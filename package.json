@@ -1,0 +1,13 @@
+{
+  "name": "project-inc-siwma-2",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kar",
+  "devDependencies": {
+    "nx": "^15.8.7",
+    "tslib": "^2.5.0",
+    "typescript": "5.0.2"
+  }
+}
