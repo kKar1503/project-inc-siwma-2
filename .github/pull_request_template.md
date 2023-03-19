@@ -11,7 +11,7 @@
 	This new feature is very cool because it allows users to do X, Y, and Z
 
 	- Fixed a bug
-	- Changed the design
+	- I forgor
 	- Updated the documentation
 	- Ate a sandwich
 	- etc.

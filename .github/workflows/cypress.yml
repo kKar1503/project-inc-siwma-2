@@ -1,4 +1,4 @@
-name: "Cypress E2E and Component Testing"
+name: "Cypress E2E and Coverage Report"
 
 # Skip job run if PR updated
 concurrency:
