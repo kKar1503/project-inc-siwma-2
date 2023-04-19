@@ -6,7 +6,8 @@
     "dev:marketplace": "nx run @inc/marketplace:dev",
     "dev:chat": "nx run @inc/chat:dev",
     "test": "nx run-many -t test",
-    "build": "nx run-many -t build"
+    "build": "nx run-many -t build",
+    "clean-i": "pnpm install --frozen-lockfile"
   },
   "author": "Kar",
   "devDependencies": {
