@@ -2,7 +2,11 @@
   "name": "project-inc-siwma-2",
   "version": "1.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nx run-many -t dev -p @inc/chat @inc/marketplace",
+    "dev:marketplace": "nx run @inc/marketplace:dev",
+    "dev:chat": "nx run @inc/chat:dev",
+    "test": "nx run-many -t test",
+    "build": "nx run-many -t build"
   },
   "author": "Kar",
   "devDependencies": {
