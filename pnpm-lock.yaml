@@ -41,6 +41,7 @@ importers:
       '@mui/material': ^5.11.14
       '@mui/x-data-grid': ^6.0.2
       '@prisma/client': ^4.12.0
+      '@types/bcryptjs': ^2.4.2
       '@types/node': 18.15.3
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.11
@@ -89,6 +90,7 @@ importers:
     devDependencies:
       '@inc/configs': link:../../packages/configs
       '@inc/types': link:../../packages/types
+      '@types/bcryptjs': 2.4.2
       '@types/node': 18.15.3
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.11
@@ -935,6 +937,10 @@ packages:
 
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
+    dev: true
+
+  /@types/bcryptjs/2.4.2:
+    resolution: {integrity: sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==}
     dev: true
 
   /@types/body-parser/1.19.2:
