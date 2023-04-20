@@ -1,5 +1,6 @@
 import { ZodParsedType } from "zod";
 import { ApiError } from "./BaseError";
+import { arrayToString } from "@/utils/stringUtils";
 
 export class QueryError extends ApiError {
   constructor() {
@@ -79,14 +80,20 @@ export class ParamTypeError extends ParamError {
  * @example "Parameter 'id' of value 'abc' is invalid"
  * @param parameter The parameter name
  * @param paramValue The value of the parameter
+ * @param allowedValues The allowed values of the parameter
  */
 export class ParamInvalidError extends ParamError {
   public static readonly status = 422;
   public static readonly code = 2005;
 
-  constructor(parameter: string, paramValue: any) {
+  constructor(parameter: string, paramValue: any, allowedValues?: (string | number)[]) {
+    // Construct message
+    const message =
+      `'${parameter}' of value '${paramValue}' is invalid` +
+      (allowedValues ? `, only values: '${arrayToString(allowedValues, "or")}' are allowed` : "");
+
     super();
-    this.message = `'${parameter}' of value '${paramValue}' is invalid`;
+    this.message = message;
     this.status = ParamInvalidError.status;
     this.code = ParamInvalidError.code;
   }

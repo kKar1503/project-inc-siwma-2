@@ -15,7 +15,7 @@ export type ErrorJSON = {
  * Do not throw this error class directly.
  * Build on top of this error class instead.
  */
-export class BaseError extends Error {
+export abstract class BaseError extends Error {
   message: string; // The error message
   detail?: string; // Detailed error message (for logging)
   status: number; // The HTTP status code
@@ -41,10 +41,20 @@ export class BaseError extends Error {
  * Do not throw this error class directly.
  * Build on top of this error class instead.
  */
-export class ApiError extends BaseError {
+export abstract class ApiError extends BaseError {
   constructor() {
     super();
     this.message = "Something went wrong";
     this.status = 500;
+  }
+}
+
+/**
+ * An unknown error occurred
+ */
+export class UnknownError extends ApiError {
+  constructor() {
+    super();
+    this.message = "An unknown error occurred";
   }
 }
