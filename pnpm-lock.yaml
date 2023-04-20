@@ -42,6 +42,7 @@ importers:
       '@mui/x-data-grid': ^6.0.2
       '@prisma/client': ^4.12.0
       '@types/bcryptjs': ^2.4.2
+      '@types/luxon': ^3.3.0
       '@types/node': 18.15.3
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.11
@@ -97,6 +98,7 @@ importers:
       '@inc/configs': link:../../packages/configs
       '@inc/types': link:../../packages/types
       '@types/bcryptjs': 2.4.2
+      '@types/luxon': 3.3.0
       '@types/node': 18.15.3
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.11
@@ -1037,6 +1039,10 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/luxon/3.3.0:
+    resolution: {integrity: sha512-uKRI5QORDnrGFYgcdAVnHvEIvEZ8noTpP/Bg+HeUzZghwinDlIS87DEenV5r1YoOF9G4x600YsUXLWZ19rmTmg==}
     dev: true
 
   /@types/mime/3.0.1:
