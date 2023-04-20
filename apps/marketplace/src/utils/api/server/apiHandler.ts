@@ -1,4 +1,4 @@
-import { BaseError, ErrorJSON, ParamError, ParamRequiredError, ParamTypeError } from "@/errors";
+import { BaseError, ErrorJSON, ParamError, ParamInvalidError, ParamRequiredError, ParamTypeError, UnknownError } from "@/errors";
 import { NextApiRequest, NextApiResponse } from "next";
 import { JWT } from "next-auth/jwt";
 import nextConnect from "next-connect";
@@ -37,6 +37,13 @@ function handleZodError(error: ZodError) {
 
       // Return a param type error
       result.push(new ParamTypeError(err.path[0].toString(), err.expected, err.received).toJSON());
+      continue;
+    }
+
+    // Check if it was a invalid_enum_value error
+    if (err.code === "invalid_enum_value") {
+      // Yes it was, return a param error
+      result.push(new ParamInvalidError(err.path[0].toString(), err.received, err.options).toJSON());
       continue;
     }
 
@@ -90,7 +97,7 @@ function handleError($error: Error): ErrorJSON[] {
 
   // An unknown error was received
   console.error(error);
-  return [new BaseError().toJSON()];
+  return [new UnknownError().toJSON()];
 }
 
 /**

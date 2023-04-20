@@ -1,4 +1,4 @@
-import { ParamInvalidError, ParamTypeError } from "@/errors";
+import { ParamInvalidError } from "@/errors";
 
 /**
  * Capitalize the first letter of a string
@@ -14,11 +14,11 @@ const capitalizeFirstLetter = (text: string) => {
  * Joins the elements of an array together into a readable string
  * @example
  * arrayToString(['Red', 'blue', 'green', 'orange'], 'and'); // Returns 'Red, blue, green and orange'
- * @param {string[] || number[]} arr The array to join
+ * @param {(string | number)[]} arr The array to join
  * @param {string} joinWord The word to be used while joining the last word
  * @returns A readable string
  */
-const arrayToString = (arr: string[] | number[], joinWord: string) => {
+const arrayToString = (arr: (string | number)[], joinWord: string) => {
   // Remove the last element from the array
   const arrWithoutLast = [...arr];
   const poppedElement = arrWithoutLast.pop();
