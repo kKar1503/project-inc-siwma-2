@@ -23,8 +23,6 @@ async function validateAccessToken(userId: string, token: string) {
     },
   });
 
-  console.log({ accessToken });
-
   // Check if the token is valid
   return validateToken({ userId, token: accessToken });
 }
@@ -41,9 +39,7 @@ export const apiGuardMiddleware = (options?: APIGuardOptions) => {
       // Check if the user is authenticated
       if (!req.token || !req.token.accessToken || !req.token.refreshToken) {
         // User is not authenticated
-        res.status(401).json({
-          message: "User not signed in",
-        });
+        throw new AuthError();
       }
 
       // User is authenticated, check if the access token is valid
