@@ -1,12 +1,12 @@
-import Head from "next/head";
-import { Button } from "@inc/ui";
-import type { Person } from "@inc/types";
-import { signIn, useSession } from "next-auth/react";
+import Head from 'next/head';
+import { Button } from '@inc/ui';
+import type { Person } from '@inc/types';
+import { signIn, useSession } from 'next-auth/react';
 
 // eslint-disable-next-line no-unused-vars
 const p: Person = {
   id: 5,
-  name: "string",
+  name: 'string',
 };
 
 const Home = () => {
@@ -21,7 +21,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Button onClick={() => console.log("clicked")}>Hello</Button>
+        <Button onClick={() => console.log('clicked')}>Hello</Button>
         <p>Hello World</p>
         Not signed in <br />
         <button onClick={() => signIn()}>Sign in</button>
