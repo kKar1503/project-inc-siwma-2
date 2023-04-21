@@ -1,15 +1,15 @@
 import { Chip } from '@mui/material';
 
-const SellBadge = () => (
+const NegotiableBadge = () => (
   <Chip
     style={{
-      backgroundColor: '#F86262',
       color: '#FFFFFF',
       fontWeight: 'bold',
       marginRight: 5,
     }}
-    label="Selling"
+    color="warning"
+    label="Negotiable"
   />
 );
 
-export default SellBadge;
+export default NegotiableBadge;

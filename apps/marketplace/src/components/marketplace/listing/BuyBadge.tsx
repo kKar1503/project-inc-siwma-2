@@ -1,5 +1,15 @@
+import { Chip } from '@mui/material';
+
 const BuyBadge = () => (
-  <div className="badge badge-md badge-success text-white rounded-lg shadow-md">Buy</div>
+  <Chip
+    style={{
+      backgroundColor: '#34D399',
+      color: '#FFFFFF',
+      fontWeight: 'bold',
+      marginRight: 5,
+    }}
+    label="Buying"
+  />
 );
 
 export default BuyBadge;
