@@ -42,11 +42,11 @@ const ProductListingItem = ({
   const [image, setImage] = React.useState('');
 
   return (
-    <Card sx={{ maxWidth: 288, maxHeight: 588 }}>
+    <Card sx={{ maxWidth: 288, maxHeight: 600 }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            T
+            {ownerFullName[0]}
           </Avatar>
         }
         title={ownerFullName}
