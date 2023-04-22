@@ -2,7 +2,42 @@ import { apiHandler } from "@/utils/api";
 import { formatAPIResponse } from "@/utils/stringUtils";
 import PrismaClient from "@/utils/prisma";
 import { z } from "zod";
-import { datatype, parametertype } from "@prisma/client";
+import { datatype, parameter, parametertype } from "@prisma/client";
+
+//-- Type definitions --//
+// Define the type of the response object
+export type ParamResponse = {
+  id: string;
+  name: string;
+  displayName: string;
+  type: parametertype;
+  datatype: datatype;
+  active: boolean;
+};
+
+//-- Helper functions --//
+export function formatParamResponse($parameters: parameter | parameter[]) {
+  // Initialise the parameters array
+  let parameters = $parameters;
+
+  // Check if the parameter is not an array
+  if (!Array.isArray(parameters)) {
+    // Make it an array
+    parameters = [parameters];
+  }
+
+  // Construct the result
+  const result: ParamResponse[] = parameters.map((parameter) => ({
+    id: parameter.id.toString(),
+    name: parameter.name,
+    displayName: parameter.display_name,
+    type: parameter.type,
+    datatype: parameter.datatype,
+    active: parameter.active,
+  }));
+
+  return formatAPIResponse(result);
+}
 
 /**
  * Zod schema for the POST / PUT request body
@@ -23,7 +58,7 @@ export default apiHandler({
     const parameters = await PrismaClient.parameter.findMany();
 
     // Return the result
-    res.status(200).json(formatAPIResponse(parameters));
+    res.status(200).json(formatParamResponse(parameters));
   })
   .post(async (req, res) => {
     // Create a new parameter
