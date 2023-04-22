@@ -5,9 +5,9 @@ import { z } from "zod";
 import { datatype, parametertype } from "@prisma/client";
 
 /**
- * Zod schema for the POST request body
+ * Zod schema for the POST / PUT request body
  */
-export const paramsPostRequest = z.object({
+export const paramsRequestBody = z.object({
   // Define the request body schema
   name: z.string(),
   displayName: z.string(),
@@ -23,11 +23,12 @@ export default apiHandler({
     const parameters = await PrismaClient.parameter.findMany();
 
     // Return the result
-    res.status(201).json(formatAPIResponse(parameters));
+    res.status(200).json(formatAPIResponse(parameters));
   })
   .post(async (req, res) => {
+    // Create a new parameter
     // Parse and validate the request body
-    const data = paramsPostRequest.parse(req.body);
+    const data = paramsRequestBody.parse(req.body);
 
     // Insert the parameter into the database
     const result = await PrismaClient.parameter.create({
