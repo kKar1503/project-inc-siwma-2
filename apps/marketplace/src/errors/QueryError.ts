@@ -11,7 +11,7 @@ export class QueryError extends ApiError {
 }
 
 /**
- * Cannot find [...]
+ * [...] not found
  */
 export class NotFoundError extends QueryError {
   public static readonly status = 404;
@@ -19,7 +19,7 @@ export class NotFoundError extends QueryError {
 
   constructor(item: string) {
     super();
-    this.message = `Cannot find ${item}`;
+    this.message = `${item} not found`;
     this.status = NotFoundError.status;
     this.code = NotFoundError.code;
   }
