@@ -49,10 +49,10 @@ export const apiGuardMiddleware = (options?: APIGuardOptions) => {
     // Perform an admin check if required (defaults to false)
     if (options?.allowAdminsOnly) {
       // Check if the user is an admin
-      if (!req.token?.isAdmin) {
+      if (!req.token?.user.permissions) {
         // User is not an admin
         // Throw an error
-        throw new ForbiddenError(req.token?.name);
+        throw new ForbiddenError(req.token?.user.name);
       }
     }
 
