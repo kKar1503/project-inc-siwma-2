@@ -3,6 +3,7 @@ import { formatAPIResponse } from "@/utils/stringUtils";
 import PrismaClient from "@/utils/prisma";
 import { z } from "zod";
 import { datatype, parameter, parametertype } from "@prisma/client";
+import { apiGuardMiddleware } from "@/utils/api/server/middlewares/apiGuardMiddleware";
 
 //-- Type definitions --//
 // Define the type of the response object
@@ -50,9 +51,7 @@ export const paramsRequestBody = z.object({
   dataType: z.nativeEnum(datatype),
 });
 
-export default apiHandler({
-  allowNonAuthenticated: true,
-})
+export default apiHandler()
   .get(async (req, res) => {
     // Retrieve all parameters from the database
     const parameters = await PrismaClient.parameter.findMany();
@@ -60,21 +59,26 @@ export default apiHandler({
     // Return the result
     res.status(200).json(formatParamResponse(parameters));
   })
-  .post(async (req, res) => {
-    // Create a new parameter
-    // Parse and validate the request body
-    const data = paramsRequestBody.parse(req.body);
+  .post(
+    apiGuardMiddleware({
+      allowAdminsOnly: true,
+    }),
+    async (req, res) => {
+      // Create a new parameter (admins only)
+      // Parse and validate the request body
+      const data = paramsRequestBody.parse(req.body);
 
-    // Insert the parameter into the database
-    const result = await PrismaClient.parameter.create({
-      data: {
-        name: data.name,
-        display_name: data.displayName,
-        type: data.type,
-        datatype: data.dataType,
-      },
-    });
+      // Insert the parameter into the database
+      const result = await PrismaClient.parameter.create({
+        data: {
+          name: data.name,
+          display_name: data.displayName,
+          type: data.type,
+          datatype: data.dataType,
+        },
+      });
 
-    // Return the result
-    res.status(201).json({ parameterId: result.id });
-  });
+      // Return the result
+      res.status(201).json({ parameterId: result.id });
+    }
+  );

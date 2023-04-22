@@ -41,7 +41,7 @@ async function checkParamExists($id: string | number) {
 }
 
 export default apiHandler({
-  allowNonAuthenticated: true,
+  allowAdminsOnly: true,
 })
   .put(async (req, res) => {
     // Update an existing parameter
