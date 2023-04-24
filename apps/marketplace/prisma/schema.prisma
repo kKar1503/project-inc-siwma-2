@@ -3,12 +3,29 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
 
+model access_tokens {
+  id             Int            @id(map: "access_tokens_pk") @default(sequence(maxValue: 2147483647))
+  token          String         @unique(map: "access_tokens_token_unique")
+  refresh_token  Int
+  user_id        String         @db.Uuid
+  revoked        Boolean        @default(false)
+  created_at     DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime?      @db.Timestamptz(6)
+  expires_at     DateTime       @db.Timestamptz(6)
+  refresh_tokens refresh_tokens @relation(fields: [refresh_token, revoked], references: [id, revoked], onDelete: Cascade)
+  users          users          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id])
+  @@index([token])
+  @@index([refresh_token])
+}
+
 model advertisements {
-  id          Int      @id(map: "advertisements_pk") @default(autoincrement())
+  id          Int      @id(map: "advertisements_pk") @default(sequence(maxValue: 2147483647))
   category_id Int
   image       String
   description String
@@ -33,7 +50,7 @@ model categories_parameters {
 }
 
 model category {
-  id                    Int                     @id(map: "category_pk") @default(autoincrement())
+  id                    Int                     @id(map: "category_pk") @default(sequence(maxValue: 2147483647))
   name                  String
   description           String
   image                 String
@@ -47,7 +64,7 @@ model category {
 }
 
 model clicks {
-  id               Int            @id(map: "clicks_pk") @default(autoincrement())
+  id               Int            @id(map: "clicks_pk") @default(sequence(maxValue: 2147483647))
   advertisement_id Int
   user_id          String         @db.Uuid
   link             Boolean        @default(false)
@@ -57,7 +74,7 @@ model clicks {
 }
 
 model companies {
-  id                  Int                   @id(map: "companies_pk") @default(autoincrement())
+  id                  Int                   @id(map: "companies_pk") @default(sequence(maxValue: 2147483647))
   name                String
   bio                 String?               @default("")
   website             String?               @default("")
@@ -71,7 +88,7 @@ model companies {
 }
 
 model companies_comments {
-  id         Int       @id(map: "companies_comments_pk") @default(autoincrement())
+  id         Int       @id(map: "companies_comments_pk") @default(sequence(maxValue: 2147483647))
   company_id Int
   comments   String
   created_at DateTime  @default(now()) @db.Timestamptz(6)
@@ -79,7 +96,7 @@ model companies_comments {
 }
 
 model invite {
-  id         Int       @id(map: "invite_pk") @default(autoincrement())
+  id         Int       @id(map: "invite_pk") @default(sequence(maxValue: 2147483647))
   name       String
   email      String
   token      String
@@ -90,7 +107,7 @@ model invite {
 }
 
 model listing {
-  id                        Int                         @id(map: "listing_pk") @default(autoincrement())
+  id                        Int                         @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
   name                      String
   description               String
   price                     Decimal                     @default(0) @db.Decimal
@@ -111,6 +128,24 @@ model listing {
   listings_parameters_value listings_parameters_value[]
 }
 
+model listing_bookmarks {
+  id         Int      @id(map: "listing_bookmarks_pk") @default(sequence(maxValue: 2147483647))
+  user_id    String   @db.Uuid
+  listing_id Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "listing_bookmarks_fk")
+  listing    listing  @relation(fields: [listing_id], references: [id], onDelete: Cascade, map: "listing_bookmarks_fk_1")
+}
+
+model listing_images {
+  id         Int      @id(map: "listing_images_pk") @default(sequence(maxValue: 2147483647))
+  listing_id Int
+  image      String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  listing    listing  @relation(fields: [listing_id], references: [id], onDelete: Cascade, map: "listing_images_fk")
+}
+
 model listings_parameters_value {
   listing_id   Int
   parameter_id Int
@@ -123,76 +158,22 @@ model listings_parameters_value {
   @@id([listing_id, parameter_id], map: "listings_parameters_value_pk")
 }
 
-model parameter {
-  id                        Int                         @id(map: "parameter_pk") @default(autoincrement())
-  type                      parametertype
-  datatype                  datatype
-  name                      String
-  display_name              String
-  active                    Boolean                     @default(true)
-  created_at                DateTime                    @default(now()) @db.Timestamptz(6)
-  updated_at                DateTime                    @default(now()) @db.Timestamptz(6)
-  categories_parameters     categories_parameters[]
-  listings_parameters_value listings_parameters_value[]
+model notification_settings {
+  id      Int              @id(map: "notification_settings_pk") @default(sequence(maxValue: 2147483647))
+  user_id String           @db.Uuid
+  type    notificationtype
+  users   users            @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "notification_settings_fk")
 }
 
 model parameter_choices {
-  id         Int      @id(map: "parameter_choices_pk") @default(autoincrement())
+  id         Int      @id(map: "parameter_choices_pk") @default(sequence(maxValue: 2147483647))
   choice     String[]
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @db.Timestamptz(6)
 }
 
-model users {
-  id                    String                  @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                 String                  @unique(map: "users_un")
-  name                  String
-  phone                 String
-  profile_picture       String?
-  password              String
-  contact               usercontacts
-  permissions           Int                     @default(0)
-  enabled               Boolean                 @default(true)
-  company_id            Int
-  created_at            DateTime                @default(now()) @db.Timestamptz(6)
-  access_tokens         access_tokens[]
-  clicks                clicks[]
-  listing               listing[]
-  listing_bookmarks     listing_bookmarks[]
-  notification_settings notification_settings[]
-  refresh_tokens        refresh_tokens[]
-  user_bookmarks        user_bookmarks[]
-  companies             companies               @relation(fields: [company_id], references: [id], onDelete: Cascade, map: "users_fk")
-  users_comments        users_comments[]
-}
-
-model users_comments {
-  id         Int      @id(map: "users_comments_pk") @default(autoincrement())
-  user_id    String   @db.Uuid
-  comments   String   @default("")
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "users_comments_fk")
-}
-
-model access_tokens {
-  id             Int            @id(map: "access_tokens_pk") @default(autoincrement())
-  token          String         @unique(map: "access_tokens_token_unique")
-  refresh_token  Int
-  user_id        String         @db.Uuid
-  revoked        Boolean        @default(false)
-  created_at     DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime?      @db.Timestamptz(6)
-  expires_at     DateTime       @db.Timestamptz(6)
-  refresh_tokens refresh_tokens @relation(fields: [refresh_token, revoked], references: [id, revoked], onDelete: Cascade)
-  users          users          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([refresh_token])
-  @@index([token])
-  @@index([user_id])
-}
-
 model refresh_tokens {
-  id            Int             @id(map: "refresh_tokens_pk") @default(autoincrement())
+  id            Int             @id(map: "refresh_tokens_pk") @default(sequence(maxValue: 2147483647))
   token         String          @unique(map: "refresh_tokens_token_unique")
   user_id       String          @db.Uuid
   revoked       Boolean         @default(false)
@@ -203,49 +184,68 @@ model refresh_tokens {
   users         users           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([id, revoked])
-  @@index([token])
   @@index([user_id])
+  @@index([token])
+}
+
+model user_bookmarks {
+  id                                  Int      @id(map: "user_bookmarks_pk") @default(sequence(maxValue: 2147483647))
+  user_id                             String   @db.Uuid
+  target_user                         String   @db.Uuid
+  created_at                          DateTime @default(now()) @db.Timestamptz(6)
+  users_user_bookmarks_user_idTousers users    @relation("user_bookmarks_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, map: "user_bookmarks_fk")
+}
+
+model users {
+  id                                           String                  @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                                        String
+  full_name                                    String
+  phone                                        String
+  profile_picture                              String?
+  password                                     String
+  contact                                      usercontacts
+  permissions                                  Int                     @default(0)
+  enabled                                      Boolean                 @default(true)
+  company_id                                   Int
+  created_at                                   DateTime                @default(now()) @db.Timestamptz(6)
+  access_tokens                                access_tokens[]
+  clicks                                       clicks[]
+  listing                                      listing[]
+  listing_bookmarks                            listing_bookmarks[]
+  notification_settings                        notification_settings[]
+  refresh_tokens                               refresh_tokens[]
+  user_bookmarks_user_bookmarks_user_idTousers user_bookmarks[]        @relation("user_bookmarks_user_idTousers")
+  companies                                    companies               @relation(fields: [company_id], references: [id], onDelete: Cascade, map: "users_fk")
+  users_comments                               users_comments[]
+}
+
+model users_comments {
+  id         Int      @id(map: "users_comments_pk") @default(sequence(maxValue: 2147483647))
+  user_id    String   @db.Uuid
+  comments   String   @default("")
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "users_comments_fk")
 }
 
 model companies_bookmarks {
-  id         Int       @id(map: "companies_bookmarks_pk") @default(autoincrement())
+  id         Int       @id(map: "companies_bookmarks_pk") @default(sequence(maxValue: 2147483647))
   user_id    String    @db.Uuid
   company_id Int
   created_at DateTime  @default(now()) @db.Timestamptz(6)
   companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, map: "companies_bookmarks_fk")
 }
 
-model listing_bookmarks {
-  id         Int      @id(map: "listing_bookmarks_pk") @default(autoincrement())
-  user_id    String   @db.Uuid
-  listing_id Int
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "listing_bookmarks_fk")
-  listing    listing  @relation(fields: [listing_id], references: [id], onDelete: Cascade, map: "listing_bookmarks_fk_1")
-}
-
-model listing_images {
-  id         Int      @id(map: "listing_images_pk") @default(autoincrement())
-  listing_id Int
-  image      String
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @db.Timestamptz(6)
-  listing    listing  @relation(fields: [listing_id], references: [id], onDelete: Cascade, map: "listing_images_fk")
-}
-
-model notification_settings {
-  id      Int              @id(map: "notification_settings_pk") @default(autoincrement())
-  user_id String           @db.Uuid
-  type    notificationtype
-  users   users            @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "notification_settings_fk")
-}
-
-model user_bookmarks {
-  id          Int      @id(map: "user_bookmarks_pk") @default(autoincrement())
-  user_id     String   @db.Uuid
-  target_user String   @db.Uuid
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "user_bookmarks_fk")
+model parameter {
+  id                        Int                         @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
+  type                      parametertype
+  datatype                  datatype
+  name                      String
+  display_name              String
+  active                    Boolean                     @default(true)
+  created_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  categories_parameters     categories_parameters[]
+  listings_parameters_value listings_parameters_value[]
 }
 
 enum datatype {

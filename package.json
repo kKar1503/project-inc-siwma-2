@@ -7,11 +7,14 @@
     "dev:chat": "nx run @inc/chat:dev",
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
-    "clean-i": "pnpm install --frozen-lockfile"
+    "clean-i": "pnpm install --frozen-lockfile",
+    "prisma": "pnpm --filter marketplace prisma",
+    "seed": "cd apps/marketplace && npx prisma db seed && cd ../.."
   },
   "author": "Kar",
   "devDependencies": {
     "nx": "^15.8.7",
+    "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "typescript": "5.0.2"
   }
