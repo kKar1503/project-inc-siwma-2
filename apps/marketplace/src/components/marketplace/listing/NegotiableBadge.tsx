@@ -2,10 +2,10 @@ import { Chip } from '@mui/material';
 
 const NegotiableBadge = () => (
   <Chip
-    style={{
+    sx={{
       color: '#FFFFFF',
       fontWeight: 'bold',
-      marginRight: 5,
+      mr: 0.5,
     }}
     color="warning"
     label="Negotiable"
