@@ -1,4 +1,4 @@
-import { ParamInvalidError } from "@/errors";
+import { ParamError, ParamInvalidError } from '@/errors';
 
 /**
  * Capitalize the first letter of a string
@@ -24,7 +24,7 @@ const arrayToString = (arr: (string | number)[], joinWord: string) => {
   const poppedElement = arrWithoutLast.pop();
 
   // Join up all elements of the array (with the last element already removed)
-  let result = arrWithoutLast.join(", ");
+  let result = arrWithoutLast.join(', ');
 
   // Join the last element to the array
   result += `, ${joinWord} ${poppedElement}`;
@@ -33,27 +33,24 @@ const arrayToString = (arr: (string | number)[], joinWord: string) => {
 };
 
 /**
- * Parse a string to a number
+ * Parse a string to a integer
  * @param string The string to parse
- * @returns The parsed number
+ * @returns The parsed integer
  */
-const parseToNumber = (string: string, key?: string) => {
-  try {
-    const result = Number(string.toString());
+const stringToInt = (string: string, key?: string) => {
+  // Attempt to parse from string to int
+  const result = parseInt(string);
 
-    if (Number.isNaN(result)) {
-      throw new Error();
-    }
-
-    return Number(string.toString());
-  } catch (error) {
-    // Unable to parse string to number
+  // Check if the parsing was successful
+  if (Number.isNaN(result)) {
     if (key) {
       throw new ParamInvalidError(key, string);
     } else {
-      throw error;
+      throw new ParamError();
     }
   }
+
+  return result;
 };
 
 /**
@@ -71,7 +68,7 @@ const formatAPIResponse = (response: object | object[]) => {
   }
 
   // The response is not an array, check if it has been formatted properly
-  if (response.hasOwnProperty("data")) {
+  if (response.hasOwnProperty('data')) {
     // Yes it has, return the response
     return response;
   }
@@ -82,4 +79,4 @@ const formatAPIResponse = (response: object | object[]) => {
   };
 };
 
-export { capitalizeFirstLetter, arrayToString, parseToNumber, formatAPIResponse };
+export { capitalizeFirstLetter, arrayToString, stringToInt, formatAPIResponse };
