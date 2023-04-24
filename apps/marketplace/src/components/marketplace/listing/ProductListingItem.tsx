@@ -49,7 +49,7 @@ const ProductListingItem = ({
     [createdAt]
   );
   return (
-    <Card sx={{ maxWidth: 288, maxHeight: 600 }}>
+    <Card sx={{ maxWidth: 288, maxHeight: 600, border: '1px solid #C4C4C4' }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
