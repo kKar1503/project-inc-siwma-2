@@ -54,7 +54,11 @@
       2,
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
     ],
-    "no-plusplus": "off"
+    "no-plusplus": "off",
+    "import/extensions": ["error", {
+      "tsx": "never",
+      "ts": "never"
+    }]
   },
   "overrides": [
     {
