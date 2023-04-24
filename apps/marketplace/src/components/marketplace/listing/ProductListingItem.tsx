@@ -12,6 +12,21 @@ import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
 
+export type ProductListingItemProps = {
+  img: string;
+  type: string;
+  name: string;
+  rating: number;
+  href: string;
+  price: number;
+  negotiable: boolean;
+  ownerId: string;
+  ownerFullName: string;
+  createdAt: string;
+  companyName: string;
+  unit_price: boolean;
+};
+
 const ProductListingItem = ({
   img,
   type,
@@ -25,20 +40,7 @@ const ProductListingItem = ({
   createdAt,
   companyName,
   unit_price: isUnitPrice,
-}: {
-  img: string;
-  type: string;
-  name: string;
-  rating: number;
-  href: string;
-  price: number;
-  negotiable: boolean;
-  ownerId: string;
-  ownerFullName: string;
-  createdAt: string;
-  companyName: string;
-  unit_price: boolean;
-}) => {
+}: ProductListingItemProps) => {
   const [image, setImage] = React.useState('');
 
   return (
