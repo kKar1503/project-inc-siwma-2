@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import Rating from '@mui/material/Rating';
 import Card from '@mui/material/Card';
+import Box from '@mui/material/Box';
 import StarIcon from '@mui/icons-material/Star';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
@@ -64,17 +65,30 @@ const ProductListingItem = ({
       />
       <CardMedia component="img" height="288" image={img} alt="Paella dish" />
       <CardContent style={{ paddingLeft: 16 }}>
-        <div style={{ paddingBottom: 16 }}>
+        {/* MUI default spacing is 8px */}
+        <Box
+          sx={{
+            pb: 2,
+          }}
+        >
           {type === 'Buy' && <BuyBadge />}
           {type === 'Sell' && <SellBadge />}
           {negotiable && <NegotiableBadge />}
-        </div>
-        <div style={{ paddingBottom: 16 }}>
+        </Box>
+        <Box
+          sx={{
+            pb: 2,
+          }}
+        >
           <Typography variant="body2" color="text.primary" fontWeight={400} fontSize={20}>
             {name}
           </Typography>
-        </div>
-        <div style={{ paddingBottom: 16 }}>
+        </Box>
+        <Box
+          sx={{
+            pb: 2,
+          }}
+        >
           <Typography variant="h4" color="text.primary" fontWeight="bold" fontSize={24}>
             {new Intl.NumberFormat('en-SG', {
               style: 'currency',
@@ -82,8 +96,12 @@ const ProductListingItem = ({
             }).format(price)}
             {isUnitPrice && <span className="text-sm font-normal">/unit</span>}
           </Typography>
-        </div>
-        <div style={{ paddingBottom: 16 }}>
+        </Box>
+        <Box
+          sx={{
+            pb: 2,
+          }}
+        >
           <Rating
             defaultValue={rating}
             readOnly
@@ -92,12 +110,16 @@ const ProductListingItem = ({
             style={{ color: '#00C853' }}
             emptyIcon={<StarIcon fontSize="inherit" />}
           />
-        </div>
-        <div style={{ paddingBottom: 16 }}>
+        </Box>
+        <Box
+          sx={{
+            pb: 2,
+          }}
+        >
           <Typography variant="subtitle1" color="text.secondary" fontSize={16}>
             {datetime}
           </Typography>
-        </div>
+        </Box>
       </CardContent>
     </Card>
   );
