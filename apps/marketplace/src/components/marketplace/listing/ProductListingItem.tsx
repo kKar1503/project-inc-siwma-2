@@ -26,7 +26,7 @@ export type ProductListingItemProps = {
   ownerFullName: string;
   createdAt: string;
   companyName: string;
-  unit_price: boolean;
+  isUnitPrice: boolean;
 };
 
 const ProductListingItem = ({
@@ -41,7 +41,7 @@ const ProductListingItem = ({
   ownerFullName,
   createdAt,
   companyName,
-  unit_price: isUnitPrice,
+  isUnitPrice,
 }: ProductListingItemProps) => {
   // save computation power to avoid multiple calculations on each render
   const datetime = useMemo(
@@ -53,7 +53,7 @@ const ProductListingItem = ({
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {ownerFullName[0]}
+            {ownerFullName.charAt(0)}
           </Avatar>
         }
         title={ownerFullName}
@@ -63,8 +63,8 @@ const ProductListingItem = ({
         }}
         subheader={companyName}
       />
-      <CardMedia component="img" height="288" image={img} alt="Paella dish" />
-      <CardContent style={{ paddingLeft: 16 }}>
+      <CardMedia component="img" height="288" image={img} />
+      <CardContent sx={{ pl: 2 }}>
         {/* MUI default spacing is 8px */}
         <Box
           sx={{
@@ -94,7 +94,7 @@ const ProductListingItem = ({
               style: 'currency',
               currency: 'SGD',
             }).format(price)}
-            {isUnitPrice && <span className="text-sm font-normal">/unit</span>}
+            {isUnitPrice && '/unit'}
           </Typography>
         </Box>
         <Box
@@ -107,7 +107,7 @@ const ProductListingItem = ({
             readOnly
             size="medium"
             precision={0.5}
-            style={{ color: '#00C853' }}
+            sx={{ color: '#00C853' }}
             emptyIcon={<StarIcon fontSize="inherit" />}
           />
         </Box>
