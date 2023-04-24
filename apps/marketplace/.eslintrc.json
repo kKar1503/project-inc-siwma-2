@@ -23,23 +23,12 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/require-default-props": "off",
-    "react/function-component-definition": [
-      2,
-      { "namedComponents": "arrow-function" }
-    ],
+    "react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
     "react/button-has-type": "off",
-    "indent": ["error", 2, { "SwitchCase": 1 }],
-    "quotes": [
-      "error",
-      "single",
-      { "allowTemplateLiterals": true, "avoidEscape": true }
-    ],
+    "indent": ["error", 2, { "SwitchCase": 1, "offsetTernaryExpressions": true }],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true, "avoidEscape": true }],
     "object-curly-newline": "off",
-    "operator-linebreak": [
-      "error",
-      "after",
-      { "overrides": { "?": "before", ":": "before" } }
-    ],
+    "operator-linebreak": ["error", "after", { "overrides": { "?": "before", ":": "before" } }],
     "no-unused-vars": [
       "warn",
       {
@@ -50,15 +39,15 @@
     ],
     "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }],
     "react/jsx-props-no-spreading": "off",
-    "react/jsx-filename-extension": [
-      2,
-      { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
-    ],
+    "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
     "no-plusplus": "off",
-    "import/extensions": ["error", {
-      "tsx": "never",
-      "ts": "never"
-    }]
+    "import/extensions": [
+      "error",
+      {
+        "tsx": "never",
+        "ts": "never"
+      }
+    ]
   },
   "overrides": [
     {
@@ -76,11 +65,5 @@
       "plugins": ["cypress"]
     }
   ],
-  "ignorePatterns": [
-    "**/*.json",
-    "node_modules",
-    ".next",
-    "public",
-    "**/*.d.ts"
-  ]
+  "ignorePatterns": ["**/*.json", "node_modules", ".next", "public", "**/*.d.ts"]
 }
