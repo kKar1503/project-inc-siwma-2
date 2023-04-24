@@ -1,12 +1,16 @@
-import { ZodParsedType } from "zod";
-import { ApiError } from "./BaseError";
-import { arrayToString } from "@/utils/stringUtils";
+import { ZodParsedType } from 'zod';
+import { ApiError } from './BaseError';
+import { arrayToString } from '@/utils/stringUtils';
 
 export class QueryError extends ApiError {
+  public static readonly status: number = 400;
+  public static readonly code: number = 2000;
+
   constructor() {
     super();
-    this.message = "Invalid query";
-    this.status = 2000;
+    this.message = 'Invalid query';
+    this.status = QueryError.status;
+    this.code = QueryError.code;
   }
 }
 
@@ -15,7 +19,7 @@ export class QueryError extends ApiError {
  */
 export class NotFoundError extends QueryError {
   public static readonly status = 404;
-  public static readonly code: number = 2001;
+  public static readonly code = 2001;
 
   constructor(item: string) {
     super();
@@ -35,7 +39,7 @@ export class ParamError extends QueryError {
 
   constructor(parameter?: string) {
     super();
-    this.message = `Invalid ${parameter || "parameter"} supplied`;
+    this.message = `Invalid ${parameter || 'parameter'} supplied`;
     this.status = ParamError.status;
     this.code = ParamError.code;
   }
@@ -90,7 +94,7 @@ export class ParamInvalidError extends ParamError {
     // Construct message
     const message =
       `'${parameter}' of value '${paramValue}' is invalid` +
-      (allowedValues ? `, only values: '${arrayToString(allowedValues, "or")}' are allowed` : "");
+      (allowedValues ? `, only values: '${arrayToString(allowedValues, 'or')}' are allowed` : '');
 
     super();
     this.message = message;
