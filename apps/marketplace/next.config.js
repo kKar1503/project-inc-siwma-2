@@ -8,15 +8,18 @@ const nextConfig = {
     ignoreBuildErrors: process.env.NEXT_BUILD_OPTION === 'ignoreType',
   },
   images: {
-    domains: [
-      'images.unsplash.com',
-      'via.placeholder.com',
-      'source.unsplash.com',
-      'rvndpcxlgtqfvrxhahnm.supabase.co',
-      'www.google.com',
-      'www.asiamediajournal.com',
-      'via.placeholder.com',
-    ],
+    domains:
+      process.env.NODE_ENV === 'development'
+        ? [
+            'images.unsplash.com',
+            'via.placeholder.com',
+            'source.unsplash.com',
+            'rvndpcxlgtqfvrxhahnm.supabase.co',
+            'www.google.com',
+            'www.asiamediajournal.com',
+            'via.placeholder.com',
+          ]
+        : [],
   },
 };
 
