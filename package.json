@@ -11,6 +11,7 @@
   },
   "author": "Kar",
   "devDependencies": {
+    "eslint": "8.36.0",
     "nx": "^15.8.7",
     "tslib": "^2.5.0",
     "typescript": "5.0.2"
