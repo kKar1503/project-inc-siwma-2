@@ -1,5 +1,5 @@
 import { access_tokens, refresh_tokens } from "@prisma/client";
-import PrismaClient from "@/utils/prisma";
+import PrismaClient from "@inc/db";
 import crypto from "crypto";
 import { InvalidTokenError, TokenExpiredError } from "@/errors/AuthError";
 
