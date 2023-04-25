@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 /**
  * Error code directory:
  * 1000 - 1999: Auth errors

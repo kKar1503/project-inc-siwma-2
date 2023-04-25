@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { ZodParsedType } from 'zod';
 import { arrayToString } from '@/utils/stringUtils';
 import { ApiError } from './BaseError';
