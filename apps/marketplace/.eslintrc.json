@@ -25,7 +25,7 @@
     "react/require-default-props": "off",
     "react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
     "react/button-has-type": "off",
-    "indent": ["error", 2, { "SwitchCase": 1, "offsetTernaryExpressions": true }],
+    "indent": "off",
     "quotes": ["error", "single", { "allowTemplateLiterals": true, "avoidEscape": true }],
     "object-curly-newline": "off",
     "operator-linebreak": ["error", "after", { "overrides": { "?": "before", ":": "before" } }],
@@ -48,7 +48,14 @@
         "ts": "never"
       }
     ],
-    "no-shadow": "off"
+    "no-shadow": "off",
+    "lines-between-class-members": [
+      "error",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ]
   },
   "overrides": [
     {
