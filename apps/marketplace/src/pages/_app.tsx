@@ -16,10 +16,10 @@ interface PageType extends React.FunctionComponent<any> {
 }
 
 // App prop type
-type ExtendedAppProps<P> = AppProps<P> & {
+type ExtendedAppProps = AppProps & {
   // Override the component type
   Component: PageType;
-  pageProps: P & {
+  pageProps: {
     session: Session | null;
   };
 };
@@ -42,7 +42,7 @@ const DisallowAuthenticatedFallback = () => {
   return <SpinnerPage />;
 };
 
-export default function App<P>({ Component, pageProps: { session, ...pageProps } }: ExtendedAppProps<P>) {
+const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppProps) => {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const { allowAuthenticated, allowNonAuthenticated } = Component;
@@ -59,4 +59,6 @@ export default function App<P>({ Component, pageProps: { session, ...pageProps }
       </AuthenticationGuard>
     </SessionProvider>
   );
-}
+};
+
+export default App;

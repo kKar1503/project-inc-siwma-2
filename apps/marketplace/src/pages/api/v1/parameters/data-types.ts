@@ -1,6 +1,6 @@
-import { apiHandler } from "@/utils/api";
-import { formatAPIResponse } from "@/utils/stringUtils";
-import { datatype } from "@prisma/client";
+import { apiHandler } from '@/utils/api';
+import { formatAPIResponse } from '@/utils/stringUtils';
+import { datatype } from '@prisma/client';
 
 export default apiHandler().get(async (req, res) => {
   // Retrieve all parameter data types from the database

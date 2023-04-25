@@ -1,15 +1,15 @@
-import { apiHandler } from "@/utils/api";
-import { formatParamResponse, paramsRequestBody } from "..";
-import PrismaClient from "@/utils/prisma";
-import { NotFoundError } from "@/errors";
+import { apiHandler } from '@/utils/api';
+import PrismaClient from '@/utils/prisma';
+import { NotFoundError } from '@/errors';
+import { formatParamResponse, paramsRequestBody } from '..';
 
-//-- Functions --//
+// -- Functions --//
 function parseParamid($id: string) {
   // Parse and validate param id provided
-  const id = parseInt($id);
+  const id = parseInt($id, 10);
 
   // Check if the parameter id is valid
-  if (isNaN(id)) {
+  if (Number.isNaN(id)) {
     throw new NotFoundError(`Parameter with id '${id}'`);
   }
 
@@ -23,7 +23,7 @@ function parseParamid($id: string) {
  */
 async function checkParamExists($id: string | number) {
   // Parse and validate param id provided
-  const id = typeof $id === "number" ? $id : parseParamid($id);
+  const id = typeof $id === 'number' ? $id : parseParamid($id);
 
   // Check if the parameter exists
   const parameter = await PrismaClient.parameter.findUnique({

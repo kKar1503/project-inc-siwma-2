@@ -1,15 +1,11 @@
-import { ParamError, ParamInvalidError } from '@/errors';
-
 /**
  * Capitalize the first letter of a string
  * @param text The text to capitalize the first letter of
  * @returns The text with the first letter capitalized
  */
-const capitalizeFirstLetter = (text: string) => {
+const capitalizeFirstLetter = (text: string) =>
   // Capitalize the first letter of a string
-  return text.charAt(0).toUpperCase() + text.slice(1);
-};
-
+  text.charAt(0).toUpperCase() + text.slice(1);
 /**
  * Joins the elements of an array together into a readable string
  * @example
@@ -33,27 +29,6 @@ const arrayToString = (arr: (string | number)[], joinWord: string) => {
 };
 
 /**
- * Parse a string to a integer
- * @param string The string to parse
- * @returns The parsed integer
- */
-const stringToInt = (string: string, key?: string) => {
-  // Attempt to parse from string to int
-  const result = parseInt(string);
-
-  // Check if the parsing was successful
-  if (Number.isNaN(result)) {
-    if (key) {
-      throw new ParamInvalidError(key, string);
-    } else {
-      throw new ParamError();
-    }
-  }
-
-  return result;
-};
-
-/**
  * Format the API response into a JSON-API compliant response
  * @param response The response to format
  * @returns A JSON-API compliant response
@@ -68,7 +43,7 @@ const formatAPIResponse = (response: object | object[]) => {
   }
 
   // The response is not an array, check if it has been formatted properly
-  if (response.hasOwnProperty('data')) {
+  if (Object.prototype.hasOwnProperty.call(response, 'data')) {
     // Yes it has, return the response
     return response;
   }
@@ -79,4 +54,4 @@ const formatAPIResponse = (response: object | object[]) => {
   };
 };
 
-export { capitalizeFirstLetter, arrayToString, stringToInt, formatAPIResponse };
+export { capitalizeFirstLetter, arrayToString, formatAPIResponse };

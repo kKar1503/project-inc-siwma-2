@@ -1,11 +1,11 @@
-import { apiHandler } from "@/utils/api";
-import { formatAPIResponse } from "@/utils/stringUtils";
-import PrismaClient from "@/utils/prisma";
-import { z } from "zod";
-import { datatype, parameter, parametertype } from "@prisma/client";
-import { apiGuardMiddleware } from "@/utils/api/server/middlewares/apiGuardMiddleware";
+import { apiHandler } from '@/utils/api';
+import { formatAPIResponse } from '@/utils/stringUtils';
+import PrismaClient from '@/utils/prisma';
+import { z } from 'zod';
+import { datatype, parameter, parametertype } from '@prisma/client';
+import apiGuardMiddleware from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
-//-- Type definitions --//
+// -- Type definitions -- //
 // Define the type of the response object
 export type ParamResponse = {
   id: string;
@@ -16,7 +16,7 @@ export type ParamResponse = {
   active: boolean;
 };
 
-//-- Helper functions --//
+// -- Helper functions -- //
 export function formatParamResponse($parameters: parameter | parameter[]) {
   // Initialise the parameters array
   let parameters = $parameters;

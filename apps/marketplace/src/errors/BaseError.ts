@@ -1,10 +1,11 @@
+/* eslint-disable max-classes-per-file */
 /**
  * Error code directory:
  * 1000 - 1999: Auth errors
  * 2000 - 2999: Query errors
  */
 
-//-- Type definitions --//
+// -- Type definitions -- //
 export type ErrorJSON = {
   status: number;
   code: number;
@@ -17,13 +18,16 @@ export type ErrorJSON = {
  */
 export abstract class BaseError extends Error {
   message: string; // The error message
+
   detail?: string; // Detailed error message (for logging)
+
   status: number; // The HTTP status code
+
   code: number; // The error code
 
   constructor() {
     super();
-    this.message = "An error occurred";
+    this.message = 'An error occurred';
     this.status = 500;
     this.code = 0;
   }
@@ -44,7 +48,7 @@ export abstract class BaseError extends Error {
 export abstract class ApiError extends BaseError {
   constructor() {
     super();
-    this.message = "Something went wrong";
+    this.message = 'Something went wrong';
     this.status = 500;
   }
 }
@@ -55,6 +59,6 @@ export abstract class ApiError extends BaseError {
 export class UnknownError extends ApiError {
   constructor() {
     super();
-    this.message = "An unknown error occurred";
+    this.message = 'An unknown error occurred';
   }
 }
