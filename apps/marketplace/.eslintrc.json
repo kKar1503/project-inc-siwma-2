@@ -47,7 +47,8 @@
         "tsx": "never",
         "ts": "never"
       }
-    ]
+    ],
+    "no-shadow": "off"
   },
   "overrides": [
     {
