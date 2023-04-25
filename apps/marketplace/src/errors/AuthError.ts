@@ -1,8 +1,8 @@
-import { arrayToString, capitalizeFirstLetter } from "@/utils/stringUtils";
-import { ApiError } from "./BaseError";
+import { arrayToString, capitalizeFirstLetter } from '@/utils/stringUtils';
+import { ApiError } from './BaseError';
 
-//-- Type Definitions --//
-type tokenType = "access" | "refresh";
+// -- Type Definitions -- //
+type TokenType = 'access' | 'refresh';
 
 export class AuthError extends ApiError {
   public static readonly status = 401;
@@ -10,8 +10,8 @@ export class AuthError extends ApiError {
 
   constructor() {
     super();
-    this.message = "Not signed in";
-    this.detail = "User is not signed in";
+    this.message = 'Not signed in';
+    this.detail = 'User is not signed in';
     this.status = AuthError.status;
     this.code = AuthError.code;
   }
@@ -26,7 +26,7 @@ export class ForbiddenError extends ApiError {
 
   constructor(user?: string | null) {
     super();
-    this.message = "Insufficient privileges";
+    this.message = 'Insufficient privileges';
     this.detail = `User ${user} does not have sufficient privileges to access this resource`;
     this.status = ForbiddenError.status;
     this.code = ForbiddenError.code;
@@ -40,9 +40,11 @@ export class InvalidTokenError extends ApiError {
   public static readonly status = 401;
   public static readonly code: number = 1002;
 
-  constructor(tokenType: tokenType | tokenType[]) {
+  constructor(tokenType: TokenType | TokenType[]) {
     super();
-    this.message = `Invalid ${typeof tokenType === "string" ? tokenType : arrayToString(tokenType, "and")} token provided`;
+    this.message = `Invalid ${
+      typeof tokenType === 'string' ? tokenType : arrayToString(tokenType, 'and')
+    } token provided`;
     this.status = InvalidTokenError.status;
     this.code = InvalidTokenError.code;
   }
@@ -55,7 +57,7 @@ export class TokenExpiredError extends InvalidTokenError {
   public static readonly status = 401;
   public static readonly code = 1003;
 
-  constructor(tokenType: tokenType) {
+  constructor(tokenType: TokenType) {
     super(tokenType);
     this.message = `${capitalizeFirstLetter(tokenType)} token is expired`;
     this.status = TokenExpiredError.status;
@@ -70,7 +72,7 @@ export class TokenRevokedError extends InvalidTokenError {
   public static readonly status = 401;
   public static readonly code = 1004;
 
-  constructor(tokenType: tokenType) {
+  constructor(tokenType: TokenType) {
     super(tokenType);
     this.message = `${capitalizeFirstLetter(tokenType)} token is revoked`;
     this.status = TokenExpiredError.status;
