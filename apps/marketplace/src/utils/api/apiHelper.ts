@@ -1,16 +1,16 @@
 import { ParamError, ParamInvalidError } from '@/errors';
 
 /**
- * Parse a string to a integer
+ * Parse a string to a number
  * @param string The string to parse
- * @returns The parsed integer
+ * @returns The parsed number
  */
-const stringToInt = (string: string, key?: string) => {
-  // Attempt to parse from string to int
-  const result = parseInt(string, 10);
+const parseToNumber = (string: string, key?: string) => {
+  // Attempt to parse from string to a number
+  const result = Number(string);
 
   // Check if the parsing was successful
-  if (Number.isNaN(result)) {
+  if (string.length === 0 || Number.isNaN(result)) {
     if (key) {
       throw new ParamInvalidError(key, string);
     } else {
@@ -47,4 +47,4 @@ const formatAPIResponse = (response: object | object[]) => {
   };
 };
 
-export { stringToInt, formatAPIResponse };
+export { parseToNumber, formatAPIResponse };
