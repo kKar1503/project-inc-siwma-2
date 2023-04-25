@@ -198,8 +198,8 @@ model user_bookmarks {
 
 model users {
   id                                           String                  @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                                        String
-  full_name                                    String
+  email                                        String                  @unique(map: "users_un")
+  name                                         String
   phone                                        String
   profile_picture                              String?
   password                                     String

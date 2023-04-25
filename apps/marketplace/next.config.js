@@ -1,3 +1,6 @@
+const { join } = require('path');
+const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -6,6 +9,26 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: process.env.NEXT_BUILD_OPTION === 'ignoreType',
+  },
+  eslint: {
+    ignoreDuringBuilds: process.env.NEXT_ESLINT_OPTION === 'ignoreLint',
+  },
+  output: 'standalone',
+  outputFileTracing: true,
+  experimental: {
+    outputFileTracingRoot: join(__dirname, '../../'),
+    externalDir: true,
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = { ...config.resolve.fallback, fs: false };
+    }
+
+    if (isServer) {
+      config.plugins.push(new PrismaPlugin());
+    }
+
+    return config;
   },
   images: {
     domains:

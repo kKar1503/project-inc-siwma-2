@@ -7,9 +7,7 @@
     "dev:chat": "nx run @inc/chat:dev",
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
-    "clean-i": "pnpm install --frozen-lockfile",
-    "prisma": "pnpm --filter marketplace prisma",
-    "seed": "cd apps/marketplace && npx prisma db seed && cd ../.."
+    "clean-i": "pnpm install --frozen-lockfile"
   },
   "author": "Kar",
   "devDependencies": {
