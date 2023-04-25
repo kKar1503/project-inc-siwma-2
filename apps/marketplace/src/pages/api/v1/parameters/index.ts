@@ -1,9 +1,8 @@
-import { apiHandler } from '@/utils/api';
-import { formatAPIResponse } from '@/utils/stringUtils';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@/utils/prisma';
 import { z } from 'zod';
 import { datatype, parameter, parametertype } from '@prisma/client';
-import apiGuardMiddleware from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
 // -- Type definitions -- //
 // Define the type of the response object

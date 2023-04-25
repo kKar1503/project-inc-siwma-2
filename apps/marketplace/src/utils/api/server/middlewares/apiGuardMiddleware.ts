@@ -26,7 +26,7 @@ async function validateAccessToken(userId: string, token: string) {
  * Protects API routes
  * @param options Options for the middleware
  */
-const apiGuardMiddleware =
+export const apiGuardMiddleware =
   (options?: APIGuardOptions) =>
   // Return the middleware function
   async (req: APIRequestType, res: NextApiResponse, next: NextHandler) => {

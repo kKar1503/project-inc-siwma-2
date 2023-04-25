@@ -1,5 +1,4 @@
-import { apiHandler } from '@/utils/api';
-import { formatAPIResponse } from '@/utils/stringUtils';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@/utils/prisma';
 
 export default apiHandler().get(async (req, res) => {

@@ -7,7 +7,6 @@ type tokenType = 'access' | 'refresh';
 
 export class AuthError extends ApiError {
   public static readonly status = 401;
-
   public static readonly code = 1000;
 
   constructor() {
@@ -24,7 +23,6 @@ export class AuthError extends ApiError {
  */
 export class ForbiddenError extends ApiError {
   public static readonly status = 403;
-
   public static readonly code = 1001;
 
   constructor(user?: string | null) {
@@ -41,7 +39,6 @@ export class ForbiddenError extends ApiError {
  */
 export class InvalidTokenError extends ApiError {
   public static readonly status = 401;
-
   public static readonly code: number = 1002;
 
   constructor(tokenType: tokenType | tokenType[]) {
@@ -59,7 +56,6 @@ export class InvalidTokenError extends ApiError {
  */
 export class TokenExpiredError extends InvalidTokenError {
   public static readonly status = 401;
-
   public static readonly code = 1003;
 
   constructor(tokenType: tokenType) {
@@ -75,7 +71,6 @@ export class TokenExpiredError extends InvalidTokenError {
  */
 export class TokenRevokedError extends InvalidTokenError {
   public static readonly status = 401;
-
   public static readonly code = 1004;
 
   constructor(tokenType: tokenType) {
