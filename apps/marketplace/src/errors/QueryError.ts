@@ -5,7 +5,6 @@ import { ApiError } from './BaseError';
 
 export class QueryError extends ApiError {
   public static readonly status: number = 400;
-
   public static readonly code: number = 2000;
 
   constructor() {
@@ -21,7 +20,6 @@ export class QueryError extends ApiError {
  */
 export class NotFoundError extends QueryError {
   public static readonly status = 404;
-
   public static readonly code = 2001;
 
   constructor(item: string) {
@@ -38,7 +36,6 @@ export class NotFoundError extends QueryError {
  */
 export class ParamError extends QueryError {
   public static readonly status = 422;
-
   public static readonly code: number = 2002;
 
   constructor(parameter?: string) {
@@ -55,7 +52,6 @@ export class ParamError extends QueryError {
  */
 export class ParamRequiredError extends ParamError {
   public static readonly status = 422;
-
   public static readonly code = 2003;
 
   constructor(parameter: string) {
@@ -74,7 +70,6 @@ export class ParamRequiredError extends ParamError {
  */
 export class ParamTypeError extends ParamError {
   public static readonly status = 422;
-
   public static readonly code = 2004;
 
   constructor(parameter: string, expectedType: ZodParsedType, actualType: ZodParsedType) {
@@ -94,7 +89,6 @@ export class ParamTypeError extends ParamError {
  */
 export class ParamInvalidError extends ParamError {
   public static readonly status = 422;
-
   public static readonly code = 2005;
 
   constructor(parameter: string, paramValue: any, allowedValues?: (string | number)[]) {

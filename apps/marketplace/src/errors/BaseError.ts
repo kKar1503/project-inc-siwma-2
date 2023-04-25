@@ -18,11 +18,8 @@ export type ErrorJSON = {
  */
 export abstract class BaseError extends Error {
   message: string; // The error message
-
   detail?: string; // Detailed error message (for logging)
-
   status: number; // The HTTP status code
-
   code: number; // The error code
 
   constructor() {
