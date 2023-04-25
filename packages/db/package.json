@@ -1,0 +1,8 @@
+{
+    "name": "@inc/db",
+    "version": "0.0.0",
+    "main": "index.ts",
+    "dependencies": {
+      "@prisma/client": "^4.12.0"
+    }
+}

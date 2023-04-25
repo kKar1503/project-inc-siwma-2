@@ -11,9 +11,14 @@
   },
   "author": "Kar",
   "devDependencies": {
+    "@types/node": "18.15.3",
     "eslint": "8.36.0",
     "nx": "^15.8.7",
     "tslib": "^2.5.0",
     "typescript": "5.0.2"
+  },
+  "dependencies": {
+    "@inc/db": "workspace:^0.0.0",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^4.13.0"
   }
 }
