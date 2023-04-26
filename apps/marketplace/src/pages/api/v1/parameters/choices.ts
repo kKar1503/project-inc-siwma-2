@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@/utils/prisma';
+import PrismaClient from '@inc/db';
 
 export default apiHandler().get(async (req, res) => {
   // Retrieve all parameter choices from the database

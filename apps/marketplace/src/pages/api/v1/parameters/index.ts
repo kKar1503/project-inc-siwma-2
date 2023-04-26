@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@/utils/prisma';
+import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { datatype, parameter, parametertype } from '@prisma/client';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
