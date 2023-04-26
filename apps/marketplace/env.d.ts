@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export {};
 
-export const envSchema = z.object({
+const envSchema = z.object({
   DATABASE_URL: z.string(),
   NEXT_BUILD_OPTION: z.enum(['ignoreType', 'checkType']),
   NEXT_ESLINT_OPTION: z.enum(['ignoreLint', 'checkLint']),
@@ -11,9 +11,6 @@ export const envSchema = z.object({
 declare global {
   namespace NodeJS {
     type NodeEnv = 'development' | 'production';
-    interface ProcessEnv extends z.infer<typeof envSchema>{
-      NEXT_BUILD_OPTION: 'ignoreType' | 'checkType';
-      NEXT_ESLINT_OPTION: 'ignoreLint' | 'checkLint';
-    }
+    interface ProcessEnv extends z.infer<typeof envSchema> {}
   }
 }
