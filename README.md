@@ -39,7 +39,7 @@ pnpm install --frozen-lockfile
 Run project in dev mode
 
 ```bash
-nx dev marketplace
+nx dev @inc/marketplace
 ```
 
 Build project
@@ -47,13 +47,13 @@ Build project
 **IMPORTANT** Build project using an admin terminal
 
 ```bash
-pnpm --filter marketplace clear && nx build marketplace
+pnpm --filter marketplace clear && nx build @inc/marketplace
 ```
 
 Run project in prod mode
 
 ```bash
-nx serve marketplace
+nx serve @inc/marketplace
 ```
 
 ## Troubleshooting
