@@ -44,6 +44,8 @@ nx dev marketplace
 
 Build project
 
+**IMPORTANT** Build project using an admin terminal
+
 ```bash
 pnpm --filter marketplace clear && nx build marketplace
 ```
@@ -52,4 +54,25 @@ Run project in prod mode
 
 ```bash
 nx serve marketplace
+```
+
+## Troubleshooting
+
+If there are issues, try to run commands in an Administrator Terminal
+
+### Windows EPERM ScanDir Error
+
+```cmd
+[Error: EPERM: operation not permitted, scandir 'path'] {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'scandir',
+  path: 'path'
+}
+```
+
+Please run this command:
+
+```bash
+pnpm --filter marketplace clear
 ```
