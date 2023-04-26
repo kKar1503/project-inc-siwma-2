@@ -13,4 +13,4 @@ export type APIGuardOptions = {
 };
 
 // Define the type of the API Handler options object
-export type APIHandlerOptions = {} & APIGuardOptions;
+export type APIHandlerOptions = APIGuardOptions;

@@ -1,4 +1,4 @@
-import Spinner from "../Spinner";
+import Spinner from '../Spinner';
 
 const SpinnerPage = () => (
   <div className="w-full h-screen flex flex-col items-center justify-center">
