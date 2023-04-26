@@ -4,13 +4,11 @@ importers:
 
   .:
     specifiers:
-      '@types/node': 18.15.3
       eslint: 8.36.0
-      nx: ^15.8.7
-      tslib: ^2.5.0
+      nx: ^15.9.2
+      tslib: 2.5.0
       typescript: 5.0.2
     devDependencies:
-      '@types/node': 18.15.3
       eslint: 8.36.0
       nx: 15.9.2
       tslib: 2.5.0
