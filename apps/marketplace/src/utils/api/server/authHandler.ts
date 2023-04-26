@@ -9,7 +9,7 @@ import { InvalidTokenError, TokenExpiredError } from "@/errors/AuthError";
 type ValidateTokenOptions<T> = {
   userId: string;
   token: T | null;
-  tokenType?: "access" | "refresh";
+  tokenType?: 'access' | 'refresh';
 };
 
 /**
@@ -24,9 +24,9 @@ const TOKEN_GRACE_PERIOD = 1000 * 30; // The time before an expired access token
  * Revokes all refresh tokens associated with the user
  * @param userId The ids of the users to revoke the tokens of
  */
-const revokeRefreshTokens = async (userId: string | string[]) => {
+const revokeRefreshTokens = async (userId: string | string[]) =>
   // Revoke all refresh tokens associated with the users
-  return PrismaClient.refresh_tokens.updateMany({
+  PrismaClient.refresh_tokens.updateMany({
     where: {
       user_id: {
         in: userId,
@@ -36,23 +36,21 @@ const revokeRefreshTokens = async (userId: string | string[]) => {
       revoked: true,
     },
   });
-};
 
 /**
  * Revokes a refresh token
  * @param token The refresh token to revoke
  */
-const revokeRefreshToken = async (token: string) => {
+const revokeRefreshToken = async (token: string) =>
   // Revokes a specific refresh token
-  return PrismaClient.refresh_tokens.update({
+  PrismaClient.refresh_tokens.update({
     where: {
-      token: token,
+      token,
     },
     data: {
       revoked: true,
     },
   });
-};
 
 /**
  * Retrieves a refresh token from the database
@@ -63,7 +61,7 @@ const retrieveRefreshToken = async (token: string) => {
   // Retrieve the refresh token from the database
   const refreshToken = await PrismaClient.refresh_tokens.findUnique({
     where: {
-      token: token,
+      token,
     },
   });
 
@@ -79,7 +77,7 @@ const retrieveAccessToken = async (token: string) => {
   // Retrieve the access token from the database
   const accessToken = await PrismaClient.access_tokens.findUnique({
     where: {
-      token: token,
+      token,
     },
   });
 
@@ -99,7 +97,7 @@ const retrieveLatestRefreshToken = async (userid: string, limit: number) => {
       user_id: userid,
     },
     orderBy: {
-      created_at: "desc",
+      created_at: 'desc',
     },
     take: limit,
   });
@@ -120,7 +118,7 @@ const retrieveLatestAccessToken = async (refreshTokenId: number, limit: number) 
       refresh_token: refreshTokenId,
     },
     orderBy: {
-      created_at: "desc",
+      created_at: 'desc',
     },
     take: limit,
   });
@@ -134,14 +132,18 @@ const retrieveLatestAccessToken = async (refreshTokenId: number, limit: number) 
  * @param token The token to validate
  * @returns The token if the token is valid, otherwise throws an error
  */
-export const validateToken = async <T extends refresh_tokens>({ userId, token, tokenType = "access" }: ValidateTokenOptions<T>) => {
+export const validateToken = async <T extends refresh_tokens>({
+  userId,
+  token,
+  tokenType = 'access',
+}: ValidateTokenOptions<T>) => {
   // Check if the token exists in the database
   if (!token) {
     // The token does not exist in the database, this might be an attack
     // Revoke all tokens associated with the user
     await revokeRefreshTokens(userId);
 
-    console.log("fake token attack: ", token);
+    console.log('fake token attack: ', token);
 
     throw new InvalidTokenError(tokenType);
   }
@@ -153,17 +155,17 @@ export const validateToken = async <T extends refresh_tokens>({ userId, token, t
     await revokeRefreshTokens(userId);
     await revokeRefreshTokens(token.user_id);
 
-    console.log("wrong user token attack: ", token);
+    console.log('wrong user token attack: ', token);
 
     throw new InvalidTokenError(tokenType);
   }
 
   // Check if the token has expired (if required)
-  if (tokenType === "refresh" && token.expires_at < new Date()) {
+  if (tokenType === 'refresh' && token.expires_at < new Date()) {
     // The token has expired, revoke it
     await revokeRefreshToken(token.token);
 
-    console.log("token expired attack: ", token);
+    console.log('token expired attack: ', token);
 
     throw new TokenExpiredError(tokenType);
   }
@@ -174,7 +176,7 @@ export const validateToken = async <T extends refresh_tokens>({ userId, token, t
     // This might be an attack, so we should revoke all refresh tokens associated with the user
     await revokeRefreshTokens(userId);
 
-    console.log("token revoked attack: ", token);
+    console.log('token revoked attack: ', token);
 
     throw new InvalidTokenError(tokenType);
   }
@@ -197,7 +199,7 @@ const validateRefreshToken = async (userId: string, token: string) => {
   return validateToken({
     userId,
     token: refreshToken,
-    tokenType: "refresh",
+    tokenType: 'refresh',
   });
 };
 
@@ -226,13 +228,12 @@ const validateAccessToken = async (userId: string, token: string) => {
     if (accessToken.expires_at > new Date(new Date().getTime() - TOKEN_GRACE_PERIOD)) {
       // The access token expired within the grace period, its considered as valid
       return accessToken;
-    } else {
-      // Token is expired, this might be an attack
-      await revokeRefreshTokens(userId);
-      console.log("second latest access token expired outside grace attack: ", accessToken);
-
-      throw new TokenExpiredError("access");
     }
+    // Token is expired, this might be an attack
+    await revokeRefreshTokens(userId);
+    console.log('second latest access token expired outside grace attack: ', accessToken);
+
+    throw new TokenExpiredError('access');
   }
 
   // Check if this is the newest access token
@@ -241,9 +242,9 @@ const validateAccessToken = async (userId: string, token: string) => {
     // Revoke all refresh tokens associated with the user
     await revokeRefreshTokens(userId);
 
-    console.log("token not the latest two access tokens attack: ", accessToken);
+    console.log('token not the latest two access tokens attack: ', accessToken);
 
-    throw new InvalidTokenError("access");
+    throw new InvalidTokenError('access');
   }
 
   return accessToken;
@@ -254,7 +255,7 @@ const validateAccessToken = async (userId: string, token: string) => {
  */
 const generateToken = () => {
   // Generate a random token
-  const token = crypto.randomBytes(32).toString("hex");
+  const token = crypto.randomBytes(32).toString('hex');
 
   // Return the token
   return token;
@@ -351,7 +352,7 @@ const refreshAccessToken = async (userId: string, $accessToken: string, $refresh
     // It was not, this might be an attack
     // Revoke all the user's refresh tokens
     await revokeRefreshTokens(userId);
-    throw new InvalidTokenError("access");
+    throw new InvalidTokenError('access');
   }
 
   // Both the access token and the refresh token are valid, refresh the refresh token if necessary
