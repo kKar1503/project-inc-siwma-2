@@ -1,7 +1,6 @@
-import { apiHandler } from '@/utils/api';
-import { formatAPIResponse } from '@/utils/stringUtils';
-import PrismaClient from '@/utils/prisma';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
+import client from '@inc/db';
 
 export default apiHandler(
   // unprotected route
@@ -19,7 +18,7 @@ export default apiHandler(
   }
 
   // Check if the token exists
-  const invite = await PrismaClient.invite.findMany({
+  const invite = await client.invite.findMany({
     where: {
       token,
     },
@@ -31,7 +30,7 @@ export default apiHandler(
   }
 
   // Check if the mobile number is already in use
-  const existingUser = await PrismaClient.users.findMany({
+  const existingUser = await client.users.findMany({
     where: {
       phone: mobileNumber,
     },
@@ -44,7 +43,7 @@ export default apiHandler(
   }
 
   // Create the user
-  const user = await PrismaClient.users.create({
+  const user = await client.users.create({
     data: {
       email: invite.email,
       name: invite.name,
@@ -54,7 +53,7 @@ export default apiHandler(
   });
 
   // Delete the invite
-  await PrismaClient.invite.delete({
+  await client.invite.delete({
     where: {
       token,
     },
