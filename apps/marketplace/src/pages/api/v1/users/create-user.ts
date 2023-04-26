@@ -1,15 +1,38 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
-import client from '@inc/db';
+import client, { UserContacts } from '@inc/db';
+
+export const userCreationRequestBody = z.object({
+  token: z.string(),
+  mobileNumber: z.string(),
+  password: z.string(),
+});
+
+export const userCreationResponseBody = z.object({
+  userId: z.string(),
+  status: z.number(),
+  detail: z.string(),
+});
 
 export default apiHandler(
-  // unprotected route
+  // TODO: Change this to false
   { allowNonAuthenticated: true }
 ).post(async (req, res) => {
   // Creates a new user from an existing invite
   // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.5t8qrsbif9ei
 
-  const { token, mobileNumber, password } = req.body;
+  // Parse the request body with zod
+  const parsedBody = userCreationRequestBody.safeParse(req.body);
+
+  // Exit if the body is invalid
+  if (!parsedBody.success) {
+    return res
+      .status(422)
+      .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
+  }
+
+  // Extract the required fields
+  const { token, mobileNumber, password } = parsedBody.data;
 
   if (!token || !mobileNumber || !password) {
     return res
@@ -18,16 +41,18 @@ export default apiHandler(
   }
 
   // Check if the token exists
-  const invite = await client.invite.findMany({
+  const invites = await client.invite.findMany({
     where: {
       token,
     },
   });
 
   // Check if the invite is valid
-  if (!invite || invite.expiresAt < new Date()) {
+  if (!invites || invites.length === 0) {
     return res.status(403).json(formatAPIResponse({ status: '403', detail: 'invalid token' }));
   }
+
+  const invite = invites[0];
 
   // Check if the mobile number is already in use
   const existingUser = await client.users.findMany({
@@ -49,27 +74,17 @@ export default apiHandler(
       name: invite.name,
       phone: mobileNumber,
       password,
+      contact: UserContacts.phone,
+      companies: { connect: { id: invite.companyId } },
     },
   });
 
   // Delete the invite
   await client.invite.delete({
     where: {
-      token,
+      id: invite.id,
     },
   });
 
   return res.status(200).json(formatAPIResponse({ status: '201', userId: user.id }));
-});
-
-export const userCreationRequestBody = z.object({
-  token: z.string(),
-  mobileNumber: z.number(),
-  password: z.string(),
-});
-
-export const userCreationResponseBody = z.object({
-  userId: z.string(),
-  status: z.number(),
-  detail: z.string(),
 });
