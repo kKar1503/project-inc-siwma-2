@@ -24,11 +24,13 @@ const nextConfig = {
         : [],
   },
   webpack: (config, { isServer }) => {
+    const modifiedConfig = config;
+
     if (isServer) {
-      config.plugins = [...config.plugins, new PrismaPlugin()];
+      modifiedConfig.plugins = [...config.plugins, new PrismaPlugin()];
     }
 
-    return config;
+    return modifiedConfig;
   },
 };
 
