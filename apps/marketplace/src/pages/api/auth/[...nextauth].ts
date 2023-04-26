@@ -1,9 +1,9 @@
-import prisma from "@inc/db";
-import bcrypt from "bcryptjs";
-import NextAuth, { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import authHandler from "@/utils/api/server/authHandler";
-import { JWT } from "next-auth/jwt";
+import prisma from '@inc/db';
+import bcrypt from 'bcryptjs';
+import NextAuth, { NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import authHandler from '@/utils/api/server/authHandler';
+import { JWT } from 'next-auth/jwt';
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
