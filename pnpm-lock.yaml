@@ -134,8 +134,11 @@ importers:
   packages/db:
     specifiers:
       '@prisma/client': ^4.12.0
+      prisma: ^4.12.0
     dependencies:
-      '@prisma/client': 4.13.0
+      '@prisma/client': 4.13.0_prisma@4.13.0
+    devDependencies:
+      prisma: 4.13.0
 
   packages/types:
     specifiers: {}
@@ -1063,19 +1066,6 @@ packages:
 
   /@popperjs/core/2.11.7:
     resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
-    dev: false
-
-  /@prisma/client/4.13.0:
-    resolution: {integrity: sha512-YaiiICcRB2hatxsbnfB66uWXjcRw3jsZdlAVxmx0cFcTc/Ad/sKdHCcWSnqyDX47vAewkjRFwiLwrOUjswVvmA==}
-    engines: {node: '>=14.17'}
-    requiresBuild: true
-    peerDependencies:
-      prisma: '*'
-    peerDependenciesMeta:
-      prisma:
-        optional: true
-    dependencies:
-      '@prisma/engines-version': 4.13.0-50.1e7af066ee9cb95cf3a403c78d9aab3e6b04f37a
     dev: false
 
   /@prisma/client/4.13.0_prisma@4.13.0:
