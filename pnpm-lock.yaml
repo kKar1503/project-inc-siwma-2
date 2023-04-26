@@ -4,16 +4,11 @@ importers:
 
   .:
     specifiers:
-      '@inc/db': workspace:^0.0.0
-      '@prisma/nextjs-monorepo-workaround-plugin': ^4.13.0
       '@types/node': 18.15.3
       eslint: 8.36.0
       nx: ^15.8.7
       tslib: ^2.5.0
       typescript: 5.0.2
-    dependencies:
-      '@inc/db': link:packages/db
-      '@prisma/nextjs-monorepo-workaround-plugin': 4.13.0
     devDependencies:
       '@types/node': 18.15.3
       eslint: 8.36.0
@@ -45,6 +40,7 @@ importers:
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@inc/configs': workspace:*
+      '@inc/db': workspace:^0.0.0
       '@inc/types': workspace:*
       '@inc/ui': workspace:*
       '@mui/icons-material': ^5.11.16
@@ -52,6 +48,7 @@ importers:
       '@mui/styled-engine-sc': ^5.12.0
       '@mui/x-data-grid': ^6.0.2
       '@prisma/client': ^4.12.0
+      '@prisma/nextjs-monorepo-workaround-plugin': ^4.13.0
       '@types/bcryptjs': ^2.4.2
       '@types/luxon': ^3.3.0
       '@types/node': 18.15.3
@@ -87,6 +84,7 @@ importers:
     dependencies:
       '@emotion/react': 11.10.6_pmekkgnqduwlme35zpnqhenc34
       '@emotion/styled': 11.10.6_oouaibmszuch5k64ms7uxp2aia
+      '@inc/db': link:../../packages/db
       '@inc/ui': link:../../packages/ui
       '@mui/icons-material': 5.11.16_m7nm55jyixqndxwgnwljmktffa
       '@mui/material': 5.12.1_xqeqsl5kvjjtyxwyi3jhw3yuli
@@ -114,6 +112,7 @@ importers:
     devDependencies:
       '@inc/configs': link:../../packages/configs
       '@inc/types': link:../../packages/types
+      '@prisma/nextjs-monorepo-workaround-plugin': 4.13.0
       '@types/bcryptjs': 2.4.2
       '@types/luxon': 3.3.0
       '@types/node': 18.15.3
@@ -1103,7 +1102,7 @@ packages:
 
   /@prisma/nextjs-monorepo-workaround-plugin/4.13.0:
     resolution: {integrity: sha512-PgpN/WdYrZdUn076oHB1CxMyqk0xJOn/KmDuyXfApic0GG+1+nr3TlvtnY84Cv0Rt0I7e1u7CqouwwcnKt21Bg==}
-    dev: false
+    dev: true
 
   /@rushstack/eslint-patch/1.2.0:
     resolution: {integrity: sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==}
