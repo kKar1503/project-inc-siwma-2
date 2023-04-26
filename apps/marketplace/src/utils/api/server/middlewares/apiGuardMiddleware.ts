@@ -1,7 +1,7 @@
 import { AuthError, ForbiddenError } from '@/errors/AuthError';
 import { NextApiResponse } from 'next';
 import { NextHandler } from 'next-connect';
-import PrismaClient from '@/utils/prisma';
+import PrismaClient from '@inc/db';
 import { validateToken } from '@/utils/api/server/authHandler';
 import { APIGuardOptions, APIRequestType } from '@/types/api-types';
 
@@ -12,7 +12,7 @@ import { APIGuardOptions, APIRequestType } from '@/types/api-types';
  */
 async function validateAccessToken(userId: string, token: string) {
   // Retrieve the token from the database
-  const accessToken = await PrismaClient.access_tokens.findFirst({
+  const accessToken = await PrismaClient.accessTokens.findFirst({
     where: {
       token,
     },

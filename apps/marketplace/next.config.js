@@ -44,6 +44,15 @@ const nextConfig = {
           ]
         : [],
   },
+  webpack: (config, { isServer }) => {
+    const modifiedConfig = config;
+
+    if (isServer) {
+      modifiedConfig.plugins = [...config.plugins, new PrismaPlugin()];
+    }
+
+    return modifiedConfig;
+  },
 };
 
 module.exports = nextConfig;

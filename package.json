@@ -8,7 +8,9 @@
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
     "build:ui": "nx run @inc/ui:build",
-    "clean-i": "pnpm install --frozen-lockfile"
+    "clean-i": "pnpm install --frozen-lockfile",
+    "lint": "nx run-many -t lint",
+    "postinstall": "nx run @inc/db:prisma:generate && echo Please restart your VSCode to make your Prisma Client work."
   },
   "author": "Kar",
   "devDependencies": {

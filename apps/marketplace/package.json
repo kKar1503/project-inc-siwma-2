@@ -8,6 +8,7 @@
     "clean": "rimraf ./.next ./out ./coverage ./tsconfig.tsbuildinfo ./node_modules/.cache",
     "dev": "next dev",
     "lint": "next lint",
+    "lint:type": "tsc --noEmit --incremental false",
     "prisma:generate": "prisma generate",
     "prisma:seed": "prisma db seed",
     "share-static-hardlink": "rimraf ./public/shared && syncdir ../../static/assets ./public/shared --copy",
@@ -15,17 +16,19 @@
     "start": "next start"
   },
   "prisma": {
-    "seed": "ts-node prisma/seeding/seed.ts --transpile-only"
+    "seed": "ts-node prisma/seeding/seed.ts --transpile-only",
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@inc/db": "workspace:*",
     "@inc/ui": "workspace:*",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.14",
     "@mui/styled-engine-sc": "^5.12.0",
     "@mui/x-data-grid": "^6.0.2",
     "@prisma/client": "^4.12.0",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^4.13.0",
     "axios": "^1.3.6",
     "bcryptjs": "^2.4.3",
     "luxon": "^3.3.0",
