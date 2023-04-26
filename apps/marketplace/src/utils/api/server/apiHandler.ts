@@ -1,49 +1,48 @@
-import { BaseError, ErrorJSON, ParamError, ParamRequiredError, ParamTypeError } from "@/errors";
-import { NextApiRequest, NextApiResponse } from "next";
-import { JWT } from "next-auth/jwt";
-import nextConnect from "next-connect";
-import { apiGuardMiddleware, APIGuardOptions } from "./middlewares/apiGuardMiddleware";
-import { jwtMiddleware } from "./middlewares/jwtMiddleware";
-import { ZodError } from "zod";
-import { Prisma } from "@prisma/client";
-
-//-- Type definitions --//
-// Define the type of the request object
-export type APIRequestType = NextApiRequest & {
-  token?: JWT | null;
-};
-
-// Define the type of the options object
-type APIHandlerOptions = {} & APIGuardOptions;
+import {
+  BaseError,
+  ErrorJSON,
+  ParamError,
+  ParamInvalidError,
+  ParamRequiredError,
+  ParamTypeError,
+  UnknownError,
+} from '@/errors';
+import { NextApiResponse } from 'next';
+import nextConnect from 'next-connect';
+import { ZodError } from 'zod';
+import { Prisma } from '@prisma/client';
+import { APIHandlerOptions, APIRequestType } from '@/types/api-types';
+import { apiGuardMiddleware } from './middlewares/apiGuardMiddleware';
+import jwtMiddleware from './middlewares/jwtMiddleware';
 
 /**
  * Zod error handler
  */
 function handleZodError(error: ZodError) {
-  // Prepare a resultant array
-  const result = [];
-
   // Iterate through each Zod Issue
-  for (const err of error.issues) {
+  const result = error.issues.map((err) => {
     // Check if it was a type error
-    if (err.code === "invalid_type") {
+    if (err.code === 'invalid_type') {
       // Yes it was
       // Check if it is due to a missing param
-      if (err.received === "undefined") {
+      if (err.received === 'undefined') {
         // Yes it was, return a param error
-        result.push(new ParamRequiredError(err.path[0].toString()).toJSON());
-        continue;
+        return new ParamRequiredError(err.path[0].toString()).toJSON();
       }
 
       // Return a param type error
-      result.push(new ParamTypeError(err.path[0].toString(), err.expected, err.received).toJSON());
-      continue;
+      return new ParamTypeError(err.path[0].toString(), err.expected, err.received).toJSON();
+    }
+
+    // Check if it was a invalid_enum_value error
+    if (err.code === 'invalid_enum_value') {
+      // Yes it was, return a param error
+      return new ParamInvalidError(err.path[0].toString(), err.received, err.options).toJSON();
     }
 
     // Unrecognised zod error
-    result.push(new ParamError().toJSON());
-    continue;
-  }
+    return new ParamError().toJSON();
+  });
 
   return result;
 }
@@ -53,7 +52,7 @@ function handleZodError(error: ZodError) {
  */
 function handlePrismaError(error: Prisma.PrismaClientKnownRequestError) {
   // Check if it was a foreign key constraint error
-  if (error.code === "P2003") {
+  if (error.code === 'P2003') {
     // Yes it was, return a param error
   }
 
@@ -90,7 +89,7 @@ function handleError($error: Error): ErrorJSON[] {
 
   // An unknown error was received
   console.error(error);
-  return [new BaseError().toJSON()];
+  return [new UnknownError().toJSON()];
 }
 
 /**
@@ -100,7 +99,7 @@ function handleError($error: Error): ErrorJSON[] {
  */
 function getStatusCode(errors: ErrorJSON[]) {
   // Check if the status code of all errors in the array are the same
-  const status = errors[0].status;
+  const { status } = errors[0];
 
   // Iterate through the errors
   for (let i = 1; i < errors.length; i++) {
@@ -115,10 +114,10 @@ function getStatusCode(errors: ErrorJSON[]) {
   return status;
 }
 
-export default (options?: APIHandlerOptions) => {
+export default (options?: APIHandlerOptions) =>
   // Return the next-connect handler
-  return nextConnect<APIRequestType, NextApiResponse>({
-    //-- API error handling --//
+  nextConnect<APIRequestType, NextApiResponse>({
+    // -- API error handling --//
     onError(error: Error | Error[], req, res) {
       // An error was thrown, initialise the response object
       const response = { errors: <ErrorJSON[]>[] };
@@ -143,8 +142,7 @@ export default (options?: APIHandlerOptions) => {
     onNoMatch(req, res) {
       res.status(405).json({ error: `Method ${req.method} not allowed` });
     },
-    //-- Middlewares --//
+    // -- Middlewares --//
   })
     .use(jwtMiddleware)
     .use(apiGuardMiddleware(options));
-};

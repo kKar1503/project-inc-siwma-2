@@ -1,12 +1,12 @@
-import { NextApiResponse } from "next";
-import { getToken } from "next-auth/jwt";
-import { NextHandler } from "next-connect";
-import { APIRequestType } from "../apiHandler";
+import { APIRequestType } from '@/types/api-types';
+import { NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
+import { NextHandler } from 'next-connect';
 
 /**
  * Decodes the JWT Token and appends it to the request body
  */
-export const jwtMiddleware = async (req: APIRequestType, res: NextApiResponse, next: NextHandler) => {
+const jwtMiddleware = async (req: APIRequestType, res: NextApiResponse, next: NextHandler) => {
   // Decode the JWT token
   const token = await getToken({ req });
 
@@ -16,3 +16,5 @@ export const jwtMiddleware = async (req: APIRequestType, res: NextApiResponse, n
   // Continue to handle the request
   next();
 };
+
+export default jwtMiddleware;
