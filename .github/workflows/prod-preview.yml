@@ -10,20 +10,10 @@ on:
     branches: [dev]
 
 jobs:
-  deploy:
+  preview-marketplace:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Create .env.local
-        uses: SpicyPizza/create-envfile@v1.3.0
-        with:
-          envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          envkey_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          envkey_NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-          directory: '/apps/marketplace'
-          file_name: .env.local
-          fail_on_empty: true
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -39,24 +29,24 @@ jobs:
       - name: Build and save docker images
         id: save-docker-image
         run: |
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/todo:latest .
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/todo:${{ github.sha }} .
-          docker save ${{ secrets.AWS_REPOSITORY_URI }}/todo:${{ github.sha }} > todo-${{ github.sha }}.tar
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:latest -f apps/marketplace/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="$(openssl rand -base64 32)" --build-arg NEXTAUTH_URL="http://ec2-18-142-177-240.ap-southeast-1.compute.amazonaws.com" .
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} -f apps/marketplace/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="$(openssl rand -base64 32)" --build-arg NEXTAUTH_URL="http://ec2-18-142-177-240.ap-southeast-1.compute.amazonaws.com" .
+          docker save ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} > marketplace-${{ github.sha }}.tar
 
       - uses: actions/upload-artifact@v3
         if: ${{ steps.save-docker-image.outcome == 'success' }}
         with:
-          name: image-${{ github.sha }}.tar
-          path: image-${{ github.sha }}.tar
-          retention-days: 5
+          name: marketplace-${{ github.sha }}.tar
+          path: marketplace-${{ github.sha }}.tar
+          retention-days: 1
 
       - name: Push images into ECR
         run: |
-          docker push ${{ secrets.AWS_REPOSITORY_URI }}/todo:${{ github.sha }}
-          docker push ${{ secrets.AWS_REPOSITORY_URI }}/todo:latest
+          docker push ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }}
+          docker push ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:latest
 
       - name: Restart task
-        run: aws ecs update-service --force-new-deployment --service todo-service --cluster todo
+        run: aws ecs update-service --force-new-deployment --service marketplace-service --cluster marketplace
 
       - name: Get Public DNS and IP
         run: |

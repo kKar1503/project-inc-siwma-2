@@ -8,7 +8,7 @@ The second revision of SIWMA Marketplace.
 - Visual Studio Code OR WebStorm
 - Docker
 - `pnpm` globally installed
-- `nx` globally installed
+- `nx` globally installed (Optional)
 
 To install `pnpm` globally:
 
@@ -24,6 +24,8 @@ npm install -g nx
 
 ## Installation
 
+**If `nx` is not installed globally, please prefix all `nx` commands with `npx`**
+
 Clone the repository
 
 ```bash
@@ -33,13 +35,13 @@ git clone https://github.com/kKar1503/project-inc-siwma-2.git
 Install dependencies
 
 ```bash
-pnpm install --frozen-lockfile
+pnpm clean-i
 ```
 
 Generate PrismaClient
 
 ```bash
-pnpm --filter marketplace prisma:generate
+nx run @inc/db:prisma:generate
 ```
 
 Run project in dev mode
@@ -53,7 +55,7 @@ Build project
 **IMPORTANT** Build project using an admin terminal
 
 ```bash
-pnpm --filter marketplace clear && nx build @inc/marketplace
+nx build:prod @inc/marketplace
 ```
 
 Run project in prod mode
@@ -65,7 +67,7 @@ nx serve @inc/marketplace
 Seed database
 
 ```bash
-pnpm --filter marketplace prisma:seed
+pnpm --filter @inc/db prisma:seed
 ```
 
 ## Troubleshooting

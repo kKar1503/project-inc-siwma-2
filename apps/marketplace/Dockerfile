@@ -1,45 +1,22 @@
-FROM node:16.18.1-alpine3.15 as deps
-RUN apk add --no-cache rsync && corepack enable
-
-WORKDIR /workspace-install
-
-# Preparing for Installation
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-RUN --mount=type=bind,target=/docker-context \
-    rsync -amv --delete \
-          --exclude='node_modules' \
-          --exclude='*/node_modules' \
-          --include='package.json' \
-          --include='schema.prisma' \
-          --include='.meshrc.yaml' \
-          --include='*/' --exclude='*' \
-          /docker-context/ /workspace-install/;
-
-ENV PRISMA_CLI_BINARY_TARGETS=linux-musl
-
-# Installing Dependencies
-RUN pnpm install --prod --frozen-lockfile
-
-# ===================================================================
-
-FROM node:16.18.1-alpine3.15 as builder
+FROM node:18.15.0-alpine3.17 as depsbuilder
 
 WORKDIR /app
+
 COPY . .
-COPY --from=deps /workspace-install ./
 
-RUN npm i -g pnpm
+# Installing Dependencies
+RUN npm install -g pnpm && pnpm clean-i
 
-# Build NextJS build
-RUN pnpm --filter marketplace build:vercel
+# Set DATABASE_URL for Prisma
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 
-# Build Prisma Client
-RUN pnpm --filter marketplace prisma:generate
+# Building NextJS
+RUN npx nx run @inc/marketplace:build:prod
 
 # ===================================================================
 
-FROM node:16.18.1-alpine3.15 as runner
+FROM node:18.15.0-alpine3.17 as runner
 
 WORKDIR /app
 ENV NODE_ENV production
@@ -48,11 +25,22 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Get NextAuth URL and Secret
+ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
+
+# Set NextAuth URL and Secret
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+
+# TODO: remove ignore for tserrors and eslint once all gone
+ENV NEXT_BUILD_OPTION="ignoreType"
+ENV NEXT_ESLINT_OPTION="ignoreLint"
+
 # Copying the standalone files & changing owners
-COPY --from=builder /app/.env.local ./.env.local
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=depsbuilder /app/apps/marketplace/public ./public
+COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/marketplace/.next/standalone ./
+COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/marketplace/.next/static ./.next/static
 
 # Changing user to NextJS's user
 USER nextjs
@@ -62,4 +50,4 @@ EXPOSE 3000
 ENV PORT 3000
 
 # NextJS server is being run using node server.js
-CMD ["node", "server.js"]
+CMD ["node", "apps/marketplace/server.js"]

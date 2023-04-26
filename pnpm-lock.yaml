@@ -201,7 +201,7 @@ importers:
   packages/db:
     dependencies:
       '@prisma/client':
-        specifier: ^4.12.0
+        specifier: ^4.11.0
         version: 4.12.0(prisma@4.12.0)
     devDependencies:
       prisma:

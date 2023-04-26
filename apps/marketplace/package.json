@@ -4,19 +4,14 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build:vercel": "pnpm run share-static-hardlink && next build",
+    "build:prod": "pnpm run share-static-hardlink && next build",
     "clean": "rimraf ./.next ./out ./coverage ./tsconfig.tsbuildinfo ./node_modules/.cache",
     "dev": "next dev",
     "lint": "next lint",
-    "lint:type": "tsc --noEmit --incremental false",
-    "prisma:generate": "prisma generate",
-    "prisma:seed": "prisma db seed",
+    "lint:type": "tsc --noEmit --incremental false",    
     "share-static-hardlink": "rimraf ./public/shared && syncdir ../../static/assets ./public/shared --copy",
     "share-static-symlink": "rimraf ./public/shared && symlink-dir ../../static/assets ./public/shared",
-    "start": "next start"
-  },
-  "prisma": {
-    "seed": "ts-node prisma/seeding/seed.ts --transpile-only"
+    "serve": "next start"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
