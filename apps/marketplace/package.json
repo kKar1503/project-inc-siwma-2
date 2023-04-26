@@ -16,7 +16,7 @@
     "start": "next start"
   },
   "prisma": {
-    "seed": "ts-node prisma/seeding/seed.ts --transpile-only",
+    "seed": "ts-node prisma/seeding/seed.ts --transpile-only"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -51,7 +51,6 @@
   "devDependencies": {
     "@inc/configs": "workspace:*",
     "@inc/types": "workspace:*",
-    "@prisma/nextjs-monorepo-workaround-plugin": "^4.13.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/luxon": "^3.3.0",
     "@types/node": "18.15.3",
