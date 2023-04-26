@@ -36,6 +36,12 @@ Install dependencies
 pnpm install --frozen-lockfile
 ```
 
+Generate PrismaClient
+
+```bash
+pnpm --filter marketplace prisma:generate
+```
+
 Run project in dev mode
 
 ```bash
@@ -54,6 +60,12 @@ Run project in prod mode
 
 ```bash
 nx serve @inc/marketplace
+```
+
+Seed database
+
+```bash
+pnpm --filter marketplace prisma:seed
 ```
 
 ## Troubleshooting
