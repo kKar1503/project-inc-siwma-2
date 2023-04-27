@@ -76,7 +76,7 @@ If there are issues, try to run commands in an Administrator Terminal
 
 ### Windows EPERM ScanDir Error
 
-```cmd
+```bash
 [Error: EPERM: operation not permitted, scandir 'path'] {
   errno: -4048,
   code: 'EPERM',
