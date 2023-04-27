@@ -55,7 +55,7 @@ Build project
 **IMPORTANT** Build project using an admin terminal
 
 ```bash
-nx build:prod @inc/marketplace
+nx build @inc/marketplace
 ```
 
 Run project in prod mode
@@ -88,5 +88,5 @@ If there are issues, try to run commands in an Administrator Terminal
 Please run this command:
 
 ```bash
-pnpm --filter marketplace clear
+pnpm --filter @inc/marketplace clean
 ```
