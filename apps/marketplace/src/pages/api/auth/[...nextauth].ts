@@ -1,17 +1,21 @@
-import prisma from "@/utils/prisma";
-import bcrypt from "bcryptjs";
-import NextAuth, { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import authHandler from "@/utils/api/server/authHandler";
-import { JWT } from "next-auth/jwt";
+import prisma from '@inc/db';
+import bcrypt from 'bcryptjs';
+import NextAuth, { NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import authHandler from '@/utils/api/server/authHandler';
+import { JWT } from 'next-auth/jwt';
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session: async ({ session, token }) => {
-      if (session?.user && typeof token.uid === "string") {
-        session.user.id = token.uid;
+      // Initialise result
+      const result = session;
+
+      if (session?.user && typeof token.uid === 'string') {
+        result.user.id = token.uid;
       }
-      return session;
+
+      return result;
     },
     jwt: async ({ user, token, account }) => {
       // https://next-auth.js.org/v3/tutorials/refresh-token-rotation
@@ -36,7 +40,11 @@ export const authOptions: NextAuthOptions = {
       }
 
       // Access token has expired, try to update it
-      const newTokens = await authHandler.refreshAccessToken(token.user.id, token.accessToken, token.refreshToken);
+      const newTokens = await authHandler.refreshAccessToken(
+        token.user.id,
+        token.accessToken,
+        token.refreshToken
+      );
 
       // Construct result object
       const result: JWT = {
@@ -48,19 +56,19 @@ export const authOptions: NextAuthOptions = {
     },
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
-      name: "Credentials",
+      name: 'Credentials',
       // The credentials is used to generate a suitable form on the sign in page.
       // You can specify whatever fields you are expecting to be submitted.
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "Username" },
-        password: { label: "Password", type: "password", placeholder: "Username" },
+        email: { label: 'Email', type: 'email', placeholder: 'Username' },
+        password: { label: 'Password', type: 'password', placeholder: 'Username' },
       },
       async authorize(credentials, req) {
         // You need to provide your own logic here that takes the credentials

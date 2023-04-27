@@ -1,9 +1,9 @@
-import { AuthError } from "@/errors/AuthError";
-import axios from "axios";
-import { Session } from "next-auth";
-import { getSession, signOut } from "next-auth/react";
+import { AuthError } from '@/errors/AuthError';
+import axios from 'axios';
+import { Session } from 'next-auth';
+import { getSession, signOut } from 'next-auth/react';
 
-//-- Global Variables --//
+// -- Global Variables -- //
 const maxRetries = 1; // The total number of times axios will retry a request
 let currRetries = 0; // The current number of times axios has retried a request
 
@@ -11,7 +11,7 @@ let tokenRefreshPromise: Promise<Session | null> | null; // Holds the promise fo
 
 // Create axios client
 const client = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: 'http://localhost:3000/api',
 });
 
 // Attach an error handler as a response interceptor
@@ -47,8 +47,10 @@ client.interceptors.response.use(
       // We have already hit the max number of retries, the user is no longer authenticated
       // Clear the user session and redirect the user to the login page
       await signOut();
-      window.location.href = "/login";
+      window.location.href = '/login';
     }
+
+    return null;
   }
 );
 

@@ -1,24 +1,29 @@
-import { ZodParsedType } from "zod";
-import { ApiError } from "./BaseError";
+import { ZodParsedType } from 'zod';
+import { arrayToString } from '@/utils/stringUtils';
+import { ApiError } from './BaseError';
 
 export class QueryError extends ApiError {
+  public static readonly status: number = 400;
+  public static readonly code: number = 2000;
+
   constructor() {
     super();
-    this.message = "Invalid query";
-    this.status = 2000;
+    this.message = 'Invalid query';
+    this.status = QueryError.status;
+    this.code = QueryError.code;
   }
 }
 
 /**
- * Cannot find [...]
+ * [...] not found
  */
 export class NotFoundError extends QueryError {
   public static readonly status = 404;
-  public static readonly code: number = 2001;
+  public static readonly code = 2001;
 
   constructor(item: string) {
     super();
-    this.message = `Cannot find ${item}`;
+    this.message = `${item} not found`;
     this.status = NotFoundError.status;
     this.code = NotFoundError.code;
   }
@@ -34,7 +39,7 @@ export class ParamError extends QueryError {
 
   constructor(parameter?: string) {
     super();
-    this.message = `Invalid ${parameter || "parameter"} supplied`;
+    this.message = `Invalid ${parameter || 'parameter'} supplied`;
     this.status = ParamError.status;
     this.code = ParamError.code;
   }
@@ -51,8 +56,8 @@ export class ParamRequiredError extends ParamError {
   constructor(parameter: string) {
     super();
     this.message = `Parameter '${parameter}' is required'`;
-    this.status = ParamTypeError.status;
-    this.code = ParamTypeError.code;
+    this.status = ParamRequiredError.status;
+    this.code = ParamRequiredError.code;
   }
 }
 
@@ -79,14 +84,20 @@ export class ParamTypeError extends ParamError {
  * @example "Parameter 'id' of value 'abc' is invalid"
  * @param parameter The parameter name
  * @param paramValue The value of the parameter
+ * @param allowedValues The allowed values of the parameter
  */
 export class ParamInvalidError extends ParamError {
   public static readonly status = 422;
   public static readonly code = 2005;
 
-  constructor(parameter: string, paramValue: any) {
+  constructor(parameter: string, paramValue: any, allowedValues?: (string | number)[]) {
+    // Construct message
+    const message = `'${parameter}' of value '${paramValue}' is invalid${
+      allowedValues ? `, only values: '${arrayToString(allowedValues, 'or')}' are allowed` : ''
+    }`;
+
     super();
-    this.message = `'${parameter}' of value '${paramValue}' is invalid`;
+    this.message = message;
     this.status = ParamInvalidError.status;
     this.code = ParamInvalidError.code;
   }

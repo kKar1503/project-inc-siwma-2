@@ -5,6 +5,7 @@
     "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/index.ts\""
   },
   "dependencies": {
+    "@inc/db": "workspace:*",
     "express": "^4.18.2",
     "sharp": "^0.32.0",
     "socket.io": "^4.6.1"
