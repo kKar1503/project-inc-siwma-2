@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -21,6 +21,7 @@ export type ProfileDetailCardProps = {
   profilePic: string;
   mobileNumber: string;
   contactMethod: string;
+  bio: string;
   rating: number;
   href: string;
 };
@@ -32,6 +33,7 @@ const ProfileDetailCard = ({
   profilePic,
   mobileNumber,
   contactMethod,
+  bio,
   rating,
   href,
 }: ProfileDetailCardProps) => {
@@ -50,7 +52,7 @@ const ProfileDetailCard = ({
       <Divider variant="middle" />
       <CardContent>
         <Avatar sx={{ mb: 1.5 }}>{profilePic}</Avatar>
-        <Typography variant="body1" sx={{ fontWeight: 'bold', mt: 1 }}>
+        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
           {name}
         </Typography>
         {/* admin only */}
@@ -71,7 +73,9 @@ const ProfileDetailCard = ({
             alignItems: 'center',
           }}
         >
-          <Typography variant="body1" sx={{ mr: 1 }}>{rating}</Typography>
+          <Typography variant="body1" sx={{ mr: 1, paddingTop: 0.5 }}>
+            {rating}
+          </Typography>
           <Rating
             readOnly
             defaultValue={rating}
@@ -79,7 +83,16 @@ const ProfileDetailCard = ({
             sx={{ color: '#00C853' }}
             emptyIcon={<StarIcon fontSize="inherit" />}
           />
+          <Typography variant="body1" sx={{ ml: 1, paddingTop: 0.5 }}>
+            180 Reviews
+          </Typography>
         </Box>
+      </CardContent>
+
+      <Divider variant="middle" />
+      <CardContent>
+        <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
+        <Typography>{bio}</Typography>
       </CardContent>
       <Divider variant="middle" />
       <CardContent>
@@ -91,7 +104,9 @@ const ProfileDetailCard = ({
             alignItems: 'center',
           }}
         >
-          <TelegramIcon sx={{ color: '#0088cc' }} />
+          <TelegramIcon
+            sx={{ backgroundColor: '#0088cc', color: 'white', borderRadius: 5, p: 0.5 }}
+          />
           <Typography sx={{ ml: 1 }}>{contactMethod}</Typography>
         </Box>
         <Box
@@ -101,28 +116,30 @@ const ProfileDetailCard = ({
             alignItems: 'center',
           }}
         >
-          <WhatsAppIcon sx={{ color: '#25D366' }} />
+          <WhatsAppIcon
+            sx={{ backgroundColor: '#25D366', color: 'white', borderRadius: 5, p: 0.5 }}
+          />
           <Typography sx={{ ml: 1 }}> +65 {mobileNumber} </Typography>
         </Box>
       </CardContent>
       <CardActions sx={{ flexDirection: 'column' }}>
         <Button
           component={Link}
-          href={`/editprofile`}
+          href="/editprofile"
           variant="contained"
           type="submit"
           color="primary"
-          sx={{ width: '98%', mb: 2, mt:10 }}
+          sx={{ width: '98%', mb: 2, mt: 10, fontWeight: 'bold' }}
         >
           Edit profile
         </Button>
         <Button
           component={Link}
-          href={`/logout`}
+          href="/logout"
           variant="contained"
           type="submit"
           color="error"
-          sx={{ width: '98%', mb: 2 }}
+          sx={{ width: '98%', mb: 2, fontWeight: 'bold' }}
         >
           Logout
         </Button>
