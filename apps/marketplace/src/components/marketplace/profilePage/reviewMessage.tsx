@@ -33,6 +33,10 @@ const ReviewMessage = ({ id, createdAt, rating, username, companyName, body }: R
                   {username}
                 </Typography>
               </Link>
+              <Typography sx={{ fontWeight: 'bold' }}>
+                {/* &#8321; */}
+                &#183;
+              </Typography>
               <Typography variant="body1" sx={{ flexGrow: 1 }}>
                 {compareDates()}
               </Typography>
@@ -58,11 +62,11 @@ const ReviewMessage = ({ id, createdAt, rating, username, companyName, body }: R
         </Typography>
       </Box>
       <Box>
-        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, my: 1 }}>
+        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb:3 }}>
           {body}
         </Typography>
       </Box>
-      <Divider />
+      <Divider/>
     </List>
   );
 };
