@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { Button } from '@inc/ui';
 import type { Person } from '@inc/types';
 import { signIn, useSession } from 'next-auth/react';
+import ProfileDetailCard from '../components/marketplace/profile/ProfileDetailCard';
 
 // eslint-disable-next-line no-unused-vars
 const p: Person = {
@@ -21,10 +22,21 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Button onClick={() => console.log('clicked')}>Hello</Button>
+        {/* <Button onClick={() => console.log('clicked')}>Hello</Button>
         <p>Hello World</p>
         Not signed in <br />
-        <button onClick={() => signIn()}>Sign in</button>
+        <button onClick={() => signIn()}>Sign in</button> */}
+         <ProfileDetailCard
+          name='Charmaine'
+          rating={3.5}
+          company='Tan Metals'
+          email='charmainechoo288@gmail.com'
+          mobileNumber='87970626'
+          contactMethod='telegram_user'
+          profilePic='C'
+          href="localhost:3000" 
+          />
+
       </main>
     </>
   );
