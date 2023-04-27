@@ -31,8 +31,8 @@ model CategoriesParameters {
   category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "categories_parameters_fk")
   parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "categories_parameters_fk_1")
 
+  @@map("CategoriesParameters")
   @@id([categoryId, parameterId], map: "categories_parameters_pk")
-  @@map("categories_parameters")
 }
 
 model Category {
@@ -46,7 +46,7 @@ model Category {
   updatedAt            DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
   advertisements       Advertisements[]
   categoriesParameters CategoriesParameters[]
-  listing              Listing[]
+  listings             Listing[]
 
   @@map("category")
 }
@@ -103,25 +103,25 @@ model Invite {
 }
 
 model Listing {
-  id                      Int                       @id @default(autoincrement()) @map("listing_pk")
-  name                    String
-  description             String
-  price                   Decimal                   @default(0) @db.Decimal
-  unitPrice               Boolean                   @default(false)
-  negotiable              Boolean                   @default(true)
-  open                    Boolean                   @default(true)
-  visibility              Boolean                   @default(true)
-  active                  Boolean                   @default(true)
-  categoryId              Int                       @map("category_id")
-  type                    ListingType               @map("listing_type")
-  owner                   String                    @db.Uuid
-  createdAt               DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt               DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  category                Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
-  users                   Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
-  listingBookmarks        ListingBookmarks[]
-  listingImages           ListingImages[]
-  listingsParametersValue ListingsParametersValue[]
+  id                       Int                       @id @default(autoincrement()) @map("listing_pk")
+  name                     String
+  description              String
+  price                    Decimal                   @default(0) @db.Decimal
+  unitPrice                Boolean                   @default(false)
+  negotiable               Boolean                   @default(true)
+  open                     Boolean                   @default(true)
+  visibility               Boolean                   @default(true)
+  active                   Boolean                   @default(true)
+  categoryId               Int                       @map("category_id")
+  type                     ListingType               @map("listing_type")
+  owner                    String                    @db.Uuid
+  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  category                 Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
+  users                    Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
+  listingBookmarks         ListingBookmarks[]
+  listingImages            ListingImages[]
+  listingsParametersValues ListingsParametersValue[]
 
   @@map("listing")
 }
@@ -135,28 +135,28 @@ model ListingsParametersValue {
   listing     Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk")
   parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk_1")
 
+  @@map("ListingsParametersValue")
   @@id([listingId, parameterId], map: "listings_parameters_value_pk")
-  @@map("listings_parameters_value")
 }
 
 model Parameter {
-  id                      Int                       @id(map: "parameter_pk") @default(autoincrement())
-  type                    ParameterType
-  datatype                DataType
-  name                    String
-  displayName             String                    @map("display_name")
-  active                  Boolean                   @default(true)
-  createdAt               DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt               DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  categoriesParameters    CategoriesParameters[]
-  listingsParametersValue ListingsParametersValue[]
+  id                       Int                       @id(map: "parameter_pk") @default(autoincrement())
+  type                     ParameterType
+  datatype                 DataType
+  name                     String
+  displayName              String                    @map("display_name")
+  active                   Boolean                   @default(true)
+  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  categoriesParameters     CategoriesParameters[]
+  listingsParametersValues ListingsParametersValue[]
 
   @@map("parameter")
 }
 
 model ParameterChoices {
   id        Int      @id @default(autoincrement()) @map("parameter_choices_pk")
-  choice    String[] @map("choice")
+  choices   String[] @map("choice")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
@@ -177,7 +177,7 @@ model Users {
   createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   accessTokens         AccessTokens[]
   clicks               Clicks[]
-  listing              Listing[]
+  listings             Listing[]
   listingBookmarks     ListingBookmarks[]
   notificationSettings NotificationSettings[]
   refreshTokens        RefreshTokens[]
@@ -210,10 +210,10 @@ model AccessTokens {
   refreshTokens RefreshTokens @relation(fields: [refreshToken, revoked], references: [id, revoked], onDelete: Cascade)
   users         Users         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
+  @@map("AccessTokens")
   @@index([refreshToken])
   @@index([token])
   @@index([userId])
-  @@map("access_tokens")
 }
 
 model RefreshTokens {
@@ -227,10 +227,10 @@ model RefreshTokens {
   accessTokens AccessTokens[]
   users        Users          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
+  @@map("RefreshTokens")
   @@unique([id, revoked])
   @@index([token])
   @@index([userId])
-  @@map("refresh_tokens")
 }
 
 model CompaniesBookmarks {
@@ -255,12 +255,12 @@ model ListingBookmarks {
 }
 
 model ListingImages {
-  id         Int      @id(map: "listing_images_pk") @default(autoincrement())
-  listingId  Int      @map("listing_id")
-  image      String
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @db.Timestamptz(6)
-  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listing_images_fk")
+  id        Int      @id(map: "listing_images_pk") @default(autoincrement())
+  listingId Int      @map("listing_id")
+  image     String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listing_images_fk")
 
   @@map("listing_images")
 }
@@ -288,22 +288,16 @@ enum DataType {
   string
   number
   boolean
-
-  @@map("datatype")
 }
 
 enum ListingType {
   BUY
   SELL
-
-  @@map("listingtype")
 }
 
 enum NotificationType {
   TAB1
   TAB2
-
-  @@map("notificationtype")
 }
 
 enum ParameterType {
@@ -312,8 +306,6 @@ enum ParameterType {
   TWO_CHOICES  @map("TWO CHOICES")
   MANY_CHOICES @map("MANY CHOICES")
   OPEN_ENDED   @map("OPEN ENDED")
-
-  @@map("parameter_type")
 }
 
 enum UserContacts {
@@ -322,6 +314,4 @@ enum UserContacts {
   telegram
   facebook
   email
-
-  @@map("user_contacts")
 }

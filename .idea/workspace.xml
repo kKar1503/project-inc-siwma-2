@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8dcd5302-28f3-422f-828e-f0bcf61f8efc" name="Changes" comment="feat: added prisma script to fix casing issue&#10;&#10;converts snake_case fields to camelCase&#10;converts snake_case model names to PascalCase&#10;also wont error when run multiple times or when a custom mapping is already provided">
+      <change beforePath="$PROJECT_DIR$/packages/db/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/db/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2OzFgL2MrcCghVMTTqVmCViRXgm" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "be-fix/prisma-script/xavier",
+    "last.edited.regexp": " @@map(\"CategoriesParameters\")",
+    "last_opened_file_path": "D:/Projects/TypeScript/project-inc-siwma-2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "D:\\Projects\\TypeScript\\project-inc-siwma-2\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8dcd5302-28f3-422f-828e-f0bcf61f8efc" name="Changes" comment="" />
+      <created>1682555628216</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1682555628216</updated>
+      <workItem from="1682555650037" duration="1378000" />
+      <workItem from="1682563445901" duration="1888000" />
+    </task>
+    <task id="LOCAL-00001" summary="feat: added prisma script to fix casing issue&#10;&#10;converts snake_case fields to camelCase&#10;converts snake_case model names to PascalCase&#10;also wont error when run multiple times or when a custom mapping is already provided">
+      <created>1682605997829</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1682605997829</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat: added prisma script to fix casing issue&#10;&#10;converts snake_case fields to camelCase&#10;converts snake_case model names to PascalCase&#10;also wont error when run multiple times or when a custom mapping is already provided">
+      <created>1682606467785</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1682606467785</updated>
+    </task>
+    <task id="LOCAL-00003" summary="feat: added prisma script to fix casing issue&#10;&#10;converts snake_case fields to camelCase&#10;converts snake_case model names to PascalCase&#10;also wont error when run multiple times or when a custom mapping is already provided">
+      <created>1682606484150</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1682606484150</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/packages/db/prisma/scripts/casingFix.js" />
+        <option value="$PROJECT_DIR$/packages/db/prisma/scripts/casingFix.js" />
+        <option value="$PROJECT_DIR$/packages/db/prisma/scripts/casingFix.js" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: added prisma script to fix casing issue&#10;&#10;converts snake_case fields to camelCase&#10;converts snake_case model names to PascalCase&#10;also wont error when run multiple times or when a custom mapping is already provided" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: added prisma script to fix casing issue&#10;&#10;converts snake_case fields to camelCase&#10;converts snake_case model names to PascalCase&#10;also wont error when run multiple times or when a custom mapping is already provided" />
+  </component>
+</project>

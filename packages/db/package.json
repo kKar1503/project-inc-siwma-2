@@ -3,12 +3,16 @@
   "version": "0.0.0",
   "main": "index.ts",
   "scripts": {
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:fix":  "node ./prisma/scripts/casingFix.js",
+    "prisma:recompileScripts&fix":  "tsc ./prisma/scripts/casingFix.ts && node ./prisma/scripts/casingFix.js"
   },
   "dependencies": {
     "@prisma/client": "^4.12.0"
   },
   "devDependencies": {
+    "@types/node": "18.15.3",
+    "pluralize": "^8.0.0",
     "prisma": "^4.12.0"
   }
 }
