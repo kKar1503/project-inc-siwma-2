@@ -1,12 +1,15 @@
 import Head from 'next/head';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { useRouter } from 'next/router';
+import React from 'react';
 import TransitionsModal from './modal';
+import ModalSelect from './modalSelect';
 
 const Home = () => {
-  const [open, setOpen] = useState(false);
-  const [leftButtonState, setLeftButtonState] = useState(false);
-  const [rightButtonState, setRightButtonState] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [leftButtonState, setLeftButtonState] = React.useState(false);
+  const [rightButtonState, setRightButtonState] = React.useState(false);
+  const [selectInput, setSelectInput] = React.useState('');
   const handleOpen = () => setOpen(true);
   const router = useRouter();
 
@@ -17,7 +20,7 @@ const Home = () => {
   const style = {
     backgroundColor: '#00C853',
     variant: 'contained',
-    color: 'white'
+    color: 'white',
   };
 
   return (
@@ -35,11 +38,26 @@ const Home = () => {
           modalType="info"
           title="Confirmation"
           content="Once you leave the page, your changes will not be saved."
-          leftButtonText="Stay here"
-          rightButtonText="Leave page"
-          leftButtonState={leftButtonState}
+          leftButtonText={null} // <= only one button set as null
+          rightButtonText="Stay here"
+          leftButtonState={false} // <= only one button, set as false
           rightButtonState={rightButtonState}
-          setLeftButtonState={setLeftButtonState}
+          setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
+          setRightButtonState={setRightButtonState}
+        />
+        <ModalSelect
+          modalButtonName="Open"
+          modalButtonStyle={style}
+          modalType="info"
+          title="Make an offer"
+          content="Enter an alternative amount to offer for the listing below."
+          leftButtonText="cancel" // <= only one button set as null
+          rightButtonText="make offer"
+          selectInput={selectInput}
+          setselectInput={setSelectInput}
+          leftButtonState={false} // <= only one button, set as false
+          rightButtonState={rightButtonState}
+          setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
           setRightButtonState={setRightButtonState}
         />
       </main>
