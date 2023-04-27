@@ -25,15 +25,15 @@ model access_tokens {
 }
 
 model advertisements {
-  id          Int      @id(map: "advertisements_pk") @default(sequence(maxValue: 2147483647))
-  category_id Int
+  id          Int       @id(map: "advertisements_pk") @default(sequence(maxValue: 2147483647))
+  company_id  Int
   image       String
   description String
-  link        String   @default("")
-  active      Boolean  @default(true)
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime @default(now()) @db.Timestamptz(6)
-  category    category @relation(fields: [category_id], references: [id], onDelete: Cascade, map: "advertisements_fk")
+  link        String    @default("")
+  active      Boolean   @default(true)
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime  @default(now()) @db.Timestamptz(6)
+  companies   companies @relation(fields: [company_id], references: [id], onDelete: Cascade, map: "advertisements_fk")
   clicks      clicks[]
 }
 
@@ -58,7 +58,6 @@ model category {
   active                Boolean                 @default(true)
   created_at            DateTime                @default(now()) @db.Timestamptz(6)
   updated_at            DateTime                @default(now()) @db.Timestamptz(6)
-  advertisements        advertisements[]
   categories_parameters categories_parameters[]
   listing               listing[]
 }
@@ -81,6 +80,7 @@ model companies {
   logo                String?               @default("")
   visibility          Boolean               @default(true)
   created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  advertisements      advertisements[]
   companies_bookmarks companies_bookmarks[]
   companies_comments  companies_comments[]
   invite              invite?
