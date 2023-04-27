@@ -36,7 +36,7 @@ const ProfileDetailCard = ({
   href,
 }: ProfileDetailCardProps) => {
   return (
-    <Card sx={{ maxWidth: 'md', display: 'inline-grid' }}>
+    <Card sx={{ width: 300, display: 'inline-grid' }}>
       <CardHeader
         titleTypographyProps={{
           fontSize: 18,
@@ -112,7 +112,7 @@ const ProfileDetailCard = ({
           variant="contained"
           type="submit"
           color="primary"
-          sx={{ width: '98%', mb: 2 }}
+          sx={{ width: '98%', mb: 2, mt:10 }}
         >
           Edit profile
         </Button>
