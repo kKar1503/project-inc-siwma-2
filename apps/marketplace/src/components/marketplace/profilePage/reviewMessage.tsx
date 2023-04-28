@@ -1,7 +1,13 @@
-import { Avatar, Box, Divider, List, Stack, Typography } from '@mui/material';
-import { DateTime, Interval } from 'luxon';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { DateTime } from 'luxon';
+import { useMemo } from 'react';
 import Link from 'next/link';
-import StarRating from './starRatings';
+import StarRating from './StarRatings';
 
 export type ReviewProps = {
   id: number;
@@ -13,13 +19,10 @@ export type ReviewProps = {
 };
 
 const ReviewMessage = ({ id, createdAt, rating, username, companyName, body }: ReviewProps) => {
-  const compareDates = (): string => {
-    const createdAtDateTime = DateTime.fromISO(createdAt);
-    const intervalDate = Interval.fromDateTimes(createdAtDateTime, DateTime.now());
-
-    const relativeTimeFormat = new Intl.RelativeTimeFormat('en', { style: 'short' });
-    return relativeTimeFormat.format(-intervalDate.count('days'), 'day');
-  };
+  const datetime = useMemo(
+    () => DateTime.fromISO(createdAt).toRelative({ locale: 'en-SG' }),
+    [createdAt]
+  );
 
   return (
     <List sx={{ m: 2, maxWidth: 'md' }}>
@@ -29,20 +32,31 @@ const ReviewMessage = ({ id, createdAt, rating, username, companyName, body }: R
           <Stack>
             <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
               <Link href="/#" style={{ textDecoration: 'none', color: 'black' }}>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{
+                    flexGrow: 1,
+                    fontWeight: 'bold',
+                    '&:hover': { textDecoration: 'underline' },
+                  }}
+                >
                   {username}
                 </Typography>
               </Link>
               <Typography sx={{ fontWeight: 'bold' }}>
-                {/* &#8321; */}
                 &#183;
               </Typography>
               <Typography variant="body1" sx={{ flexGrow: 1 }}>
-                {compareDates()}
+                {datetime}
               </Typography>
             </Stack>
             <Link href="/#" style={{ textDecoration: 'none' }}>
-              <Typography variant="body2" component="div" sx={{ flexGrow: 1, color: 'grey' }}>
+              <Typography
+                variant="body2"
+                component="div"
+                sx={{ flexGrow: 1, color: 'grey', '&:hover': { textDecoration: 'underline' } }}
+              >
                 {companyName}
               </Typography>
             </Link>
@@ -62,11 +76,11 @@ const ReviewMessage = ({ id, createdAt, rating, username, companyName, body }: R
         </Typography>
       </Box>
       <Box>
-        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb:3 }}>
+        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb: 3 }}>
           {body}
         </Typography>
       </Box>
-      <Divider/>
+      <Divider />
     </List>
   );
 };
