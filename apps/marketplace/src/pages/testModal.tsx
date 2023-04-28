@@ -2,8 +2,8 @@ import Head from 'next/head';
 // import { useState } from 'react';
 import { useRouter } from 'next/router';
 import React from 'react';
-import TransitionsModal from './modal';
-import ModalSelect from './modalSelect';
+import TransitionsModal from '@inc/ui/lib/components/modal';
+import ModalSelect from '@inc/ui/lib/components/modalSelect';
 
 const Home = () => {
   const [open, setOpen] = React.useState(false);
