@@ -14,27 +14,25 @@ const ChatNow = ({
   profilePic,
   companyName,
 }: ChatNowProps) => (
-    <Card sx={{ maxWidth: 330, maxHeight: 600, border: '1px solid #C4C4C4' }}>
+    <Card sx={{ maxWidth: 430, maxHeight: 600, border: '1px solid #C4C4C4', backgroundColor: '#F0F1F1' }}>
       <CardContent sx={{ pl: 2}}>
-        {/* MUI default spacing is 8px */}
-        <div style ={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 10}} >
-            <Avatar sx={{ mb: 1.5 }}>{profilePic}</Avatar>
-            <Box
+        <div style ={{display: 'flex', flexDirection: 'row', alignItems: 'center', paddingLeft: 20, paddingTop: 7, paddingBottom: 10}} >
+          <Avatar sx={{ mb: 1.5 }}>{profilePic}</Avatar>
+          <Box
             sx={{ pb: 2, marginLeft: 2 }}
-            >
-                <Typography variant="body2" color="text.primary" fontWeight={400} fontSize={20}>
-                    {companyName}
-                </Typography>
-            </Box>
+          >
+            <Typography variant="body2" color="text.primary" fontWeight={500} fontSize={20}>
+              {companyName}
+            </Typography>
+          </Box>
         </div>
           <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <Button variant='contained' color='primary' sx={{ width: 250}}>
-                Chat Now
+            <Button variant='contained' sx={{ width: 350, backgroundColor: '#2563EB'}}>
+              Chat Now
             </Button>
           </Box> 
       </CardContent>
     </Card>
   );
-
 
 export default ChatNow;
