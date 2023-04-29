@@ -1,6 +1,5 @@
-import { apiHandler } from '@/utils/api';
-import { formatAPIResponse } from '@/utils/stringUtils';
-import PrismaClient from '@/utils/prisma';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
+import client from '@inc/db';
 
 export default apiHandler(
   // unprotected route
@@ -11,7 +10,7 @@ export default apiHandler(
 
   const { email, name, company } = req.body;
 
-  if (
+  if (   
     !email ||
     !name ||
     !company ||
@@ -25,7 +24,7 @@ export default apiHandler(
   }
 
   // Check if the email, name, or company are already in use
-  const existingUser = await PrismaClient.users.findMany({
+  const existingUser = await client.users.findMany({
     where: {
       OR: [
         {
@@ -35,7 +34,7 @@ export default apiHandler(
           name,
         },
         {
-          company_id: company,
+          companyId: company,
         },
       ],
     },
@@ -58,11 +57,11 @@ export default apiHandler(
     .join('');
 
   // Create the invite
-  const invite = await PrismaClient.invite.create({
+  const invite = await client.invite.create({
     data: {
       email,
       name,
-      company_id: company,
+      companyId: company,
       token,
       expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     },
