@@ -4,11 +4,12 @@
   "main": "index.ts",
   "scripts": {
     "prisma:generate": "prisma generate",
-    "prisma:fix":  "ts-node ./prisma/scripts/casingFix.ts",
+    "prisma:fix":  "node ./prisma/scripts/casingFix.js && prisma format",
+    "prisma:recompile-fix": "tsc ./prisma/scripts/casingFix.ts  && node ./prisma/scripts/casingFix.js && prisma format",
     "prisma:seed": "prisma db seed"
   },
   "prisma": {
-    "seed": "ts-node prisma/seeding/seed.ts --transpile-only"
+    "seed": "ts-node prisma/seeding/seed.ts --transpileOnly"
   },
   "dependencies": {
     "@prisma/client": "4.12.0"

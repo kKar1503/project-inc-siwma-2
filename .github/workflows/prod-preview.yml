@@ -51,10 +51,10 @@ jobs:
 
       - name: Get Public DNS and IP
         run: |
-          export PublicDnsName=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicDnsName' --output text)
-          export PublicIpAddress=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicIpAddress' --output text)
-          echo "Public DNS: $PublicDnsName"
-          echo "Public IP: $PublicIpAddress"
+          echo "public_dns_name=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicDnsName' --output text)" >> "$GITHUB_ENV"
+          echo "public_ip_address=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicIpAddress' --output text)" >> "$GITHUB_ENV"
+          echo "Public DNS: ${{ env.public_dns_name }}"
+          echo "Public IP: ${{ env.public_ip_address }}"
 
       - name: Output Public DNS and IP into PR
         if: ${{ github.event_name == 'pull_request' }}
@@ -62,5 +62,5 @@ jobs:
         with:
           message: |
             # Public DNS and IP
-            Public DNS: $PublicDnsName
-            Public IP: $PublicIpAddress
+            Public DNS: ${{ env.public_dns_name }}
+            Public IP: ${{ env.public_ip_address }}
