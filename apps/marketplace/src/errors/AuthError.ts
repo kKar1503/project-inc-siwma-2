@@ -1,13 +1,11 @@
-/* eslint-disable max-classes-per-file */
 import { arrayToString, capitalizeFirstLetter } from '@/utils/stringUtils';
 import { ApiError } from './BaseError';
 
 // -- Type Definitions -- //
-type tokenType = 'access' | 'refresh';
+type TokenType = 'access' | 'refresh';
 
 export class AuthError extends ApiError {
   public static readonly status = 401;
-
   public static readonly code = 1000;
 
   constructor() {
@@ -24,7 +22,6 @@ export class AuthError extends ApiError {
  */
 export class ForbiddenError extends ApiError {
   public static readonly status = 403;
-
   public static readonly code = 1001;
 
   constructor(user?: string | null) {
@@ -41,10 +38,9 @@ export class ForbiddenError extends ApiError {
  */
 export class InvalidTokenError extends ApiError {
   public static readonly status = 401;
-
   public static readonly code: number = 1002;
 
-  constructor(tokenType: tokenType | tokenType[]) {
+  constructor(tokenType: TokenType | TokenType[]) {
     super();
     this.message = `Invalid ${
       typeof tokenType === 'string' ? tokenType : arrayToString(tokenType, 'and')
@@ -59,10 +55,9 @@ export class InvalidTokenError extends ApiError {
  */
 export class TokenExpiredError extends InvalidTokenError {
   public static readonly status = 401;
-
   public static readonly code = 1003;
 
-  constructor(tokenType: tokenType) {
+  constructor(tokenType: TokenType) {
     super(tokenType);
     this.message = `${capitalizeFirstLetter(tokenType)} token is expired`;
     this.status = TokenExpiredError.status;
@@ -75,10 +70,9 @@ export class TokenExpiredError extends InvalidTokenError {
  */
 export class TokenRevokedError extends InvalidTokenError {
   public static readonly status = 401;
-
   public static readonly code = 1004;
 
-  constructor(tokenType: tokenType) {
+  constructor(tokenType: TokenType) {
     super(tokenType);
     this.message = `${capitalizeFirstLetter(tokenType)} token is revoked`;
     this.status = TokenExpiredError.status;

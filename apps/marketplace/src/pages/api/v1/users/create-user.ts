@@ -1,16 +1,39 @@
-import { apiHandler } from '@/utils/api';
-import { formatAPIResponse } from '@/utils/stringUtils';
-import PrismaClient from '@/utils/prisma';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
+import client, { UserContacts } from '@inc/db';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+export const userCreationRequestBody = z.object({
+  token: z.string(),
+  mobileNumber: z.string(),
+  password: z.string(),
+});
+
+export const userCreationResponseBody = z.object({
+  userId: z.string(),
+  status: z.number(),
+  detail: z.string(),
+});
 
 export default apiHandler(
-  // unprotected route
+  // TODO: Change this to false
   { allowNonAuthenticated: true }
-).post(async (req, res) => {
+).post(async (req: NextApiRequest, res: NextApiResponse) => {
   // Creates a new user from an existing invite
   // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.5t8qrsbif9ei
 
-  const { token, mobileNumber, password } = req.body;
+  // Parse the request body with zod
+  const parsedBody = userCreationRequestBody.safeParse(req.body);
+
+  // Exit if the body is invalid
+  if (!parsedBody.success) {
+    return res
+      .status(422)
+      .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
+  }
+
+  // Extract the required fields
+  const { token, mobileNumber, password } = parsedBody.data;
 
   if (!token || !mobileNumber || !password) {
     return res
@@ -19,19 +42,19 @@ export default apiHandler(
   }
 
   // Check if the token exists
-  const invite = await PrismaClient.invite.findMany({
+  const invite = await client.invite.findFirst({
     where: {
       token,
     },
   });
 
   // Check if the invite is valid
-  if (!invite || invite.expiresAt < new Date()) {
+  if (!invite) {
     return res.status(403).json(formatAPIResponse({ status: '403', detail: 'invalid token' }));
   }
 
   // Check if the mobile number is already in use
-  const existingUser = await PrismaClient.users.findMany({
+  const existingUser = await client.users.findMany({
     where: {
       phone: mobileNumber,
     },
@@ -44,33 +67,23 @@ export default apiHandler(
   }
 
   // Create the user
-  const user = await PrismaClient.users.create({
+  const user = await client.users.create({
     data: {
       email: invite.email,
       name: invite.name,
       phone: mobileNumber,
       password,
+      contact: UserContacts.phone,
+      companies: { connect: { id: invite.companyId } },
     },
   });
 
   // Delete the invite
-  await PrismaClient.invite.delete({
+  await client.invite.delete({
     where: {
-      token,
+      id: invite.id,
     },
   });
 
   return res.status(200).json(formatAPIResponse({ status: '201', userId: user.id }));
-});
-
-export const userCreationRequestBody = z.object({
-  token: z.string(),
-  mobileNumber: z.number(),
-  password: z.string(),
-});
-
-export const userCreationResponseBody = z.object({
-  userId: z.string(),
-  status: z.number(),
-  detail: z.string(),
 });
