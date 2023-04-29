@@ -4,6 +4,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: { write-all, read-all }
+
 on:
   workflow_dispatch:
   pull_request:
@@ -51,8 +53,8 @@ jobs:
 
       - name: Get Public DNS and IP
         run: |
-          export PublicDnsName=$(aws ec2 describe-instances --query 'Reservations[].Instances[].PublicDnsName' --output text)
-          export PublicIpAddress=$(aws ec2 describe-instances --query 'Reservations[].Instances[].PublicIpAddress' --output text)
+          export PublicDnsName=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicDnsName' --output text)
+          export PublicIpAddress=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicIpAddress' --output text)
           echo "Public DNS: $PublicDnsName"
           echo "Public IP: $PublicIpAddress"
 
