@@ -16,7 +16,7 @@ export const userCreationResponseBody = z.object({
 });
 
 export default apiHandler(
-  // TODO: Change this to false
+  // This route does not require authentication
   { allowNonAuthenticated: true }
 ).post(async (req: NextApiRequest, res: NextApiResponse) => {
   // Creates a new user from an existing invite
