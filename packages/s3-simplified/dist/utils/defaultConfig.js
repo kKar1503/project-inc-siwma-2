@@ -8,8 +8,8 @@ exports.defaultConfig = {
     },
     objectCreation: {
         multiPartUpload: {
-            maxPartSize: 5 * constants_1.MB,
-            enabledThreshold: 5 * constants_1.MB,
+            maxPartSize: 100 * constants_1.MB,
+            enabledThreshold: 100 * constants_1.MB,
         },
         appendFileTypeToKey: true,
     }

@@ -9,8 +9,8 @@ export const defaultConfig: OptionalConfig = {
 
     objectCreation: {
         multiPartUpload: {
-            maxPartSize: 5 * MB,
-            enabledThreshold: 5 * MB,
+            maxPartSize: 100 * MB,
+            enabledThreshold: 100 * MB,
         },
         appendFileTypeToKey: true,
     }
