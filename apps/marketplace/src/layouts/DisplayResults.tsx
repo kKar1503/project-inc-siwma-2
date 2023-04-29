@@ -63,7 +63,7 @@ const DisplayResults = ({ items }: ResultsProps) => {
           {items && items.length > 0 && (
             <Mui.Grid container display="flex">
               {items.map((item: any) => (
-                <Mui.Grid item xs={12} md={3} sx={{ mb: 2 }}>
+                <Mui.Grid item xs={3} md={3} sx={{ mb: 2 }}>
                   <ProductListingItem
                     img={item.img}
                     type={item.type}

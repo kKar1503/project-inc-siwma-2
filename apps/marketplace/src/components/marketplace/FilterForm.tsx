@@ -28,7 +28,9 @@ const FilterForm = () => {
       </Mui.Select>
 
       <Mui.Divider sx={{ my: 2 }} />
-      <Mui.Button variant="contained">APPLY</Mui.Button>
+      <Mui.Button variant="contained" type="submit">
+        APPLY
+      </Mui.Button>
     </Mui.FormControl>
   );
 };
