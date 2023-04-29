@@ -1,6 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
 import client, { UserContacts } from '@inc/db';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export const userCreationRequestBody = z.object({
   token: z.string(),
@@ -17,7 +18,7 @@ export const userCreationResponseBody = z.object({
 export default apiHandler(
   // TODO: Change this to false
   { allowNonAuthenticated: true }
-).post(async (req, res) => {
+).post(async (req: NextApiRequest, res: NextApiResponse) => {
   // Creates a new user from an existing invite
   // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.5t8qrsbif9ei
 
@@ -41,18 +42,16 @@ export default apiHandler(
   }
 
   // Check if the token exists
-  const invites = await client.invite.findMany({
+  const invite = await client.invite.findFirst({
     where: {
       token,
     },
   });
 
   // Check if the invite is valid
-  if (!invites || invites.length === 0) {
+  if (!invite) {
     return res.status(403).json(formatAPIResponse({ status: '403', detail: 'invalid token' }));
   }
-
-  const invite = invites[0];
 
   // Check if the mobile number is already in use
   const existingUser = await client.users.findMany({
