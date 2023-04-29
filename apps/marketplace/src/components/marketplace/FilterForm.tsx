@@ -8,7 +8,7 @@ const FilterForm = () => {
       <Mui.RadioGroup>
         <Mui.FormControlLabel value="negotiable" control={<Mui.Radio />} label="Negotiable" />
         <Mui.FormControlLabel
-          value="non-negotiable"
+          value="nonNegotiable"
           control={<Mui.Radio />}
           label="Non-Negotiable"
         />
