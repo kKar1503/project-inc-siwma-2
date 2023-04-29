@@ -19,6 +19,13 @@ const KNEX_INTERNAL_MODELS = [
   'knex_migrations_lock',
   'pgmigrations',
 ];
+const SUPPORTED_ENUMS = [
+  "DataType",
+  "ListingType",
+  "NotificationType",
+  "ParameterType",
+  "UserContacts"
+]
 
 function isKnexInternalModel(typeName: string) {
   return KNEX_INTERNAL_MODELS.includes(typeName);
@@ -26,6 +33,12 @@ function isKnexInternalModel(typeName: string) {
 
 function isPrimitiveType(typeName: string) {
   return PRISMA_PRIMITIVES.includes(typeName);
+}
+
+function validateSupportedEnum(typeName: string): [isSupportedEnum: boolean, enumIndex: number] {
+  let enumIndex =  SUPPORTED_ENUMS.findIndex(e => e.toLowerCase() === typeName.toLowerCase())
+  let isSupportedEnum = enumIndex !== -1
+  return [isSupportedEnum, enumIndex]
 }
 
 function fixFieldsArrayString(fields: string) {
@@ -118,9 +131,16 @@ function parseLine(line: string, persistentData: {
   if (fieldTypeMatch) {
     const currentFieldType = fieldTypeMatch[1];
     const fieldTypeIndex = fieldTypeMatch[0].lastIndexOf(currentFieldType);
-    const fixedFieldType = snakeToPascal(currentFieldType);
+    let fixedFieldType = snakeToPascal(currentFieldType);
     const startOfLine = fixedLine.slice(0, fieldTypeIndex);
     const restOfLine = fixedLine.slice(fieldTypeIndex + currentFieldType.length);
+
+    // Check if field type is enum
+    let [isSupportedEnum, enumIndex] = validateSupportedEnum(fixedFieldType)
+    if (isSupportedEnum) {
+      fixedFieldType = SUPPORTED_ENUMS[enumIndex];
+    }
+
     fixedLine = `${startOfLine}${fixedFieldType}${restOfLine}`;
   }
 
@@ -136,6 +156,15 @@ function parseLine(line: string, persistentData: {
   if (indexUniqueFieldsMatch) {
     const fields = indexUniqueFieldsMatch[1];
     fixedLine = fixedLine.replace(fields, fixFieldsArrayString(fields));
+  }
+
+  // Try to match for enum
+  const enumMatch = fixedLine.match(/^enum\s+(\S+)\s*\{/);
+  if (enumMatch) {
+    let [isSupportedEnum, enumIndex] = validateSupportedEnum(enumMatch[1])
+    if (isSupportedEnum) {
+      fixedLine = fixedLine.replace(enumMatch[1], SUPPORTED_ENUMS[enumIndex])
+    }
   }
 
   fixedText.push(fixedLine);
