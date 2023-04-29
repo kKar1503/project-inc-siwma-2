@@ -6,7 +6,7 @@ import crypto from 'crypto';
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
   name: z.string(),
-  // company is a number but is sent as a string because of being a query param
+  // company is a number but is sent as a string because it is a query param
   company: z.string().refine((val) => !Number.isNaN(Number(val)), {
     message: 'company must be a number',
   }),
@@ -37,32 +37,24 @@ export default apiHandler(
 
   const companyId = Number(company);
 
-  // Check if the email, name, or company are already in use
-  const existingUser = await client.users.findMany({
+  // Check if the email is already in use
+  const existingUser = await client.users.findFirst({
     where: {
-      OR: [
-        {
-          email,
-        },
-        {
-          name,
-        },
-        {
-          companyId,
-        },
-      ],
+      email,
     },
   });
 
-  if (existingUser && existingUser.length > 0) {
-    return res.status(403).json(formatAPIResponse({ status: '422', detail: 'invalid parameters' }));
+  if (existingUser) {
+    return res
+      .status(403)
+      .json(formatAPIResponse({ status: '403', detail: 'email already in use' }));
   }
 
   // Create sha256 hash of the user's name, email, the current date, and a random string
   const tokenHash = await crypto
     .createHash('sha256')
     .update(`${name}${email}${new Date().toISOString()}${crypto.randomBytes(16).toString('hex')}`)
-    .digest();  
+    .digest();
 
   // Convert the hash to a hex string
   const token = Array.from(new Uint8Array(tokenHash))
