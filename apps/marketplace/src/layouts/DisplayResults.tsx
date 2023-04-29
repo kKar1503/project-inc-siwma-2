@@ -5,7 +5,11 @@ import baseTheme from '../themes/baseTheme';
 import FilterForm from '../components/marketplace/filterForm';
 import ProductListingItem from '../components/marketplace/listing/ProductListingItem';
 
-const DisplayResults = ({ items }: { items: any[] }) => {
+export type ResultsProps = {
+  items: any[];
+};
+
+const DisplayResults = ({ items }: ResultsProps) => {
   const isMediumScreen = Mui.useMediaQuery(baseTheme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -59,20 +63,22 @@ const DisplayResults = ({ items }: { items: any[] }) => {
           {items && items.length > 0 && (
             <Mui.Grid container display="flex">
               {items.map((item: any) => (
-                <ProductListingItem
-                  img={item.img}
-                  type={item.type}
-                  href={item.link}
-                  price={item.price}
-                  name={item.name}
-                  rating={item.rating}
-                  negotiable={item.negotiable}
-                  ownerFullName={item.username}
-                  ownerId={item.userId}
-                  companyName={item.companyName}
-                  isUnitPrice={item.isUnitPrice}
-                  createdAt={item.createdAt}
-                />
+                <Mui.Grid item xs={12} md={3} sx={{ mb: 2 }}>
+                  <ProductListingItem
+                    img={item.img}
+                    type={item.type}
+                    href={item.link}
+                    price={item.price}
+                    name={item.name}
+                    rating={item.rating}
+                    negotiable={item.negotiable}
+                    ownerFullName={item.ownerFullName}
+                    ownerId={item.userId}
+                    companyName={item.companyName}
+                    isUnitPrice={item.isUnitPrice}
+                    createdAt={item.createdAt}
+                  />
+                </Mui.Grid>
               ))}
             </Mui.Grid>
           )}
