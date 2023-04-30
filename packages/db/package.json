@@ -4,8 +4,8 @@
   "main": "index.ts",
   "scripts": {
     "prisma:generate": "prisma generate",
-    "prisma:fix":  "node ./prisma/scripts/casingFix.js && prisma format",
-    "prisma:recompile-fix": "tsc ./prisma/scripts/casingFix.ts  && node ./prisma/scripts/casingFix.js && prisma format",
+    "prisma:patchCasing": "node ./prisma/scripts/casingFix.js && prisma format",
+    "prisma:compile": "tsc ./prisma/scripts/casingFix.ts",
     "prisma:seed": "prisma db seed"
   },
   "prisma": {
@@ -16,8 +16,9 @@
   },
   "devDependencies": {
     "@types/node": "18.15.3",
+    "@types/pluralize": "^0.0.29",
     "pluralize": "^8.0.0",
-    "prisma": "4.12.0"
+    "prisma": "4.12.0",
+    "ts-node": "^10.9.1"
   }
 }
-
