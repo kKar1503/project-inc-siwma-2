@@ -1,58 +1,117 @@
-import {apiHandler, formatAPIResponse} from '@/utils/api';
-import {NextApiRequest, NextApiResponse} from 'next';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import {NotFoundError} from '@/errors';
+import { NotFoundError } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import s3Connection from '@/utils/s3Connection';
+import { IS3Object, S3BucketService, S3ObjectBuilder } from 's3-simplified';
+import { AdvertisementBucket, AdvertisementPayload, validateAdvertisementPayload } from '@api/v1/advertisments/index';
 
 const GET = async (req: NextApiRequest, res: NextApiResponse) => {
-    const reqId = req.query.id as string;
-    const id = parseInt(reqId, 10);
+  const reqId = req.query.id as string;
+  const id = parseInt(reqId, 10);
 
-    if (Number.isNaN(id)) {
-        throw new NotFoundError(`advertisement not found`);
-    }
+  if (Number.isNaN(id)) {
+    throw new NotFoundError(`advertisement not found`);
+  }
 
-    const advertisement = await PrismaClient.advertisements.findUnique({
-        where: {
-            id,
-        }
-    });
+  const advertisement = await PrismaClient.advertisements.findUnique({
+    where: {
+      id,
+    },
+  });
 
-    if (!advertisement) {
-        throw new NotFoundError(`advertisement not found`);
-    }
+  if (!advertisement) {
+    throw new NotFoundError(`advertisement not found`);
+  }
 
-    res.status(200).json(formatAPIResponse(advertisement));
-}
+  res.status(200).json(formatAPIResponse(advertisement));
+};
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
+  const reqId = req.query.id as string;
+  const id = parseInt(reqId, 10);
 
-}
+  if (Number.isNaN(id)) {
+    throw new NotFoundError(`advertisement not found`);
+  }
+
+  const payload = req.body as AdvertisementPayload;
+  try {
+    validateAdvertisementPayload(payload);
+  } catch (e) {
+    return res.status(422).json(formatAPIResponse({
+      details: 'invalid input',
+    }));
+  }
+
+  let bucket: S3BucketService;
+  try {
+    bucket = await s3Connection.getBucket(AdvertisementBucket);
+  } catch (e) {
+    // access key don't have access to bucket or bucket doesn't exist
+    return res.status(500).json(formatAPIResponse({
+      details: 'failed to connect to bucket',
+    }));
+  }
+
+  const s3ObjectBuilder = new S3ObjectBuilder(payload.image);
+
+  let s3Object: IS3Object;
+
+  try {
+    s3Object = await bucket.createObject(s3ObjectBuilder);
+  } catch (e: any | { name: string }) {
+    return res.status(500).json(formatAPIResponse({
+      details: 'image already exists',
+    }));
+  }
+  const url = await s3Object.generateLink();
+  const advertisement = await PrismaClient.advertisements.update({
+    data: {
+      companyId: payload.companyId,
+      image: url,
+      endDate: new Date(payload.endDate),
+      description: payload.description,
+      link: payload.link,
+    },
+    where: {
+      id,
+    }
+  });
+
+  const advertisementId = advertisement.id;
+
+  res.status(201).json(formatAPIResponse({
+    advertisementId,
+  }));
+
+};
 
 const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
-    const reqId = req.query.id as string;
-    const id = parseInt(reqId, 10);
+  const reqId = req.query.id as string;
+  const id = parseInt(reqId, 10);
 
-    if (Number.isNaN(id)) {
-        throw new NotFoundError(`advertisement not found`);
-    }
+  if (Number.isNaN(id)) {
+    throw new NotFoundError(`advertisement not found`);
+  }
 
 
-    await PrismaClient.advertisements.delete({
-        where: {
-            id,
-        },
-    });
+  await PrismaClient.advertisements.delete({
+    where: {
+      id,
+    },
+  });
 
-    res.status(204).end();
-}
+  res.status(204).end();
+};
 
 export default apiHandler({
-    allowAdminsOnly: true,
+  allowAdminsOnly: true,
 })
-    .get(apiGuardMiddleware({
-        allowNonAuthenticated: true,
-    }), GET)                   // no need admin    no need auth
-    .put(PUT)           // needs admin      needs auth
-    .delete(DELETE);    // needs admin      needs auth
+  .get(apiGuardMiddleware({
+    allowNonAuthenticated: true,
+  }), GET)                   // no need admin    no need auth
+  .put(PUT)           // needs admin      needs auth
+  .delete(DELETE);    // needs admin      needs auth
 
