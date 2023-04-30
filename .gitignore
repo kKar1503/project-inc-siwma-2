@@ -5,3 +5,4 @@ node_modules
 .idea/*
 dist
 packages/db/prisma/scripts/casingFix.js
+tmp/**/*
