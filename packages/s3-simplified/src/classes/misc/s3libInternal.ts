@@ -18,7 +18,6 @@ export class S3libInternal {
     }
 
     public async createBucket(bucketName: string): Promise<S3BucketService> {
-        console.log("Creating bucket: " + bucketName);
         const command = new CreateBucketCommand({Bucket: bucketName});
         await this.s3.send(command);
         return new S3Bucket(this, bucketName);

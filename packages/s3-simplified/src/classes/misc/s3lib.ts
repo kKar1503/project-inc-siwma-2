@@ -12,7 +12,6 @@ export class S3Lib implements IS3 {
     }
 
     public async createBucket(bucketName: string): Promise<S3BucketService> {
-        console.log("Creating bucket: " + bucketName);
         this.validateBucketName(bucketName);
         return this.internal.createBucket(bucketName);
     }
