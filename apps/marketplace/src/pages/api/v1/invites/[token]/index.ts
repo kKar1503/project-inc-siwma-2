@@ -1,6 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
 import client from '@inc/db';
+import { NotFoundError } from '@/errors';
 
 const tokenSchema = z.object({
   token: z.string(),
@@ -9,15 +10,7 @@ const tokenSchema = z.object({
 export default apiHandler({
   allowNonAuthenticated: true,
 }).get(async (req, res) => {
-  const parsedBody = tokenSchema.safeParse(req.query);
-
-  if (!parsedBody.success) {
-    return res
-      .status(422)
-      .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
-  }
-
-  const { token } = parsedBody.data;
+  const { token } = tokenSchema.parse(req.query);
 
   const invite = await client.invite.findFirst({
     where: {
@@ -32,8 +25,8 @@ export default apiHandler({
   });
 
   if (!invite) {
-    return res.status(404).json(formatAPIResponse({ status: '404', detail: 'invite not found' }));
+    throw new NotFoundError('invite');
   }
 
-  return res.status(200).json(formatAPIResponse({ status: '200', data: invite }));
+  return res.status(200).json(formatAPIResponse({ data: invite }));
 });
