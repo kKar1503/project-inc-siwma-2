@@ -15,61 +15,77 @@ export const inviteCreationRequestBody = z.object({
 export default apiHandler(
   // TODO: Change this to false
   { allowNonAuthenticated: true }
-).post(async (req, res) => {
-  // Creates a new invite
-  // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.ifiq27spo70n
+)
+  .post(async (req, res) => {
+    // Creates a new invite
+    // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.ifiq27spo70n
 
-  const parsedBody = inviteCreationRequestBody.safeParse(req.body);
+    const parsedBody = inviteCreationRequestBody.safeParse(req.body);
 
-  if (!parsedBody.success) {
-    return res
-      .status(422)
-      .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
-  }
+    if (!parsedBody.success) {
+      return res
+        .status(422)
+        .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
+    }
 
-  const { email, name, company } = parsedBody.data;
+    const { email, name, company } = parsedBody.data;
 
-  if (!email || !name || !company) {
-    return res
-      .status(422)
-      .json(formatAPIResponse({ status: '422', detail: 'missing required fields' }));
-  }
+    if (!email || !name || !company) {
+      return res
+        .status(422)
+        .json(formatAPIResponse({ status: '422', detail: 'missing required fields' }));
+    }
 
-  const companyId = Number(company);
+    const companyId = Number(company);
 
-  const existingUser = await client.users.findFirst({
-    where: {
-      email,
-    },
+    const existingUser = await client.users.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (existingUser) {
+      return res
+        .status(403)
+        .json(formatAPIResponse({ status: '403', detail: 'email already in use' }));
+    }
+
+    // Create sha256 hash of the user's name, email, the current date, and a random string
+    const tokenHash = await crypto
+      .createHash('sha256')
+      .update(`${name}${email}${new Date().toISOString()}${crypto.randomBytes(16).toString('hex')}`)
+      .digest();
+
+    // Convert the hash to a hex string
+    const token = Array.from(new Uint8Array(tokenHash))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    // Create the invite
+    const invite = await client.invite.create({
+      data: {
+        email,
+        name,
+        company_id: companyId,
+        token,
+        expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      },
+    });
+
+    return res.status(200).json(formatAPIResponse({ status: '200', inviteId: invite.id }));
+  })
+  .get(async (req, res) => {
+    // Get all invites
+
+    const invites = await client.invite.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        company_id: true,
+      },
+    });
+
+    return res.status(200).json(formatAPIResponse({ invites }));
   });
 
-  if (existingUser) {
-    return res
-      .status(403)
-      .json(formatAPIResponse({ status: '403', detail: 'email already in use' }));
-  }
-
-  // Create sha256 hash of the user's name, email, the current date, and a random string
-  const tokenHash = await crypto
-    .createHash('sha256')
-    .update(`${name}${email}${new Date().toISOString()}${crypto.randomBytes(16).toString('hex')}`)
-    .digest();
-
-  // Convert the hash to a hex string
-  const token = Array.from(new Uint8Array(tokenHash))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-
-  // Create the invite
-  const invite = await client.invite.create({
-    data: {
-      email,
-      name,
-      company_id: companyId,
-      token,
-      expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-    },
-  });
-
-  return res.status(200).json(formatAPIResponse({ status: '200', inviteId: invite.id }));
-});
