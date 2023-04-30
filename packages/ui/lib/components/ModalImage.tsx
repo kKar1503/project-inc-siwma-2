@@ -28,30 +28,6 @@ type DialogProps = {
   img: string;
 };
 
-// function BootstrapDialogTitle(props: DialogProps) {
-//   const { modalButtonName, modalButtonStyle, children, onClose, ...other } = props;
-
-//   return (
-//     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-//       {children}
-//       {onClose ? (
-//         <IconButton
-//           aria-label="close"
-//           onClick={onClose}
-//           sx={{
-//             position: 'absolute',
-//             right: 8,
-//             top: 8,
-//             color: (theme) => theme.palette.grey[500],
-//           }}
-//         >
-//           <CloseIcon />
-//         </IconButton>
-//       ) : null}
-//     </DialogTitle>
-//   );
-// }
-
 const ModalImage = (props: DialogProps) => {
   const { modalButtonName, modalButtonStyle, title, description, img } = props;
   const [open, setOpen] = React.useState(false);
