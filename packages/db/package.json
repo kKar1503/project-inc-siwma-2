@@ -5,7 +5,7 @@
   "scripts": {
     "prisma:generate": "prisma generate",
     "prisma:patchCasing": "node ./prisma/scripts/casingFix.js && prisma format",
-    "prisma:compile": "tsc ./prisma/scripts/casingFix.ts",
+    "prisma:compile": "tsc --project tsconfig.compile.json",
     "prisma:seed": "prisma db seed"
   },
   "prisma": {
