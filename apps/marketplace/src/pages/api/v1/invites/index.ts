@@ -3,7 +3,7 @@ import client from '@inc/db';
 import { z } from 'zod';
 import crypto from 'crypto';
 
-export const inviteCreationRequestBody = z.object({
+const inviteCreationRequestBody = z.object({
   email: z.string(),
   name: z.string(),
   // company is a number but is sent as a string because it is a query param
@@ -75,9 +75,35 @@ export default apiHandler(
     return res.status(200).json(formatAPIResponse({ status: '200', inviteId: invite.id }));
   })
   .get(async (req, res) => {
-    // Get all invites
+
+    const getInvitesRequestBody = z.object({
+      lastIdPointer: z.number().optional(),
+      limit: z.number().optional(),
+    });
+
+    let lastIdPointer: number | undefined;
+    let limit: number | undefined;
+
+    if (req.body) {
+      const parsedBody = getInvitesRequestBody.safeParse(req.body);
+
+      if (!parsedBody.success) {
+        return res
+          .status(422)
+          .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
+      }
+
+      lastIdPointer = parsedBody.data?.lastIdPointer;
+      limit = parsedBody.data?.limit;
+    }
 
     const invites = await client.invite.findMany({
+      where: {
+        id: {
+          gt: lastIdPointer,
+        },
+      },
+      take: limit,
       select: {
         id: true,
         email: true,
@@ -88,4 +114,3 @@ export default apiHandler(
 
     return res.status(200).json(formatAPIResponse({ invites }));
   });
-
