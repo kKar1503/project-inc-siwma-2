@@ -1,4 +1,4 @@
-import { Regions, S3Lib } from 's3-simplified/dist';
+import { Regions, S3Lib } from 's3-simplified';
 
 const s3Connection = new S3Lib({
     accessKey:{
