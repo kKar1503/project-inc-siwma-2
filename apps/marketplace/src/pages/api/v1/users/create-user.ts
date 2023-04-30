@@ -1,11 +1,13 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
-import client, { UserContacts } from '@inc/db';
+import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
+
+const phoneRegex = /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/;
 
 export const userCreationRequestBody = z.object({
   token: z.string(),
-  mobileNumber: z.string(),
+  mobileNumber: z.string().regex(phoneRegex, 'Invalid Number!'),
   password: z.string(),
 });
 
@@ -53,6 +55,11 @@ export default apiHandler(
     return res.status(403).json(formatAPIResponse({ status: '403', detail: 'invalid token' }));
   }
 
+  // Verify invite expiry
+  if (invite.expiry < new Date()) {
+    return res.status(403).json(formatAPIResponse({ status: '403', detail: 'expired token' }));
+  }
+
   // Check if the mobile number is already in use
   const existingUser = await client.users.findMany({
     where: {
@@ -73,7 +80,7 @@ export default apiHandler(
       name: invite.name,
       phone: mobileNumber,
       password,
-      contact: UserContacts.phone,
+      contact: 'phone',
       companies: { connect: { id: invite.companyId } },
     },
   });
@@ -87,3 +94,4 @@ export default apiHandler(
 
   return res.status(200).json(formatAPIResponse({ status: '201', userId: user.id }));
 });
+
