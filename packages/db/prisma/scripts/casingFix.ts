@@ -1,10 +1,7 @@
-// @ts-expect-error Error exist from us not adding the mapping of node types
-import * as fs from 'fs';
-// @ts-expect-error Error exist from us not adding the mapping of node types
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as pluralize from 'pluralize';
 
-// @ts-expect-error Error exist from us not adding the mapping of node types
 const PRISMA_FILE_PATH = path.join(__dirname, '../schema.prisma');
 console.log('editing the file at :' + PRISMA_FILE_PATH);
 
