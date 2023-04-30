@@ -7,6 +7,7 @@ import { Readable } from 'stream';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
 import { ParamError } from '@/errors';
+import * as process from 'process';
 
 export interface AdvertisementPayload {
   companyId: string,
@@ -16,7 +17,7 @@ export interface AdvertisementPayload {
   link: string
 }
 
-export const AdvertisementBucket = 'advertisements';
+export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
 export const validateAdvertisementPayload = (payload: AdvertisementPayload) => {
   if (!payload.companyId) {
@@ -48,14 +49,22 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     throw new ParamError();
   }
 
+  let companyId: number;
+  try {
+    companyId = parseInt(payload.companyId, 10);
+  } catch (e) {
+    throw new ParamError();
+  }
+
   let bucket: S3BucketService;
   try {
     bucket = await s3Connection.getBucket(AdvertisementBucket);
   } catch (e) {
     // access key don't have access to bucket or bucket doesn't exist
-    return res.status(500).json(formatAPIResponse({
+     res.status(500).json(formatAPIResponse({
       details: 'failed to connect to bucket',
     }));
+    return;
   }
 
   const s3ObjectBuilder = new S3ObjectBuilder(payload.image);
@@ -65,14 +74,15 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     s3Object = await bucket.createObject(s3ObjectBuilder);
   } catch (e: any | { name: string }) {
-    return res.status(500).json(formatAPIResponse({
+    res.status(500).json(formatAPIResponse({
       details: 'image already exists',
     }));
+    return;
   }
   const url = await s3Object.generateLink();
   const advertisement = await PrismaClient.advertisements.create({
     data: {
-      companyId: payload.companyId,
+      companyId,
       image: url,
       endDate: new Date(payload.endDate),
       description: payload.description,

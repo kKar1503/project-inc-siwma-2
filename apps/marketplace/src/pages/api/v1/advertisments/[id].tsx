@@ -41,7 +41,8 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   res.status(200).json(formatAPIResponse(advertisement));
 };
 
-const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
+const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
+  const isAdmin = (req.token?.user.permissions === true);
   const reqId = req.query.id as string;
   const id = parseInt(reqId, 10);
 
@@ -69,9 +70,10 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
       bucket = await s3Connection.getBucket(AdvertisementBucket);
     } catch (e) {
       // access key don't have access to bucket or bucket doesn't exist
-      return res.status(500).json(formatAPIResponse({
+      res.status(500).json(formatAPIResponse({
         details: 'failed to connect to bucket',
       }));
+      return;
     }
 
     const s3ObjectBuilder = new S3ObjectBuilder(payload.image);
@@ -89,15 +91,22 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
       s3Object = newS3Object;
 
     } catch (e: any | { name: string }) {
-      return res.status(500).json(formatAPIResponse({
+      res.status(500).json(formatAPIResponse({
         details: 'image already exists',
       }));
+      return;
     }
     url = await s3Object.generateLink();
   }
 
-
-  const advertisement = await PrismaClient.advertisements.update({
+  const updated = await PrismaClient.advertisements.update({
+    select: {
+      companyId: true,
+      image: true,
+      endDate: isAdmin,
+      description: true,
+      link: true,
+    },
     data: {
       companyId: payload.companyId || advertisement.companyId,
       image: url,
@@ -110,10 +119,8 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
-  const advertisementId = advertisement.id;
-
   res.status(201).json(formatAPIResponse({
-    advertisementId,
+    updated,
   }));
 
 };
@@ -147,9 +154,10 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
     bucket = await s3Connection.getBucket(AdvertisementBucket);
   } catch (e) {
     // access key don't have access to bucket or bucket doesn't exist
-    return res.status(500).json(formatAPIResponse({
+     res.status(500).json(formatAPIResponse({
       details: 'failed to connect to bucket',
     }));
+    return;
   }
 
   await bucket.deleteObject(advertisement.image);
