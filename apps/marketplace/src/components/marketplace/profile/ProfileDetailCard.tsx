@@ -20,12 +20,11 @@ export type ProfileDetailCardProps = {
   email: string;
   company: string;
   profilePic: string;
-  mobileNumber: string;
-  contactMethod: string;
+  mobileNumber: number;
+  telegramUsername: string;
   bio: string;
   rating: number;
-  href: string;
-  reviews: string;
+  reviews: number;
 };
 
 const ProfileDetailCard = ({
@@ -35,10 +34,9 @@ const ProfileDetailCard = ({
   company,
   profilePic,
   mobileNumber,
-  contactMethod,
+  telegramUsername,
   bio,
   rating,
-  href,
   reviews,
 }: ProfileDetailCardProps) => (
   <Card sx={{ width: 300, display: 'inline-grid' }}>
@@ -58,7 +56,6 @@ const ProfileDetailCard = ({
       <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
         {name}
       </Typography>
-      {/* admin only */}
       <Typography variant="body2" color="text.secondary">
         {company}
       </Typography>
@@ -107,7 +104,7 @@ const ProfileDetailCard = ({
         <TelegramIcon
           sx={{ backgroundColor: '#0088cc', color: 'white', borderRadius: 5, p: 0.5 }}
         />
-        <Typography sx={{ ml: 1 }}>{contactMethod}</Typography>
+        <Typography sx={{ ml: 1 }}>{telegramUsername}</Typography>
       </Box>
       <Box
         sx={{
@@ -119,7 +116,7 @@ const ProfileDetailCard = ({
         <WhatsAppIcon
           sx={{ backgroundColor: '#25D366', color: 'white', borderRadius: 5, p: 0.5 }}
         />
-        <Typography sx={{ ml: 1 }}> +65 {mobileNumber} </Typography>
+        <Typography sx={{ ml: 1, fontWeight:'bold' }}> +65 {mobileNumber} </Typography>
       </Box>
     </CardContent>
     <CardActions sx={{ flexDirection: 'column' }}>
