@@ -6,7 +6,7 @@ concurrency:
 
 on:
   workflow_dispatch:
-  pull_request:
+  push:
     branches: [dev]
 
 jobs:
@@ -55,12 +55,3 @@ jobs:
           echo "public_ip_address=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicIpAddress' --output text)" >> "$GITHUB_ENV"
           echo "Public DNS: ${{ env.public_dns_name }}"
           echo "Public IP: ${{ env.public_ip_address }}"
-
-      - name: Output Public DNS and IP into PR
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            # Public DNS and IP
-            Public DNS: ${{ env.public_dns_name }}
-            Public IP: ${{ env.public_ip_address }}
