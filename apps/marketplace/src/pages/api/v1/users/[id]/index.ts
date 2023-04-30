@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
-import client, { UserContacts } from '@inc/db';
+import client, { usercontacts } from '@inc/db';
 
 // eslint-disable-next-line import/no-named-as-default
 import apiGuardMiddleware from '@/utils/api/server/middlewares/apiGuardMiddleware';
@@ -48,11 +48,11 @@ export default apiHandler({
         id: true,
         name: true,
         email: true,
-        companyId: true,
-        createdAt: true,
+        company_id: true,
+        created_at: true,
         enabled: true,
-        profilePicture: true,
-        usersComments: isAdmin,
+        profile_picture: true,
+        users_comments: isAdmin,
         phone: true,
         contact: true,
       },
@@ -77,7 +77,7 @@ export default apiHandler({
     const { id } = parsedQuery.data;
     const { name, email, company, profilePicture, mobileNumber, contactMethod } = parsedBody.data;
 
-    if (!(contactMethod as UserContacts)) {
+    if (!(contactMethod as usercontacts)) {
       return res
         .status(422)
         .json(formatAPIResponse({ status: '422', detail: 'invalid contact method' }));
@@ -98,10 +98,10 @@ export default apiHandler({
       data: {
         name,
         email,
-        companyId: Number(company),
-        profilePicture,
+        company_id: Number(company),
+        profile_picture: profilePicture,
         phone: mobileNumber,
-        contact: contactMethod as UserContacts,
+        contact: contactMethod as usercontacts,
       },
     });
 

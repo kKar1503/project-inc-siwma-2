@@ -37,7 +37,6 @@ export default apiHandler(
 
   const companyId = Number(company);
 
-  // Check if the email is already in use
   const existingUser = await client.users.findFirst({
     where: {
       email,
@@ -66,7 +65,7 @@ export default apiHandler(
     data: {
       email,
       name,
-      companyId,
+      company_id: companyId,
       token,
       expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     },

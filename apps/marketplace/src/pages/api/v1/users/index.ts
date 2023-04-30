@@ -121,7 +121,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         phone: mobileNumber,
         password: hashedPassword,
         contact: 'phone',
-        companies: { connect: { id: invite.companyId } },
+        companies: { connect: { id: invite.company_id } },
       },
     });
 
