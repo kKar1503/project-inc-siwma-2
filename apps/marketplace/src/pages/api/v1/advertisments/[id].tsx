@@ -6,8 +6,11 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import s3Connection from '@/utils/s3Connection';
 import { IS3Object, S3BucketService, S3ObjectBuilder } from 's3-simplified';
 import { AdvertisementBucket, AdvertisementPayload } from '@api/v1/advertisments/index';
+import { APIRequestType } from '@/types/api-types';
 
-const GET = async (req: NextApiRequest, res: NextApiResponse) => {
+const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
+  const isAdmin = (req.token?.user.permissions === true);
+
   const reqId = req.query.id as string;
   const id = parseInt(reqId, 10);
 
@@ -16,8 +19,18 @@ const GET = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const advertisement = await PrismaClient.advertisements.findUnique({
+    select: {
+      companyId: true,
+      image: true,
+      endDate: isAdmin,
+      description: true,
+      link: true,
+    },
     where: {
       id,
+      endDate: {
+        gte: new Date(),
+      },
     },
   });
 

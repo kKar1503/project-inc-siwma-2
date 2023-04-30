@@ -5,6 +5,7 @@ import { IS3Object, S3BucketService, S3ObjectBuilder } from 's3-simplified';
 import s3Connection from '@/utils/s3Connection';
 import { Readable } from 'stream';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { APIRequestType } from '@/types/api-types';
 
 export interface AdvertisementPayload {
   companyId: string,
@@ -87,8 +88,22 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   }));
 };
 
-const GET = async (req: NextApiRequest, res: NextApiResponse) => {
-  const advertisements = await PrismaClient.advertisements.findMany();
+const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
+  const isAdmin = (req.token?.user.permissions === true);
+  const advertisements = await PrismaClient.advertisements.findMany({
+    select: {
+      companyId: true,
+      image: true,
+      endDate: isAdmin,
+      description: true,
+      link: true,
+    },
+    where: {
+      endDate: {
+        gte: new Date(),
+      },
+    },
+  });
   res.status(200).json(formatAPIResponse(advertisements));
 };
 
