@@ -1,7 +1,10 @@
+// @ts-expect-error Error exist from us not adding the mapping of node types
 import * as fs from 'fs';
+// @ts-expect-error Error exist from us not adding the mapping of node types
 import * as path from 'path';
 import * as pluralize from 'pluralize';
 
+// @ts-expect-error Error exist from us not adding the mapping of node types
 const PRISMA_FILE_PATH = path.join(__dirname, '../schema.prisma');
 console.log('editing the file at :' + PRISMA_FILE_PATH);
 
@@ -172,7 +175,7 @@ function parseLine(line: string, persistentData: {
 
   if(fixedLine.includes('@relation("')){
     //get the relation name
-    const relationName = fixedLine.match(/@relation\("(\w+)"/)[1];
+    const relationName = fixedLine.match(/@relation\("(\w+)"/)![1];
     //check if relation name is in camel case
     if(relationName.includes('_')){
       //convert to camel case
@@ -206,7 +209,7 @@ async function fixPrismaFile() {
 
   const textAsArray = text.split('\n');
 
-  const fixedText = [];
+  const fixedText: string[] = [];
 
 
   const persistentData = {
