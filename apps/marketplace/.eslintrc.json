@@ -18,6 +18,11 @@
   "settings": {
     "next": {
       "rootDir": ["."]
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "apps/marketplace"
+      } // this loads <rootdir>/tsconfig.json to eslint
     }
   },
   "rules": {
