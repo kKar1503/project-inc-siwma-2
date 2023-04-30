@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 // eslint-disable-next-line import/no-named-as-default
 import apiGuardMiddleware from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import bcrypt from 'bcryptjs';
+import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@/errors/QueryError';
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
@@ -22,16 +23,10 @@ export default apiHandler({ allowNonAuthenticated: true })
       let limit: number | undefined;
 
       if (req.body) {
-        const parsedBody = getUsersRequestBody.safeParse(req.body);
+        const parsedBody = getUsersRequestBody.parse(req.body);
 
-        if (!parsedBody.success) {
-          return res
-            .status(422)
-            .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
-        }
-
-        lastIdPointer = parsedBody.data?.lastIdPointer;
-        limit = parsedBody.data?.limit;
+        lastIdPointer = parsedBody.lastIdPointer;
+        limit = parsedBody.limit;
       }
 
       const users = await client.users.findMany({
@@ -52,31 +47,19 @@ export default apiHandler({ allowNonAuthenticated: true })
     // Creates a new user from an existing invite
     // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.5t8qrsbif9ei
 
-    const phoneRegex = /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/;
-
     const userCreationRequestBody = z.object({
       token: z.string(),
-      mobileNumber: z.string().regex(phoneRegex, 'Invalid Number!'),
+      mobileNumber: z.string(),
       password: z.string(),
     });
 
     // Parse the request body with zod
-    const parsedBody = userCreationRequestBody.safeParse(req.body);
+    const { token, mobileNumber, password } = userCreationRequestBody.parse(req.body);
 
-    // Exit if the body is invalid
-    if (!parsedBody.success) {
-      return res
-        .status(422)
-        .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
-    }
-
-    // Extract the required fields
-    const { token, mobileNumber, password } = parsedBody.data;
-
-    if (!token || !mobileNumber || !password) {
-      return res
-        .status(422)
-        .json(formatAPIResponse({ status: '422', detail: 'missing required fields' }));
+    const phoneRegex = /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/;
+    // Match the mobile number against the regex
+    if (!phoneRegex.test(req.body.mobileNumber)) {
+      throw new ParamInvalidError('mobileNumber', mobileNumber);
     }
 
     // Check if the token exists
@@ -88,12 +71,17 @@ export default apiHandler({ allowNonAuthenticated: true })
 
     // Check if the invite is valid
     if (!invite) {
-      return res.status(403).json(formatAPIResponse({ status: '403', detail: 'invalid token' }));
+      throw new ParamInvalidError('token', token);
     }
 
     // Verify invite expiry
     if (invite.expiry < new Date()) {
-      return res.status(403).json(formatAPIResponse({ status: '403', detail: 'expired token' }));
+      throw new InvalidRangeError(
+        'expiry',
+        undefined,
+        invite.expiry.toString(),
+        Date.now().toString()
+      );
     }
 
     // Check if the mobile number is already in use
@@ -104,9 +92,7 @@ export default apiHandler({ allowNonAuthenticated: true })
     });
 
     if (existingUser && existingUser.length > 0) {
-      return res
-        .status(403)
-        .json(formatAPIResponse({ status: '422', detail: 'mobile number already in use' }));
+      throw new DuplicateError('mobile number');
     }
 
     // Hash password with bcrrypt and genSalt(10)
@@ -132,5 +118,5 @@ export default apiHandler({ allowNonAuthenticated: true })
       },
     });
 
-    return res.status(200).json(formatAPIResponse({ status: '201', userId: user.id }));
+    return res.status(201).json(formatAPIResponse({ userId: user.id }));
   });
