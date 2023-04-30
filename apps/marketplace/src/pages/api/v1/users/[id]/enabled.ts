@@ -1,6 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
 import client from '@inc/db';
+import { NotFoundError } from '@/errors/QueryError';
 
 // eslint-disable-next-line import/no-named-as-default
 import apiGuardMiddleware from '@/utils/api/server/middlewares/apiGuardMiddleware';
@@ -17,15 +18,7 @@ export default apiHandler({
     allowAdminsOnly: false,
   }),
   async (req, res) => {
-    const parsedBody = userIdSchema.safeParse(req.query);
-
-    if (!parsedBody.success) {
-      return res
-        .status(422)
-        .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
-    }
-
-    const { id } = parsedBody.data;
+    const { id } = userIdSchema.parse(req.query);
 
     // Get user's enabled status
     const fetchedUser = await client.users.findUnique({
@@ -38,7 +31,7 @@ export default apiHandler({
     });
 
     if (!fetchedUser) {
-      return res.status(404).json(formatAPIResponse({ status: '404', detail: 'user not found' }));
+      throw new NotFoundError('User');
     }
 
     const user = await client.users.update({
@@ -51,9 +44,10 @@ export default apiHandler({
     });
 
     if (!user) {
-      return res.status(404).json(formatAPIResponse({ status: '404', detail: 'user not found' }));
+      // This should never happen unless the user is deleted between the two queries
+      throw new NotFoundError('User');
     }
 
-    return res.status(200).json(formatAPIResponse({ status: '200', visible: user.enabled }));
+    return res.status(200).json(formatAPIResponse({ visible: user.enabled }));
   }
 );

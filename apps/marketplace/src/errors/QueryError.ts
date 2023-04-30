@@ -102,3 +102,49 @@ export class ParamInvalidError extends ParamError {
     this.code = ParamInvalidError.code;
   }
 }
+
+/**
+ * Duplicate query/body parameter
+ * @example "A record with the same email already exists"
+ * @param item The item name
+ */
+export class DuplicateError extends QueryError {
+  public static readonly status = 422;
+  public static readonly code = 2006;
+
+  constructor(parameter: string) {
+    super();
+    this.message = `A record with the same ${parameter} already exists`;
+    this.status = DuplicateError.status;
+    this.code = DuplicateError.code;
+  }
+}
+
+/**
+ * Invalid range for query/body parameter
+ * @example "Invalid range for 'expiry', expected values up to '25', but got '30'"
+ * @param parameter The parameter name
+ * @param maximum The maximum value of the parameter (optional)
+ * @param minimum The minimum value of the parameter (optional)
+ * @param actual The actual value of the parameter
+ */
+
+export class InvalidRangeError extends ParamError {
+  public static readonly status = 422;
+  public static readonly code = 2007;
+
+  constructor(parameter: string, maximum?: string, minimum?: string, actual?: string) {
+    // Construct message
+    const message = `Invalid range for '${parameter}'${
+      maximum ? `, expected values up to '${maximum}'` : ''
+    }${minimum ? `, expected values from '${minimum}'` : ''}${
+      actual ? `, but got '${actual}'` : ''
+    }`;
+
+    super();
+    this.message = message;
+    this.status = InvalidRangeError.status;
+    this.code = InvalidRangeError.code;
+  }
+}
+

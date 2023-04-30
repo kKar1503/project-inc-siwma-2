@@ -1,6 +1,8 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
 import client, { usercontacts } from '@inc/db';
+import { ParamInvalidError, NotFoundError } from '@/errors/QueryError';
+import { ForbiddenError } from '@/errors/AuthError';
 
 // eslint-disable-next-line import/no-named-as-default
 import apiGuardMiddleware from '@/utils/api/server/middlewares/apiGuardMiddleware';
@@ -8,8 +10,6 @@ import apiGuardMiddleware from '@/utils/api/server/middlewares/apiGuardMiddlewar
 const userIdSchema = z.object({
   id: z.string(),
 });
-
-const phoneRegex = /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/;
 
 const userDetailsSchema = z.object({
   name: z.string(),
@@ -20,7 +20,7 @@ const userDetailsSchema = z.object({
     .optional()
     .refine((val) => !Number.isNaN(Number(val))),
   profilePicture: z.string().optional(),
-  mobileNumber: z.string().regex(phoneRegex, 'Invalid Number!'),
+  mobileNumber: z.string(),
   contactMethod: z.string(),
 });
 
@@ -30,15 +30,7 @@ export default apiHandler({
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const parsedBody = userIdSchema.safeParse(req.query);
-
-    if (!parsedBody.success) {
-      return res
-        .status(422)
-        .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
-    }
-
-    const { id } = parsedBody.data;
+    const { id } = userIdSchema.parse(req.query);
 
     const user = await client.users.findUnique({
       where: {
@@ -58,37 +50,27 @@ export default apiHandler({
       },
     });
 
-    return res
-      .status(200)
-      .json(formatAPIResponse({ status: '200', detail: 'success', data: user }));
+    return res.status(200).json(formatAPIResponse({ detail: 'success', data: user }));
   })
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const parsedBody = userDetailsSchema.safeParse(req.body);
-    const parsedQuery = userIdSchema.safeParse(req.query);
+    const { id } = userIdSchema.parse(req.query);
+    const { name, email, company, profilePicture, mobileNumber, contactMethod } =
+      userDetailsSchema.parse(req.body);
 
-    if (!parsedBody.success || !parsedQuery.success) {
-      return res
-        .status(422)
-        .json(formatAPIResponse({ status: '422', detail: 'invalid request body' }));
+    const phoneRegex = /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/;
+    // Match the mobile number against the regex
+    if (!phoneRegex.test(req.body.mobileNumber)) {
+      throw new ParamInvalidError('mobileNumber', mobileNumber);
     }
-
-    const { id } = parsedQuery.data;
-    const { name, email, company, profilePicture, mobileNumber, contactMethod } = parsedBody.data;
 
     if (!(contactMethod as usercontacts)) {
-      return res
-        .status(422)
-        .json(formatAPIResponse({ status: '422', detail: 'invalid contact method' }));
+      throw new ParamInvalidError('contactMethod', contactMethod);
     }
 
-    if (!isAdmin && req.token?.user.id !== id) {
-      return res.status(403).json(formatAPIResponse({ status: '403', detail: 'unauthorized' }));
-    }
-
-    if (company && !isAdmin) {
-      return res.status(403).json(formatAPIResponse({ status: '403', detail: 'unauthorized' }));
+    if ((!isAdmin && req.token?.user.id !== id) || (company && !isAdmin)) {
+      throw new ForbiddenError();
     }
 
     const user = await client.users.update({
@@ -106,12 +88,10 @@ export default apiHandler({
     });
 
     if (!user) {
-      return res.status(404).json(formatAPIResponse({ status: '404', detail: 'user not found' }));
+      throw new NotFoundError('User');
     }
 
-    return res
-      .status(200)
-      .json(formatAPIResponse({ status: '200', detail: 'success', data: user }));
+    return res.status(200).json(formatAPIResponse({ detail: 'success', data: user }));
   })
   .delete(
     apiGuardMiddleware({
