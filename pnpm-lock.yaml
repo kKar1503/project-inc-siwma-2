@@ -89,9 +89,6 @@ importers:
       bcrypt:
         specifier: ^5.1.0
         version: 5.1.0
-      bcryptjs:
-        specifier: ^2.4.3
-        version: 2.4.3
       luxon:
         specifier: ^3.3.0
         version: 3.3.0
@@ -150,9 +147,6 @@ importers:
       '@inc/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@types/bcryptjs':
-        specifier: ^2.4.2
-        version: 2.4.2
       '@types/luxon':
         specifier: ^3.3.0
         version: 3.3.0
@@ -1449,10 +1443,6 @@ packages:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
     dev: true
 
-  /@types/bcryptjs@2.4.2:
-    resolution: {integrity: sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==}
-    dev: true
-
   /@types/body-parser@1.19.2:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
@@ -1984,10 +1974,6 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
-    dev: false
-
-  /bcryptjs@2.4.3:
-    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
     dev: false
 
   /better-path-resolve@1.0.0:

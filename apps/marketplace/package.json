@@ -8,7 +8,7 @@
     "clean": "rimraf ./.next ./out ./coverage ./tsconfig.tsbuildinfo ./node_modules/.cache",
     "dev": "next dev",
     "lint": "next lint",
-    "lint:type": "tsc --noEmit --incremental false",    
+    "lint:type": "tsc --noEmit --incremental false",
     "share-static-hardlink": "rimraf ./public/shared && syncdir ../../static/assets ./public/shared --copy",
     "share-static-symlink": "rimraf ./public/shared && symlink-dir ../../static/assets ./public/shared",
     "serve": "next start"
@@ -26,7 +26,6 @@
     "@prisma/nextjs-monorepo-workaround-plugin": "^4.13.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
-    "bcryptjs": "^2.4.3",
     "luxon": "^3.3.0",
     "next": "13.2.4",
     "next-auth": "^4.22.1",
@@ -48,7 +47,6 @@
   "devDependencies": {
     "@inc/configs": "workspace:*",
     "@inc/types": "workspace:*",
-    "@types/bcryptjs": "^2.4.2",
     "@types/luxon": "^3.3.0",
     "@types/node": "18.15.3",
     "@types/react": "18.0.28",
