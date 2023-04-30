@@ -1,9 +1,9 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient, {
-    Listing,
-    ListingImages,
-    ListingType,
-    ListingsParametersValue,
+  listing,
+  listing_images,
+  listingtype,
+  listings_parameters_value,
 } from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
@@ -26,23 +26,23 @@ type Parameter = {
 
 // Define the type of the response object
 export type ListingResponse = {
-    id: string;
-    name: string;
-    description: string;
-    price: Decimal;
-    unitPrice?: boolean;
-    negotiable?: boolean;
-    categoryId: string;
-    type: ListingType;
-    active: boolean;
-    owner: string;
+  id: string;
+  name: string;
+  description: string;
+  price: Decimal;
+  unitPrice?: boolean;
+  negotiable?: boolean;
+  categoryId: string;
+  type: listingtype;
+  active: boolean;
+  owner: string;
 };
 
 // -- Helper functions -- //
 
-export function formatListingResponse($listings: Listing | Listing[]) {
-    // Initialise the listings array
-    let listings = $listings;
+export function formatListingResponse($listings: listing | listing[]) {
+  // Initialise the listings array
+  let listings = $listings;
 
     // Check if the listing is not an array
     if (!Array.isArray(listings)) {
@@ -50,34 +50,34 @@ export function formatListingResponse($listings: Listing | Listing[]) {
         listings = [listings];
     }
 
-    // Construct the result
-    const result = listings.map((listing) => ({
-        id: listing.id.toString(),
-        name: listing.name,
-        description: listing.description,
-        price: listing.price,
-        unitPrice: listing.unitPrice,
-        negotiable: listing.negotiable,
-        categoryId: listing.categoryId.toString(),
-        listingType: listing.type,
-        owner: listing.owner,
-        active: listing.active,
-    }));
+  // Construct the result
+  const result = listings.map((listing) => ({
+    id: listing.id.toString(),
+    name: listing.name,
+    description: listing.description,
+    price: listing.price,
+    unitPrice: listing.unit_price,
+    negotiable: listing.negotiable,
+    categoryId: listing.category_id.toString(),
+    listingType: listing.type,
+    owner: listing.owner,
+    active: listing.active,
+  }));
 
     return formatAPIResponse(result);
 }
 
 export const listingsRequestBody = z.object({
-    // Define the request body schema
-    name: z.string(),
-    description: z.string(),
-    price: z.number(),
-    unitPrice: z.boolean().optional(),
-    negotiable: z.boolean().optional(),
-    categoryId: z.number(),
-    type: z.nativeEnum(ListingType),
-    owner: z.string(),
-    active: z.boolean(),
+  // Define the request body schema
+  name: z.string(),
+  description: z.string(),
+  price: z.number(),
+  unitPrice: z.boolean().optional(),
+  negotiable: z.boolean().optional(),
+  categoryId: z.number(),
+  type: z.nativeEnum(listingtype),
+  owner: z.string(),
+  active: z.boolean(),
 });
 
 export default apiHandler()
