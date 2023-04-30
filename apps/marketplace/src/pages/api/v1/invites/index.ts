@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
 import { z } from 'zod';
 import crypto from 'crypto';
@@ -7,14 +7,10 @@ export const inviteCreationRequestBody = z.object({
   email: z.string(),
   name: z.string(),
   // company is a number but is sent as a string because it is a query param
-  company: z.string().refine((val) => !Number.isNaN(Number(val)), {
-    message: 'company must be a number',
-  }),
+  company: z.string()
 });
 
 export default apiHandler(
-  // TODO: Change this to false
-  { allowNonAuthenticated: true }
 ).post(async (req, res) => {
   // Creates a new invite
   // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.ifiq27spo70n
@@ -28,6 +24,12 @@ export default apiHandler(
   }
 
   const { email, name, company } = parsedBody.data;
+
+  if (parseToNumber(company) === null) {
+    return res
+      .status(422)
+      .json(formatAPIResponse({ status: '422', detail: 'company id must be a number' }));
+  }
 
   if (!email || !name || !company) {
     return res

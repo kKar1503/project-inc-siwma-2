@@ -132,5 +132,5 @@ export default apiHandler({ allowNonAuthenticated: true })
       },
     });
 
-    return res.status(200).json(formatAPIResponse({ status: '201', userId: user.id }));
+    return res.status(201).json(formatAPIResponse({ userId: user.id }));
   });
