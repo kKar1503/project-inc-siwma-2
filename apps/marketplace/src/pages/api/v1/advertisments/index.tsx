@@ -1,6 +1,7 @@
 import {apiHandler, formatAPIResponse} from '@/utils/api';
-import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiRequest, NextApiResponse} from 'next';
 import PrismaClient from '@inc/db';
+
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
 
 }

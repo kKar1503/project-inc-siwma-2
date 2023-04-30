@@ -1,8 +1,8 @@
 import {apiHandler, formatAPIResponse} from '@/utils/api';
-import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiRequest, NextApiResponse} from 'next';
 import PrismaClient from '@inc/db';
 import {NotFoundError} from '@/errors';
-import apiGuardMiddleware from "@/utils/api/server/middlewares/apiGuardMiddleware";
+import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
 const GET = async (req: NextApiRequest, res: NextApiResponse) => {
     const reqId = req.query.id as string;
