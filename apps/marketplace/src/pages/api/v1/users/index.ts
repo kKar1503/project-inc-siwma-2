@@ -9,6 +9,7 @@ export default apiHandler({allowNonAuthenticated: true})
   .get(
     apiGuardMiddleware({
       allowNonAuthenticated: false,
+      allowAdminsOnly: true,
     }),
     async (req: NextApiRequest, res: NextApiResponse) => {
       const getUsersRequestBody = z.object({
