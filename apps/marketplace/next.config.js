@@ -10,6 +10,22 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: process.env.NEXT_BUILD_OPTION === 'ignoreType',
   },
+  eslint: {
+    ignoreDuringBuilds: process.env.NEXT_ESLINT_OPTION === 'ignoreLint',
+  },
+  output: 'standalone',
+  outputFileTracing: process.env.NODE_ENV === 'production',
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = { ...config.resolve.fallback, fs: false };
+    }
+
+    if (isServer) {
+      config.plugins.push(new PrismaPlugin());
+    }
+
+    return config;
+  },
   images: {
     domains:
       process.env.NODE_ENV === 'development'
@@ -23,15 +39,6 @@ const nextConfig = {
             'via.placeholder.com',
           ]
         : [],
-  },
-  webpack: (config, { isServer }) => {
-    const modifiedConfig = config;
-
-    if (isServer) {
-      modifiedConfig.plugins = [...config.plugins, new PrismaPlugin()];
-    }
-
-    return modifiedConfig;
   },
 };
 
