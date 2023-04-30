@@ -1,0 +1,132 @@
+import * as React from 'react';
+import LogoutIcon from '@mui/icons-material/Logout';
+import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
+import LockIcon from '@mui/icons-material/Lock';
+import EditNotificationsIcon from '@mui/icons-material/EditNotifications';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+
+export default function Profile() {
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
+    React.useState<null | HTMLElement>(null);
+
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
+
+  const handleSettingsOpen = () => {
+
+  }
+
+  const menuId = 'primary-search-account-menu';
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      
+      <Typography
+          fontSize={10}
+          color={'#424242'}
+          padding={'0.5rem'}
+          paddingRight={'6rem'}
+      >
+        Hi, Name!
+      </Typography>
+
+      <Divider />
+
+      <MenuItem onClick={handleMenuClose}>
+        <AccountCircle sx={{paddingRight: '1rem', fontSize: '16px'}}/>
+        <Typography
+          fontSize={10}
+          color={'#424242'}
+        >
+          Profile
+        </Typography>
+      </MenuItem>
+
+      <MenuItem onClick={handleMenuClose}>
+        <EditIcon sx={{paddingRight: '1rem', fontSize: '16px'}}/>
+        <Typography
+          fontSize={10}
+          color={'#424242'}
+        >
+          Edit Profile
+        </Typography>
+      </MenuItem>
+
+      <MenuItem onClick={handleMenuClose}>
+        <LockIcon sx={{paddingRight: '1rem', fontSize: '16px'}}/>
+        <Typography
+          fontSize={10}
+          color={'#424242'}
+        >
+          Change Password
+        </Typography>
+      </MenuItem>
+
+      <MenuItem onClick={handleMenuClose}>
+        <EditNotificationsIcon sx={{paddingRight: '1rem', fontSize: '16px'}}/>
+        <Typography
+          fontSize={10}
+          color={'#424242'}
+        >
+          Notification Preference
+        </Typography>
+      </MenuItem>
+
+      <MenuItem onClick={handleMenuClose}>
+        <LogoutIcon sx={{paddingRight: '1rem', fontSize: '16px'}}/>
+        <Typography
+          fontSize={10}
+          color={'#424242'}
+        >
+          Log Out
+        </Typography>
+      </MenuItem>
+
+    </Menu>
+  );
+  return (
+    <>
+      <IconButton size="medium" onClick={handleProfileMenuOpen} sx={{marginLeft: '1rem'}}>
+        <AccountCircle sx={{color: '#424242', fontSize: '16px'}}/>
+      </IconButton>
+
+      {renderMenu}
+    </>
+  )
+}
