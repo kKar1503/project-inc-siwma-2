@@ -13,6 +13,15 @@ importers:
       nx:
         specifier: 15.9.2
         version: 15.9.2
+      rimraf:
+        specifier: ^5.0.0
+        version: 5.0.0
+      symlink-dir:
+        specifier: ^5.1.1
+        version: 5.1.1
+      sync-directory:
+        specifier: ^6.0.4
+        version: 6.0.4
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
@@ -186,15 +195,6 @@ importers:
       prisma:
         specifier: ^4.12.0
         version: 4.12.0
-      rimraf:
-        specifier: ^5.0.0
-        version: 5.0.0
-      symlink-dir:
-        specifier: ^5.1.1
-        version: 5.1.1
-      sync-directory:
-        specifier: ^6.0.4
-        version: 6.0.4
       typescript:
         specifier: 5.0.2
         version: 5.0.2
@@ -4111,7 +4111,7 @@ packages:
     hasBin: true
     dependencies:
       foreground-child: 3.1.1
-      jackspeak: 2.1.0
+      jackspeak: 2.1.1
       minimatch: 9.0.0
       minipass: 5.0.0
       path-scurry: 1.7.0
@@ -4539,11 +4539,11 @@ packages:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
 
-  /jackspeak@2.1.0:
-    resolution: {integrity: sha512-DiEwVPqsieUzZBNxQ2cxznmFzfg/AMgJUjYw5xl6rSmCxAQXECcbSdwcLM6Ds6T09+SBfSNCGPhYUoQ96P4h7A==}
+  /jackspeak@2.1.1:
+    resolution: {integrity: sha512-juf9stUEwUaILepraGOWIJTLwg48bUnBmRqd2ln2Os1sW987zeoj/hzhbvRB95oMuS2ZTpjULmdwHNX4rzZIZw==}
     engines: {node: '>=14'}
     dependencies:
-      cliui: 7.0.4
+      cliui: 8.0.1
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
     dev: true
