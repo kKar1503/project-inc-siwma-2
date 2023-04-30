@@ -38,15 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3ObjectBuilder = void 0;
 var metadata_1 = require("../misc/metadata");
-var generateUUID_1 = require("../../utils/generateUUID");
+var generateHash_1 = require("../../utils/generateHash");
 var fileTypeParser_1 = require("../../utils/fileTypeParser");
 var convertToBuffer_1 = require("../../utils/convertToBuffer");
 var S3ObjectBuilder = /** @class */ (function () {
     function S3ObjectBuilder(data, metadata) {
         if (metadata === void 0) { metadata = new metadata_1.Metadata(); }
         this.metadata = metadata;
-        if (this.UUID === undefined)
-            this.UUID = (0, generateUUID_1.generateUUID)();
         this.data = new BufferManager(data);
     }
     Object.defineProperty(S3ObjectBuilder.prototype, "Body", {
@@ -105,16 +103,15 @@ var S3ObjectBuilder = /** @class */ (function () {
     };
     Object.defineProperty(S3ObjectBuilder.prototype, "UUID", {
         get: function () {
-            var uuid = this.metadata.get("Content-Disposition");
+            var _this = this;
+            var uuid = this.metadata.get("content-disposition");
             if (uuid)
+                return new Promise(function (resolve) { return resolve(uuid); });
+            return this.data.getBuffer().then(function (buffer) {
+                var uuid = (0, generateHash_1.generateHash)(buffer);
+                _this.metadata.set("content-disposition", uuid);
                 return uuid;
-            var newUuid = (0, generateUUID_1.generateUUID)();
-            this.UUID = newUuid;
-            return newUuid;
-        },
-        set: function (value) {
-            if (value)
-                this.metadata.set("Content-Disposition", value);
+            });
         },
         enumerable: false,
         configurable: true

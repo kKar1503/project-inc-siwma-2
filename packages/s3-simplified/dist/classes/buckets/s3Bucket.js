@@ -54,13 +54,14 @@ var S3Bucket = /** @class */ (function () {
             var s3ObjectId, size;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        s3ObjectId = this.internal.getS3ObjectId(s3Object, this.config.objectCreation);
-                        return [4 /*yield*/, this.assertNoConflicts(s3ObjectId)];
+                    case 0: return [4 /*yield*/, this.internal.getS3ObjectId(s3Object, this.config.objectCreation)];
                     case 1:
+                        s3ObjectId = _a.sent();
+                        return [4 /*yield*/, this.assertNoConflicts(s3ObjectId)];
+                    case 2:
                         _a.sent();
                         return [4 /*yield*/, s3Object.DataSize];
-                    case 2:
+                    case 3:
                         size = _a.sent();
                         if (size === undefined)
                             throw new Error("Data size is undefined");

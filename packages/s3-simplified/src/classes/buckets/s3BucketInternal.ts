@@ -104,10 +104,10 @@ export class S3BucketInternal {
         return `${this.bucketUrl}/${key}`;
     }
 
-    public getS3ObjectId(s3ObjectBuilder: S3ObjectBuilder, objectConfig: ObjectCreationConfig): string {
+    public async getS3ObjectId(s3ObjectBuilder: S3ObjectBuilder, objectConfig: ObjectCreationConfig): Promise<string> {
         const metadata = s3ObjectBuilder.Metadata.asRecord();
         if (metadata["identifier"]) return metadata["identifier"];
-        const uuid = s3ObjectBuilder.UUID;
+        const uuid = await s3ObjectBuilder.UUID;
         const ext = s3ObjectBuilder.Extension; // This will generate the extension if it doesn't exist, so we call it even if we don't need it.
         const id = (objectConfig.appendFileTypeToKey) ? uuid + "." + ext : uuid;
         metadata["identifier"] = id;
@@ -116,7 +116,7 @@ export class S3BucketInternal {
 
     public async createObject_Single(s3ObjectBuilder: S3ObjectBuilder, config: Config): Promise<IS3Object> {
         const objectConfig = config.objectCreation;
-        const id = this.getS3ObjectId(s3ObjectBuilder, objectConfig);
+        const id = await this.getS3ObjectId(s3ObjectBuilder, objectConfig);
 
         const command = new PutObjectCommand({
             Bucket: this.bucketName,
@@ -130,7 +130,7 @@ export class S3BucketInternal {
 
     public async createObject_Multipart(s3ObjectBuilder: S3ObjectBuilder, config: Config): Promise<IS3Object> {
         const objectConfig = config.objectCreation;
-        const id = this.getS3ObjectId(s3ObjectBuilder, objectConfig);
+        const id = await this.getS3ObjectId(s3ObjectBuilder, objectConfig);
         const partSize = objectConfig.multiPartUpload.maxPartSize
         // Multipart upload
         console.log("Using multipart upload")

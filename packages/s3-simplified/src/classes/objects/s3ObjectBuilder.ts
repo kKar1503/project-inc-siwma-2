@@ -1,6 +1,6 @@
 import {Readable} from "stream";
 import {Metadata} from "../misc/metadata";
-import {generateUUID} from "../../utils/generateUUID";
+import {generateHash} from "../../utils/generateHash";
 import {IMetadata} from "../../interfaces";
 import {FileTypeParser} from "../../utils/fileTypeParser";
 import {ConvertToBuffer} from "../../utils/convertToBuffer";
@@ -11,7 +11,6 @@ export class S3ObjectBuilder {
     private data: BufferManager
 
     constructor(data: AcceptedDataTypes, private metadata: Metadata = new Metadata()) {
-        if (this.UUID === undefined) this.UUID = generateUUID();
         this.data = new BufferManager(data);
     }
 
@@ -52,17 +51,16 @@ export class S3ObjectBuilder {
         return fileType;
     }
 
-    public get UUID(): string {
-        const uuid = this.metadata.get("Content-Disposition");
-        if (uuid) return uuid;
-        const newUuid = generateUUID();
-        this.UUID = newUuid;
-        return newUuid;
+    public get UUID(): Promise<string> {
+        const uuid = this.metadata.get("content-disposition");
+        if (uuid) return new Promise<string>(resolve => resolve(uuid));
+        return this.data.getBuffer().then(buffer => {
+            const uuid = generateHash(buffer);
+            this.metadata.set("content-disposition", uuid);
+            return uuid;
+        });
     }
 
-    private set UUID(value: string) {
-        if (value) this.metadata.set("Content-Disposition", value);
-    }
 
     public async AsBuffer(): Promise<Buffer> {
         return await this.data.getBuffer();

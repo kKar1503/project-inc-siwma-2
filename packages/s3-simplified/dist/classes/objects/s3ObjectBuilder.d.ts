@@ -14,8 +14,7 @@ export declare class S3ObjectBuilder {
     get Type(): string | undefined;
     get Extension(): string | undefined;
     private generateExtension;
-    get UUID(): string;
-    private set UUID(value);
+    get UUID(): Promise<string>;
     AsBuffer(): Promise<Buffer>;
 }
 export {};

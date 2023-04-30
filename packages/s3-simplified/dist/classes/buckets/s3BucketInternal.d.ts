@@ -26,7 +26,7 @@ export declare class S3BucketInternal {
     isPublic(): Promise<boolean>;
     generateSignedUrl(key: string, signedUrlConfig: SignedUrlConfig): Promise<string>;
     generatePublicUrl(key: string): string;
-    getS3ObjectId(s3ObjectBuilder: S3ObjectBuilder, objectConfig: ObjectCreationConfig): string;
+    getS3ObjectId(s3ObjectBuilder: S3ObjectBuilder, objectConfig: ObjectCreationConfig): Promise<string>;
     createObject_Single(s3ObjectBuilder: S3ObjectBuilder, config: Config): Promise<IS3Object>;
     createObject_Multipart(s3ObjectBuilder: S3ObjectBuilder, config: Config): Promise<IS3Object>;
     getBucketACL(): Promise<import("@aws-sdk/client-s3").GetBucketAclCommandOutput>;

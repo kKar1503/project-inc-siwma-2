@@ -20,7 +20,7 @@ export class S3Bucket implements S3BucketService {
     }
 
     public async createObject(s3Object: S3ObjectBuilder): Promise<IS3Object> {
-        const s3ObjectId = this.internal.getS3ObjectId(s3Object, this.config.objectCreation);
+        const s3ObjectId = await this.internal.getS3ObjectId(s3Object, this.config.objectCreation);
         await this.assertNoConflicts(s3ObjectId);
         const size = await s3Object.DataSize;
         if (size === undefined) throw new Error("Data size is undefined");
