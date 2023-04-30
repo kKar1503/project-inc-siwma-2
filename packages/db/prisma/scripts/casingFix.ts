@@ -147,8 +147,39 @@ function parseLine(line: string, persistentData: {
   // Changes `fields: [relation_id]` in @relation to camel case
   const relationFieldsMatch = fixedLine.match(/fields:\s\[([\w,\s]+)\]/);
   if (relationFieldsMatch) {
-    const fields = relationFieldsMatch[1];
+    const fields = relationFieldsMatch[1].replace(/\s/g, '');
+
     fixedLine = fixedLine.replace(fields, fixFieldsArrayString(fields));
+    //check again cos replace doesn't replace all
+    const relationFieldsMatch2 = fixedLine.match(/fields:\s\[([\w,\s]+)\]/);
+    if (relationFieldsMatch2) {
+      const fields = relationFieldsMatch2[1].replace(/\s/g, '');
+      fixedLine = fixedLine.replace(fields, fixFieldsArrayString(fields));
+
+      const relationFieldsMatch3 = fixedLine.match(/fields:\s\[([\w,\s]+)\]/);
+      if (relationFieldsMatch3) {
+        const fields = relationFieldsMatch3[1].replace(/\s/g, '');
+        fixedLine = fixedLine.replace(fields, fixFieldsArrayString(fields));
+      }
+    }
+
+
+    if(fixedLine.includes('fields: [refresh_token'))
+    {
+      fixedLine = fixedLine.replace('fields: [refresh_token', 'fields: [refreshToken');
+    }
+  }
+
+  if(fixedLine.includes('@relation("')){
+    //get the relation name
+    const relationName = fixedLine.match(/@relation\("(\w+)"/)[1];
+    //check if relation name is in camel case
+    if(relationName.includes('_')){
+      //convert to camel case
+      const camelCaseRelationName = snakeToCamel(relationName);
+      //replace relation name with camel case
+      fixedLine = fixedLine.replace(relationName, camelCaseRelationName);
+    }
   }
 
   // Changes fields listed in @@index or @@unique to camel case
