@@ -21,6 +21,7 @@
     "@prisma/client": "^4.13.0",
     "@prisma/nextjs-monorepo-workaround-plugin": "^4.13.0",
     "axios": "^1.4.0",
+    "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "luxon": "^3.3.0",
     "next": "13.2.4",
