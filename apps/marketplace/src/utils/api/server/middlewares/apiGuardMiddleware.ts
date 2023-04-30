@@ -12,7 +12,7 @@ import { APIGuardOptions, APIRequestType } from '@/types/api-types';
  */
 async function validateAccessToken(userId: string, token: string) {
   // Retrieve the token from the database
-  const accessToken = await PrismaClient.accessTokens.findFirst({
+  const accessToken = await PrismaClient.access_tokens.findFirst({
     where: {
       token,
     },
