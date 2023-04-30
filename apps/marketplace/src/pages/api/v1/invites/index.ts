@@ -12,10 +12,7 @@ const inviteCreationRequestBody = z.object({
   }),
 });
 
-export default apiHandler(
-  // TODO: Change this to false
-  { allowNonAuthenticated: true }
-)
+export default apiHandler({ allowNonAuthenticated: false, allowAdminsOnly: true })
   .post(async (req, res) => {
     // Creates a new invite
     // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.ifiq27spo70n
@@ -75,7 +72,6 @@ export default apiHandler(
     return res.status(200).json(formatAPIResponse({ status: '200', inviteId: invite.id }));
   })
   .get(async (req, res) => {
-
     const getInvitesRequestBody = z.object({
       lastIdPointer: z.number().optional(),
       limit: z.number().optional(),

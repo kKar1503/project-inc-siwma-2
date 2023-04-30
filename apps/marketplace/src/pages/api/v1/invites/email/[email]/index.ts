@@ -7,7 +7,8 @@ const emailSchema = z.object({
 });
 
 export default apiHandler({
-  allowNonAuthenticated: true,
+  allowNonAuthenticated: false,
+  allowAdminsOnly: true
 }).delete(async (req, res) => {
   const parsedBody = emailSchema.safeParse(req.query);
 
