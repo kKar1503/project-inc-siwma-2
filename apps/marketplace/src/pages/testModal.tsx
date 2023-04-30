@@ -2,21 +2,27 @@ import Head from 'next/head';
 // import { useState } from 'react';
 import { useRouter } from 'next/router';
 import React from 'react';
-import TransitionsModal from '@inc/ui/lib/components/modal';
-import ModalSelect from '@inc/ui/lib/components/modalSelect';
+import TransitionsModal from '@inc/ui/lib/components/Modal';
+import ModalSelect from '@inc/ui/lib/components/ModalSelect';
+import ModalImage from '@inc/ui/lib/components/ModalImage';
 
 const Home = () => {
+  const report = [
+    'Offensive Content/Behavior',
+    'Suspicious Account',
+    'Canceling on Deal',
+    'Mispriced Listings',
+  ];
   const [open, setOpen] = React.useState(false);
   const [leftButtonState, setLeftButtonState] = React.useState(false);
   const [rightButtonState, setRightButtonState] = React.useState(false);
-  const [selectInput, setSelectInput] = React.useState('');
+  const [selectInput, setSelectInput] = React.useState<string | number>('');
   const handleOpen = () => setOpen(true);
   const router = useRouter();
 
   if (leftButtonState === true) {
     router.back();
   }
-
   const style = {
     backgroundColor: '#00C853',
     variant: 'contained',
@@ -36,10 +42,10 @@ const Home = () => {
           modalButtonName="Open"
           modalButtonStyle={style}
           modalType="info"
-          title="Confirmation"
-          content="Once you leave the page, your changes will not be saved."
+          title="Seller has been reported"
+          content=""
           leftButtonText={null} // <= only one button set as null
-          rightButtonText="Stay here"
+          rightButtonText="return to home page"
           leftButtonState={false} // <= only one button, set as false
           rightButtonState={rightButtonState}
           setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
@@ -49,16 +55,25 @@ const Home = () => {
           modalButtonName="Open"
           modalButtonStyle={style}
           modalType="info"
-          title="Make an offer"
+          title="Make An offer"
           content="Enter an alternative amount to offer for the listing below."
           leftButtonText="cancel" // <= only one button set as null
-          rightButtonText="make offer"
+          rightButtonText="Make Offer"
+          dropDownSelect={false}
+          // selectData={report}
           selectInput={selectInput}
           setselectInput={setSelectInput}
           leftButtonState={false} // <= only one button, set as false
           rightButtonState={rightButtonState}
           setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
           setRightButtonState={setRightButtonState}
+        />
+        <ModalImage
+          modalButtonName="Open"
+          modalButtonStyle={style}
+          title="Mild Steel Channel Hot Rolled"
+          description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,"
+          img="https://images.unsplash.com/photo-1520697517317-6767553cc51a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
         />
       </main>
     </>

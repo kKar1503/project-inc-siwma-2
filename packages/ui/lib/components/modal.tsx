@@ -8,23 +8,23 @@
   - rightButtonText (The text for the right button)
   - leftButtonState (The state for the left button)
   - rightButtonState (The state for the right button)
- - setLeftButtonState (Set the state for left button)
+  - setLeftButtonState (Set the state for left button)
   - setRightButtonState (Set the state for right button)
 
   Data is expected to contain at least one button, if there is only one button we will leave leftbuttonText, leftButtonState and setLeftButtonState, then data should look like this:
-{
-  modalButtonName: string;
-  modalButtonStyle: object;
-  modalType: string;
-  title: string;
-  content: string;
-  leftButtonText: string | null;
-  rightButtonText: string;
-  leftButtonState: boolean;
-  rightButtonState: boolean;
-  setLeftButtonState: Dispatch<SetStateAction<boolean>>;
-  setRightButtonState: Dispatch<SetStateAction<boolean>>;
-};
+  {
+    modalButtonName: string;
+    modalButtonStyle: object;
+    modalType: string;
+    title: string;
+    content: string;
+    leftButtonText: string | null;
+    rightButtonText: string;
+    leftButtonState: boolean;
+    rightButtonState: boolean;
+    setLeftButtonState: Dispatch<SetStateAction<boolean>>;
+    setRightButtonState: Dispatch<SetStateAction<boolean>>;
+  }
 
 
 An example with two button will look like this: 
@@ -57,7 +57,6 @@ An example with only one button
           setRightButtonState={setRightButtonState}
         }
 */
-
 import { useState, Dispatch, SetStateAction, ReactNode } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
@@ -65,11 +64,9 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import {
-  CheckCircleOutlineOutlined,
-  InfoOutlined,
-  WarningAmberOutlined,
-} from '@mui/icons-material';
+import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined';
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
+import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 // declaring props for TransitionsModal
