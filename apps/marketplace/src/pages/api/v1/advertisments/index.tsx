@@ -6,6 +6,7 @@ import s3Connection from '@/utils/s3Connection';
 import { Readable } from 'stream';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
+import { ParamError } from '@/errors';
 
 export interface AdvertisementPayload {
   companyId: string,
@@ -44,9 +45,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     validateAdvertisementPayload(payload);
   } catch (e) {
-    return res.status(422).json(formatAPIResponse({
-      details: 'invalid input',
-    }));
+    throw new ParamError();
   }
 
   let bucket: S3BucketService;
