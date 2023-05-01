@@ -8,6 +8,7 @@ interface IUsers {
   name: string;
   phone: string;
   profile_picture?: string;
+  bio?: string;
   password: string;
   contact: usercontacts;
   permissions?: number;

@@ -1,4 +1,5 @@
-import PrismaClient, { RefreshTokens } from '@inc/db';
+/* eslint-disable camelcase */
+import PrismaClient, {RefreshTokens} from '@inc/db';
 import crypto from 'crypto';
 import { InvalidTokenError, TokenExpiredError } from '@/errors/AuthError';
 

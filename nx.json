@@ -3,9 +3,13 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "test"]
+        "cacheableOperations": ["lint", "build", "test", "prisma:compile"],
+        "cacheDirectory": "tmp/nx/cache"
       }
     }
+  },
+  "namedInputs": {
+    "prismaCompile": ["{projectRoot}/**/casingFix.ts"]
   },
   "targetDefaults": {
     "build": {
@@ -16,6 +20,13 @@
     },
     "build:prod": {
       "dependsOn": ["^build"]
+    },
+    "prisma:patchCasing": {
+      "dependsOn": ["prisma:compile"]
+    },
+    "prisma:compile": {
+      "inputs": ["prismaCompile"],
+      "outputs": ["{projectRoot}/**/casingFix.js"]
     }
   }
 }
