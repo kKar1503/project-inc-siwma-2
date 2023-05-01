@@ -5,7 +5,7 @@ import { NotFoundError } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
 import { IS3Object, S3BucketService, S3ObjectBuilder } from 's3-simplified';
-import { AdvertisementBucket, AdvertisementPayload } from '@api/v1/advertisments/index';
+import { AdvertisementBucket, AdvertisementPayload, select, where } from '@api/v1/advertisments/index';
 import { APIRequestType } from '@/types/api-types';
 import { Readable } from 'stream';
 import { z } from 'zod';
@@ -40,25 +40,8 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   }
 
   const advertisement = await PrismaClient.advertisements.findUnique({
-    select: {
-      companyId: true,
-      image: true,
-      endDate: isAdmin,
-      startDate: isAdmin,
-      active: isAdmin,
-      description: true,
-      link: true,
-    },
-    where: {
-      id,
-      endDate: {
-        gte: new Date(),
-      },
-      startDate: {
-        lte: new Date(),
-      },
-      active: true,
-    },
+    select: select(isAdmin),
+    where: where(isAdmin),
   });
 
   if (!advertisement) {
@@ -68,8 +51,8 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   res.status(200).json(formatAPIResponse(advertisement));
 };
 
-const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
-  const isAdmin = (req.token?.user.permissions === true);
+const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
+  const isAdmin = true; // this endpoint is admin only
   const reqId = req.query.id as string;
   const id = parseInt(reqId, 10);
 
@@ -132,15 +115,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const link = validatedPayload.link || advertisement.link;
 
   const updated = await PrismaClient.advertisements.update({
-    select: {
-      companyId: true,
-      image: true,
-      endDate: isAdmin,
-      startDate: isAdmin,
-      active: isAdmin,
-      description: true,
-      link: true,
-    },
+    select: select(isAdmin),
     data: {
       companyId,
       image: url,

@@ -37,6 +37,26 @@ export interface AdvertisementPayload {
   link: string
 }
 
+export const select = (isAdmin : boolean) => ({
+  companyId: true,
+  image: true,
+  endDate: isAdmin,
+  startDate: isAdmin,
+  active: isAdmin,
+  description: true,
+  link: true,
+})
+
+export const where = (isAdmin : boolean) => isAdmin ? {} : {
+  endDate: {
+    gte: new Date(),
+  },
+  startDate: {
+    lte: new Date(),
+  },
+  active: true,
+}
+
 export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -95,24 +115,8 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   const isAdmin = (req.token?.user.permissions === true);
   const advertisements = await PrismaClient.advertisements.findMany({
-    select: {
-      companyId: true,
-      image: true,
-      endDate: isAdmin,
-      startDate: isAdmin,
-      active: isAdmin,
-      description: true,
-      link: true,
-    },
-    where: {
-      endDate: {
-        gte: new Date(),
-      },
-      startDate: {
-        lte: new Date(),
-      },
-      active: true,
-    },
+    select: select(isAdmin),
+    where: where(isAdmin),
   });
   res.status(200).json(formatAPIResponse(advertisements));
 };
