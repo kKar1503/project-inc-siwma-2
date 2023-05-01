@@ -51,22 +51,20 @@ async function getParameter(listingId: number, parameterId: number) {
 
 export default apiHandler()
     .get(async (req: NextApiRequest, res: NextApiResponse) => {
-        await apiGuardMiddleware()(req, res, async () => {
-            try {
-                const listingId = parseId(req.query.id as string);
-                const parameterId = parseId(req.query.parameterId as string);
-                await checkListingExists(listingId);
+        try {
+            const listingId = parseId(req.query.id as string);
+            const parameterId = parseId(req.query.parameterId as string);
+            await checkListingExists(listingId);
 
-                const parameter = await getParameter(listingId, parameterId);
-                res.status(200).json(formatAPIResponse({ success: true, data: parameter }));
-            } catch (error) {
-                if (error instanceof NotFoundError) {
-                    res.status(404).json(formatAPIResponse({ success: false, data: error.message }));
-                } else {
-                    res.status(500).json(formatAPIResponse({ success: false, data: 'Internal server error' }));
-                }
+            const parameter = await getParameter(listingId, parameterId);
+            res.status(200).json(formatAPIResponse({ success: true, data: parameter }));
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                res.status(404).json(formatAPIResponse({ success: false, data: error.message }));
+            } else {
+                res.status(500).json(formatAPIResponse({ success: false, data: 'Internal server error' }));
             }
-        });
+        }
     })
     .all((req, res) => {
         res.status(405).json({ success: false, data: 'Method not allowed' });
