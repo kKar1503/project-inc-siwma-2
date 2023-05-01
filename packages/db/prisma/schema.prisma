@@ -22,7 +22,7 @@ model AccessTokens {
   @@index([refreshToken])
   @@index([token])
   @@index([userId])
-  @@map("AccessTokens")
+  @@map("access_tokens")
 }
 
 model Advertisements {
@@ -52,7 +52,7 @@ model CategoriesParameters {
   parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "categories_parameters_fk_1")
 
   @@id([categoryId, parameterId], map: "categories_parameters_pk")
-  @@map("CategoriesParameters")
+  @@map("categories_parameters")
 }
 
 model Category {
@@ -190,21 +190,22 @@ model ListingsParametersValue {
   parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk_1")
 
   @@id([listingId, parameterId], map: "listings_parameters_value_pk")
-  @@map("ListingsParametersValue")
+  @@map("listings_parameters_value")
 }
 
 model Messages {
-  id          Int      @id(map: "messages_pk") @default(sequence())
-  author      String   @db.Uuid
-  room        String   @db.Uuid
-  read        Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  contentType String   @map("content_type")
-  offer       Int
-  content     String
-  offers      Offers   @relation(fields: [offer], references: [id], onDelete: Cascade, map: "messages_fk")
-  rooms       Rooms    @relation(fields: [room], references: [id], onDelete: Cascade, map: "messages_fk_1")
-  users       Users    @relation(fields: [author], references: [id], onDelete: Cascade, map: "messages_fk_2")
+  id                            Int         @id(map: "messages_pk") @default(sequence())
+  author                        String      @db.Uuid
+  room                          String      @db.Uuid
+  read                          Boolean     @default(false)
+  createdAt                     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  contentType                   ContentType
+  offer                         Int
+  content                       String
+  offersMessagesOfferTooffers   Offers      @relation("messagesOfferTooffers", fields: [offer], references: [id], onDelete: Cascade, map: "messages_fk")
+  rooms                         Rooms       @relation(fields: [room], references: [id], onDelete: Cascade, map: "messages_fk_1")
+  users                         Users       @relation(fields: [author], references: [id], onDelete: Cascade, map: "messages_fk_2")
+  offersOffersMessageTomessages Offers[]    @relation("offersMessageTomessages")
 
   @@map("messages")
 }
@@ -219,13 +220,14 @@ model NotificationSettings {
 }
 
 model Offers {
-  id                            Int        @id(map: "offers_pk") @default(sequence())
-  listing                       Int
-  message                       Int
-  amount                        Float      @default(0.0)
-  accepted                      Boolean    @default(false)
-  messages                      Messages[]
-  listingOffersListingTolisting Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
+  id                              Int        @id(map: "offers_pk") @default(sequence())
+  listing                         Int
+  message                         Int
+  amount                          Float      @default(0.0)
+  accepted                        Boolean    @default(false)
+  messagesMessagesOfferTooffers   Messages[] @relation("messagesOfferTooffers")
+  listingOffersListingTolisting   Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
+  messagesOffersMessageTomessages Messages   @relation("offersMessageTomessages", fields: [message], references: [id], onDelete: Cascade, map: "offers_fk_1")
 
   @@map("offers")
 }
@@ -268,7 +270,7 @@ model RefreshTokens {
   @@unique([id, revoked])
   @@index([token])
   @@index([userId])
-  @@map("RefreshTokens")
+  @@map("refresh_tokens")
 }
 
 model Rooms {
@@ -279,6 +281,8 @@ model Rooms {
   listing                      Int
   messages                     Messages[]
   listingRoomsListingTolisting Listing    @relation("roomsListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "rooms_fk")
+  usersRoomsSellerTousers      Users      @relation("roomsSellerTousers", fields: [seller], references: [id], onDelete: Cascade, map: "rooms_fk_1")
+  usersRoomsBuyerTousers       Users      @relation("roomsBuyerTousers", fields: [buyer], references: [id], onDelete: Cascade, map: "rooms_fk_2")
 
   @@map("rooms")
 }
@@ -289,7 +293,7 @@ model Sibkeys {
   senderEmail    String @map("sender_email")
 
   @@unique([key, senderEmail], map: "sibkeys_un")
-  @@map("Sibkeys")
+  @@map("sibkeys")
 }
 
 model UserBookmarks {
@@ -303,28 +307,30 @@ model UserBookmarks {
 }
 
 model Users {
-  id                   String                 @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                String                 @unique(map: "users_un")
-  name                 String
-  phone                String
-  profilePicture       String?                @map("profile_picture")
-  password             String
-  contact              UserContacts
-  permissions          Int                    @default(0)
-  enabled              Boolean                @default(true)
-  companyId            Int                    @map("company_id")
-  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
-  bio                  String?
-  accessTokens         AccessTokens[]
-  clicks               Clicks[]
-  listings             Listing[]
-  listingBookmarks     ListingBookmarks[]
-  messages             Messages[]
-  notificationSettings NotificationSettings[]
-  refreshTokens        RefreshTokens[]
-  userBookmarks        UserBookmarks[]
-  companies            Companies              @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
-  usersComments        UsersComments[]
+  id                      String                 @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                   String                 @unique(map: "users_un")
+  name                    String
+  phone                   String
+  profilePicture          String?                @map("profile_picture")
+  password                String
+  contact                 UserContacts
+  permissions             Int                    @default(0)
+  enabled                 Boolean                @default(true)
+  companyId               Int                    @map("company_id")
+  createdAt               DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  bio                     String?
+  accessTokens            AccessTokens[]
+  clicks                  Clicks[]
+  listings                Listing[]
+  listingBookmarks        ListingBookmarks[]
+  messages                Messages[]
+  notificationSettings    NotificationSettings[]
+  refreshTokens           RefreshTokens[]
+  roomsRoomsSellerTousers Rooms[]                @relation("roomsSellerTousers")
+  roomsRoomsBuyerTousers  Rooms[]                @relation("roomsBuyerTousers")
+  userBookmarks           UserBookmarks[]
+  companies               Companies              @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
+  usersComments           UsersComments[]
 
   @@map("users")
 }
