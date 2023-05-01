@@ -1,8 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { DataType } from '@inc/db';
 
-export default apiHandler().get(async (req: NextApiRequest, res: NextApiResponse) => {
+export default apiHandler().get(async (req, res) => {
   // Retrieve all parameter data types from the database
   const dataTypes = await Object.keys(DataType);
 
