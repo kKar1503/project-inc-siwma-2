@@ -22,7 +22,7 @@ model AccessTokens {
   @@index([refreshToken])
   @@index([token])
   @@index([userId])
-  @@map("access_tokens")
+  @@map("AccessTokens")
 }
 
 model Advertisements {
@@ -52,7 +52,7 @@ model CategoriesParameters {
   parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "categories_parameters_fk_1")
 
   @@id([categoryId, parameterId], map: "categories_parameters_pk")
-  @@map("categories_parameters")
+  @@map("CategoriesParameters")
 }
 
 model Category {
@@ -190,7 +190,7 @@ model ListingsParametersValue {
   parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk_1")
 
   @@id([listingId, parameterId], map: "listings_parameters_value_pk")
-  @@map("listings_parameters_value")
+  @@map("ListingsParametersValue")
 }
 
 model Messages {
@@ -268,7 +268,7 @@ model RefreshTokens {
   @@unique([id, revoked])
   @@index([token])
   @@index([userId])
-  @@map("refresh_tokens")
+  @@map("RefreshTokens")
 }
 
 model Rooms {
@@ -289,7 +289,7 @@ model Sibkeys {
   senderEmail    String @map("sender_email")
 
   @@unique([key, senderEmail], map: "sibkeys_un")
-  @@map("sibkeys")
+  @@map("Sibkeys")
 }
 
 model UserBookmarks {
@@ -339,7 +339,7 @@ model UsersComments {
   @@map("users_comments")
 }
 
-enum contenttype {
+enum ContentType {
   text
   file
   image

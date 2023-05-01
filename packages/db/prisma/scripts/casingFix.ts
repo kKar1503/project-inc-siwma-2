@@ -24,7 +24,8 @@ const SUPPORTED_ENUMS = [
   "ListingType",
   "NotificationType",
   "ParameterType",
-  "UserContacts"
+  "UserContacts",
+  "ContentType"
 ]
 
 function isKnexInternalModel(typeName: string) {
