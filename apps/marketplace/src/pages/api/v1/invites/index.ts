@@ -45,7 +45,7 @@ export default apiHandler().post(async (req, res) => {
     data: {
       email,
       name,
-      company_id: companyId,
+      companyId,
       token,
       expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     },
