@@ -15,7 +15,17 @@ const ChatNow = ({ profilePic, companyName }: ChatNowProps) => (
     sx={{ maxWidth: 430, maxHeight: 600, border: '1px solid #C4C4C4', backgroundColor: '#F0F1F1' }}
   >
     <CardContent sx={{ pl: 2 }}>
-      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingLeft: 5,
+          paddingRight: 5,
+          paddingTop: 2,
+          paddingBottom: 2,
+        }}
+      >
         <Avatar sx={{ mb: 1.5 }}>{profilePic}</Avatar>
         <Box sx={{ pb: 2, marginLeft: 2 }}>
           <Typography variant="body2" color="text.primary" fontWeight={500} fontSize={20}>
