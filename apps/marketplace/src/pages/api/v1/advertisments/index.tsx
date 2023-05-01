@@ -60,47 +60,48 @@ export const where = (isAdmin: boolean, other: {} = {}) => isAdmin ? other : {
 export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
+  // Validate payload
   const payload = zod.parse(req.body);
+  const companyId = parseToNumber(payload.companyId);
 
-  const companyId = parseToNumber(payload.companyId, 10);
-
+  // Create S3 object
   const bucket = await s3Connection.getBucket(AdvertisementBucket);
+  const s3Object = await bucket.createObject(new S3ObjectBuilder(payload.image));
 
-  const s3ObjectBuilder = new S3ObjectBuilder(payload.image);
-
-  const s3Object = await bucket.createObject(s3ObjectBuilder);
-
-  const url = await s3Object.generateLink();
-  const advertisement = await PrismaClient.advertisements.create({
+  // Create advertisement
+  const advertisementId = (await PrismaClient.advertisements.create({
+    select: {
+      id: true,
+    },
     data: {
       companyId,
-      image: url,
+      image: await s3Object.generateLink(),
       endDate: new Date(payload.endDate),
       startDate: new Date(payload.startDate),
       active: payload.active,
       description: payload.description,
       link: payload.link,
     },
-  });
+  })).id;
 
-  const advertisementId = advertisement.id;
-
-  res.status(201).json(formatAPIResponse({
-    advertisementId,
-  }));
+  // Return advertisement id
+  res.status(201).json(formatAPIResponse({ advertisementId }));
 };
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
+  // Validate admin
   const isAdmin = (req.token?.user.permissions === true);
+
+  // Get advertisements
   const advertisements = await PrismaClient.advertisements.findMany({
     select: select(isAdmin),
     where: where(isAdmin),
   });
+
+  // Return advertisements
   res.status(200).json(formatAPIResponse(advertisements));
 };
 
 export default apiHandler()
-  .post(apiGuardMiddleware({
-    allowAdminsOnly: true,
-  }), POST)
+  .post(apiGuardMiddleware({ allowAdminsOnly: true }), POST)
   .get(GET);

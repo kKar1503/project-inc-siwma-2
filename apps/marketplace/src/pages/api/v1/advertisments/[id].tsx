@@ -30,11 +30,13 @@ const zod = z.object({
 
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
-  const isAdmin = (req.token?.user.permissions === true);
-
-
+  // Validate query params
   const id = parseToNumber(req.query.id as string);
 
+  // Check if user is admin
+  const isAdmin = (req.token?.user.permissions === true);
+
+  // Get advertisement
   const advertisement = await PrismaClient.advertisements.findUnique({
     select: select(isAdmin),
     where: where(isAdmin, {
@@ -42,24 +44,29 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     }),
   });
 
-  if (!advertisement) {
-    throw new NotFoundError(`advertisement not found`);
-  }
+  // Throw error if advertisement not found
+  if (!advertisement) throw new NotFoundError(`advertisement not found`);
 
+  // Return advertisement
   res.status(200).json(formatAPIResponse(advertisement));
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
-  const isAdmin = true; // this endpoint is admin only
+  // Validate payload
   const id = parseToNumber(req.query.id as string);
   const validatedPayload = zod.parse(req.body);
 
+  // Check if user is admin
+  const isAdmin = true; // this endpoint is admin only
+
+  // Get advertisement
   const advertisement = await PrismaClient.advertisements.findUnique({
     where: {
       id,
     },
   });
 
+  // Throw error if advertisement not found
   if (!advertisement) {
     throw new NotFoundError(`advertisement not found`);
   }
@@ -80,6 +87,8 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     const [newS3Object] = promise;
     url = await newS3Object.generateLink();
   }
+
+  // get new values or use old values if not provided
   const companyId = validatedPayload.companyId || advertisement.companyId;
   const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate;
   const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || advertisement.startDate;
@@ -87,6 +96,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   const description = validatedPayload.description || advertisement.description;
   const link = validatedPayload.link || advertisement.link;
 
+  // update advertisement
   const updated = await PrismaClient.advertisements.update({
     select: select(isAdmin),
     data: {
@@ -103,44 +113,47 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
-  res.status(201).json(formatAPIResponse(updated));
 
+  // Return advertisement
+  res.status(201).json(formatAPIResponse(updated));
 };
 
 const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
+  // Validate query params
   const id = parseToNumber(req.query.id as string);
 
+  // Check if advertisement exists, if yes get the image url
   const advertisement = await PrismaClient.advertisements.findUnique({
+    select: {
+      image: true,
+    },
     where: {
       id,
     },
   });
 
+  // Throw error if advertisement not found
   if (!advertisement) {
     throw new NotFoundError(`advertisement not found`);
   }
 
+  // Delete advertisement
   await PrismaClient.advertisements.delete({
     where: {
       id,
     },
   });
 
-
+  // Delete image from s3
   const bucket = await s3Connection.getBucket(AdvertisementBucket);
-
-
   await bucket.deleteObject(advertisement.image);
 
+  // Return advertisement
   res.status(204).end();
 };
 
 export default apiHandler()
   .get(GET)
-  .put(apiGuardMiddleware({
-    allowAdminsOnly: true,
-  }), PUT)
-  .delete(apiGuardMiddleware({
-    allowAdminsOnly: true,
-  }), DELETE);
+  .put(apiGuardMiddleware({ allowAdminsOnly: true }), PUT)
+  .delete(apiGuardMiddleware({ allowAdminsOnly: true }), DELETE);
 
