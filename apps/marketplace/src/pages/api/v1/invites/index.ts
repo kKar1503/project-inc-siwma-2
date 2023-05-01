@@ -7,7 +7,6 @@ import { DuplicateError } from '@/errors';
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
   name: z.string(),
-  // company is a number but is sent as a string because it is a query param
   company: z.string(),
 });
 
@@ -45,7 +44,7 @@ export default apiHandler().post(async (req, res) => {
     data: {
       email,
       name,
-      company_id: companyId,
+      companyId,
       token,
       expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     },

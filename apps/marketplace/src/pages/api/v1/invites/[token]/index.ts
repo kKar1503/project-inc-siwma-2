@@ -20,7 +20,7 @@ export default apiHandler({
       id: true,
       email: true,
       name: true,
-      company_id: true,
+      companyId: true,
     },
   });
 
