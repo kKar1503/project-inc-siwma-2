@@ -1,53 +1,72 @@
-import { apiHandler } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
+import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
-const POSTSchema = z.object({
+const createCompanyRequestBody = z.object({
   name: z.string(),
   website: z.string(),
-  comments: z.string(),
-  image: z.string(),
+  comments: z.string().optional(),
+  image: z.string().optional(),
 });
 
-export default apiHandler({
-  allowNonAuthenticated: true,
-})
-  .post(async (req, res) => {
-    const { name, website, comments, image } = POSTSchema.parse(req.body);
+const getCompaniesRequestBody = z.object({
+  lastIdPointer: z.number().optional(),
+  limit: z.number().optional(),
+  name: z.string().optional(),
+});
 
-    const data = await PrismaClient.companies.create({
+export default apiHandler({})
+  .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
+    const { name, website, comments, image } = createCompanyRequestBody.parse(req.body);
+
+    const response = await PrismaClient.companies.create({
       data: {
         name,
         website,
         logo: image,
-        companiesComments: {
-          create: {
-            comments,
-          },
-        },
       },
     });
 
-    if (data) {
-      const companyid = data.id;
-      if (comments) {
-        const comment = await PrismaClient.companiesComments.create({
-          data: {
-            companyId: companyid,
-            comments,
-          },
-        });
-      }
+    // if company was created and comments are provided
+    if (response && comments) {
+      const companyid = response.id;
+      const response2 = await PrismaClient.companiesComments.create({
+        data: {
+          companyId: companyid,
+          comments,
+        },
+      });
     }
 
-    res.status(201).json({ data });
+    res.status(201).json(formatAPIResponse({ companyid: response.id }));
   })
   .get(async (req, res) => {
-    const data = await PrismaClient.companies.findMany({
-      include: {
-        companiesComments: true,
+    const isAdmin = req.token?.user.permissions === 1;
+
+    const { lastIdPointer, limit, name } = getCompaniesRequestBody.parse(req.body);
+
+    const response = await PrismaClient.companies.findMany({
+      select: {
+        id: true,
+        name: true,
+        bio: true,
+        website: true,
+        logo: true,
+        visibility: true,
+        createdAt: isAdmin,
+        companiesComments: isAdmin,
       },
+      where: {
+        id: {
+          gt: lastIdPointer,
+        },
+        name: {
+          contains: name,
+        },
+      },
+      take: limit,
     });
 
-    res.status(200).json({ data });
+    res.status(200).json(formatAPIResponse(response));
   });
