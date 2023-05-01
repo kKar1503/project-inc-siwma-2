@@ -103,9 +103,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
-  res.status(201).json(formatAPIResponse({
-    updated,
-  }));
+  res.status(201).json(formatAPIResponse(updated));
 
 };
 
@@ -137,12 +135,12 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
   res.status(204).end();
 };
 
-export default apiHandler({
-  allowAdminsOnly: true,
-})
-  .get(apiGuardMiddleware({
-    allowNonAuthenticated: true,
-  }), GET)                   // no need admin    no need auth
-  .put(PUT)           // needs admin      needs auth
-  .delete(DELETE);    // needs admin      needs auth
+export default apiHandler()
+  .get(GET)
+  .put(apiGuardMiddleware({
+    allowAdminsOnly: true,
+  }), PUT)
+  .delete(apiGuardMiddleware({
+    allowAdminsOnly: true,
+  }), DELETE);
 

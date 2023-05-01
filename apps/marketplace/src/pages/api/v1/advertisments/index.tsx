@@ -101,8 +101,6 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
 export default apiHandler()
   .post(apiGuardMiddleware({
-    allowNonAuthenticated: true,
+    allowAdminsOnly: true,
   }), POST)
-  .get(apiGuardMiddleware({
-    allowNonAuthenticated: false,
-  }), GET);
+  .get(GET);
