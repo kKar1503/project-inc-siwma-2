@@ -11,7 +11,7 @@ import { Readable } from 'stream';
 import { z } from 'zod';
 
 
-const  zod =  z.object({
+const zod = z.object({
   companyId: z.string().optional(),
   image: z.union([
     z.instanceof(Readable),
@@ -22,6 +22,8 @@ const  zod =  z.object({
     z.instanceof(Buffer),
   ]).optional(),
   endDate: z.string().optional(),
+  startDate: z.string().optional(),
+  active: z.boolean().optional(),
   description: z.string().optional(),
   link: z.string().optional(),
 });
@@ -42,6 +44,8 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       companyId: true,
       image: true,
       endDate: isAdmin,
+      startDate: isAdmin,
+      active: isAdmin,
       description: true,
       link: true,
     },
@@ -50,6 +54,10 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       endDate: {
         gte: new Date(),
       },
+      startDate: {
+        lte: new Date(),
+      },
+      active: true,
     },
   });
 
@@ -68,7 +76,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   if (Number.isNaN(id)) {
     throw new NotFoundError(`advertisement not found`);
   }
-  const validatedPayload = zod.parse( req.body as AdvertisementPayload);
+  const validatedPayload = zod.parse(req.body as AdvertisementPayload);
 
   const advertisement = await PrismaClient.advertisements.findUnique({
     where: {
@@ -116,21 +124,31 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     }
     url = await s3Object.generateLink();
   }
+  const companyId = validatedPayload.companyId || advertisement.companyId;
+  const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate;
+  const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || advertisement.startDate;
+  const active = validatedPayload.active === undefined ? advertisement.active : validatedPayload.active;
+  const description = validatedPayload.description || advertisement.description;
+  const link = validatedPayload.link || advertisement.link;
 
   const updated = await PrismaClient.advertisements.update({
     select: {
       companyId: true,
       image: true,
       endDate: isAdmin,
+      startDate: isAdmin,
+      active: isAdmin,
       description: true,
       link: true,
     },
     data: {
-      companyId: validatedPayload.companyId || advertisement.companyId,
+      companyId,
       image: url,
-      endDate: (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate,
-      description: validatedPayload.description || advertisement.description,
-      link: validatedPayload.link || advertisement.link,
+      endDate,
+      startDate,
+      active,
+      description,
+      link,
     },
     where: {
       id,
@@ -172,7 +190,7 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
     bucket = await s3Connection.getBucket(AdvertisementBucket);
   } catch (e) {
     // access key don't have access to bucket or bucket doesn't exist
-     res.status(500).json(formatAPIResponse({
+    res.status(500).json(formatAPIResponse({
       details: 'failed to connect to bucket',
     }));
     return;

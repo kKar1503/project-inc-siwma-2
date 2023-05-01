@@ -21,6 +21,8 @@ const zod = z.object({
     z.instanceof(Buffer),
   ]),
   endDate: z.string(),
+  startDate: z.string(),
+  active: z.boolean(),
   description: z.string(),
   link: z.string(),
 });
@@ -29,6 +31,8 @@ export interface AdvertisementPayload {
   companyId: string,
   image: Readable | ReadableStream | Blob | string | Uint8Array | Buffer,
   endDate: string,
+  startDate: string,
+  active: boolean,
   description: string,
   link: string
 }
@@ -74,6 +78,8 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       companyId,
       image: url,
       endDate: new Date(payload.endDate),
+      startDate: new Date(payload.startDate),
+      active: payload.active,
       description: payload.description,
       link: payload.link,
     },
@@ -93,6 +99,8 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       companyId: true,
       image: true,
       endDate: isAdmin,
+      startDate: isAdmin,
+      active: isAdmin,
       description: true,
       link: true,
     },
@@ -100,6 +108,10 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       endDate: {
         gte: new Date(),
       },
+      startDate: {
+        lte: new Date(),
+      },
+      active: true,
     },
   });
   res.status(200).json(formatAPIResponse(advertisements));
