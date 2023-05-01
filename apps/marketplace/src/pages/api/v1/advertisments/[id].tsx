@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { BucketConnectionFailure, NotFoundError, ObjectCollision } from '@/errors';
@@ -32,16 +32,14 @@ const zod = z.object({
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   const isAdmin = (req.token?.user.permissions === true);
 
-  const reqId = req.query.id as string;
-  const id = parseInt(reqId, 10);
 
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`advertisement not found`);
-  }
+  const id = parseToNumber(req.query.id as string);
 
   const advertisement = await PrismaClient.advertisements.findUnique({
     select: select(isAdmin),
-    where: where(isAdmin),
+    where: where(isAdmin,{
+      id,
+    }),
   });
 
   if (!advertisement) {
@@ -53,13 +51,8 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   const isAdmin = true; // this endpoint is admin only
-  const reqId = req.query.id as string;
-  const id = parseInt(reqId, 10);
-
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`advertisement not found`);
-  }
-  const validatedPayload = zod.parse(req.body as AdvertisementPayload);
+  const id = parseToNumber(req.query.id as string);
+  const validatedPayload = zod.parse(req.body);
 
   const advertisement = await PrismaClient.advertisements.findUnique({
     where: {
@@ -80,7 +73,6 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (e) {
       // access key don't have access to bucket or bucket doesn't exist
       throw new BucketConnectionFailure();
-      return;
     }
 
     const s3ObjectBuilder = new S3ObjectBuilder(validatedPayload.image);
@@ -132,12 +124,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
-  const reqId = req.query.id as string;
-  const id = parseInt(reqId, 10);
-
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`advertisement not found`);
-  }
+  const id = parseToNumber(req.query.id as string);
 
   const advertisement = await PrismaClient.advertisements.findUnique({
     where: {

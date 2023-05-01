@@ -47,7 +47,7 @@ export const select = (isAdmin : boolean) => ({
   link: true,
 })
 
-export const where = (isAdmin : boolean) => isAdmin ? {} : {
+export const where = (isAdmin : boolean,other:{} = {}) => isAdmin ? other : {
   endDate: {
     gte: new Date(),
   },
@@ -55,12 +55,13 @@ export const where = (isAdmin : boolean) => isAdmin ? {} : {
     lte: new Date(),
   },
   active: true,
+  ...other,
 }
 
 export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
-  const payload = zod.parse(req.body) as AdvertisementPayload;
+  const payload = zod.parse(req.body)
 
   let companyId: number;
   try {
