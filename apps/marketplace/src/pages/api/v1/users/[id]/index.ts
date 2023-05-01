@@ -1,6 +1,6 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
-import client, { usercontacts } from '@inc/db';
+import client, { UserContacts } from '@inc/db';
 import { ParamInvalidError, NotFoundError } from '@/errors/QueryError';
 import { ForbiddenError } from '@/errors/AuthError';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
@@ -13,13 +13,10 @@ const userDetailsSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   //   company is a number that represents the id of the company
-  company: z
-    .string()
-    .optional()
-    .refine((val) => !Number.isNaN(Number(val))),
+  company: z.string().optional(),
   profilePicture: z.string().optional(),
   mobileNumber: z.string(),
-  contactMethod: z.nativeEnum(usercontacts)
+  contactMethod: z.nativeEnum(UserContacts),
 });
 
 export default apiHandler()
@@ -36,11 +33,11 @@ export default apiHandler()
         id: true,
         name: true,
         email: true,
-        company_id: true,
-        created_at: true,
+        companyId: true,
+        createdAt: true,
         enabled: true,
-        profile_picture: true,
-        users_comments: isAdmin,
+        profilePicture: true,
+        usersComments: isAdmin,
         phone: true,
         contact: true,
       },
@@ -61,8 +58,19 @@ export default apiHandler()
       throw new ParamInvalidError('mobileNumber', mobileNumber);
     }
 
-    if ((!isAdmin && req.token?.user.id !== id) || (company && !isAdmin)) {
+    if (!isAdmin && req.token?.user.id !== id) {
       throw new ForbiddenError();
+    }
+
+    let companyId: number | undefined;
+
+    if (company) {
+      if (!isAdmin) {
+        throw new ForbiddenError();
+      }
+      companyId = parseToNumber(company);
+    } else {
+      companyId = undefined;
     }
 
     const user = await client.users.update({
@@ -72,10 +80,10 @@ export default apiHandler()
       data: {
         name,
         email,
-        company_id: Number(company),
-        profile_picture: profilePicture,
+        companyId,
+        profilePicture,
         phone: mobileNumber,
-        contact: contactMethod as usercontacts,
+        contact: contactMethod,
       },
     });
 
@@ -83,8 +91,8 @@ export default apiHandler()
       throw new NotFoundError('User');
     }
 
-    return res.status(200).json(formatAPIResponse({ data: user }));
-  })
+    return res.status(200).json(formatAPIResponse({ user }));
+  })  
   .delete(
     apiGuardMiddleware({
       allowAdminsOnly: true,

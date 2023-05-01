@@ -2,10 +2,20 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
 import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
-// eslint-disable-next-line import/no-named-as-default
-import apiGuardMiddleware from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import bcrypt from 'bcryptjs';
 import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@/errors/QueryError';
+
+const getUsersRequestBody = z.object({
+  lastIdPointer: z.string().optional(),
+  limit: z.number().optional(),
+});
+
+const userCreationRequestBody = z.object({
+  token: z.string(),
+  mobileNumber: z.string(),
+  password: z.string(),
+});
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
@@ -14,20 +24,7 @@ export default apiHandler({ allowNonAuthenticated: true })
       allowAdminsOnly: true,
     }),
     async (req: NextApiRequest, res: NextApiResponse) => {
-      const getUsersRequestBody = z.object({
-        lastIdPointer: z.string().optional(),
-        limit: z.number().optional(),
-      });
-
-      let lastIdPointer: string | undefined;
-      let limit: number | undefined;
-
-      if (req.body) {
-        const parsedBody = getUsersRequestBody.parse(req.body);
-
-        lastIdPointer = parsedBody.lastIdPointer;
-        limit = parsedBody.limit;
-      }
+      const { lastIdPointer, limit } = getUsersRequestBody.parse(req.body);
 
       const users = await client.users.findMany({
         where: {
@@ -38,20 +35,12 @@ export default apiHandler({ allowNonAuthenticated: true })
         take: limit,
       });
 
-      return res
-        .status(200)
-        .json(formatAPIResponse({ status: '200', detail: 'success', data: users }));
+      return res.status(200).json(formatAPIResponse({ data: users }));
     }
   )
   .post(async (req: NextApiRequest, res: NextApiResponse) => {
     // Creates a new user from an existing invite
     // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.5t8qrsbif9ei
-
-    const userCreationRequestBody = z.object({
-      token: z.string(),
-      mobileNumber: z.string(),
-      password: z.string(),
-    });
 
     // Parse the request body with zod
     const { token, mobileNumber, password } = userCreationRequestBody.parse(req.body);
@@ -107,7 +96,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         phone: mobileNumber,
         password: hashedPassword,
         contact: 'phone',
-        companies: { connect: { id: invite.company_id } },
+        companies: { connect: { id: invite.companyId } },
       },
     });
 
