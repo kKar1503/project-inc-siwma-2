@@ -7,6 +7,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model AccessTokens {
+  id            Int           @id(map: "access_tokens_pk") @default(sequence(maxValue: 2147483647))
+  token         String        @unique(map: "access_tokens_token_unique")
+  refreshToken  Int           @map("refresh_token")
+  userId        String        @map("user_id") @db.Uuid
+  revoked       Boolean       @default(false)
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime?     @map("updated_at") @db.Timestamptz(6)
+  expiresAt     DateTime      @map("expires_at") @db.Timestamptz(6)
+  refreshTokens RefreshTokens @relation(fields: [refreshToken, revoked], references: [id, revoked], onDelete: Cascade)
+  users         Users         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([refreshToken])
+  @@index([token])
+  @@index([userId])
+  @@map("access_tokens")
+}
+
 model Advertisements {
   id          Int       @id(map: "advertisements_pk") @default(sequence(maxValue: 2147483647))
   companyId   Int       @map("company_id")
@@ -22,6 +40,19 @@ model Advertisements {
   clicks      Clicks[]
 
   @@map("advertisements")
+}
+
+model CategoriesParameters {
+  categoryId  Int       @map("category_id")
+  parameterId Int       @map("parameter_id")
+  required    Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "categories_parameters_fk")
+  parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "categories_parameters_fk_1")
+
+  @@id([categoryId, parameterId], map: "categories_parameters_pk")
+  @@map("categories_parameters")
 }
 
 model Category {
@@ -66,6 +97,16 @@ model Companies {
   users              Users[]
 
   @@map("companies")
+}
+
+model CompaniesBookmarks {
+  id        Int       @id(map: "companies_bookmarks_pk") @default(sequence(maxValue: 2147483647))
+  userId    String    @map("user_id") @db.Uuid
+  companyId Int       @map("company_id")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "companies_bookmarks_fk")
+
+  @@map("companies_bookmarks")
 }
 
 model CompaniesComments {
@@ -139,127 +180,6 @@ model ListingImages {
   @@map("listing_images")
 }
 
-model NotificationSettings {
-  id     Int              @id(map: "notification_settings_pk") @default(sequence(maxValue: 2147483647))
-  userId String           @map("user_id") @db.Uuid
-  type   NotificationType
-  users  Users            @relation(fields: [userId], references: [id], onDelete: Cascade, map: "notification_settings_fk")
-
-  @@map("notification_settings")
-}
-
-model ParameterChoices {
-  id        Int      @id(map: "parameter_choices_pk") @default(sequence(maxValue: 2147483647))
-  choices   String[]
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  @@map("parameter_choices")
-}
-
-model UserBookmarks {
-  id                              Int      @id(map: "user_bookmarks_pk") @default(sequence(maxValue: 2147483647))
-  userId                          String   @map("user_id") @db.Uuid
-  targetUser                      String   @map("target_user") @db.Uuid
-  createdAt                       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  usersUserBookmarksUserIdTousers Users    @relation("userBookmarksUserIdTousers", fields: [userId], references: [id], onDelete: Cascade, map: "user_bookmarks_fk")
-
-  @@map("user_bookmarks")
-}
-
-model Users {
-  id                                      String                 @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                                   String                 @unique(map: "users_un")
-  name                                    String
-  phone                                   String
-  profilePicture                          String?                @map("profile_picture")
-  password                                String
-  contact                                 UserContacts
-  permissions                             Int                    @default(0)
-  enabled                                 Boolean                @default(true)
-  companyId                               Int                    @map("company_id")
-  createdAt                               DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
-  bio                                     String?
-  accessTokens                            AccessTokens[]
-  clicks                                  Clicks[]
-  listings                                Listing[]
-  listingBookmarks                        ListingBookmarks[]
-  messages                                Messages[]
-  notificationSettings                    NotificationSettings[]
-  refreshTokens                           RefreshTokens[]
-  userBookmarksUserBookmarksUserIdTousers UserBookmarks[]        @relation("userBookmarksUserIdTousers")
-  companies                               Companies              @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
-  usersComments                           UsersComments[]
-
-  @@map("users")
-}
-
-model UsersComments {
-  id        Int      @id(map: "users_comments_pk") @default(sequence(maxValue: 2147483647))
-  userId    String   @map("user_id") @db.Uuid
-  comments  String   @default("")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "users_comments_fk")
-
-  @@map("users_comments")
-}
-
-model CompaniesBookmarks {
-  id        Int       @id(map: "companies_bookmarks_pk") @default(sequence(maxValue: 2147483647))
-  userId    String    @map("user_id") @db.Uuid
-  companyId Int       @map("company_id")
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "companies_bookmarks_fk")
-
-  @@map("companies_bookmarks")
-}
-
-model Parameter {
-  id                       Int                       @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
-  type                     ParameterType
-  datatype                 DataType
-  name                     String
-  displayName              String                    @map("display_name")
-  active                   Boolean                   @default(true)
-  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  categoriesParameters     CategoriesParameters[]
-  listingsParametersValues ListingsParametersValue[]
-
-  @@map("parameter")
-}
-
-model AccessTokens {
-  id            Int           @id(map: "access_tokens_pk") @default(sequence(maxValue: 2147483647))
-  token         String        @unique(map: "access_tokens_token_unique")
-  refreshToken  Int           @map("refresh_token")
-  userId        String        @map("user_id") @db.Uuid
-  revoked       Boolean       @default(false)
-  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime?     @map("updated_at") @db.Timestamptz(6)
-  expiresAt     DateTime      @map("expires_at") @db.Timestamptz(6)
-  refreshTokens RefreshTokens @relation(fields: [refreshToken, revoked], references: [id, revoked], onDelete: Cascade)
-  users         Users         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([refreshToken])
-  @@index([token])
-  @@index([userId])
-  @@map("access_tokens")
-}
-
-model CategoriesParameters {
-  categoryId  Int       @map("category_id")
-  parameterId Int       @map("parameter_id")
-  required    Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "categories_parameters_fk")
-  parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "categories_parameters_fk_1")
-
-  @@id([categoryId, parameterId], map: "categories_parameters_pk")
-  @@map("categories_parameters")
-}
-
 model ListingsParametersValue {
   listingId   Int       @map("listing_id")
   parameterId Int       @map("parameter_id")
@@ -289,6 +209,15 @@ model Messages {
   @@map("messages")
 }
 
+model NotificationSettings {
+  id     Int              @id(map: "notification_settings_pk") @default(sequence(maxValue: 2147483647))
+  userId String           @map("user_id") @db.Uuid
+  type   NotificationType
+  users  Users            @relation(fields: [userId], references: [id], onDelete: Cascade, map: "notification_settings_fk")
+
+  @@map("notification_settings")
+}
+
 model Offers {
   id                            Int        @id(map: "offers_pk") @default(sequence())
   listing                       Int
@@ -299,6 +228,30 @@ model Offers {
   listingOffersListingTolisting Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
 
   @@map("offers")
+}
+
+model Parameter {
+  id                       Int                       @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
+  type                     ParameterType
+  datatype                 DataType
+  name                     String
+  displayName              String                    @map("display_name")
+  active                   Boolean                   @default(true)
+  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  categoriesParameters     CategoriesParameters[]
+  listingsParametersValues ListingsParametersValue[]
+
+  @@map("parameter")
+}
+
+model ParameterChoices {
+  id        Int      @id(map: "parameter_choices_pk") @default(sequence(maxValue: 2147483647))
+  choices   String[]
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("parameter_choices")
 }
 
 model RefreshTokens {
@@ -337,6 +290,53 @@ model Sibkeys {
 
   @@unique([key, senderEmail], map: "sibkeys_un")
   @@map("sibkeys")
+}
+
+model UserBookmarks {
+  id         Int      @id(map: "user_bookmarks_pk") @default(sequence(maxValue: 2147483647))
+  userId     String   @map("user_id") @db.Uuid
+  targetUser String   @map("target_user") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  users      Users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "user_bookmarks_fk")
+
+  @@map("user_bookmarks")
+}
+
+model Users {
+  id                   String                 @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                String                 @unique(map: "users_un")
+  name                 String
+  phone                String
+  profilePicture       String?                @map("profile_picture")
+  password             String
+  contact              UserContacts
+  permissions          Int                    @default(0)
+  enabled              Boolean                @default(true)
+  companyId            Int                    @map("company_id")
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  bio                  String?
+  accessTokens         AccessTokens[]
+  clicks               Clicks[]
+  listings             Listing[]
+  listingBookmarks     ListingBookmarks[]
+  messages             Messages[]
+  notificationSettings NotificationSettings[]
+  refreshTokens        RefreshTokens[]
+  userBookmarks        UserBookmarks[]
+  companies            Companies              @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
+  usersComments        UsersComments[]
+
+  @@map("users")
+}
+
+model UsersComments {
+  id        Int      @id(map: "users_comments_pk") @default(sequence(maxValue: 2147483647))
+  userId    String   @map("user_id") @db.Uuid
+  comments  String   @default("")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "users_comments_fk")
+
+  @@map("users_comments")
 }
 
 enum contenttype {
