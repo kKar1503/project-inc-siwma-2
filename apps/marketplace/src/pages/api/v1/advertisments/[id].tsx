@@ -1,11 +1,11 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import { BucketConnectionFailure, NotFoundError, ObjectCollision } from '@/errors';
+import { NotFoundError } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
-import { IS3Object, S3BucketService, S3ObjectBuilder } from 's3-simplified';
-import { AdvertisementBucket, AdvertisementPayload, select, where } from '@api/v1/advertisments/index';
+import { S3ObjectBuilder } from 's3-simplified';
+import { AdvertisementBucket, select, where } from '@api/v1/advertisments/index';
 import { APIRequestType } from '@/types/api-types';
 import { Readable } from 'stream';
 import { z } from 'zod';
@@ -37,7 +37,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
   const advertisement = await PrismaClient.advertisements.findUnique({
     select: select(isAdmin),
-    where: where(isAdmin,{
+    where: where(isAdmin, {
       id,
     }),
   });
@@ -67,32 +67,18 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   // if image has changed
   let url = advertisement.image;
   if (validatedPayload.image) {
-    let bucket: S3BucketService;
-    try {
-      bucket = await s3Connection.getBucket(AdvertisementBucket);
-    } catch (e) {
-      // access key don't have access to bucket or bucket doesn't exist
-      throw new BucketConnectionFailure();
-    }
-
+    const bucket = await s3Connection.getBucket(AdvertisementBucket);
     const s3ObjectBuilder = new S3ObjectBuilder(validatedPayload.image);
 
-    let s3Object: IS3Object;
 
-    try {
-      // create new image and delete old image as aws doesn't support update
-      const promise = await Promise.all(
-        [
-          await bucket.createObject(s3ObjectBuilder),
-          await bucket.deleteObject(advertisement.image),
-        ]);
-      const [newS3Object] = promise;
-      s3Object = newS3Object;
-
-    } catch (e: any | { name: string }) {
-      throw new ObjectCollision('image');
-    }
-    url = await s3Object.generateLink();
+    // create new image and delete old image as aws doesn't support update
+    const promise = await Promise.all(
+      [
+        await bucket.createObject(s3ObjectBuilder),
+        await bucket.deleteObject(advertisement.image),
+      ]);
+    const [newS3Object] = promise;
+    url = await newS3Object.generateLink();
   }
   const companyId = validatedPayload.companyId || advertisement.companyId;
   const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate;
@@ -142,13 +128,9 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
-  let bucket: S3BucketService;
-  try {
-    bucket = await s3Connection.getBucket(AdvertisementBucket);
-  } catch (e) {
-    // access key don't have access to bucket or bucket doesn't exist
-    throw new BucketConnectionFailure();
-  }
+
+  const bucket = await s3Connection.getBucket(AdvertisementBucket);
+
 
   await bucket.deleteObject(advertisement.image);
 

@@ -1,12 +1,11 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import { IS3Object, S3BucketService, S3ObjectBuilder } from 's3-simplified';
+import { S3ObjectBuilder } from 's3-simplified';
 import s3Connection from '@/utils/s3Connection';
 import { Readable } from 'stream';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
-import { BucketConnectionFailure, ParamError } from '@/errors';
 import * as process from 'process';
 import { z } from 'zod';
 
@@ -37,7 +36,7 @@ export interface AdvertisementPayload {
   link: string
 }
 
-export const select = (isAdmin : boolean) => ({
+export const select = (isAdmin: boolean) => ({
   companyId: true,
   image: true,
   endDate: isAdmin,
@@ -45,9 +44,9 @@ export const select = (isAdmin : boolean) => ({
   active: isAdmin,
   description: true,
   link: true,
-})
+});
 
-export const where = (isAdmin : boolean,other:{} = {}) => isAdmin ? other : {
+export const where = (isAdmin: boolean, other: {} = {}) => isAdmin ? other : {
   endDate: {
     gte: new Date(),
   },
@@ -56,40 +55,21 @@ export const where = (isAdmin : boolean,other:{} = {}) => isAdmin ? other : {
   },
   active: true,
   ...other,
-}
+};
 
 export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
-  const payload = zod.parse(req.body)
+  const payload = zod.parse(req.body);
 
-  let companyId: number;
-  try {
-    companyId = parseInt(payload.companyId, 10);
-  } catch (e) {
-    throw new ParamError();
-  }
+  const companyId = parseToNumber(payload.companyId, 10);
 
-  let bucket: S3BucketService;
-  try {
-    bucket = await s3Connection.getBucket(AdvertisementBucket);
-  } catch (e) {
-    // access key don't have access to bucket or bucket doesn't exist
-    throw new BucketConnectionFailure();
-  }
+  const bucket = await s3Connection.getBucket(AdvertisementBucket);
 
   const s3ObjectBuilder = new S3ObjectBuilder(payload.image);
 
-  let s3Object: IS3Object;
+  const s3Object = await bucket.createObject(s3ObjectBuilder);
 
-  try {
-    s3Object = await bucket.createObject(s3ObjectBuilder);
-  } catch (e: any | { name: string }) {
-    res.status(500).json(formatAPIResponse({
-      details: 'image already exists',
-    }));
-    return;
-  }
   const url = await s3Object.generateLink();
   const advertisement = await PrismaClient.advertisements.create({
     data: {
