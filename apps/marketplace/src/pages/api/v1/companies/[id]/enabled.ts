@@ -1,23 +1,28 @@
 import { NotFoundError } from '@/errors';
-import { apiHandler, parseToNumber } from '@/utils/api';
+import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default apiHandler({
-  allowNonAuthenticated: true,
-}).patch(async (req, res) => {
-  const { id } = req.query;
-  let companyid;
-  if (id && typeof id === 'string') {
-    companyid = parseToNumber(id);
-  }
+type ResponseBody = {
+  visibility: boolean;
+};
 
-  const data = await PrismaClient.$queryRaw`
+export default apiHandler({ allowAdminsOnly: false, allowNonAuthenticated: true }).patch(
+  async (req: NextApiRequest, res: NextApiResponse) => {
+    const { id } = req.query;
+    let companyid;
+    if (id && typeof id === 'string') {
+      companyid = parseToNumber(id);
+    }
+
+    const response: ResponseBody = await PrismaClient.$queryRaw`
         UPDATE "companies" SET "visibility" = NOT "visibility" WHERE "id" = ${companyid} RETURNING "visibility"
     `;
 
-  if (!data) {
-    throw new NotFoundError('company');
-  }
+    if (Object.keys(response).length === 0) {
+      throw new NotFoundError('company');
+    }
 
-  res.status(200).json({ data });
-});
+    res.status(200).json(formatAPIResponse(response));
+  }
+);
