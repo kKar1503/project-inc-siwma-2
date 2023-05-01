@@ -1,7 +1,7 @@
 {
   "name": "s3-simplified",
   "version": "0.0.0",
-  "main": "dist/index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc"
   },
