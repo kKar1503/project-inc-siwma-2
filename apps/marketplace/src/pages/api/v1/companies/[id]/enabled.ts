@@ -7,7 +7,7 @@ type ResponseBody = {
   visibility: boolean;
 };
 
-export default apiHandler({ allowAdminsOnly: false, allowNonAuthenticated: true }).patch(
+export default apiHandler({ allowAdminsOnly: true }).patch(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
     let companyid;
