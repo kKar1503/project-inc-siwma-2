@@ -3,7 +3,7 @@ import { z } from 'zod';
 import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@/errors/QueryError';
 
 const getUsersRequestBody = z.object({
