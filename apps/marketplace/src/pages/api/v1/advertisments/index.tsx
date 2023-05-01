@@ -6,7 +6,7 @@ import s3Connection from '@/utils/s3Connection';
 import { Readable } from 'stream';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
-import { ParamError } from '@/errors';
+import { BucketConnectionFailure, ParamError } from '@/errors';
 import * as process from 'process';
 import { z } from 'zod';
 
@@ -74,10 +74,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     bucket = await s3Connection.getBucket(AdvertisementBucket);
   } catch (e) {
     // access key don't have access to bucket or bucket doesn't exist
-    res.status(500).json(formatAPIResponse({
-      details: 'failed to connect to bucket',
-    }));
-    return;
+    throw new BucketConnectionFailure();
   }
 
   const s3ObjectBuilder = new S3ObjectBuilder(payload.image);

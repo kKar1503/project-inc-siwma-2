@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import { NotFoundError } from '@/errors';
+import { BucketConnectionFailure, NotFoundError, ObjectCollision } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
 import { IS3Object, S3BucketService, S3ObjectBuilder } from 's3-simplified';
@@ -79,9 +79,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
       bucket = await s3Connection.getBucket(AdvertisementBucket);
     } catch (e) {
       // access key don't have access to bucket or bucket doesn't exist
-      res.status(500).json(formatAPIResponse({
-        details: 'failed to connect to bucket',
-      }));
+      throw new BucketConnectionFailure();
       return;
     }
 
@@ -100,10 +98,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
       s3Object = newS3Object;
 
     } catch (e: any | { name: string }) {
-      res.status(500).json(formatAPIResponse({
-        details: 'image already exists',
-      }));
-      return;
+      throw new ObjectCollision('image');
     }
     url = await s3Object.generateLink();
   }
@@ -165,10 +160,7 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
     bucket = await s3Connection.getBucket(AdvertisementBucket);
   } catch (e) {
     // access key don't have access to bucket or bucket doesn't exist
-    res.status(500).json(formatAPIResponse({
-      details: 'failed to connect to bucket',
-    }));
-    return;
+    throw new BucketConnectionFailure();
   }
 
   await bucket.deleteObject(advertisement.image);
