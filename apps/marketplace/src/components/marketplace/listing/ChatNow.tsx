@@ -12,11 +12,11 @@ export type ChatNowProps = {
 
 const ChatNow = ({
   profilePic,
-  companyName,
+  companyName
 }: ChatNowProps) => (
     <Card sx={{ maxWidth: 430, maxHeight: 600, border: '1px solid #C4C4C4', backgroundColor: '#F0F1F1' }}>
       <CardContent sx={{ pl: 2}}>
-        <div style ={{display: 'flex', flexDirection: 'row', alignItems: 'center', paddingLeft: 20, paddingTop: 7, paddingBottom: 10}} >
+        <Box sx ={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: 2}} >
           <Avatar sx={{ mb: 1.5 }}>{profilePic}</Avatar>
           <Box
             sx={{ pb: 2, marginLeft: 2 }}
@@ -25,7 +25,7 @@ const ChatNow = ({
               {companyName}
             </Typography>
           </Box>
-        </div>
+        </Box>
           <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <Button variant='contained' sx={{ width: 350, backgroundColor: '#2563EB'}}>
               Chat Now
