@@ -2,6 +2,7 @@ import { apiHandler } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@/errors';
 import { formatListingResponse, listingsRequestBody } from '..';
+import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
 // -- Functions --//
 function parseListingId($id: string) {
@@ -49,44 +50,19 @@ export default apiHandler()
         // Return the result
         res.status(200).json(formatListingResponse(listing));
     })
-    .put(async (req, res) => {
-        // // Update an existing listing
-        // // Parse and validate listing id provided
-        // const id = parseListingId(req.query.id as string);
 
-        // // Check if the listing exists
-        // await checkListingExists(id);
-
-        // // Parse and validate the request body
-        // const data = listingsRequestBody.parse(req.body);
-
-        // // Update the listing in the database
-        // const updatedListing = await PrismaClient.listing.update({
-        //     where: {
-        //         id,
-        //     },
-        //     data: {
-        //         name: data.name,
-        //         description: data.description,
-        //         price: data.price,
-        //         unitPrice: data.unitPrice,
-        //         negotiable: data.negotiable,
-        //         categoryId: data.categoryId,
-        //         type: data.type,
-        //         active: data.active,
-        //     },
-        // });
-
-        // // Return the result
-        // res.status(200).json(formatListingResponse(updatedListing));
-    })
     .delete(async (req, res) => {
+        apiGuardMiddleware({
+            allowNonAuthenticated: true,
+        })
+
         // Deletes a listing
         // Parse and validate listing id provided
         const id = parseListingId(req.query.id as string);
 
-        // Check if the listing exists
-        await checkListingExists(id);
+
+        // // Check if the listing exists
+        // await checkListingExists(id);
 
         // Delete the listing from the database
         await PrismaClient.listing.delete({
