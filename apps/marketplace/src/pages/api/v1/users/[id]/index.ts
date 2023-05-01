@@ -68,9 +68,7 @@ export default apiHandler()
       if (!isAdmin) {
         throw new ForbiddenError();
       }
-      companyId = parseToNumber(company);
-    } else {
-      companyId = undefined;
+      companyId = parseToNumber(company, 'company');
     }
 
     const user = await client.users.update({
@@ -92,7 +90,7 @@ export default apiHandler()
     }
 
     return res.status(200).json(formatAPIResponse({ user }));
-  })  
+  })
   .delete(
     apiGuardMiddleware({
       allowAdminsOnly: true,
