@@ -28,10 +28,10 @@ async function checkListingExists(listingId: number) {
 }
 
 async function getParameter(listingId: number, parameterId: number) {
-  const parameter = await PrismaClient.listings_parameters_value.findFirst({
+  const parameter = await PrismaClient.listingsParametersValue.findFirst({
     where: {
-      listing_id: listingId,
-      parameter_id: parameterId,
+      listingId,
+      parameterId,
     },
     include: {
       parameter: true,
@@ -43,7 +43,7 @@ async function getParameter(listingId: number, parameterId: number) {
   }
 
   return {
-    paramId: parameter.parameter.id,
+    paramId: parameter.parameterId,
     value: parameter.value,
   };
 }
