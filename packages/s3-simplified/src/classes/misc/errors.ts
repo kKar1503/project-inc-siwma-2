@@ -1,4 +1,4 @@
-abstract class InvalidError extends Error {
+export abstract class InvalidError extends Error {
 }
 
 export class MissingBucket extends InvalidError {
