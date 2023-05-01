@@ -8,6 +8,22 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { APIRequestType } from '@/types/api-types';
 import { ParamError } from '@/errors';
 import * as process from 'process';
+import { z } from 'zod';
+
+const zod = z.object({
+  companyId: z.string(),
+  image: z.union([
+    z.instanceof(Readable),
+    z.instanceof(ReadableStream),
+    z.instanceof(Blob),
+    z.string(),
+    z.instanceof(Uint8Array),
+    z.instanceof(Buffer),
+  ]),
+  endDate: z.string(),
+  description: z.string(),
+  link: z.string(),
+});
 
 export interface AdvertisementPayload {
   companyId: string,
@@ -19,35 +35,8 @@ export interface AdvertisementPayload {
 
 export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
-export const validateAdvertisementPayload = (payload: AdvertisementPayload) => {
-  if (!payload.companyId) {
-    throw new Error(`companyId is required`);
-  }
-
-  if (!payload.image) {
-    throw new Error(`image is required`);
-  }
-
-  if (!payload.endDate) {
-    throw new Error(`endDate is required`);
-  }
-
-  if (!payload.description) {
-    throw new Error(`description is required`);
-  }
-
-  if (!payload.link) {
-    throw new Error(`link is required`);
-  }
-};
-
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
-  const payload = req.body as AdvertisementPayload;
-  try {
-    validateAdvertisementPayload(payload);
-  } catch (e) {
-    throw new ParamError();
-  }
+  const payload = zod.parse(req.body) as AdvertisementPayload;
 
   let companyId: number;
   try {
@@ -61,7 +50,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     bucket = await s3Connection.getBucket(AdvertisementBucket);
   } catch (e) {
     // access key don't have access to bucket or bucket doesn't exist
-     res.status(500).json(formatAPIResponse({
+    res.status(500).json(formatAPIResponse({
       details: 'failed to connect to bucket',
     }));
     return;

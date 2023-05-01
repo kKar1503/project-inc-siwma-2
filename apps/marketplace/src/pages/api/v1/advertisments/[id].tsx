@@ -7,6 +7,25 @@ import s3Connection from '@/utils/s3Connection';
 import { IS3Object, S3BucketService, S3ObjectBuilder } from 's3-simplified';
 import { AdvertisementBucket, AdvertisementPayload } from '@api/v1/advertisments/index';
 import { APIRequestType } from '@/types/api-types';
+import { Readable } from 'stream';
+import { z } from 'zod';
+
+
+const  zod =  z.object({
+  companyId: z.string().optional(),
+  image: z.union([
+    z.instanceof(Readable),
+    z.instanceof(ReadableStream),
+    z.instanceof(Blob),
+    z.string(),
+    z.instanceof(Uint8Array),
+    z.instanceof(Buffer),
+  ]).optional(),
+  endDate: z.string().optional(),
+  description: z.string().optional(),
+  link: z.string().optional(),
+});
+
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   const isAdmin = (req.token?.user.permissions === true);
@@ -49,8 +68,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   if (Number.isNaN(id)) {
     throw new NotFoundError(`advertisement not found`);
   }
-
-  const payload = req.body as AdvertisementPayload;
+  const validatedPayload = zod.parse( req.body as AdvertisementPayload);
 
   const advertisement = await PrismaClient.advertisements.findUnique({
     where: {
@@ -64,7 +82,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
   // if image has changed
   let url = advertisement.image;
-  if (payload.image) {
+  if (validatedPayload.image) {
     let bucket: S3BucketService;
     try {
       bucket = await s3Connection.getBucket(AdvertisementBucket);
@@ -76,7 +94,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       return;
     }
 
-    const s3ObjectBuilder = new S3ObjectBuilder(payload.image);
+    const s3ObjectBuilder = new S3ObjectBuilder(validatedPayload.image);
 
     let s3Object: IS3Object;
 
@@ -108,11 +126,11 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       link: true,
     },
     data: {
-      companyId: payload.companyId || advertisement.companyId,
+      companyId: validatedPayload.companyId || advertisement.companyId,
       image: url,
-      endDate: (payload.endDate && new Date(payload.endDate)) || advertisement.endDate,
-      description: payload.description,
-      link: payload.link,
+      endDate: (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate,
+      description: validatedPayload.description || advertisement.description,
+      link: validatedPayload.link || advertisement.link,
     },
     where: {
       id,
