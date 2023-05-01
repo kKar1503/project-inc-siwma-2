@@ -138,15 +138,21 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // Delete advertisement
-  await PrismaClient.advertisements.delete({
+  const prismaPromise = PrismaClient.advertisements.delete({
     where: {
       id,
     },
   });
 
   // Delete image from s3
-  const bucket = await s3Connection.getBucket(AdvertisementBucket);
-  await bucket.deleteObject(advertisement.image);
+  const s3Promise = new Promise((resolve) => {
+    s3Connection.getBucket(AdvertisementBucket).then((bucket) => {
+      bucket.deleteObject(advertisement.image).then(resolve);
+    });
+  });
+
+  // Wait for both promises to resolve
+  await Promise.all([prismaPromise, s3Promise]);
 
   // Return advertisement
   res.status(204).end();
