@@ -1,3 +1,8 @@
 node_modules
 *.env
-.vscode/
+*.env.local
+.vscode/*
+.idea/*
+dist
+packages/db/prisma/scripts/casingFix.js
+tmp/**/*
