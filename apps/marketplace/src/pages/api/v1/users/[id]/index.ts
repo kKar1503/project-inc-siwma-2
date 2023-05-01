@@ -58,12 +58,15 @@ export default apiHandler()
       throw new ParamInvalidError('mobileNumber', mobileNumber);
     }
 
+    // Users can edit their own details, and admins can edit anyone's details
+    // Therefore, we cannot simply block the entire endpoint for non-admin users
     if (!isAdmin && req.token?.user.id !== id) {
       throw new ForbiddenError();
     }
 
     let companyId: number | undefined;
 
+    // Users cannot change their company, but admins can change anyone's company (per API specs)
     if (company) {
       if (!isAdmin) {
         throw new ForbiddenError();
