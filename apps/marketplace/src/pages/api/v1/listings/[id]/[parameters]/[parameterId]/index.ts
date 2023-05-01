@@ -22,7 +22,7 @@ async function checkListingExists(listingId: number) {
     });
 
     if (!listing) {
-        throw new NotFoundError(`Listing with id '${listingId}' not found`);
+        throw new NotFoundError("Listing")
     }
 
     return listing;
@@ -40,7 +40,7 @@ async function getParameter(listingId: number, parameterId: number) {
     });
 
     if (!parameter) {
-        throw new NotFoundError(`Parameter with id '${parameterId}' not found`);
+        throw new NotFoundError("Parameter");
     }
 
     return {
