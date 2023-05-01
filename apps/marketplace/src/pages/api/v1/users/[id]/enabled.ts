@@ -8,7 +8,7 @@ const userIdSchema = z.object({
 });
 
 export default apiHandler({
-  allowAdminsOnly: false,
+  allowAdminsOnly: true,
 }).patch(async (req, res) => {
   const { id } = userIdSchema.parse(req.query);
 

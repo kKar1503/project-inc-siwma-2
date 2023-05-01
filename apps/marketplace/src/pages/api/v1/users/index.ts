@@ -20,7 +20,6 @@ const userCreationRequestBody = z.object({
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
     apiGuardMiddleware({
-      allowNonAuthenticated: false,
       allowAdminsOnly: true,
     }),
     async (req: NextApiRequest, res: NextApiResponse) => {
@@ -35,7 +34,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         take: limit,
       });
 
-      return res.status(200).json(formatAPIResponse({ data: users }));
+      return res.status(200).json(formatAPIResponse({ users }));
     }
   )
   .post(async (req: NextApiRequest, res: NextApiResponse) => {

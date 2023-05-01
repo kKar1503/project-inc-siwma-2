@@ -43,7 +43,7 @@ export default apiHandler()
       },
     });
 
-    return res.status(200).json(formatAPIResponse({ data: user }));
+    return res.status(200).json(formatAPIResponse({ user }));
   })
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
