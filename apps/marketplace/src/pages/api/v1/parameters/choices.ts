@@ -1,8 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NextApiRequest, NextApiResponse } from 'next';
 
-export default apiHandler().get(async (req: NextApiRequest, res: NextApiResponse) => {
+export default apiHandler().get(async (req, res) => {
   // Retrieve all parameter choices from the database
   const parameterChoices = await PrismaClient.parameterChoices.findMany();
 
