@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@inc/db';
+import PrismaClient, { ListingsParametersValue } from '@inc/db';
 import { NotFoundError } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
@@ -55,9 +55,9 @@ const getListingParameters = async (req: NextApiRequest, res: NextApiResponse) =
             const id = parseListingId(req.query.id as string);
             const listing = await checkListingExists(id);
 
-            const parameters = await PrismaClient.listings_parameters_value.findMany({
+            const parameters = await PrismaClient.listingsParametersValue.findMany({
                 where: {
-                    listing_id: id,
+                    listingId: id,
                 },
                 include: {
                     parameter: true,
@@ -88,22 +88,22 @@ const updateListingParameters = async (req: NextApiRequest, res: NextApiResponse
             const { parameters } = req.body;
 
             // Delete all the existing parameters for this listing
-            await PrismaClient.listings_parameters_value.deleteMany({
+            await PrismaClient.listingsParametersValue.deleteMany({
                 where: {
-                    listing_id: id,
+                    listingId: id,
                 },
             });
 
             // Add the new parameters to the database
-            for (const param of parameters) {
-                await PrismaClient.listings_parameters_value.create({
-                    data: {
-                        listing_id: id,
-                        parameter_id: param.parameterId,
-                        value: param.value,
-                    },
+            await Promise.all(parameters.map(async (param: ListingsParametersValue) => {
+                await PrismaClient.listingsParametersValue.create({
+                  data: {
+                    listingId: id,
+                    parameterId: param.parameterId,
+                    value: param.value,
+                  },
                 });
-            }
+              }));
 
             res.status(200).json(formatAPIResponse({ success: true, data: 'Listing parameters updated successfully' }));
         } catch (error) {

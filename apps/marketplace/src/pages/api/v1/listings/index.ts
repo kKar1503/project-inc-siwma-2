@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient, { listing, listingtype } from '@inc/db';
+import PrismaClient, { Listing, ListingType } from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { Decimal } from '@prisma/client/runtime';
@@ -13,7 +13,7 @@ export type ListingResponse = {
   unitPrice?: boolean;
   negotiable?: boolean;
   categoryId: string;
-  type: listingtype;
+  type: ListingType;
   active: boolean;
   owner: string;
   parameters?: Array<{
@@ -22,7 +22,7 @@ export type ListingResponse = {
   }>;
 };
 
-export type ListingWithParameters = listing & {
+export type ListingWithParameters = Listing & {
   listings_parameters_value: Array<{
     parameter_id: number;
     value: string;
@@ -36,9 +36,9 @@ export function formatListingResponse($listings: ListingWithParameters[]) {
     name: listing.name,
     description: listing.description,
     price: listing.price,
-    unitPrice: listing.unit_price,
+    unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
-    categoryId: listing.category_id.toString(),
+    categoryId: listing.categoryId.toString(),
     listingType: listing.type,
     owner: listing.owner,
     active: listing.active,
@@ -57,9 +57,9 @@ export function formatSingleListingResponse(listing: ListingWithParameters): Lis
     name: listing.name,
     description: listing.description,
     price: listing.price,
-    unitPrice: listing.unit_price,
+    unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
-    categoryId: listing.category_id.toString(),
+    categoryId: listing.categoryId.toString(),
     type: listing.type,
     owner: listing.owner,
     active: listing.active,
@@ -79,7 +79,7 @@ export const listingsRequestBody = z.object({
   unitPrice: z.boolean().optional(),
   negotiable: z.boolean().optional(),
   categoryId: z.number(),
-  type: z.nativeEnum(listingtype),
+  type: z.nativeEnum(ListingType),
   parameters: z
     .array(
       z.object({
@@ -91,19 +91,19 @@ export const listingsRequestBody = z.object({
 });
 
 export default apiHandler()
-  .get(apiGuardMiddleware(), async (req, res) => {
+  .get(async (req, res) => {
+    // Retrieve all listings from the database
     const listings = await PrismaClient.listing.findMany({
       include: {
-        listings_parameters_value: true,
+        listingsParametersValues: true,
       },
     });
 
     res.status(200).json(formatAPIResponse(formatListingResponse(listings)));
   })
-  .post(apiGuardMiddleware(), async (req, res) => {
-    try {
+  .post(async (req, res) => {
+
       const data = listingsRequestBody.parse(req.body);
-      console.log('Parsed request body:', data);
 
       // Use the user ID from the request object
       const userId = req.token?.user?.id;
@@ -124,19 +124,19 @@ export default apiHandler()
           name: data.name,
           description: data.description,
           price: data.price,
-          unit_price: data.unitPrice,
+          unitPrice: data.unitPrice,
           negotiable: data.negotiable,
-          category_id: data.categoryId,
+          categoryId: data.categoryId,
           type: data.type,
           active: true,
           owner: userId,
-          listings_parameters_value: data.parameters
+          listingsParametersValues: data.parameters
             ? {
                 create: data.parameters.map((parameter) => ({
                   value: parameter.value,
                   parameter: {
                     connect: {
-                      id: parseInt(parameter.paramId),
+                      id: parseInt(parameter.paramId, 10),
                     },
                   },
                 })),
@@ -144,24 +144,10 @@ export default apiHandler()
             : undefined,
         },
         include: {
-          listings_parameters_value: true,
+          listingsParametersValues: true,
         },
       });
-      console.log('Created listing:', listing);
 
       res.status(201).json({ listingId: listing.id });
-    } catch (error) {
-      console.error('Error creating listing:', error);
 
-      let detail;
-      if (error instanceof z.ZodError) {
-        detail = error.issues[0].path.join('/');
-      } else {
-        detail = 'Invalid parameter supplied';
-      }
-
-      res.status(422).json({
-        errors: [{ status: 422, detail }],
-      });
-    }
   });
