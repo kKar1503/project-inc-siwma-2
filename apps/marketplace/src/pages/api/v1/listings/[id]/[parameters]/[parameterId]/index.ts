@@ -52,8 +52,8 @@ async function getParameter(listingId: number, parameterId: number) {
 export default apiHandler()
     .get(async (req: NextApiRequest, res: NextApiResponse) => {
         try {
-            const listingId = parseId(req.query.id as string);
-            const parameterId = parseId(req.query.parameterId as string);
+            const listingId = parseToNumber(req.query.id as string);
+            const parameterId = parseToNumber(req.query.parameterId as string);
             await checkListingExists(listingId);
 
             const parameter = await getParameter(listingId, parameterId);
