@@ -1,5 +1,6 @@
 import { ThemeProvider, CssBaseline, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import FormLabel from '@mui/material/FormLabel';
@@ -8,9 +9,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import baseTheme from '../themes/baseTheme';
-import FilterForm from '../components/marketplace/FilterForm';
-import ProductListingItem from '../components/marketplace/listing/ProductListingItem';
+import baseTheme from '@/themes/baseTheme';
+import FilterForm from '@/components/marketplace/FilterForm';
+import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
 
 export type ResultsProps = {
   items: any[];
@@ -30,13 +31,13 @@ const DisplayResults = ({ items }: ResultsProps) => {
       <Container maxWidth="lg">
         <Grid container spacing={2}>
           {!isMediumScreen && (
-            <Grid item xs={12} md={2} sx={{ width: '100%' }}>
+            <Grid item xs={12} md={2} sx={{ width: '100%', marginTop: 2 }}>
               <FilterForm />
             </Grid>
           )}
 
           <Grid item xs={12} md={10} sx={{ width: '100%' }}>
-            <div style={{ display: 'flex', margin: 2 }}>
+            <Box sx={{ display: 'flex', margin: 2 }}>
               <Grid item xs={6} md={8} container justifyContent="flex-start">
                 {items ? (
                   <h1 style={{ fontSize: '1.5rem' }}>
@@ -63,11 +64,13 @@ const DisplayResults = ({ items }: ResultsProps) => {
                     FILTER
                   </Button>
                   <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
-                    <FilterForm />
+                    <Box sx={{ height: '100%', margin: 2 }}>
+                      <FilterForm />
+                    </Box>
                   </Drawer>
                 </Grid>
               )}
-            </div>
+            </Box>
 
             {items && items.length > 0 && (
               <Grid container display="flex">

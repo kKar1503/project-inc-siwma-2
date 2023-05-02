@@ -1,4 +1,5 @@
 import * as Mui from '@mui/material';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
@@ -12,7 +13,7 @@ import Button from '@mui/material/Button';
 const FilterForm = () => {
   return (
     <form style={{ padding: 1, marginTop: 2, width: '100%' }}>
-      <h3>Search Filter</h3>
+      <h3 style={{ marginBottom: 0 }}>Search Filter</h3>
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>Negotiability</FormLabel>
       <RadioGroup>
@@ -22,10 +23,10 @@ const FilterForm = () => {
 
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>Price</FormLabel>
-      <div style={{ display: 'flex', marginBottom: 2 }}>
+      <Box sx={{ display: 'flex', marginBottom: 2 }}>
         <TextField id="standard-basic min" label="Min" variant="standard" sx={{ mr: 2 }} />
         <TextField id="standard-basic max" label="Max" variant="standard" />
-      </div>
+      </Box>
 
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>Condition</FormLabel>
