@@ -17,6 +17,7 @@ const updateUserDetailsSchema = z.object({
   profilePicture: z.string().optional(),
   mobileNumber: z.string().optional(),
   contactMethod: z.nativeEnum(UserContacts).optional(),
+  bio: z.string().optional(),
 });
 
 export default apiHandler()
@@ -40,6 +41,7 @@ export default apiHandler()
         usersComments: isAdmin,
         phone: true,
         contact: true,
+        bio: true,
       },
     });
 
@@ -49,7 +51,7 @@ export default apiHandler()
     const isAdmin = req.token?.user.permissions === 1;
 
     const { id } = userIdSchema.parse(req.query);
-    const { name, email, company, profilePicture, mobileNumber, contactMethod } =
+    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio } =
     updateUserDetailsSchema.parse(req.body);
 
     // Phone Regex: 8 digits or more, allow spaces, dashes, and parentheses
@@ -86,6 +88,7 @@ export default apiHandler()
         profilePicture,
         phone: mobileNumber,
         contact: contactMethod,
+        bio
       },
     });
 
