@@ -45,9 +45,9 @@ export default apiHandler({ allowNonAuthenticated: true })
     const { token, mobileNumber, password } = userCreationRequestBody.parse(req.body);
 
     // Phone Regex: 8 digits or more, allow spaces, dashes, and parentheses
-    const phoneRegex = /^(\d{8,})(?:\s|-|\()?\d{3,}(?:\s|-|\()?\d{3,}$/;
+    const phoneRegex = /^\\s*(\\d[\\s()-]*){8,}$/;
     // Match the mobile number against the regex
-    if (!phoneRegex.test(req.body.mobileNumber)) {
+    if (!phoneRegex.test(mobileNumber)) {
       throw new ParamInvalidError('mobileNumber', mobileNumber);
     }
 
