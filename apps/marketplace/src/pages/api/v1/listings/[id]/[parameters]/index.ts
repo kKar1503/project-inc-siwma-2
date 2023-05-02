@@ -3,19 +3,9 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient, { ListingsParametersValue } from '@inc/db';
 import { NotFoundError } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { parseListingId } from '@/utils/api';
 
 // -- Functions --//
-function parseListingId($id: string) {
-    // Parse and validate listing id provided
-    const id = parseInt($id, 10);
-
-    // Check if the listing id is valid
-    if (Number.isNaN(id)) {
-        throw new NotFoundError(`Listing with id '${id}'`);
-    }
-
-    return id;
-}
 
 function formatParametersResponse(parameters: any[]): any[] {
     return parameters.map((param) => ({
@@ -43,39 +33,31 @@ async function checkListingExists($id: string | number) {
 
     // Check if the listing exists
     if (!listing) {
-        throw new NotFoundError(`Listing with id '${id}'`);
+        throw new NotFoundError('Listing');
     }
 
     return listing;
 }
 
 const getListingParameters = async (req: NextApiRequest, res: NextApiResponse) => {
-    if (req.method === 'GET') {
-        try {
-            const id = parseListingId(req.query.id as string);
-            const listing = await checkListingExists(id);
 
-            const parameters = await PrismaClient.listingsParametersValue.findMany({
-                where: {
-                    listingId: id,
-                },
-                include: {
-                    parameter: true,
-                },
-            });
 
-            const formattedParameters = formatParametersResponse(parameters);
-            res.status(200).json(formatAPIResponse({ success: true, data: formattedParameters }));
-        } catch (error) {
-            if (error instanceof NotFoundError) {
-                res.status(404).json(formatAPIResponse({ success: false, data: error.message }));
-            } else {
-                res.status(500).json(formatAPIResponse({ success: false, data: 'Internal server error' }));
-            }
-        }
-    } else {
-        res.status(405).json(formatAPIResponse({ success: false, data: 'Method not allowed' }));
-    }
+    const id = parseListingId(req.query.id as string);
+    const listing = await checkListingExists(id);
+
+    const parameters = await PrismaClient.listingsParametersValue.findMany({
+        where: {
+            listingId: id,
+        },
+        include: {
+            parameter: true,
+        },
+    });
+
+    const formattedParameters = formatParametersResponse(parameters);
+    res.status(200).json(formatAPIResponse({ success: true, data: formattedParameters }));
+
+
 };
 
 const updateListingParameters = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -97,13 +79,13 @@ const updateListingParameters = async (req: NextApiRequest, res: NextApiResponse
             // Add the new parameters to the database
             await Promise.all(parameters.map(async (param: ListingsParametersValue) => {
                 await PrismaClient.listingsParametersValue.create({
-                  data: {
-                    listingId: id,
-                    parameterId: param.parameterId,
-                    value: param.value,
-                  },
+                    data: {
+                        listingId: id,
+                        parameterId: param.parameterId,
+                        value: param.value,
+                    },
                 });
-              }));
+            }));
 
             res.status(200).json(formatAPIResponse({ success: true, data: 'Listing parameters updated successfully' }));
         } catch (error) {

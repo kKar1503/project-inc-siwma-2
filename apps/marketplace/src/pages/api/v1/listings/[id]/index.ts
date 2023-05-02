@@ -3,19 +3,11 @@ import PrismaClient from '@inc/db';
 import { NotFoundError } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { listingsRequestBody, formatSingleListingResponse } from '..';
+import { ForbiddenError } from '@/errors/AuthError';
+import { parseListingId } from '@/utils/api';
 
 // -- Functions --//
-function parseListingId($id: string) {
-  // Parse and validate param id provided
-  const id = parseInt($id, 10);
 
-  // Check if the parameter id is valid
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`Listing with id '${id}'`);
-  }
-
-  return id;
-}
 /**
  * Checks if a listing exists
  * @param id The listing id
@@ -67,9 +59,7 @@ export default apiHandler()
     const sameCompany = req.token?.user?.company === listing.users.companyId;
 
     if (!isOwner && !isAdmin && !sameCompany) {
-      return res.status(403).json({
-        errors: [{ status: 403, detail: 'Forbidden' }],
-      });
+      throw new ForbiddenError();
     }
 
     await PrismaClient.listing.delete({

@@ -1,8 +1,8 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { Listing, ListingType } from '@inc/db';
 import { z } from 'zod';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { Decimal } from '@prisma/client/runtime';
+import { NotFoundError } from '@/errors';
 
 // -- Type definitions -- //
 export type ListingResponse = {
@@ -23,8 +23,8 @@ export type ListingResponse = {
 };
 
 export type ListingWithParameters = Listing & {
-  listings_parameters_value: Array<{
-    parameter_id: number;
+  listingsParametersValue: Array<{
+    parameterId: number;
     value: string;
   }>;
 };
@@ -42,11 +42,11 @@ export function formatListingResponse($listings: ListingWithParameters[]) {
     listingType: listing.type,
     owner: listing.owner,
     active: listing.active,
-    parameters: listing.listings_parameters_value
-      ? listing.listings_parameters_value.map((parameter) => ({
-          paramId: parameter.parameter_id.toString(),
-          value: parameter.value,
-        }))
+    parameters: listing.listingsParametersValue
+      ? listing.listingsParametersValue.map((parameter) => ({
+        paramId: parameter.parameterId.toString(),
+        value: parameter.value,
+      }))
       : undefined,
   }));
 }
@@ -63,11 +63,11 @@ export function formatSingleListingResponse(listing: ListingWithParameters): Lis
     type: listing.type,
     owner: listing.owner,
     active: listing.active,
-    parameters: listing.listings_parameters_value
-      ? listing.listings_parameters_value.map((parameter) => ({
-          paramId: parameter.parameter_id.toString(),
-          value: parameter.value,
-        }))
+    parameters: listing.listingsParametersValue
+      ? listing.listingsParametersValue.map((parameter) => ({
+        paramId: parameter.parameterId.toString(),
+        value: parameter.value,
+      }))
       : undefined,
   };
 }
@@ -103,51 +103,49 @@ export default apiHandler()
   })
   .post(async (req, res) => {
 
-      const data = listingsRequestBody.parse(req.body);
+    const data = listingsRequestBody.parse(req.body);
 
-      // Use the user ID from the request object
-      const userId = req.token?.user?.id;
+    // Use the user ID from the request object
+    const userId = req.token?.user?.id;
 
-      // Check if the category exists
-      const categoryExists = await PrismaClient.category.findUnique({
-        where: { id: data.categoryId },
-      });
+    // Check if the category exists
+    const categoryExists = await PrismaClient.category.findUnique({
+      where: { id: data.categoryId },
+    });
 
-      if (!categoryExists) {
-        return res.status(422).json({
-          errors: [{ status: 422, detail: 'Category not found' }],
-        });
-      }
+    if (!categoryExists) {
+      throw new NotFoundError('Category');
+    }
 
-      const listing = await PrismaClient.listing.create({
-        data: {
-          name: data.name,
-          description: data.description,
-          price: data.price,
-          unitPrice: data.unitPrice,
-          negotiable: data.negotiable,
-          categoryId: data.categoryId,
-          type: data.type,
-          active: true,
-          owner: userId,
-          listingsParametersValues: data.parameters
-            ? {
-                create: data.parameters.map((parameter) => ({
-                  value: parameter.value,
-                  parameter: {
-                    connect: {
-                      id: parseInt(parameter.paramId, 10),
-                    },
-                  },
-                })),
-              }
-            : undefined,
-        },
-        include: {
-          listingsParametersValues: true,
-        },
-      });
+    const listing = await PrismaClient.listing.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        unitPrice: data.unitPrice,
+        negotiable: data.negotiable,
+        categoryId: data.categoryId,
+        type: data.type,
+        active: true,
+        owner: userId,
+        listingsParametersValues: data.parameters
+          ? {
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value,
+              parameter: {
+                connect: {
+                  id: parseToNumber(parameter.paramId),
+                },
+              },
+            })),
+          }
+          : undefined,
+      },
+      include: {
+        listingsParametersValues: true,
+      },
+    });
 
-      res.status(201).json({ listingId: listing.id });
+    res.status(201).json({ listingId: listing.id });
 
   });
