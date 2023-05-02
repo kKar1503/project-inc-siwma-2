@@ -14,7 +14,20 @@ import FilterForm from '@/components/marketplace/FilterForm';
 import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
 
 export type ResultsProps = {
-  items: any[];
+  items: {
+    img: string;
+    type: string;
+    name: string;
+    rating: number;
+    href: string;
+    price: number;
+    negotiable: boolean;
+    ownerId: string;
+    ownerFullName: string;
+    createdAt: string;
+    companyName: string;
+    isUnitPrice: boolean;
+  }[];
 };
 
 const DisplayResults = ({ items }: ResultsProps) => {
@@ -47,14 +60,14 @@ const DisplayResults = ({ items }: ResultsProps) => {
                   <h1 style={{ fontSize: '1.5rem' }}>0 search results</h1>
                 )}
               </Grid>
-              <Grid item xs={3} md={4} container justifyContent="flex-end" alignContent="center">
+              <Grid item xs={4} md={4} container justifyContent="flex-end" alignContent="center">
                 <FormLabel sx={{ pt: 1, pr: 1 }}>Sort By: </FormLabel>
                 <Select sx={{ height: '45px', width: '40%' }}>
                   <MenuItem value={1}>idk</MenuItem>
                 </Select>
               </Grid>
               {isMediumScreen && (
-                <Grid item xs={3} container justifyContent="flex-end" alignContent="center">
+                <Grid item xs={2} container justifyContent="flex-end" alignContent="center">
                   <Button
                     sx={{ height: '45px' }}
                     variant="outlined"
