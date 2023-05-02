@@ -1,6 +1,13 @@
-import * as Mui from '@mui/material';
-import * as MuiIcon from '@mui/icons-material';
+import { ThemeProvider, CssBaseline, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import FormLabel from '@mui/material/FormLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import Drawer from '@mui/material/Drawer';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import baseTheme from '../themes/baseTheme';
 import FilterForm from '../components/marketplace/FilterForm';
 import ProductListingItem from '../components/marketplace/listing/ProductListingItem';
@@ -10,7 +17,7 @@ export type ResultsProps = {
 };
 
 const DisplayResults = ({ items }: ResultsProps) => {
-  const isMediumScreen = Mui.useMediaQuery(baseTheme.breakpoints.down('md'));
+  const isMediumScreen = useMediaQuery(baseTheme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -18,19 +25,19 @@ const DisplayResults = ({ items }: ResultsProps) => {
   };
 
   return (
-    <Mui.ThemeProvider theme={baseTheme}>
-      <Mui.CssBaseline />
-      <Mui.Container maxWidth="lg">
-        <Mui.Grid container spacing={2}>
+    <ThemeProvider theme={baseTheme}>
+      <CssBaseline />
+      <Container maxWidth="lg">
+        <Grid container spacing={2}>
           {!isMediumScreen && (
-            <Mui.Grid item xs={12} md={2} sx={{ width: '100%' }}>
+            <Grid item xs={12} md={2} sx={{ width: '100%' }}>
               <FilterForm />
-            </Mui.Grid>
+            </Grid>
           )}
 
-          <Mui.Grid item xs={12} md={10} sx={{ width: '100%' }}>
+          <Grid item xs={12} md={10} sx={{ width: '100%' }}>
             <div style={{ display: 'flex', margin: 2 }}>
-              <Mui.Grid item xs={6} md={8} container justifyContent="flex-start">
+              <Grid item xs={6} md={8} container justifyContent="flex-start">
                 {items ? (
                   <h1 style={{ fontSize: '1.5rem' }}>
                     Displaying {items.length} search results for:{' '}
@@ -38,41 +45,34 @@ const DisplayResults = ({ items }: ResultsProps) => {
                 ) : (
                   <h1 style={{ fontSize: '1.5rem' }}>0 search results</h1>
                 )}
-              </Mui.Grid>
-              <Mui.Grid
-                item
-                xs={3}
-                md={4}
-                container
-                justifyContent="flex-end"
-                alignContent="center"
-              >
-                <Mui.FormLabel sx={{ pt: 1, pr: 1 }}>Sort By: </Mui.FormLabel>
-                <Mui.Select sx={{ height: '45px', width: '40%' }}>
-                  <Mui.MenuItem value={1}>idk</Mui.MenuItem>
-                </Mui.Select>
-              </Mui.Grid>
+              </Grid>
+              <Grid item xs={3} md={4} container justifyContent="flex-end" alignContent="center">
+                <FormLabel sx={{ pt: 1, pr: 1 }}>Sort By: </FormLabel>
+                <Select sx={{ height: '45px', width: '40%' }}>
+                  <MenuItem value={1}>idk</MenuItem>
+                </Select>
+              </Grid>
               {isMediumScreen && (
-                <Mui.Grid item xs={3} container justifyContent="flex-end" alignContent="center">
-                  <Mui.Button
+                <Grid item xs={3} container justifyContent="flex-end" alignContent="center">
+                  <Button
                     sx={{ height: '45px' }}
                     variant="outlined"
                     onClick={toggleDrawer}
-                    endIcon={<MuiIcon.FilterAlt />}
+                    endIcon={<FilterAltIcon />}
                   >
                     FILTER
-                  </Mui.Button>
-                  <Mui.Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
+                  </Button>
+                  <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
                     <FilterForm />
-                  </Mui.Drawer>
-                </Mui.Grid>
+                  </Drawer>
+                </Grid>
               )}
             </div>
 
             {items && items.length > 0 && (
-              <Mui.Grid container display="flex">
+              <Grid container display="flex">
                 {items.map((item: any) => (
-                  <Mui.Grid item xs={4} md={3} sx={{ mb: 2 }}>
+                  <Grid item xs={4} md={3} sx={{ mb: 2 }}>
                     <ProductListingItem
                       img={item.img}
                       type={item.type}
@@ -87,20 +87,20 @@ const DisplayResults = ({ items }: ResultsProps) => {
                       isUnitPrice={item.isUnitPrice}
                       createdAt={item.createdAt}
                     />
-                  </Mui.Grid>
+                  </Grid>
                 ))}
-              </Mui.Grid>
+              </Grid>
             )}
 
             {!items && (
-              <Mui.Grid container justifyContent="center">
+              <Grid container justifyContent="center">
                 <h1>No items found.</h1>
-              </Mui.Grid>
+              </Grid>
             )}
-          </Mui.Grid>
-        </Mui.Grid>
-      </Mui.Container>
-    </Mui.ThemeProvider>
+          </Grid>
+        </Grid>
+      </Container>
+    </ThemeProvider>
   );
 };
 
