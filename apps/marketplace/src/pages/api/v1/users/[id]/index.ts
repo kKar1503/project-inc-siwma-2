@@ -54,8 +54,7 @@ export default apiHandler()
     const { name, email, company, profilePicture, mobileNumber, contactMethod, bio } =
     updateUserDetailsSchema.parse(req.body);
 
-    // Phone Regex: 8 digits or more, allow spaces, dashes, and parentheses
-    const phoneRegex = /^\\s*(\\d[\\s()-]*){8,}$/;
+    const phoneRegex = /^(?:\+65)?[689][0-9]{7}$/;
     // Match the mobile number against the regex
     if (mobileNumber && !phoneRegex.test(mobileNumber)) {
       throw new ParamInvalidError('mobileNumber', mobileNumber);
