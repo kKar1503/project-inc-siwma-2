@@ -9,14 +9,14 @@ const userIdSchema = z.object({
   id: z.string(),
 });
 
-const userDetailsSchema = z.object({
-  name: z.string(),
+const updateUserDetailsSchema = z.object({
+  name: z.string().optional(),
   email: z.string().email(),
   //   company is a number that represents the id of the company
   company: z.string().optional(),
   profilePicture: z.string().optional(),
-  mobileNumber: z.string(),
-  contactMethod: z.nativeEnum(UserContacts),
+  mobileNumber: z.string().optional(),
+  contactMethod: z.nativeEnum(UserContacts).optional(),
 });
 
 export default apiHandler()
@@ -50,9 +50,10 @@ export default apiHandler()
 
     const { id } = userIdSchema.parse(req.query);
     const { name, email, company, profilePicture, mobileNumber, contactMethod } =
-      userDetailsSchema.parse(req.body);
+    updateUserDetailsSchema.parse(req.body);
 
-    const phoneRegex = /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/;
+    // Phone Regex: 8 digits or more, allow spaces, dashes, and parentheses
+    const phoneRegex = /^(\d{8,})(?:\s|-|\()?\d{3,}(?:\s|-|\()?\d{3,}$/;
     // Match the mobile number against the regex
     if (!phoneRegex.test(req.body.mobileNumber)) {
       throw new ParamInvalidError('mobileNumber', mobileNumber);
