@@ -45,7 +45,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   });
 
   // Throw error if advertisement not found
-  if (!advertisement) throw new NotFoundError(`advertisement not found`);
+  if (!advertisement) throw new NotFoundError(`advertisement`);
 
   // Return advertisement
   res.status(200).json(formatAPIResponse(advertisement));
@@ -67,9 +67,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   // Throw error if advertisement not found
-  if (!advertisement) {
-    throw new NotFoundError(`advertisement not found`);
-  }
+  if (!advertisement) throw new NotFoundError(`advertisement`);
 
   // if image has changed
   let url = advertisement.image;
@@ -133,9 +131,7 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   // Throw error if advertisement not found
-  if (!advertisement) {
-    throw new NotFoundError(`advertisement not found`);
-  }
+  if (!advertisement) throw new NotFoundError(`advertisement`);
 
   // Delete advertisement
   const prismaPromise = PrismaClient.advertisements.delete({
