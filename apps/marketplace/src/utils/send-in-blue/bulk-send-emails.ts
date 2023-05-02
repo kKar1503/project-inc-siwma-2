@@ -2,7 +2,10 @@ import client from '@inc/db';
 import sibClient, { changeAPIKey } from '@inc/send-in-blue';
 import getAPIKey from './api-keys';
 
-// This function sends email notifications to multiple recipients.
+/* This function sends emails to multiple recipients.
+ * It uses SendInBlue's Transactional Email API.
+ *
+ */
 
 /* htmlContent example
 To use a variable in the HTML content, use {{params.variableName}} and make sure to include the variable in the params object.
@@ -22,7 +25,8 @@ If this email was sent to you by mistake, please ignore it.
 
 export type BulkEmailRequestBody = {
   htmlContent: string; // HTML content of the email
-  messageVersions: { // Each messageVersion is a different email that will be sent to a different user.
+  messageVersions: {
+    // Each messageVersion is a different email that will be sent to a different user.
     to: {
       email: string; // Email address of the recipient
       name: string; // Name of the recipient (to be shown in the email's recipient field)
