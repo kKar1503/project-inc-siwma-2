@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
-import { datatype, parameter, parametertype } from '@prisma/client';
+import { DataType, Parameter, ParameterType } from '@prisma/client';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
 // -- Type definitions -- //
@@ -10,13 +10,13 @@ export type ParamResponse = {
   id: string;
   name: string;
   displayName: string;
-  type: parametertype;
-  datatype: datatype;
+  type: ParameterType;
+  datatype: DataType;
   active: boolean;
 };
 
 // -- Helper functions -- //
-export function formatParamResponse($parameters: parameter | parameter[]) {
+export function formatParamResponse($parameters: Parameter | Parameter[]) {
   // Initialise the parameters array
   let parameters = $parameters;
 
@@ -30,7 +30,7 @@ export function formatParamResponse($parameters: parameter | parameter[]) {
   const result: ParamResponse[] = parameters.map((parameter) => ({
     id: parameter.id.toString(),
     name: parameter.name,
-    displayName: parameter.display_name,
+    displayName: parameter.displayName,
     type: parameter.type,
     datatype: parameter.datatype,
     active: parameter.active,
@@ -46,8 +46,8 @@ export const paramsRequestBody = z.object({
   // Define the request body schema
   name: z.string(),
   displayName: z.string(),
-  type: z.nativeEnum(parametertype),
-  dataType: z.nativeEnum(datatype),
+  type: z.nativeEnum(ParameterType),
+  dataType: z.nativeEnum(DataType),
 });
 
 export default apiHandler()
@@ -71,7 +71,7 @@ export default apiHandler()
       const result = await PrismaClient.parameter.create({
         data: {
           name: data.name,
-          display_name: data.displayName,
+          displayName: data.displayName,
           type: data.type,
           datatype: data.dataType,
         },
