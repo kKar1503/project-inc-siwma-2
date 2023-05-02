@@ -31,24 +31,7 @@ export type ListingWithParameters = Listing & {
 
 // -- Helper functions -- //
 export function formatListingResponse($listings: ListingWithParameters[]) {
-  return $listings.map((listing) => ({
-    id: listing.id.toString(),
-    name: listing.name,
-    description: listing.description,
-    price: listing.price,
-    unitPrice: listing.unitPrice,
-    negotiable: listing.negotiable,
-    categoryId: listing.categoryId.toString(),
-    listingType: listing.type,
-    owner: listing.owner,
-    active: listing.active,
-    parameters: listing.listingsParametersValue
-      ? listing.listingsParametersValue.map((parameter) => ({
-        paramId: parameter.parameterId.toString(),
-        value: parameter.value,
-      }))
-      : undefined,
-  }));
+  return $listings.map((listing) => formatSingleListingResponse(listing));
 }
 
 export function formatSingleListingResponse(listing: ListingWithParameters): ListingResponse {

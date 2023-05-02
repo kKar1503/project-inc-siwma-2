@@ -3,22 +3,9 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@/errors';
 import { parseToNumber } from '@/utils/api';
+import { checkListingExists } from '@api/v1/listings/[id]/index';
 
 // -- Functions --//
-async function checkListingExists(listingId: number) {
-    const listing = await PrismaClient.listing.findUnique({
-        where: {
-            id: listingId,
-        },
-    });
-
-    if (!listing) {
-        throw new NotFoundError("Listing")
-    }
-
-    return listing;
-}
-
 async function getParameter(listingId: number, parameterId: number) {
     const parameter = await PrismaClient.listingsParametersValue.findFirst({
         where: {

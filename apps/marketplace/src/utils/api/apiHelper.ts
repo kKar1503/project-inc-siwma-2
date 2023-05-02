@@ -20,6 +20,7 @@ const parseToNumber = (string: string, key?: string) => {
 
   return result;
 };
+
 function parseListingId($id: string) {
   // Parse and validate listing id provided
   const id = parseToNumber($id, 'id');

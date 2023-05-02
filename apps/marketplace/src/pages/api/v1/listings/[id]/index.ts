@@ -13,7 +13,7 @@ import { parseListingId } from '@/utils/api';
  * @param id The listing id
  * @returns The listing if it exists
  */
-async function checkListingExists($id: string | number) {
+export async function checkListingExists($id: string | number) {
   // Parse and validate listing id provided
   const id = typeof $id === 'number' ? $id : parseListingId($id);
 
@@ -48,6 +48,8 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(formatSingleListingResponse(listing)));
   })
   .delete(async (req, res) => {
+    allowAdminsOnly: true;
+
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.role;
