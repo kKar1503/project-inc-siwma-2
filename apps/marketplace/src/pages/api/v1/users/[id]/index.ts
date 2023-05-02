@@ -11,7 +11,7 @@ const userIdSchema = z.object({
 
 const updateUserDetailsSchema = z.object({
   name: z.string().optional(),
-  email: z.string().email(),
+  email: z.string().email().optional(),
   //   company is a number that represents the id of the company
   company: z.string().optional(),
   profilePicture: z.string().optional(),
