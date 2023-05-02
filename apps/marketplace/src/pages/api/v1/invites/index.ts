@@ -1,8 +1,8 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
 import { z } from 'zod';
-import crypto from 'crypto';
 import { DuplicateError } from '@/errors';
+import bcrypt from 'bcrypt';
 
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
@@ -10,9 +10,7 @@ export const inviteCreationRequestBody = z.object({
   company: z.string(),
 });
 
-export default apiHandler(
-  { allowAdminsOnly: true },
-).post(async (req, res) => {
+export default apiHandler({ allowAdminsOnly: true }).post(async (req, res) => {
   // Creates a new invite
   // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.ifiq27spo70n
 
@@ -30,16 +28,12 @@ export default apiHandler(
     throw new DuplicateError('email');
   }
 
-  // Create sha256 hash of the user's name, email, the current date, and a random string
-  const tokenHash = crypto
-    .createHash('sha256')
-    .update(`${name}${email}${new Date().toISOString()}${crypto.randomBytes(16).toString('hex')}`)
-    .digest();
+  // Create token: user's name, email, the current date, and a random string
+  const tokenString = `${name}${email}${new Date().toISOString()}${Math.random()}`;
 
-  // Convert the hash to a hex string
-  const token = Array.from(new Uint8Array(tokenHash))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+  // Use bcrypt to hash the token
+  const salt = await bcrypt.genSalt(10);
+  const tokenHash = await bcrypt.hash(tokenString, salt);
 
   // Create the invite
   const invite = await client.invite.create({
@@ -47,7 +41,7 @@ export default apiHandler(
       email,
       name,
       companyId,
-      token,
+      token: tokenHash,
       expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     },
   });
