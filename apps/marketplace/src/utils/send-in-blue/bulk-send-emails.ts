@@ -4,7 +4,7 @@ import getAPIKey from './api-keys';
 
 /* This function sends emails to multiple recipients.
  * It uses SendInBlue's Transactional Email API.
- *
+ * You should use this function to send emails to multiple users at once instead of using a single email function multiple times.
  */
 
 /* htmlContent example
@@ -25,6 +25,7 @@ If this email was sent to you by mistake, please ignore it.
 
 export type BulkEmailRequestBody = {
   htmlContent: string; // HTML content of the email
+  subject: string; // Subject of the email
   messageVersions: {
     // Each messageVersion is a different email that will be sent to a different user.
     to: {
@@ -58,25 +59,25 @@ export default async function sendNotificationEmail(
   //   console.log(body.to[0].email);
   // });
 
-  const apiKey = (await getAPIKey(data.messageVersions.length)).key;
+  const apiKey = await getAPIKey(data.messageVersions.length);
 
-  if (!apiKey) {
+  if (!apiKey || !apiKey.key?.key) {
     return {
       success: false,
       message: 'No API key found.',
     };
   }
 
-  changeAPIKey(apiKey.key);
+  changeAPIKey(apiKey.key?.key);
 
   const apiInstance = new sibClient.TransactionalEmailsApi();
 
   const email = {
     sender: {
-      email: process.env.SIB_SENDER_EMAIL,
-      name: process.env.SIB_SENDER_NAME,
+      email: apiKey.key.senderEmail,
+      name: 'SIWMA Marketplace',
     },
-    subject: 'SIWMA Invite',
+    subject: data.subject,
     htmlContent: data.htmlContent,
     messageVersions: data.messageVersions,
   };
@@ -87,7 +88,7 @@ export default async function sendNotificationEmail(
     // Update the API Key usage count
     await client.sibkeys.update({
       where: {
-        key: apiKey.key,
+        key: apiKey.key?.key,
       },
       data: {
         remainingCount: {
