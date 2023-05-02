@@ -5,6 +5,9 @@ import getAPIKey from './api-keys';
 // This function sends email notifications to multiple recipients.
 
 /* htmlContent example
+To use a variable in the HTML content, use {{params.variableName}} and make sure to include the variable in the params object.
+You may want to extend the params object to include more variables.
+
 <!DOCTYPE html>
 <html>
 <body>
@@ -18,34 +21,38 @@ If this email was sent to you by mistake, please ignore it.
 */
 
 export type BulkEmailRequestBody = {
-  htmlContent: string;
-  messageVersions: {
+  htmlContent: string; // HTML content of the email
+  messageVersions: { // Each messageVersion is a different email that will be sent to a different user.
     to: {
-      email: string;
-      name: string;
+      email: string; // Email address of the recipient
+      name: string; // Name of the recipient (to be shown in the email's recipient field)
     }[];
     /* SendInBlue requires this to be an array.
     But if you do this, every user with this messageVersion will receive the same email.
     So we just create as many messageVersions as there are users.
     */
     params: {
-      name: string;
-      message: string;
+      name: string; // Name of the recipient (to be shown in the email's content)
+      message: string; // Message to be displayed in the email
     };
   }[];
 };
 
+export type BulkEmailResponseBody = {
+  success: boolean;
+  message?: string;
+};
+
 export default async function sendNotificationEmail(
   parameters: BulkEmailRequestBody
-): Promise<Response> {
+): Promise<BulkEmailResponseBody> {
   const data: BulkEmailRequestBody = parameters;
 
-  console.log(data);
-
-  console.log('Sending email to:');
-  data.messageVersions.forEach((body) => {
-    console.log(body.to[0].email);
-  });
+  // DEBUG
+  // console.log('Sending email to:');
+  // data.messageVersions.forEach((body) => {
+  //   console.log(body.to[0].email);
+  // });
 
   const apiKey = (await getAPIKey(data.messageVersions.length)).key;
 
@@ -89,7 +96,8 @@ export default async function sendNotificationEmail(
       success: true,
     };
   } catch (error) {
-    console.log('error', error);
+    // DEBUG
+    // console.log(error);
     return {
       success: false,
       message: 'An unexpected error occurred while sending the email.',
