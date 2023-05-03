@@ -4,7 +4,7 @@ import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import bcrypt from 'bcrypt';
-import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@/errors/QueryError';
+import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@inc/errors';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
 
 const getUsersRequestBody = z.object({

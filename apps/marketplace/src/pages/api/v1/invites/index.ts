@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
 import { z } from 'zod';
 import crypto from 'crypto';
-import { DuplicateError } from '@/errors';
+import { DuplicateError } from '@inc/errors';
 import { validateEmail, validateName } from '@/utils/api/validate';
 
 export const inviteCreationRequestBody = z.object({

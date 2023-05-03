@@ -1,8 +1,7 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
 import client, { UserContacts } from '@inc/db';
-import { NotFoundError } from '@/errors/QueryError';
-import { ForbiddenError } from '@/errors/AuthError';
+import { NotFoundError, ForbiddenError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
