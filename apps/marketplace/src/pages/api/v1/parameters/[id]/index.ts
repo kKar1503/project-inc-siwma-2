@@ -61,7 +61,7 @@ export default apiHandler({
       },
       data: {
         name: data.name,
-        display_name: data.displayName,
+        displayName: data.displayName,
         type: data.type,
         datatype: data.dataType,
       },
