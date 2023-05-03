@@ -3,17 +3,17 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient, { ListingsParametersValue } from '@inc/db';
 import { NotFoundError } from '@/errors';
 import * as z from 'zod';
-
+import { Parameter } from '@inc/db';
 import { parseListingId } from '@/utils/api';
 import { checkListingExists } from '../index';
 
 // -- Functions --//
 
-function formatParametersResponse(parameters: any[]): any[] {
-    return parameters.map((param) => ({
-        id: param.parameter_id,
-        paramId: param.parameter.id,
-        value: param.value,
+function formatParametersResponse(parameters: Parameter[]): any[] {
+    return parameters.map((parameter) => ({
+        id: parameter.id,
+        name: parameter.name,
+        type: parameter.type,
     }));
 }
 
