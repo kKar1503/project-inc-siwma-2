@@ -1,8 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@/errors';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { listingsRequestBody, formatSingleListingResponse } from '..';
+import { formatSingleListingResponse } from '..';
 import { ForbiddenError } from '@/errors/AuthError';
 import { parseListingId } from '@/utils/api';
 
