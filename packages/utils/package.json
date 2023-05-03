@@ -1,0 +1,9 @@
+{
+  "name": "@inc/utils",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "devDependencies": {
+    "@types/node": "18.15.3",
+    "ts-node": "^10.9.1"
+  }
+}

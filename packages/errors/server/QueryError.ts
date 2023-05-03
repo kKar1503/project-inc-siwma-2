@@ -1,5 +1,5 @@
 import { ZodParsedType } from 'zod';
-import { arrayToString } from '@/utils/stringUtils';
+import { arrayToString } from '@inc/utils';
 import { ApiError } from './BaseError';
 
 export class QueryError extends ApiError {
