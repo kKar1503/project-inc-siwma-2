@@ -92,7 +92,7 @@ model Companies {
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   advertisements     Advertisements[]
   companiesBookmarks CompaniesBookmarks[]
-  companiesComments  CompaniesComments[]
+  companiesComments  CompaniesComments?
   invite             Invite?
   users              Users[]
 
@@ -111,13 +111,12 @@ model CompaniesBookmarks {
 
 model CompaniesComments {
   id        Int       @id(map: "companies_comments_pk") @default(sequence(maxValue: 2147483647))
-  companyId Int       @map("company_id")
+  companyId Int       @unique(map: "companies_comments_company_id_idx") @map("company_id")
   comments  String
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "companies_comments_fk")
 
   @@map("companies_comments")
-  @@unique([companyId])
 }
 
 model Invite {
