@@ -1,7 +1,7 @@
-import { AuthError } from '@/errors/AuthError';
 import axios from 'axios';
 import { Session } from 'next-auth';
 import { getSession, signOut } from 'next-auth/react';
+import { AuthError } from '@inc/errors';
 
 // -- Global Variables -- //
 const maxRetries = 1; // The total number of times axios will retry a request
