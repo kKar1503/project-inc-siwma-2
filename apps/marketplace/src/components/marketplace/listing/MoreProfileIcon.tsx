@@ -29,7 +29,7 @@ const MoreProfileIcon = () => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
       >
-        <MoreVertIcon sx={{}} />
+        <MoreVertIcon sx={{ color: 'black' }} />
       </IconButton>
 
       <Menu
