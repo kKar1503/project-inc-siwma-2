@@ -84,6 +84,11 @@ export default apiHandler()
         website,
         bio,
         logo: image,
+        companiesComments: {
+          update: {
+            comments,
+          },
+        },
       },
       select: {
         id: true,
@@ -100,36 +105,6 @@ export default apiHandler()
     // if company doesn't exist
     if (!response) {
       throw new NotFoundError('Company');
-    }
-
-    // if comments are provided
-    if (comments) {
-      // see if the comments exist
-      const commentsData = await PrismaClient.companiesComments.findFirst({
-        where: {
-          companyId: parseCompanyId(id as string),
-        },
-      });
-      // if exist update
-      if (commentsData) {
-        const response2 = await PrismaClient.companiesComments.update({
-          where: {
-            id: commentsData.id,
-          },
-          data: {
-            comments,
-          },
-        });
-      }
-      // otherwise create comments
-      else {
-        const response2 = await PrismaClient.companiesComments.create({
-          data: {
-            companyId: parseCompanyId(id as string),
-            comments,
-          },
-        });
-      }
     }
 
     res.status(200).json(formatAPIResponse(response));

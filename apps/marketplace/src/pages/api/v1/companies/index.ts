@@ -7,7 +7,7 @@ import { ParamError } from '@inc/errors';
 const createCompanyRequestBody = z.object({
   name: z.string(),
   website: z.string(),
-  comments: z.string().optional(),
+  comments: z.string(),
   image: z.string().optional(),
 });
 
@@ -37,19 +37,13 @@ export default apiHandler()
         name,
         website,
         logo: image,
+        companiesComments: {
+          create: {
+            comments,
+          },
+        },
       },
     });
-
-    // if company was created and comments are provided
-    if (response && comments) {
-      const companyid = response.id;
-      const response2 = await PrismaClient.companiesComments.create({
-        data: {
-          companyId: companyid,
-          comments,
-        },
-      });
-    }
 
     res.status(201).json(formatAPIResponse({ companyId: response.id }));
   })
