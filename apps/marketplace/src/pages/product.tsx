@@ -22,7 +22,7 @@ const Home = () => (
         negotiable
         ownerId=""
         ownerFullName="Mr. Potato"
-        createdAt=""
+        createdAt="2022-10-05T14:48:00.000Z"
         companyName="Potato Industries"
         isUnitPrice={false}
         isOwnProfile
