@@ -6,7 +6,7 @@ import {
   ParamRequiredError,
   ParamTypeError,
   UnknownError,
-} from '@/errors';
+} from '@inc/errors';
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import { ZodError } from 'zod';

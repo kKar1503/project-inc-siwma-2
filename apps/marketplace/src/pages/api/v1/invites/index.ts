@@ -1,8 +1,9 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
 import { z } from 'zod';
-import { DuplicateError } from '@/errors';
 import bcrypt from 'bcrypt';
+import { DuplicateError } from '@inc/errors';
+import { validateEmail, validateName } from '@/utils/api/validate';
 
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
@@ -17,6 +18,9 @@ export default apiHandler({ allowAdminsOnly: true }).post(async (req, res) => {
   const { email, name, company } = inviteCreationRequestBody.parse(req.body);
 
   const companyId = parseToNumber(company, 'company');
+
+  validateEmail(email);
+  validateName(name);
 
   const existingUser = await client.users.findFirst({
     where: {
