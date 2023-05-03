@@ -6,10 +6,9 @@ import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
-import Rating from '@mui/material/Rating';
+import { StarsRating } from '@inc/ui';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
-import StarIcon from '@mui/icons-material/Star';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
@@ -102,14 +101,7 @@ const ProductListingItem = ({
             pb: 2,
           }}
         >
-          <Rating
-            defaultValue={rating}
-            readOnly
-            size="medium"
-            precision={0.5}
-            sx={{ color: '#00C853' }}
-            emptyIcon={<StarIcon fontSize="inherit" />}
-          />
+          <StarsRating rating={rating} precision={0.5} size="medium" readOnly />
         </Box>
         <Box
           sx={{
