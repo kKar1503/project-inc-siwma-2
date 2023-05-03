@@ -48,7 +48,11 @@ export default apiHandler()
       },
     });
 
-    return res.status(200).json(formatAPIResponse({ user }));
+    if (!user) {
+      throw new NotFoundError('User');
+    }
+
+    return res.status(200).json(formatAPIResponse(user));
   })
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
