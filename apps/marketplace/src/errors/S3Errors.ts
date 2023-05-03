@@ -18,19 +18,20 @@ UNKNOWN S3 ERROR          : 3999
 
 export class S3ApiError extends ApiError {
 
-  public static readonly baseCode = 3000; // let's say we change S3 codes to 4xxx, we can just change this to 4000 and all the codes will be updated
+  public static readonly code: number = 3000; // let's say we change S3 codes to 4xxx, we can just change this to 4000 and all the codes will be updated
+  public static readonly status: number = 500;
 
   constructor() {
     super();
     this.message = 'Something went wrong';
-    this.status = 500;
-    this.code = S3ApiError.baseCode;
+    this.status = S3ApiError.status;
+    this.code = S3ApiError.code;
   }
 }
 
 export class UnknownS3Error extends S3ApiError {
   public static readonly status = 500;
-  public static readonly code = S3ApiError.baseCode + 999; // 3999
+  public static readonly code = S3ApiError.code + 999; // 3999
 
   constructor() {
     super();
@@ -42,7 +43,7 @@ export class UnknownS3Error extends S3ApiError {
 
 export class S3ConnectionFailError extends S3ApiError {
   public static readonly status = 500;
-  public static readonly code = S3ApiError.baseCode + 1; // 3001
+  public static readonly code = S3ApiError.code + 1; // 3001
 
   constructor() {
     super();
@@ -54,7 +55,7 @@ export class S3ConnectionFailError extends S3ApiError {
 
 export class BucketConnectionFailure extends S3ApiError {
   public static readonly status = 500;
-  public static readonly code = S3ApiError.baseCode + 100; // 3100
+  public static readonly code = S3ApiError.code + 100; // 3100
 
   constructor() {
     super();
@@ -66,7 +67,7 @@ export class BucketConnectionFailure extends S3ApiError {
 
 export class InvalidBucketName extends S3ApiError {
   public static readonly status = 500;
-  public static readonly code = S3ApiError.baseCode + 101; // 3101
+  public static readonly code = S3ApiError.code + 101; // 3101
 
   constructor() {
     super();
@@ -78,7 +79,7 @@ export class InvalidBucketName extends S3ApiError {
 
 export class ObjectNotFound extends S3ApiError {
   public static readonly status = 404;
-  public static readonly code = S3ApiError.baseCode + 300; // 3400
+  public static readonly code = S3ApiError.code + 300; // 3400
 
   constructor() {
     super();
@@ -90,7 +91,7 @@ export class ObjectNotFound extends S3ApiError {
 
 export class ObjectCollision extends S3ApiError {
   public static readonly status = 500;
-  public static readonly code = S3ApiError.baseCode + 400; // 3400
+  public static readonly code = S3ApiError.code + 400; // 3400
 
   constructor() {
     super();
