@@ -1,4 +1,4 @@
-import * as Mui from '@mui/material';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -10,14 +10,42 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 
-const FilterForm = () => {
+export type ListingProps = {
+  items: {
+    img: string;
+    type: string;
+    name: string;
+    rating: number;
+    href: string;
+    price: number;
+    negotiable: boolean;
+    ownerId: string;
+    ownerFullName: string;
+    createdAt: string;
+    companyName: string;
+    isUnitPrice: boolean;
+  }[];
+};
+
+const FilterForm = ({ items }: ListingProps) => {
+  const conditionOptions = ['Mint', 'Used'];
+  const sortOptions = ['Best Match', 'Recent', 'Price - High to Low', 'Price - Low to High'];
+
   return (
     <form style={{ padding: 1, marginTop: 2, width: '100%' }}>
       <h3 style={{ marginBottom: 0 }}>Search Filter</h3>
       <Divider sx={{ my: 2 }} />
+      <FormLabel sx={{ fontWeight: 600 }}>Sort By</FormLabel>
+      <Select sx={{ height: '45px', width: '100%' }}>
+        {sortOptions.map((option) => (
+          <MenuItem value={option}>{option}</MenuItem>
+        ))}
+      </Select>
+
+      <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>Negotiability</FormLabel>
       <RadioGroup>
-        <FormControlLabel value="negotiable" control={<Mui.Radio />} label="Negotiable" />
+        <FormControlLabel value="negotiable" control={<Radio />} label="Negotiable" />
         <FormControlLabel value="nonNegotiable" control={<Radio />} label="Non-Negotiable" />
       </RadioGroup>
 
@@ -31,7 +59,9 @@ const FilterForm = () => {
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>Condition</FormLabel>
       <Select sx={{ height: '45px', width: '100%' }}>
-        <MenuItem value={1}>1</MenuItem>
+        {conditionOptions.map((option) => (
+          <MenuItem value={option}>{option}</MenuItem>
+        ))}
       </Select>
 
       <Divider sx={{ my: 2 }} />

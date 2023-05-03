@@ -45,13 +45,13 @@ const DisplayResults = ({ items }: ResultsProps) => {
         <Grid container spacing={2}>
           {!isMediumScreen && (
             <Grid item xs={12} md={2} sx={{ width: '100%', marginTop: 2 }}>
-              <FilterForm />
+              <FilterForm items={items} />
             </Grid>
           )}
 
           <Grid item xs={12} md={10} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', margin: 2 }}>
-              <Grid item xs={6} md={8} container justifyContent="flex-start">
+              <Grid item xs={10} md={8} container justifyContent="flex-start">
                 {items ? (
                   <h1 style={{ fontSize: '1.5rem' }}>
                     Displaying {items.length} search results for:{' '}
@@ -59,12 +59,6 @@ const DisplayResults = ({ items }: ResultsProps) => {
                 ) : (
                   <h1 style={{ fontSize: '1.5rem' }}>0 search results</h1>
                 )}
-              </Grid>
-              <Grid item xs={4} md={4} container justifyContent="flex-end" alignContent="center">
-                <FormLabel sx={{ pt: 1, pr: 1 }}>Sort By: </FormLabel>
-                <Select sx={{ height: '45px', width: '40%' }}>
-                  <MenuItem value={1}>idk</MenuItem>
-                </Select>
               </Grid>
               {isMediumScreen && (
                 <Grid item xs={2} container justifyContent="flex-end" alignContent="center">
@@ -78,7 +72,7 @@ const DisplayResults = ({ items }: ResultsProps) => {
                   </Button>
                   <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
                     <Box sx={{ height: '100%', margin: 2 }}>
-                      <FilterForm />
+                      <FilterForm items={items} />
                     </Box>
                   </Drawer>
                 </Grid>
@@ -89,20 +83,7 @@ const DisplayResults = ({ items }: ResultsProps) => {
               <Grid container display="flex">
                 {items.map((item: any) => (
                   <Grid item xs={4} md={3} sx={{ mb: 2 }}>
-                    <ProductListingItem
-                      img={item.img}
-                      type={item.type}
-                      href={item.link}
-                      price={item.price}
-                      name={item.name}
-                      rating={item.rating}
-                      negotiable={item.negotiable}
-                      ownerFullName={item.ownerFullName}
-                      ownerId={item.userId}
-                      companyName={item.companyName}
-                      isUnitPrice={item.isUnitPrice}
-                      createdAt={item.createdAt}
-                    />
+                    <ProductListingItem {...item} />
                   </Grid>
                 ))}
               </Grid>
