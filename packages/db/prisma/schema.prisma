@@ -117,6 +117,7 @@ model CompaniesComments {
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "companies_comments_fk")
 
   @@map("companies_comments")
+  @@unique([companyId])
 }
 
 model Invite {
