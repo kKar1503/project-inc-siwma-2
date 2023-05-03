@@ -4,7 +4,8 @@ import client, { UserContacts } from '@inc/db';
 import { NotFoundError } from '@/errors/QueryError';
 import { ForbiddenError } from '@/errors/AuthError';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { validateEmail, validateName, validatePhone } from '@/utils/api/validate';
+import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
+import bcrypt from 'bcrypt';
 
 const userIdSchema = z.object({
   id: z.string(),
@@ -19,6 +20,7 @@ const updateUserDetailsSchema = z.object({
   mobileNumber: z.string().optional(),
   contactMethod: z.nativeEnum(UserContacts).optional(),
   bio: z.string().optional(),
+  password: z.string().optional(),
 });
 
 export default apiHandler()
@@ -52,8 +54,9 @@ export default apiHandler()
     const isAdmin = req.token?.user.permissions === 1;
 
     const { id } = userIdSchema.parse(req.query);
-    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio } =
-    updateUserDetailsSchema.parse(req.body);
+    const parsedBody = updateUserDetailsSchema.parse(req.body);
+    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio } = parsedBody;
+    let { password } = parsedBody;
 
     if (name) {
       validateName(name);
@@ -64,7 +67,12 @@ export default apiHandler()
     if (mobileNumber) {
       validatePhone(mobileNumber);
     }
-
+    if (password) {
+      validatePassword(password);
+      // Hash password with bcrrypt and genSalt(10)
+      const salt = await bcrypt.genSalt(10);
+      password = await bcrypt.hash(password, salt);
+    }
 
     // Users can edit their own details, and admins can edit anyone's details
     // Therefore, we cannot simply block the entire endpoint for non-admin users
@@ -90,10 +98,11 @@ export default apiHandler()
         name,
         email,
         companyId,
+        password,
         profilePicture,
         phone: mobileNumber,
         contact: contactMethod,
-        bio
+        bio,
       },
     });
 
