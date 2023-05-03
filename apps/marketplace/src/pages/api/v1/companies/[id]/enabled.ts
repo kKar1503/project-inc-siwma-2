@@ -1,4 +1,4 @@
-import { NotFoundError, ParamError } from '@/errors';
+import { NotFoundError, ParamError } from '@inc/errors';
 import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NextApiRequest, NextApiResponse } from 'next';

@@ -1,4 +1,4 @@
-import { NotFoundError, ParamError } from '@/errors';
+import { NotFoundError, ParamError, ForbiddenError } from '@inc/errors';
 import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
@@ -48,14 +48,36 @@ export default apiHandler()
     return res.status(200).json(formatAPIResponse(response));
   })
   .put(async (req, res) => {
-    const isAdmin = req.token?.user.permissions === 1;
     const { id } = req.query;
     const { name, website, bio, comments, image } = editCompanyRequestBody.parse(req.body);
+
+    const companyid = parseCompanyId(id as string);
+    const isAdmin = req.token?.user.permissions === 1;
+    const user = await PrismaClient.users.findUnique({
+      where: {
+        id: req.token?.user.id,
+      },
+    });
+
+    if (!isAdmin && user?.companyId !== companyid) {
+      throw new ForbiddenError();
+    }
+
+    if (name === '') {
+      throw new ParamError('name');
+    }
+
+    const websiteRegex =
+      /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
+
+    if (website && !websiteRegex.test(website)) {
+      throw new ParamError('website');
+    }
 
     // update the company
     const response = await PrismaClient.companies.update({
       where: {
-        id: parseCompanyId(id as string),
+        id: companyid,
       },
       data: {
         name,

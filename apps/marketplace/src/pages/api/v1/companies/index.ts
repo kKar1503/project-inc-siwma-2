@@ -2,6 +2,7 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { ParamError } from '@inc/errors';
 
 const createCompanyRequestBody = z.object({
   name: z.string(),
@@ -19,6 +20,17 @@ const getCompaniesRequestBody = z.object({
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { name, website, comments, image } = createCompanyRequestBody.parse(req.body);
+
+    if (name === '') {
+      throw new ParamError('name');
+    }
+
+    const websiteRegex =
+      /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
+
+    if (website && !websiteRegex.test(website)) {
+      throw new ParamError('website');
+    }
 
     const response = await PrismaClient.companies.create({
       data: {
