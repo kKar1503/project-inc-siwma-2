@@ -4,7 +4,7 @@ import {
   InvalidPhoneNumberError,
   InvalidNameError,
   InvalidCompanyNameError,
-} from '@/errors';
+} from '@inc/errors';
 
 const validatePassword = (password: string) => {
   if (password.length < 8) {

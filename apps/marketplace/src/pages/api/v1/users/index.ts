@@ -21,7 +21,8 @@ const userCreationRequestBody = z.object({
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
     apiGuardMiddleware({
-      allowAdminsOnly: true,
+      allowNonAuthenticated: true,
+      // allowAdminsOnly: true,
     }),
     async (req: NextApiRequest, res: NextApiResponse) => {
       const { lastIdPointer, limit } = getUsersRequestBody.parse(req.query);
@@ -33,9 +34,36 @@ export default apiHandler({ allowNonAuthenticated: true })
           },
         },
         take: limit,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          companyId: true,
+          createdAt: true,
+          enabled: true,
+          profilePicture: true,
+          usersComments: true,
+          phone: true,
+          contact: true,
+          bio: true,
+        },
       });
 
-      return res.status(200).json(formatAPIResponse({ users }));
+      const mappedUsers = users.map((user) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        company: user.companyId,
+        createdAt: user.createdAt,
+        enabled: user.enabled,
+        profilePic: user.profilePicture,
+        comments: user.usersComments,
+        mobileNumber: user.phone,
+        contactMethod: user.contact,
+        bio: user.bio,
+      }));
+
+      return res.status(200).json(formatAPIResponse({ mappedUsers }));
     }
   )
   .post(async (req: NextApiRequest, res: NextApiResponse) => {
