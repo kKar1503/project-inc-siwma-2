@@ -274,7 +274,7 @@ model RefreshTokens {
 }
 
 model Rooms {
-  id                           String     @id(map: "rooms_pk") @db.Uuid
+  id                           String     @id(map: "rooms_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   seller                       String     @db.Uuid
   buyer                        String     @db.Uuid
   createdAt                    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
