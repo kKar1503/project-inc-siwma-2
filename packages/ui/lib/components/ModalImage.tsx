@@ -21,16 +21,15 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 type DialogProps = {
-  modalButtonName: string;
-  modalButtonStyle: object;
+  open: boolean;
+  setOpen: (val: boolean) => void;
   title: string;
   description: string;
   img: string;
 };
 
 const ModalImage = (props: DialogProps) => {
-  const { modalButtonName, modalButtonStyle, title, description, img } = props;
-  const [open, setOpen] = React.useState(false);
+  const {open,setOpen, title, description, img } = props;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -41,9 +40,6 @@ const ModalImage = (props: DialogProps) => {
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen} sx={modalButtonStyle}>
-        {modalButtonName}
-      </Button>
       <BootstrapDialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <DialogTitle sx={{ m: 0, p: 2 }}>
           {title}

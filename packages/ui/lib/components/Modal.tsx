@@ -1,66 +1,7 @@
-/* Expected props:
-  - modalButtonName  (A stringify text for the opening button)
-  - modalButtonStyle (An object that contents the sx styling for the opening button)
-  - modalType (The button type success/info/warning)
-  - title (The title of the modal box)
-  - content (The content of the modal box)
-  - leftButtonText (The text for the left button)
-  - rightButtonText (The text for the right button)
-  - leftButtonState (The state for the left button)
-  - rightButtonState (The state for the right button)
-  - setLeftButtonState (Set the state for left button)
-  - setRightButtonState (Set the state for right button)
-
-  Data is expected to contain at least one button, if there is only one button we will leave leftbuttonText, leftButtonState and setLeftButtonState, then data should look like this:
-  {
-    modalButtonName: string;
-    modalButtonStyle: object;
-    modalType: string;
-    title: string;
-    content: string;
-    leftButtonText: string | null;
-    rightButtonText: string;
-    leftButtonState: boolean;
-    rightButtonState: boolean;
-    setLeftButtonState: Dispatch<SetStateAction<boolean>>;
-    setRightButtonState: Dispatch<SetStateAction<boolean>>;
-  }
-
-
-An example with two button will look like this: 
-      {
-          modalButtonName="Open"
-          modalButtonStyle={style}
-          modalType="info"
-          title="Confirmation"
-          content="Once you leave the page, your changes will not be saved."
-          leftButtonText="Stay here"
-          rightButtonText="Leave page"
-          leftButtonState={leftButtonState}
-          rightButtonState={rightButtonState}
-          setLeftButtonState={setLeftButtonState}
-          setRightButtonState={setRightButtonState}
-      }
-
-An example with only one button
-        {
-          modalButtonName="Open"
-          modalButtonStyle={style}
-          modalType="info"
-          title="Confirmation"
-          content="Once you leave the page, your changes will not be saved."
-          leftButtonText={null} <= only one button set as null
-          rightButtonText="Stay here"
-          leftButtonState={false} <= only one button, set as false
-          rightButtonState={rightButtonState}
-          setLeftButtonState={setRightButtonState} <= only one button, set as the rightButtonState
-          setRightButtonState={setRightButtonState}
-        }
-*/
-import { useState, Dispatch, SetStateAction, ReactNode } from 'react';
+import { Dispatch, SetStateAction, ReactNode } from 'react';
 import Backdrop from '@mui/material/Backdrop';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
+import Box, { BoxProps } from '@mui/material/Box';
+import MUIModal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -68,26 +9,63 @@ import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOu
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { styled } from '@mui/material/styles';
+
+const ModalBoxShadow = styled(Box)<BoxProps>(({ theme }) =>
+  theme.unstable_sx({
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '23%',
+    borderRadius: 3,
+    padding: 2,
+    position: 'absolute',
+    boxShadow: 24,
+    backgroundColor: 'background.paper',
+  })
+);
 
 // declaring props for TransitionsModal
 type ComponentProps = {
-  modalButtonName: string;
-  modalButtonStyle: object;
-  modalType: string;
+  open: boolean;
+  setOpen: (val: boolean) => void;
+  buttonColor: `#${string}`;
+  icon: 'success' | 'info' | 'warning';
   title: string;
   content: string;
-  leftButtonText: string | null;
+  leftButtonText?: string | null;
   rightButtonText: string;
-  leftButtonState: boolean;
+  leftButtonState?: boolean;
   rightButtonState: boolean;
   setLeftButtonState: Dispatch<SetStateAction<boolean>>;
   setRightButtonState: Dispatch<SetStateAction<boolean>>;
 };
 
-const TransitionsModal = ({
-  modalButtonName,
-  modalButtonStyle,
-  modalType,
+/**
+ * Modal
+ *  Data is expected to contain at least one button, if there is only one button we will leave leftbuttonText,
+ *  leftButtonState and setLeftButtonState, then data should look like this:
+ * {
+      open={open}
+      setOpen={setOpen}
+      buttonColor="#0288D1"
+      icon="info"
+      title="Seller has been reported"
+      content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
+      leftButtonText={null} // <= only one button set as null
+      rightButtonText="return to home page"
+      leftButtonState={false} // <= only one button, set as false
+      rightButtonState={rightButtonState}
+      setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
+      setRightButtonState={setRightButtonState}
+    }
+ */
+
+const Modal = ({
+  open,
+  setOpen,
+  buttonColor,
+  icon,
   title,
   content,
   leftButtonText,
@@ -97,61 +75,35 @@ const TransitionsModal = ({
   setLeftButtonState,
   setRightButtonState,
 }: ComponentProps) => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const isXsScreen = useMediaQuery('(max-width:600px)');
 
   // set the border color based on the modal type
-  let borderColor: string;
   let iconType: ReactNode;
   // select icon based on the modal type (success/info/warning)
-  switch (modalType) {
+  switch (icon) {
     case 'success':
-      // success icon + green
-      borderColor = '#2E7D32';
+      // green
       iconType = (
-        <CheckCircleOutlineOutlined color="success" sx={{ fontSize: { xs: 24, md: 32 } }} />
+        <CheckCircleOutlineOutlined color="success" sx={{ fontSize: { xs: 32, md: 48 }, mr: 2 }} />
+      );
+      break;
+    case 'warning':
+      // orange/red
+      iconType = (
+        <WarningAmberOutlined color="warning" sx={{ fontSize: { xs: 24, md: 32 }, mr: 2 }} />
       );
       break;
     case 'info':
-      // info icon + blue
-      borderColor = '#0288D1';
-      iconType = <InfoOutlined color="info" sx={{ fontSize: { xs: 24, md: 32 } }} />;
-      break;
-    case 'warning':
-      // warning icon + orange/red
-      borderColor = '#EDBF02';
-      iconType = <WarningAmberOutlined color="warning" sx={{ fontSize: { xs: 24, md: 32 } }} />;
-      break;
     default:
-      // by default will set to success
-      borderColor = '#2E7D32';
-      iconType = (
-        <CheckCircleOutlineOutlined color="success" sx={{ fontSize: { xs: 24, md: 32 } }} />
-      );
+      // by default will set to info
+      iconType = <InfoOutlined color="info" sx={{ fontSize: { xs: 32, md: 42 }, mr: 2 }} />;
   }
   // the styling of the modal box
-  const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '20%',
-    bgcolor: 'background.paper',
-    borderRadius: 3,
-    boxShadow: 24,
-    border: '1px solid',
-    borderColor,
-    p: 4,
-  };
 
   return (
     <div>
-      <Button onClick={handleOpen} sx={modalButtonStyle}>
-        {modalButtonName}
-      </Button>
-      <Modal
+      <MUIModal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
@@ -165,18 +117,17 @@ const TransitionsModal = ({
         }}
       >
         <Fade in={open}>
-          <Box sx={style}>
+          <ModalBoxShadow>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               {iconType}
-              <Box>
+              <Box sx={{ justifyContent: 'left' }}>
                 <Typography
                   id="transition-modal-title"
                   variant="h6"
                   component="h2"
                   sx={{
                     color: '#013654',
-                    ml: 2,
-                    fontSize: { xs: 'subtitle2', sm: 'h6' },
+                    fontSize: { xs: 'subtitle1', sm: 'h5' },
                   }}
                 >
                   {title}
@@ -186,62 +137,62 @@ const TransitionsModal = ({
                     id="transition-modal-description"
                     sx={{
                       mt: 2,
-                      fontSize: { xs: 'overline', sm: 'subtitle1' },
-                      textAlign: isXsScreen ? 'left' : 'center',
+                      fontSize: { xs: 'subtitle1', sm: 'h6' },
+                      textAlign: 'left',
                     }}
                   >
                     {content}
                   </Typography>
                 </Box>
-                <Box textAlign="center" display="flex">
-                  {/* if Left Button Text is != null, it will print */}
-                  {leftButtonText != null && (
-                    <Button
-                      variant={leftButtonText != null ? 'outlined' : 'contained'}
-                      sx={{
-                        bgcolor: leftButtonText != null ? '' : borderColor,
-                        marginRight: '16px',
-                        width: 1 / 2,
-                        marginTop: 2,
-                        padding: '7px 20px',
-                        '@media (max-width: 600px)': {
-                          padding: '2px 4px',
-                        },
-                      }}
-                      onClick={() => setLeftButtonState(true)}
-                    >
-                      <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
-                        {leftButtonText}
-                      </Typography>
-                    </Button>
-                  )}
-
-                  {/* Right Button Text */}
-                  <Button
-                    variant="contained"
-                    sx={{
-                      bgcolor: borderColor,
-                      width: leftButtonText != null ? 1 / 2 : 1,
-                      marginTop: 2,
-                      padding: '7px 20px',
-                      '@media (max-width: 600px)': {
-                        padding: '4px 8px',
-                      },
-                    }}
-                    onClick={() => setRightButtonState(true)}
-                  >
-                    <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
-                      {rightButtonText}
-                    </Typography>
-                  </Button>
-                </Box>
               </Box>
             </Box>
-          </Box>
+            <Box textAlign="center" display="flex" justifyContent="center">
+              {/* if Left Button Text is != null, it will print */}
+              {leftButtonText != null && (
+                <Button
+                  variant={leftButtonText != null ? 'outlined' : 'contained'}
+                  sx={{
+                    bgcolor: leftButtonText != null ? '' : buttonColor,
+                    marginRight: '16px',
+                    width: 1 / 2,
+                    marginTop: 2,
+                    padding: '7px 20px',
+                    '@media (max-width: 600px)': {
+                      padding: '2px 4px',
+                    },
+                  }}
+                  onClick={() => setLeftButtonState(true)}
+                >
+                  <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
+                    {leftButtonText}
+                  </Typography>
+                </Button>
+              )}
+
+              {/* Right Button Text */}
+              <Button
+                variant="contained"
+                sx={{
+                  bgcolor: buttonColor,
+                  width: 1 / 2,
+                  marginTop: 2,
+                  padding: '7px 20px',
+                  '@media (max-width: 600px)': {
+                    padding: '4px 8px',
+                  },
+                }}
+                onClick={() => setRightButtonState(true)}
+              >
+                <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
+                  {rightButtonText}
+                </Typography>
+              </Button>
+            </Box>
+          </ModalBoxShadow>
         </Fade>
-      </Modal>
+      </MUIModal>
     </div>
   );
 };
 
-export default TransitionsModal;
+export default Modal;
