@@ -46,15 +46,22 @@ const getListingParameters = async (req: NextApiRequest, res: NextApiResponse) =
 
 
 };
+const parameterSchema = z.object({
+    parameterId: z.string(),
+    value: z.string(),
+});
+
+// Define the schema for the entire request body
+const requestSchema = z.object({
+    parameters: z.array(parameterSchema),
+});
 
 const updateListingParameters = async (req: NextApiRequest, res: NextApiResponse) => {
-
-
     const id = parseListingId(req.query.id as string);
     const listing = await checkListingExists(id);
 
     // Assuming that the request body contains the new parameters
-    const { parameters } = req.body;
+    const { parameters } = requestSchema.parse(req.body);
 
     // Delete all the existing parameters for this listing
     await PrismaClient.listingsParametersValue.deleteMany({
@@ -73,10 +80,7 @@ const updateListingParameters = async (req: NextApiRequest, res: NextApiResponse
             },
         });
     }));
-
     res.status(200).json(formatAPIResponse({ success: true, data: 'Listing parameters updated successfully' }));
-
-
 };
 
 
