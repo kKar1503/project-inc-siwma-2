@@ -71,9 +71,15 @@ importers:
       '@inc/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@inc/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
       '@inc/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@inc/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@mui/icons-material':
         specifier: ^5.11.16
         version: 5.11.16(@mui/material@5.11.14)(@types/react@18.0.28)(react@18.2.0)
@@ -223,6 +229,22 @@ importers:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
 
+  packages/errors:
+    dependencies:
+      '@inc/utils':
+        specifier: workspace:*
+        version: link:../utils
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      '@types/node':
+        specifier: 18.15.3
+        version: 18.15.3
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
+
   packages/types: {}
 
   packages/ui:
@@ -252,6 +274,15 @@ importers:
       typescript:
         specifier: 5.0.2
         version: 5.0.2
+
+  packages/utils:
+    devDependencies:
+      '@types/node':
+        specifier: 18.15.3
+        version: 18.15.3
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
 
 packages:
 
@@ -1500,6 +1531,7 @@ packages:
   /acorn@8.8.2:
     resolution: {integrity: sha512-xjIYgE8HBrkpd/sJqOGNspf8uHG+NOHGOw6a/Urj8taM2EXfdNAH2oFcPeIFfsv3+kz/mJrS5VuMqbNLjCa2vw==}
     engines: {node: '>=0.4.0'}
+    hasBin: true
     dev: true
 
   /agent-base@6.0.2:
