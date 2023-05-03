@@ -1,17 +1,21 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from "@inc/db";
-import { z } from "zod";
+import { PrismaClient } from '@inc/db';
+import { z } from 'zod';
 
-//-- Type definitions --//
-// Define the type of the response object
+// -- Type definitions -- //
 export type ChatResponse = {
-  // Add the fields relevant to chat response
+  id: number;
+  author: string;
+  room: string;
+  read: boolean;
+  createdAt: Date;
+  contentType: string;
+  offer: number;
+  content: string;
 };
 
-//-- Helper functions --//
+// -- Helper functions -- //
 export function formatChatResponse(chatData: any) {
-  // Modify this function to format the response as required
-
   return formatAPIResponse(chatData);
 }
 
@@ -19,29 +23,26 @@ export function formatChatResponse(chatData: any) {
  * Zod schema for the POST request body
  */
 export const chatRequestBody = z.object({
-  // Define the request body schema
-  // Add the fields relevant to chat request
+  sellerId: z.string(),
+  buyerId: z.string(),
+  listingId: z.number(),
 });
 
-export default apiHandler()
-  .get(async (req, res) => {
-    // Retrieve the relevant data from the database
-    const chatData = await PrismaClient.chat.findMany();
+const prisma = new PrismaClient();
 
-    // Return the result
-    res.status(200).json(formatChatResponse(chatData));
-  })
-  .post(async (req, res) => {
-      // Parse and validate the request body
-      const data = chatRequestBody.parse(req.body);
+export default apiHandler().post(async (req, res) => {
+  // Parse and validate the request body
+  const data = chatRequestBody.parse(req.body);
 
-      // Insert the data into the database
-      const result = await PrismaClient.chat.create({
-        data: {
-          // Add the fields relevant to chat data
-        },
-      });
-
-      // Return the result
-      res.status(201).json({ chatId: result.id });
+  // Insert the data into the database and create a new chat room
+  const result = await prisma.rooms.create({
+    data: {
+      seller: data.sellerId,
+      buyer: data.buyerId,
+      listing: data.listingId,
+    },
   });
+
+  // Return the result
+  res.status(201).json({ room: result.id });
+});
