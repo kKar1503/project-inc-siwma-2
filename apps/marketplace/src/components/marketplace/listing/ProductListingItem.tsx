@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { DateTime } from 'luxon';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
@@ -9,6 +9,7 @@ import { red } from '@mui/material/colors';
 import { StarsRating } from '@inc/ui';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
+import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
@@ -47,6 +48,7 @@ const ProductListingItem = ({
     () => DateTime.fromISO(createdAt).toRelative({ locale: 'en-SG' }),
     [createdAt]
   );
+
   return (
     <Card sx={{ maxWidth: 288, maxHeight: 600, border: '1px solid #C4C4C4' }}>
       <CardHeader
@@ -67,12 +69,17 @@ const ProductListingItem = ({
         {/* MUI default spacing is 8px */}
         <Box
           sx={{
+            display: 'flex',
             pb: 2,
           }}
         >
           {type === 'Buy' && <BuyBadge />}
           {type === 'Sell' && <SellBadge />}
           {negotiable && <NegotiableBadge />}
+
+          <Box sx={{ ml: 'auto' }}>
+            <MoreProfileIcon />
+          </Box>
         </Box>
         <Box
           sx={{
