@@ -27,6 +27,7 @@ export type ProductListingItemProps = {
   createdAt: string;
   companyName: string;
   isUnitPrice: boolean;
+  isOwnProfile: boolean;
 };
 
 const ProductListingItem = ({
@@ -42,6 +43,7 @@ const ProductListingItem = ({
   createdAt,
   companyName,
   isUnitPrice,
+  isOwnProfile,
 }: ProductListingItemProps) => {
   // save computation power to avoid multiple calculations on each render
   const datetime = useMemo(
@@ -77,9 +79,7 @@ const ProductListingItem = ({
           {type === 'Sell' && <SellBadge />}
           {negotiable && <NegotiableBadge />}
 
-          <Box sx={{ ml: 'auto' }}>
-            <MoreProfileIcon />
-          </Box>
+          <Box sx={{ ml: 'auto' }}>{isOwnProfile && <MoreProfileIcon />}</Box>
         </Box>
         <Box
           sx={{
