@@ -139,7 +139,7 @@ export default apiHandler()
       bio: user.bio,
     };
 
-    return res.status(200).json(formatAPIResponse({ mappedUser }));
+    return res.status(200).json((mappedUser));
   })
   .delete(
     apiGuardMiddleware({

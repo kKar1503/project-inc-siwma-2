@@ -63,7 +63,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         bio: user.bio,
       }));
 
-      return res.status(200).json(formatAPIResponse({ mappedUsers }));
+      return res.status(200).json(formatAPIResponse(mappedUsers));
     }
   )
   .post(async (req: NextApiRequest, res: NextApiResponse) => {
