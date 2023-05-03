@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import bcrypt from 'bcrypt';
 import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@/errors/QueryError';
+import { validatePassword, validatePhone } from '@/utils/api/validate';
 
 const getUsersRequestBody = z.object({
   lastIdPointer: z.string().optional(),
@@ -44,11 +45,8 @@ export default apiHandler({ allowNonAuthenticated: true })
     // Parse the request body with zod
     const { token, mobileNumber, password } = userCreationRequestBody.parse(req.body);
 
-    const phoneRegex = /^(?:\+65)?[689][0-9]{7}$/;
-    // Match the mobile number against the regex
-    if (!phoneRegex.test(mobileNumber)) {
-      throw new ParamInvalidError('mobileNumber', mobileNumber);
-    }
+    validatePhone(mobileNumber);
+    validatePassword(password);
 
     // Check if the token exists
     const invite = await client.invite.findFirst({

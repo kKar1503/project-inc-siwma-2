@@ -1,9 +1,10 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
 import client, { UserContacts } from '@inc/db';
-import { ParamInvalidError, NotFoundError } from '@/errors/QueryError';
+import { NotFoundError } from '@/errors/QueryError';
 import { ForbiddenError } from '@/errors/AuthError';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { validateEmail, validateName, validatePhone } from '@/utils/api/validate';
 
 const userIdSchema = z.object({
   id: z.string(),
@@ -54,11 +55,16 @@ export default apiHandler()
     const { name, email, company, profilePicture, mobileNumber, contactMethod, bio } =
     updateUserDetailsSchema.parse(req.body);
 
-    const phoneRegex = /^(?:\+65)?[689][0-9]{7}$/;
-    // Match the mobile number against the regex
-    if (mobileNumber && !phoneRegex.test(mobileNumber)) {
-      throw new ParamInvalidError('mobileNumber', mobileNumber);
+    if (name) {
+      validateName(name);
     }
+    if (email) {
+      validateEmail(email);
+    }
+    if (mobileNumber) {
+      validatePhone(mobileNumber);
+    }
+
 
     // Users can edit their own details, and admins can edit anyone's details
     // Therefore, we cannot simply block the entire endpoint for non-admin users

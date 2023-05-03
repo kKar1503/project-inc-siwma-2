@@ -3,6 +3,7 @@ import client from '@inc/db';
 import { z } from 'zod';
 import crypto from 'crypto';
 import { DuplicateError } from '@/errors';
+import { validateEmail, validateName } from '@/utils/api/validate';
 
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
@@ -19,6 +20,9 @@ export default apiHandler(
   const { email, name, company } = inviteCreationRequestBody.parse(req.body);
 
   const companyId = parseToNumber(company, 'company');
+
+  validateEmail(email);
+  validateName(name);
 
   const existingUser = await client.users.findFirst({
     where: {
