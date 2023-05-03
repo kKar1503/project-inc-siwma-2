@@ -5,28 +5,28 @@ import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
 const editCompanyRequestBody = z.object({
-  name: z.string(),
-  website: z.string(),
-  bio: z.string(),
+  name: z.string().optional(),
+  website: z.string().optional(),
+  bio: z.string().optional(),
   comments: z.string().optional(),
-  image: z.string(),
+  image: z.string().optional(),
 });
 
-function parseCompanyId(id: any): number {
-  if (id && typeof id === 'string') {
-    return parseToNumber(id);
+function parseCompanyId(id: string | undefined): number {
+  if (!id) {
+    throw new ParamError('id');
   }
-  return 0;
+  return parseToNumber(id);
 }
 
-export default apiHandler({})
+export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
     const { id } = req.query;
 
     const response = await PrismaClient.companies.findUnique({
       where: {
-        id: parseCompanyId(id),
+        id: parseCompanyId(id as string),
       },
       select: {
         id: true,
@@ -42,7 +42,7 @@ export default apiHandler({})
 
     // if the company does not exist
     if (!response) {
-      throw new NotFoundError('company');
+      throw new NotFoundError('Company');
     }
 
     return res.status(200).json(formatAPIResponse(response));
@@ -55,7 +55,7 @@ export default apiHandler({})
     // update the company
     const response = await PrismaClient.companies.update({
       where: {
-        id: parseCompanyId(id),
+        id: parseCompanyId(id as string),
       },
       data: {
         name,
@@ -77,7 +77,7 @@ export default apiHandler({})
 
     // if company doesn't exist
     if (!response) {
-      throw new NotFoundError('company');
+      throw new NotFoundError('Company');
     }
 
     // if comments are provided
@@ -85,7 +85,7 @@ export default apiHandler({})
       // see if the comments exist
       const commentsData = await PrismaClient.companiesComments.findFirst({
         where: {
-          companyId: parseCompanyId(id),
+          companyId: parseCompanyId(id as string),
         },
       });
       // if exist update
@@ -103,7 +103,7 @@ export default apiHandler({})
       else {
         const response2 = await PrismaClient.companiesComments.create({
           data: {
-            companyId: parseCompanyId(id),
+            companyId: parseCompanyId(id as string),
             comments,
           },
         });
@@ -117,13 +117,13 @@ export default apiHandler({})
 
     const data = await PrismaClient.companies.delete({
       where: {
-        id: parseCompanyId(id),
+        id: parseCompanyId(id as string),
       },
     });
 
     // if the company does not exist
     if (!data) {
-      throw new NotFoundError('company');
+      throw new NotFoundError('Company');
     }
 
     return res.status(204).end();

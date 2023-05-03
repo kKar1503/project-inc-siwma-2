@@ -16,7 +16,7 @@ const getCompaniesRequestBody = z.object({
   name: z.string().optional(),
 });
 
-export default apiHandler({})
+export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { name, website, comments, image } = createCompanyRequestBody.parse(req.body);
 
@@ -39,7 +39,7 @@ export default apiHandler({})
       });
     }
 
-    res.status(201).json(formatAPIResponse({ companyid: response.id }));
+    res.status(201).json(formatAPIResponse({ companyId: response.id }));
   })
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
