@@ -21,8 +21,7 @@ const userCreationRequestBody = z.object({
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
     apiGuardMiddleware({
-      allowNonAuthenticated: true,
-      // allowAdminsOnly: true,
+      allowAdminsOnly: true,
     }),
     async (req: NextApiRequest, res: NextApiResponse) => {
       const { lastIdPointer, limit } = getUsersRequestBody.parse(req.query);
