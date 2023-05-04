@@ -34,7 +34,7 @@ export type getResponseBody = {
   website: string | null;
   bio: string | null;
   logo: string | null;
-  visibile: boolean;
+  visible: boolean;
   comments?: string | null;
   createdAt?: Date;
 };
@@ -48,7 +48,7 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
       website: r.website,
       bio: r.bio,
       logo: r.logo,
-      visibile: r.visibility,
+      visible: r.visibility,
       comments: r.companiesComments?.comments,
       createdAt: r.createdAt,
     });
