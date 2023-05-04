@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler } from '@/utils/api';
 import { z } from 'zod';
 import client from '@inc/db';
 import { NotFoundError } from '@inc/errors';
@@ -22,5 +22,5 @@ export default apiHandler({
     throw new NotFoundError('invite');
   }
 
-  return res.status(200).json(formatAPIResponse({ invite }));
+  return res.status(204).end();
 });

@@ -28,5 +28,5 @@ export default apiHandler({
     throw new NotFoundError('invite');
   }
 
-  return res.status(200).json(formatAPIResponse({ invite }));
+  return res.status(200).json(formatAPIResponse(invite));
 });
