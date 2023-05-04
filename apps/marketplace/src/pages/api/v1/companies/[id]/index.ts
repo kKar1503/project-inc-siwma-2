@@ -3,6 +3,7 @@ import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { getResponseBody, queryResult } from '..';
 
 const editCompanyRequestBody = z.object({
   name: z.string().optional(),
@@ -17,6 +18,19 @@ function parseCompanyId(id: string | undefined): number {
     throw new ParamError('id');
   }
   return parseToNumber(id);
+}
+
+function formatResponse(r: queryResult): getResponseBody {
+  return {
+    id: r.id,
+    name: r.name,
+    website: r.website,
+    bio: r.bio,
+    logo: r.logo,
+    visibility: r.visibility,
+    comments: r.companiesComments?.comments,
+    createdAt: r.createdAt,
+  };
 }
 
 export default apiHandler()
@@ -45,7 +59,7 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
-    return res.status(200).json(formatAPIResponse(response));
+    return res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .put(async (req, res) => {
     const { id } = req.query;
@@ -63,7 +77,7 @@ export default apiHandler()
       throw new ForbiddenError();
     }
 
-    if (name === '') {
+    if (name && name.trim().length === 0) {
       throw new ParamError('name');
     }
 
@@ -107,7 +121,7 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
-    res.status(200).json(formatAPIResponse(response));
+    res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .delete(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { id } = req.query;

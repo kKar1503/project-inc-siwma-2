@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@inc/db';
+import PrismaClient, { CompaniesComments } from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
@@ -17,11 +17,50 @@ const getCompaniesRequestBody = z.object({
   name: z.string().optional(),
 });
 
+export type queryResult = {
+  id: number;
+  name: string;
+  website: string | null;
+  bio: string | null;
+  logo: string | null;
+  visibility: boolean;
+  companiesComments?: CompaniesComments | null;
+  createdAt?: Date;
+};
+
+export type getResponseBody = {
+  id: number;
+  name: string;
+  website: string | null;
+  bio: string | null;
+  logo: string | null;
+  visibility: boolean;
+  comments?: string | null;
+  createdAt?: Date;
+};
+
+function formatResponse(response: queryResult[]): getResponseBody[] {
+  const temp: getResponseBody[] = [];
+  response.forEach((r) => {
+    temp.push({
+      id: r.id,
+      name: r.name,
+      website: r.website,
+      bio: r.bio,
+      logo: r.logo,
+      visibility: r.visibility,
+      comments: r.companiesComments?.comments,
+      createdAt: r.createdAt,
+    });
+  });
+  return temp;
+}
+
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { name, website, comments, image } = createCompanyRequestBody.parse(req.body);
 
-    if (name === '') {
+    if (name && name.trim().length === 0) {
       throw new ParamError('name');
     }
 
@@ -74,5 +113,5 @@ export default apiHandler()
       take: limit,
     });
 
-    res.status(200).json(formatAPIResponse(response));
+    res.status(200).json(formatAPIResponse(formatResponse(response)));
   });
