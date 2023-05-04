@@ -3,7 +3,7 @@ import ProductListingItem from '@/components/marketplace/listing/ProductListingI
 
 // eslint-disable-next-line no-unused-vars
 
-const Home = () => (
+const ProductTest = () => (
   <>
     <Head>
       <title>Product Listing Component</title>
@@ -31,4 +31,4 @@ const Home = () => (
   </>
 );
 
-export default Home;
+export default ProductTest;
