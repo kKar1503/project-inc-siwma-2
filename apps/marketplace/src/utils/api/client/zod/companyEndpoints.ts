@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
 export const getCompanyResponseBody = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string(),
   bio: z.string(),
   website: z.string(),
   logo: z.string(),
-  visibility: z.boolean(),
+  visible: z.boolean(),
   createdAt: z.date().optional(),
   comments: z.string().optional(),
 });
@@ -20,5 +20,5 @@ export const createCompanyResponseBody = z.object({
 export const editCompanyResponseBody = getCompanyResponseBody;
 
 export const enableCompanyResponseBody = z.object({
-  visibility: z.boolean(),
+  visible: z.boolean(),
 });
