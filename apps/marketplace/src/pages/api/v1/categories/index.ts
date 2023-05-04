@@ -1,26 +1,34 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
-import PrismaClient from '@inc/db';
+import PrismaClient, { CategoriesParameters } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@/errors';
 
-export type getResponse = {
-  id?: number;
+export type queryResult = {
+  id: number;
   name: string;
   description: string;
   image: string;
   crossSectionImage: string;
-  categoriesParameters?: {
-    categoryId?: number;
-    parameterId: number;
-    required: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
-  }[];
+  categoriesParameters?: CategoriesParameters[];
 };
 
-export const getCategoriesRequestBody = z.object({
-  includeParameters: z.boolean().optional(),
+export type parameter = {
+  parameterId: string;
+  required: boolean;
+};
+
+export type getResponse = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  crossSectionImage: string;
+  parameters?: parameter[];
+};
+
+export const getCategoriesQueryParameter = z.object({
+  includeParameters: z.string().optional(),
 });
 
 export const categoryRequestBody = z.object({
@@ -36,11 +44,40 @@ export const categoryRequestBody = z.object({
     .array(),
 });
 
+export function formatParamters(parameters: CategoriesParameters[] | undefined): parameter[] {
+  const temp: parameter[] = [];
+  if (parameters) {
+    parameters.forEach((p) => {
+      temp.push({
+        parameterId: p.parameterId.toString(),
+        required: p.required,
+      });
+    });
+  }
+  return temp;
+}
+
+function formatResponse(response: queryResult[]): getResponse[] {
+  const temp: getResponse[] = [];
+  response.forEach((r) => {
+    temp.push({
+      id: r.id.toString(),
+      name: r.name,
+      description: r.description,
+      image: r.image,
+      crossSectionImage: r.crossSectionImage,
+      parameters: r.categoriesParameters ? formatParamters(r.categoriesParameters) : undefined,
+    });
+  });
+  return temp;
+}
+
 export default apiHandler()
   .get(async (req, res) => {
-    const { includeParameters = false } = getCategoriesRequestBody.parse(req.body);
+    const { includeParameters = 'false' } = getCategoriesQueryParameter.parse(req.query);
+    const include = includeParameters === 'true';
 
-    const response: getResponse[] = await PrismaClient.category.findMany({
+    const response: queryResult[] = await PrismaClient.category.findMany({
       select: {
         id: true,
         name: true,
@@ -49,29 +86,18 @@ export default apiHandler()
         crossSectionImage: true,
         createdAt: false,
         updatedAt: false,
-        categoriesParameters: includeParameters,
+        categoriesParameters: include,
       },
     });
 
-    // delete unnecessary properties from paramters array
-    /* eslint-disable no-param-reassign */
-    response.forEach((r) => {
-      if (r.categoriesParameters) {
-        r.categoriesParameters.forEach((parameter) => {
-          delete parameter.categoryId;
-          delete parameter.createdAt;
-          delete parameter.updatedAt;
-        });
-      }
-    });
-    res.status(200).json(formatAPIResponse(response));
+    res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { name, description, image, crossSectionImage, parameters } = categoryRequestBody.parse(
       req.body
     );
 
-    if (name === '') {
+    if (!name || name.trim().length === 0) {
       throw new ParamError('name');
     }
 
@@ -87,5 +113,5 @@ export default apiHandler()
       },
     });
 
-    res.status(201).json(formatAPIResponse({ categoryId: response.id }));
+    res.status(201).json(formatAPIResponse({ categoryId: response.id.toString() }));
   });

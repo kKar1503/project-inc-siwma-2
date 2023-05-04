@@ -3,7 +3,7 @@ import { z } from 'zod';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ParamError } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { getCategoriesRequestBody, getResponse } from '../index';
+import { getCategoriesQueryParameter, getResponse, queryResult, formatParamters } from '../index';
 
 const editCategoryRequestBody = z.object({
   name: z.string().optional(),
@@ -20,29 +20,44 @@ const editCategoryRequestBody = z.object({
 });
 
 function parseId(id: string | undefined): number {
-  if (id) {
-    return parseToNumber(id);
+  if (!id) {
+    throw new ParamError('id');
   }
-  return 0;
+  return parseToNumber(id);
+}
+
+function formatResponse(response: queryResult): getResponse {
+  return {
+    id: response.id.toString(),
+    name: response.name,
+    description: response.description,
+    image: response.image,
+    crossSectionImage: response.crossSectionImage,
+    parameters: response.categoriesParameters
+      ? formatParamters(response.categoriesParameters)
+      : undefined,
+  };
 }
 
 export default apiHandler()
   .get(async (req, res) => {
     const { id } = req.query;
-    const { includeParameters = false } = getCategoriesRequestBody.parse(req.body);
+    const { includeParameters = 'false' } = getCategoriesQueryParameter.parse(req.query);
+    const include = includeParameters === 'true';
 
-    const response: getResponse | null = await PrismaClient.category.findFirst({
+    const response: queryResult | null = await PrismaClient.category.findFirst({
       where: {
         id: parseId(id as string),
       },
       select: {
+        id: true,
         name: true,
         description: true,
         image: true,
         crossSectionImage: true,
         createdAt: false,
         updatedAt: false,
-        categoriesParameters: includeParameters,
+        categoriesParameters: include,
       },
     });
 
@@ -50,17 +65,7 @@ export default apiHandler()
       throw new NotFoundError('Category');
     }
 
-    // delete unnecessary properties from paramters array
-    /* eslint-disable no-param-reassign */
-    if (response.categoriesParameters) {
-      response.categoriesParameters.forEach((parameter) => {
-        delete parameter.categoryId;
-        delete parameter.createdAt;
-        delete parameter.updatedAt;
-      });
-    }
-
-    res.status(200).json(formatAPIResponse(response));
+    res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .put(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { id } = req.query;
@@ -68,7 +73,7 @@ export default apiHandler()
     const { name, description, image, crossSectionImage, parameters } =
       editCategoryRequestBody.parse(req.body);
 
-    if (name === '') {
+    if (!name || name.trim().length === 0) {
       throw new ParamError('name');
     }
 
@@ -100,20 +105,14 @@ export default apiHandler()
         crossSectionImage,
       },
       select: {
+        id: true,
         name: true,
         description: true,
         image: true,
         crossSectionImage: true,
         createdAt: false,
         updatedAt: false,
-        categoriesParameters: {
-          select: {
-            parameterId: true,
-            required: true,
-            createdAt: false,
-            updatedAt: false,
-          },
-        },
+        categoriesParameters: true,
       },
     });
 
@@ -121,7 +120,7 @@ export default apiHandler()
       throw new NotFoundError('Category');
     }
 
-    res.status(200).json(formatAPIResponse(response));
+    res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .delete(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { id } = req.query;
