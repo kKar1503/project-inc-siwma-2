@@ -1,24 +1,24 @@
 import { z } from 'zod';
 
-export const getCompanyResponseBody = z.object({
+export const createCompany = z.object({
+  companyId: z.string(),
+});
+
+export const getCompany = z.object({
   id: z.string(),
   name: z.string(),
   bio: z.string(),
   website: z.string(),
-  logo: z.string(),
+  image: z.string(),
   visible: z.boolean(),
-  createdAt: z.date().optional(),
   comments: z.string().optional(),
+  createdAt: z.date().optional(),
 });
 
-export const getCompaniesResponseBody = getCompanyResponseBody.array();
+export const getCompanies = getCompany.array();
 
-export const createCompanyResponseBody = z.object({
-  companyId: z.number(),
-});
+export const editCompany = getCompany;
 
-export const editCompanyResponseBody = getCompanyResponseBody;
-
-export const enableCompanyResponseBody = z.object({
+export const enableCompany = z.object({
   visible: z.boolean(),
 });
