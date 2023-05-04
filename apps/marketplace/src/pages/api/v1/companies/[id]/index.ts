@@ -26,7 +26,7 @@ function formatResponse(r: queryResult): getResponseBody {
     name: r.name,
     website: r.website,
     bio: r.bio,
-    logo: r.logo,
+    image: r.logo,
     visible: r.visibility,
     comments: r.companiesComments?.comments,
     createdAt: r.createdAt,
