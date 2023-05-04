@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
 import client, { UserContacts } from '@inc/db';
-import { NotFoundError, ForbiddenError } from '@inc/errors';
+import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
@@ -20,6 +20,7 @@ const updateUserDetailsSchema = z.object({
   contactMethod: z.nativeEnum(UserContacts).optional(),
   bio: z.string().optional(),
   password: z.string().optional(),
+  userComments: z.string().optional(),
 });
 
 export default apiHandler()
@@ -47,14 +48,32 @@ export default apiHandler()
       },
     });
 
-    return res.status(200).json(formatAPIResponse({ user }));
+    if (!user) {
+      throw new NotFoundError('User');
+    }
+
+    const mappedUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      company: user.companyId,
+      createdAt: user.createdAt,
+      enabled: user.enabled,
+      profilePic: user.profilePicture,
+      mobileNumber: user.phone,
+      contactMethod: user.contact,
+      bio: user.bio,
+    };
+
+    return res.status(200).json(formatAPIResponse(mappedUser));
   })
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
     const { id } = userIdSchema.parse(req.query);
     const parsedBody = updateUserDetailsSchema.parse(req.body);
-    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio } = parsedBody;
+    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio, userComments } =
+      parsedBody;
     let { password } = parsedBody;
 
     if (name) {
@@ -89,6 +108,16 @@ export default apiHandler()
       companyId = parseToNumber(company, 'company');
     }
 
+    if (userComments) {
+      if (!isAdmin) {
+        throw new ForbiddenError();
+      }
+
+      if (userComments.trim().length === 0) {
+        throw new ParamRequiredError('userComments');
+      }
+    }
+
     const user = await client.users.update({
       where: {
         id,
@@ -102,6 +131,11 @@ export default apiHandler()
         phone: mobileNumber,
         contact: contactMethod,
         bio,
+        usersComments: {
+          create: {
+            comments: userComments,
+          },
+        },
       },
     });
 
@@ -109,7 +143,20 @@ export default apiHandler()
       throw new NotFoundError('User');
     }
 
-    return res.status(200).json(formatAPIResponse({ user }));
+    const mappedUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      company: user.companyId,
+      createdAt: user.createdAt,
+      enabled: user.enabled,
+      profilePic: user.profilePicture,
+      mobileNumber: user.phone,
+      contactMethod: user.contact,
+      bio: user.bio,
+    };
+
+    return res.status(200).json(formatAPIResponse(mappedUser));
   })
   .delete(
     apiGuardMiddleware({
