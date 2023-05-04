@@ -23,6 +23,6 @@ export default apiHandler({ allowAdminsOnly: true }).patch(
       throw new NotFoundError('Company');
     }
 
-    res.status(200).json(formatAPIResponse(response));
+    res.status(200).json(formatAPIResponse({ visible: response.visibility }));
   }
 );

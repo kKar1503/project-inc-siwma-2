@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { CompaniesComments } from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
@@ -12,8 +12,8 @@ const createCompanyRequestBody = z.object({
 });
 
 const getCompaniesRequestBody = z.object({
-  lastIdPointer: z.number().optional(),
-  limit: z.number().optional(),
+  lastIdPointer: z.string().optional(),
+  limit: z.string().optional(),
   name: z.string().optional(),
 });
 
@@ -29,12 +29,12 @@ export type queryResult = {
 };
 
 export type getResponseBody = {
-  id: number;
+  id: string;
   name: string;
   website: string | null;
   bio: string | null;
   logo: string | null;
-  visibility: boolean;
+  visibile: boolean;
   comments?: string | null;
   createdAt?: Date;
 };
@@ -43,12 +43,12 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
   const temp: getResponseBody[] = [];
   response.forEach((r) => {
     temp.push({
-      id: r.id,
+      id: r.id.toString(),
       name: r.name,
       website: r.website,
       bio: r.bio,
       logo: r.logo,
-      visibility: r.visibility,
+      visibile: r.visibility,
       comments: r.companiesComments?.comments,
       createdAt: r.createdAt,
     });
@@ -60,7 +60,7 @@ export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { name, website, comments, image } = createCompanyRequestBody.parse(req.body);
 
-    if (name && name.trim().length === 0) {
+    if (!name || name.trim().length === 0) {
       throw new ParamError('name');
     }
 
@@ -89,7 +89,7 @@ export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { lastIdPointer, limit, name } = getCompaniesRequestBody.parse(req.body);
+    const { lastIdPointer = '0', limit = '10', name } = getCompaniesRequestBody.parse(req.query);
 
     const response = await PrismaClient.companies.findMany({
       select: {
@@ -104,13 +104,13 @@ export default apiHandler()
       },
       where: {
         id: {
-          gt: lastIdPointer,
+          gt: parseToNumber(lastIdPointer),
         },
         name: {
           contains: name,
         },
       },
-      take: limit,
+      take: parseToNumber(limit),
     });
 
     res.status(200).json(formatAPIResponse(formatResponse(response)));

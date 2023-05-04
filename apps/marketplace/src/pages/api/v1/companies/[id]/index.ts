@@ -22,12 +22,12 @@ function parseCompanyId(id: string | undefined): number {
 
 function formatResponse(r: queryResult): getResponseBody {
   return {
-    id: r.id,
+    id: r.id.toString(),
     name: r.name,
     website: r.website,
     bio: r.bio,
     logo: r.logo,
-    visibility: r.visibility,
+    visibile: r.visibility,
     comments: r.companiesComments?.comments,
     createdAt: r.createdAt,
   };
@@ -77,7 +77,7 @@ export default apiHandler()
       throw new ForbiddenError();
     }
 
-    if (name && name.trim().length === 0) {
+    if (!name || name.trim().length === 0) {
       throw new ParamError('name');
     }
 
