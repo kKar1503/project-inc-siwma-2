@@ -52,7 +52,20 @@ export default apiHandler()
       throw new NotFoundError('User');
     }
 
-    return res.status(200).json(formatAPIResponse(user));
+    const mappedUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      company: user.companyId,
+      createdAt: user.createdAt,
+      enabled: user.enabled,
+      profilePic: user.profilePicture,
+      mobileNumber: user.phone,
+      contactMethod: user.contact,
+      bio: user.bio,
+    };
+
+    return res.status(200).json(formatAPIResponse(mappedUser));
   })
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
