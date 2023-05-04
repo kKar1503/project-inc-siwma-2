@@ -84,7 +84,7 @@ export default apiHandler()
       },
     });
 
-    res.status(201).json(formatAPIResponse({ companyId: response.id }));
+    res.status(201).json(formatAPIResponse({ companyId: response.id.toString() }));
   })
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
