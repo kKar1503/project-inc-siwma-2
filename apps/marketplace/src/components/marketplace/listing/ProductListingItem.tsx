@@ -108,7 +108,7 @@ const ProductListingItem = ({
             pb: 2,
           }}
         >
-          <StarsRating rating={rating} precision={0.5} size="medium" readOnly />
+          <StarsRating rating={rating} />
         </Box>
         <Box
           sx={{
