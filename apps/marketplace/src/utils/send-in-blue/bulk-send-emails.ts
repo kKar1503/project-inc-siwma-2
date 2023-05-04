@@ -59,22 +59,34 @@ export default async function sendNotificationEmail(
   //   console.log(body.to[0].email);
   // });
 
-  const apiKey = await getAPIKey(data.messageVersions.length);
+  let apiKey: string | undefined;
+  let senderEmail: string | undefined;
 
-  if (!apiKey || !apiKey.key?.key) {
+  if (process.env.NODE_ENV === 'production') {
+    // If in production, get the API key from the environment variables.
+    apiKey = process.env.SIB_API_KEY;
+    senderEmail = process.env.SIB_SENDER_EMAIL;
+  } else {
+    // Otherwise, get the API key from the database
+    const retrieved = await getAPIKey(data.messageVersions.length);
+    apiKey = retrieved.key?.key;
+    senderEmail = retrieved.key?.senderEmail;
+  }
+
+  if (!apiKey || !senderEmail) {
     return {
       success: false,
-      message: 'No API key found.',
+      message: 'An unexpected error occurred while sending the email.',
     };
   }
 
-  changeAPIKey(apiKey.key?.key);
+  changeAPIKey(apiKey); // Set the API Key in the SendInBlue client
 
   const apiInstance = new sibClient.TransactionalEmailsApi();
 
   const email = {
     sender: {
-      email: apiKey.key.senderEmail,
+      email: senderEmail,
       name: 'SIWMA Marketplace',
     },
     subject: data.subject,
@@ -85,17 +97,19 @@ export default async function sendNotificationEmail(
   try {
     await apiInstance.sendTransacEmail(email);
 
-    // Update the API Key usage count
-    await client.sibkeys.update({
-      where: {
-        key: apiKey.key?.key,
-      },
-      data: {
-        remainingCount: {
-          decrement: data.messageVersions.length,
+    if (process.env.NODE_ENV !== 'production') {
+      // If in development, update the API Key usage count
+      await client.sibkeys.update({
+        where: {
+          key: apiKey,
         },
-      },
-    });
+        data: {
+          remainingCount: {
+            decrement: data.messageVersions.length,
+          },
+        },
+      });
+    }
 
     return {
       success: true,
