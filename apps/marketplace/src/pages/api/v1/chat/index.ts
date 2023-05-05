@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { PrismaClient } from '@inc/db';
+import PrismaClient from '@inc/db';
 import { z } from 'zod';
 
 // -- Type definitions -- //
@@ -28,14 +28,12 @@ export const chatRequestBody = z.object({
   listingId: z.number(),
 });
 
-const prisma = new PrismaClient();
-
 export default apiHandler().post(async (req, res) => {
   // Parse and validate the request body
   const data = chatRequestBody.parse(req.body);
 
   // Insert the data into the database and create a new chat room
-  const result = await prisma.rooms.create({
+  const result = await PrismaClient.rooms.create({
     data: {
       seller: data.sellerId,
       buyer: data.buyerId,
