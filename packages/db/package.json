@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "prisma:generate": "prisma generate",
-    "prisma:patchCasing": "node ./prisma/scripts/casingFix.js && prisma format",
+    "prisma:patchCasing": "node ./prisma/scripts/casingFix.js && prisma format && prisma generate",
     "prisma:compile": "tsc --project tsconfig.compile.json",
     "prisma:seed": "prisma db seed"
   },
