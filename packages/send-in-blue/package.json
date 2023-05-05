@@ -7,5 +7,8 @@
   "dependencies": {
     "@inc/db": "workspace:*",
     "sib-api-v3-sdk": "^8.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.3"
   }
 }

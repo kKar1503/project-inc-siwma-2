@@ -62,15 +62,15 @@ export default async function sendNotificationEmail(
   let apiKey: string | undefined;
   let senderEmail: string | undefined;
 
-  if (process.env.NODE_ENV === 'production') {
-    // If in production, get the API key from the environment variables.
-    apiKey = process.env.SIB_API_KEY;
-    senderEmail = process.env.SIB_SENDER_EMAIL;
-  } else {
-    // Otherwise, get the API key from the database
+  if (process.env.NODE_ENV === 'development') {
+    // If in development, get the API key from the database.
     const retrieved = await getAPIKey(data.messageVersions.length);
     apiKey = retrieved.key?.key;
     senderEmail = retrieved.key?.senderEmail;
+  } else {
+    apiKey = process.env.SIB_API_KEY;
+    senderEmail = process.env.SIB_SENDER_EMAIL;
+    // Otherwise, get the API key from the environment variables.
   }
 
   if (!apiKey || !senderEmail) {
@@ -97,7 +97,7 @@ export default async function sendNotificationEmail(
   try {
     await apiInstance.sendTransacEmail(email);
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'development') {
       // If in development, update the API Key usage count
       await client.sibkeys.update({
         where: {
