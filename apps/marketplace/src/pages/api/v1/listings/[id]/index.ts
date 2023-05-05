@@ -46,6 +46,40 @@ export default apiHandler()
     // Return the result
     res.status(200).json(formatAPIResponse(formatSingleListingResponse(listing)));
   })
+  .put(async (req, res) => {
+    allowAdminsOnly: true;
+
+    const id = parseListingId(req.query.id as string);
+    const userId = req.token?.user?.id;
+    const userRole = req.token?.user?.role;
+
+    const listing = await checkListingExists(id);
+
+    const isOwner = listing.owner === userId;
+    const isAdmin = userRole && userRole >= 1;
+    const sameCompany = req.token?.user?.company === listing.users.companyId;
+
+    if (!isOwner && !isAdmin && !sameCompany) {
+      throw new ForbiddenError();
+    }
+
+    // Update the listing with the request data
+    const data = req.body;
+    const updatedListing = await PrismaClient.listing.update({
+      where: { id },
+      data,
+      include: {
+        users: {
+          select: {
+            companyId: true,
+          },
+        },
+        listingsParametersValues: true,
+      },
+    });
+
+    res.status(200).json(formatAPIResponse(formatSingleListingResponse(updatedListing)));
+  })
   .delete(async (req, res) => {
     allowAdminsOnly: true;
 
