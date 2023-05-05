@@ -235,6 +235,7 @@ importers:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
 
+
   packages/s3-simplified:
     dependencies:
       '@aws-sdk/client-s3':
@@ -250,7 +251,7 @@ importers:
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
-        
+
   packages/errors:
     dependencies:
       '@inc/utils':
