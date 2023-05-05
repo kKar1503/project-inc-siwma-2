@@ -1,5 +1,5 @@
 import client from '@inc/db';
-import sibClient, { changeAPIKey } from '@inc/send-in-blue';
+import sibClient, { changeAPIKey } from './index';
 import getAPIKey from './api-keys';
 
 /* This function sends emails to multiple recipients.
