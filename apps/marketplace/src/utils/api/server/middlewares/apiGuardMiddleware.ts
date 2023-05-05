@@ -1,4 +1,4 @@
-import { AuthError, ForbiddenError } from '@/errors/AuthError';
+import { AuthError, ForbiddenError } from '@inc/errors';
 import { NextApiResponse } from 'next';
 import { NextHandler } from 'next-connect';
 import PrismaClient from '@inc/db';
