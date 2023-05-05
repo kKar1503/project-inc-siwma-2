@@ -1,6 +1,6 @@
 import { apiHandler } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError } from '@/errors';
+import { NotFoundError } from '@inc/errors';
 import { formatParamResponse, paramsRequestBody } from '..';
 
 // -- Functions --//
