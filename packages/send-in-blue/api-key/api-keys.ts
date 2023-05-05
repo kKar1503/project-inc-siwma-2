@@ -1,5 +1,5 @@
 import client from '@inc/db';
-import { GetAPIKeyResponseBody } from './types/GetAPIKeyResponseBody';
+import { GetAPIKeyResponseBody } from '../types/GetAPIKeyResponseBody';
 
 export default async function getAPIKey(numEmails: number): Promise<GetAPIKeyResponseBody> {
   const key = await client.sibkeys.findFirst({
