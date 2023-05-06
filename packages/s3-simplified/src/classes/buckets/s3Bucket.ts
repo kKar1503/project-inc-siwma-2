@@ -9,14 +9,13 @@ export class S3Bucket implements S3BucketService {
     private internal: S3BucketInternal;
     private readonly config: Config;
 
-    /**
-     * @internal
-     * @param lib
-     * @param bucketName
-     */
-    constructor(lib: S3libInternal, bucketName: string) {
-        this.config = lib.config;
-        this.internal = new S3BucketInternal(lib.s3, this.config, bucketName);
+
+    public constructor(internal: S3BucketInternal, config: Config) {
+        this.internal = internal;
+        this.config = config;
+    }
+    public async getObjectId(s3Object: S3ObjectBuilder): Promise<string> {
+        return  await this.internal.getS3ObjectId(s3Object, this.config.objectCreation);
     }
 
     public async createObject(s3Object: S3ObjectBuilder): Promise<IS3Object> {

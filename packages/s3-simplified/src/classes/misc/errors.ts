@@ -1,4 +1,4 @@
-export abstract class S3Error extends Error {
+abstract class S3Error extends Error {
 }
 
 export class MissingBucket extends S3Error {

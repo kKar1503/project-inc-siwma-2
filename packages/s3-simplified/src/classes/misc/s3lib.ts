@@ -1,8 +1,8 @@
-import {IS3, S3BucketService} from "../../interfaces";
+import {IS3, S3BucketService, UserConfig} from "../../interfaces";
 import {InvalidBucketName} from "./errors";
-import {UserConfig} from "../../interfaces";
 import {bucketStatus} from "../../types";
 import {S3libInternal} from "./s3libInternal";
+import {S3Bucket} from "../buckets/s3Bucket";
 
 export class S3Lib implements IS3 {
     private readonly internal: S3libInternal;
@@ -13,7 +13,8 @@ export class S3Lib implements IS3 {
 
     public async createBucket(bucketName: string): Promise<S3BucketService> {
         this.validateBucketName(bucketName);
-        return this.internal.createBucket(bucketName);
+        const bucketInternal = await this.internal.createBucket(bucketName);
+        return new S3Bucket(bucketInternal, this.internal.config)
     }
 
     public async deleteBucket(bucketName: string): Promise<void> {
@@ -27,19 +28,18 @@ export class S3Lib implements IS3 {
 
     public async getBucket(bucketName: string): Promise<S3BucketService> {
         await this.assetBucketOwnership(bucketName);
-        return this.internal.getBucket(bucketName);
+        const bucketInternal = await this.internal.getBucket(bucketName);
+        return new S3Bucket(bucketInternal, this.internal.config)
     }
 
     public async getOrCreateBucket(bucketName: string): Promise<S3BucketService> {
         const bucketStatus = await this.getBucketStatus(bucketName);
-        switch (bucketStatus) {
-            case 'owned':
-                return this.internal.getBucket(bucketName);
-            case 'not owned':
-                throw new InvalidBucketName(bucketName, `${bucketName} is owned by another user`);
-            case 'not found':
-                return this.createBucket(bucketName);
-        }
+        if(bucketStatus === 'not owned')
+            throw new InvalidBucketName(bucketName, `${bucketName} is owned by another user`);
+        const bucketInternal = (bucketStatus === 'owned') ?
+            await this.internal.getBucket(bucketName) :
+            await this.internal.createBucket(bucketName);
+        return new S3Bucket(bucketInternal, this.internal.config)
     }
 
     public async getBucketStatus(bucketName: string): Promise<bucketStatus> {

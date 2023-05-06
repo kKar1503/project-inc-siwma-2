@@ -20,6 +20,7 @@ import {getSignedUrl} from '@aws-sdk/s3-request-presigner';
 import {S3ObjectBuilder} from "../objects/s3ObjectBuilder";
 import {Readable} from "stream";
 import {Config, ObjectCreationConfig, SignedUrlConfig} from "../../interfaces/config";
+import {Regions} from "../../types";
 
 /**
  * An unsafe version of S3 bucket with no validation.
@@ -34,11 +35,11 @@ export class S3BucketInternal {
     /**
      * @internal
      * @param s3 The s3 client to use
-     * @param config
+     * @param region
      * @param bucketName
      */
-    public constructor(private readonly s3:S3, config: Config, bucketName: string) {
-        this.bucketUrl = `https://${bucketName}.s3.${config.region}.amazonaws.com`;
+    public constructor(private readonly s3:S3, region: Regions, bucketName: string) {
+        this.bucketUrl = `https://${bucketName}.s3.${region}.amazonaws.com`;
         this.bucketName = bucketName;
     }
 
@@ -106,7 +107,7 @@ export class S3BucketInternal {
     public async getS3ObjectId(s3ObjectBuilder: S3ObjectBuilder, objectConfig: ObjectCreationConfig): Promise<string> {
         const metadata = s3ObjectBuilder.Metadata.asRecord();
         if (metadata["identifier"]) return metadata["identifier"];
-        const uuid = await s3ObjectBuilder.UUID;
+        const uuid = await s3ObjectBuilder.getUUID(objectConfig);
         const ext = s3ObjectBuilder.Extension; // This will generate the extension if it doesn't exist, so we call it even if we don't need it.
         const id = (objectConfig.appendFileTypeToKey) ? uuid + "." + ext : uuid;
         metadata["identifier"] = id;
@@ -142,7 +143,6 @@ export class S3BucketInternal {
         if (!uploadId) throw new Error("Failed to initialize multipart upload");
 
         const partsCount = Math.ceil(await s3ObjectBuilder.DataSize / partSize);
-
 
         //Consolidate all the promises into one array and await them all at once rather than one by one
         const promises = new Array<Promise<UploadPartCommandOutput>>(partsCount);

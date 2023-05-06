@@ -12,6 +12,13 @@ export interface S3BucketService {
      */
     createObject(s3ObjectBuilder: S3ObjectBuilder): Promise<IS3Object>;
 
+
+    /**
+     * Calculates the object id for an S3ObjectBuilder.
+     * This id is hashed from the object's body and metadata.
+     * @param s3Object - The object to calculate the id for.
+     */
+    getObjectId(s3Object: S3ObjectBuilder): Promise<string>;
     /**
      * Retrieves an S3 object with the specified key.
      * @param {string} key - The key of the object to retrieve.
