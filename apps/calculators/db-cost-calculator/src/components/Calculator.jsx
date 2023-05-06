@@ -1,9 +1,66 @@
 import React, { useState } from 'react';
 import Tippy from '@tippyjs/react';
-import Results from './Results';
+import Results from './results';
 import { mathLogic } from './mathLogic';
 
 function App() {
+  const [showResults, setShowResults] = useState(false);
+  const [inputs, setInputs] = useState({
+    numCompany: 200,
+    numUsersperCompany: 1,
+    percentUsers: 80,
+    numListings: 10,
+    numRooms: 5,
+    numMessages: 10,
+    numCategories: 25,
+    numParams: 10,
+  });
+  const [result, setResult] = useState(0);
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    const calculatedResult = mathLogic(
+      inputs.numCompany,
+      inputs.numUsersperCompany,
+      inputs.percentUsers,
+      inputs.numListings,
+      inputs.numRooms,
+      inputs.numMessages,
+      inputs.numCategories,
+      inputs.numParams,
+    );
+    setResult(calculatedResult);
+    setShowResults(true);
+  }
+
+  const handleInputChange = (event, inputName) => {
+    setInputs({
+      ...inputs,
+      [inputName]: Number(event.target.value),
+    });
+  };
+
+  function handleReset() {
+    setShowResults(false);
+    setResult(0);
+    setInputs({
+      numCompany: 200,
+      numUsersperCompany: 1,
+      percentUsers: 80,
+      numListings: 10,
+      numRooms: 5,
+      numMessages: 10,
+      numCategories: 25,
+      numParams: 10,
+    });
+  }
+
+  const preventNegativeInput = (event) => {
+    if (event.key === '-') {
+      event.preventDefault();
+    }
+  };
+
   const styles = {
     backgroundColor: 'white',
     height: '100vh',
@@ -51,6 +108,7 @@ function App() {
   };
 
   const buttonStyles = {
+    // button should be at bottom right of the form
     alignItems: 'center',
     backgroundColor: '#bf0202',
     color: 'white',
@@ -72,6 +130,7 @@ function App() {
   };
 
   const headerStyle = {
+    // bring the header closer to the form
     marginBottom: '-1rem',
     textAlign: 'center',
     font: 'bold 2rem/1.5 Roboto, sans-serif',
@@ -102,9 +161,11 @@ function App() {
   return (
     <div>
       <h1 style={headerStyle}>Database Calculator</h1>
-      <h2 style={subheaderStyle}>Determine how much the database would cost as per your needs</h2>
+      <h2 style={subheaderStyle}>
+        Determine how much the database would cost as per your needs
+      </h2>
       <div style={styles}>
-        <form>
+        <form onSubmit={(event) => handleFormSubmit(event)}>
           <table style={tableStyles}>
             <thead>
               <tr>
@@ -117,8 +178,7 @@ function App() {
                 {
                   label: 'Number of companies',
                   defaultValue: 200,
-                  tooltip:
-                    'The estimated number of companies which will be participating in the usage of the marketplace.',
+                  tooltip: 'The estimated number of companies which will be participating in the usage of the marketplace.',
                   inputName: 'numCompany',
                 },
                 {
@@ -130,8 +190,7 @@ function App() {
                 {
                   label: 'Percentage of active users',
                   defaultValue: 80,
-                  tooltip:
-                    'An estimate of 80% has been set to default to estimate the percentage of total users created who are actively using the marketplace.',
+                  tooltip: 'An estimate of 80% has been set to default to estimate the percentage of total users created who are actively using the marketplace.',
                   inputName: 'numUsersActive',
                 },
                 {
@@ -168,25 +227,45 @@ function App() {
                 <tr key={label}>
                   <td style={tdStyles}>
                     {label}
-                    <Tippy content={tooltip} theme="custom-white-box">
-                      <span className="tooltip-icon" style={tooltipStyle}>
+                    <Tippy
+                      content={tooltip}
+                      theme="custom-white-box"
+                    >
+                      <span
+                        className="tooltip-icon"
+                        style={tooltipStyle}
+                      >
                         i
                       </span>
                     </Tippy>
                   </td>
                   <td style={tdStyles}>
-                    <input type="number" defaultValue={defaultValue} style={inputStyles} />
+                    <input
+                      type="number"
+                      defaultValue={defaultValue}
+                      style={inputStyles}
+                      onChange={(event) => handleInputChange(event, inputName)}
+                      onKeyPress={preventNegativeInput}
+                    />
                   </td>
                 </tr>
               ))}
               {/* submit and reset buttons */}
               <tr>
-                <td colSpan="2" style={{ textAlign: 'right' }}>
-                  <button type="submit" style={buttonStyles}>
+                <td
+                  colSpan="2"
+                  style={{ textAlign: 'right' }}
+                >
+                  <button
+                    type="submit"
+                    onClick={handleFormSubmit}
+                    style={buttonStyles}
+                  >
                     Calculate
                   </button>
                   <button
                     type="reset"
+                    onClick={handleReset}
                     style={{
                       ...resetButtonStyles,
                       marginLeft: '1rem',
@@ -200,7 +279,7 @@ function App() {
             <tbody>
               <tr>
                 <td colSpan="2">
-                  <Results />
+                  {showResults ? <Results result={result} /> : null}
                 </td>
               </tr>
             </tbody>
