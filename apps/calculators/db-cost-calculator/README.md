@@ -1,34 +1,83 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# db-cost-visualisation
 
-## Getting Started
+Webapp to visualise cost of database
 
-First, run the development server:
+## Datatype Sizing Table
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+| Datatype              | Size (bits) |
+| --------------------- | ----------- |
+| Array                 | 8000000     |
+| Bit                   | 1           |
+| Boolean               | 16          |
+| Byte                  | 8           |
+| Date                  | 128         |
+| Decimal               | 512000      |
+| Float                 | 64          |
+| Integer               | 32          |
+| String                | 512000      |
+| Timestamp/Timestamptz | 96          |
+| UUID                  | 128         |
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database Sizing Table
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Calculations all in `bits`
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The tables `access_tokens`, `refresh_tokens`, and `sibkeys` are all tables that will not scale with the number of users and listings etc
 
-## Learn More
+For **`text`**, each character is 1 bit and it is dynamic in size
 
-To learn more about Next.js, take a look at the following resources:
+For **`numeric`**, every 4 additional digits is 16 bits eg. 1234 is 16 bits, 1234.5678 is 32 bits
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The size of an array depends on the datatype and the size of the elements within it
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+| DB Table                   | Calculations Per Row (bits)                                                                    |
+| -------------------------- | ---------------------------------------------------------------------------------------------- |
+| `access_token`             | 32 + `text` + 32 + 128 + 16 + 96 + 96 + 96                                                     |
+| `advertisements`           | 32 + 32 + `text` + `text` + `text` + 16 + 96 + 96 + 96 + 96                                    |
+| `categories_parameters`    | 32 + 32 + 16 + 96 + 96                                                                         |
+| `category`                 | 32 + `text` + `text` + `text` + `text` + 16 + 96 + 96                                          |
+| `clicks`                   | 32 + 32 + 128 + 16 + 96                                                                        |
+| `companies`                | 32 + `text` + `text` + `text` + `text` + 16 + 96                                               |
+| `companies_bookmarks`      | 32 + 128 + 32 + 96                                                                             |
+| `companies_comments`       | 32 + 32 + `text` + 96                                                                          |
+| `invite`                   | 32 + `text` + `text` + `text` + 96 + 32 + 96                                                   |
+| `listing`                  | 32 + `text` + `text` + `numeric` + 16 + 16 + 16 + 16 + 16 + 32 + `listingtype` + 128 + 96 + 96 |
+| `listing_bookmarks`        | 32 + 128 + 32 96                                                                               |
+| `listing_images`           | 32 + 32 + `text` + 96 + 96                                                                     |
+| `listing_parameters_value` | 32 + 32 + `text` + 96 + 96                                                                     |
+| `messages`                 | 32 + 128 + 128 + 16 + 96 + `contenttype` + 32 + `text`                                         |
+| `notification_settings`    | 32 + 128 + `notificationtype`                                                                  |
+| `offers`                   | 32 + 32 + 32 + 64 + 16                                                                         |
+| `pararameter`              | 32 + `parametertype` + `datatype` + `text` + `text` + 16 + 96 + 96                             |
+| `parameter_choices`        | 32 + array(`text`) + 96 + 96                                                                   |
+| `refresh_tokens`           | 32 + `text` + 128 + 16 + 96 + 96 + 96                                                          |
+| `rooms`                    | 128 + 128 + 128 + 96 + 32                                                                      |
+| `sibkeys`                  | `text` + 32 + `text`                                                                           |
+| `user_bookmarks`           | 32 + 128 + 128 + 96                                                                            |
+| `users`                    | 128 + `text` + `text` + `text` + `text` + `text` + `usercontacts` + 32 + 16 + 32 + 96 + `text` |
+| `users_comments`           | 32 + 128 + `text`+ 96                                                                          |
 
-## Deploy on Vercel
+## Custom Enum Sizing + Values Table
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Each enum value is 32 bits
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Enum Name          | Enum Values                                                  |
+| ------------------ | ------------------------------------------------------------ |
+| `contenttype`      | `[text, file, image, offer]`                                 |
+| `datatype`         | `[string, number, boolean]`                                  |
+| `listingtype`      | `[BUY, SELL]`                                                |
+| `notificationtype` | `[TAB1, TAB2]`                                               |
+| `parametertype`    | `[WEIGHT, DIMENSION, TWO CHOICES, MANY CHOICES, OPEN ENDED]` |
+| `usercontacts`     | `[whatsapp, phone, telegram, facebook, email]`               |
+
+## Default Values
+
+Number of companies (default 200)
+Number of user per companies (default 1)
+% users active (this is what we use to calculate the scale) (default 100%)
+Number of listing per user per month (default 6)
+Number of chat opened per listing (default 6)
+Number of messages per chat (default 15)
+Number of categories (default 25)
+Number of Params per categories (default 10)
+Number of bookmarks per user (default 10)
