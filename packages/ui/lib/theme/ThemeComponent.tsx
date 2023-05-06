@@ -10,7 +10,7 @@ import generateThemeOptions from './theme';
 
 export type MuiThemeProps = {
   children: ReactNode;
-}
+};
 
 const MuiTheme = ({ children }: MuiThemeProps) => {
   // ** Creates core theme options
@@ -21,8 +21,8 @@ const MuiTheme = ({ children }: MuiThemeProps) => {
 
   return (
     <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
+      <CssBaseline />
+      {children}
     </ThemeProvider>
   );
 };
