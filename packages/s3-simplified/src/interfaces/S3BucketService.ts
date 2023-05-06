@@ -12,6 +12,11 @@ export interface S3BucketService {
      */
     createObject(s3ObjectBuilder: S3ObjectBuilder): Promise<IS3Object>;
 
+    /**
+     * Creates an S3 object from an S3ObjectBuilder if it does not already exist.
+     * @param s3ObjectBuilder
+     */
+    getOrCreateObject(s3ObjectBuilder: S3ObjectBuilder): Promise<IS3Object>;
 
     /**
      * Calculates the object id for an S3ObjectBuilder.
