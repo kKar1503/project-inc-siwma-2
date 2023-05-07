@@ -1,6 +1,7 @@
 import React from 'react';
 import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
+import { useTheme } from '@mui/material/styles';
 
 type StarRatingProps = {
   rating: number;
@@ -11,14 +12,17 @@ type StarRatingProps = {
 };
 
 const StarsRating = ({ rating, precision, size, readOnly }: StarRatingProps) => {
+  const theme = useTheme();
+
   return (
     <Rating
       defaultValue={rating}
       readOnly={readOnly}
       size={size}
       precision={precision}
-      sx={{ color: '#00C853' }}
-      emptyIcon={<StarIcon fontSize="inherit" />}
+      // sx={{ color: '#00C853' }}
+      sx={{ color: theme.palette.secondary['main'] }}
+      emptyIcon={<StarIcon sx={{ color: theme.palette.grey[400] }} />}
     />
   );
 };

@@ -69,13 +69,16 @@ const ProductListingItem = ({
         subheader={companyName}
       />
       <CardMedia component="img" height="288" image={img} />
-      <CardContent sx={{ pl: 2 }}>
-        {/* MUI default spacing is 8px */}
+      <CardContent
+        sx={({ spacing }) => ({
+          pl: spacing(2),
+        })}
+      >
         <Box
-          sx={{
+          sx={({ spacing }) => ({
             display: 'flex',
-            pb: 2,
-          }}
+            pb: spacing(2),
+          })}
         >
           {type === 'Buy' && <BuyBadge />}
           {type === 'Sell' && <SellBadge />}
@@ -84,18 +87,18 @@ const ProductListingItem = ({
           <Box sx={{ ml: 'auto' }}>{isOwnProfile && <MoreProfileIcon />}</Box>
         </Box>
         <Box
-          sx={{
-            pb: 2,
-          }}
+          sx={({ spacing }) => ({
+            pb: spacing(2),
+          })}
         >
           <Typography variant="body2" color="text.primary" fontWeight={400} fontSize={20}>
             {name}
           </Typography>
         </Box>
         <Box
-          sx={{
-            pb: 2,
-          }}
+          sx={({ spacing }) => ({
+            pb: spacing(2),
+          })}
         >
           <Typography variant="h4" color="text.primary" fontWeight="bold" fontSize={24}>
             {new Intl.NumberFormat('en-SG', {
@@ -106,16 +109,16 @@ const ProductListingItem = ({
           </Typography>
         </Box>
         <Box
-          sx={{
-            pb: 2,
-          }}
+          sx={({ spacing }) => ({
+            pb: spacing(2),
+          })}
         >
           <StarsRating rating={rating} />
         </Box>
         <Box
-          sx={{
-            pb: 2,
-          }}
+          sx={({ spacing }) => ({
+            pb: spacing(2),
+          })}
         >
           <Typography variant="subtitle1" color="text.secondary" fontSize={16}>
             {datetime}
