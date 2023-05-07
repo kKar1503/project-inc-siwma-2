@@ -1,6 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
+import { NotFoundError, ParamError, AuthError } from '@inc/errors';
 
 // -- Type definitions -- //
 export type ChatResponse = {
@@ -23,14 +24,61 @@ export function formatChatResponse(chatData: any) {
  * Zod schema for the POST request body
  */
 export const chatRequestBody = z.object({
-  sellerId: z.string(),
-  buyerId: z.string(),
-  listingId: z.number(),
+  sellerId: z.string().refine((value) => value.trim() !== '', {
+    message: 'invalid seller id',
+  }),
+  buyerId: z.string().refine((value) => value.trim() !== '', {
+    message: 'invalid buyer id',
+  }),
+  listingId: z.number().refine((value) => !Number.isNaN(value), {
+    message: 'invalid listing id',
+  }),
 });
 
 export default apiHandler().post(async (req, res) => {
   // Parse and validate the request body
-  const data = chatRequestBody.parse(req.body);
+  const parseResult = chatRequestBody.safeParse(req.body);
+
+  if (!parseResult.success) {
+    const error = parseResult.error.issues[0];
+    const paramName = error.path[0] ? error.path[0].toString() : 'Unknown';
+    const detail = error.message || 'Invalid Unknown supplied';
+
+    const customError = new ParamError(paramName);
+    customError.message = detail;
+    customError.status = ParamError.status;
+    customError.code = ParamError.code;
+    throw customError;
+  }
+
+  const data = parseResult.data;
+
+  if (data.sellerId === data.buyerId) {
+    throw new ParamError('buyerId and sellerId');
+  }
+
+  // Verify the user is not creating a chat room for their own listing
+  const listing = await PrismaClient.listing.findUnique({
+    where: { id: data.listingId },
+  });
+
+  if (!listing) {
+    throw new NotFoundError('Listing');
+  }
+
+  if (!req.token || !req.token.user) {
+    throw new AuthError();
+  }
+
+  // Ensure the authenticated user is the buyer
+  if (data.buyerId !== req.token.user.id) {
+    throw new ParamError('buyerId');
+  }
+
+  // Ensure the sellerId matches the listing owner
+  if (data.sellerId !== listing.owner) {
+    throw new ParamError('sellerId');
+  }
 
   // Insert the data into the database and create a new chat room
   const result = await PrismaClient.rooms.create({
