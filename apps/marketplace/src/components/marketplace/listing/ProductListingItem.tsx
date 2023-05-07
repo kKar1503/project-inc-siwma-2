@@ -16,6 +16,7 @@ import NegotiableBadge from './NegotiableBadge';
 
 export type ProductListingItemProps = {
   img: string;
+  profileImg: string;
   type: string;
   name: string;
   rating: number;
@@ -32,6 +33,7 @@ export type ProductListingItemProps = {
 
 const ProductListingItem = ({
   img,
+  profileImg,
   type,
   name,
   rating,
@@ -55,7 +57,7 @@ const ProductListingItem = ({
     <Card sx={{ maxWidth: 288, maxHeight: 600, border: '1px solid #C4C4C4' }}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+          <Avatar sx={{ bgcolor: red[500] }} src={profileImg}>
             {ownerFullName.charAt(0)}
           </Avatar>
         }
