@@ -47,7 +47,7 @@ export default apiHandler({ allowNonAuthenticated: true })
           createdAt: true,
           enabled: true,
           profilePicture: true,
-          usersComments: true,
+          comments: true, // Only admins can access this endpoint so we can return comments
           phone: true,
           contact: true,
           bio: true,
@@ -62,7 +62,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         createdAt: user.createdAt,
         enabled: user.enabled,
         profilePic: user.profilePicture,
-        comments: user.usersComments,
+        comments: user.comments,
         mobileNumber: user.phone,
         contactMethod: user.contact,
         bio: user.bio,
