@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import PrismaClient, { CompaniesComments } from '@inc/db';
+import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
@@ -24,7 +24,7 @@ export type queryResult = {
   bio: string | null;
   logo: string | null;
   visibility: boolean;
-  companiesComments?: CompaniesComments | null;
+  comments: string | null;
   createdAt?: Date;
 };
 
@@ -49,7 +49,7 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
       bio: r.bio,
       image: r.logo,
       visible: r.visibility,
-      comments: r.companiesComments?.comments,
+      comments: r.comments,
       createdAt: r.createdAt,
     });
   });
@@ -76,11 +76,7 @@ export default apiHandler()
         name,
         website,
         logo: image,
-        companiesComments: {
-          create: {
-            comments,
-          },
-        },
+        comments,
       },
     });
 
@@ -100,7 +96,7 @@ export default apiHandler()
         logo: true,
         visibility: true,
         createdAt: isAdmin,
-        companiesComments: isAdmin,
+        comments: isAdmin,
       },
       where: {
         id: {

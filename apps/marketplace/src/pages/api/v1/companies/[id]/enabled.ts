@@ -16,13 +16,13 @@ export default apiHandler({ allowAdminsOnly: true }).patch(
     const companyid = parseToNumber(id as string);
 
     const response: ResponseBody = await PrismaClient.$queryRaw`
-        UPDATE "companies" SET "visibility" = NOT "visibility" WHERE "id" = ${companyid} RETURNING "visibility"
+        UPDATE "companies" SET "visibility" = NOT "visibility" WHERE "id" = ${companyid} RETURNING "visibility" AS "visible"
     `;
 
     if (Object.keys(response).length === 0) {
       throw new NotFoundError('Company');
     }
 
-    res.status(200).json(formatAPIResponse({ visible: response.visibility }));
+    res.status(200).json(formatAPIResponse(response));
   }
 );

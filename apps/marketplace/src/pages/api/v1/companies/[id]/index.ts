@@ -28,7 +28,7 @@ function formatResponse(r: queryResult): getResponseBody {
     bio: r.bio,
     image: r.logo,
     visible: r.visibility,
-    comments: r.companiesComments?.comments,
+    comments: r.comments,
     createdAt: r.createdAt,
   };
 }
@@ -50,7 +50,7 @@ export default apiHandler()
         logo: true,
         visibility: true,
         createdAt: isAdmin,
-        companiesComments: isAdmin,
+        comments: isAdmin,
       },
     });
 
@@ -98,11 +98,7 @@ export default apiHandler()
         website,
         bio,
         logo: image,
-        companiesComments: {
-          update: {
-            comments,
-          },
-        },
+        comments,
       },
       select: {
         id: true,
@@ -112,7 +108,7 @@ export default apiHandler()
         logo: true,
         visibility: true,
         createdAt: isAdmin,
-        companiesComments: isAdmin,
+        comments: isAdmin,
       },
     });
 
