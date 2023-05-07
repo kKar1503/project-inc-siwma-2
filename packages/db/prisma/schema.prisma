@@ -90,9 +90,9 @@ model Companies {
   visibility         Boolean              @default(true)
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   name               String               @unique(map: "companies_un") @default("")
+  comments           String?
   advertisements     Advertisements[]
   companiesBookmarks CompaniesBookmarks[]
-  companiesComments  CompaniesComments?
   invite             Invite?
   users              Users[]
 
@@ -107,16 +107,6 @@ model CompaniesBookmarks {
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "companies_bookmarks_fk")
 
   @@map("companies_bookmarks")
-}
-
-model CompaniesComments {
-  id        Int       @id(map: "companies_comments_pk") @default(sequence(maxValue: 2147483647))
-  companyId Int       @unique(map: "companies_comments_company_id_idx") @map("company_id")
-  comments  String
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "companies_comments_fk")
-
-  @@map("companies_comments")
 }
 
 model Invite {
@@ -285,7 +275,7 @@ model Sibkeys {
   senderEmail    String @map("sender_email")
 
   @@unique([key, senderEmail], map: "sibkeys_un")
-  @@map("sibkeys")
+  @@map("Sibkeys")
 }
 
 model UserBookmarks {
@@ -311,6 +301,7 @@ model Users {
   companyId               Int                    @map("company_id")
   createdAt               DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   bio                     String?
+  comments                String?
   accessTokens            AccessTokens[]
   clicks                  Clicks[]
   listings                Listing[]
@@ -322,19 +313,8 @@ model Users {
   roomsRoomsBuyerTousers  Rooms[]                @relation("roomsBuyerTousers")
   userBookmarks           UserBookmarks[]
   companies               Companies              @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
-  usersComments           UsersComments?
 
   @@map("users")
-}
-
-model UsersComments {
-  id        Int      @id(map: "users_comments_pk") @unique(map: "users_comments_id_idx") @default(sequence(maxValue: 2147483647))
-  userId    String   @unique(map: "users_comments_un") @map("user_id") @db.Uuid
-  comments  String   @default("")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "users_comments_fk")
-
-  @@map("users_comments")
 }
 
 enum ContentType {
