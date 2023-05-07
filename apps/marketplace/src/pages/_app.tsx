@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
+import { ThemeComponent } from '@inc/ui';
 
 // -- Type declarations --//
 // Page type
@@ -48,16 +49,18 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   const { allowAuthenticated, allowNonAuthenticated } = Component;
 
   return (
-    <SessionProvider session={session}>
-      <AuthenticationGuard
-        disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
-        disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
-        allowAuthenticated={allowAuthenticated}
-        allowNonAuthenticated={allowNonAuthenticated}
-      >
-        {getLayout(<Component {...pageProps} />)}
-      </AuthenticationGuard>
-    </SessionProvider>
+    <ThemeComponent>
+      <SessionProvider session={session}>
+        <AuthenticationGuard
+          disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
+          disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
+          allowAuthenticated={allowAuthenticated}
+          allowNonAuthenticated={allowNonAuthenticated}
+        >
+          {getLayout(<Component {...pageProps} />)}
+        </AuthenticationGuard>
+      </SessionProvider>
+    </ThemeComponent>
   );
 };
 
