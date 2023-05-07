@@ -149,6 +149,9 @@ importers:
       react-swipeable-views:
         specifier: ^0.14.0
         version: 0.14.0(react@18.2.0)
+      react-swipeable-views-utils:
+        specifier: ^0.14.0
+        version: 0.14.0(react@18.2.0)
       sib-api-v3-sdk:
         specifier: ^8.5.0
         version: 8.5.0
@@ -180,6 +183,9 @@ importers:
       '@types/react-dom':
         specifier: 18.0.11
         version: 18.0.11
+      '@types/react-swipeable-views-utils':
+        specifier: ^0.13.4
+        version: 0.13.4
       eslint:
         specifier: 8.36.0
         version: 8.36.0
@@ -686,6 +692,12 @@ packages:
       - encoding
       - supports-color
     dev: false
+
+  /@material-ui/types@4.1.1:
+    resolution: {integrity: sha512-AN+GZNXytX9yxGi0JOfxHrRTbhFybjUJ05rnsBVjcB+16e466Z0Xe5IxawuOayVZgTBNDxmPKo5j4V6OnMtaSQ==}
+    dependencies:
+      '@types/react': 18.0.28
+    dev: true
 
   /@mui/base@5.0.0-alpha.122(@types/react@18.0.28)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-IgZEFQyHa39J1+Q3tekVdhPuUm1fr3icddaNLmiAIeYTVXmR7KR5FhBAIL0P+4shlPq0liUPGlXryoTm0iCeFg==}
@@ -1383,6 +1395,20 @@ packages:
     dependencies:
       '@types/react': 18.0.28
     dev: false
+
+  /@types/react-swipeable-views-utils@0.13.4:
+    resolution: {integrity: sha512-v0nDk6mMIPAu/kaEnqQpDz2Z7O8ewqy2in7xwobcAAkUKKsdw3MSWFW1BkQ+dPgTrBnj/KXUzx3ZIS6UYviwyA==}
+    dependencies:
+      '@material-ui/types': 4.1.1
+      '@types/react': 18.0.28
+      '@types/react-swipeable-views': 0.13.1
+    dev: true
+
+  /@types/react-swipeable-views@0.13.1:
+    resolution: {integrity: sha512-Nuvywkv9CkwcUgItOCBszkc/pc8YSdiKV5E1AzOJ/p32Db50LgwhJFi5b1ANPgyWxB0Q5yn69aMURHyGi3MLyg==}
+    dependencies:
+      '@types/react': 18.0.28
+    dev: true
 
   /@types/react-transition-group@4.4.5:
     resolution: {integrity: sha512-juKD/eiSM3/xZYzjuzH6ZwpP+/lejltmiS3QEzV/vmb/Q8+HfDmxu+Baga8UEMGBqV88Nbg4l2hY/K2DkyaLLA==}
