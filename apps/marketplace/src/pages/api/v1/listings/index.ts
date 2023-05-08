@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import PrismaClient, { Listing, ListingType } from '@inc/db';
+import PrismaClient, { Listing, ListingType, Prisma } from '@inc/db';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError } from '@inc/errors';
@@ -23,19 +23,40 @@ export type ListingResponse = {
 };
 
 export type ListingWithParameters = Listing & {
-  listingsParametersValue: Array<{
+  listingsParametersValues: Array<{
     parameterId: number;
     value: string;
   }>;
 };
 
+const getQueryParameters = z.object({
+  lastIdPointer: z.string().transform((val) => parseInt(val)).optional(),
+  limit: z.string().transform((val) => parseInt(val)).optional(),
+  matching: z.string().optional(),
+  includeParameters: z
+    .string()
+    .transform((val) => val.toLowerCase() === 'true')
+    .default(false).optional(),
+  category: z.string().transform((val) => parseInt(val)).optional(),
+  negotiable: z.string().transform((val) => val.toLowerCase() === 'true').optional(),
+  minPrice: z.string().transform((val) => parseFloat(val)).optional(),
+  maxPrice: z.string().transform((val) => parseFloat(val)).optional(),
+  sortBy: z.string().optional(),
+});
+
 // -- Helper functions -- //
-export function formatListingResponse($listings: ListingWithParameters[]) {
-  return $listings.map((listing) => formatSingleListingResponse(listing));
+export function formatListingResponse(
+  $listings: ListingWithParameters[],
+  includeParameters: boolean
+) {
+  return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
 }
 
-export function formatSingleListingResponse(listing: ListingWithParameters): ListingResponse {
-  return {
+export function formatSingleListingResponse(
+  listing: ListingWithParameters,
+  includeParameters: boolean
+): ListingResponse {
+  const formattedListing: ListingResponse = {
     id: listing.id.toString(),
     name: listing.name,
     description: listing.description,
@@ -46,13 +67,16 @@ export function formatSingleListingResponse(listing: ListingWithParameters): Lis
     type: listing.type,
     owner: listing.owner,
     active: listing.active,
-    parameters: listing.listingsParametersValue
-      ? listing.listingsParametersValue.map((parameter) => ({
-        paramId: parameter.parameterId.toString(),
-        value: parameter.value,
-      }))
-      : undefined,
   };
+
+  if (includeParameters && listing.listingsParametersValues) {
+    formattedListing.parameters = listing.listingsParametersValues.map((parameter) => ({
+      paramId: parameter.parameterId.toString(),
+      value: parameter.value,
+    }));
+  }
+
+  return formattedListing;
 }
 
 export const listingsRequestBody = z.object({
@@ -75,17 +99,47 @@ export const listingsRequestBody = z.object({
 
 export default apiHandler()
   .get(async (req, res) => {
-    // Retrieve all listings from the database
+    // Parse the query parameters
+    const queryParams = getQueryParameters.parse(req.query);
+
+    // Filter options
+    const whereOptions: Prisma.ListingWhereInput = {
+      active: true,
+      categoryId: queryParams.category ? queryParams.category : undefined,
+      negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+      price: {
+        gte: queryParams.minPrice ? queryParams.minPrice : undefined,
+        lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
+      },
+      name: queryParams.matching
+        ? {
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
+        : undefined,
+    };
+
+    // Sorting options
+    const sortByOptions: Prisma.ListingOrderByWithAggregationInput = {
+      [queryParams.sortBy === 'price' ? 'price' : 'updatedAt']: 'desc',
+    };
+
+    // Retrieve filtered and sorted listings from the database
     const listings = await PrismaClient.listing.findMany({
+      where: whereOptions,
+      orderBy: sortByOptions,
+      skip: queryParams.lastIdPointer,
+      take: queryParams.limit,
       include: {
-        listingsParametersValues: true,
+        listingsParametersValues: queryParams.includeParameters,
       },
     });
 
-    res.status(200).json(formatAPIResponse(formatListingResponse(listings)));
+    res
+      .status(200)
+      .json(formatAPIResponse(formatListingResponse(listings, queryParams.includeParameters)));
   })
   .post(async (req, res) => {
-
     const data = listingsRequestBody.parse(req.body);
 
     // Use the user ID from the request object
@@ -113,15 +167,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value,
-              parameter: {
-                connect: {
-                  id: parseToNumber(parameter.paramId),
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value,
+                parameter: {
+                  connect: {
+                    id: parseToNumber(parameter.paramId),
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
@@ -130,5 +184,4 @@ export default apiHandler()
     });
 
     res.status(201).json({ listingId: listing.id });
-
   });
