@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { Listing, ListingType } from '@inc/db';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
-import { NotFoundError } from '@/errors';
+import { NotFoundError } from '@inc/errors';
 
 // -- Type definitions -- //
 export type ListingResponse = {

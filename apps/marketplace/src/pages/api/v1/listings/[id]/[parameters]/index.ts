@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiHandler, formatAPIResponse, parseListingId } from '@/utils/api';
 import PrismaClient, { ListingsParametersValue } from '@inc/db';
-import { ForbiddenError } from '@/errors/AuthError';
-import { NotFoundError } from '@/errors';
+import { ForbiddenError, NotFoundError } from '@inc/errors';
 import * as z from 'zod';
 import { checkListingExists } from '../index';
 
