@@ -12,6 +12,17 @@ export default apiHandler({
 }).patch(async (req, res) => {
   const { id } = userIdSchema.parse(req.query);
 
+  // Verify that the user exists
+  const userExists = await client.users.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!userExists) {
+    throw new NotFoundError('User');
+  }
+
   // Get user's enabled status
   const fetchedUser = await client.users.findUnique({
     where: {
@@ -22,10 +33,6 @@ export default apiHandler({
     },
   });
 
-  if (!fetchedUser) {
-    throw new NotFoundError('User');
-  }
-
   const user = await client.users.update({
     where: {
       id,
@@ -34,11 +41,6 @@ export default apiHandler({
       enabled: !fetchedUser?.enabled,
     },
   });
-
-  if (!user) {
-    // This should never happen unless the user is deleted between the two queries
-    throw new NotFoundError('User');
-  }
 
   return res.status(200).json(formatAPIResponse({ visible: user.enabled }));
 });

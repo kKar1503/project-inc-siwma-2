@@ -119,6 +119,17 @@ export default apiHandler()
       }
     }
 
+    // Verify that the user exists
+    const userExists = await client.users.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!userExists) {
+      throw new NotFoundError('User');
+    }
+
     const user = await client.users.update({
       where: {
         id,
@@ -135,10 +146,6 @@ export default apiHandler()
         comments: userComments,
       },
     });
-
-    if (!user) {
-      throw new NotFoundError('User');
-    }
 
     const mappedUser = {
       id: user.id,
@@ -163,15 +170,22 @@ export default apiHandler()
     async (req, res) => {
       const { id } = userIdSchema.parse(req.query);
 
-      const user = await client.users.delete({
+      // Verify that the user exists
+      const userExists = await client.users.findUnique({
         where: {
           id,
         },
       });
 
-      if (!user) {
+      if (!userExists) {
         throw new NotFoundError('User');
       }
+
+      await client.users.delete({
+        where: {
+          id,
+        },
+      });
 
       return res.status(204).end();
     }
