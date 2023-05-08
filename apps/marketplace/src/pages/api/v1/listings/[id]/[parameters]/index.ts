@@ -1,17 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiHandler, formatAPIResponse, parseListingId } from '@/utils/api';
-import PrismaClient, { Parameter, ListingsParametersValue } from '@inc/db';
+import PrismaClient, { ListingsParametersValue } from '@inc/db';
 import { ForbiddenError } from '@/errors/AuthError';
+import { NotFoundError } from '@/errors';
 import * as z from 'zod';
 import { checkListingExists } from '../index';
 
 // -- Functions --//
-
-function formatParametersResponse(parameters: Parameter[]): any[] {
+function formatParametersResponse(parameters: ListingsParametersValue[]): any[] {
   return parameters.map((parameter) => ({
-    id: parameter.id,
-    name: parameter.name,
-    type: parameter.type,
+    paramId: parameter.parameterId,
+    value: parameter.value,
   }));
 }
 
@@ -23,6 +22,10 @@ function formatParametersResponse(parameters: Parameter[]): any[] {
 const getListingParameters = async (req: NextApiRequest, res: NextApiResponse) => {
   const id = parseListingId(req.query.id as string);
   const listing = await checkListingExists(id);
+
+  if (!listing) {
+    throw new NotFoundError(`Listing with id '${id}'`);
+  }
 
   const parameters = await PrismaClient.listingsParametersValue.findMany({
     where: {
@@ -38,13 +41,8 @@ const getListingParameters = async (req: NextApiRequest, res: NextApiResponse) =
 };
 
 const parameterSchema = z.object({
-  parameterId: z.string(),
+  paramId: z.string(),
   value: z.string(),
-});
-
-// Define the schema for the entire request body
-const requestSchema = z.object({
-  parameters: z.array(parameterSchema),
 });
 
 // Custom request type with 'token' property
@@ -59,7 +57,7 @@ interface CustomApiRequest extends NextApiRequest {
 }
 
 type RequestBodyParameter = {
-  parameterId: string;
+  paramId: string;
   value: string;
 };
 
@@ -128,7 +126,7 @@ const updateListingParameters = async (req: CustomApiRequest, res: NextApiRespon
 
   // Check for invalid paramIds and values
   for (const param of parameters) {
-    const paramIdInt = parseInt(param.parameterId, 10);
+    const paramIdInt = parseInt(param.paramId, 10);
     if (isNaN(paramIdInt)) {
       return res.status(422).json(formatAPIResponse({ success: false, error: 'Invalid paramId' }));
     }
@@ -137,7 +135,7 @@ const updateListingParameters = async (req: CustomApiRequest, res: NextApiRespon
   // Update the parameters in the database and format the response
   const updatedParameters = await Promise.all(
     parameters.map(async (param: RequestBodyParameter) => {
-      const parameterId = parseInt(param.parameterId, 10);
+      const parameterId = parseInt(param.paramId, 10);
 
       // Update the parameter value
       const updatedParameter = await PrismaClient.listingsParametersValue.update({
