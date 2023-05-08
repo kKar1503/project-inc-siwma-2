@@ -41,7 +41,7 @@ export default apiHandler()
         createdAt: true,
         enabled: true,
         profilePicture: true,
-        usersComments: isAdmin,
+        comments: isAdmin, // Only admins can see comments
         phone: true,
         contact: true,
         bio: true,
@@ -63,6 +63,7 @@ export default apiHandler()
       mobileNumber: user.phone,
       contactMethod: user.contact,
       bio: user.bio,
+      ...(isAdmin && { comments: user.comments }),
     };
 
     return res.status(200).json(formatAPIResponse(mappedUser));
@@ -131,11 +132,7 @@ export default apiHandler()
         phone: mobileNumber,
         contact: contactMethod,
         bio,
-        usersComments: {
-          create: {
-            comments: userComments,
-          },
-        },
+        comments: userComments,
       },
     });
 
@@ -154,6 +151,7 @@ export default apiHandler()
       mobileNumber: user.phone,
       contactMethod: user.contact,
       bio: user.bio,
+      ...(isAdmin && { comments: user.comments }),
     };
 
     return res.status(200).json(formatAPIResponse(mappedUser));

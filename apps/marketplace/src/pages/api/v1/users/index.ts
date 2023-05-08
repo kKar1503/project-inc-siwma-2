@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
 import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -9,7 +9,7 @@ import { validatePassword, validatePhone } from '@/utils/api/validate';
 
 const getUsersRequestBody = z.object({
   lastIdPointer: z.string().optional(),
-  limit: z.number().optional(),
+  limit: z.string().optional(),
 });
 
 const userCreationRequestBody = z.object({
@@ -24,7 +24,13 @@ export default apiHandler({ allowNonAuthenticated: true })
       allowAdminsOnly: true,
     }),
     async (req: NextApiRequest, res: NextApiResponse) => {
-      const { lastIdPointer, limit } = getUsersRequestBody.parse(req.query);
+      const { limit, lastIdPointer } = getUsersRequestBody.parse(req.query);
+
+      let limitInt: number | undefined;
+
+      if (limit) {
+        limitInt = parseToNumber(limit, 'limit');
+      }
 
       const users = await client.users.findMany({
         where: {
@@ -32,7 +38,7 @@ export default apiHandler({ allowNonAuthenticated: true })
             gt: lastIdPointer,
           },
         },
-        take: limit,
+        take: limitInt,
         select: {
           id: true,
           name: true,
@@ -41,7 +47,7 @@ export default apiHandler({ allowNonAuthenticated: true })
           createdAt: true,
           enabled: true,
           profilePicture: true,
-          usersComments: true,
+          comments: true, // Only admins can access this endpoint so we can return comments
           phone: true,
           contact: true,
           bio: true,
@@ -56,7 +62,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         createdAt: user.createdAt,
         enabled: user.enabled,
         profilePic: user.profilePicture,
-        comments: user.usersComments,
+        comments: user.comments,
         mobileNumber: user.phone,
         contactMethod: user.contact,
         bio: user.bio,
