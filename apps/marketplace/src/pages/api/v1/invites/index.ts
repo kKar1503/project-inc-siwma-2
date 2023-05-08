@@ -12,8 +12,8 @@ export const inviteCreationRequestBody = z.object({
 });
 
 const getInvitesRequestBody = z.object({
-  lastIdPointer: z.number().optional(),
-  limit: z.number().optional(),
+  lastIdPointer: z.string().optional(),
+  limit: z.string().optional(),
 });
 
 export default apiHandler({ allowAdminsOnly: true })
@@ -61,21 +61,31 @@ export default apiHandler({ allowAdminsOnly: true })
   .get(async (req, res) => {
     const { lastIdPointer, limit } = getInvitesRequestBody.parse(req.query);
 
+    let limitInt: number | undefined;
+    let lastIdPointerInt: number | undefined;
+
+    if (limit) {
+      limitInt = parseToNumber(limit, 'limit');
+    }
+    if (lastIdPointer) {
+      lastIdPointerInt = parseToNumber(lastIdPointer, 'lastIdPointer');
+    }
+
     const invites = await client.invite.findMany({
       orderBy: {
         createdAt: 'desc',
       },
       where: {
         id: {
-          gt: lastIdPointer,
+          gt: lastIdPointerInt,
         },
       },
-      take: limit,
+      take: limitInt,
       select: {
         id: true,
         email: true,
         name: true,
-        companyId: true
+        companyId: true,
       },
     });
 
