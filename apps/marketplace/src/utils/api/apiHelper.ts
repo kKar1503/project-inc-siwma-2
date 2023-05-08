@@ -1,4 +1,4 @@
-import { ParamError, ParamInvalidError, NotFoundError } from '@/errors';
+import { ParamError, ParamInvalidError } from '@inc/errors';
 
 /**
  * Parse a string to a number

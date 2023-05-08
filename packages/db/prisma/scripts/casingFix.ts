@@ -13,6 +13,12 @@ function snakeToPascal(str: string) {
   return snakeToCamel(str).replace(/^\w/, (c) => c.toUpperCase());
 }
 
+function PascalToSnake(str: string) {
+  const fixedStr = str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  // check if the first letter is a _ and remove it
+  return fixedStr.startsWith('_') ? fixedStr.slice(1) : fixedStr;
+}
+
 const PRISMA_PRIMITIVES = ['String', 'Boolean', 'Int', 'Float', 'DateTime'];
 const KNEX_INTERNAL_MODELS = [
   'knex_migrations',
@@ -20,13 +26,13 @@ const KNEX_INTERNAL_MODELS = [
   'pgmigrations',
 ];
 const SUPPORTED_ENUMS = [
-  "DataType",
-  "ListingType",
-  "NotificationType",
-  "ParameterType",
-  "UserContacts",
-  "ContentType"
-]
+  'DataType',
+  'ListingType',
+  'NotificationType',
+  'ParameterType',
+  'UserContacts',
+  'ContentType',
+];
 
 function isKnexInternalModel(typeName: string) {
   return KNEX_INTERNAL_MODELS.includes(typeName);
@@ -37,9 +43,9 @@ function isPrimitiveType(typeName: string) {
 }
 
 function validateSupportedEnum(typeName: string): [isSupportedEnum: boolean, enumIndex: number] {
-  let enumIndex =  SUPPORTED_ENUMS.findIndex(e => e.toLowerCase() === typeName.toLowerCase())
-  let isSupportedEnum = enumIndex !== -1
-  return [isSupportedEnum, enumIndex]
+  let enumIndex = SUPPORTED_ENUMS.findIndex(e => e.toLowerCase() === typeName.toLowerCase());
+  let isSupportedEnum = enumIndex !== -1;
+  return [isSupportedEnum, enumIndex];
 }
 
 function fixFieldsArrayString(fields: string) {
@@ -88,12 +94,13 @@ function parseLine(line: string, persistentData: {
 
   // Add the @@map to the table name for the model
   else if (!persistentData.hasAddedModelMap) {
+    const snakeModelName = PascalToSnake(persistentData.currentModelName);
     if (line.match(/\s+@@/)) {
-      fixedText.push(`  @@map("${persistentData.currentModelName}")`);
+      fixedText.push(`  @@map("${snakeModelName}")`);
       persistentData.hasAddedModelMap = true;
     }
     if (line === '}' || line === '}\r') {
-      fixedText.push(`\n  @@map("${persistentData.currentModelName}")`);
+      fixedText.push(`\n  @@map("${snakeModelName}")`);
       fixedText.push(`}`);
       persistentData.hasAddedModelMap = true;
       return;
@@ -137,7 +144,7 @@ function parseLine(line: string, persistentData: {
     const restOfLine = fixedLine.slice(fieldTypeIndex + currentFieldType.length);
 
     // Check if field type is enum
-    let [isSupportedEnum, enumIndex] = validateSupportedEnum(fixedFieldType)
+    let [isSupportedEnum, enumIndex] = validateSupportedEnum(fixedFieldType);
     if (isSupportedEnum) {
       fixedFieldType = SUPPORTED_ENUMS[enumIndex];
     }
@@ -165,17 +172,16 @@ function parseLine(line: string, persistentData: {
     }
 
 
-    if(fixedLine.includes('fields: [refresh_token'))
-    {
+    if (fixedLine.includes('fields: [refresh_token')) {
       fixedLine = fixedLine.replace('fields: [refresh_token', 'fields: [refreshToken');
     }
   }
 
-  if(fixedLine.includes('@relation("')){
+  if (fixedLine.includes('@relation("')) {
     //get the relation name
     const relationName = fixedLine.match(/@relation\("(\w+)"/)![1];
     //check if relation name is in camel case
-    if(relationName.includes('_')){
+    if (relationName.includes('_')) {
       //convert to camel case
       const camelCaseRelationName = snakeToCamel(relationName);
       //replace relation name with camel case
@@ -193,9 +199,9 @@ function parseLine(line: string, persistentData: {
   // Try to match for enum
   const enumMatch = fixedLine.match(/^enum\s+(\S+)\s*\{/);
   if (enumMatch) {
-    let [isSupportedEnum, enumIndex] = validateSupportedEnum(enumMatch[1])
+    let [isSupportedEnum, enumIndex] = validateSupportedEnum(enumMatch[1]);
     if (isSupportedEnum) {
-      fixedLine = fixedLine.replace(enumMatch[1], SUPPORTED_ENUMS[enumIndex])
+      fixedLine = fixedLine.replace(enumMatch[1], SUPPORTED_ENUMS[enumIndex]);
     }
   }
 
@@ -223,4 +229,4 @@ async function fixPrismaFile() {
 
 
 fixPrismaFile()
-  .then(_ => console.log('prisma file fixed'))
+  .then(_ => console.log('prisma file fixed'));

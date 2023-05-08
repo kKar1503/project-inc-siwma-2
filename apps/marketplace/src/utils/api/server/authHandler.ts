@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
-import PrismaClient, {RefreshTokens} from '@inc/db';
+import PrismaClient, { RefreshTokens } from '@inc/db';
 import crypto from 'crypto';
-import { InvalidTokenError, TokenExpiredError } from '@/errors/AuthError';
+import { InvalidTokenError, TokenExpiredError } from '@inc/errors';
 
 /**
  * Type declarations
