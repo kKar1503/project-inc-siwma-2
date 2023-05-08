@@ -149,6 +149,12 @@ importers:
       react-responsive:
         specifier: ^9.0.2
         version: 9.0.2(react@18.2.0)
+      react-swipeable-views:
+        specifier: ^0.14.0
+        version: 0.14.0(react@18.2.0)
+      react-swipeable-views-utils:
+        specifier: ^0.14.0
+        version: 0.14.0(react@18.2.0)
       sib-api-v3-sdk:
         specifier: ^8.5.0
         version: 8.5.0
@@ -180,6 +186,9 @@ importers:
       '@types/react-dom':
         specifier: 18.0.11
         version: 18.0.11
+      '@types/react-swipeable-views-utils':
+        specifier: ^0.13.4
+        version: 0.13.4
       eslint:
         specifier: 8.36.0
         version: 8.36.0
@@ -390,6 +399,12 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       '@babel/types': 7.21.4
+    dev: false
+
+  /@babel/runtime@7.0.0:
+    resolution: {integrity: sha512-7hGhzlcmg01CvH1EHdSPVXYX1aJ8KCEyz6I9xYIi/asDtzBPMyMhVibhM/K6g/5qnKBwjZtp10bNZIEFTRW1MA==}
+    dependencies:
+      regenerator-runtime: 0.12.1
     dev: false
 
   /@babel/runtime@7.21.0:
@@ -693,6 +708,12 @@ packages:
       - encoding
       - supports-color
     dev: false
+
+  /@material-ui/types@4.1.1:
+    resolution: {integrity: sha512-AN+GZNXytX9yxGi0JOfxHrRTbhFybjUJ05rnsBVjcB+16e466Z0Xe5IxawuOayVZgTBNDxmPKo5j4V6OnMtaSQ==}
+    dependencies:
+      '@types/react': 18.0.28
+    dev: true
 
   /@mui/base@5.0.0-alpha.122(@types/react@18.0.28)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-IgZEFQyHa39J1+Q3tekVdhPuUm1fr3icddaNLmiAIeYTVXmR7KR5FhBAIL0P+4shlPq0liUPGlXryoTm0iCeFg==}
@@ -1390,6 +1411,20 @@ packages:
     dependencies:
       '@types/react': 18.0.28
     dev: false
+
+  /@types/react-swipeable-views-utils@0.13.4:
+    resolution: {integrity: sha512-v0nDk6mMIPAu/kaEnqQpDz2Z7O8ewqy2in7xwobcAAkUKKsdw3MSWFW1BkQ+dPgTrBnj/KXUzx3ZIS6UYviwyA==}
+    dependencies:
+      '@material-ui/types': 4.1.1
+      '@types/react': 18.0.28
+      '@types/react-swipeable-views': 0.13.1
+    dev: true
+
+  /@types/react-swipeable-views@0.13.1:
+    resolution: {integrity: sha512-Nuvywkv9CkwcUgItOCBszkc/pc8YSdiKV5E1AzOJ/p32Db50LgwhJFi5b1ANPgyWxB0Q5yn69aMURHyGi3MLyg==}
+    dependencies:
+      '@types/react': 18.0.28
+    dev: true
 
   /@types/react-transition-group@4.4.5:
     resolution: {integrity: sha512-juKD/eiSM3/xZYzjuzH6ZwpP+/lejltmiS3QEzV/vmb/Q8+HfDmxu+Baga8UEMGBqV88Nbg4l2hY/K2DkyaLLA==}
@@ -3786,6 +3821,10 @@ packages:
       object.assign: 4.1.4
     dev: true
 
+  /keycode@2.2.1:
+    resolution: {integrity: sha512-Rdgz9Hl9Iv4QKi8b0OlCRQEzp4AgVxyCtz5S/+VIHezDmrDhkp2N2TqBWOLz0/gbeREXOOiI9/4b8BY9uw2vFg==}
+    dev: false
+
   /language-subtag-registry@0.3.22:
     resolution: {integrity: sha512-tN0MCzyWnoz/4nHS6uxdlFWoUZT7ABptwKPQ52Ea7URk6vll88bWBVhodtnlfEuCcKWNGoc+uGbw1cwa9IKh/w==}
     dev: true
@@ -4614,6 +4653,17 @@ packages:
       scheduler: 0.23.0
     dev: false
 
+  /react-event-listener@0.6.6(react@18.2.0):
+    resolution: {integrity: sha512-+hCNqfy7o9wvO6UgjqFmBzARJS7qrNoda0VqzvOuioEpoEXKutiKuv92dSz6kP7rYLmyHPyYNLesi5t/aH1gfw==}
+    peerDependencies:
+      react: ^16.3.0
+    dependencies:
+      '@babel/runtime': 7.21.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      warning: 4.0.3
+    dev: false
+
   /react-fast-compare@3.2.1:
     resolution: {integrity: sha512-xTYf9zFim2pEif/Fw16dBiXpe0hoy5PxcD8+OwBnTtNLfIm3g6WxhKNurY+6OmdH1u6Ta/W/Vl6vjbYP1MFnDg==}
     dev: false
@@ -4692,6 +4742,42 @@ packages:
       shallow-equal: 1.2.1
     dev: false
 
+  /react-swipeable-views-core@0.14.0:
+    resolution: {integrity: sha512-0W/e9uPweNEOSPjmYtuKSC/SvKKg1sfo+WtPdnxeLF3t2L82h7jjszuOHz9C23fzkvLfdgkaOmcbAxE9w2GEjA==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      '@babel/runtime': 7.0.0
+      warning: 4.0.3
+    dev: false
+
+  /react-swipeable-views-utils@0.14.0(react@18.2.0):
+    resolution: {integrity: sha512-W+fXBOsDqgFK1/g7MzRMVcDurp3LqO3ksC8UgInh2P/tKgb5DusuuB1geKHFc6o1wKl+4oyER4Zh3Lxmr8xbXA==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      '@babel/runtime': 7.0.0
+      keycode: 2.2.1
+      prop-types: 15.8.1
+      react-event-listener: 0.6.6(react@18.2.0)
+      react-swipeable-views-core: 0.14.0
+      shallow-equal: 1.2.1
+    transitivePeerDependencies:
+      - react
+    dev: false
+
+  /react-swipeable-views@0.14.0(react@18.2.0):
+    resolution: {integrity: sha512-wrTT6bi2nC3JbmyNAsPXffUXLn0DVT9SbbcFr36gKpbaCgEp7rX/OFxsu5hPc/NBsUhHyoSRGvwqJNNrWTwCww==}
+    engines: {node: '>=6.0.0'}
+    peerDependencies:
+      react: ^15.3.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@babel/runtime': 7.0.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-swipeable-views-core: 0.14.0
+      react-swipeable-views-utils: 0.14.0(react@18.2.0)
+      warning: 4.0.3
+    dev: false
+
   /react-transition-group@4.4.5(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
     peerDependencies:
@@ -4747,6 +4833,10 @@ packages:
     dependencies:
       picomatch: 2.3.1
     dev: true
+
+  /regenerator-runtime@0.12.1:
+    resolution: {integrity: sha512-odxIc1/vDlo4iZcfXqRYFj0vpXFNoGdKMAUieAlFYO6m/nl5e9KR/beGf41z4a1FI+aQgtjhuaSlDxQ0hmkrHg==}
+    dev: false
 
   /regenerator-runtime@0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
