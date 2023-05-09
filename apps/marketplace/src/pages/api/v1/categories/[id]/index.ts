@@ -39,6 +39,15 @@ function formatResponse(response: queryResult): getResponse {
   };
 }
 
+async function checkCategory(categoryId: number) {
+  const category = await PrismaClient.category.findFirst({
+    where: {
+      id: categoryId,
+    },
+  });
+  return category;
+}
+
 export default apiHandler()
   .get(async (req, res) => {
     const { id } = req.query;
@@ -73,8 +82,15 @@ export default apiHandler()
     const { name, description, image, crossSectionImage, parameters } =
       editCategoryRequestBody.parse(req.body);
 
+    const categoryId = parseId(id as string);
+
     if (name != null && name.trim().length === 0) {
       throw new ParamError('name');
+    }
+
+    const category = await checkCategory(categoryId);
+    if (!category) {
+      throw new NotFoundError('Category');
     }
 
     if (parameters) {
@@ -96,7 +112,7 @@ export default apiHandler()
 
     const response = await PrismaClient.category.update({
       where: {
-        id: parseId(id as string),
+        id: categoryId,
       },
       data: {
         name,
@@ -116,24 +132,23 @@ export default apiHandler()
       },
     });
 
-    if (!response) {
-      throw new NotFoundError('Category');
-    }
-
     res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .delete(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { id } = req.query;
 
-    const response = await PrismaClient.category.delete({
-      where: {
-        id: parseId(id as string),
-      },
-    });
+    const categoryId = parseId(id as string);
 
-    if (!response) {
+    const category = await checkCategory(categoryId);
+    if (!category) {
       throw new NotFoundError('Category');
     }
+
+    const response = await PrismaClient.category.delete({
+      where: {
+        id: categoryId,
+      },
+    });
 
     res.status(204).end();
   });
