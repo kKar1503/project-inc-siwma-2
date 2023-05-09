@@ -87,6 +87,7 @@ const EditProfile = ({
             <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
               <Button variant="contained" component="label">
                 Upload a profile photo
+                <input type="file" hidden />
               </Button>
             </Box>
           </Box>
