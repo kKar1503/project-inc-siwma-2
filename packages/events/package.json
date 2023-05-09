@@ -1,0 +1,13 @@
+{
+  "name": "@inc/events",
+  "version": "0.0.0",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@inc/types": "workspace:*",
+    "typescript": "5.0.2"
+  }
+}
