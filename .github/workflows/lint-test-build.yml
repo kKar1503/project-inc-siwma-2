@@ -12,6 +12,7 @@ on:
 
 jobs:
   lint:
+    environment: development
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -38,6 +39,7 @@ jobs:
   #       run: pnpm test
 
   build:
+    environment: development
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
