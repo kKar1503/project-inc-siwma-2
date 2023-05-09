@@ -1,4 +1,4 @@
-import { Regions, S3Lib } from 's3-simplified';
+import { Regions, S3Lib } from '@inc/s3-simplified';
 import hashS3 from '@/utils/hash';
 
 const s3Connection = new S3Lib({
