@@ -19,6 +19,8 @@ export const getCompanies = getCompany.array();
 
 export const editCompany = getCompany;
 
-export const enableCompany = z.object({
+export const toggleCompany = z.object({
   visible: z.boolean(),
 });
+
+export const deleteCompany = z.object({});
