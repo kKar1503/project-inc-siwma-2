@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
 import PrismaClient from '@inc/db';
-import { NotFoundError, ParamError } from '@/errors';
+import { NotFoundError, ParamError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { getCategoriesQueryParameter, getResponse, queryResult, formatParamters } from '../index';
 
@@ -73,7 +73,7 @@ export default apiHandler()
     const { name, description, image, crossSectionImage, parameters } =
       editCategoryRequestBody.parse(req.body);
 
-    if (!name || name.trim().length === 0) {
+    if (name != null && name.trim().length === 0) {
       throw new ParamError('name');
     }
 

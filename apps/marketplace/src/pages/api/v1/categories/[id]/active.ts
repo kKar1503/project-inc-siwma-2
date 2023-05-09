@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError } from '@/errors';
+import { NotFoundError } from '@inc/errors';
 
 type ResponseBody = {
   active: boolean;

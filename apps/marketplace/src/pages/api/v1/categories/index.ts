@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
 import PrismaClient, { CategoriesParameters } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { ParamError } from '@/errors';
+import { ParamError } from '@inc/errors';
 
 export type queryResult = {
   id: number;
@@ -97,7 +97,7 @@ export default apiHandler()
       req.body
     );
 
-    if (!name || name.trim().length === 0) {
+    if (name != null && name.trim().length === 0) {
       throw new ParamError('name');
     }
 
