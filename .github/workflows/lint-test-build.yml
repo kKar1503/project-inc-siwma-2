@@ -73,7 +73,7 @@ jobs:
 
       - name: Save @inc/ui dist build
         if: ${{ steps.build-id.outcome == 'success' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ui-dist
           path: packages/ui/dist
