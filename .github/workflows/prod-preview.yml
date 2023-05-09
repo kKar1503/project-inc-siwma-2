@@ -47,7 +47,11 @@ jobs:
           docker push ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:latest
 
       - name: Restart task
+        # TODO: do not restart tasks like this
         run: aws ecs update-service --force-new-deployment --service marketplace-service --cluster marketplace
+
+      # instead, define a new task definition and update the service with the new task definition
+      # but it will do for now :p
 
       - name: Get Public DNS and IP
         run: |

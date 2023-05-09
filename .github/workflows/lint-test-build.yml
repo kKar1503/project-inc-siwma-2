@@ -1,0 +1,61 @@
+name: Lint - Test - Build
+
+# Skip job run if PR updated
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup NodeJS, pnpm and installs packages
+        uses: ./.github/actions/setup
+
+      - name: Lint
+        run: pnpm lint
+
+  # TODO: write this after the tests have been written
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Setup NodeJS, pnpm and installs packages
+  #       uses: ./.github/actions/setup
+
+  #     - name: Test
+  #       run: pnpm test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup NodeJS, pnpm and installs packages
+        uses: ./.github/actions/setup
+
+      - name: Build
+        id: build-id
+        run: pnpm build
+
+      - name: Save @inc/ui dist build
+        if: ${{ steps.build-id.outcome == 'success' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ui-dist
+          path: packages/ui/dist
+
+      - name: Save @inc/marketplace .next build
+        if: ${{ steps.build-id.outcome == 'success' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: marketplace-next
+          path: apps/marketplace/.next
