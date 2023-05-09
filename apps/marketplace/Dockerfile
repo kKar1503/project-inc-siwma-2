@@ -33,6 +33,18 @@ FROM node:18.15.0-alpine3.17 as runner
 WORKDIR /app
 ENV NODE_ENV production
 
+# Set DATABASE_URL for Prisma
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+# Get NextAuth URL and Secret
+ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
+
+# Set NextAuth URL and Secret
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+
 # Adding user & usergroup for NextJS's node server
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -40,7 +52,7 @@ RUN adduser --system --uid 1001 nextjs
 # Copying the standalone files & changing owners
 COPY --from=depsbuilder /app/apps/marketplace/public ./public
 COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/marketplace/.next/standalone ./
-COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/marketplace/.next/static ./.next/static
+COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/marketplace/.next/static ./apps/marketplace/.next/static
 
 # Changing user to NextJS's user
 USER nextjs
