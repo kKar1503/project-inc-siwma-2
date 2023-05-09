@@ -20,6 +20,15 @@ function parseCompanyId(id: string | undefined): number {
   return parseToNumber(id);
 }
 
+async function checkCompany(companyid: number) {
+  const company = await PrismaClient.companies.findFirst({
+    where: {
+      id: companyid,
+    },
+  });
+  return company;
+}
+
 function formatResponse(r: queryResult): getResponseBody {
   return {
     id: r.id.toString(),
@@ -88,6 +97,12 @@ export default apiHandler()
       throw new ParamError('website');
     }
 
+    const company = await checkCompany(companyid);
+    // check if company exists
+    if (!company) {
+      throw new NotFoundError('Company');
+    }
+
     // update the company
     const response = await PrismaClient.companies.update({
       where: {
@@ -112,7 +127,6 @@ export default apiHandler()
       },
     });
 
-    // if company doesn't exist
     if (!response) {
       throw new NotFoundError('Company');
     }
@@ -121,17 +135,19 @@ export default apiHandler()
   })
   .delete(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { id } = req.query;
+    const companyid = parseCompanyId(id as string);
 
-    const data = await PrismaClient.companies.delete({
-      where: {
-        id: parseCompanyId(id as string),
-      },
-    });
-
-    // if the company does not exist
-    if (!data) {
+    // check if company exists
+    const company = await checkCompany(companyid);
+    if (!company) {
       throw new NotFoundError('Company');
     }
+
+    const response = await PrismaClient.companies.delete({
+      where: {
+        id: companyid,
+      },
+    });
 
     return res.status(204).end();
   });
