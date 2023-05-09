@@ -3,6 +3,7 @@ import ProductListingItem from '@/components/marketplace/listing/ProductListingI
 import ProfileDetailCard, {
   ProfileDetailCardProps,
 } from '@/components/marketplace/profile/ProfileDetailCard';
+import ListingsTab from '@/components/marketplace/profilePage/ListingsTab';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
@@ -139,11 +140,7 @@ const TabPanel = (props: TabPanelProps) => {
       aria-labelledby={`full-width-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 };
@@ -250,13 +247,9 @@ const ProfilePage = ({ data, props }: { data: ProfileDetailCardProps; props: Tab
                 }}
               />
             </Tabs>
-            <SwipeableViews
-              axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-              index={value}
-              onChangeIndex={handleChangeIndex}
-            >
+            <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
               <TabPanel value={value} index={0} dir={theme.direction}>
-                Item One
+                <ListingsTab />
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction}>
                 Item Two
