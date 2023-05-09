@@ -98,7 +98,7 @@ const ProfileDetailCard = ({
         <TelegramIcon
           sx={({ spacing, palette }) => ({
             borderRadius: spacing(2),
-            padding: '1%',
+            pr: '2px',
             color: palette.common.white,
             backgroundColor: '#0088cc',
           })}
@@ -121,7 +121,7 @@ const ProfileDetailCard = ({
         <WhatsAppIcon
           sx={({ spacing, palette }) => ({
             borderRadius: spacing(2),
-            padding: '1%',
+            p: '1px',
             color: palette.common.white,
             backgroundColor: '#25D366',
           })}
