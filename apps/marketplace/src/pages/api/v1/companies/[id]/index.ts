@@ -86,14 +86,14 @@ export default apiHandler()
       throw new ForbiddenError();
     }
 
-    if (!name || name.trim().length === 0) {
+    if (name != null && name.trim().length === 0) {
       throw new ParamError('name');
     }
 
     const websiteRegex =
       /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
 
-    if (website && !websiteRegex.test(website)) {
+    if (website != null && !websiteRegex.test(website)) {
       throw new ParamError('website');
     }
 
