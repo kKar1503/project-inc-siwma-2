@@ -91,7 +91,13 @@ const ProductListingItem = ({
             pb: spacing(2),
           })}
         >
-          <Typography variant="body2" color="text.primary" fontWeight={400} fontSize={20}>
+          <Typography
+            sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            variant="body2"
+            color="text.primary"
+            fontWeight={400}
+            fontSize={20}
+          >
             {name}
           </Typography>
         </Box>
