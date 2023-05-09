@@ -19,6 +19,9 @@ jobs:
       - name: Setup NodeJS, pnpm and installs packages
         uses: ./.github/actions/setup
 
+      - name: Build only @inc/ui
+        run: pnpm build:ui
+
       - name: Lint
         run: pnpm lint
 
@@ -41,6 +44,26 @@ jobs:
 
       - name: Setup NodeJS, pnpm and installs packages
         uses: ./.github/actions/setup
+
+      - name: Create .env for prisma
+        uses: SpicyPizza/create-envfile@v1.3.0
+        with:
+          envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          directory: 'packages/db'
+          file_name: .env
+          fail_on_empty: true
+
+      - name: Create .env.local for marketplace
+        uses: SpicyPizza/create-envfile@v1.3.0
+        with:
+          envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          envkey_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          envkey_NEXTAUTH_URL: http://localhost:3000
+          envkey_NEXT_BUILD_OPTION: ignoreType
+          envkey_NEXT_ESLINT_OPTION: ignoreLint
+          directory: 'apps/marketplace'
+          file_name: .env.local
+          fail_on_empty: true
 
       - name: Build
         id: build-id
