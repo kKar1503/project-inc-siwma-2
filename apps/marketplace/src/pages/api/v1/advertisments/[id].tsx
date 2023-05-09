@@ -4,7 +4,7 @@ import PrismaClient from '@inc/db';
 import { NotFoundError } from '@/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
-import { S3ObjectBuilder } from 's3-simplified';
+import { S3ObjectBuilder } from '@inc/s3-simplified';
 import { AdvertisementBucket, select, where } from '@api/v1/advertisments/index';
 import { APIRequestType } from '@/types/api-types';
 import { Readable } from 'stream';

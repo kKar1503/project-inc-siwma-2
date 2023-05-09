@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import { S3ObjectBuilder } from 's3-simplified';
+import { S3ObjectBuilder } from '@inc/s3-simplified';
 import s3Connection from '@/utils/s3Connection';
 import { Readable } from 'stream';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
