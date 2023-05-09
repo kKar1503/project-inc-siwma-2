@@ -1,4 +1,3 @@
-import React from 'react';
 import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
 import { useTheme } from '@mui/material/styles';
@@ -20,7 +19,6 @@ const StarsRating = ({ rating, precision, size, readOnly }: StarRatingProps) => 
       readOnly={readOnly}
       size={size}
       precision={precision}
-      // sx={{ color: '#00C853' }}
       sx={{ color: theme.palette.secondary['main'] }}
       emptyIcon={<StarIcon sx={{ color: theme.palette.grey[400] }} />}
     />
