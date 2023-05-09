@@ -4,29 +4,24 @@ const companyId = z.number();
 const image = z.string().url();
 const description = z.string();
 const link = z.string().url();
-const active = z.boolean();
-const startDate = z.date();
-const endDate = z.date();
+// Admin Fields
+const active = z.boolean().optional();
+const startDate = z.date().optional();
+const endDate = z.date().optional();
 
-const advertisement = {
+const advertisement = z.object({
   companyId,
   image,
   description,
   link,
-};
-
-const advertisementAdmin = {
+  // Admin Fields
   active,
   startDate,
   endDate,
-  ...advertisement,
-};
+});
 
-
-export const getAdvertisements = z.object(advertisement).array();
-export const getAdvertisementsAdmin = z.object(advertisementAdmin).array();
-export const getAdvertisement = z.object(advertisement);
-export const getAdvertisementAdmin = z.object(advertisementAdmin);
 export const createAdvertisement = z.object({ companyId });
-export const updateAdvertisement = getAdvertisementAdmin;
+export const getAdvertisements = advertisement.array();
+export const getAdvertisement = advertisement;
+export const updateAdvertisement = advertisement;
 export const deleteAdvertisement = z.object({});
