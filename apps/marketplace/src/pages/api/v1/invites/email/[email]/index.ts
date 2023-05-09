@@ -12,7 +12,8 @@ export default apiHandler({
 }).delete(async (req, res) => {
   const { email } = emailSchema.parse(req.query);
 
-  const invite = await client.invite.deleteMany({
+  // Find the invite
+  const invite = await client.invite.findFirst({
     where: {
       email,
     },
@@ -21,6 +22,12 @@ export default apiHandler({
   if (!invite) {
     throw new NotFoundError('invite');
   }
+
+  await client.invite.delete({
+    where: {
+      id: invite.id,
+    },
+  });
 
   return res.status(204).end();
 });
