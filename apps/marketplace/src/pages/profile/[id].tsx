@@ -145,6 +145,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   bgcolor: theme.palette.common.white,
   color: theme.palette.primary[400],
   border: 1,
+  borderColor: theme.palette.primary[400],
   borderRadius: theme.shape.borderRadius,
   //   for some reason, half of this doesn't work??
   '&.Mui-selected': {
@@ -223,6 +224,8 @@ const ProfilePage = ({ data }: { data: ProfileDetailCardProps }) => {
                 label="Listings"
                 sx={{
                   // added in-line styling here because styled() doesn't want to work
+                  border: 1,
+                  borderColor: theme.palette.primary[400],
                   '&.Mui-selected': {
                     minHeight: 60,
                     color: theme.palette.common.white,
@@ -236,6 +239,8 @@ const ProfilePage = ({ data }: { data: ProfileDetailCardProps }) => {
               <StyledTab
                 label="Reviews"
                 sx={{
+                  border: 1,
+                  borderColor: theme.palette.primary[400],
                   '&.Mui-selected': {
                     minHeight: 60,
                     color: theme.palette.common.white,
