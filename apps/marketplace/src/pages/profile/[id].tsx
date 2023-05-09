@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
 import ProfileDetailCard, {
   ProfileDetailCardProps,
 } from '@/components/marketplace/profile/ProfileDetailCard';
@@ -8,7 +7,6 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { ReactNode, useState, SyntheticEvent } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 
@@ -127,20 +125,17 @@ interface TabPanelProps {
   dir?: string;
   index: number;
   value: number;
+  height: string;
 }
 
 const TabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, height, ...other } = props;
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
+      {value === index && (
+        <Box sx={{ p: 3, height: { height }, overflowY: 'auto' }}>{children}</Box>
+      )}
     </div>
   );
 };
@@ -162,7 +157,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   },
 }));
 
-const ProfilePage = ({ data, props }: { data: ProfileDetailCardProps; props: TabPanelProps }) => {
+const ProfilePage = ({ data }: { data: ProfileDetailCardProps }) => {
   const theme = useTheme();
   const [value, setValue] = useState(0);
 
@@ -188,7 +183,7 @@ const ProfilePage = ({ data, props }: { data: ProfileDetailCardProps; props: Tab
             pl: '160px',
             pr: '160px',
             pb: spacing(3),
-            height: '950px;',
+            height: '100vh;',
             width: '100%',
             display: 'flex',
             justifyContent: 'space-between',
@@ -207,7 +202,12 @@ const ProfilePage = ({ data, props }: { data: ProfileDetailCardProps; props: Tab
             reviews={data.reviews}
           />
           <Box
-            sx={{ width: '73%', bgcolor: theme.palette.common.white, borderRadius: theme.shape }}
+            sx={{
+              width: '73%',
+              height: 'full',
+              bgcolor: theme.palette.common.white,
+              borderRadius: theme.shape,
+            }}
           >
             <Tabs
               value={value}
@@ -248,10 +248,10 @@ const ProfilePage = ({ data, props }: { data: ProfileDetailCardProps; props: Tab
               />
             </Tabs>
             <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
-              <TabPanel value={value} index={0} dir={theme.direction}>
+              <TabPanel value={value} index={0} dir={theme.direction} height="90.5vh">
                 <ListingsTab />
               </TabPanel>
-              <TabPanel value={value} index={1} dir={theme.direction}>
+              <TabPanel value={value} index={1} dir={theme.direction} height="90.5vh">
                 Item Two
               </TabPanel>
             </SwipeableViews>
