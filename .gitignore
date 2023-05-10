@@ -8,3 +8,4 @@ packages/db/prisma/scripts/casingFix.js
 tmp/**/*
 packages/events/index.js
 packages/events/index.d.ts
+packages/errors/index.js
