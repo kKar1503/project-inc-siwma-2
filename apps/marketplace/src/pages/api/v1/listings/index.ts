@@ -29,18 +29,37 @@ export type ListingWithParameters = Listing & {
   }>;
 };
 
-const getQueryParameters = z.object({
-  lastIdPointer: z.string().transform((val) => parseInt(val)).optional(),
-  limit: z.string().transform((val) => parseInt(val)).optional(),
+export const getQueryParameters = z.object({
+  lastIdPointer: z
+    .string()
+    .transform((val) => parseInt(val))
+    .optional(),
+  limit: z
+    .string()
+    .transform((val) => parseInt(val))
+    .optional(),
   matching: z.string().optional(),
   includeParameters: z
     .string()
     .transform((val) => val.toLowerCase() === 'true')
-    .default(false).optional(),
-  category: z.string().transform((val) => parseInt(val)).optional(),
-  negotiable: z.string().transform((val) => val.toLowerCase() === 'true').optional(),
-  minPrice: z.string().transform((val) => parseFloat(val)).optional(),
-  maxPrice: z.string().transform((val) => parseFloat(val)).optional(),
+    .default(false)
+    .optional(),
+  category: z
+    .string()
+    .transform((val) => parseInt(val))
+    .optional(),
+  negotiable: z
+    .string()
+    .transform((val) => val.toLowerCase() === 'true')
+    .optional(),
+  minPrice: z
+    .string()
+    .transform((val) => parseFloat(val))
+    .optional(),
+  maxPrice: z
+    .string()
+    .transform((val) => parseFloat(val))
+    .optional(),
   sortBy: z.string().optional(),
 });
 
@@ -120,9 +139,22 @@ export default apiHandler()
     };
 
     // Sorting options
-    const sortByOptions: Prisma.ListingOrderByWithAggregationInput = {
-      [queryParams.sortBy === 'price' ? 'price' : 'updatedAt']: 'desc',
+    let sortByOptions: Prisma.ListingOrderByWithAggregationInput = {
+      id: 'asc',
     };
+
+    if (queryParams.sortBy) {
+      switch (queryParams.sortBy.toLowerCase()) {
+        case 'price':
+          sortByOptions = { price: 'asc' };
+          break;
+        case 'active':
+          sortByOptions = { active: 'asc' };
+          break;
+        default:
+          break;
+      }
+    }
 
     // Retrieve filtered and sorted listings from the database
     const listings = await PrismaClient.listing.findMany({

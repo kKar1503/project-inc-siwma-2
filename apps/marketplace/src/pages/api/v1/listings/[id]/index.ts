@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError } from '@inc/errors';
-import { formatSingleListingResponse } from '..';
+import { formatSingleListingResponse, getQueryParameters } from '..';
 import { parseListingId } from '@/utils/api';
 
 // -- Functions --//
@@ -24,7 +24,7 @@ export async function checkListingExists($id: string | number) {
           companyId: true,
         },
       },
-      listingsParametersValues: true, // add this line
+      listingsParametersValues: true,
     },
   });
 
@@ -36,37 +36,51 @@ export async function checkListingExists($id: string | number) {
   return listing;
 }
 
+interface ParameterValue {
+  paramId: string;
+  value: string;
+}
+
 export default apiHandler()
   .get(async (req, res) => {
+    const queryParams = getQueryParameters.parse(req.query);
+
     // Retrieve the listing from the database
     const id = parseListingId(req.query.id as string);
     const listing = await checkListingExists(id);
 
     // Return the result
-    res.status(200).json(formatAPIResponse(formatSingleListingResponse(listing)));
+    res
+      .status(200)
+      .json(formatAPIResponse(formatSingleListingResponse(listing, queryParams.includeParameters)));
   })
   .put(async (req, res) => {
-    allowAdminsOnly: true;
+    const queryParams = getQueryParameters.parse(req.query);
 
     const id = parseListingId(req.query.id as string);
-    const userId = req.token?.user?.id;
-    const userRole = req.token?.user?.role;
+    const userPermissions = req.token?.user?.permissions;
 
-    const listing = await checkListingExists(id);
-
-    const isOwner = listing.owner === userId;
-    const isAdmin = userRole && userRole >= 1;
-    const sameCompany = req.token?.user?.company === listing.users.companyId;
-
-    if (!isOwner && !isAdmin && !sameCompany) {
+    if (!userPermissions || userPermissions < 1) {
       throw new ForbiddenError();
     }
 
+    const listing = await checkListingExists(id);
+
     // Update the listing with the request data
     const data = req.body;
+
+    //Do not remove this, it is necessary to update the listing
     const updatedListing = await PrismaClient.listing.update({
       where: { id },
-      data,
+      data: {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        unitPrice: data.unitPrice,
+        negotiable: data.negotiable,
+        categoryId: data.categoryId,
+        type: data.type,
+      },
       include: {
         users: {
           select: {
@@ -77,22 +91,50 @@ export default apiHandler()
       },
     });
 
-    res.status(200).json(formatAPIResponse(formatSingleListingResponse(updatedListing)));
+    if (data.listingsParametersValues) {
+      for (const parameter of data.listingsParametersValues) {
+        await PrismaClient.listingsParametersValue.upsert({
+          where: {
+            listingId_parameterId: {
+              parameterId: parseInt(parameter.paramId),
+              listingId: id,
+            },
+          },
+          update: { value: parameter.value },
+          create: {
+            value: parameter.value,
+            parameterId: parseInt(parameter.paramId),
+            listingId: id,
+          },
+        });
+      }
+    }
+
+    const completeListing = await PrismaClient.listing.findUnique({
+      where: { id },
+      include: {
+        users: {
+          select: {
+            companyId: true,
+          },
+        },
+        listingsParametersValues: true,
+      },
+    });
+
+    res
+      .status(200)
+      .json(
+        formatAPIResponse(
+          formatSingleListingResponse(completeListing, queryParams.includeParameters)
+        )
+      );
   })
   .delete(async (req, res) => {
-    allowAdminsOnly: true;
-
     const id = parseListingId(req.query.id as string);
-    const userId = req.token?.user?.id;
-    const userRole = req.token?.user?.role;
+    const userPermissions = req.token?.user?.permissions;
 
-    const listing = await checkListingExists(id);
-
-    const isOwner = listing.owner === userId;
-    const isAdmin = userRole && userRole >= 1;
-    const sameCompany = req.token?.user?.company === listing.users.companyId;
-
-    if (!isOwner && !isAdmin && !sameCompany) {
+    if (!userPermissions || userPermissions < 1) {
       throw new ForbiddenError();
     }
 
