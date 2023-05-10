@@ -80,6 +80,22 @@ export default apiHandler().post(async (req, res) => {
     throw new ParamError('sellerId');
   }
 
+  // Check if a chat room with the same buyer and seller already exists
+  const existingChat = await PrismaClient.rooms.findFirst({
+    where: {
+      buyer: data.buyerId,
+      seller: data.sellerId,
+    },
+  });
+
+  // If a chat room with the same buyer and seller exists, return an error response
+  if (existingChat) {
+    return res.status(400).json({
+      success: false,
+      error: 'A chat room with the same buyer and seller already exists',
+    });
+  }
+
   // Insert the data into the database and create a new chat room
   const result = await PrismaClient.rooms.create({
     data: {
