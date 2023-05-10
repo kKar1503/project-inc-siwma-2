@@ -39,4 +39,5 @@ export const createUser = z.object({
   userId: id
 });
 export const getUser = user;
+export const updateUser = user;
 export const getUsers = user.array();
