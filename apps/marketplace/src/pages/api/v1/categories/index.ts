@@ -10,6 +10,7 @@ export type queryResult = {
   description: string;
   image: string;
   crossSectionImage: string;
+  active: boolean;
   categoriesParameters?: CategoriesParameters[];
 };
 
@@ -24,6 +25,7 @@ export type getResponse = {
   description: string;
   image: string;
   crossSectionImage: string;
+  active?: boolean;
   parameters?: parameter[];
 };
 
@@ -66,6 +68,7 @@ function formatResponse(response: queryResult[]): getResponse[] {
       description: r.description,
       image: r.image,
       crossSectionImage: r.crossSectionImage,
+      active: r.active,
       parameters: r.categoriesParameters ? formatParamters(r.categoriesParameters) : undefined,
     });
   });
@@ -84,6 +87,7 @@ export default apiHandler()
         description: true,
         image: true,
         crossSectionImage: true,
+        active: true,
         createdAt: false,
         updatedAt: false,
         categoriesParameters: include,

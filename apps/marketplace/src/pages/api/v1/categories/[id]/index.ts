@@ -33,6 +33,7 @@ function formatResponse(response: queryResult): getResponse {
     description: response.description,
     image: response.image,
     crossSectionImage: response.crossSectionImage,
+    active: response.active,
     parameters: response.categoriesParameters
       ? formatParamters(response.categoriesParameters)
       : undefined,
@@ -64,6 +65,7 @@ export default apiHandler()
         description: true,
         image: true,
         crossSectionImage: true,
+        active: true,
         createdAt: false,
         updatedAt: false,
         categoriesParameters: include,
@@ -126,6 +128,7 @@ export default apiHandler()
         description: true,
         image: true,
         crossSectionImage: true,
+        active: true,
         createdAt: false,
         updatedAt: false,
         categoriesParameters: true,
