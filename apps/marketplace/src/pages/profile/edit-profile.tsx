@@ -53,7 +53,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => (
                 subheader="Edit your profile details here"
               />
               <Box
-                sx={({ spacing }) => ({ justifyContent: 'flex-end', ml: 'auto', mr: spacing(1) })}
+                sx={({ spacing }) => ({ justifyContent: 'flex-end', ml: 'auto', mr: spacing(2) })}
               >
                 <Button variant="contained" color="error">
                   Cancel Edit
