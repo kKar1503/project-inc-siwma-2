@@ -1,15 +1,6 @@
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Radio from '@mui/material/Radio';
-import RadioGroup, { useRadioGroup } from '@mui/material/RadioGroup';
-import FormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel';
-import { SelectChangeEvent } from '@mui/material/Select';
-import { styled } from '@mui/material/styles';
-
-interface FilterChipsLabelProps extends FormControlLabelProps {
-  checked: boolean;
-}
 
 type FilterChipsProps = {
   onData: (newData: string) => void;
