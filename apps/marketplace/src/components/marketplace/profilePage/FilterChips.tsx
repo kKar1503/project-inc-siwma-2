@@ -18,7 +18,7 @@ type FilterChipsProps = {
 const options = ['ALL', 'FROM BUYERS', 'FROM SELLERS'];
 
 const FilterChips = ({ onData }: FilterChipsProps) => {
-  const [selectedValue, setSelectedValue] = useState('All');
+  const [selectedValue, setSelectedValue] = useState('ALL');
 
   const handleClick = (event: any) => {
     const label = event.currentTarget.textContent;
