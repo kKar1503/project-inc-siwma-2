@@ -40,4 +40,5 @@ export const createUser = z.object({
 });
 export const getUser = user;
 export const updateUser = user;
+export const deleteUser = z.object({});
 export const getUsers = user.array();
