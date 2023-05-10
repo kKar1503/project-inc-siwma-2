@@ -3,6 +3,7 @@ import ProfileDetailCard, {
   ProfileDetailCardProps,
 } from '@/components/marketplace/profile/ProfileDetailCard';
 import ListingsTab from '@/components/marketplace/profilePage/ListingsTab';
+import ReviewsTab from '@/components/marketplace/profilePage/ReviewsTab';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
@@ -258,7 +259,7 @@ const ProfilePage = ({ data }: { data: ProfileDetailCardProps }) => {
                 <ListingsTab />
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="90.5vh">
-                Item Two
+                <ReviewsTab />
               </TabPanel>
             </SwipeableViews>
           </Box>
