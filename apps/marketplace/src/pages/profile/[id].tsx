@@ -259,7 +259,7 @@ const ProfilePage = ({ data }: { data: ProfileDetailCardProps }) => {
                 <ListingsTab />
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="90.5vh">
-                <ReviewsTab />
+                <ReviewsTab userRating={data.rating} totalReviews={data.reviews} />
               </TabPanel>
             </SwipeableViews>
           </Box>

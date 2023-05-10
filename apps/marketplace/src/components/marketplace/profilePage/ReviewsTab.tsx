@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { SelectComponent } from '@inc/ui';
+import Divider from '@mui/material/Divider';
+import { SelectComponent, StarsRating } from '@inc/ui';
 import ReviewMessage from './ReviewMessage';
 
 // test data for viewing
@@ -77,7 +78,7 @@ const reviewsTestData = [
 // pass filter values to select component
 const sortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
 
-const ReviewsTab = () => {
+const ReviewsTab = ({ userRating, totalReviews }: { userRating: number; totalReviews: number }) => {
   // use to filter data accordingly when called from api
   const [sort, setSort] = useState('');
 
@@ -86,22 +87,61 @@ const ReviewsTab = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{ height: '100vh' }}>
       {/* top portion */}
-      <Box sx={{ display: 'flex' }}>
-        {/* search bar component goes here */}
+      <Box
+        sx={({ spacing }) => ({
+          display: 'flex',
+          height: '15%',
+          mb: spacing(3),
+          alignItems: 'center',
+        })}
+      >
+        {/* left box of rating and total reviews */}
+        <Box
+          sx={({ spacing }) => ({
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            pl: spacing(1),
+            pr: spacing(3),
+          })}
+        >
+          <Typography
+            sx={({ typography }) => ({
+              fontSize: typography.h1,
+            })}
+          >
+            {userRating}
+          </Typography>
+          <StarsRating rating={userRating} />
+          <Typography
+            sx={({ typography }) => ({
+              fontSize: typography.subtitle1,
+            })}
+          >
+            ({totalReviews} Reviews)
+          </Typography>
+        </Box>
+        {/* vertial divider */}
+        <Divider
+          orientation="vertical"
+          sx={({ spacing }) => ({ height: '100%', mt: spacing(2) })}
+        />
+        {/* filter chips */}
+
         {/* Select Components */}
-        <Box sx={{ display: 'flex', ml: 'auto' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
-              Sort By:
-            </Typography>
-            <SelectComponent onData={handleSortData} values={sortValues} />
-          </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+          <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
+            Sort By:
+          </Typography>
+          <SelectComponent onData={handleSortData} values={sortValues} />
         </Box>
       </Box>
+      {/* horizontal divider */}
+      <Divider />
       {/* lower portion showing marketplace cards */}
-      <Box sx={({ spacing }) => ({})}>
+      <Box>
         {reviewsTestData.map((data) => (
           <ReviewMessage
             noOfReviews={data.noOfReviews}
