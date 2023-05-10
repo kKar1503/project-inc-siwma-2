@@ -138,7 +138,7 @@ function App() {
 
   const subheaderStyle = {
     font: '1.5rem Roboto, sans-serif',
-    marginBottom: '4rem',
+    marginBottom: '7rem',
     fontSize: '1.5rem',
     fontWeight: 'normal',
     textAlign: 'center',
