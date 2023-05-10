@@ -78,9 +78,39 @@ jobs:
           name: ui-dist
           path: packages/ui/dist
 
+      - name: Save @inc/events build
+        if: ${{ steps.build-id.outcome == 'success' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: events-build
+          path: |
+            packages/events/index.d.ts
+            packages/events/index.js
+
+      - name: Save @inc/s3-simplified dist build
+        if: ${{ steps.build-id.outcome == 'success' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: s3-simplified-dist
+          path: packages/s3-simplified/dist
+
+      - name: Save @inc/errors dist build
+        if: ${{ steps.build-id.outcome == 'success' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: errors-dist
+          path: packages/errors/dist
+
       - name: Save @inc/marketplace .next build
         if: ${{ steps.build-id.outcome == 'success' }}
         uses: actions/upload-artifact@v3
         with:
           name: marketplace-next
           path: apps/marketplace/.next
+
+      - name: Save @inc/chat dist build
+        if: ${{ steps.build-id.outcome == 'success' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: chat-dist
+          path: apps/chat/dist
