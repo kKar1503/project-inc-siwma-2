@@ -8,6 +8,6 @@
       "@api/*": ["./src/pages/api/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../../packages/auth/authHandler.ts"],
   "exclude": ["node_modules", "dist", "tests"]
 }

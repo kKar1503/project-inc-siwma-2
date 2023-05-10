@@ -34,6 +34,9 @@ importers:
 
   apps/chat:
     dependencies:
+      '@inc/auth':
+        specifier: workspace:^
+        version: link:../../packages/auth
       '@inc/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -89,6 +92,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.10.6
         version: 11.10.6(@emotion/react@11.10.6)(@types/react@18.0.28)(react@18.2.0)
+      '@inc/auth':
+        specifier: workspace:^
+        version: link:../../packages/auth
       '@inc/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -243,6 +249,28 @@ importers:
       typescript:
         specifier: 5.0.2
         version: 5.0.2
+
+  packages/auth:
+    dependencies:
+      '@inc/db':
+        specifier: workspace:*
+        version: link:../db
+      '@inc/errors':
+        specifier: workspace:*
+        version: link:../errors
+      '@inc/utils':
+        specifier: workspace:*
+        version: link:../utils
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      '@types/node':
+        specifier: 18.15.3
+        version: 18.15.3
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
 
   packages/configs: {}
 

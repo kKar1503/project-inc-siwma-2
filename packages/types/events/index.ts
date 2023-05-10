@@ -13,6 +13,11 @@ type RoomMessage = {
   time: Date;
 };
 
+type Authenticate = {
+  userId: string;
+  token: string;
+};
+
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
   // Connections
@@ -28,6 +33,7 @@ type EventParams = {
   rooms: Record<string, Room>;
   joinedRoom: Room;
   roomMessage: RoomMessage;
+  authenticate: Authenticate;
   serverPing: string;
 };
 
@@ -41,9 +47,6 @@ type EventFile = (io: Server) => {
   };
 }[keyof EventParams];
 
-type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(
-  event: E,
-  param: P
-) => void;
+type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(event: E, param: P) => void;
 
 export type { Event, EventFile, TypedSocketEmitter };

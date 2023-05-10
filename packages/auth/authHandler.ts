@@ -317,7 +317,7 @@ const generateRefreshToken = async (userId: string) => {
  * @param $refreshToken The old refresh token
  * @returns New refresh token
  */
-const refreshRefreshToken = async (userId: string, $refreshToken: string) => {
+export const refreshRefreshToken = async (userId: string, $refreshToken: string) => {
   // Validate the refresh token
   const refreshToken = await validateRefreshToken(userId, $refreshToken);
 
@@ -340,7 +340,11 @@ const refreshRefreshToken = async (userId: string, $refreshToken: string) => {
 /**
  * Generates a new access token with the refresh token
  */
-const refreshAccessToken = async (userId: string, $accessToken: string, $refreshToken: string) => {
+export const refreshAccessToken = async (
+  userId: string,
+  $accessToken: string,
+  $refreshToken: string
+) => {
   // Validate the access token
   const accessToken = await validateAccessToken(userId, $accessToken);
 
@@ -381,7 +385,7 @@ const refreshAccessToken = async (userId: string, $accessToken: string, $refresh
  * Generates both access and refresh tokens for a user on initial login
  * @param userId The id of the user
  */
-const requestTokens = async (userId: string) => {
+export const requestTokens = async (userId: string) => {
   // Generate a new refresh token
   const refreshToken = await generateRefreshToken(userId);
 
@@ -396,10 +400,4 @@ const requestTokens = async (userId: string) => {
   };
 
   return result;
-};
-
-export default {
-  refreshAccessToken,
-  refreshRefreshToken,
-  requestTokens,
 };

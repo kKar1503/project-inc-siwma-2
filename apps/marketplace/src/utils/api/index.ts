@@ -1,4 +1,4 @@
-export * from './server/authHandler';
+export * from '../../../../../packages/auth/authHandler';
 
 export { default as apiHandler } from './server/apiHandler';
 

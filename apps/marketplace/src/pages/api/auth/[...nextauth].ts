@@ -2,7 +2,7 @@ import prisma from '@inc/db';
 import bcrypt from 'bcrypt';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import authHandler from '@/utils/api/server/authHandler';
+import { refreshAccessToken, requestTokens } from '@inc/auth';
 import { JWT } from 'next-auth/jwt';
 
 export const authOptions: NextAuthOptions = {
@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
       // Handle initial sign in (account and user are only returned on initial sign in)
       if (account && user) {
         // Generate a new refresh and access token
-        const generatedTokens = await authHandler.requestTokens(user.id);
+        const generatedTokens = await requestTokens(user.id);
 
         // Construct result object
         const result = {
@@ -40,7 +40,7 @@ export const authOptions: NextAuthOptions = {
       }
 
       // Access token has expired, try to update it
-      const newTokens = await authHandler.refreshAccessToken(
+      const newTokens = await refreshAccessToken(
         token.user.id,
         token.accessToken,
         token.refreshToken

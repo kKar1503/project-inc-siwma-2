@@ -1,0 +1,15 @@
+{
+  "name": "@inc/auth",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "devDependencies": {
+    "@types/node": "18.15.3",
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "@inc/db": "workspace:*",
+    "@inc/errors": "workspace:*",
+    "@inc/utils": "workspace:*",
+    "zod": "^3.21.4"
+  }
+}
