@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { SelectComponent, StarsRating } from '@inc/ui';
 import ReviewMessage from './ReviewMessage';
+import FilterChips from './FilterChips';
 
 // test data for viewing
 const reviewsTestData = [
@@ -81,9 +82,14 @@ const sortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
 const ReviewsTab = ({ userRating, totalReviews }: { userRating: number; totalReviews: number }) => {
   // use to filter data accordingly when called from api
   const [sort, setSort] = useState('');
+  const [chipFilter, setChipFilter] = useState('');
 
   const handleSortData = (sort: string) => {
     setSort(sort);
+  };
+
+  const handleFilterChipData = (chipFilter: string) => {
+    setChipFilter(chipFilter);
   };
 
   return (
@@ -128,8 +134,16 @@ const ReviewsTab = ({ userRating, totalReviews }: { userRating: number; totalRev
           orientation="vertical"
           sx={({ spacing }) => ({ height: '100%', mt: spacing(2) })}
         />
-        {/* filter chips */}
-
+        {/* right box with filter chips */}
+        <Box sx={({ spacing }) => ({ pl: spacing(3), display: 'flex', flexDirection: 'column' })}>
+          <Typography
+            sx={({ typography, spacing }) => ({ fontSize: typography.body1, mb: spacing(1) })}
+          >
+            Filter reviews:
+          </Typography>
+          {/* filter chips */}
+          <FilterChips onData={handleFilterChipData} />
+        </Box>
         {/* Select Components */}
         <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
           <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
