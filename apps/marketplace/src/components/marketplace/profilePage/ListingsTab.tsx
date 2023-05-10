@@ -232,7 +232,8 @@ const ListingsTab = () => {
             lg: 'repeat(auto-fit, minmax(200px, 1fr))',
             xl: 'repeat(auto-fit, minmax(288px, 1fr))',
           },
-          gap: spacing(1),
+          columnGap: spacing(1),
+          rowGap: spacing(3),
         })}
       >
         {marketplaceListingsData.map((data) => (
