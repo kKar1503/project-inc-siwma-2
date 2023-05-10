@@ -148,6 +148,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   borderColor: theme.palette.primary[400],
   borderRadius: theme.shape.borderRadius,
   //   for some reason, half of this doesn't work??
+  //   upon further investigation seems like it's more specifically the ones regarding border, including the styles above
   '&.Mui-selected': {
     minHeight: 60,
     color: theme.palette.common.white,
