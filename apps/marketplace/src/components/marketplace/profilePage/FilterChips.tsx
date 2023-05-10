@@ -26,23 +26,6 @@ const FilterChips = ({ onData }: FilterChipsProps) => {
     onData(label);
   };
 
-  const StyledChips = styled(Chip)(({ theme }) => ({
-    minHeight: 42,
-    minWidth: 80,
-    bgcolor: theme.palette.common.white,
-    color: theme.palette.primary[400],
-    //   for some reason, half of this doesn't work??
-    //   upon further investigation seems like it's more specifically the ones regarding border, including the styles above
-    '&.Mui-selected': {
-      minHeight: 60,
-      color: theme.palette.common.white,
-      bgcolor: theme.palette.primary[400],
-      border: 1,
-      borderColor: theme.palette.primary[400],
-      borderRadius: theme.shape,
-    },
-  }));
-
   return (
     <Box sx={{ display: 'flex' }}>
       <Chip
