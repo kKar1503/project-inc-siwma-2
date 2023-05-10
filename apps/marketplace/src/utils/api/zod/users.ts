@@ -27,12 +27,12 @@ const user = z.object({
   bio,
 });
 
-// Request Schemas
+// Request Schemas (Not Implemented)
 // export const updateUser = user.partial(); // .partial() means that all fields are optional
 // export const createUser = user.omit({ id: true, createdAt: true, enabled: true });
 
 // Response Schemas
-export const enableUser = z.object({
+export const toggleUser = z.object({
   visible: enabled,
 });
 export const createUser = z.object({
