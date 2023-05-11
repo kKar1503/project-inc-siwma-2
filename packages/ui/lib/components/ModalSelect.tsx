@@ -9,10 +9,8 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { styled } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
-// declaring props for TransitionsModal
 type ComponentProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
@@ -47,22 +45,14 @@ const ModalSelect = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-  const isXsScreen = useMediaQuery('(max-width:600px)');
 
-  // the styling of the modal box
-  const ModalBoxShadow = styled(Box)<BoxProps>(({ theme }) =>
-    theme.unstable_sx({
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: '23%',
-      borderRadius: 3,
-      padding: 4,
-      position: 'absolute',
-      boxShadow: 24,
-      backgroundColor: 'background.paper',
-    })
-  );
+  const theme = createTheme({
+    palette: {
+      text: {
+        primary: '#013654',
+      },
+    },
+  });
 
   return (
     <div>
@@ -80,7 +70,19 @@ const ModalSelect = ({
         }}
       >
         <Fade in={open}>
-          <ModalBoxShadow>
+          <Box
+            sx={({ spacing, palette, shadows }) => ({
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '25%',
+              borderRadius: 3,
+              padding: spacing(2),
+              position: 'absolute',
+              boxShadow: shadows[3],
+              backgroundColor: palette.common.white,
+            })}
+          >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Box sx={{ width: 1 }}>
                 <Typography
@@ -116,12 +118,9 @@ const ModalSelect = ({
                     borderRadius: 2,
                   }}
                 >
-                  <InputLabel id="select-filled-label" sx={{ fontSize: '20px' }}>
-                    Select a Reason
-                  </InputLabel>
+                  <InputLabel sx={{ fontSize: '20px' }}>Select a Reason</InputLabel>
                   <Select
                     labelId="select-filled-label"
-                    id="select-filled"
                     value={selectInput}
                     sx={{ fontSize: '20px', backgroundColor: 'transparent' }}
                     onChange={(e) => setselectInput(e.target.value as string)}
@@ -139,16 +138,16 @@ const ModalSelect = ({
                   {/* Left Button Text */}
                   <Button
                     variant={leftButtonText != null ? 'outlined' : 'contained'}
-                    sx={{
+                    sx={({ spacing }) => ({
                       bgcolor: leftButtonText != null ? '' : buttonColor,
                       marginRight: '16px',
                       width: 1 / 2,
-                      marginTop: 2,
+                      marginTop: spacing(2),
                       padding: '7px 20px',
                       '@media (max-width: 600px)': {
                         padding: '2px 4px',
                       },
-                    }}
+                    })}
                     onClick={() => setLeftButtonState(true)}
                   >
                     <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
@@ -159,25 +158,30 @@ const ModalSelect = ({
                   {/* Right Button Text */}
                   <Button
                     variant="contained"
-                    sx={{
+                    sx={({ spacing }) => ({
                       bgcolor: buttonColor,
-                      width:1/2,
-                      marginTop: 2,
+                      width: 1 / 2,
+                      marginTop: spacing(2),
                       padding: '7px 20px',
                       '@media (max-width: 600px)': {
                         padding: '4px 8px',
                       },
-                    }}
+                    })}
                     onClick={() => setRightButtonState(true)}
                   >
-                    <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
+                    <Typography
+                      sx={({ palette }) => ({
+                        fontSize: { xs: 'overline', sm: 'subtitle1' },
+                        color: palette.common.white,
+                      })}
+                    >
                       {rightButtonText}
                     </Typography>
                   </Button>
                 </Box>
               </Box>
             </Box>
-          </ModalBoxShadow>
+          </Box>
         </Fade>
       </Modal>
     </div>

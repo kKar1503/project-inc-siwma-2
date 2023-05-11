@@ -2,8 +2,13 @@ import Head from 'next/head';
 // import { useState } from 'react';
 import { useRouter } from 'next/router';
 import React from 'react';
+// import { ModalImage } from '@inc/ui';
+// import Modal from '@/components/Modal';
 import { ModalImage, Modal, ModalSelect, ModalInput } from '@inc/ui';
 import Button from '@mui/material/Button';
+// import ModalInput from '@/components/ModalInput';
+// import ModalSelect from '@/components/ModalSelect';
+// import ModalImage from '@/components/ModalImage';
 
 const Home = () => {
   const report = [
@@ -12,7 +17,6 @@ const Home = () => {
     'Canceling on Deal',
     'Mispriced Listings',
   ];
-  // const [open, setOpen] = React.useState(false);
   const [leftButtonState, setLeftButtonState] = React.useState(false);
   const [rightButtonState, setRightButtonState] = React.useState(false);
   const [selectInput, setSelectInput] = React.useState<string | number>('');

@@ -8,24 +8,16 @@ import Typography from '@mui/material/Typography';
 import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { styled } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
-const ModalBoxShadow = styled(Box)<BoxProps>(({ theme }) =>
-  theme.unstable_sx({
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '23%',
-    borderRadius: 3,
-    padding: 2,
-    position: 'absolute',
-    boxShadow: 24,
-    backgroundColor: 'background.paper',
-  })
-);
+const theme = createTheme({
+  palette: {
+    text: {
+      primary: '#013654',
+    },
+  },
+});
 
-// declaring props for TransitionsModal
 type ComponentProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
@@ -76,31 +68,34 @@ const Modal = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-  const isXsScreen = useMediaQuery('(max-width:600px)');
 
-  // set the border color based on the modal type
   let iconType: ReactNode;
-  // select icon based on the modal type (success/info/warning)
   switch (icon) {
     case 'success':
-      // green
       iconType = (
-        <CheckCircleOutlineOutlined color="success" sx={{ fontSize: { xs: 32, md: 48 }, mr: 2 }} />
+        <CheckCircleOutlineOutlined
+          color="success"
+          sx={({ spacing }) => ({ fontSize: { xs: 32, md: 48 }, mr: spacing(2) })}
+        />
       );
       break;
     case 'warning':
-      // orange/red
       iconType = (
-        <WarningAmberOutlined color="warning" sx={{ fontSize: { xs: 24, md: 32 }, mr: 2 }} />
+        <WarningAmberOutlined
+          color="warning"
+          sx={({ spacing }) => ({ fontSize: { xs: 32, md: 48 }, mr: spacing(2) })}
+        />
       );
       break;
     case 'info':
     default:
-      // by default will set to info
-      iconType = <InfoOutlined color="info" sx={{ fontSize: { xs: 32, md: 42 }, mr: 2 }} />;
+      iconType = (
+        <InfoOutlined
+          color="info"
+          sx={({ spacing }) => ({ fontSize: { xs: 32, md: 48 }, mr: spacing(2) })}
+        />
+      );
   }
-  // the styling of the modal box
-
   return (
     <div>
       <MUIModal
@@ -117,7 +112,19 @@ const Modal = ({
         }}
       >
         <Fade in={open}>
-          <ModalBoxShadow>
+          <Box
+            sx={({ spacing, palette, shadows }) => ({
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '25%',
+              borderRadius: 3,
+              padding: spacing(2),
+              position: 'absolute',
+              boxShadow: shadows[3],
+              backgroundColor: palette.common.white,
+            })}
+          >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               {iconType}
               <Box sx={{ justifyContent: 'left' }}>
@@ -126,8 +133,8 @@ const Modal = ({
                   variant="h6"
                   component="h2"
                   sx={{
-                    color: '#013654',
-                    fontSize: { xs: 'subtitle1', sm: 'h5' },
+                    color: theme.palette.text.primary,
+                    fontSize: { xs: 'subtitle2', sm: 'h5' },
                   }}
                 >
                   {title}
@@ -151,16 +158,16 @@ const Modal = ({
               {leftButtonText != null && (
                 <Button
                   variant={leftButtonText != null ? 'outlined' : 'contained'}
-                  sx={{
+                  sx={({ spacing }) => ({
                     bgcolor: leftButtonText != null ? '' : buttonColor,
                     marginRight: '16px',
                     width: 1 / 2,
-                    marginTop: 2,
+                    marginTop: spacing(2),
                     padding: '7px 20px',
                     '@media (max-width: 600px)': {
                       padding: '2px 4px',
                     },
-                  }}
+                  })}
                   onClick={() => setLeftButtonState(true)}
                 >
                   <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
@@ -172,23 +179,28 @@ const Modal = ({
               {/* Right Button Text */}
               <Button
                 variant="contained"
-                sx={{
+                sx={({ spacing }) => ({
                   bgcolor: buttonColor,
                   width: 1 / 2,
-                  marginTop: 2,
+                  marginTop: spacing(2),
                   padding: '7px 20px',
                   '@media (max-width: 600px)': {
                     padding: '4px 8px',
                   },
-                }}
+                })}
                 onClick={() => setRightButtonState(true)}
               >
-                <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
+                <Typography
+                  sx={({ palette }) => ({
+                    fontSize: { xs: 'overline', sm: 'subtitle1' },
+                    color: palette.common.white,
+                  })}
+                >
                   {rightButtonText}
                 </Typography>
               </Button>
             </Box>
-          </ModalBoxShadow>
+          </Box>
         </Fade>
       </MUIModal>
     </div>
