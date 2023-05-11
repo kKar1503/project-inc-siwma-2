@@ -3,7 +3,7 @@ import { z } from 'zod';
 const id = z.string();
 const name = z.string();
 const email = z.string();
-const companyId = z.number();
+const companyId = z.string();
 
 const invite = z.object({
   id,
