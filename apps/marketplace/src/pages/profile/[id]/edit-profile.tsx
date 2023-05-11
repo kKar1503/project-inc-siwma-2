@@ -55,7 +55,11 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => (
               <Box
                 sx={({ spacing }) => ({ justifyContent: 'flex-end', ml: 'auto', mr: spacing(2) })}
               >
-                <Button variant="contained" color="error">
+                <Button
+                  variant="contained"
+                  color="error"
+                  sx={({ palette }) => ({ bgcolor: palette.error[400] })}
+                >
                   Cancel Edit
                 </Button>
               </Box>
@@ -67,11 +71,12 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => (
             <CardContent>
               <Typography sx={{ fontWeight: 'bold' }}>Profile Photo</Typography>
               <Typography>
-                Choose an image for other users to recognise you in the marketplace
+                Choose an image for other users to recognise you on the marketplace
               </Typography>
               <Box
                 sx={({ spacing }) => ({
                   mb: spacing(1),
+                  mt: spacing(1),
                   display: 'flex',
                   alignItems: 'center',
                 })}
@@ -79,11 +84,10 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => (
                 <Avatar>P</Avatar>
                 <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
                   <Box
-                    sx={({ spacing }) => ({
-                      mt: spacing(1),
+                    sx={{
                       display: 'flex',
                       alignItems: 'center',
-                    })}
+                    }}
                   >
                     <Typography>Maximum upload size: &nbsp;</Typography>
                     <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
@@ -207,7 +211,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => (
               <Box
                 sx={({ spacing }) => ({
                   width: '98%',
-                  mt: spacing(6),
+                  mt: spacing(3),
                 })}
               >
                 <Button
@@ -215,10 +219,10 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => (
                   href="/edit-profile"
                   variant="contained"
                   type="submit"
-                  sx={({ spacing }) => ({
+                  sx={{
                     width: '100%',
                     mt: 'auto',
-                  })}
+                  }}
                 >
                   Save Changes
                 </Button>
