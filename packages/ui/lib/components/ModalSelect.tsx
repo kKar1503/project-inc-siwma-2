@@ -1,6 +1,6 @@
 import React from 'react';
 import Backdrop from '@mui/material/Backdrop';
-import Box, { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
