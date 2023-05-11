@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Link from 'next/link';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -9,10 +8,9 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import Rating from '@mui/material/Rating';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import StarIcon from '@mui/icons-material/Star';
+import { StarsRating } from '@inc/ui';
 
 export type ProfileDetailCardProps = {
   username: string;
@@ -39,95 +37,117 @@ const ProfileDetailCard = ({
   rating,
   reviews,
 }: ProfileDetailCardProps) => (
-  <Card sx={{ width: 300, display: 'inline-grid' }}>
+  <Card sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column' }}>
     <CardHeader
       titleTypographyProps={{
-        fontSize: 18,
+        fontSize: 16,
       }}
       subheaderTypographyProps={{
-        fontSize: 13,
+        fontSize: 16,
       }}
       title="Your Profile"
       subheader="View your profile details here"
     />
-    <Divider variant="middle" />
+    <Divider variant="middle" sx={{ height: '1px' }} />
     <CardContent>
-      <Avatar sx={{ mb: 1.5 }}>{profilePic}</Avatar>
-      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-        {name}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {company}
-      </Typography>
-      <Typography variant="body2">@{username}</Typography>
-      <Typography variant="body2">{email}</Typography>
+      <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{profilePic}</Avatar>
+      <Typography sx={{ fontWeight: 'bold' }}>{name}</Typography>
+      <Typography variant="body2">{company}</Typography>
+      <Typography>@{username}</Typography>
+      <Typography>{email}</Typography>
 
       <Box
-        sx={{
-          mt: 1,
+        sx={({ spacing }) => ({
+          mt: spacing(1),
           display: 'flex',
           alignItems: 'center',
-        }}
+        })}
       >
-        <Typography variant="body1" sx={{ mr: 1, paddingTop: 0.5 }}>
-          {rating}
+        <Typography
+          sx={({ spacing }) => ({
+            mr: spacing(1),
+          })}
+        >
+          {rating.toFixed(1)}
         </Typography>
-        <Rating
-          readOnly
-          defaultValue={rating}
-          size="medium"
-          sx={{ color: '#00C853' }}
-          emptyIcon={<StarIcon fontSize="inherit" />}
-          precision={0.5}
-        />
-        <Typography variant="body1" sx={{ ml: 1, paddingTop: 0.5 }}>
-          {reviews} Reviews
+        <StarsRating rating={rating} />
+        <Typography
+          sx={({ spacing }) => ({
+            ml: spacing(1),
+          })}
+        >
+          ({reviews} Reviews)
         </Typography>
       </Box>
     </CardContent>
-
-    <Divider variant="middle" />
+    <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
     <CardContent>
       <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
       <Typography>{bio}</Typography>
     </CardContent>
-    <Divider variant="middle" />
+    <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
     <CardContent>
       <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
       <Box
-        sx={{
-          mt: 1,
+        sx={({ spacing }) => ({
+          mt: spacing(1),
           display: 'flex',
           alignItems: 'center',
-        }}
+        })}
       >
         <TelegramIcon
-          sx={{ backgroundColor: '#0088cc', color: 'white', borderRadius: 5, p: 0.5 }}
+          sx={({ spacing, palette }) => ({
+            borderRadius: spacing(2),
+            pr: '2px',
+            color: palette.common.white,
+            backgroundColor: '#0088cc',
+          })}
         />
-        <Typography sx={{ ml: 1 }}>{telegramUsername}</Typography>
+        <Typography
+          sx={({ spacing }) => ({
+            ml: spacing(1),
+          })}
+        >
+          {telegramUsername}
+        </Typography>
       </Box>
       <Box
-        sx={{
-          mt: 1,
+        sx={({ spacing }) => ({
+          mt: spacing(1),
           display: 'flex',
           alignItems: 'center',
-        }}
+        })}
       >
         <WhatsAppIcon
-          sx={{ backgroundColor: '#25D366', color: 'white', borderRadius: 5, p: 0.5 }}
+          sx={({ spacing, palette }) => ({
+            borderRadius: spacing(2),
+            p: '1px',
+            color: palette.common.white,
+            backgroundColor: '#25D366',
+          })}
         />
-        <Typography sx={{ ml: 1, fontWeight:'bold' }}> +65 {mobileNumber} </Typography>
+        <Typography
+          sx={({ spacing }) => ({
+            ml: spacing(1),
+          })}
+        >
+          +65 {mobileNumber}
+        </Typography>
       </Box>
     </CardContent>
-    <CardActions sx={{ flexDirection: 'column' }}>
+    <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
       <Box sx={{ width: '98%' }}>
         <Button
           component={Link}
           href="/editprofile"
           variant="contained"
           type="submit"
-          color="primary"
-          sx={{ width: '100%', mb: 2, mt: 10, fontWeight: 'bold' }}
+          sx={({ spacing }) => ({
+            width: '100%',
+            mb: spacing(2),
+            mt: spacing(2),
+            fontWeight: 'bold',
+          })}
         >
           Edit profile
         </Button>
@@ -137,7 +157,11 @@ const ProfileDetailCard = ({
           variant="contained"
           type="submit"
           color="error"
-          sx={{ width: '100%', mb: 2, fontWeight: 'bold' }}
+          sx={({ spacing }) => ({
+            width: '100%',
+            mb: spacing(1),
+            fontWeight: 'bold',
+          })}
         >
           Logout
         </Button>
