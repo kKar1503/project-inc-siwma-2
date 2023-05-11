@@ -2,6 +2,7 @@
  * Error code directory:
  * 1000 - 1999: Auth errors
  * 2000 - 2999: Query errors
+ * 3000 - 3999: S3 errors
  */
 
 // -- Type definitions -- //
