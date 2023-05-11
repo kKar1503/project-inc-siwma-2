@@ -49,6 +49,7 @@ export const paramsRequestBody = z.object({
   displayName: z.string(),
   type: z.nativeEnum(ParameterType),
   dataType: z.nativeEnum(DataType),
+  options: z.string().array().optional(),
 });
 
 export default apiHandler()

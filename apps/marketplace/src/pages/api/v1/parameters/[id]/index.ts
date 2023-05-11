@@ -52,7 +52,7 @@ export default apiHandler({
     await checkParamExists(id);
 
     // Parse and validate the request body
-    const data = paramsRequestBody.parse(req.body);
+    const data = paramsRequestBody.partial().parse(req.body);
 
     // Update the parameter in the database
     const updatedParams = await PrismaClient.parameter.update({
@@ -60,10 +60,7 @@ export default apiHandler({
         id,
       },
       data: {
-        name: data.name,
-        displayName: data.displayName,
-        type: data.type,
-        datatype: data.dataType,
+        ...data,
       },
     });
 
