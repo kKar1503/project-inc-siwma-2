@@ -17,6 +17,8 @@ import AddListing from './AddListing';
 import Profile from './Profile';
 
 
+
+
 const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -38,35 +40,36 @@ const NavBar = () => {
 
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, backgroundColor: 'white', boxShadow: 1}}>
       <Toolbar>
       
         <Image src='/../public/images/favicons/SIWMA icon.png' alt='logo' width={60} height={40}/>
 
 
-        <Link href="#" underline="none">
+        <Link href="/home" underline="none">
           <Typography
             noWrap
             fontSize={12}
             paddingRight='1rem'
-            paddingLeft='2rem'
+            paddingLeft='2.5rem'
             color='#424242'
           >
             Home
           </Typography>
         </Link>
 
-        <Link href="#" underline="none">
+        <Link href="/allCategories" underline="none">
           <Typography
             noWrap
             fontSize={12}
-            paddingRight='1rem'
-            paddingLeft='1rem'
+            paddingRight='2rem'
+            paddingLeft='2rem'
             color='#424242'
           >
             All Categories
           </Typography>
         </Link>
+
         <SearchBar/>
 
         <AddListing/>

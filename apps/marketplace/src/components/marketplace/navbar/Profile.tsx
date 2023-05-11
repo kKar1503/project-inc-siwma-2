@@ -63,7 +63,7 @@ const Profile = () => {
       <Divider />
 
       <MenuItem onClick={handleMenuClose}>
-        <AccountCircle sx={{paddingRight: '1rem', fontSize: '20px'}}/>
+        <AccountCircle sx={{paddingRight: '1rem', fontSize: '35px' }}/>
         <Typography
           fontSize={12}
           color='#424242'
@@ -73,7 +73,7 @@ const Profile = () => {
       </MenuItem>
 
       <MenuItem onClick={handleMenuClose}>
-        <EditIcon sx={{paddingRight: '1rem', fontSize: '20px'}}/>
+        <EditIcon sx={{paddingRight: '1rem', fontSize: '35px'}}/>
         <Typography
           fontSize={12}
           color='#424242'
@@ -83,7 +83,7 @@ const Profile = () => {
       </MenuItem>
 
       <MenuItem onClick={handleMenuClose}>
-        <LockIcon sx={{paddingRight: '1rem', fontSize: '20px'}}/>
+        <LockIcon sx={{paddingRight: '1rem', fontSize: '35px'}}/>
         <Typography
           fontSize={12}
           color='#424242'
@@ -93,7 +93,7 @@ const Profile = () => {
       </MenuItem>
 
       <MenuItem onClick={handleMenuClose}>
-        <EditNotificationsIcon sx={{paddingRight: '1rem', fontSize: '20px'}}/>
+        <EditNotificationsIcon sx={{paddingRight: '1rem', fontSize: '35px'}}/>
         <Typography
           fontSize={12}
           color='#424242'
@@ -103,7 +103,7 @@ const Profile = () => {
       </MenuItem>
 
       <MenuItem onClick={handleMenuClose}>
-        <LogoutIcon sx={{paddingRight: '1rem', fontSize: '20px'}}/>
+        <LogoutIcon sx={{paddingRight: '1rem', fontSize: '35px'}}/>
         <Typography
           fontSize={12}
           color='#424242'
