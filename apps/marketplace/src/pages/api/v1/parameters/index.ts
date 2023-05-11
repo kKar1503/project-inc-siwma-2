@@ -11,7 +11,7 @@ export type ParamResponse = {
   name: string;
   displayName: string;
   type: ParameterType;
-  datatype: DataType;
+  dataType: DataType;
   active: boolean;
 };
 
@@ -32,7 +32,7 @@ export function formatParamResponse($parameters: Parameter | Parameter[]) {
     name: parameter.name,
     displayName: parameter.displayName,
     type: parameter.type,
-    datatype: parameter.datatype,
+    dataType: parameter.datatype,
     active: parameter.active,
     ...(parameter.options.length > 0 && { options: parameter.options }),
   }));
