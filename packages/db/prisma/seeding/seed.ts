@@ -120,7 +120,7 @@ const main = async (): Promise<void> => {
   console.log('Adding an offer to a message...');
 
   await prismaClient.messages.update({
-    where: { id: 1 },
+    where: { id: 9 },
     data: { offer: 1 },
   });
 
