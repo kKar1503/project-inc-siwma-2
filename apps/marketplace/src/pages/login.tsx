@@ -9,6 +9,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 
@@ -16,6 +17,9 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
+
+  const router = useRouter();
+
   const handleSubmit = async (event: {
     preventDefault: () => void;
     currentTarget: HTMLFormElement | undefined;
@@ -26,17 +30,11 @@ const LoginForm = () => {
       email,
       password,
     });
-    if (!authResult!.ok) {
+    if (!authResult?.ok) {
       setErrorMessage(true);
     } else {
-      return {
-        redirect: {
-          destination: '/index',
-        },
-      };
+      return router.push('/');
     }
-    console.log(authResult);
-
     return authResult;
   };
 
@@ -51,7 +49,7 @@ const LoginForm = () => {
         <Image src="/../public/images/siwma-bg.png" alt="logo" fill />
         <Container
           component="main"
-          maxWidth="sm"
+          maxWidth="md"
           sx={{
             justifyContent: 'center',
             display: 'flex',
@@ -62,36 +60,50 @@ const LoginForm = () => {
           <Box
             sx={({ shape, shadows, spacing, palette }) => ({
               boxShadow: shadows[5],
-              px: spacing(4),
-              py: spacing(4),
+              px: '15vh',
+              pb: '25vh',
+              pt: spacing(3),
               position: 'relative',
               bgcolor: palette.common.white,
               ...shape,
             })}
           >
-            <Image
-              src="/../public/images/favicons/Siwma-logo.jpeg"
-              alt="logo"
-              width={460}
-              height={80}
-            />
+            <Box
+              sx={({ spacing }) => ({
+                position: 'relative',
+                margin: 'auto',
+                display: 'flex',
+                justifyContent: 'center',
+                width: '80%',
+                height: '20%',
+                mb: spacing(2),
+              })}
+            >
+              <Image src="/../public/images/siwma-logo.jpeg" alt="logo" fill />
+            </Box>
             <Divider flexItem />
-            <Typography
-              sx={({ spacing, typography }) => ({
-                fontSize: typography.h5,
-                mt: spacing(2),
-                fontWeight: 'bold',
+            <Box
+              sx={({ spacing }) => ({
+                mb: spacing(2),
               })}
             >
-              Sign In
-            </Typography>
-            <Typography
-              sx={({ typography }) => ({
-                fontSize: typography.body1,
-              })}
-            >
-              Please sign in to your account
-            </Typography>
+              <Typography
+                sx={({ spacing, typography }) => ({
+                  fontSize: typography.h5,
+                  mt: spacing(3),
+                  fontWeight: 'bold',
+                })}
+              >
+                Sign In
+              </Typography>
+              <Typography
+                sx={({ typography }) => ({
+                  fontSize: typography.body1,
+                })}
+              >
+                Please sign in to your account
+              </Typography>
+            </Box>
             <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 fullWidth
@@ -100,7 +112,6 @@ const LoginForm = () => {
                 label="E-mail"
                 placeholder="Your company e-mail"
                 value={email}
-                // autoComplete="email"
                 type="email"
                 variant="standard"
                 autoFocus
@@ -115,18 +126,18 @@ const LoginForm = () => {
                 label="Password"
                 placeholder="Your password"
                 value={password}
-                // autoComplete="current-password"
                 type="password"
                 variant="standard"
                 onChange={(e) => setPassword(e.target.value)}
               />
               {errorMessage && (
                 <Typography
-                  sx={({ palette }) => ({
+                  sx={({ palette, spacing }) => ({
                     color: palette.error.main,
+                    my: spacing(2),
                   })}
                 >
-                  Invalid email or password
+                  Invalid email or password!
                 </Typography>
               )}
               <Grid
@@ -144,8 +155,9 @@ const LoginForm = () => {
                 <Grid item>
                   <Link href="/forgot-your-password">
                     <Typography
-                      sx={({ spacing }) => ({
+                      sx={({ spacing, palette }) => ({
                         mt: spacing(1),
+                        color: palette.primary.main,
                       })}
                     >
                       Forgot your password?
