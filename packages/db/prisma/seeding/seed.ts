@@ -5,6 +5,8 @@ import { Companies } from './tables/companies';
 import { Users } from './tables/users';
 import { Listings } from './tables/listing';
 import { Rooms } from './tables/rooms';
+import { Offers } from './tables/offers';
+import { Messages } from './tables/messages';
 import { Parameters } from './tables/parameter';
 import { Advertisements } from './tables/advertisements';
 import { CategoriesParameters } from './tables/categories_parameters';
@@ -101,6 +103,28 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${roomsCount} rows into public.rooms`);
+  console.log('Seeding public.messages...');
+
+  const { count: messagesCount } = await prismaClient.messages.createMany({
+    data: Messages,
+  });
+
+  console.log(`Seeded ${messagesCount} rows into public.messages`);
+  console.log('Seeding public.offers...');
+
+  const { count: offersCount } = await prismaClient.offers.createMany({
+    data: Offers,
+  });
+
+  console.log(`Seeded ${offersCount} rows into public.offers`);
+  console.log('Adding an offer to a message...');
+
+  await prismaClient.messages.update({
+    where: { id: 1 },
+    data: { offer: 1 },
+  });
+
+  console.log('Added an offer to a message');
   console.log('Seeding public.parameter...');
 
   const { count: parameterCount } = await prismaClient.parameter.createMany({
