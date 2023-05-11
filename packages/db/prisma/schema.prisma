@@ -225,7 +225,7 @@ model Offers {
 model Parameter {
   id                       Int                       @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
   type                     ParameterType
-  datatype                 DataType
+  dataType                 DataType
   name                     String
   displayName              String                    @map("display_name")
   active                   Boolean                   @default(true)
