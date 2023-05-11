@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem'
-import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -26,12 +26,13 @@ const ChatHeader = ({ profilePic, companyName, progressStatus }: ChatHeaderProps
     setOpenMenu(null);
   };
   return (
-      <Container
+      <Box
         sx={({ spacing, palette }) => ({
           borderBottom: 1,
           padding: spacing(2),
           borderColor: palette.grey[300],
-          display: 'flex',
+          display: 'flex',  
+          mx: spacing(2)
         })}
       >
         <IconButton
@@ -79,7 +80,7 @@ const ChatHeader = ({ profilePic, companyName, progressStatus }: ChatHeaderProps
             Report User
           </MenuItem>
         </Menu>
-      </Container>
+      </Box>
   );
 };
 

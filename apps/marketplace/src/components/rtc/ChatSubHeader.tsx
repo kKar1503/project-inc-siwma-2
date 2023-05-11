@@ -27,12 +27,13 @@ const ChatSubHeader = ({
     setMakeOffer(true);
   };
   return (
-    <Container
+    <Box
       sx={({ spacing, palette }) => ({
         borderBottom: 1,
         padding: spacing(2),
         borderColor: palette.grey[300],
         display: 'flex',
+        marginLeft: spacing(1)
       })}
     >
       <IconButton
@@ -98,17 +99,17 @@ const ChatSubHeader = ({
         onClick={handleMakeOffer}
         sx={({ palette, spacing }) => ({
           fontSize: 'h6',
-          bgcolor: palette.info.main,
+          bgcolor: palette.primary.main,
           color: palette.common.white,
           px: spacing(2),
           pt: 0,
-          marginRight: spacing(3),
+          marginRight: spacing(4),
           my: spacing(1),
         })}
       >
         Make Offer
       </Button>
-    </Container>
+    </Box>
   );
 };
 
