@@ -34,6 +34,7 @@ export function formatParamResponse($parameters: Parameter | Parameter[]) {
     type: parameter.type,
     datatype: parameter.datatype,
     active: parameter.active,
+    ...(parameter.options.length > 0 && { options: parameter.options }),
   }));
 
   return formatAPIResponse(result);
