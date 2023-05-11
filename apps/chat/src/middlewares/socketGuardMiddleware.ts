@@ -24,12 +24,15 @@ async function validateAccessToken(userId: string, token: string) {
  */
 const middleware = (socket: Socket, next: SocketNextHandler) => {
   // Check if the user is authenticated
-  if (!socket.authenticated) {
+  if (!socket.authenticated || !socket.userId || !socket.token) {
     next();
+    return;
   }
 
   // User is authenticated, check if the token is valid
-  // validateAccessToken(socket.userId, socket.token)
+  validateAccessToken(socket.userId, socket.token);
+
+  next();
 };
 
 export default middleware;
