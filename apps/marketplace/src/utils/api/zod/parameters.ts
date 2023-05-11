@@ -6,9 +6,9 @@ const id = z.number();
 const name = z.string();
 const displayName = z.string();
 const type = z.nativeEnum(ParameterType);
-const datatype = z.nativeEnum(DataType);
+const dataType = z.nativeEnum(DataType);
 const active = z.boolean();
-const options = z.array(z.any());
+const options = z.string().array();
 
 // -- Define schema -- //
 const parameter = z.object({
@@ -16,7 +16,7 @@ const parameter = z.object({
   name,
   displayName,
   type,
-  datatype,
+  dataType,
   active,
   options: options.optional(),
 });
@@ -31,7 +31,7 @@ export const getParameters = z.array(parameter);
 export const getParameterTypes = z.array(type);
 
 // GET /parameters/data-types
-export const getParameterDataTypes = z.array(datatype);
+export const getParameterDataTypes = z.array(dataType);
 
 // PUT /parameters/:id
 export const updateParameter = parameter;
