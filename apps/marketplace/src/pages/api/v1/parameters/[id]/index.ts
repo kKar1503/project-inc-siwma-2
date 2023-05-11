@@ -60,7 +60,11 @@ export default apiHandler({
         id,
       },
       data: {
-        ...data,
+        name: data.name,
+        displayName: data.displayName,
+        type: data.type,
+        datatype: data.dataType,
+        options: data.options,
       },
     });
 

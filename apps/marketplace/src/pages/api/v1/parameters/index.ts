@@ -94,6 +94,7 @@ export default apiHandler()
           displayName: data.displayName,
           type: data.type,
           datatype: data.dataType,
+          options: data.options,
         },
       });
 
