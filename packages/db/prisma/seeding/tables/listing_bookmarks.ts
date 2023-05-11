@@ -1,38 +1,38 @@
 interface IListingBookmarks {
   id?: number;
-  user_id: string;
-  listing_id: number;
-  created_at?: Date;
+  userId: string;
+  listingId: number;
+  createdAt?: Date;
 }
 
 const ListingBookmarks: IListingBookmarks[] = [
   {
-    user_id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    listing_id: 1,
+    userId: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+    listingId: 1,
   },
   {
-    user_id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    listing_id: 2,
+    userId: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+    listingId: 2,
   },
   {
-    user_id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    listing_id: 3,
+    userId: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+    listingId: 3,
   },
   {
-    user_id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    listing_id: 4,
+    userId: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+    listingId: 4,
   },
   {
-    user_id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    listing_id: 5,
+    userId: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+    listingId: 5,
   },
   {
-    user_id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    listing_id: 6,
+    userId: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+    listingId: 6,
   },
   {
-    user_id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    listing_id: 7,
+    userId: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+    listingId: 7,
   },
 ];
 

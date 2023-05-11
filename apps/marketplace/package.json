@@ -19,6 +19,7 @@
     "@inc/db": "workspace:*",
     "@inc/send-in-blue": "workspace:*",
     "@inc/errors": "workspace:*",
+    "@inc/s3-simplified": "workspace:*",
     "@inc/ui": "workspace:*",
     "@inc/utils": "workspace:*",
     "@mui/icons-material": "^5.11.16",
