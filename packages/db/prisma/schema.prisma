@@ -190,9 +190,9 @@ model Messages {
   read                          Boolean     @default(false)
   createdAt                     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   contentType                   ContentType
-  offer                         Int
+  offer                         Int?
   content                       String
-  offersMessagesOfferTooffers   Offers      @relation("messagesOfferTooffers", fields: [offer], references: [id], onDelete: Cascade, map: "messages_fk")
+  offersMessagesOfferTooffers   Offers?     @relation("messagesOfferTooffers", fields: [offer], references: [id], onDelete: Cascade, map: "messages_fk")
   rooms                         Rooms       @relation(fields: [room], references: [id], onDelete: Cascade, map: "messages_fk_1")
   users                         Users       @relation(fields: [author], references: [id], onDelete: Cascade, map: "messages_fk_2")
   offersOffersMessageTomessages Offers[]    @relation("offersMessageTomessages")
@@ -275,7 +275,7 @@ model Sibkeys {
   senderEmail    String @map("sender_email")
 
   @@unique([key, senderEmail], map: "sibkeys_un")
-  @@map("Sibkeys")
+  @@map("sibkeys")
 }
 
 model UserBookmarks {
