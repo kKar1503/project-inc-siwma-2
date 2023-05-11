@@ -21,12 +21,7 @@ const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
 
-  // const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  // const handleProfileMenuOpen = (event: MouseEvent<HTMLElement>) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
+  const isMobileMenuOpen = mobileMoreAnchorEl !== null;
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -41,19 +36,15 @@ const NavBar = () => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  // const renderMobileMenu = (
-    
-  // );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Toolbar>
       
-        <Image src='/../public/images/favicons/logo.png' alt='logo' width={50} height={40}/>
+        <Image src='/../public/images/favicons/SIWMA icon.png' alt='logo' width={60} height={40}/>
 
 
-        <Link href="https://github.com/kKar1503/project-inc-siwma-2" underline="none">
+        <Link href="#" underline="none">
           <Typography
             noWrap
             fontSize={12}
@@ -65,7 +56,7 @@ const NavBar = () => {
           </Typography>
         </Link>
 
-        <Link href="https://github.com/kKar1503/project-inc-siwma-2" underline="none">
+        <Link href="#" underline="none">
           <Typography
             noWrap
             fontSize={12}
@@ -105,12 +96,12 @@ const NavBar = () => {
 
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
           <IconButton
-            size="large"
-            aria-label="show more"
-            aria-controls={mobileMenuId}
-            aria-haspopup="true"
+            size='large'
+            aria-label='show more'
+            aria-controls='primary-search-account-menu-mobile'
+            aria-haspopup='true'
             onClick={handleMobileMenuOpen}
-            color="inherit"
+            color='inherit'
           >
             <MoreIcon />
           </IconButton>
@@ -121,7 +112,7 @@ const NavBar = () => {
               vertical: 'bottom',
               horizontal: 'right'
             }}
-            id={mobileMenuId}
+            id='primary-search-account-menu-mobile'
             keepMounted
             transformOrigin={{
               vertical: 'top',

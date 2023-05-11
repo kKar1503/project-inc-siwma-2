@@ -4,13 +4,13 @@ import Typography from '@mui/material/Typography';
 
 const AddListing = () => (
 
-    <Button variant="contained" size='small' sx={{backgroundColor: '#2962FF'}}>
+    <Button variant="contained" size='small' sx={{backgroundColor: '#2962FF', textTransform: 'capitalize'}}>
       <Typography
         noWrap
-        fontSize={14}
+        fontSize={13}
         color='#FFFFF'
       >
-        ADD LISTINGS
+        Add Listings
       </Typography>
     </Button>
 

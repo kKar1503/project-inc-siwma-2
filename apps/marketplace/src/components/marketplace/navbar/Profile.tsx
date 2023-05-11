@@ -15,7 +15,7 @@ const Profile = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
  
 
-  const isMenuOpen = Boolean(anchorEl);
+  const isMenuOpen = anchorEl!== null;
 
   const handleProfileMenuOpen = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -25,10 +25,8 @@ const Profile = () => {
     setAnchorEl(null);
   };
 
-  const menuId = 'primary-search-account-menu';
-  // const renderMenu = (
-    
-  // );
+  const userName = 'John';
+
   return (
     <>
     
@@ -42,7 +40,7 @@ const Profile = () => {
         vertical: 'bottom',
         horizontal: 'right',
       }}
-      id={menuId}
+      id='primary-search-account-menu'
       keepMounted
       transformOrigin={{
         vertical: 'top',
@@ -59,9 +57,9 @@ const Profile = () => {
           paddingRight='6rem'
           paddingLeft='1rem'
       >
-        Hi, Name!
+        Hi, {userName}!
       </Typography>
-
+     
       <Divider />
 
       <MenuItem onClick={handleMenuClose}>
