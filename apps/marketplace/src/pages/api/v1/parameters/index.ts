@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { DataType, Parameter, ParameterType } from '@prisma/client';
@@ -53,8 +53,26 @@ export const paramsRequestBody = z.object({
 
 export default apiHandler()
   .get(async (req, res) => {
+    // Obtain  query parameters
+    const { id: $ids } = req.query;
+
+    // Initialise query params
+    let ids;
+
+    // Check if the ids query parameter is present
+    if ($ids) {
+      // Yes it is, parse it
+      ids = parseArray($ids).map((e) => parseToNumber(e, 'id'));
+    }
+
     // Retrieve all parameters from the database
-    const parameters = await PrismaClient.parameter.findMany();
+    const parameters = await PrismaClient.parameter.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
 
     // Return the result
     res.status(200).json(formatParamResponse(parameters));
