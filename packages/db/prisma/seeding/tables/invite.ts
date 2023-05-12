@@ -6,8 +6,8 @@ interface IInvite {
   email: string;
   token: string;
   expiry?: Date;
-  company_id: number;
-  created_at?: Date;
+  companyId: number;
+  createdAt?: Date;
 }
 
 const Invite: IInvite[] = [];

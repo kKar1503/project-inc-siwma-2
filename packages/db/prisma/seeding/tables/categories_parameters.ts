@@ -1,147 +1,147 @@
 interface ICategoriesParameters {
-  category_id: number;
-  parameter_id: number;
+  categoryId: number;
+  parameterId: number;
   required?: boolean;
-  created_at?: Date;
-  updated_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const CategoriesParameters: ICategoriesParameters[] = [
   {
-    category_id: 1,
-    parameter_id: 2,
+    categoryId: 1,
+    parameterId: 2,
   },
   {
-    category_id: 3,
-    parameter_id: 2,
+    categoryId: 3,
+    parameterId: 2,
   },
   {
-    category_id: 8,
-    parameter_id: 2,
+    categoryId: 8,
+    parameterId: 2,
   },
   {
-    category_id: 3,
-    parameter_id: 4,
+    categoryId: 3,
+    parameterId: 4,
   },
   {
-    category_id: 1,
-    parameter_id: 10,
+    categoryId: 1,
+    parameterId: 10,
   },
   {
-    category_id: 2,
-    parameter_id: 2,
+    categoryId: 2,
+    parameterId: 2,
   },
   {
-    category_id: 2,
-    parameter_id: 27,
+    categoryId: 2,
+    parameterId: 27,
   },
   {
-    category_id: 2,
-    parameter_id: 28,
+    categoryId: 2,
+    parameterId: 28,
   },
   {
-    category_id: 2,
-    parameter_id: 29,
+    categoryId: 2,
+    parameterId: 29,
   },
   {
-    category_id: 3,
-    parameter_id: 11,
+    categoryId: 3,
+    parameterId: 11,
   },
   {
-    category_id: 4,
-    parameter_id: 2,
+    categoryId: 4,
+    parameterId: 2,
   },
   {
-    category_id: 4,
-    parameter_id: 12,
+    categoryId: 4,
+    parameterId: 12,
   },
   {
-    category_id: 4,
-    parameter_id: 13,
+    categoryId: 4,
+    parameterId: 13,
   },
   {
-    category_id: 4,
-    parameter_id: 14,
+    categoryId: 4,
+    parameterId: 14,
   },
   {
-    category_id: 5,
-    parameter_id: 2,
+    categoryId: 5,
+    parameterId: 2,
   },
   {
-    category_id: 5,
-    parameter_id: 15,
+    categoryId: 5,
+    parameterId: 15,
   },
   {
-    category_id: 5,
-    parameter_id: 16,
+    categoryId: 5,
+    parameterId: 16,
   },
   {
-    category_id: 5,
-    parameter_id: 17,
+    categoryId: 5,
+    parameterId: 17,
   },
   {
-    category_id: 6,
-    parameter_id: 2,
+    categoryId: 6,
+    parameterId: 2,
   },
   {
-    category_id: 6,
-    parameter_id: 18,
+    categoryId: 6,
+    parameterId: 18,
   },
   {
-    category_id: 6,
-    parameter_id: 19,
+    categoryId: 6,
+    parameterId: 19,
   },
   {
-    category_id: 6,
-    parameter_id: 20,
+    categoryId: 6,
+    parameterId: 20,
   },
   {
-    category_id: 7,
-    parameter_id: 2,
+    categoryId: 7,
+    parameterId: 2,
   },
   {
-    category_id: 7,
-    parameter_id: 4,
+    categoryId: 7,
+    parameterId: 4,
   },
   {
-    category_id: 7,
-    parameter_id: 21,
+    categoryId: 7,
+    parameterId: 21,
   },
   {
-    category_id: 8,
-    parameter_id: 22,
+    categoryId: 8,
+    parameterId: 22,
   },
   {
-    category_id: 9,
-    parameter_id: 23,
+    categoryId: 9,
+    parameterId: 23,
   },
   {
-    category_id: 10,
-    parameter_id: 2,
+    categoryId: 10,
+    parameterId: 2,
   },
   {
-    category_id: 10,
-    parameter_id: 24,
+    categoryId: 10,
+    parameterId: 24,
   },
   {
-    category_id: 10,
-    parameter_id: 25,
+    categoryId: 10,
+    parameterId: 25,
   },
   {
-    category_id: 9,
-    parameter_id: 2,
+    categoryId: 9,
+    parameterId: 2,
   },
   {
-    category_id: 2,
-    parameter_id: 26,
+    categoryId: 2,
+    parameterId: 26,
   },
   {
-    category_id: 2,
-    parameter_id: 31,
+    categoryId: 2,
+    parameterId: 31,
   },
   {
-    category_id: 2,
-    parameter_id: 4,
+    categoryId: 2,
+    parameterId: 4,
   },
 ];
 
