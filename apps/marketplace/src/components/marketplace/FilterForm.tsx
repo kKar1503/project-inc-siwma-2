@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -33,7 +34,9 @@ const FilterForm = ({ items }: ListingProps) => {
 
   return (
     <form style={{ padding: 1, marginTop: 2, width: '100%' }}>
-      <h3 style={{ marginBottom: 0 }}>Search Filter</h3>
+      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+        Search Filter
+      </Typography>
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>Sort By</FormLabel>
       <Select sx={{ height: '45px', width: '100%' }}>
