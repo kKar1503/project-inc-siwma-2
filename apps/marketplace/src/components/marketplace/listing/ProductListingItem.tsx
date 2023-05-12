@@ -55,7 +55,17 @@ const ProductListingItem = ({
   );
 
   return (
-    <Card sx={{ maxWidth: 288, maxHeight: 600, border: '1px solid #C4C4C4' }}>
+    <Card
+      sx={{
+        maxWidth: 288,
+        maxHeight: 600,
+        border: '1px solid #C4C4C4',
+        transition: 'transform .2s',
+        '&:hover': {
+          transform: 'scale(1.03)',
+        },
+      }}
+    >
       <Link style={{ textDecoration: 'none' }} href={`/profile/${ownerId}`}>
         <CardHeader
           avatar={
