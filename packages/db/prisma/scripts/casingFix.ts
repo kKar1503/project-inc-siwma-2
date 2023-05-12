@@ -42,6 +42,12 @@ function isPrimitiveType(typeName: string) {
   return PRISMA_PRIMITIVES.includes(typeName);
 }
 
+function isLowercaseEnumsType(typeName: string) {
+  const lowercaseEnums = SUPPORTED_ENUMS.map((e) => e.toLowerCase());
+
+  return lowercaseEnums.includes(typeName);
+}
+
 function validateSupportedEnum(typeName: string): [isSupportedEnum: boolean, enumIndex: number] {
   let enumIndex = SUPPORTED_ENUMS.findIndex(e => e.toLowerCase() === typeName.toLowerCase());
   let isSupportedEnum = enumIndex !== -1;
@@ -124,6 +130,17 @@ function parseLine(line: string, persistentData: {
     // Add map if we needed to convert the field name and the field is not a relational type
     // If it's relational, the field type will be a non-primitive, hence the isPrimitiveType check
     if (currentFieldName.includes('_') && isPrimitiveType(currentFieldType)) {
+      //check if fixedLine contains /r
+      if (fixedLine.includes('\r')) {
+        //remove /r
+        fixedLine = fixedLine.replace('\r', '');
+      }
+      //add @map
+      fixedLine += `  @map("${currentFieldName}")`;
+    }
+
+    // Add map if the field type is an enum
+    if (currentFieldName.includes('_') && isLowercaseEnumsType(currentFieldType)) {
       //check if fixedLine contains /r
       if (fixedLine.includes('\r')) {
         //remove /r
