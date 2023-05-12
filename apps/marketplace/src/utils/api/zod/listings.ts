@@ -9,9 +9,19 @@ const price = z.number();
 const unitPrice = z.boolean().optional();
 const negotiable = z.boolean().optional();
 const categoryId = z.number();
-const typeId = z.nativeEnum(ListingType);
+const type = z.nativeEnum(ListingType);
+const images = z
+  .array(
+    z.object({
+      id: z.string(),
+      filename: z.string(),
+      url: z.string(),
+    })
+  )
+  .optional();
+const coverImage = z.string().optional();
 const active = z.boolean();
-const ownerId = z.number();
+const owner = z.number();
 const parameters = z
   .array(
     z.object({
@@ -30,9 +40,11 @@ const listing = z.object({
   unitPrice,
   negotiable,
   categoryId,
-  typeId,
+  type,
+  images,
+  coverImage,
   active,
-  ownerId,
+  owner,
   parameters,
 });
 
@@ -40,6 +52,7 @@ const listing = z.object({
 export const createListing = z.object({ listingId: id });
 
 // POST /listings/:id/images
+export const createListingImage = z.object({ imageId: z.string() });
 
 // POST /listings/:id/parameters
 export const createListingParameter = z.object({
@@ -54,8 +67,13 @@ export const getListings = z.array(listing);
 export const getListing = listing;
 
 // GET /listings/:id/images
+export const getListingImages = z.array(images);
 
 // GET /listings/:id/images/:imageId
+export const getListingImage = z.object({
+  fileName: z.string(),
+  url: z.string(),
+});
 
 // GET /listings/:id/parameters
 export const getListingParameters = parameters;
@@ -64,8 +82,14 @@ export const getListingParameters = parameters;
 export const updateListing = listing;
 
 // PUT /listings/:id/images
+export const updateListingImages = z.array(images);
 
 // PUT /listings/:id/images/:imageId
+export const updateListingImage = z.object({ 
+  id: z.string(),
+  filename: z.string(),
+  url: z.string(),
+})
 
 // PUT /listings/:id/parameters
 export const updateListingParameters = parameters;
@@ -74,3 +98,4 @@ export const updateListingParameters = parameters;
 export const deleteListing = z.object({});
 
 // DELETE /listings/:id/images/:imageId
+export const deleteListingImage = z.object({});
