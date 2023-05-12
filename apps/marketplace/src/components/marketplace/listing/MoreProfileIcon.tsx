@@ -17,7 +17,7 @@ export type MoreProfileIconProps = {
 const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const open = anchorEl !== null;
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     // stops click from propogating through to Link tag
     event.preventDefault();
