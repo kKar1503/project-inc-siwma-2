@@ -58,7 +58,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         id: user.id,
         name: user.name,
         email: user.email,
-        company: user.companyId,
+        company: user.companyId.toString(),
         createdAt: user.createdAt,
         enabled: user.enabled,
         profilePic: user.profilePicture,
