@@ -22,10 +22,7 @@ const getInvitesRequestBody = z.object({
   limit: z.string().optional(),
 });
 
-export default apiHandler({
-  // allowAdminsOnly: true
-  allowNonAuthenticated: true,
-})
+export default apiHandler({ allowAdminsOnly: true })
   .post(async (req, res) => {
     // Creates a new invite
     // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.ifiq27spo70n
