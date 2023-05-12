@@ -4,12 +4,6 @@ import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { DuplicateError } from '@inc/errors';
 import { validateEmail, validateName } from '@/utils/api/validate';
-import sendNotificationEmail from '@inc/send-in-blue/bulk-send-emails';
-import {
-  getContentFor,
-  BulkInviteEmailRequestBody,
-  EmailTemplate,
-} from '@inc/send-in-blue/templates/sib-templates';
 
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
@@ -22,10 +16,7 @@ const getInvitesRequestBody = z.object({
   limit: z.string().optional(),
 });
 
-export default apiHandler({
-  // allowAdminsOnly: true
-  allowNonAuthenticated: true,
-})
+export default apiHandler({ allowAdminsOnly: true })
   .post(async (req, res) => {
     // Creates a new invite
     // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.ifiq27spo70n
@@ -64,35 +55,6 @@ export default apiHandler({
         expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       },
     });
-
-    // Sending Emails
-
-    // 1. Get the invite email template
-    const content = getContentFor(EmailTemplate.INVITE);
-
-    // 2. Format the content
-    const emailBody: BulkInviteEmailRequestBody = {
-      htmlContent: content,
-      subject: 'Join the SIWMA Marketplace',
-      messageVersions: [
-        {
-          to: [
-            {
-              email,
-              name,
-            },
-          ],
-          params: {
-            name,
-            companyName: 'SIWMA Marketplace', // TODO: Get the company name from the database
-            registrationUrl: `https://siwma.org/register?token=${tokenHash}`,
-          },
-        },
-      ],
-    };
-
-    // 3. Send the email
-    await sendNotificationEmail(emailBody);
 
     return res.status(200).json(formatAPIResponse({ inviteId: invite.id.toString() }));
   })
