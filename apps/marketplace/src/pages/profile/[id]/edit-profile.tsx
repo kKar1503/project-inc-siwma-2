@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -20,20 +20,42 @@ import ProfileDetailCard, {
 } from '@/components/marketplace/profile/ProfileDetailCard';
 
 const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
-  const [profilePic, setProfilepic] = useState('');
+  const [profilePic, setProfilepic] = useState(null);
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [bio, setBio] = useState('');
   const [telegramUsername, setTelegramusername] = useState('');
-  const [mobileNumber, setMobilenumber] = useState('');
+  const [mobileNumber, setMobilenumber] = useState(null);
+
+  const [imageUrl, setImageUrl] = useState(null);
+
+  useEffect(() => {
+    if (profilePic) {
+      setImageUrl(URL.createObjectURL(profilePic));
+    }
+  }, [profilePic]);
+
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setProfilepic(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    console.log({ profilePic, name, username, email, company, bio, telegramUsername, mobileNumber });
+    console.log({
+      profilePic,
+      name,
+      username,
+      email,
+      company,
+      bio,
+      telegramUsername,
+      mobileNumber,
+    });
   };
-
 
   return (
     <>
@@ -102,7 +124,11 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                       alignItems: 'center',
                     })}
                   >
-                    <Avatar>P</Avatar>
+                    {imageUrl && profilePic && (
+                      <Box>
+                        <Avatar src={imageUrl} />
+                      </Box>
+                    )}
                     <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
                       <Box
                         sx={{
@@ -114,9 +140,14 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                         <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
                       </Box>
                       <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
-                        <Button variant="contained" component="label">
-                          Upload a profile photo
-                          <input type="file" hidden />
+                        <Button variant="contained" component="label" onChange={handleFileSelect}>
+                          Upload A Profile Photo
+                          <input
+                            accept="image/*"
+                            type="file"
+                            hidden
+                            onChange={(e) => setProfilepic(e.target.files[0])}
+                          />
                         </Button>
                       </Box>
                     </Box>
@@ -149,7 +180,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                         placeholder="Your Full Name"
                         InputLabelProps={{ shrink: true }}
                         value={name}
-                        onChange={e => setName(e.target.value)}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </FormControl>
 
@@ -165,7 +196,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                         placeholder="@account_username"
                         InputLabelProps={{ shrink: true }}
                         value={username}
-                        onChange={e => setUsername(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value)}
                       />
                     </FormControl>
                   </Box>
@@ -179,7 +210,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                         mt: spacing(2),
                       })}
                       value={email}
-                      onChange={e => setEmail(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </FormControl>
 
@@ -192,7 +223,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                         mt: spacing(2),
                       })}
                       value={company}
-                      onChange={e => setCompany(e.target.value)}
+                      onChange={(e) => setCompany(e.target.value)}
                     />
                   </FormControl>
 
@@ -208,7 +239,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                         mb: spacing(1),
                       })}
                       value={bio}
-                      onChange={e => setBio(e.target.value)}
+                      onChange={(e) => setBio(e.target.value)}
                     />
                   </FormControl>
                 </CardContent>
@@ -241,7 +272,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                           ),
                         }}
                         value={telegramUsername}
-                        onChange={e => setTelegramusername(e.target.value)}
+                        onChange={(e) => setTelegramusername(e.target.value)}
                       />
                     </FormControl>
 
@@ -257,7 +288,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                           ),
                         }}
                         value={mobileNumber}
-                        onChange={e => setMobilenumber(e.target.value)}
+                        onChange={(e) => setMobilenumber(e.target.value)}
                       />
                     </FormControl>
                   </Box>
