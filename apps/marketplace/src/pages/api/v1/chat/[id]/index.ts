@@ -20,7 +20,7 @@ function parseChatId($uuid: string) {
   return $uuid;
 }
 
-async function checkChatExists(chatId: string) {
+export async function checkChatExists(chatId: string) {
   // Check if the chat exists
   const chat = await PrismaClient.rooms.findUnique({
     where: {
