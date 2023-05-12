@@ -1,11 +1,11 @@
 // Emails are structured as HTML
 
-enum EmailTemplate {
+export enum EmailTemplate {
   INVITE,
   NOTIFICATION,
 }
 
-function getContentFor(template: EmailTemplate): string {
+export function getContentFor(template: EmailTemplate): string {
   /* When adding a new template, make sure to add it to the switch statement below.
    * To use a variable in the HTML content, use {{params.variableName}} and make sure to include the variable in the params object.
    * Create a new EmailRequestBody type that extends the params object to include the appropriate variables.
