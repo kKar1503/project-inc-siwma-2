@@ -1,4 +1,4 @@
-import { ApiError } from '@/errors/BaseError';
+import { ApiError } from './BaseError';
 
 /*
 Code implementation:
@@ -17,7 +17,6 @@ UNKNOWN S3 ERROR          : 3999
  */
 
 export class S3ApiError extends ApiError {
-
   public static readonly code: number = 3000; // let's say we change S3 codes to 4xxx, we can just change this to 4000 and all the codes will be updated
   public static readonly status: number = 500;
 
