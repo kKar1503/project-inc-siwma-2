@@ -2,14 +2,14 @@ import { apiHandler } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, AuthError } from '@inc/errors';
 
-async function getUserChats(userId: string, lastIdPointer: number, limit: number) {
+async function getUserChats(userId: string, lastIdPointer: string, limit: number) {
   // Fetch chats for the user
   const chats = await PrismaClient.rooms.findMany({
     where: {
       OR: [{ seller: userId }, { buyer: userId }],
-    //   id: {
-    //     gt: lastIdPointer,
-    //   },
+      id: {
+        gt: lastIdPointer,
+      },
     },
     orderBy: {
       id: 'asc',
@@ -29,7 +29,7 @@ export default apiHandler().get(async (req, res) => {
   }
 
   // Parse and validate lastIdPointer and limit provided
-  const lastIdPointer = Number(req.query.lastIdPointer) || 0;
+  const lastIdPointer = (req.query.lastIdPointer as string) || '0';
   const limit = Math.min(Number(req.query.limit) || 10, 10);
 
   // Check if the user is logged in
