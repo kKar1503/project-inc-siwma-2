@@ -448,8 +448,33 @@ const ProfilePage = ({
 }) => {
   const theme = useTheme();
   const [value, setValue] = useState(0);
+  // when filter/sorts are called use set states to set the new listings/reviews again
   const [listings, setListings] = useState(serverSideListings);
   const [reviews, setReviews] = useState(serverSideReviews);
+  const [filterListings, setFilterListings] = useState('');
+  const [sortByListings, setSortByListings] = useState('');
+  const [filterReviews, setFilterReviews] = useState('');
+  const [sortByReviews, setSortByReviews] = useState('');
+
+  const handleFilterListings = (filter: string) => {
+    setFilterListings(filter);
+    // make endpoint call to carry out filter
+  };
+
+  const handleSortByListings = (filter: string) => {
+    setSortByListings(filter);
+    // make endpoint call to carry out filter
+  };
+
+  const handleFilterReviews = (filter: string) => {
+    setFilterReviews(filter);
+    // make endpoint call to carry out filter
+  };
+
+  const handleSortByReviews = (filter: string) => {
+    setSortByReviews(filter);
+    // make endpoint call to carry out filter
+  };
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -543,13 +568,19 @@ const ProfilePage = ({
             </Tabs>
             <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
               <TabPanel value={value} index={0} dir={theme.direction} height="90.5vh">
-                <ListingsTab allListings={listings} />
+                <ListingsTab
+                  allListings={listings}
+                  filterListings={handleFilterListings}
+                  sortByListings={handleSortByListings}
+                />
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="90.5vh">
                 <ReviewsTab
                   allReviews={reviews}
                   userRating={data.rating}
                   totalReviews={data.reviews}
+                  filterReviews={handleFilterReviews}
+                  sortByReviews={handleSortByReviews}
                 />
               </TabPanel>
             </SwipeableViews>
