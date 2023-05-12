@@ -8,9 +8,9 @@ import { DateTime } from 'luxon';
 import { useMemo } from 'react';
 import Link from 'next/link';
 import { StarsRating } from '@inc/ui';
-import StarRating from './StarRatings';
 
 export type ReviewProps = {
+  ownerId: number;
   noOfReviews: number;
   profilePic: string;
   createdAt: string;
@@ -22,6 +22,7 @@ export type ReviewProps = {
 };
 
 const ReviewMessage = ({
+  ownerId,
   noOfReviews,
   profilePic,
   createdAt,
@@ -40,11 +41,16 @@ const ReviewMessage = ({
     <List sx={{ m: 2 }}>
       <Box sx={{ m: 1 }}>
         <Stack direction="row" spacing={2} alignItems="center">
-          <Avatar src={profilePic} sx={{ width: 45, height: 45 }} />
+          <Link href={`/profile/${ownerId}`}>
+            <Avatar src={profilePic} sx={{ width: 45, height: 45 }} />
+          </Link>
           <Stack>
             <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Link href="/#" style={{ textDecoration: 'none', color: 'black' }}>
+                <Link
+                  href={`/profile/${ownerId}`}
+                  style={{ textDecoration: 'none', color: 'black' }}
+                >
                   <Typography
                     variant="h6"
                     component="div"
