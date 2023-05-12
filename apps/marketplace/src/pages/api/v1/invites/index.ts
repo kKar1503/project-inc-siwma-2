@@ -56,7 +56,7 @@ export default apiHandler({ allowAdminsOnly: true })
       },
     });
 
-    return res.status(200).json(formatAPIResponse({ inviteId: invite.id }));
+    return res.status(200).json(formatAPIResponse({ inviteId: invite.id.toString() }));
   })
   .get(async (req, res) => {
     const { lastIdPointer, limit } = getInvitesRequestBody.parse(req.query);
@@ -89,5 +89,12 @@ export default apiHandler({ allowAdminsOnly: true })
       },
     });
 
-    return res.status(200).json(formatAPIResponse(invites));
+    const mappedInvites = invites.map((invite) => ({
+      id: invite.id.toString(),
+      email: invite.email,
+      name: invite.name,
+      companyId: invite.companyId.toString(),
+    }));
+
+    return res.status(200).json(formatAPIResponse(mappedInvites));
   });

@@ -28,5 +28,12 @@ export default apiHandler({
     throw new NotFoundError('invite');
   }
 
-  return res.status(200).json(formatAPIResponse(invite));
+  const mappedInvite = {
+    id: invite.id.toString(),
+    email: invite.email,
+    name: invite.name,
+    companyId: invite.companyId.toString(),
+  };
+
+  return res.status(200).json(formatAPIResponse(mappedInvite));
 });
