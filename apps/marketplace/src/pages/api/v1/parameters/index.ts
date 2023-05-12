@@ -1,6 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient, { DataType, Parameter, ParameterType } from '@inc/db';
+import PrismaClient from '@inc/db';
 import { z } from 'zod';
+import { DataType, Parameter, ParameterType } from '@prisma/client';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
 // -- Type definitions -- //

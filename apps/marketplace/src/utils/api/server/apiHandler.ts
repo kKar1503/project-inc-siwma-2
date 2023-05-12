@@ -1,17 +1,19 @@
 import {
-  BaseError,
-  ErrorJSON,
+  BaseError, BucketConnectionFailure,
+  ErrorJSON, InvalidBucketName, ObjectCollision, ObjectNotFound,
   ParamError,
   ParamInvalidError,
   ParamRequiredError,
   ParamTypeError,
-  UnknownError,
-} from '@/errors';
+  UnknownError, UnknownS3Error,
+} from '@inc/errors';
+
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
 import { APIHandlerOptions, APIRequestType } from '@/types/api-types';
+import { S3Error } from '@inc/s3-simplified';
 import { apiGuardMiddleware } from './middlewares/apiGuardMiddleware';
 import jwtMiddleware from './middlewares/jwtMiddleware';
 
@@ -61,6 +63,25 @@ function handlePrismaError(error: Prisma.PrismaClientKnownRequestError) {
 }
 
 /**
+ * Prisma error handler
+ */
+function handleS3Error(error: S3Error) {
+  switch (error.name) {
+    case 'InvalidBucket':
+      return new BucketConnectionFailure();
+    case 'InvalidBucketName':
+      return new InvalidBucketName();
+    case 'InvalidObject':
+      return new ObjectNotFound();
+    case 'ObjectConflict':
+      return new ObjectCollision();
+      default:
+        return new UnknownS3Error();
+  }
+}
+
+
+/**
  * Error handler
  * @param $error The error
  * @returns An error object
@@ -79,6 +100,12 @@ function handleError($error: Error): ErrorJSON[] {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     // We got a prisma error
     error = handlePrismaError(error);
+  }
+
+  // Check if it was a custom error
+  if (error instanceof S3Error) {
+    // Return the error message
+    error = handleS3Error(error);
   }
 
   // Check if it was a custom error

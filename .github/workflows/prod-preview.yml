@@ -6,7 +6,7 @@ concurrency:
 
 on:
   workflow_dispatch:
-  pull_request:
+  push:
     branches: [dev]
 
 jobs:
@@ -32,14 +32,14 @@ jobs:
         run: |
           docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:latest -f apps/marketplace/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" --build-arg NEXTAUTH_URL="http://ec2-18-142-177-240.ap-southeast-1.compute.amazonaws.com" .
           docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} -f apps/marketplace/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" --build-arg NEXTAUTH_URL="http://ec2-18-142-177-240.ap-southeast-1.compute.amazonaws.com" .
-          docker save ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} > marketplace-${{ github.sha }}.tar
+        # docker save ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} > marketplace-${{ github.sha }}.tar
 
-      - uses: actions/upload-artifact@v3
-        if: ${{ steps.save-docker-image.outcome == 'success' }}
-        with:
-          name: marketplace-${{ github.sha }}.tar
-          path: marketplace-${{ github.sha }}.tar
-          retention-days: 1
+      # - uses: actions/upload-artifact@v3
+      #   if: ${{ steps.save-docker-image.outcome == 'success' }}
+      #   with:
+      #     name: marketplace-${{ github.sha }}.tar
+      #     path: marketplace-${{ github.sha }}.tar
+      #     retention-days: 1
 
       - name: Push images into ECR
         run: |
@@ -47,20 +47,15 @@ jobs:
           docker push ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:latest
 
       - name: Restart task
+        # TODO: do not restart tasks like this
         run: aws ecs update-service --force-new-deployment --service marketplace-service --cluster marketplace
+
+      # instead, define a new task definition and update the service with the new task definition
+      # but it will do for now :p
 
       - name: Get Public DNS and IP
         run: |
-          export PublicDnsName=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicDnsName' --output text)
-          export PublicIpAddress=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicIpAddress' --output text)
-          echo "Public DNS: $PublicDnsName"
-          echo "Public IP: $PublicIpAddress"
-
-      - name: Output Public DNS and IP into PR
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            # Public DNS and IP
-            Public DNS: $PublicDnsName
-            Public IP: $PublicIpAddress
+          echo "public_dns_name=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicDnsName' --output text)" >> "$GITHUB_ENV"
+          echo "public_ip_address=$(aws ec2 describe-instances --instance-ids i-0a8375b1fe54c7fb3 --query 'Reservations[].Instances[].PublicIpAddress' --output text)" >> "$GITHUB_ENV"
+          echo "Public DNS: ${{ env.public_dns_name }}"
+          echo "Public IP: ${{ env.public_ip_address }}"

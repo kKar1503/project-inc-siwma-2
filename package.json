@@ -7,18 +7,25 @@
     "dev:chat": "nx run @inc/chat:dev",
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
+    "build:packages": "nx run-many -t build -p @inc/ui @inc/events @inc/s3-simplified @inc/errors --parallel=4",
     "build:ui": "nx run @inc/ui:build",
+    "build:events": "nx run @inc/events:build",
+    "build:s3": "nx run @inc/s3-simplified:build",
     "clean-i": "pnpm install --frozen-lockfile",
     "lint": "nx run-many -t lint",
-    "postinstall": "nx run @inc/db:prisma:generate && echo Please restart your VSCode to make your Prisma Client work."
+    "postinstall": "nx run @inc/db:prisma:generate && echo Please restart your VSCode to make your Prisma Client work.",
+    "prisma:fix": "nx run @inc/db:prisma:compile && nx run @inc/db:prisma:patchCasing"
   },
   "author": "Kar",
   "devDependencies": {
+    "@nrwl/nx-cloud": "latest",
     "eslint": "8.36.0",
     "nx": "15.9.2",
+    "rimraf": "^5.0.0",
+    "symlink-dir": "^5.1.1",
+    "sync-directory": "^6.0.4",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
-    "typescript": "5.0.2",
-    "@nrwl/nx-cloud": "latest"
+    "typescript": "5.0.2"
   }
 }
