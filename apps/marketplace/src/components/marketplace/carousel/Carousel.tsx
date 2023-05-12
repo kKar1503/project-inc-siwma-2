@@ -48,7 +48,7 @@ const Carousel = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 'max', flexGrow: 1 }}>
+    <Box sx={{ maxWidth: 'max' }}>
       <Paper
         square
         elevation={0}
@@ -76,7 +76,7 @@ const Carousel = () => {
                 <Box
                   component="img"
                   sx={{
-                    height: 255,
+                    height: 300,
                     display: 'block',
                     maxWidth: 'max',
                     overflow: 'hidden',
@@ -88,11 +88,15 @@ const Carousel = () => {
                 <Box
                   component="img"
                   sx={{
-                    height: 255,
+                    height: 300,
                     display: 'block',
                     maxWidth: 'max',
                     overflow: 'hidden',
                     width: 'min',
+                    position: 'relative',
+                    bottom: 300,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
                   src={step.imgPath}
@@ -103,19 +107,33 @@ const Carousel = () => {
         ))}
       </AutoPlaySwipeableViews>
       <MobileStepper
-        steps={maxSteps}
+        sx={{
+          position: 'relative',
+          bottom: 340,
+          backgroundColor: 'transparent'
+        }}
+        steps={maxSteps
+        }
         position="static"
         activeStep={activeStep}
         nextButton={
-          <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-            Next
+          <Button
+            size="small"
+            sx={{ borderRadius: 12 }}
+            onClick={handleNext}
+            disabled={activeStep === maxSteps - 1}
+          >
             {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
           </Button>
         }
         backButton={
-          <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+          <Button
+            size="small"
+            sx={{ borderRadius: 12 }}
+            onClick={handleBack}
+            disabled={activeStep === 0}
+          >
             {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-            Back
           </Button>
         }
       />
