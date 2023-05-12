@@ -4,7 +4,7 @@ import { UserContacts } from '@inc/db';
 const id = z.string();
 const name = z.string();
 const email = z.string();
-const company = z.number();
+const company = z.string();
 const createdAt = z.date();
 const enabled = z.boolean();
 const profilePic = z.string().url();
