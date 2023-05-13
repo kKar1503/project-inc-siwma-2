@@ -1,7 +1,7 @@
 import client from '@inc/db';
-import sibClient, { changeAPIKey } from './index';
-import getAPIKey from './api-key/api-keys';
-import { BulkEmailRequestBody } from './templates/sib-templates';
+import sibClient, { changeAPIKey } from './sib';
+import getAPIKey from './apiKey/apiKeys';
+import { BulkEmailRequestBody } from './templates/sibTemplates';
 import { BulkEmailResponseBody } from './types/BulkEmailResponseBody';
 
 /* This function sends emails to multiple recipients.
