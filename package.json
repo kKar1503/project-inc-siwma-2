@@ -18,9 +18,9 @@
   },
   "author": "Kar",
   "devDependencies": {
-    "@nrwl/nx-cloud": "latest",
     "eslint": "8.36.0",
-    "nx": "15.9.2",
+    "nx": "16.1.4",
+    "nx-cloud": "16.0.5",
     "rimraf": "^5.0.0",
     "symlink-dir": "^5.1.1",
     "sync-directory": "^6.0.4",
