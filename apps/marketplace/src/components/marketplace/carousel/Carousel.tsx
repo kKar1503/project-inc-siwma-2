@@ -11,7 +11,7 @@ import { autoPlay } from 'react-swipeable-views-utils';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-const images = [
+const CarouselImageData = [
   {
     imgPath:
       'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
@@ -33,7 +33,7 @@ const images = [
 const Carousel = () => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
-  const maxSteps = images.length;
+  const maxSteps = CarouselImageData.length;
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -48,24 +48,14 @@ const Carousel = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 'max' }}>
-      <Paper
-        square
-        elevation={0}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          height: 50,
-          bgcolor: 'background.default',
-        }}
-      />
+    <Box sx={{ maxWidth: 'max', maxHeight: 300 }}>
       <AutoPlaySwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
       >
-        {images.map((step, index) => (
+        {CarouselImageData.map((step, index) => (
           <div>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
@@ -110,10 +100,9 @@ const Carousel = () => {
         sx={{
           position: 'relative',
           bottom: 340,
-          backgroundColor: 'transparent'
+          backgroundColor: 'transparent',
         }}
-        steps={maxSteps
-        }
+        steps={maxSteps}
         position="static"
         activeStep={activeStep}
         nextButton={
