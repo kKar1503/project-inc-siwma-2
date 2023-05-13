@@ -1,8 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MobileStepper from '@mui/material/MobileStepper';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -13,25 +12,69 @@ const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const CarouselImageData = [
   {
-    imgPath:
+    id: '1',
+    companyId: '1',
+    image:
       'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
+    active: 'true',
+    startDate: '2023-04-18 13:25:45',
+    endDate: '2023-05-18 13:25:45',
+    description: 'Advertisement Description',
+    link: 'https://example.com',
   },
   {
-    imgPath:
+    id: '2',
+    companyId: '2',
+    image:
       'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
+    active: 'true',
+    startDate: '2023-04-18 13:25:45',
+    endDate: '2023-05-18 13:25:45',
+    description: 'Advertisement Description',
+    link: 'https://example.com',
   },
   {
-    imgPath:
+    id: '3',
+    companyId: '3',
+    image:
       'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
+    active: 'true',
+    startDate: '2023-04-18 13:25:45',
+    endDate: '2023-05-18 13:25:45',
+    description: 'Advertisement Description',
+    link: 'https://example.com',
   },
   {
-    imgPath:
+    id: '4',
+    companyId: '4',
+    image:
       'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
+    active: 'true',
+    startDate: '2023-04-18 13:25:45',
+    endDate: '2023-05-18 13:25:45',
+    description: 'Advertisement Description',
+    link: 'https://example.com',
   },
 ];
 
+export const getServerSideProps = async ({ query }: { query: any }) => {
+  // api call to get advertisement details go here
+  // if advertisement does not exist, nothing will display
+
+  const { id } = query;
+
+  const data = CarouselImageData[id - 1];
+
+  return {
+    props: {
+      data,
+    },
+  };
+};
+
 const Carousel = () => {
   const theme = useTheme();
+  // when filter/sorts are called use set states to set the new listings/reviews again
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = CarouselImageData.length;
 
@@ -73,7 +116,7 @@ const Carousel = () => {
                     width: '100%',
                     opacity: '30%',
                   }}
-                  src={step.imgPath}
+                  src={step.image}
                 />
                 <Box
                   component="img"
@@ -89,7 +132,7 @@ const Carousel = () => {
                     marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
-                  src={step.imgPath}
+                  src={step.image}
                 />
               </Box>
             ) : null}
@@ -103,12 +146,12 @@ const Carousel = () => {
           backgroundColor: 'transparent',
         }}
         steps={maxSteps}
-        position="static"
+        // position="static"
         activeStep={activeStep}
         nextButton={
           <Button
             size="small"
-            sx={{ borderRadius: 12 }}
+            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
           >
@@ -118,7 +161,7 @@ const Carousel = () => {
         backButton={
           <Button
             size="small"
-            sx={{ borderRadius: 12 }}
+            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
             onClick={handleBack}
             disabled={activeStep === 0}
           >
