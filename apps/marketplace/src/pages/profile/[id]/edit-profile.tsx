@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import Head from 'next/head';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -20,16 +20,15 @@ import ProfileDetailCard, {
 } from '@/components/marketplace/profile/ProfileDetailCard';
 
 const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
-  const [profilePic, setProfilepic] = useState(null);
+  const [profilePic, setProfilepic] = useState<File | null>(null)
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [bio, setBio] = useState('');
   const [telegramUsername, setTelegramusername] = useState('');
-  const [mobileNumber, setMobilenumber] = useState(null);
-
-  const [imageUrl, setImageUrl] = useState(null);
+  const [mobileNumber, setMobilenumber] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
 
   useEffect(() => {
     if (profilePic) {
@@ -37,7 +36,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
     }
   }, [profilePic]);
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setProfilepic(e.target.files[0]);
     }
@@ -140,13 +139,13 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                         <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
                       </Box>
                       <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
-                        <Button variant="contained" component="label" onChange={handleFileSelect}>
+                        <Button variant="contained" component="label">
                           Upload A Profile Photo
                           <input
                             accept="image/*"
                             type="file"
                             hidden
-                            onChange={(e) => setProfilepic(e.target.files[0])}
+                            onChange={handleFileSelect}
                           />
                         </Button>
                       </Box>
