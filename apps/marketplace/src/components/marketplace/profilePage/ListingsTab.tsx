@@ -9,15 +9,13 @@ import { SelectComponent } from '@inc/ui';
 const filterValues = ['All Listings', 'Buy Listings', 'Sell Listings'];
 const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
 
-const ListingsTab = ({
-  allListings,
-  filterListings,
-  sortByListings,
-}: {
+export type ListingsTabProps = {
   allListings: ProductListingItemProps[];
   filterListings: (newData: string) => void;
   sortByListings: (newData: string) => void;
-}) => (
+};
+
+const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTabProps) => (
   <Box>
     {/* top portion */}
     <Box sx={{ display: 'flex' }}>

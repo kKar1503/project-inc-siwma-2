@@ -8,19 +8,21 @@ import FilterChips from './FilterChips';
 // pass filter values to select component
 const sortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
 
+export type ReviewsTabProps = {
+  allReviews: ReviewProps[];
+  userRating: number;
+  totalReviews: number;
+  filterReviews: (newData: string) => void;
+  sortByReviews: (newData: string) => void;
+};
+
 const ReviewsTab = ({
   allReviews,
   userRating,
   totalReviews,
   filterReviews,
   sortByReviews,
-}: {
-  allReviews: ReviewProps[];
-  userRating: number;
-  totalReviews: number;
-  filterReviews: (newData: string) => void;
-  sortByReviews: (newData: string) => void;
-}) => (
+}: ReviewsTabProps) => (
   <Box sx={{ height: '100vh' }}>
     {/* top portion */}
     <Box
