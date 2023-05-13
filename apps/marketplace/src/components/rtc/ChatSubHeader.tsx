@@ -1,13 +1,12 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 
-export type ChatHeaderProps = {
-  profilePic: string;
+export type ChatSubHeaderProps = {
+  itemPic: string;
   itemName: string;
   itemPrice: number;
   progressStatus: 'In Progress' | 'Sold';
@@ -16,13 +15,13 @@ export type ChatHeaderProps = {
 };
 
 const ChatSubHeader = ({
-  profilePic,
+  itemPic,
   itemName,
   itemPrice,
   progressStatus,
   makeOffer,
   setMakeOffer,
-}: ChatHeaderProps) => {
+}: ChatSubHeaderProps) => {
   const handleMakeOffer = () => {
     setMakeOffer(true);
   };
@@ -33,7 +32,7 @@ const ChatSubHeader = ({
         padding: spacing(2),
         borderColor: palette.grey[300],
         display: 'flex',
-        marginLeft: spacing(1)
+        marginLeft: spacing(1),
       })}
     >
       <IconButton
@@ -50,7 +49,7 @@ const ChatSubHeader = ({
         >
           <Avatar
             alt="company profile picture"
-            src={profilePic}
+            src={itemPic}
             variant="square"
             sx={{
               width: 70,
