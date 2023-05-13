@@ -11,22 +11,26 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 
+export type SortProps = 'Recent' | 'Price - High to Low' | 'Price - Low to High';
+
+export type FilterFormProps = {
+  setSort: (sort: SortProps) => void;
+  setCategory: (category: string) => void;
+  setNegotiation: (negotiation: string) => void;
+  setMinPrice: (minPrice: string) => void;
+  setMaxPrice: (maxPrice: string) => void;
+};
+
 const FilterForm = ({
   setSort,
   setCategory,
   setNegotiation,
   setMinPrice,
   setMaxPrice,
-}: {
-  setSort: (sort: string) => void;
-  setCategory: (category: string) => void;
-  setNegotiation: (negotiation: string) => void;
-  setMinPrice: (minPrice: string) => void;
-  setMaxPrice: (maxPrice: string) => void;
-}) => {
+}: FilterFormProps) => {
   const sortOptions = ['Recent', 'Price - High to Low', 'Price - Low to High'];
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-  const [sortOption, setSortOption] = useState<string>('');
+  const [sortOption, setSortOption] = useState<SortProps>('Recent');
   const [categoryOption, setCategoryOption] = useState<string>('');
   const [negotiationOption, setNegotiationOption] = useState<string>('');
   const [minPriceOption, setMinPriceOption] = useState<string>('');
@@ -61,7 +65,7 @@ const FilterForm = ({
       <FormLabel sx={{ fontWeight: 600 }}>Sort By</FormLabel>
       <Select
         sx={{ height: '45px', width: '100%' }}
-        onChange={(e: SelectChangeEvent<string>) => setSortOption(e.target.value as string)}
+        onChange={(e) => setSortOption(e.target.value as SortProps)}
         value={sortOption as string}
       >
         {sortOptions.map((option) => (
@@ -87,9 +91,7 @@ const FilterForm = ({
 
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>Negotiability</FormLabel>
-      <RadioGroup
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNegotiationOption(e.target.value)}
-      >
+      <RadioGroup onChange={(e) => setNegotiationOption(e.target.value)}>
         <FormControlLabel value="negotiable" control={<Radio />} label="Negotiable" />
         <FormControlLabel value="nonNegotiable" control={<Radio />} label="Non-Negotiable" />
       </RadioGroup>
@@ -102,13 +104,13 @@ const FilterForm = ({
           label="Min"
           variant="standard"
           sx={{ mr: 2 }}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMinPriceOption(e.target.value)}
+          onChange={(e) => setMinPriceOption(e.target.value)}
         />
         <TextField
           id="max"
           label="Max"
           variant="standard"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMaxPriceOption(e.target.value)}
+          onChange={(e) => setMaxPriceOption(e.target.value)}
         />
       </Box>
 

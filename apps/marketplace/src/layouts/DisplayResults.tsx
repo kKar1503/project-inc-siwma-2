@@ -1,5 +1,6 @@
-import { useMediaQuery, createTheme } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
+import React, { useState, useEffect } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -7,18 +8,20 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import FilterForm from '@/components/marketplace/filter/FilterForm';
+import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
 import ProductListingItem, {
   ProductListingItemProps,
 } from '@/components/marketplace/listing/ProductListingItem';
 
-// create theme
-const baseTheme = createTheme();
+type DisplayResultsProps = {
+  children?: React.ReactNode;
+};
 
-const DisplayResults = () => {
-  const isMediumScreen = useMediaQuery(baseTheme.breakpoints.down('md'));
+const DisplayResults = ({ children }: DisplayResultsProps) => {
+  const Theme = useTheme();
+  const isMediumScreen = useMediaQuery(Theme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [sort, setSort] = useState<string>('');
+  const [sort, setSort] = useState<SortProps>('Recent');
   const [category, setCategory] = useState<string>('');
   const [negotiation, setNegotiation] = useState<string>('');
   const [minPrice, setMinPrice] = useState<string>('');
@@ -38,6 +41,7 @@ const DisplayResults = () => {
 
   return (
     <Container maxWidth="lg">
+      {children}
       <Grid container spacing={2}>
         {!isMediumScreen && (
           <Grid item xs={12} md={2} sx={{ width: '100%', marginTop: 2 }}>
