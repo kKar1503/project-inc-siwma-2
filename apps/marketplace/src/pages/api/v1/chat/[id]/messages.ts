@@ -8,12 +8,12 @@ import { checkChatExists } from '.';
 const chatRequestQuery = z.object({
   id: z.string().uuid(),
   lastIdPointer: z
-    .string()
-    .optional()
-    .transform((value) => (value ? parseToNumber(value) : 0))
-    .refine((value) => !isNaN(value), {
-      message: 'Invalid lastIdPointer',
-    }),
+  .string()
+  .optional()
+  .transform((value) => (value ? parseToNumber(value) : 0))
+  .refine((value) => typeof value === 'number' && !Number.isNaN(value), {
+    message: 'Invalid lastIdPointer',
+  }),
   limit: z
     .string()
     .optional()
