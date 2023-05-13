@@ -1,5 +1,5 @@
 import { useMediaQuery, createTheme } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -7,40 +7,33 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import FilterForm from '@/components/marketplace/FilterForm';
-import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
-
-export type ResultsProps = {
-  items: {
-    img: string;
-    type: string;
-    name: string;
-    rating: number;
-    href: string;
-    price: number;
-    negotiable: boolean;
-    ownerId: string;
-    ownerFullName: string;
-    createdAt: string;
-    companyName: string;
-    isUnitPrice: boolean;
-  }[];
-};
+import FilterForm from '@/components/marketplace/filter/FilterForm';
+import ProductListingItem, {
+  ProductListingItemProps,
+} from '@/components/marketplace/listing/ProductListingItem';
 
 // create theme
 const baseTheme = createTheme();
 
-const DisplayResults = ({ items }: ResultsProps) => {
+const DisplayResults = () => {
   const isMediumScreen = useMediaQuery(baseTheme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [sort, setSort] = useState<string>('');
   const [negotiation, setNegotiation] = useState<string>('');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
+  const [items, setItems] = useState<ProductListingItemProps[]>([]);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
+
+  useEffect(() => {
+    // Use the filter
+    // Create object
+    // Set items
+    setItems([]);
+  }, [sort, negotiation, minPrice, maxPrice]);
 
   return (
     <Container maxWidth="lg">
@@ -91,7 +84,7 @@ const DisplayResults = ({ items }: ResultsProps) => {
 
           {items && items.length > 0 && (
             <Grid container display="flex">
-              {items.map((item: any) => (
+              {items.map((item: ProductListingItemProps) => (
                 <Grid item xs={4} md={3} sx={{ mb: 2 }}>
                   <ProductListingItem {...item} />
                 </Grid>
