@@ -20,7 +20,7 @@ import ProfileDetailCard, {
 } from '@/components/marketplace/profile/ProfileDetailCard';
 
 const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
-  const [profilePic, setProfilepic] = useState<File | null>(null)
+  const [profilePic, setProfilepic] = useState<File | null>(null);
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
   const [bio, setBio] = useState('');
   const [telegramUsername, setTelegramusername] = useState('');
   const [mobileNumber, setMobilenumber] = useState('');
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (profilePic) {
@@ -141,12 +141,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                       <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
                         <Button variant="contained" component="label">
                           Upload A Profile Photo
-                          <input
-                            accept="image/*"
-                            type="file"
-                            hidden
-                            onChange={handleFileSelect}
-                          />
+                          <input accept="image/*" type="file" hidden onChange={handleFileSelect} />
                         </Button>
                       </Box>
                     </Box>
@@ -316,6 +311,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
               </Card>
 
               <ProfileDetailCard
+                ownerId={1}
                 username="gold_digger"
                 name="Sarah Jones"
                 email="sjones@golddigger.com"

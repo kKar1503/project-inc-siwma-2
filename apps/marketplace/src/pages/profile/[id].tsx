@@ -18,6 +18,7 @@ import { useTheme, styled } from '@mui/material/styles';
 // test data for profile component
 const profileDetailData = [
   {
+    ownerId: 1,
     username: 'diggers',
     name: 'John Tan',
     email: 'digs@gmail.com',
@@ -30,6 +31,7 @@ const profileDetailData = [
     reviews: 336,
   },
   {
+    ownerId: 2,
     username: 'rock_hound',
     name: 'Emily Stone',
     email: 'emily.stone@gmail.com',
@@ -42,6 +44,7 @@ const profileDetailData = [
     reviews: 97,
   },
   {
+    ownerId: 3,
     username: 'ore_king',
     name: 'David Hill',
     email: 'david.hill@orekingdom.com',
@@ -54,6 +57,7 @@ const profileDetailData = [
     reviews: 215,
   },
   {
+    ownerId: 4,
     username: 'gold_digger',
     name: 'Sarah Jones',
     email: 'sjones@golddigger.com',
@@ -66,6 +70,7 @@ const profileDetailData = [
     reviews: 184,
   },
   {
+    ownerId: 5,
     username: 'mining_pro',
     name: 'Jackie Lee',
     email: 'jackie.lee@miningpro.com',
@@ -78,6 +83,7 @@ const profileDetailData = [
     reviews: 102,
   },
   {
+    ownerId: 6,
     username: 'ore_genius',
     name: 'Karen Chen',
     email: 'karen.chen@oregenius.com',
@@ -505,6 +511,7 @@ const ProfilePage = ({
           })}
         >
           <ProfileDetailCard
+            ownerId={data.ownerId}
             username={data.username}
             name={data.name}
             company={data.company}

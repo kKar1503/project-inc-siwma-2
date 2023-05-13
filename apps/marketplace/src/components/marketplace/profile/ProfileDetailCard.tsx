@@ -23,6 +23,7 @@ export type ProfileDetailCardProps = {
   bio: string;
   rating: number;
   reviews: number;
+  ownerId: number;
 };
 
 const ProfileDetailCard = ({
@@ -36,8 +37,9 @@ const ProfileDetailCard = ({
   bio,
   rating,
   reviews,
+  ownerId,
 }: ProfileDetailCardProps) => (
-  <Card sx={{ width: '30%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+  <Card sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column' }}>
     <CardHeader
       titleTypographyProps={{
         fontSize: 16,
@@ -139,7 +141,7 @@ const ProfileDetailCard = ({
       <Box sx={{ width: '98%' }}>
         <Button
           component={Link}
-          href="/editprofile"
+          href={`/editprofile/${ownerId}`}
           variant="contained"
           type="submit"
           sx={({ spacing }) => ({
