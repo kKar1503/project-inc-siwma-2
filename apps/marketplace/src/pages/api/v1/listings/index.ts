@@ -2,7 +2,19 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { Listing, ListingType, Prisma } from '@inc/db';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
-import { NotFoundError } from '@inc/errors';
+import { NotFoundError, ParamError } from '@inc/errors';
+
+export function parseListingId($id: string) {
+  // Parse and validate listing id provided
+  const id = parseToNumber($id, 'id');
+
+  // Check if the listing id is valid
+  if (Number.isNaN(id)) {
+    throw new NotFoundError(`Listing with id '${id}'`);
+  }
+
+  return id;
+}
 
 // -- Type definitions -- //
 export type ListingResponse = {
@@ -32,7 +44,7 @@ export type ListingWithParameters = Listing & {
 export const getQueryParameters = z.object({
   lastIdPointer: z
     .string()
-    .transform((val) => parseInt(val))
+    .coerce.number()
     .optional(),
   limit: z
     .string()
@@ -132,9 +144,9 @@ export default apiHandler()
       },
       name: queryParams.matching
         ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+          contains: queryParams.matching,
+          mode: 'insensitive',
+        }
         : undefined,
     };
 
@@ -183,7 +195,7 @@ export default apiHandler()
     });
 
     if (!categoryExists) {
-      throw new NotFoundError('Category');
+      throw new ParamError('Category');
     }
 
     const listing = await PrismaClient.listing.create({
@@ -199,21 +211,21 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value,
-                parameter: {
-                  connect: {
-                    id: parseToNumber(parameter.paramId),
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value,
+              parameter: {
+                connect: {
+                  id: parseToNumber(parameter.paramId),
                 },
-              })),
-            }
+              },
+            })),
+          }
           : undefined,
       },
       include: {
         listingsParametersValues: true,
       },
     });
-
-    res.status(201).json({ listingId: listing.id });
+    //  res.status(200).json(formatAPIResponse(formatResponse(response)));
+    res.status(201).json(formatAPIResponse({ listingId: listing.id }));
   });

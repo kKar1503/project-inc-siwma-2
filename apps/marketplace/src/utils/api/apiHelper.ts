@@ -21,17 +21,7 @@ const parseToNumber = (string: string, key?: string) => {
   return result;
 };
 
-function parseListingId($id: string) {
-  // Parse and validate listing id provided
-  const id = parseToNumber($id, 'id');
 
-  // Check if the listing id is valid
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`Listing with id '${id}'`);
-  }
-
-  return id;
-}
 
 /**
  * Format the API response into a JSON-API compliant response
@@ -59,4 +49,4 @@ const formatAPIResponse = (response: object | object[]) => {
   };
 };
 
-export { parseToNumber, formatAPIResponse, parseListingId };
+export { parseToNumber, formatAPIResponse };

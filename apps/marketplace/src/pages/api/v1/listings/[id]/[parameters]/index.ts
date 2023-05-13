@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { apiHandler, formatAPIResponse, parseListingId } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { parseListingId } from '../../../listings/index';
 import PrismaClient, { ListingsParametersValue } from '@inc/db';
 import { ForbiddenError, NotFoundError } from '@inc/errors';
 import * as z from 'zod';
@@ -36,7 +37,7 @@ const getListingParameters = async (req: NextApiRequest, res: NextApiResponse) =
   });
 
   const formattedParameters = formatParametersResponse(parameters);
-  res.status(200).json(formatAPIResponse({ success: true, data: formattedParameters }));
+  res.status(200).json(formatAPIResponse({ formattedParameters }));
 };
 
 const parameterSchema = z.object({
@@ -78,12 +79,8 @@ const createListingParameter = async (req: CustomApiRequest, res: NextApiRespons
   const { paramId, value } = req.body;
 
   // Make sure to check if paramId is a valid number
-  const paramIdInt = parseInt(paramId, 10);
-  if (isNaN(paramIdInt)) {
-    return res
-      .status(400)
-      .json(formatAPIResponse({ success: false, error: 'Invalid parameter ID' }));
-  }
+  const paramIdInt = parseToNumber(paramId);
+
 
   await PrismaClient.listingsParametersValue.create({
     data: {
@@ -125,7 +122,7 @@ const updateListingParameters = async (req: CustomApiRequest, res: NextApiRespon
 
   // Check for invalid paramIds and values
   for (const param of parameters) {
-    const paramIdInt = parseInt(param.paramId, 10);
+    const paramIdInt = parseToNumber(param.paramId);
     if (isNaN(paramIdInt)) {
       return res.status(422).json(formatAPIResponse({ success: false, error: 'Invalid paramId' }));
     }
@@ -134,7 +131,7 @@ const updateListingParameters = async (req: CustomApiRequest, res: NextApiRespon
   // Update the parameters in the database and format the response
   const updatedParameters = await Promise.all(
     parameters.map(async (param: RequestBodyParameter) => {
-      const parameterId = parseInt(param.paramId, 10);
+      const parameterId = parseToNumber(param.paramId);
 
       // Update the parameter value
       const updatedParameter = await PrismaClient.listingsParametersValue.update({
@@ -157,7 +154,7 @@ const updateListingParameters = async (req: CustomApiRequest, res: NextApiRespon
     })
   );
 
-  res.status(200).json(formatAPIResponse({ success: true, data: updatedParameters }));
+  res.status(200).json(formatAPIResponse({ updatedParameters }));
 };
 
 export default apiHandler()

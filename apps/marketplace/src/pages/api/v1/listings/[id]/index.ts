@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError } from '@inc/errors';
 import { formatSingleListingResponse, getQueryParameters } from '..';
-import { parseListingId } from '@/utils/api';
+import { parseListingId } from '../index';
 
 // -- Functions --//
 
