@@ -19,6 +19,7 @@ const DisplayResults = () => {
   const isMediumScreen = useMediaQuery(baseTheme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [sort, setSort] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
   const [negotiation, setNegotiation] = useState<string>('');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
@@ -33,7 +34,7 @@ const DisplayResults = () => {
     // Create object
     // Set items
     setItems([]);
-  }, [sort, negotiation, minPrice, maxPrice]);
+  }, [sort, category, negotiation, minPrice, maxPrice]);
 
   return (
     <Container maxWidth="lg">
@@ -42,6 +43,7 @@ const DisplayResults = () => {
           <Grid item xs={12} md={2} sx={{ width: '100%', marginTop: 2 }}>
             <FilterForm
               setSort={setSort}
+              setCategory={setCategory}
               setNegotiation={setNegotiation}
               setMinPrice={setMinPrice}
               setMaxPrice={setMaxPrice}
@@ -72,6 +74,7 @@ const DisplayResults = () => {
                   <Box sx={{ height: '100%', margin: 2 }}>
                     <FilterForm
                       setSort={setSort}
+                      setCategory={setCategory}
                       setNegotiation={setNegotiation}
                       setMinPrice={setMinPrice}
                       setMaxPrice={setMaxPrice}
