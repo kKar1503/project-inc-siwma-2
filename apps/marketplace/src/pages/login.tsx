@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
 
 const LoginForm = () => {
@@ -20,11 +20,8 @@ const LoginForm = () => {
 
   const router = useRouter();
 
-  const handleSubmit = async (event: {
-    preventDefault: () => void;
-    currentTarget: HTMLFormElement | undefined;
-  }) => {
-    event.preventDefault();
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const authResult = await signIn('credentials', {
       redirect: false,
       email,
@@ -35,6 +32,7 @@ const LoginForm = () => {
     } else {
       return router.push('/');
     }
+
     return authResult;
   };
 
@@ -60,8 +58,8 @@ const LoginForm = () => {
           <Box
             sx={({ shape, shadows, spacing, palette }) => ({
               boxShadow: shadows[5],
-              px: '15vh',
-              pb: '25vh',
+              px: '10rem',
+              pb: '15rem',
               pt: spacing(3),
               position: 'relative',
               bgcolor: palette.common.white,
