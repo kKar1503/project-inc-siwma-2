@@ -1,6 +1,7 @@
 import { apiHandler } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, AuthError } from '@inc/errors';
+import { formatChatResponse } from '..';
 
 function parseChatId($uuid: string) {
   // Check if $uuid is defined
@@ -55,9 +56,5 @@ export default apiHandler().get(async (req, res) => {
   }
 
   // Return the result
-  res.status(200).json({
-    id: chat.id,
-    seller: chat.seller,
-    buyer: chat.buyer,
-  });
+  res.status(200).json(formatChatResponse(chat));
 });

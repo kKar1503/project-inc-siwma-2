@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
-import { NotFoundError, ParamError, AuthError } from '@inc/errors';
+import { ParamError, SameBuyerSellerError, NotSellerError, SellerNotOwnerError, ChatRoomExistsError } from '@inc/errors';
 
 // -- Type definitions -- //
 export type ChatResponse = {
@@ -17,44 +17,31 @@ export type ChatResponse = {
 
 // -- Helper functions -- //
 export function formatChatResponse(chatData: any) {
-  return formatAPIResponse(chatData);
+  return {
+    id: chatData.id,
+    seller: chatData.seller,
+    buyer: chatData.buyer,
+  };
 }
 
 /**
  * Zod schema for the POST request body
  */
 export const chatRequestBody = z.object({
-  sellerId: z.string().refine((value) => value.trim() !== '', {
-    message: 'invalid seller id',
-  }),
-  buyerId: z.string().refine((value) => value.trim() !== '', {
-    message: 'invalid buyer id',
-  }),
-  listingId: z.number().refine((value) => !Number.isNaN(value), {
-    message: 'invalid listing id',
-  }),
+  sellerId: z.string().uuid(),
+  buyerId: z.string().uuid(),
+  listingId: z.number(),
 });
 
 export default apiHandler().post(async (req, res) => {
   // Parse and validate the request body
-  const parseResult = chatRequestBody.safeParse(req.body);
+  const parseResult = chatRequestBody.parse(req.body);
 
-  if (!parseResult.success) {
-    const error = parseResult.error.issues[0];
-    const paramName = error.path[0] ? error.path[0].toString() : 'Unknown';
-    const detail = error.message || 'Invalid Unknown supplied';
+  const data = parseResult;
 
-    const customError = new ParamError(paramName);
-    customError.message = detail;
-    customError.status = ParamError.status;
-    customError.code = ParamError.code;
-    throw customError;
-  }
-
-  const data = parseResult.data;
-
+  // Ensure the buyer and seller are not the same
   if (data.sellerId === data.buyerId) {
-    throw new ParamError('buyerId and sellerId');
+    throw new SameBuyerSellerError();
   }
 
   // Verify the user is not creating a chat room for their own listing
@@ -63,21 +50,22 @@ export default apiHandler().post(async (req, res) => {
   });
 
   if (!listing) {
-    throw new NotFoundError('Listing');
-  }
-
-  if (!req.token || !req.token.user) {
-    throw new AuthError();
+    throw new ParamError('Listing');
   }
 
   // Ensure the authenticated user is the buyer
-  if (data.buyerId !== req.token.user.id) {
+  if (!req.token || !req.token.user || data.buyerId !== req.token.user.id) {
     throw new ParamError('buyerId');
+  }
+
+  // Ensure the authenticated user is not the seller
+  if (req.token?.user.id === data.sellerId) {
+    throw new NotSellerError();
   }
 
   // Ensure the sellerId matches the listing owner
   if (data.sellerId !== listing.owner) {
-    throw new ParamError('sellerId');
+    throw new SellerNotOwnerError();
   }
 
   // Check if a chat room with the same buyer and seller already exists
@@ -85,15 +73,13 @@ export default apiHandler().post(async (req, res) => {
     where: {
       buyer: data.buyerId,
       seller: data.sellerId,
+      listing: data.listingId,
     },
   });
 
   // If a chat room with the same buyer and seller exists, return an error response
   if (existingChat) {
-    return res.status(400).json({
-      success: false,
-      error: 'A chat room with the same buyer and seller already exists',
-    });
+    throw new ChatRoomExistsError();
   }
 
   // Insert the data into the database and create a new chat room
@@ -106,5 +92,5 @@ export default apiHandler().post(async (req, res) => {
   });
 
   // Return the result
-  res.status(201).json({ room: result.id });
+  res.status(201).json(formatAPIResponse({ room: result.id }));
 });

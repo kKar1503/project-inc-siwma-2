@@ -1,15 +1,31 @@
-import { apiHandler } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError, AuthError } from '@inc/errors';
+import { ForbiddenError } from '@inc/errors';
+import { z } from 'zod';
 
-async function getUserChats(userId: string, lastIdPointer: string, limit: number) {
+// Zod schema for the GET request query parameters
+const chatRequestQuery = z.object({
+  id: z.string().uuid(),
+  lastIdPointer: z.string().uuid().optional(),
+  limit: z
+    .string()
+    .optional()
+    .transform((value) => (value ? parseToNumber(value) : 10))
+    .refine((value) => value >= 1 && value <= 10, {
+      message: 'Invalid limit',
+    }),
+});
+
+async function getUserChats(userId: string, lastIdPointer: string | undefined, limit: number) {
   // Fetch chats for the user
   const chats = await PrismaClient.rooms.findMany({
     where: {
       OR: [{ seller: userId }, { buyer: userId }],
-      id: {
-        gt: lastIdPointer,
-      },
+      id: lastIdPointer
+        ? {
+            gt: lastIdPointer,
+          }
+        : undefined,
     },
     orderBy: {
       id: 'asc',
@@ -21,25 +37,12 @@ async function getUserChats(userId: string, lastIdPointer: string, limit: number
 }
 
 export default apiHandler().get(async (req, res) => {
-  // Parse and validate user id provided
-  const userId = req.query.id as string;
-
-  if (!userId) {
-    throw new NotFoundError('User not found');
-  }
-
-  // Parse and validate lastIdPointer and limit provided
-  const lastIdPointer = (req.query.lastIdPointer as string) || '0';
-  const limit = Math.min(Number(req.query.limit) || 10, 10);
-
-  // Check if the user is logged in
-  if (!req.token || !req.token.user) {
-    throw new AuthError();
-  }
+  // Parse and validate user id, lastIdPointer and limit
+  const { id: userId, lastIdPointer, limit } = chatRequestQuery.parse(req.query);
 
   // Verify if the user is the one requesting
-  if (req.token.user.id !== userId) {
-    throw new AuthError();
+  if (!req.token || !req.token.user || req.token.user.id !== userId) {
+    throw new ForbiddenError();
   }
 
   // Fetch chats
@@ -55,5 +58,5 @@ export default apiHandler().get(async (req, res) => {
   }));
 
   // Return the result
-  res.status(200).json(formattedChats);
+  res.status(200).json(formatAPIResponse(formattedChats));
 });
