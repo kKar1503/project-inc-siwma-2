@@ -51,7 +51,7 @@ export class SellerNotOwnerError extends ChatError {
 
 export class ChatRoomExistsError extends ChatError {
   public static readonly status = 422;
-  public static readonly code = 5002;
+  public static readonly code = 5004;
 
   constructor() {
     super();
