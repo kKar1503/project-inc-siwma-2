@@ -1,11 +1,16 @@
 import {
-  BaseError, BucketConnectionFailure,
-  ErrorJSON, InvalidBucketName, ObjectCollision, ObjectNotFound,
+  BaseError,
+  BucketConnectionFailure,
+  ErrorJSON,
+  InvalidBucketName,
+  ObjectCollision,
+  ObjectNotFound,
   ParamError,
   ParamInvalidError,
   ParamRequiredError,
   ParamTypeError,
-  UnknownError, UnknownS3Error,
+  UnknownError,
+  UnknownS3Error,
 } from '@inc/errors';
 
 import { NextApiResponse } from 'next';
@@ -42,6 +47,18 @@ function handleZodError(error: ZodError) {
       return new ParamInvalidError(err.path[0].toString(), err.received, err.options).toJSON();
     }
 
+    // Check if the zod error has a custom code
+    if (err.code === 'custom') {
+      // Yes it does, return the response
+      if (err.params) {
+        return err.params.response;
+      }
+
+      // The custom zod error doesn't have a response param attached to it
+      // Something is wrong, return a unknown error
+      return new UnknownError().toJSON();
+    }
+
     // Unrecognised zod error
     return new ParamError().toJSON();
   });
@@ -75,11 +92,10 @@ function handleS3Error(error: S3Error) {
       return new ObjectNotFound();
     case 'ObjectConflict':
       return new ObjectCollision();
-      default:
-        return new UnknownS3Error();
+    default:
+      return new UnknownS3Error();
   }
 }
-
 
 /**
  * Error handler
