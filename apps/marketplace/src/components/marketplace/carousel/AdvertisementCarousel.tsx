@@ -10,73 +10,26 @@ import { autoPlay } from 'react-swipeable-views-utils';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-const CarouselImageData = [
-  {
-    id: '1',
-    companyId: '1',
-    image:
-      'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-    active: 'true',
-    startDate: '2023-04-18 13:25:45',
-    endDate: '2023-05-18 13:25:45',
-    description: 'Advertisement Description',
-    link: 'https://example.com',
-  },
-  {
-    id: '2',
-    companyId: '2',
-    image:
-      'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-    active: 'true',
-    startDate: '2023-04-18 13:25:45',
-    endDate: '2023-05-18 13:25:45',
-    description: 'Advertisement Description',
-    link: 'https://example.com',
-  },
-  {
-    id: '3',
-    companyId: '3',
-    image:
-      'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
-    active: 'true',
-    startDate: '2023-04-18 13:25:45',
-    endDate: '2023-05-18 13:25:45',
-    description: 'Advertisement Description',
-    link: 'https://example.com',
-  },
-  {
-    id: '4',
-    companyId: '4',
-    image:
-      'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-    active: 'true',
-    startDate: '2023-04-18 13:25:45',
-    endDate: '2023-05-18 13:25:45',
-    description: 'Advertisement Description',
-    link: 'https://example.com',
-  },
-];
+interface Image {
+  id: string;
+  companyId: string;
+  image: string;
+  active: boolean;
+  startDate: string;
+  endDate: number;
+  link: string;
+}
 
-export const getServerSideProps = async ({ query }: { query: any }) => {
-  // api call to get advertisement details go here
-  // if advertisement does not exist, nothing will display
-
-  const { id } = query;
-
-  const data = CarouselImageData[id - 1];
-
-  return {
-    props: {
-      data,
-    },
-  };
+export type AdvertisementCarouselProps = {
+  data: Image[];
 };
 
-const Carousel = () => {
+const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
   const theme = useTheme();
-  // when filter/sorts are called use set states to set the new listings/reviews again
+
+  const maxSteps = data.length;
+
   const [activeStep, setActiveStep] = React.useState(0);
-  const maxSteps = CarouselImageData.length;
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -98,7 +51,7 @@ const Carousel = () => {
         onChangeIndex={handleStepChange}
         enableMouseEvents
       >
-        {CarouselImageData.map((step, index) => (
+        {data.map((step, index) => (
           <div>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
@@ -173,4 +126,4 @@ const Carousel = () => {
   );
 };
 
-export default Carousel;
+export default AdvertisementCarousel;
