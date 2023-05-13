@@ -1,7 +1,7 @@
 import client from '@inc/db';
 import sibClient, { changeAPIKey } from './sib';
 import getAPIKey from './apiKey/apiKeys';
-import { BulkEmailRequestBody } from './templates/sibTemplates';
+import { BulkEmailRequestBody } from './templates';
 import { BulkEmailResponseBody } from './types/BulkEmailResponseBody';
 
 /* This function sends emails to multiple recipients.
@@ -9,7 +9,7 @@ import { BulkEmailResponseBody } from './types/BulkEmailResponseBody';
  * You should use this function to send emails to multiple users at once instead of using a single email function multiple times.
  */
 
-export default async function sendNotificationEmail(
+export default async function sendEmails(
   parameters: BulkEmailRequestBody
 ): Promise<BulkEmailResponseBody> {
   const data: BulkEmailRequestBody = parameters;
