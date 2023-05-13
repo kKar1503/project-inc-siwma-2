@@ -8,15 +8,8 @@ import Typography from '@mui/material/Typography';
 import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
-import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
-  palette: {
-    text: {
-      primary: '#013654',
-    },
-  },
-});
+
 
 type ComponentProps = {
   open: boolean;
@@ -132,10 +125,10 @@ const Modal = ({
                   id="transition-modal-title"
                   variant="h6"
                   component="h2"
-                  sx={{
-                    color: theme.palette.text.primary,
+                  sx={({  palette }) => ({
+                    color: palette.info[800],
                     fontSize: { xs: 'subtitle2', sm: 'h5' },
-                  }}
+                  })}
                 >
                   {title}
                 </Typography>

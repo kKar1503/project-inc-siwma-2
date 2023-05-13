@@ -88,10 +88,10 @@ const ModalInput = ({
                   id="transition-modal-title"
                   variant="h6"
                   component="h2"
-                  sx={{
-                    color: theme.palette.text.primary,
-                    fontSize: { xs: 'subtitle1', sm: 'h5' },
-                  }}
+                  sx={({ palette }) => ({
+                    color: palette.info[800],
+                    fontSize: { xs: 'subtitle2', sm: 'h5' },
+                  })}
                 >
                   {title}
                 </Typography>

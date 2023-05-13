@@ -9,7 +9,6 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { createTheme } from '@mui/material/styles';
 
 type ComponentProps = {
   open: boolean;
@@ -46,14 +45,6 @@ const ModalSelect = ({
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
 
-  const theme = createTheme({
-    palette: {
-      text: {
-        primary: '#013654',
-      },
-    },
-  });
-
   return (
     <div>
       <Modal
@@ -89,10 +80,10 @@ const ModalSelect = ({
                   id="transition-modal-title"
                   variant="h6"
                   component="h2"
-                  sx={{
-                    color: '#013654',
-                    fontSize: { xs: 'subtitle1', sm: 'h5' },
-                  }}
+                  sx={({ palette }) => ({
+                    color: palette.info[800],
+                    fontSize: { xs: 'subtitle2', sm: 'h5' },
+                  })}
                 >
                   {title}
                 </Typography>
