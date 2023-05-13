@@ -40,7 +40,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
   };
 
   return (
-    <Box sx={{ maxWidth: 'max', maxHeight: 300 }}>
+    <Box sx={{ maxHeight: 400, marginRight: 'auto', marginLeft:'auto' }}>
       <AutoPlaySwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={activeStep}
@@ -58,25 +58,25 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
                 <Box
                   component="img"
                   sx={{
-                    height: 300,
+                    height: 400,
                     display: 'block',
-                    maxWidth: 'max',
+                    width: 1000,
                     overflow: 'hidden',
-                    width: '100%',
                     opacity: '30%',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                   }}
                   src={step.url}
                 />
                 <Box
                   component="img"
                   sx={{
-                    height: 300,
                     display: 'block',
-                    maxWidth: 'max',
+                    height: 400,
                     overflow: 'hidden',
-                    width: 'min',
+                    width: 'auto',
                     position: 'relative',
-                    bottom: 300,
+                    bottom: 400,
                     marginLeft: 'auto',
                     marginRight: 'auto',
                     zIndex: 'tooltip',
@@ -91,7 +91,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
       <MobileStepper
         sx={{
           position: 'relative',
-          bottom: 340,
+          bottom: 440,
           backgroundColor: 'transparent',
         }}
         steps={maxSteps}
@@ -100,7 +100,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         nextButton={
           <Button
             size="small"
-            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
+            sx={{ borderRadius: 12, position: 'relative', bottom: 180, right: 780 }}
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
           >
@@ -110,7 +110,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         backButton={
           <Button
             size="small"
-            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
+            sx={{ borderRadius: 12, position: 'relative', bottom: 180, left: 780 }}
             onClick={handleBack}
             disabled={activeStep === 0}
           >
