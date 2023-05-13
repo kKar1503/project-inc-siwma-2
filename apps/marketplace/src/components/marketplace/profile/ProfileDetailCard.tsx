@@ -37,7 +37,7 @@ const ProfileDetailCard = ({
   rating,
   reviews,
 }: ProfileDetailCardProps) => (
-  <Card sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+  <Card sx={{ width: '30%', height: '100%', display: 'flex', flexDirection: 'column' }}>
     <CardHeader
       titleTypographyProps={{
         fontSize: 16,
