@@ -141,7 +141,7 @@ const ProfileDetailCard = ({
       <Box sx={{ width: '98%' }}>
         <Button
           component={Link}
-          href={`/editprofile/${ownerId}`}
+          href={`/profile/${ownerId}/edit-profile`}
           variant="contained"
           type="submit"
           sx={({ spacing }) => ({
