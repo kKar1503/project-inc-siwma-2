@@ -1,4 +1,11 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import {
+  apiHandler,
+  formatAPIResponse,
+  parseToNumber,
+  zodParseToBoolean,
+  zodParseToInteger,
+  zodParseToNumber,
+} from '@/utils/api';
 import PrismaClient, { Listing, ListingType, Prisma } from '@inc/db';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
@@ -42,36 +49,14 @@ export type ListingWithParameters = Listing & {
 };
 
 export const getQueryParameters = z.object({
-  lastIdPointer: z
-    .string()
-    .coerce.number()
-    .optional(),
-  limit: z
-    .string()
-    .transform((val) => parseInt(val))
-    .optional(),
+  lastIdPointer: z.string().transform(zodParseToInteger).optional(),
+  limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
-  includeParameters: z
-    .string()
-    .transform((val) => val.toLowerCase() === 'true')
-    .default(false)
-    .optional(),
-  category: z
-    .string()
-    .transform((val) => parseInt(val))
-    .optional(),
-  negotiable: z
-    .string()
-    .transform((val) => val.toLowerCase() === 'true')
-    .optional(),
-  minPrice: z
-    .string()
-    .transform((val) => parseFloat(val))
-    .optional(),
-  maxPrice: z
-    .string()
-    .transform((val) => parseFloat(val))
-    .optional(),
+  includeParameters: z.string().transform(zodParseToBoolean).optional().default('false'),
+  category: z.string().transform(zodParseToInteger).optional(),
+  negotiable: z.string().transform(zodParseToBoolean).optional(),
+  minPrice: z.string().transform(zodParseToNumber).optional(),
+  maxPrice: z.string().transform(zodParseToNumber).optional(),
   sortBy: z.string().optional(),
 });
 
@@ -144,9 +129,9 @@ export default apiHandler()
       },
       name: queryParams.matching
         ? {
-          contains: queryParams.matching,
-          mode: 'insensitive',
-        }
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
         : undefined,
     };
 
@@ -211,15 +196,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value,
-              parameter: {
-                connect: {
-                  id: parseToNumber(parameter.paramId),
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value,
+                parameter: {
+                  connect: {
+                    id: parseToNumber(parameter.paramId, 'paramId'),
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
