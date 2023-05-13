@@ -33,6 +33,10 @@ const baseTheme = createTheme();
 const DisplayResults = ({ items }: ResultsProps) => {
   const isMediumScreen = useMediaQuery(baseTheme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [sort, setSort] = useState<string>('');
+  const [negotiation, setNegotiation] = useState<string>('');
+  const [minPrice, setMinPrice] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
@@ -43,7 +47,12 @@ const DisplayResults = ({ items }: ResultsProps) => {
       <Grid container spacing={2}>
         {!isMediumScreen && (
           <Grid item xs={12} md={2} sx={{ width: '100%', marginTop: 2 }}>
-            <FilterForm items={items} />
+            <FilterForm
+              setSort={setSort}
+              setNegotiation={setNegotiation}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+            />
           </Grid>
         )}
 
@@ -68,7 +77,12 @@ const DisplayResults = ({ items }: ResultsProps) => {
                 </Button>
                 <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
                   <Box sx={{ height: '100%', margin: 2 }}>
-                    <FilterForm items={items} />
+                    <FilterForm
+                      setSort={setSort}
+                      setNegotiation={setNegotiation}
+                      setMinPrice={setMinPrice}
+                      setMaxPrice={setMaxPrice}
+                    />
                   </Box>
                 </Drawer>
               </Grid>
