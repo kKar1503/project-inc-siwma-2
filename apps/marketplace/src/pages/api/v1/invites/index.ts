@@ -4,12 +4,12 @@ import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { DuplicateError } from '@inc/errors';
 import { validateEmail, validateName } from '@/utils/api/validate';
-import sendNotificationEmail from '@inc/send-in-blue/bulk-send-emails';
+import sendNotificationEmail from '@inc/send-in-blue/bulkSendEmails';
 import {
   getContentFor,
   BulkInviteEmailRequestBody,
   EmailTemplate,
-} from '@inc/send-in-blue/templates/sib-templates';
+} from '@inc/send-in-blue/templates/sibTemplates';
 
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
