@@ -1,90 +1,162 @@
-import { useState } from 'react';
+import React , { useState, SyntheticEvent } from 'react';
 import { Box } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { SearchBar } from '@inc/ui'; 
+import SearchBar from '@inc/ui/lib/components/SearchBar';
 
-const ProfilePageFilter = () => {
+const ProfilePageFilter: React.FC<{
+  setFilter: (value: string) => void,
+  setSort: (value: string) => void,
+}> = ({ setFilter, setSort }) => {
 
-  const [filter, setFilter] = useState('');
-  const [sort, setSort] = useState('');
+  const filterHandler = (event: SelectChangeEvent<unknown>) => {
+    setFilter(event.target.value as string);
+  }
 
-  const handleFilter = (event: SelectChangeEvent) => {
-    setFilter(event.target.value);
-  };
-
-  const handleSort = (event: SelectChangeEvent) => {
-    setSort(event.target.value);
-  };
-
+  const sortHandler = (event: SelectChangeEvent<unknown>) => {
+    setSort(event.target.value as string);
+  }
 
   return (
-  <Box
-    display='flex' 
-    justifyContent='center' 
-    alignItems='center'  
-    width='60%'
-    sx={{ flexGrow: 1,}}>
-    <SearchBar/>
-    
+    <Box display="flex" justifyContent="center" alignItems="center" width="60%" sx={{ flexGrow: 1 }}>
+      <SearchBar />
 
-    <Typography
-      noWrap
-      fontSize={10}
-      color='#FFFFF'
-    >
-      Filter:
-    </Typography>
+      <Typography noWrap fontSize={11}>
+        Filter:
+      </Typography>
 
-    <Select
-        labelId="demo-select-small-label"
-        id="demo-select-small"
-        value={filter}
-        onChange={handleFilter}
+      <Select
+        onChange={filterHandler}
         sx={{
-            color: '#212121',
-            width: '7rem',
-            height:'1.5rem',
-            marginLeft: '1rem',
-            marginRight: '1rem',
-            fontSize: '10px',
-          }}
-    >
-      <MenuItem value={1} sx={{fontSize: '10px',}}>All Listings</MenuItem>
-      <MenuItem value={2} sx={{fontSize: '10px',}}>Buying</MenuItem>
-      <MenuItem value={3} sx={{fontSize: '10px',}}>Selling</MenuItem>
-    </Select>
+          color: '#212121',
+          width: '7rem',
+          height: '1.5rem',
+          marginLeft: '1rem',
+          marginRight: '1rem',
+          fontSize: '10px',
+        }}
+      >
+        <MenuItem value="All Listings" sx={{ fontSize: '10px' }}>
+          All Listings
+        </MenuItem>
+        <MenuItem value="Buying" sx={{ fontSize: '10px' }}>
+          Buying
+        </MenuItem>
+        <MenuItem value="Selling" sx={{ fontSize: '10px' }}>
+          Selling
+        </MenuItem>
+      </Select>
 
-    <Typography
-      noWrap
-      fontSize={10}
-      color='#FFFFF'
+      <Typography noWrap fontSize={11} color="#FFFFF">
+        Sort:
+      </Typography>
 
-    >
-      Sort:
-    </Typography>
-
-    <Select
-        labelId="demo-select-small-label"
-        id="demo-select-small"
-        value={sort}
-        onChange={handleSort}
+      <Select
+        onChange={sortHandler}
         sx={{
-            color: '#212121',
-            width: '7rem',
-            height:'1.5rem',
-            marginLeft: '1rem',
-            marginRight: '1rem',
-            fontSize: '10px',
-          }}
-    >
-      <MenuItem value={1} sx={{fontSize: '10px',}}>Newest</MenuItem>
-      <MenuItem value={2} sx={{fontSize: '10px',}}>Oldest</MenuItem>
-    </Select>
-
-  </Box>
-  )
-}
+          width: '7rem',
+          height: '1.5rem',
+          marginLeft: '1rem',
+          marginRight: '1rem',
+        }}
+      >
+        <MenuItem value="Newest" sx={{ fontSize: '10px' }}>
+          Newest
+        </MenuItem>
+        <MenuItem value="Oldest" sx={{ fontSize: '10px' }}>
+          Oldest
+        </MenuItem>
+      </Select>
+    </Box>
+  );
+};
 
 export default ProfilePageFilter;
+
+
+// import { useState, SyntheticEvent } from 'react';
+// import { Box } from '@mui/material';
+// import Typography from '@mui/material/Typography';
+// import Select from '@mui/material/Select';
+// import MenuItem from '@mui/material/MenuItem';
+// import SearchBar from '@inc/ui/lib/components/SearchBar';    
+
+// const ProfilePageFilter : () => Element = ({
+//   setFilter, 
+//   setSort,
+// }: {
+//   setFilter: (arg0: string) => void,
+//   setSort: (arg0: string) => void,
+// }) => {
+
+//   const filterHandler = (event: SyntheticEvent<HTMLSelectElement>) => {
+//     setFilter(event.currentTarget.value);
+//   }
+
+//   const sortHandler = (event: SyntheticEvent<HTMLSelectElement>) => {
+//     setSort(event.currentTarget.value)
+//   }
+
+//   return (
+
+//     <Box
+//       display='flex' 
+//       justifyContent='center' 
+//       alignItems='center'  
+//       width='60%'
+//       sx={{ flexGrow: 1,}}
+//     >
+//       <SearchBar/>
+    
+
+//       <Typography
+//         noWrap
+//         fontSize={11}
+//       >
+//         Filter:
+//       </Typography>
+
+//       <Select
+//           onSelect={filterHandler}
+//           sx={{
+//               color: '#212121',
+//               width: '7rem',
+//               height:'1.5rem',
+//               marginLeft: '1rem',
+//               marginRight: '1rem',
+//               fontSize: '10px',
+//             }}
+//       >
+//         <MenuItem value='All Listings' sx={{fontSize: '10px',}}>All Listings</MenuItem>
+//         <MenuItem value='Buying' sx={{fontSize: '10px',}}>Buying</MenuItem>
+//         <MenuItem value='Selling' sx={{fontSize: '10px',}}>Selling</MenuItem>
+//       </Select>
+
+//       <Typography
+//         noWrap
+//         fontSize={11}
+//         color='#FFFFF'
+
+//       >
+//         Sort:
+//       </Typography>
+
+//       <Select
+//         onSelect={sortHandler}
+//         sx={{        
+//           width: '7rem',
+//           height:'1.5rem',
+//           marginLeft: '1rem',
+//           marginRight: '1rem',
+//         }}
+//       >
+//         <MenuItem value='Newest' sx={{fontSize: '10px',}}>Newest</MenuItem>
+//         <MenuItem value='Oldest' sx={{fontSize: '10px',}}>Oldest</MenuItem>
+//       </Select>
+
+//     </Box>
+//   )
+// }
+
+// export default ProfilePageFilter;
