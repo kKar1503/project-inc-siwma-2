@@ -2,8 +2,8 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError } from '@inc/errors';
 import { ListingType } from '@prisma/client';
-import { formatSingleListingResponse, getQueryParameters, parseListingId } from '..';
 import z from 'zod';
+import { formatSingleListingResponse, getQueryParameters, parseListingId } from '..';
 
 // -- Functions --//
 
