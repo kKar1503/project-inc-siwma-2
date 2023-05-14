@@ -189,7 +189,7 @@ model Messages {
   room                          String      @db.Uuid
   read                          Boolean     @default(false)
   createdAt                     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  contentType                   ContentType
+  contentType                   ContentType @map("content_type")
   offer                         Int?
   content                       String
   offersMessagesOfferTooffers   Offers?     @relation("messagesOfferTooffers", fields: [offer], references: [id], onDelete: Cascade, map: "messages_fk")
@@ -225,7 +225,7 @@ model Offers {
 model Parameter {
   id                       Int                       @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
   type                     ParameterType
-  datatype                 DataType
+  dataType                 DataType                  @map("data_type")
   name                     String
   displayName              String                    @map("display_name")
   active                   Boolean                   @default(true)
