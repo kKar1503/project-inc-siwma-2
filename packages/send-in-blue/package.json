@@ -2,6 +2,7 @@
   "name": "@inc/send-in-blue",
   "version": "0.0.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.js",
   "scripts": {
     "build": "rimraf dist && tsc"
   },

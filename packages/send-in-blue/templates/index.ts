@@ -25,7 +25,7 @@ export function getContentFor(template: EmailTemplate): string {
         Thank you,
         The SIWMA Marketplace Team
         </body>
-        </html> 
+        </html>
         `;
     case EmailTemplate.NOTIFICATION:
       return `
@@ -44,7 +44,7 @@ export function getContentFor(template: EmailTemplate): string {
         <br>
         <a href="{{params.notificationSettingsUrl}}">Click to adjust your notification settings</a>
         </body>
-        </html> 
+        </html>
         `;
   }
 }
@@ -57,9 +57,9 @@ export function getContentFor(template: EmailTemplate): string {
 
 // When adding a new template, build on top of this class.
 export abstract class BulkEmailRequestBody {
-  htmlContent: string; // HTML content of the email
-  subject: string; // Subject of the email
-  messageVersions: {
+  abstract htmlContent: string; // HTML content of the email
+  abstract subject: string; // Subject of the email
+  abstract messageVersions: {
     to: {
       email: string; // Email address of the recipient
       name: string; // Name of the recipient (to be shown in the email's recipient field)
