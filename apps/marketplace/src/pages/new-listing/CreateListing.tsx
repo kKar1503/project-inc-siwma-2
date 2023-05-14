@@ -43,6 +43,10 @@ const CreateListingPage = () => {
     // implement form submission logic here
   };
 
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <Container>
       <form onSubmit={handleSubmit}>
@@ -67,7 +71,7 @@ const CreateListingPage = () => {
             </Typography>
           </Grid>
           <Grid item xs={2} md={2} justifyContent="flex-end" sx={{ width: '100%' }}>
-            <Button variant="contained" type="submit">
+            <Button variant="contained" type="submit" onClick={handleCancel}>
               Cancel Listing
             </Button>
           </Grid>

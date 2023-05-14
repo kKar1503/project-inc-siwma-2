@@ -42,6 +42,10 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
     setPreivewImages([]);
   };
 
+  const openFullImage = (url: string) => {
+    window.open(url, '_blank');
+  };
+
   const renderImages = () => {
     if (images.length === 0) return null;
 
@@ -54,14 +58,15 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
                 src={preview}
                 alt={file.name}
                 style={{ width: '100px', height: '100px', paddingRight: '1rem' }}
+                onClick={() => openFullImage(preview)}
               />
               <IconButton
                 aria-label="delete"
                 size="small"
                 sx={{
                   position: 'absolute',
-                  top: 0,
-                  right: 0,
+                  top: -15,
+                  right: -20,
                   zIndex: 2000,
                   color: 'primary.main',
                   bgcolor: 'background.paper',
