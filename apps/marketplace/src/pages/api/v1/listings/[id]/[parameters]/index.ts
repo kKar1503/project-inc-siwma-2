@@ -1,8 +1,7 @@
 import { NextApiResponse } from 'next';
 import {
-  apiHandler, formatAPIResponse, parseToNumber, zodParseToBoolean,
+  apiHandler, formatAPIResponse,
   zodParseToInteger,
-  zodParseToNumber,
 } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError } from '@inc/errors';
@@ -10,6 +9,7 @@ import * as z from 'zod';
 import { APIRequestType } from '@/types/api-types';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
+
 
 // -- Functions --//
 function formatParametersResponse(parameters: { parameterId: number; value: string }[]): any[] {
@@ -50,10 +50,12 @@ const parameterSchema = z.object({
   value: z.string(),
 });
 
+
 type RequestBodyParameter = {
-  paramId: string;
+  paramId: number;
   value: string;
 };
+
 
 const createListingParameter = async (req: APIRequestType, res: NextApiResponse) => {
   const id = parseListingId(req.query.id as string);
@@ -82,7 +84,7 @@ const createListingParameter = async (req: APIRequestType, res: NextApiResponse)
       },
       parameter: {
         connect: {
-          id: parseToNumber(paramId, 'paramId'),
+          id: paramId,
         },
       },
     },
@@ -122,7 +124,7 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
 
   // Update the parameters in the database and format the response
   const updatePromises = parameters.map((param: RequestBodyParameter) => {
-    const parameterId = parseToNumber(param.paramId, 'paramId');
+    const parameterId = param.paramId;
 
     // Update the parameter value
     return PrismaClient.listingsParametersValue.update({
