@@ -36,7 +36,7 @@ export async function checkListingExists($id: string | number) {
   return listing;
 }
 
-interface ParameterValue {
+interface Parameter {
   paramId: string;
   value: string;
 }
@@ -56,15 +56,19 @@ export default apiHandler()
   })
   .put(async (req, res) => {
     const queryParams = getQueryParameters.parse(req.query);
-
     const id = parseListingId(req.query.id as string);
-    const userPermissions = req.token?.user?.permissions;
-
-    if (!userPermissions || userPermissions < 1) {
-      throw new ForbiddenError();
-    }
+    const userId = req.token?.user?.id;
+    const userRole = req.token?.user?.permissions;
 
     const listing = await checkListingExists(id);
+
+    const isOwner = listing.owner === userId;
+    const isAdmin = userRole && userRole >= 1;
+    const sameCompany = req.token?.user?.company === listing.users.companyId.toString();
+
+    if (!isOwner && !isAdmin && !sameCompany) {
+      throw new ForbiddenError();
+    }
 
     // Update the listing with the request data
     const data = req.body;
@@ -92,8 +96,8 @@ export default apiHandler()
     });
 
     if (data.listingsParametersValues) {
-      for (const parameter of data.listingsParametersValues) {
-        await PrismaClient.listingsParametersValue.upsert({
+      const parameterUpdates = data.listingsParametersValues.map((parameter: Parameter) => {
+        return PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {
               parameterId: parseInt(parameter.paramId),
@@ -107,7 +111,9 @@ export default apiHandler()
             listingId: id,
           },
         });
-      }
+      });
+    
+      await PrismaClient.$transaction(parameterUpdates);
     }
 
     const completeListing = await PrismaClient.listing.findUnique({
@@ -122,6 +128,10 @@ export default apiHandler()
       },
     });
 
+    if (!completeListing) {
+      throw new NotFoundError(`Listing with id '${id}' not found.`);
+    }
+
     res
       .status(200)
       .json(
@@ -132,9 +142,16 @@ export default apiHandler()
   })
   .delete(async (req, res) => {
     const id = parseListingId(req.query.id as string);
-    const userPermissions = req.token?.user?.permissions;
+    const userId = req.token?.user?.id;
+    const userRole = req.token?.user?.permissions;
 
-    if (!userPermissions || userPermissions < 1) {
+    const listing = await checkListingExists(id);
+
+    const isOwner = listing.owner === userId;
+    const isAdmin = userRole && userRole >= 1;
+    const sameCompany = req.token?.user?.company === listing.users.companyId.toString();
+
+    if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
     }
 
