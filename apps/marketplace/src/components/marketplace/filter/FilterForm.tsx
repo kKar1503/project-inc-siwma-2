@@ -79,7 +79,7 @@ const FilterForm = ({
       <FormLabel sx={{ fontWeight: 600 }}>Category</FormLabel>
       <Select
         sx={{ height: '45px', width: '100%' }}
-        onChange={(e: SelectChangeEvent<string>) => setCategoryOption(e.target.value as string)}
+        onChange={(e) => setCategoryOption(e.target.value as string)}
         value={categoryOption as string}
       >
         {categoryOptions.map((option) => (
