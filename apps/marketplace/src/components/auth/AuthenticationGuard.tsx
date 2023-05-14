@@ -19,14 +19,13 @@ const AuthenticationGuard = ({
   disallowNonAuthenticatedFallback,
   allowAuthenticated,
   allowNonAuthenticated,
-}: AuthenticationGuardProps) => {
+}: AuthenticationGuardProps) =>
   // useUser() uses useSessionContext() internally and returns the user object
   // We want to ensure that the user object is derived from a single source (The context),
   // so if the useUser() hook were to change, there won't be any unexpected issues
 
   // TODO: Someone please work towards this.
-  // eslint-disable-next-line no-unused-vars
-  const { status } = useSession();
+  // const { status } = useSession();
 
   // if (allowAuthenticated && allowNonAuthenticated) {
   //   return children;
@@ -43,7 +42,7 @@ const AuthenticationGuard = ({
   // }
 
   // All checks passed
-  return children;
-};
+  children
+
 
 export default AuthenticationGuard;
