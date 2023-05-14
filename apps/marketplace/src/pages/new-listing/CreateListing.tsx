@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
-import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import ListingTypeForm from '@/components/marketplace/createListing/ListingTypeForm';
@@ -19,7 +19,7 @@ const CreateListingPage = () => {
   const [category, setCategory] = useState<string>('');
   const [images, setImages] = useState<ImageProps[]>([]);
   const [parameters, setParameters] = useState<ParameterFormProps[]>([]);
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<number>();
   const [negotiable, setNegotiable] = useState<boolean>(false);
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
@@ -37,55 +37,63 @@ const CreateListingPage = () => {
     console.log(`Description: ${description}`);
   }, [listingType, category, images, parameters, price, negotiable, unitPrice, title, description]);
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // implement form submission logic here
+  };
+
   return (
     <Container>
-      <Grid
-        container
-        spacing={2}
-        boxShadow={5}
-        alignContent="center"
-        display="flex"
-        position="relative"
-        padding="1rem"
-        margin="1rem"
-      >
-        <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            Create Listing
-          </Typography>
-        </Grid>
-        <Grid item xs={10} md={10} justifyContent="flex-start" sx={{ width: '100%' }}>
-          <Typography variant="body1">
-            Create a buy or a sell listing to be shared on your profile.
-          </Typography>
-        </Grid>
-        <Grid item xs={2} md={2} justifyContent="flex-end" sx={{ width: '100%' }}>
-          <Button variant="contained" type="submit">
-            Cancel Listing
-          </Button>
-        </Grid>
-        <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-          <Divider />
-        </Grid>
+      <form onSubmit={handleSubmit}>
+        <Grid
+          container
+          spacing={2}
+          boxShadow={5}
+          alignContent="center"
+          display="flex"
+          position="relative"
+          padding="1rem"
+          margin="1rem"
+        >
+          <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              Create Listing
+            </Typography>
+          </Grid>
+          <Grid item xs={10} md={10} justifyContent="flex-start" sx={{ width: '100%' }}>
+            <Typography variant="body1">
+              Create a buy or a sell listing to be shared on your profile.
+            </Typography>
+          </Grid>
+          <Grid item xs={2} md={2} justifyContent="flex-end" sx={{ width: '100%' }}>
+            <Button variant="contained" type="submit">
+              Cancel Listing
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+            <Divider />
+          </Grid>
 
-        <ListingTypeForm setListingType={setListingType} />
-        <CategoryForm setCategory={setCategory} />
-        <ImageUploadForm setImages={setImages} />
-        <ParameterForm setParameters={setParameters} category={category} />
-        <ListingForm
-          setTitle={setTitle}
-          setPrice={setPrice}
-          setNegotiable={setNegotiable}
-          setUnitPrice={setUnitPrice}
-          setDescription={setDescription}
-        />
+          <ListingTypeForm setListingType={setListingType} />
+          <CategoryForm setCategory={setCategory} />
+          <ImageUploadForm setImages={setImages} />
+          <ParameterForm setParameters={setParameters} category={category} />
+          <ListingForm
+            setTitle={setTitle}
+            setPrice={setPrice}
+            setNegotiable={setNegotiable}
+            setUnitPrice={setUnitPrice}
+            setDescription={setDescription}
+          />
 
-        <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-          <Button variant="contained" type="submit" fullWidth sx={{ mt: '1rem' }}>
-            CREATE LISTING
-          </Button>
+          <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+            <Button variant="contained" type="submit" fullWidth sx={{ mt: '1rem' }}>
+              CREATE LISTING
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
+      </form>
     </Container>
   );
 };

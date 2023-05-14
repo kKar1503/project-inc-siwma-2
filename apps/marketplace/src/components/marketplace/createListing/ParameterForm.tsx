@@ -10,6 +10,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import MenuItem from '@mui/material/MenuItem';
+import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 type SetParameterProps = {
@@ -120,7 +121,7 @@ const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
         {displayParameters.length > 0 &&
           displayParameters.map((parameter: ParameterProps) => {
             switch (parameter.type) {
-              case 'WEIGHT':
+              case ParameterType.WEIGHT:
                 return (
                   <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
                     <OutlinedInput
@@ -137,7 +138,7 @@ const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
                     />
                   </Grid>
                 );
-              case 'DIMENSION':
+              case ParameterType.DIMENSION:
                 return (
                   <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
                     <TextField
@@ -149,7 +150,7 @@ const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
                     />
                   </Grid>
                 );
-              case 'TWO_CHOICES':
+              case ParameterType.TWO_CHOICES:
                 return (
                   <Grid item xs={12} md={12} sx={{ width: '100%', my: 2 }}>
                     <FormLabel id="demo-radio-buttons-group-label">
@@ -171,7 +172,7 @@ const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
                     </RadioGroup>
                   </Grid>
                 );
-              case 'MANY_CHOICES':
+              case ParameterType.MANY_CHOICES:
                 return (
                   <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
                     <Select
@@ -190,7 +191,7 @@ const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
                     </Select>
                   </Grid>
                 );
-              case 'OPEN_ENDED':
+              case ParameterType.OPEN_ENDED:
                 return (
                   <Grid item xs={12} md={12} sx={{ width: '100%', my: 2 }}>
                     <TextField

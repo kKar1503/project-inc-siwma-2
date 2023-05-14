@@ -17,9 +17,9 @@ const CategoryForm = ({ setCategory }: SetCategoryProps) => {
     setCategoryOptions(['all', 'electronics', 'furniture', 'clothing', 'books', 'other']);
   }, []);
 
-  const handleCategoryChange = (event: SelectChangeEvent<string>) => {
-    setSelectedCategory(event.target.value as string);
-    setCategory(event.target.value as string);
+  const handleCategoryChange = (e: SelectChangeEvent<string>) => {
+    setSelectedCategory(e.target.value as string);
+    setCategory(e.target.value as string);
   };
 
   return (
