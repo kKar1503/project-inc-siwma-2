@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-// import SearchBar from '@inc/ui/lib/components/SearchBar';
+import SearchBar from '@inc/ui/lib/components/SearchBar';
 
 const ProfilePageFilter: React.FC<{
   setFilter: (value: string) => void,
@@ -20,7 +20,7 @@ const ProfilePageFilter: React.FC<{
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center" width="60%" sx={{ flexGrow: 1 }}>
-      {/* <SearchBar /> */}
+      <SearchBar />
 
       <Typography noWrap fontSize={11}>
         Filter:
