@@ -11,6 +11,7 @@ export type MakeOfferModalProps = {
 const MakeOfferModal = ({ open, setOpen, inputValue, setInputValue }: MakeOfferModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
+
   return (
     <ModalInput
       open={open}

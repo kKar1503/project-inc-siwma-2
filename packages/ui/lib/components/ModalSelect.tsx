@@ -8,6 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export type ComponentProps = {
   open: boolean;
@@ -43,6 +44,7 @@ const ModalSelect = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
+  const isMinWidth = useMediaQuery('(min-width:600px)');
 
   // on cancel, clear select value and close modal
   const handleCancel = () => {
@@ -139,10 +141,7 @@ const ModalSelect = ({
                       marginRight: '16px',
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: '7px 20px',
-                      '@media (max-width: 600px)': {
-                        padding: '2px 4px',
-                      },
+                      padding: isMinWidth ? '7px 20px' : '2px 4px',
                     })}
                     onClick={handleCancel}
                   >
@@ -158,10 +157,7 @@ const ModalSelect = ({
                       bgcolor: buttonColor,
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: '7px 20px',
-                      '@media (max-width: 600px)': {
-                        padding: '4px 8px',
-                      },
+                      padding: isMinWidth ? '7px 20px' : '2px 4px',
                     })}
                     onClick={() => setRightButtonState(true)}
                   >

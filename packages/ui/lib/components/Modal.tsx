@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export type ComponentProps = {
   open: boolean;
@@ -39,6 +40,7 @@ const Modal = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
+  const isMinWidth = useMediaQuery('(min-width:600px)');
 
   let iconType: ReactNode;
   switch (icon) {
@@ -134,10 +136,7 @@ const Modal = ({
                     marginRight: '16px',
                     width: 1 / 2,
                     marginTop: spacing(2),
-                    padding: '7px 20px',
-                    '@media (max-width: 600px)': {
-                      padding: '2px 4px',
-                    },
+                    padding: isMinWidth ? '7px 20px' : '2px 4px',
                   })}
                   onClick={() => setLeftButtonState(true)}
                 >
@@ -154,10 +153,7 @@ const Modal = ({
                   bgcolor: buttonColor,
                   width: 1 / 2,
                   marginTop: spacing(2),
-                  padding: '7px 20px',
-                  '@media (max-width: 600px)': {
-                    padding: '4px 8px',
-                  },
+                  padding: isMinWidth ? '7px 20px' : '2px 4px',
                 })}
                 onClick={() => setRightButtonState(true)}
               >

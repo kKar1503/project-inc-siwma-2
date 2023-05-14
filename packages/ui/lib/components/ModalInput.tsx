@@ -8,6 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FilledInput from '@mui/material/FilledInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export type ComponentProps = {
   open: boolean;
@@ -41,6 +42,8 @@ const ModalInput = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
+  const isMinWidth = useMediaQuery('(min-width:600px)');
+
   return (
     <div>
       <Modal
@@ -118,10 +121,7 @@ const ModalInput = ({
                         marginRight: '16px',
                         width: 1 / 2,
                         marginTop: spacing(2),
-                        padding: '7px 20px',
-                        '@media (max-width: 600px)': {
-                          padding: '2px 4px',
-                        },
+                        padding: isMinWidth ? '7px 20px' : '2px 4px',
                       })}
                       onClick={() => setLeftButtonState(true)}
                     >
@@ -139,10 +139,7 @@ const ModalInput = ({
                       bgcolor: buttonColor,
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: '7px 20px',
-                      '@media (max-width: 600px)': {
-                        padding: '4px 8px',
-                      },
+                      padding: isMinWidth ? '7px 20px' : '2px 4px',
                     })}
                     onClick={() => setRightButtonState(true)}
                   >
