@@ -54,6 +54,27 @@ function handleZodError(error: ZodError) {
       return new ParamTooShortError(err.path[0].toString(), Number(err.minimum)).toJSON();
     }
 
+    // Check if it was a invalid_union error
+    if (err.code === 'invalid_union') {
+      // Yes it was, iterate through each union error to get an array of accepted types
+      const acceptedTypes = err.unionErrors
+        .map((unionError) => {
+          // Check if the type is a native zod type
+          if (unionError.errors[0].code === 'invalid_type') {
+            // Return the expected type
+            return unionError.errors[0].expected;
+          }
+
+          // It is a custom type, return the type
+          const split = unionError.errors[0].message.split(' ').at(-1);
+          return split;
+        })
+        .filter((type) => type);
+
+      // Return a param error
+      return new ParamTypeError(err.path[0].toString(), acceptedTypes).toJSON();
+    }
+
     // Unrecognised zod error
     return new ParamError().toJSON();
   });
