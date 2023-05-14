@@ -1,4 +1,3 @@
-import React from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -10,7 +9,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-type ComponentProps = {
+export type ComponentProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   buttonColor: `#${string}`;
@@ -20,11 +19,11 @@ type ComponentProps = {
   rightButtonText: string;
   selectData?: string[];
   selectInput: string | number;
-  setselectInput: React.Dispatch<React.SetStateAction<string>>;
+  setselectInput: (val: string) => void;
   leftButtonState: boolean;
   rightButtonState: boolean;
-  setLeftButtonState: React.Dispatch<React.SetStateAction<boolean>>;
-  setRightButtonState: React.Dispatch<React.SetStateAction<boolean>>;
+  setLeftButtonState: (val: boolean) => void;
+  setRightButtonState: (val: boolean) => void;
 };
 
 const ModalSelect = ({
@@ -44,13 +43,13 @@ const ModalSelect = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-  
-  // on cancel, clear select value and close modal 
+
+  // on cancel, clear select value and close modal
   const handleCancel = () => {
     setOpen(false);
-    setLeftButtonState(true)
-    setselectInput('')
-  }
+    setLeftButtonState(true);
+    setselectInput('');
+  };
 
   return (
     <div>

@@ -1,7 +1,7 @@
 import { ModalInput } from '@inc/ui';
-import React from 'react';
+import { useState } from 'react';
 
-type MakeOfferModalProps = {
+export type MakeOfferModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   inputValue: number;
@@ -9,8 +9,8 @@ type MakeOfferModalProps = {
 };
 
 const MakeOfferModal = ({ open, setOpen, inputValue, setInputValue }: MakeOfferModalProps) => {
-  const [leftButtonState, setLeftButtonState] = React.useState(false);
-  const [rightButtonState, setRightButtonState] = React.useState(false);
+  const [leftButtonState, setLeftButtonState] = useState(false);
+  const [rightButtonState, setRightButtonState] = useState(false);
   return (
     <ModalInput
       open={open}

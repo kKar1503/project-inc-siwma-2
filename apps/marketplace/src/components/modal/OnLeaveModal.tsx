@@ -1,22 +1,22 @@
 import { Modal } from '@inc/ui';
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-type ReportModalProps = {
+export type ReportModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
 };
 
 const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
-  const [leftButtonState, setLeftButtonState] = React.useState(false);
-  const [rightButtonState, setRightButtonState] = React.useState(false);
+  const [leftButtonState, setLeftButtonState] = useState(false);
+  const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
 
   if (leftButtonState === true) {
     router.back();
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (rightButtonState === true) {
       setOpen(false);
     }

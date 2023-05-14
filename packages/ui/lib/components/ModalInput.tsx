@@ -9,7 +9,7 @@ import FilledInput from '@mui/material/FilledInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 
-type ComponentProps = {
+export type ComponentProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   buttonColor: `#${string}`;

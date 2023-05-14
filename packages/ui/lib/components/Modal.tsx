@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import MUIModal from '@mui/material/Modal';
@@ -9,42 +9,20 @@ import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOu
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
 
-
-
-type ComponentProps = {
+export type ComponentProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   buttonColor: `#${string}`;
   icon: 'success' | 'info' | 'warning';
   title: string;
-  content: string; 
+  content: string;
   leftButtonText?: string | null;
   rightButtonText: string;
   leftButtonState?: boolean;
   rightButtonState: boolean;
-  setLeftButtonState: Dispatch<SetStateAction<boolean>>;
-  setRightButtonState: Dispatch<SetStateAction<boolean>>;
+  setLeftButtonState: (val: boolean) => void;
+  setRightButtonState: (val: boolean) => void;
 };
-
-/**
- * Modal
- *  Data is expected to contain at least one button, if there is only one button we will leave leftbuttonText,
- *  leftButtonState and setLeftButtonState, then data should look like this:
- * {
-      open={open}
-      setOpen={setOpen}
-      buttonColor="#0288D1"
-      icon="info"
-      title="Seller has been reported"
-      content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. "
-      leftButtonText={null} // <= only one button set as null
-      rightButtonText="return to home page"
-      leftButtonState={false} // <= only one button, set as false
-      rightButtonState={rightButtonState}
-      setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
-      setRightButtonState={setRightButtonState}
-    }
- */
 
 const Modal = ({
   open,
@@ -125,7 +103,7 @@ const Modal = ({
                   id="transition-modal-title"
                   variant="h6"
                   component="h2"
-                  sx={({  palette }) => ({
+                  sx={({ palette }) => ({
                     color: palette.info[800],
                     fontSize: { xs: 'subtitle2', sm: 'h5' },
                   })}

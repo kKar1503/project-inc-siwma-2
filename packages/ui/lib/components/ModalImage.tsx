@@ -16,7 +16,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-type DialogProps = {
+export type DialogProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   title: string;
