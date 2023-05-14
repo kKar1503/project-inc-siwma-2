@@ -21,7 +21,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -30,16 +30,16 @@ jobs:
       - name: Build and save docker images
         id: save-docker-image
         run: |
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:latest -f apps/marketplace/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" --build-arg NEXTAUTH_URL="http://ec2-18-142-177-240.ap-southeast-1.compute.amazonaws.com" .
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} -f apps/marketplace/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" --build-arg NEXTAUTH_URL="http://ec2-18-142-177-240.ap-southeast-1.compute.amazonaws.com" .
-          docker save ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} > marketplace-${{ github.sha }}.tar
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:latest -f apps/marketplace/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" --build-arg NEXTAUTH_URL="${{ secrets.NEXTAUTH_URL }} --build-arg NEXT_BUILD_OPTION="${{ secrets.NEXT_BUILD_OPTION }} --build-arg NEXT_ESLINT_OPTION="${{ secrets.NEXT_ESLINT_OPTION }}" .
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} -f apps/marketplace/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" --build-arg NEXTAUTH_URL="${{ secrets.NEXTAUTH_URL }} --build-arg NEXT_BUILD_OPTION="${{ secrets.NEXT_BUILD_OPTION }} --build-arg NEXT_ESLINT_OPTION="${{ secrets.NEXT_ESLINT_OPTION }}" .
+        # docker save ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:${{ github.sha }} > marketplace-${{ github.sha }}.tar
 
-      - uses: actions/upload-artifact@v3
-        if: ${{ steps.save-docker-image.outcome == 'success' }}
-        with:
-          name: marketplace-${{ github.sha }}.tar
-          path: marketplace-${{ github.sha }}.tar
-          retention-days: 1
+      # - uses: actions/upload-artifact@v3
+      #   if: ${{ steps.save-docker-image.outcome == 'success' }}
+      #   with:
+      #     name: marketplace-${{ github.sha }}.tar
+      #     path: marketplace-${{ github.sha }}.tar
+      #     retention-days: 1
 
       - name: Push images into ECR
         run: |
@@ -47,7 +47,11 @@ jobs:
           docker push ${{ secrets.AWS_REPOSITORY_URI }}/marketplace:latest
 
       - name: Restart task
+        # TODO: do not restart tasks like this
         run: aws ecs update-service --force-new-deployment --service marketplace-service --cluster marketplace
+
+      # instead, define a new task definition and update the service with the new task definition
+      # but it will do for now :p
 
       - name: Get Public DNS and IP
         run: |
