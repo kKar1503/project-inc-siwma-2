@@ -1,6 +1,6 @@
 import { apiHandler } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError } from '@/errors';
+import { NotFoundError } from '@inc/errors';
 import { formatParamResponse, paramsRequestBody } from '..';
 
 // -- Functions --//
@@ -61,7 +61,7 @@ export default apiHandler({
       },
       data: {
         name: data.name,
-        display_name: data.displayName,
+        displayName: data.displayName,
         type: data.type,
         datatype: data.dataType,
       },
