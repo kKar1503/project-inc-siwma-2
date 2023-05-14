@@ -26,16 +26,6 @@ const zod = z.object({
   link: z.string(),
 });
 
-export interface AdvertisementPayload {
-  companyId: string,
-  image: Readable | ReadableStream | Blob | string | Uint8Array | Buffer,
-  endDate: string,
-  startDate: string,
-  active: boolean,
-  description: string,
-  link: string
-}
-
 export const select = (isAdmin: boolean) => ({
   companyId: true,
   image: true,
