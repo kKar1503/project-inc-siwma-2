@@ -5,7 +5,7 @@ import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
 import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
-import { AdvertisementBucket, select, where } from '@api/v1/advertisments/index';
+import { AdvertisementBucket, select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
 import parseFormData from '@/utils/parseFormData';
