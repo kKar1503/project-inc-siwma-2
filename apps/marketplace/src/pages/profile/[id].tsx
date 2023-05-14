@@ -443,15 +443,13 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   },
 }));
 
-const ProfilePage = ({
-  data,
-  serverSideListings,
-  serverSideReviews,
-}: {
+export type ProfilePageProps = {
   data: ProfileDetailCardProps;
   serverSideListings: ProductListingItemProps[];
   serverSideReviews: ReviewProps[];
-}) => {
+};
+
+const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePageProps) => {
   const theme = useTheme();
   const [value, setValue] = useState(0);
   // when filter/sorts are called use set states to set the new listings/reviews again
