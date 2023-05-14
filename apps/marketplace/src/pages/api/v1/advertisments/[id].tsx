@@ -88,7 +88,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // get new values or use old values if not provided
-  const companyId = validatedPayload.companyId || advertisement.companyId;
+  const companyId = validatedPayload.companyId ? parseToNumber(validatedPayload.companyId) : advertisement.companyId;
   const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate;
   const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || advertisement.startDate;
   const active = validatedPayload.active === undefined ? advertisement.active : validatedPayload.active;
