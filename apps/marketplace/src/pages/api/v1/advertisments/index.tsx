@@ -7,7 +7,7 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
 import { z } from 'zod';
-import { parseFormData } from '@/utils/parseFormData';
+import parseFormData from '@/utils/parseFormData';
 import { ParamError } from '@inc/errors/src';
 import { File } from 'formidable';
 import fs from 'fs';
@@ -36,7 +36,7 @@ export const select = (isAdmin: boolean) => ({
   link: true,
 });
 
-export const where = (isAdmin: boolean, other: {} = {}) => isAdmin ? other : {
+export const where = (isAdmin: boolean, other = {}) => isAdmin ? other : {
   endDate: {
     gte: new Date(),
   },
@@ -55,11 +55,11 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   const payload = zod.parse(req.body);
   const companyId = parseToNumber(payload.companyId);
 
-  if (data === undefined || data.files === undefined || data.files['file'] === undefined) {
+  if (data === undefined || data.files === undefined || data.files.file === undefined) {
     throw new ParamError(`advertisement`);
   }
 
-  const file: File = Array.isArray(data.files['file']) ? data.files['file'][0] : data.files['file'];
+  const file: File = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
   const buffer = fs.readFileSync(file.filepath);
   // Create S3 object
   const metadata = new Metadata({
@@ -68,7 +68,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     // "content-disposition": file.newFilename,
   });
   const bucket = await s3Connection.getBucket(AdvertisementBucket);
-  const s3Object = await bucket.createObject(new S3ObjectBuilder(buffer,metadata));
+  const s3Object = await bucket.createObject(new S3ObjectBuilder(buffer, metadata));
 
   // Create advertisement
   const advertisementId = (await PrismaClient.advertisements.create({
@@ -110,6 +110,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
         gt: lastIdPointer,
       },
     }),
+    take: limitInt,
   });
 
   // Return advertisements
