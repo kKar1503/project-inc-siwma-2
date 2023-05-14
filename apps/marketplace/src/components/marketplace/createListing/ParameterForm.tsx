@@ -32,47 +32,6 @@ type ParameterProps = {
   options?: string[];
 };
 
-// sample data
-const parametersData = [
-  {
-    id: '3',
-    name: 'weight',
-    displayName: 'Weight',
-    type: 'WEIGHT',
-    dataType: 'NUMBER',
-  },
-  {
-    id: '6',
-    name: 'dimensions',
-    displayName: 'Dimensions',
-    type: 'DIMENSION',
-    dataType: 'STRING',
-  },
-  {
-    id: '99',
-    name: 'isUsed',
-    displayName: 'Is Used',
-    type: 'TWO_CHOICES',
-    dataType: 'BOOLEAN',
-    options: ['New', 'Used'],
-  },
-  {
-    id: '1',
-    name: 'condition',
-    displayName: 'Condition',
-    type: 'MANY_CHOICES',
-    dataType: 'STRING',
-    options: ['New', 'Used', 'Refurbished'],
-  },
-  {
-    id: '7',
-    name: 'description',
-    displayName: 'Description',
-    type: 'OPEN_ENDED',
-    dataType: 'STRING',
-  },
-];
-
 const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
   const [displayParameters, setDisplayParameters] = useState<ParameterProps[]>([]);
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
@@ -81,7 +40,7 @@ const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
   useEffect(() => {
     // Get parameters from backend using category
     setParameters(formValuesArray);
-    setDisplayParameters(parametersData);
+    setDisplayParameters([]);
   }, [category, formValuesArray, setParameters]);
 
   const handleFormValueChange = (
