@@ -11,7 +11,7 @@ import { checkListingExists } from '../index';
 function formatParametersResponse(parameters: { parameterId: number; value: string }[]): any[] {
   return parameters.map(({ parameterId, value }) => ({
     paramId: parameterId,
-    value: value,
+    value,
   }));
 }
 
@@ -123,7 +123,6 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
     const paramIdInt = parseToNumber(param.paramId, 'paramId');
     if (Number.isNaN(paramIdInt)) {
       res.status(422).json(formatAPIResponse({ success: false, error: 'Invalid paramId' }));
-      return; // Exit the loop after sending the response
     }
   });
 
@@ -157,8 +156,6 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
   }));
 
   res.status(200).json(formatAPIResponse({ updatedParameters }));
-
-  return;
 };
 
 export default apiHandler()
