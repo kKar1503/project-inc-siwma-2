@@ -1,7 +1,7 @@
 {
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx-cloud",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
           "lint",
@@ -9,21 +9,24 @@
           "test",
           "prisma:compile"
         ],
-        "cacheDirectory": "tmp/nx/cache",
-        "accessToken": "YWYzNGQzOTQtNmQwYy00ZDJiLTk2ZGUtOWUzMjExMDc1OTI1fHJlYWQtd3JpdGU="
+        "cacheDirectory": "tmp/nx/cache"
       }
     }
   },
   "namedInputs": {
     "prismaCompile": [
       "{projectRoot}/**/casingFix.ts"
+    ],
+    "default": [
+      "{projectRoot}/**/*"
     ]
   },
   "targetDefaults": {
     "build": {
       "dependsOn": [
         "^build"
-      ]
+      ],
+      "inputs": ["default", "^default"]
     },
     "dev": {
       "dependsOn": [
@@ -33,7 +36,8 @@
     "build:prod": {
       "dependsOn": [
         "^build"
-      ]
+      ],
+      "inputs": ["default", "^default"]
     },
     "prisma:patchCasing": {
       "dependsOn": [
