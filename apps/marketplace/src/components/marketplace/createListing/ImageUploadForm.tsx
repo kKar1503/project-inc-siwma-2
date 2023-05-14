@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -7,13 +8,13 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-type SetImageProps = {
-  setImages: (parameters: ImageProps[]) => void;
-};
-
 export type ImageProps = {
   fileName: string;
   url: string;
+};
+
+type SetImageProps = {
+  setImages: (parameters: ImageProps[]) => void;
 };
 
 const ImageUploadForm = ({ setImages }: SetImageProps) => {
@@ -54,7 +55,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
         {images.map(({ file, preview }, index) => (
           <Grid item xs={2} md={1} key={file.name}>
             <Box position="relative" mt="1rem">
-              <img
+              <Image
                 src={preview}
                 alt={file.name}
                 style={{ width: '100px', height: '100px', paddingRight: '1rem' }}
@@ -83,34 +84,32 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
   };
 
   return (
-    <>
-      <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          Select Photos (Up to 10 Images)
-        </Typography>
-        <Typography variant="body1">Choose images to display for the listing</Typography>
-        <input
-          type="file"
-          accept="image/*"
-          id="upload-btn"
-          multiple
-          hidden
-          onChange={handleImageSelect}
-        />
-        <label htmlFor="upload-btn">
-          <Button
-            variant="contained"
-            component="span"
-            sx={{ mt: '1rem' }}
-            onClick={handleUploadClick}
-          >
-            Upload a Photo
-          </Button>
-        </label>
-        {renderImages()}
-        <Divider sx={{ my: 2 }} />
-      </Grid>
-    </>
+    <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+        Select Photos (Up to 10 Images)
+      </Typography>
+      <Typography variant="body1">Choose images to display for the listing</Typography>
+      <input
+        type="file"
+        accept="image/*"
+        id="upload-btn"
+        multiple
+        hidden
+        onChange={handleImageSelect}
+      />
+      <label htmlFor="upload-btn">
+        <Button
+          variant="contained"
+          component="span"
+          sx={{ mt: '1rem' }}
+          onClick={handleUploadClick}
+        >
+          Upload a Photo
+        </Button>
+      </label>
+      {renderImages()}
+      <Divider sx={{ my: 2 }} />
+    </Grid>
   );
 };
 

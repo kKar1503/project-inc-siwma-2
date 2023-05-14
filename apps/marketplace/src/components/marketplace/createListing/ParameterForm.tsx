@@ -13,6 +13,11 @@ import MenuItem from '@mui/material/MenuItem';
 import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
+export type ParameterFormProps = {
+  id: string;
+  value: string;
+};
+
 type SetParameterProps = {
   setParameters: (parameters: ParameterFormProps[]) => void;
   category: string;
@@ -25,11 +30,6 @@ type ParameterProps = {
   type: string;
   dataType: string;
   options?: string[];
-};
-
-export type ParameterFormProps = {
-  id: string;
-  value: string;
 };
 
 // sample data
