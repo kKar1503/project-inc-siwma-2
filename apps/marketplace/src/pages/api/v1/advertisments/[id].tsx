@@ -1,33 +1,26 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import { NotFoundError } from '@inc/errors';
+import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
-import { S3ObjectBuilder } from '@inc/s3-simplified';
+import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
 import { AdvertisementBucket, select, where } from '@api/v1/advertisments/index';
 import { APIRequestType } from '@/types/api-types';
-import { Readable } from 'stream';
 import { z } from 'zod';
+import { parseFormData } from '@/utils/parseFormData';
+import { File } from 'formidable';
+import fs from 'fs';
 
 
 const zod = z.object({
   companyId: z.string().optional(),
-  image: z.union([
-    z.instanceof(Readable),
-    z.instanceof(ReadableStream),
-    z.instanceof(Blob),
-    z.string(),
-    z.instanceof(Uint8Array),
-    z.instanceof(Buffer),
-  ]).optional(),
   endDate: z.string().optional(),
   startDate: z.string().optional(),
   active: z.boolean().optional(),
   description: z.string().optional(),
   link: z.string().optional(),
 });
-
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
@@ -52,6 +45,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
+  const data = await parseFormData(req);
   // Validate payload
   const id = parseToNumber(req.query.id as string);
   const validatedPayload = zod.parse(req.body);
@@ -69,11 +63,29 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   // Throw error if advertisement not found
   if (!advertisement) throw new NotFoundError(`advertisement`);
 
+  // get new values or use old values if not provided
+  const companyId = validatedPayload.companyId ? parseToNumber(validatedPayload.companyId) : advertisement.companyId;
+  const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate;
+  const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || advertisement.startDate;
+  const active = validatedPayload.active === undefined ? advertisement.active : validatedPayload.active;
+  const description = validatedPayload.description || advertisement.description;
+  const link = validatedPayload.link || advertisement.link;
+
   // if image has changed
   let url = advertisement.image;
-  if (validatedPayload.image) {
+
+  if (data !== undefined && data.files !== undefined && data.files['file'] !== undefined) {
+    const file: File = Array.isArray(data.files['file']) ? data.files['file'][0] : data.files['file'];
+
+
     const bucket = await s3Connection.getBucket(AdvertisementBucket);
-    const s3ObjectBuilder = new S3ObjectBuilder(validatedPayload.image);
+    const metadata = new Metadata({
+      'content-type': file.mimetype || 'image/jpeg',
+      'original-name': file.originalFilename || 'untitled-advertisement-image',
+      // "content-disposition": file.newFilename,
+    });
+    const buffer = fs.readFileSync(file.filepath);
+    const s3ObjectBuilder = new S3ObjectBuilder(buffer, metadata);
 
 
     // create new image and delete old image as aws doesn't support update
@@ -87,13 +99,6 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     url = await newS3Object.generateLink();
   }
 
-  // get new values or use old values if not provided
-  const companyId = validatedPayload.companyId ? parseToNumber(validatedPayload.companyId) : advertisement.companyId;
-  const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate;
-  const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || advertisement.startDate;
-  const active = validatedPayload.active === undefined ? advertisement.active : validatedPayload.active;
-  const description = validatedPayload.description || advertisement.description;
-  const link = validatedPayload.link || advertisement.link;
 
   // update advertisement
   const updated = await PrismaClient.advertisements.update({
