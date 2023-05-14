@@ -9,7 +9,6 @@ import * as process from 'process';
 import { z } from 'zod';
 import parseFormData from '@/utils/parseFormData';
 import { ParamError } from '@inc/errors/src';
-import { File } from 'formidable';
 import fs from 'fs';
 
 const zod = z.object({
@@ -59,7 +58,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     throw new ParamError(`advertisement`);
   }
 
-  const file: File = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
+  const file = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
   const buffer = fs.readFileSync(file.filepath);
   // Create S3 object
   const metadata = new Metadata({
