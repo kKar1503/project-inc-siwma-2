@@ -61,13 +61,6 @@ export const getQueryParameters = z.object({
 });
 
 // -- Helper functions -- //
-export function formatListingResponse(
-  $listings: ListingWithParameters[],
-  includeParameters: boolean
-) {
-  return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
-}
-
 export function formatSingleListingResponse(
   listing: ListingWithParameters,
   includeParameters: boolean
@@ -93,6 +86,13 @@ export function formatSingleListingResponse(
   }
 
   return formattedListing;
+}
+
+export function formatListingResponse(
+  $listings: ListingWithParameters[],
+  includeParameters: boolean
+) {
+  return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
 }
 
 export const listingsRequestBody = z.object({

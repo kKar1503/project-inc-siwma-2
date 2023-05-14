@@ -1,8 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError } from '@inc/errors';
-import { formatSingleListingResponse, getQueryParameters } from '..';
-import { parseListingId } from '../index';
+import { formatSingleListingResponse, getQueryParameters, parseListingId } from '..';
 
 // -- Functions --//
 
@@ -73,7 +72,7 @@ export default apiHandler()
     // Update the listing with the request data
     const data = req.body;
 
-    //Do not remove this, it is necessary to update the listing
+    // Do not remove this, it is necessary to update the listing
     const updatedListing = await PrismaClient.listing.update({
       where: { id },
       data: {
@@ -100,6 +99,7 @@ export default apiHandler()
         return PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {
+              // parameterId: parseInt(parameter.paramId),
               parameterId: parseInt(parameter.paramId),
               listingId: id,
             },
