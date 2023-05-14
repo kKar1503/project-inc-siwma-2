@@ -4,12 +4,12 @@ import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { DuplicateError } from '@inc/errors';
 import { validateEmail, validateName } from '@/utils/api/validate';
-import sendNotificationEmail from '@inc/send-in-blue/bulkSendEmails';
+import sendEmails from '@inc/send-in-blue/sendEmails';
 import {
   getContentFor,
   BulkInviteEmailRequestBody,
   EmailTemplate,
-} from '@inc/send-in-blue/templates/sibTemplates';
+} from '@inc/send-in-blue/templates';
 
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
@@ -89,7 +89,7 @@ export default apiHandler({ allowAdminsOnly: true })
     };
 
     // 3. Send the email
-    await sendNotificationEmail(emailBody);
+    await sendEmails(emailBody);
 
     return res.status(200).json(formatAPIResponse({ inviteId: invite.id.toString() }));
   })
