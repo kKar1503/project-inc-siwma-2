@@ -77,12 +77,13 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
 
 
     // create new image and delete old image as aws doesn't support update
-    const promise = await Promise.all(
+    // also do these in parallel for faster response
+    const awaitedPromise = await Promise.all(
       [
-        await bucket.createObject(s3ObjectBuilder),
-        await bucket.deleteObject(advertisement.image),
+        bucket.createObject(s3ObjectBuilder),
+        bucket.deleteObject(advertisement.image),
       ]);
-    const [newS3Object] = promise;
+    const [newS3Object] = awaitedPromise;
     url = await newS3Object.generateLink();
   }
 
