@@ -1,17 +1,17 @@
 import { NextApiResponse } from 'next';
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import { parseListingId } from '../../../listings/index';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError } from '@inc/errors';
 import * as z from 'zod';
-import { checkListingExists } from '../index';
 import { APIRequestType } from '@/types/api-types';
+import { parseListingId } from '../../index';
+import { checkListingExists } from '../index';
 
 // -- Functions --//
 function formatParametersResponse(parameters: { parameterId: number; value: string }[]): any[] {
-  return parameters.map((parameter) => ({
-    paramId: parameter.parameterId,
-    value: parameter.value,
+  return parameters.map(({ parameterId, value }) => ({
+    paramId: parameterId,
+    value: value,
   }));
 }
 
@@ -42,7 +42,7 @@ const getListingParameters = async (req: APIRequestType, res: NextApiResponse) =
 };
 
 const parameterSchema = z.object({
-  paramId: z.string().refine((paramId) => !isNaN(parseToNumber(paramId, 'paramId')), {
+  paramId: z.string().refine((paramId) => !Number.isNaN(parseToNumber(paramId, 'paramId')), {
     message: 'paramId must be a string that can be converted to a number.',
   }),
   value: z.string(),
@@ -72,10 +72,10 @@ const createListingParameter = async (req: APIRequestType, res: NextApiResponse)
 
   const createdParameter = await PrismaClient.listingsParametersValue.create({
     data: {
-      value: value,
+      value,
       listing: {
         connect: {
-          id: id,
+          id,
         },
       },
       parameter: {
@@ -119,12 +119,13 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
   const parameters = z.array(parameterSchema).parse(req.body);
 
   // Check for invalid paramIds and values
-  for (const param of parameters) {
+  parameters.forEach((param) => {
     const paramIdInt = parseToNumber(param.paramId, 'paramId');
-    if (isNaN(paramIdInt)) {
-      return res.status(422).json(formatAPIResponse({ success: false, error: 'Invalid paramId' }));
+    if (Number.isNaN(paramIdInt)) {
+      res.status(422).json(formatAPIResponse({ success: false, error: 'Invalid paramId' }));
+      return; // Exit the loop after sending the response
     }
-  }
+  });
 
   // Update the parameters in the database and format the response
   const updatePromises = parameters.map((param: RequestBodyParameter) => {
@@ -135,7 +136,7 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
       where: {
         listingId_parameterId: {
           listingId: id,
-          parameterId: parameterId,
+          parameterId,
         },
       },
       data: {
@@ -149,13 +150,15 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
   });
 
   const updatedParametersResults = await PrismaClient.$transaction(updatePromises);
-  
+
   const updatedParameters = updatedParametersResults.map((result) => ({
     paramId: result.parameterId,
     value: result.value,
   }));
 
   res.status(200).json(formatAPIResponse({ updatedParameters }));
+
+  return;
 };
 
 export default apiHandler()
