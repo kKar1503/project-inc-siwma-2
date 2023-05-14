@@ -26,6 +26,11 @@ const zod = z.object({
   link: z.string(),
 });
 
+const getBody = z.object({
+  lastIdPointer: z.string().optional(),
+  limit: z.string().optional(),
+});
+
 export const select = (isAdmin: boolean) => ({
   companyId: true,
   image: true,
@@ -81,11 +86,23 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate admin
   const isAdmin = (req.token?.user.permissions === true);
+  const { limit, lastIdPointer } = getBody.parse(req.query);
+
+  let limitInt: number | undefined;
+
+  if (limit) {
+    limitInt = parseToNumber(limit, 'limit');
+  }
+
 
   // Get advertisements
   const advertisements = await PrismaClient.advertisements.findMany({
     select: select(isAdmin),
-    where: where(isAdmin),
+    where: where(isAdmin, {
+      id: {
+        gt: lastIdPointer,
+      },
+    }),
   });
 
   // Return advertisements
