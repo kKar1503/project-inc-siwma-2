@@ -17,7 +17,7 @@ type ComponentProps = {
   buttonColor: `#${string}`;
   icon: 'success' | 'info' | 'warning';
   title: string;
-  content: string;
+  content: string; 
   leftButtonText?: string | null;
   rightButtonText: string;
   leftButtonState?: boolean;

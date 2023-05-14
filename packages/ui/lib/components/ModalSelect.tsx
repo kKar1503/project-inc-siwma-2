@@ -15,12 +15,12 @@ type ComponentProps = {
   setOpen: (val: boolean) => void;
   buttonColor: `#${string}`;
   title: string;
-  content: string;
+  content?: string;
   leftButtonText: string;
   rightButtonText: string;
   selectData?: string[];
   selectInput: string | number;
-  setselectInput: React.Dispatch<React.SetStateAction<string | number>>;
+  setselectInput: React.Dispatch<React.SetStateAction<string>>;
   leftButtonState: boolean;
   rightButtonState: boolean;
   setLeftButtonState: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,6 +44,13 @@ const ModalSelect = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
+  
+  // on cancel, clear select value and close modal 
+  const handleCancel = () => {
+    setOpen(false);
+    setLeftButtonState(true)
+    setselectInput('')
+  }
 
   return (
     <div>
@@ -105,7 +112,6 @@ const ModalSelect = ({
                     width: 1,
                     my: 2,
                     backgroundColor: 'transparent',
-                    // border: '1px solid',
                     borderRadius: 2,
                   }}
                 >
@@ -116,7 +122,7 @@ const ModalSelect = ({
                     sx={{ fontSize: '20px', backgroundColor: 'transparent' }}
                     onChange={(e) => setselectInput(e.target.value as string)}
                   >
-                    {selectData instanceof Array &&
+                    {Array.isArray(selectData) &&
                       selectData.map((item) => (
                         <MenuItem value={item} key={item} sx={{ fontSize: '20px' }}>
                           {item}
@@ -139,7 +145,7 @@ const ModalSelect = ({
                         padding: '2px 4px',
                       },
                     })}
-                    onClick={() => setLeftButtonState(true)}
+                    onClick={handleCancel}
                   >
                     <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
                       {leftButtonText}

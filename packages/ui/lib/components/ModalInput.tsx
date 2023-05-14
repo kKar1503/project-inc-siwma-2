@@ -1,4 +1,3 @@
-import React from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -9,9 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FilledInput from '@mui/material/FilledInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import { createTheme } from '@mui/material/styles';
 
-// declaring props for TransitionsModal
 type ComponentProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
@@ -21,11 +18,11 @@ type ComponentProps = {
   leftButtonText: string | null;
   rightButtonText: string;
   selectInput: string | number;
-  setselectInput: React.Dispatch<React.SetStateAction<string | number>>;
+  setselectInput: (val: number) => void;
   leftButtonState: boolean;
   rightButtonState: boolean;
-  setLeftButtonState: React.Dispatch<React.SetStateAction<boolean>>;
-  setRightButtonState: React.Dispatch<React.SetStateAction<boolean>>;
+  setLeftButtonState: (val: boolean) => void;
+  setRightButtonState: (val: boolean) => void;
 };
 
 const ModalInput = ({
@@ -44,15 +41,6 @@ const ModalInput = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-
-  const theme = createTheme({
-    palette: {
-      text: {
-        primary: '#013654',
-      },
-    },
-  });
-
   return (
     <div>
       <Modal
@@ -112,8 +100,13 @@ const ModalInput = ({
                   <FilledInput
                     sx={{ backgroundColor: 'transparent', border: '1px solid', borderRadius: 2 }}
                     startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                    onChange={(e) => setselectInput(e.target.value)}
+                    onChange={(e) => setselectInput(parseFloat(e.target.value))}
                   />
+                  {(selectInput === 0 || Number.isNaN(selectInput)) && (
+                    <Typography variant="caption" color="error">
+                      Please enter a valid number.
+                    </Typography>
+                  )}
                 </FormControl>
                 <Box textAlign="center" display="flex" justifyContent="center">
                   {/* if Left Button Text is != null, it will print */}
@@ -141,6 +134,7 @@ const ModalInput = ({
                   {/* Right Button Text */}
                   <Button
                     variant="contained"
+                    disabled={selectInput === 0 || Number.isNaN(selectInput)}
                     sx={({ spacing }) => ({
                       bgcolor: buttonColor,
                       width: 1 / 2,
