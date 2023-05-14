@@ -1,47 +1,44 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Button } from '@mui/material';
-import axios from 'axios';
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogActions from '@mui/material/DialogActions'
+ import { useRouter } from 'next/router';
 
 
 
 
 interface AdvertisementModalProps {
+  id: number;
   companyName: string;
   description: string;
-  onCloseClick: () => void;
+  onClose: () => void;
+  url: string;
 }
 
 
-const AdvertisementModal = ( { companyName, description, onCloseClick }: AdvertisementModalProps ) => {
-  const handleShareClick = () => {
-    axios
-      .post('/api/listings', { companyName, description })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-      
+const AdvertisementModal = ( { id, companyName, description, url,  onClose }: AdvertisementModalProps ) => {
+  const [open, setOpen] = useState(true);
+  
+  const router = useRouter();
 
+  const handleRedirect = () => {
+  router.push(url);
   };
 
   return (
-    <Dialog open onClose={onCloseClick}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>{companyName}</DialogTitle>
       <DialogContent>
         <DialogContentText>{description}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" color="primary" >
-          Show Me!
+        <Button onClick={handleRedirect}  variant="contained" color="primary" >
+        Show Me!
         </Button>
-        <Button variant="contained"  onClick={onCloseClick} sx={{ color: 'black',  backgroundColor: 'white'  }} >
+        <Button variant="text" onClick={onClose} sx={{ color: 'black',  backgroundColor: 'white'  }} >
           Close
         </Button>
       </DialogActions>
