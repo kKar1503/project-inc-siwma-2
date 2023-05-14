@@ -9,7 +9,6 @@ import { AdvertisementBucket, select, where } from '@api/v1/advertisements/index
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
 import parseFormData from '@/utils/parseFormData';
-import { File } from 'formidable';
 import fs from 'fs';
 
 
@@ -75,7 +74,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   let url = advertisement.image;
 
   if (data !== undefined && data.files !== undefined && data.files.file !== undefined) {
-    const file: File = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
+    const file = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
 
 
     const bucket = await s3Connection.getBucket(AdvertisementBucket);
