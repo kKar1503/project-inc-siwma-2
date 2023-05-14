@@ -107,7 +107,7 @@ export const listingsRequestBody = z.object({
     .array(
       z.object({
         paramId: z.string(),
-        value: z.string(),
+        value: z.number().refine((value) => value >= 0, {}),
       })
     )
     .optional(),
@@ -197,7 +197,7 @@ export default apiHandler()
         listingsParametersValues: data.parameters
           ? {
               create: data.parameters.map((parameter) => ({
-                value: parameter.value,
+                value: parameter.value.toString(),
                 parameter: {
                   connect: {
                     id: parseToNumber(parameter.paramId, 'paramId'),

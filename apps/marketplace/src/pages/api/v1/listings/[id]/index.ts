@@ -1,9 +1,9 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError } from '@inc/errors';
+import { ListingType } from '@prisma/client';
 import { formatSingleListingResponse, getQueryParameters, parseListingId } from '..';
 import z from 'zod';
-import { ListingType } from '@prisma/client';
 
 // -- Functions --//
 
@@ -39,7 +39,7 @@ export async function checkListingExists($id: string | number) {
 
 interface Parameter {
   paramId: string;
-  value: string;
+  value: number;
 }
 
 // Define the schema for the request body
@@ -55,7 +55,7 @@ const putListingRequestBody = z.object({
     .array(
       z.object({
         paramId: z.string(),
-        value: z.string(),
+        value: z.number().refine((value) => value >= 0, {}),
       })
     )
     .optional(),
@@ -116,22 +116,22 @@ export default apiHandler()
     });
 
     if (data.listingsParametersValues) {
-      const parameterUpdates = data.listingsParametersValues.map((parameter: Parameter) => {
-        return PrismaClient.listingsParametersValue.upsert({
+      const parameterUpdates = data.listingsParametersValues.map((parameter: Parameter) =>
+        PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {
               parameterId: parseToNumber(parameter.paramId, 'paramId'),
               listingId: id,
             },
           },
-          update: { value: parameter.value },
+          update: { value: parameter.value.toString() },
           create: {
-            value: parameter.value,
+            value: parameter.value.toString(),
             parameterId: parseToNumber(parameter.paramId, 'paramId'),
             listingId: id,
           },
-        });
-      });
+        })
+      );
 
       await PrismaClient.$transaction(parameterUpdates);
     }
