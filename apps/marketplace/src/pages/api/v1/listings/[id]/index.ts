@@ -72,6 +72,7 @@ export default apiHandler()
     // Update the listing with the request data
     const data = req.body;
 
+
     // Do not remove this, it is necessary to update the listing
     const updatedListing = await PrismaClient.listing.update({
       where: { id },
@@ -112,7 +113,7 @@ export default apiHandler()
           },
         });
       });
-    
+
       await PrismaClient.$transaction(parameterUpdates);
     }
 
@@ -129,7 +130,7 @@ export default apiHandler()
     });
 
     if (!completeListing) {
-      throw new NotFoundError(`Listing with id '${id}' not found.`);
+      throw new NotFoundError(`Listing with id '${id}'`);
     }
 
     res

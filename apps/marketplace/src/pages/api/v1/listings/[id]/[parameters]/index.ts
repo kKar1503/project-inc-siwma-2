@@ -1,5 +1,9 @@
 import { NextApiResponse } from 'next';
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import {
+  apiHandler, formatAPIResponse, parseToNumber, zodParseToBoolean,
+  zodParseToInteger,
+  zodParseToNumber,
+} from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError } from '@inc/errors';
 import * as z from 'zod';
@@ -42,9 +46,7 @@ const getListingParameters = async (req: APIRequestType, res: NextApiResponse) =
 };
 
 const parameterSchema = z.object({
-  paramId: z.string().refine((paramId) => !Number.isNaN(parseToNumber(paramId, 'paramId')), {
-    message: 'paramId must be a string that can be converted to a number.',
-  }),
+  paramId: z.string().transform(zodParseToInteger),
   value: z.string(),
 });
 
@@ -117,14 +119,6 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
   }
 
   const parameters = z.array(parameterSchema).parse(req.body);
-
-  // Check for invalid paramIds and values
-  parameters.forEach((param) => {
-    const paramIdInt = parseToNumber(param.paramId, 'paramId');
-    if (Number.isNaN(paramIdInt)) {
-      res.status(422).json(formatAPIResponse({ success: false, error: 'Invalid paramId' }));
-    }
-  });
 
   // Update the parameters in the database and format the response
   const updatePromises = parameters.map((param: RequestBodyParameter) => {
