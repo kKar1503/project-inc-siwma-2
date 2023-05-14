@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import ListingTypeForm from '@/components/marketplace/createListing/ListingTypeForm';
 import ListingForm from '@/components/marketplace/createListing/ListingForm';
 import ParameterForm, {
-  ParameterProps,
+  ParameterFormProps,
 } from '@/components/marketplace/createListing/ParameterForm';
 import ImageUploadForm, {
   ImageProps,
@@ -18,7 +18,7 @@ const CreateListingPage = () => {
   const [listingType, setListingType] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   const [images, setImages] = useState<ImageProps[]>([]);
-  const [parameters, setParameters] = useState<ParameterProps[]>([]);
+  const [parameters, setParameters] = useState<ParameterFormProps[]>([]);
   const [price, setPrice] = useState<number>(0);
   const [negotiable, setNegotiable] = useState<boolean>(false);
   const [unitPrice, setUnitPrice] = useState<boolean>(false);

@@ -35,7 +35,7 @@ const ListingForm = ({
 
       <Grid item xs={12} md={12} sx={{ width: '100%' }}>
         <OutlinedInput
-          id="outlined-adornment-amount"
+          className="outlined-adornment-amount"
           startAdornment={<InputAdornment position="start">S$</InputAdornment>}
         />
       </Grid>
