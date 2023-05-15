@@ -47,3 +47,15 @@ export class InvalidSenderEmailError extends EmailError {
     this.code = InvalidSenderEmailError.code;
   }
 }
+
+export class EmailTemplateNotFoundError extends EmailError {
+  public static readonly status: number = 500;
+  public static readonly code: number = 6004;
+
+  constructor() {
+    super();
+    this.message = 'Email template not found';
+    this.status = EmailTemplateNotFoundError.status;
+    this.code = EmailTemplateNotFoundError.code;
+  }
+}

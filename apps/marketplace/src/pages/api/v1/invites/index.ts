@@ -2,7 +2,12 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import { DuplicateError, EmailSendError, NotFoundError } from '@inc/errors';
+import {
+  DuplicateError,
+  EmailSendError,
+  NotFoundError,
+  EmailTemplateNotFoundError,
+} from '@inc/errors';
 import { validateEmail, validateName } from '@/utils/api/validate';
 import sendEmails from '@inc/send-in-blue/sendEmails';
 import {
@@ -83,7 +88,21 @@ export default apiHandler({
     }
 
     // 1. Get the invite email template
-    const content = getContentFor(EmailTemplate.INVITE);
+    let content: string;
+
+    try {
+      content = getContentFor(EmailTemplate.INVITE);
+    } catch (e) {
+      // This should never happen, but if it does, we should delete the invite
+
+      await client.invite.delete({
+        where: {
+          id: invite.id,
+        },
+      });
+
+      throw new EmailTemplateNotFoundError();
+    }
 
     // 2. Format the content
     const emailBody: BulkInviteEmailRequestBody = {
