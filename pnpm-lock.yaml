@@ -350,6 +350,9 @@ importers:
       '@inc/db':
         specifier: workspace:*
         version: link:../db
+      '@inc/errors':
+        specifier: workspace:*
+        version: link:../errors
       sib-api-v3-sdk:
         specifier: ^8.5.0
         version: 8.5.0
