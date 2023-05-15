@@ -14,7 +14,7 @@
     "build:errors": "nx run @inc/errors:build",
     "build:send-in-blue": "nx run @inc/send-in-blue:build",
     "ci": "pnpm install --frozen-lockfile",
-    "clean": "npx rimraf --glob */**/node_modules && npx rimraf node_modules",
+    "clean": "pnpx rimraf --glob */**/node_modules && pnpx rimraf node_modules",
     "lint": "nx run-many -t lint",
     "postinstall": "nx run @inc/db:prisma:generate && echo Please restart your VSCode to make your Prisma Client work.",
     "prisma:fix": "nx run @inc/db:prisma:compile && nx run @inc/db:prisma:patchCasing"
