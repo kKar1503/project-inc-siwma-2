@@ -2,14 +2,13 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import s3Connection from '@/utils/s3Connection';
-import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
-import { AdvertisementBucket, select, where } from '@api/v1/advertisements/index';
+// import s3Connection from '@/utils/s3Connection';
+// import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
+import { select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
 import parseFormData from '@/utils/parseFormData';
-import fs from 'fs';
+import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 
 
 const zod = z.object({
@@ -19,6 +18,7 @@ const zod = z.object({
   active: z.boolean().optional(),
   description: z.string().optional(),
   link: z.string().optional(),
+  image: z.string().optional(),
 });
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
@@ -44,7 +44,6 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
-  const data = await parseFormData(req);
   // Validate payload
   const id = parseToNumber(req.query.id as string);
   const validatedPayload = zod.parse(req.body);
@@ -69,34 +68,36 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   const active = validatedPayload.active === undefined ? advertisement.active : validatedPayload.active;
   const description = validatedPayload.description || advertisement.description;
   const link = validatedPayload.link || advertisement.link;
+  const image = validatedPayload.image || advertisement.image;
 
-  // if image has changed
-  let url = advertisement.image;
-
-  if (data !== undefined && data.files !== undefined && data.files.file !== undefined) {
-    const file = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
-
-
-    const bucket = await s3Connection.getBucket(AdvertisementBucket);
-    const metadata = new Metadata({
-      'content-type': file.mimetype || 'image/jpeg',
-      'original-name': file.originalFilename || 'untitled-advertisement-image',
-      // "content-disposition": file.newFilename,
-    });
-    const buffer = fs.readFileSync(file.filepath);
-    const s3ObjectBuilder = new S3ObjectBuilder(buffer, metadata);
-
-
-    // create new image and delete old image as aws doesn't support update
-    // also do these in parallel for faster response
-    const awaitedPromise = await Promise.all(
-      [
-        bucket.createObject(s3ObjectBuilder),
-        bucket.deleteObject(advertisement.image),
-      ]);
-    const [newS3Object] = awaitedPromise;
-    url = await newS3Object.generateLink();
-  }
+  // const data = await parseFormData(req);
+  // // if image has changed
+  // let url = advertisement.image;
+  //
+  // if (data !== undefined && data.files !== undefined && data.files.file !== undefined) {
+  //   const file = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
+  //
+  //
+  //   // const bucket = await s3Connection.getBucket(AdvertisementBucket);
+  //   // const metadata = new Metadata({
+  //   //   'content-type': file.mimetype || 'image/jpeg',
+  //   //   'original-name': file.originalFilename || 'untitled-advertisement-image',
+  //   //   // "content-disposition": file.newFilename,
+  //   // });
+  //   // const buffer = fs.readFileSync(file.filepath);
+  //   // const s3ObjectBuilder = new S3ObjectBuilder(buffer, metadata);
+  //   //
+  //   //
+  //   // // create new image and delete old image as aws doesn't support update
+  //   // // also do these in parallel for faster response
+  //   // const awaitedPromise = await Promise.all(
+  //   //   [
+  //   //     bucket.createObject(s3ObjectBuilder),
+  //   //     bucket.deleteObject(advertisement.image),
+  //   //   ]);
+  //   // const [newS3Object] = awaitedPromise;
+  //   // url = await newS3Object.generateLink();
+  // }
 
 
   // update advertisement
@@ -104,7 +105,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     select: select(isAdmin),
     data: {
       companyId,
-      image: url,
+      image,
       endDate,
       startDate,
       active,
@@ -145,17 +146,20 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
-  // Delete image from s3
-  const s3Promise = new Promise((resolve) => {
-    s3Connection.getBucket(AdvertisementBucket).then((bucket) => {
-      bucket.deleteObject(advertisement.image).then(resolve);
-    });
-  });
+  // // Delete image from s3
+  // const s3Promise = new Promise((resolve) => {
+  //   s3Connection.getBucket(AdvertisementBucket).then((bucket) => {
+  //     bucket.deleteObject(advertisement.image).then(resolve);
+  //   });
+  // });
 
-  // Wait for both promises to resolve
-  await Promise.all([prismaPromise, s3Promise]);
 
-  // Return advertisement
+  await prismaPromise;
+  // // Wait for both promises to resolve
+  // await Promise.all([prismaPromise, s3Promise]);
+
+
+  // Return
   res.status(204).end();
 };
 

@@ -8,10 +8,10 @@ import {
   ParamError,
   ParamInvalidError,
   ParamRequiredError,
+  ParamTooShortError,
   ParamTypeError,
   UnknownError,
   UnknownS3Error,
-  ParamTooShortError,
 } from '@inc/errors';
 
 import { NextApiResponse } from 'next';
@@ -19,7 +19,7 @@ import nextConnect from 'next-connect';
 import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
 import { APIHandlerOptions, APIRequestType } from '@/types/api-types';
-import { S3Error } from '@inc/s3-simplified';
+// import { S3Error } from '@inc/s3-simplified';
 import { apiGuardMiddleware } from './middlewares/apiGuardMiddleware';
 import jwtMiddleware from './middlewares/jwtMiddleware';
 
@@ -77,7 +77,7 @@ function handlePrismaError(error: Prisma.PrismaClientKnownRequestError) {
 /**
  * Prisma error handler
  */
-function handleS3Error(error: S3Error) {
+function handleS3Error(error: { name: string }) {
   switch (error.name) {
     case 'InvalidBucket':
       return new BucketConnectionFailure();
@@ -97,7 +97,7 @@ function handleS3Error(error: S3Error) {
  * @param $error The error
  * @returns An error object
  */
-function handleError($error: Error): ErrorJSON[] {
+function handleError($error: Error & { type?: string }): ErrorJSON[] {
   // An error occurred
   let error = $error;
 
@@ -116,7 +116,8 @@ function handleError($error: Error): ErrorJSON[] {
   }
 
   // Check if it was a custom error
-  if (error instanceof S3Error) {
+  const type = error.type || 'undefined';
+  if (type === 'S3Error') {
     // Return the error message
     error = handleS3Error(error);
   }
