@@ -44,7 +44,7 @@ const LoginForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/../public/images/siwma-bg.png" alt="logo" fill />
+        <Image src="/images/siwma-bg.png" alt="logo" fill />
         <Container
           component="main"
           maxWidth="md"
@@ -72,12 +72,12 @@ const LoginForm = () => {
                 margin: 'auto',
                 display: 'flex',
                 justifyContent: 'center',
-                width: '80%',
+                width: '100%',
                 height: '20%',
                 mb: spacing(2),
               })}
             >
-              <Image src="/../public/images/siwma-logo.jpeg" alt="logo" fill />
+              <Image src="/images/siwma-logo.jpeg" alt="logo" fill  />
             </Box>
             <Divider flexItem />
             <Box
