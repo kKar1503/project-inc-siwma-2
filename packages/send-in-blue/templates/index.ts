@@ -1,5 +1,7 @@
 // Emails are structured as HTML
 
+import fs from 'fs';
+
 export enum EmailTemplate {
   INVITE,
   NOTIFICATION,
@@ -9,43 +11,12 @@ export function getContentFor(template: EmailTemplate): string {
   /* When adding a new template, make sure to add it to the switch statement below.
    * To use a variable in the HTML content, use {{params.variableName}} and make sure to include the variable in the params object.
    * Create a new EmailRequestBody type that extends the params object to include the appropriate variables.
-   */
+   */ 
   switch (template) {
     case EmailTemplate.INVITE:
-      return `
-        <!DOCTYPE html>
-        <html>
-        <body>
-        <h1>Hi {{params.name}},</h1>
-        You have been invited to join the SIWMA Marketplace as a member of {{params.companyName}}.
-        Please click the following link to register your account:
-        <a href="{{params.registrationUrl}}">Join the SIWMA Marketplace</a>
-        If this email was sent to you by mistake, please ignore it.
-        <br>
-        Thank you,
-        The SIWMA Marketplace Team
-        </body>
-        </html>
-        `;
+      return fs.readFileSync('./InviteTemplate.html', 'utf8');
     case EmailTemplate.NOTIFICATION:
-      return `
-        <!DOCTYPE html>
-        <html>
-        <body>
-        <h1>Hi {{params.name}},</h1>
-        Here are your latest notifications from the SIWMA Marketplace:
-        <br>
-        {{params.notifications}}
-        <br>
-        If this email was sent to you by mistake, please ignore it.
-        <br>
-        Thank you,
-        The SIWMA Marketplace Team
-        <br>
-        <a href="{{params.notificationSettingsUrl}}">Click to adjust your notification settings</a>
-        </body>
-        </html>
-        `;
+      return fs.readFileSync('./NotificationTemplate.html', 'utf8');
   }
 }
 
