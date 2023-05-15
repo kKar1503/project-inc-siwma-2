@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+import MenuItem from '@mui/material/MenuItem'; 
 
 export type FilterProps = {
   filter: string;
