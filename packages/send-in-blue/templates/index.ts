@@ -1,7 +1,7 @@
 // Emails are structured as HTML
 
-import fs from 'fs';
-import path from 'path';
+import invite from './InviteTemplate.html';
+import notification from './NotificationTemplate.html';
 
 export enum EmailTemplate {
   INVITE,
@@ -13,18 +13,12 @@ export function getContentFor(template: EmailTemplate): string {
    * To use a variable in the HTML content, use {{params.variableName}} and make sure to include the variable in the params object.
    * Create a new EmailRequestBody type that extends the params object to include the appropriate variables.
    */
-  // switch (template) {
-  //   case EmailTemplate.INVITE:
-  //     return fs.readFileSync('InviteTemplate.html', 'utf8');
-  //   case EmailTemplate.NOTIFICATION:
-  //     return fs.readFileSync('NotificationTemplate.html', 'utf8');
-  // }
 
   switch (template) {
     case EmailTemplate.INVITE:
-      return fs.readFileSync(path.join(__dirname, 'InviteTemplate.html'), 'utf8');
+      return invite;
     case EmailTemplate.NOTIFICATION:
-      return fs.readFileSync(path.join(__dirname, 'NotificationTemplate.html'), 'utf8');
+      return notification;
   }
 }
 
