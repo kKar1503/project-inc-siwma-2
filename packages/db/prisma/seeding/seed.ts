@@ -18,6 +18,7 @@ import { ListingImages } from './tables/listing_images';
 import { ListingsParametersValue } from './tables/listings_parameters_value';
 import { NotificationSettings } from './tables/notification_settings';
 import { UserBookmarks } from './tables/user_bookmarks';
+import { SibKeys } from './tables/sibkeys';
 
 const main = async (): Promise<void> => {
   console.log('\nClearing database...');
@@ -43,6 +44,7 @@ const main = async (): Promise<void> => {
     prismaClient.userBookmarks.deleteMany({}),
     prismaClient.refreshTokens.deleteMany({}),
     prismaClient.accessTokens.deleteMany({}),
+    prismaClient.sibkeys.deleteMany({}),
   ]);
 
   console.log('Database cleared');
@@ -203,6 +205,13 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${userBookmarksCount} rows into public.user_bookmarks`);
+  console.log('Seeding public.sibkeys...');
+
+  const { count: sibkeysCount } = await prismaClient.sibkeys.createMany({
+    data: SibKeys,
+  });
+
+  console.log(`Seeded ${sibkeysCount} rows into public.sibkeys`);
 };
 
 main()
