@@ -1,39 +1,32 @@
-import * as React from 'react';
-import { useTheme } from '@mui/material/styles';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import MobileStepper from '@mui/material/MobileStepper';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+export const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-const images = [
-  {
-    imgPath:
-      'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    imgPath:
-      'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    imgPath:
-      'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
-  },
-  {
-    imgPath:
-      'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-];
+interface Image {
+  id: string;
+  companyId: string;
+  image: string;
+  active: boolean;
+  startDate: string;
+  endDate: number;
+  link: string;
+}
 
-const Carousel = () => {
-  const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const maxSteps = images.length;
+export type AdvertisementCarouselProps = {
+  data: Image[];
+};
+
+const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
+  const maxSteps = data.length;
+
+  const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -48,24 +41,14 @@ const Carousel = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 'max', flexGrow: 1 }}>
-      <Paper
-        square
-        elevation={0}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          height: 50,
-          bgcolor: 'background.default',
-        }}
-      />
+    <Box sx={{ maxWidth: 'max', maxHeight: 300 }}>
       <AutoPlaySwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        axis='x'
         index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
       >
-        {images.map((step, index) => (
+        {data.map((step, index) => (
           <div>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
@@ -76,26 +59,30 @@ const Carousel = () => {
                 <Box
                   component="img"
                   sx={{
-                    height: 255,
+                    height: 300,
                     display: 'block',
                     maxWidth: 'max',
                     overflow: 'hidden',
                     width: '100%',
                     opacity: '30%',
                   }}
-                  src={step.imgPath}
+                  src={step.image}
                 />
                 <Box
                   component="img"
                   sx={{
-                    height: 255,
+                    height: 300,
                     display: 'block',
                     maxWidth: 'max',
                     overflow: 'hidden',
                     width: 'min',
+                    position: 'relative',
+                    bottom: 300,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
-                  src={step.imgPath}
+                  src={step.image}
                 />
               </Box>
             ) : null}
@@ -103,19 +90,32 @@ const Carousel = () => {
         ))}
       </AutoPlaySwipeableViews>
       <MobileStepper
+        sx={{
+          position: 'relative',
+          bottom: 340,
+          backgroundColor: 'transparent',
+        }}
         steps={maxSteps}
-        position="static"
+        // position="static"
         activeStep={activeStep}
         nextButton={
-          <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-            Next
-            {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+          <Button
+            size="small"
+            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
+            onClick={handleNext}
+            disabled={activeStep === maxSteps - 1}
+          >
+            <KeyboardArrowRight />
           </Button>
         }
         backButton={
-          <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-            {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-            Back
+          <Button
+            size="small"
+            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
+            onClick={handleBack}
+            disabled={activeStep === 0}
+          >
+            <KeyboardArrowLeft />
           </Button>
         }
       />
@@ -123,4 +123,4 @@ const Carousel = () => {
   );
 };
 
-export default Carousel;
+export default AdvertisementCarousel;

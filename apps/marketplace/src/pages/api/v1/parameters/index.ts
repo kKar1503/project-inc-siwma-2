@@ -1,8 +1,9 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { DataType, Parameter, ParameterType } from '@prisma/client';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { ParamSizeError } from '@inc/errors';
 
 // -- Type definitions -- //
 // Define the type of the response object
@@ -11,7 +12,7 @@ export type ParamResponse = {
   name: string;
   displayName: string;
   type: ParameterType;
-  datatype: DataType;
+  dataType: DataType;
   active: boolean;
 };
 
@@ -32,8 +33,9 @@ export function formatParamResponse($parameters: Parameter | Parameter[]) {
     name: parameter.name,
     displayName: parameter.displayName,
     type: parameter.type,
-    datatype: parameter.datatype,
+    dataType: parameter.dataType,
     active: parameter.active,
+    ...(parameter.options.length > 0 && { options: parameter.options }),
   }));
 
   return formatAPIResponse(result);
@@ -44,16 +46,58 @@ export function formatParamResponse($parameters: Parameter | Parameter[]) {
  */
 export const paramsRequestBody = z.object({
   // Define the request body schema
-  name: z.string(),
-  displayName: z.string(),
+  name: z.string().min(1),
+  displayName: z.string().min(1),
   type: z.nativeEnum(ParameterType),
   dataType: z.nativeEnum(DataType),
+  options: z.string().array().optional(),
 });
+
+export type ParamsRequestBody = z.infer<typeof paramsRequestBody>;
+
+/**
+ * Validation functions
+ */
+export const validateOptions = (data: Pick<ParamsRequestBody, 'type' | 'options'>) => {
+  // Ensure that the options array has more than 2 elements if MANY_CHOICES is selected
+  if (data.type === ParameterType.MANY_CHOICES && (!data.options || data.options.length <= 2)) {
+    throw new ParamSizeError('options', {
+      min: 3,
+    });
+  }
+
+  // Ensure that the options array has 2 elements if TWO_CHOICES is selected
+  if (data.type === ParameterType.TWO_CHOICES && (!data.options || data.options.length !== 2)) {
+    throw new ParamSizeError('options', {
+      exact: 2,
+    });
+  }
+
+  return true;
+};
 
 export default apiHandler()
   .get(async (req, res) => {
+    // Obtain  query parameters
+    const { id: $ids } = req.query;
+
+    // Initialise query params
+    let ids;
+
+    // Check if the ids query parameter is present
+    if ($ids) {
+      // Yes it is, parse it
+      ids = parseArray($ids).map((e) => parseToNumber(e, 'id'));
+    }
+
     // Retrieve all parameters from the database
-    const parameters = await PrismaClient.parameter.findMany();
+    const parameters = await PrismaClient.parameter.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
 
     // Return the result
     res.status(200).json(formatParamResponse(parameters));
@@ -67,13 +111,13 @@ export default apiHandler()
       // Parse and validate the request body
       const data = paramsRequestBody.parse(req.body);
 
+      // Validate parameter options
+      validateOptions(data);
+
       // Insert the parameter into the database
       const result = await PrismaClient.parameter.create({
         data: {
-          name: data.name,
-          displayName: data.displayName,
-          type: data.type,
-          datatype: data.dataType,
+          ...data,
         },
       });
 
