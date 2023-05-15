@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 
@@ -11,10 +11,10 @@ const options = ['ALL', 'FROM BUYERS', 'FROM SELLERS'];
 const FilterChips = ({ onData }: FilterChipsProps) => {
   const [selectedValue, setSelectedValue] = useState('ALL');
 
-  const handleClick = (event: any) => {
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const label = event.currentTarget.textContent;
-    setSelectedValue(label);
-    onData(label);
+    setSelectedValue(label || '');
+    onData(label || '');
   };
 
   return (

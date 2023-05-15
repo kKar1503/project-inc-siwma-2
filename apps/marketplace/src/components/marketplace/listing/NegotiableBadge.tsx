@@ -1,22 +1,11 @@
 import { Chip } from '@mui/material';
-import { createTheme } from '@mui/material/styles';
-
-// warning color not included in palette, created here for negotiable tag use
-// yellow was an option but too bright for user
-const theme = createTheme({
-  palette: {
-    warning: {
-      main: '#ed6c02',
-    },
-  },
-});
 
 const NegotiableBadge = () => (
   <Chip
     sx={({ spacing, palette }) => ({
       mr: spacing(1),
-      bgcolor: theme.palette.warning.main,
-      fontWeight: 'bold',
+      bgcolor: palette.info[600], // warning color is orange, but too similar to sell badge
+      fontWeight: 500,
       color: palette.common.white,
     })}
     label="Negotiable"

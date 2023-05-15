@@ -4,7 +4,7 @@ const SellBadge = () => (
   <Chip
     sx={({ spacing, palette }) => ({
       mr: spacing(1),
-      bgcolor: palette.error[200],
+      bgcolor: palette.error[500],
       fontWeight: 'bold',
       color: palette.common.white,
     })}
