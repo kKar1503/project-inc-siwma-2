@@ -23,6 +23,21 @@ export function parseListingId($id: string) {
   return id;
 }
 
+/**
+ * Fetches required parameters for a category
+ * @param categoryId The category id
+ * @returns An array of required parameter ids for the category
+ */
+async function getRequiredParametersForCategory(categoryId: number): Promise<number[]> {
+  // Fetch required parameters for the category
+  const categoryParameters = await PrismaClient.categoriesParameters.findMany({
+    where: { categoryId: categoryId, required: true },
+  });
+
+  // Return an array of required parameter ids
+  return categoryParameters.map((param) => param.parameterId);
+}
+
 // -- Type definitions -- //
 export type ListingResponse = {
   id: string;
@@ -107,7 +122,7 @@ export const listingsRequestBody = z.object({
     .array(
       z.object({
         paramId: z.string(),
-        value: z.number().refine((value) => value >= 0, {}),
+        value: z.string().transform(zodParseToNumber),
       })
     )
     .optional(),
@@ -129,9 +144,9 @@ export default apiHandler()
       },
       name: queryParams.matching
         ? {
-          contains: queryParams.matching,
-          mode: 'insensitive',
-        }
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
         : undefined,
     };
 
@@ -183,6 +198,18 @@ export default apiHandler()
       throw new ParamError('Category');
     }
 
+    // Check if all required parameters for the category are provided
+    const requiredParameters = await getRequiredParametersForCategory(data.categoryId);
+    const providedParameters = data.parameters
+      ? data.parameters.map((param) => parseToNumber(param.paramId, 'paramId'))
+      : [];
+
+    for (let reqParam of requiredParameters) {
+      if (!providedParameters.includes(reqParam)) {
+        throw new ParamError('ParamId');
+      }
+    }
+
     const listing = await PrismaClient.listing.create({
       data: {
         name: data.name,
@@ -196,21 +223,21 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parseToNumber(parameter.paramId, 'paramId'),
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parseToNumber(parameter.paramId, 'paramId'),
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
         listingsParametersValues: true,
       },
     });
-    //  res.status(200).json(formatAPIResponse(formatResponse(response)));
+
     res.status(201).json(formatAPIResponse({ listingId: listing.id }));
   });

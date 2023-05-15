@@ -1,15 +1,12 @@
 import { NextApiResponse } from 'next';
-import {
-  apiHandler, formatAPIResponse,
-  zodParseToInteger,
-} from '@/utils/api';
+import { apiHandler, formatAPIResponse, zodParseToInteger } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { ForbiddenError, NotFoundError } from '@inc/errors';
+import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import * as z from 'zod';
 import { APIRequestType } from '@/types/api-types';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
-
+import parameters from '../../../parameters';
 
 // -- Functions --//
 function formatParametersResponse(parameters: { parameterId: number; value: string }[]): any[] {
@@ -45,17 +42,35 @@ const getListingParameters = async (req: APIRequestType, res: NextApiResponse) =
   res.status(200).json(formatAPIResponse(formattedParameters));
 };
 
+/**
+ * Fetches valid parameters for a category
+ * @param categoryId The category id
+ * @returns An array of valid parameter ids for the category
+ */
+async function getValidParametersForCategory(categoryId: number): Promise<string[]> {
+  // Fetch valid parameters for the category
+  const validParameters = await PrismaClient.category.findUnique({
+    where: { id: categoryId },
+    include: { categoriesParameters: true },
+  });
+
+  if (!validParameters) {
+    throw new NotFoundError(`Category with id '${categoryId}'`);
+  }
+
+  // Return an array of valid parameter ids
+  return validParameters.categoriesParameters.map((param) => param.parameterId.toString());
+}
+
 const parameterSchema = z.object({
   paramId: z.string().transform(zodParseToInteger),
   value: z.string(),
 });
 
-
 type RequestBodyParameter = {
   paramId: number;
   value: string;
 };
-
 
 const createListingParameter = async (req: APIRequestType, res: NextApiResponse) => {
   const id = parseListingId(req.query.id as string);
@@ -73,6 +88,14 @@ const createListingParameter = async (req: APIRequestType, res: NextApiResponse)
   }
 
   const { paramId, value } = parameterSchema.parse(req.body);
+
+  // Get valid parameters for the listing's category
+  const validParameters = await getValidParametersForCategory(listing.categoryId);
+
+  // Check that the paramId is a valid parameter for the category
+  if (!validParameters.includes(paramId.toString())) {
+    throw new ParamError('paramId');
+  }
 
   const createdParameter = await PrismaClient.listingsParametersValue.create({
     data: {
