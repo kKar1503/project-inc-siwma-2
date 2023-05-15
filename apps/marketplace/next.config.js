@@ -24,6 +24,11 @@ const nextConfig = {
       config.plugins.push(new PrismaPlugin());
     }
 
+    config.module.rules.push({
+      test: /\.html$/,
+      loader: 'html-loader',
+    });
+
     return config;
   },
   images: {
