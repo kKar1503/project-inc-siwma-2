@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError } from '@inc/errors';
 import { z } from 'zod';
@@ -9,11 +9,11 @@ const chatRequestQuery = z.object({
   lastIdPointer: z.string().uuid().optional(),
   limit: z
     .string()
-    .optional()
-    .transform((value) => (value ? parseToNumber(value) : 10))
+    .transform(zodParseToNumber)
     .refine((value) => value >= 1 && value <= 10, {
       message: 'Invalid limit',
-    }),
+    })
+    .optional(),
 });
 
 async function getUserChats(userId: string, lastIdPointer: string | undefined, limit: number) {
@@ -46,7 +46,7 @@ export default apiHandler().get(async (req, res) => {
   }
 
   // Fetch chats
-  const chats = await getUserChats(userId, lastIdPointer, limit);
+  const chats = await getUserChats(userId, lastIdPointer, limit || 10);
 
   // Format chats
   const formattedChats = chats.map((chat) => ({

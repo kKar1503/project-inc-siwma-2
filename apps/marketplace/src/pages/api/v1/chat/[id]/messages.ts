@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, AuthError } from '@inc/errors';
 import { z } from 'zod';
@@ -8,19 +8,19 @@ import { checkChatExists } from '.';
 const chatRequestQuery = z.object({
   id: z.string().uuid(),
   lastIdPointer: z
-  .string()
-  .optional()
-  .transform((value) => (value ? parseToNumber(value) : 0))
-  .refine((value) => typeof value === 'number' && !Number.isNaN(value), {
-    message: 'Invalid lastIdPointer',
-  }),
+    .string()
+    .transform(zodParseToNumber)
+    .refine((value) => typeof value === 'number' && !Number.isNaN(value), {
+      message: 'Invalid lastIdPointer',
+    })
+    .optional(),
   limit: z
     .string()
-    .optional()
-    .transform((value) => (value ? parseToNumber(value) : 10))
+    .transform(zodParseToNumber)
     .refine((value) => value >= 1 && value <= 10, {
       message: 'Invalid limit',
-    }),
+    })
+    .optional(),
 });
 
 async function getMessages(chatId: string, lastIdPointer: number, limit: number) {
@@ -43,13 +43,7 @@ async function getMessages(chatId: string, lastIdPointer: number, limit: number)
 
 export default apiHandler().get(async (req, res) => {
   // Parse and validate the request query parameters
-  const parseResult = chatRequestQuery.safeParse(req.query);
-
-  if (!parseResult.success) {
-    throw new NotFoundError(parseResult.error.issues[0]?.path[0]?.toString() || 'Unknown');
-  }
-
-  const { id, lastIdPointer, limit } = parseResult.data;
+  const { id, lastIdPointer, limit } = chatRequestQuery.parse(req.query);
 
   // Fetch the chat room details
   const chat = await checkChatExists(id);
@@ -60,12 +54,16 @@ export default apiHandler().get(async (req, res) => {
   }
 
   // Verify if the user is a participant of the chat room
-if (!req.token || !req.token.user || (req.token.user.id !== chat.buyer && req.token.user.id !== chat.seller)) {
-  throw new AuthError();
-}
+  if (
+    !req.token ||
+    !req.token.user ||
+    (req.token.user.id !== chat.buyer && req.token.user.id !== chat.seller)
+  ) {
+    throw new AuthError();
+  }
 
   // Fetch messages
-  const messages = await getMessages(id, lastIdPointer, limit);
+  const messages = await getMessages(id, lastIdPointer || 0, limit || 10);
 
   // Format messages
   const formattedMessages = messages.map((message) => ({
