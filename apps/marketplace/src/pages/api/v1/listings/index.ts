@@ -31,7 +31,7 @@ export function parseListingId($id: string) {
 async function getRequiredParametersForCategory(categoryId: number): Promise<number[]> {
   // Fetch required parameters for the category
   const categoryParameters = await PrismaClient.categoriesParameters.findMany({
-    where: { categoryId: categoryId, required: true },
+    where: { categoryId, required: true },
   });
 
   // Return an array of required parameter ids
@@ -204,11 +204,11 @@ export default apiHandler()
       ? data.parameters.map((param) => parseToNumber(param.paramId, 'paramId'))
       : [];
 
-    for (let reqParam of requiredParameters) {
+    requiredParameters.forEach((reqParam) => {
       if (!providedParameters.includes(reqParam)) {
-        throw new ParamError('ParamId');
+        throw new ParamError('paramId');
       }
-    }
+    });
 
     const listing = await PrismaClient.listing.create({
       data: {
