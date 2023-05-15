@@ -1,73 +1,114 @@
-import React , { useState, SyntheticEvent } from 'react';
 import { Box } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import SearchBar from '@inc/ui/lib/components/SearchBar';
 
-const ProfilePageFilter: React.FC<{
-  setFilter: (value: string) => void,
-  setSort: (value: string) => void,
-}> = ({ setFilter, setSort }) => {
+export type FilterProps = {
+  filter: string;
+  setFilter: (val: string) => void;
+  sort: string;
+  setSort: (val: string) => void;
+};
 
-  const filterHandler = (event: SelectChangeEvent<unknown>) => {
+const ProfilePageFilter = ({ filter, setFilter, sort, setSort }: FilterProps) => {
+  const handleChange = (event: SelectChangeEvent) => {
     setFilter(event.target.value as string);
-  }
-
-  const sortHandler = (event: SelectChangeEvent<unknown>) => {
     setSort(event.target.value as string);
-  }
-
+  };
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" width="60%" sx={{ flexGrow: 1 }}>
-      <SearchBar />
+    <Box
+      display="flex"
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <>
+        {/* Here goes the Searchbar */}
 
-      <Typography noWrap fontSize={11}>
-        Filter:
-      </Typography>
-
-      <Select
-        onChange={filterHandler}
-        sx={{
-          color: '#212121',
-          width: '7rem',
-          height: '1.5rem',
-          marginLeft: '1rem',
-          marginRight: '1rem',
-          fontSize: '10px',
-        }}
-      >
-        <MenuItem value="All Listings" sx={{ fontSize: '10px' }}>
-          All Listings
-        </MenuItem>
-        <MenuItem value="Buying" sx={{ fontSize: '10px' }}>
-          Buying
-        </MenuItem>
-        <MenuItem value="Selling" sx={{ fontSize: '10px' }}>
-          Selling
-        </MenuItem>
-      </Select>
-
-      <Typography noWrap fontSize={11} color="#FFFFF">
-        Sort:
-      </Typography>
-
-      <Select
-        onChange={sortHandler}
-        sx={{
-          width: '7rem',
-          height: '1.5rem',
-          marginLeft: '1rem',
-          marginRight: '1rem',
-        }}
-      >
-        <MenuItem value="Newest" sx={{ fontSize: '10px' }}>
-          Newest
-        </MenuItem>
-        <MenuItem value="Oldest" sx={{ fontSize: '10px' }}>
-          Oldest
-        </MenuItem>
-      </Select>
+        <Typography
+          noWrap
+          sx={({ spacing, typography }) => ({
+            ml: spacing(1),
+            mt: spacing(1),
+            fontSize: typography.caption,
+          })}
+        >
+          Filter:
+        </Typography>
+        <Select
+          onChange={handleChange}
+          sx={({ spacing, typography }) => ({
+            ml: spacing(1),
+            mt: spacing(1),
+            height: spacing(3),
+            fontSize: typography.caption,
+            width: 'fill',
+          })}
+        >
+          <MenuItem
+            value="All Listings"
+            sx={({ typography }) => ({
+              fontSize: typography.caption,
+            })}
+          >
+            All Listings
+          </MenuItem>
+          <MenuItem
+            value="Buying"
+            sx={({ typography }) => ({
+              fontSize: typography.caption,
+            })}
+          >
+            Buying
+          </MenuItem>
+          <MenuItem
+            value="Selling"
+            sx={({ typography }) => ({
+              fontSize: typography.caption,
+            })}
+          >
+            Selling
+          </MenuItem>
+        </Select>
+        <Typography
+          noWrap
+          sx={({ spacing, typography }) => ({
+            ml: spacing(1),
+            mt: spacing(1),
+            fontSize: typography.caption,
+          })}
+        >
+          Sort:
+        </Typography>
+        <Select
+          onChange={handleChange}
+          sx={({ spacing, typography }) => ({
+            ml: spacing(1),
+            mt: spacing(1),
+            width: 'fill',
+            height: spacing(3),
+            fontSize: typography.caption,
+          })}
+        >
+          <MenuItem
+            value="Newest"
+            sx={({ typography }) => ({
+              fontSize: typography.caption,
+            })}
+          >
+            Newest
+          </MenuItem>
+          <MenuItem
+            value="Oldest"
+            sx={({ typography }) => ({
+              fontSize: typography.caption,
+            })}
+          >
+            Oldest
+          </MenuItem>
+        </Select>
+      </>
     </Box>
   );
 };
