@@ -129,14 +129,13 @@ model Listing {
   price                         Decimal                   @default(0) @db.Decimal
   unitPrice                     Boolean                   @default(false) @map("unit_price")
   negotiable                    Boolean                   @default(true)
-  open                          Boolean                   @default(true)
-  visibility                    Boolean                   @default(true)
-  active                        Boolean                   @default(true)
   categoryId                    Int                       @map("category_id")
   type                          ListingType
   owner                         String                    @db.Uuid
   createdAt                     DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                     DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  archived                      Boolean                   @default(false)
+  deletedAt                     DateTime                  @default(now()) @map("deleted_at") @db.Timestamptz(6)
   category                      Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
   users                         Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
   listingBookmarks              ListingBookmarks[]
