@@ -7,7 +7,7 @@ import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
+import MenuIcon from '@mui/icons-material/Menu';
 import TranslateIcon from '@mui/icons-material/Translate';
 import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
@@ -35,21 +35,18 @@ const NavBar = () => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: 'white', boxShadow: 1}}>
+    <Box sx={{ flexGrow: 1, backgroundColor: 'white', boxShadow: 1 }}>
       <Toolbar>
-      
-        <Image src='/../public/images/favicons/SIWMA icon.png' alt='logo' width={60} height={40}/>
-
+        <Image src="/images/favicons/SIWMA-icon.png" alt="logo" width={60} height={40} />
 
         <Link href="/home" underline="none">
           <Typography
             noWrap
-            fontSize={12}
-            paddingRight='1rem'
-            paddingLeft='2.5rem'
-            color='#424242'
+            sx={({ spacing, typography }) => ({
+              fontSize: typography.subtitle2,
+              ml: spacing(3),
+            })}
           >
             Home
           </Typography>
@@ -58,128 +55,176 @@ const NavBar = () => {
         <Link href="/allCategories" underline="none">
           <Typography
             noWrap
-            fontSize={12}
-            paddingRight='2rem'
-            paddingLeft='2rem'
-            color='#424242'
+            sx={({ spacing, typography }) => ({
+              fontSize: typography.subtitle2,
+              ml: spacing(3),
+              mr: spacing(3),
+            })}
           >
             All Categories
           </Typography>
         </Link>
 
-        <SearchBar/>
+        <SearchBar />
 
-        <AddListing/>
+        <AddListing />
 
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
-          <IconButton size="medium" sx={{marginLeft: '1rem'}}>
-            <TranslateIcon sx={{color: '#424242', fontSize: '22px'}}/>
+          <IconButton size="medium" sx={{ marginLeft: '1rem' }}>
+            <TranslateIcon
+              sx={({ typography, palette }) => ({
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+              })}
+            />
           </IconButton>
 
-          <IconButton size="medium" sx={{marginLeft: '1rem'}}>
-            <Badge> 
-              <MessageIcon sx={{color: '#424242', fontSize: '22px'}}/>
-            </Badge>
-          </IconButton>
-
-          <IconButton size="medium" sx={{marginLeft: '1rem'}}>
+          <IconButton size="medium" sx={{ marginLeft: '1rem' }}>
             <Badge>
-              <NotificationsIcon sx={{color: '#424242', fontSize: '22px'}}/>
+              <MessageIcon
+                sx={({ typography, palette }) => ({
+                  fontSize: typography.h5,
+                  color: palette.text.secondary,
+                })}
+              />
             </Badge>
           </IconButton>
 
-          <Profile/>
+          <IconButton size="medium" sx={{ marginLeft: '1rem' }}>
+            <Badge>
+              <NotificationsIcon
+                sx={({ typography, palette }) => ({
+                  fontSize: typography.h5,
+                  color: palette.text.secondary,
+                })}
+              />
+            </Badge>
+          </IconButton>
 
+          <Profile />
         </Box>
 
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
           <IconButton
-            size='large'
-            aria-label='show more'
-            aria-controls='primary-search-account-menu-mobile'
-            aria-haspopup='true'
+            size="large"
+            aria-label="show more"
+            aria-controls="primary-search-account-menu-mobile"
+            aria-haspopup="true"
             onClick={handleMobileMenuOpen}
-            color='inherit'
+            color="inherit"
           >
-            <MoreIcon />
+            <MenuIcon />
           </IconButton>
 
           <Menu
             anchorEl={mobileMoreAnchorEl}
             anchorOrigin={{
               vertical: 'bottom',
-              horizontal: 'right'
+              horizontal: 'right',
             }}
-            id='primary-search-account-menu-mobile'
             keepMounted
             transformOrigin={{
               vertical: 'top',
-              horizontal: 'right'
+              horizontal: 'right',
             }}
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
           >
             <MenuItem onClick={handleMenuClose}>
-              <IconButton size="medium" sx={{marginLeft: '1rem'}}>
-                <TranslateIcon sx={{color: '#424242', fontSize: '22px'}}/>
+              <IconButton
+                sx={({ spacing }) => ({
+                  ml: spacing(2),
+                })}
+              >
+                <TranslateIcon
+                  sx={({ typography, palette }) => ({
+                    fontSize: typography.h5,
+                    color: palette.text.secondary,
+                  })}
+                />
               </IconButton>
-              <Typography fontSize={10}
-                color='#424242'
-                sx={{paddingRight: '2rem', paddingLeft: '0.5rem'}}
+              <Typography
+                sx={({ spacing, typography, palette }) => ({
+                  fontSize: typography.caption,
+                  color: palette.text.secondary,
+                  ml: spacing(1),
+                  mr: spacing(1),
+                })}
               >
                 Translate
               </Typography>
             </MenuItem>
 
             <MenuItem onClick={handleMenuClose}>
-              <IconButton size="medium" sx={{marginLeft: '1rem'}}>
-                <Badge> 
-                  <MessageIcon sx={{color: '#424242', fontSize: '22px'}}/>
-                </Badge>
+              <IconButton
+                sx={({ spacing }) => ({
+                  ml: spacing(2),
+                })}
+              >
+                <MessageIcon
+                  sx={({ typography, palette }) => ({
+                    fontSize: typography.h5,
+                    color: palette.text.secondary,
+                  })}
+                />
               </IconButton>
-              <Typography 
-                fontSize={10}
-                color='#424242'
-                sx={{paddingLeft: '0.5rem'}}
+              <Typography
+                sx={({ spacing, typography, palette }) => ({
+                  fontSize: typography.caption,
+                  color: palette.text.secondary,
+                  ml: spacing(1),
+                  mr: spacing(1),
+                })}
               >
                 Message
               </Typography>
             </MenuItem>
 
             <MenuItem onClick={handleMenuClose}>
-              <IconButton size="medium" sx={{marginLeft: '1rem'}}>
-                <Badge>
-                  <NotificationsIcon sx={{color: '#424242', fontSize: '22px'}}/>
-                </Badge>
+              <IconButton
+                sx={({ spacing }) => ({
+                  ml: spacing(2),
+                })}
+              >
+                <NotificationsIcon
+                  sx={({ typography, palette }) => ({
+                    fontSize: typography.h5,
+                    color: palette.text.secondary,
+                  })}
+                />
               </IconButton>
-              <Typography 
-                  fontSize={10}
-                  color='#424242'
-                  sx={{paddingLeft: '0.5rem'}}
-                >
-                    Notification
-                </Typography>
+
+              <Typography
+                sx={({ spacing, typography, palette }) => ({
+                  fontSize: typography.caption,
+                  color: palette.text.secondary,
+                  ml: spacing(1),
+                  mr: spacing(1),
+                })}
+              >
+                Notification
+              </Typography>
             </MenuItem>
 
             <MenuItem>
-              <Profile/>
-              <Typography 
-                fontSize={10}
-                color='#424242'
-                sx={{paddingLeft: '0.5rem'}}
+              <Profile />
+              <Typography
+                sx={({ spacing, typography, palette }) => ({
+                  fontSize: typography.caption,
+                  color: palette.text.secondary,
+                  ml: spacing(1),
+                  mr: spacing(1),
+                })}
               >
                 Profile
               </Typography>
             </MenuItem>
-
           </Menu>
-          
         </Box>
       </Toolbar>
     </Box>
   );
-}
+};
 
 export default NavBar;

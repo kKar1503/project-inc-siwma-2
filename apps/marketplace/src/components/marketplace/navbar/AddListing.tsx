@@ -3,15 +3,22 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 const AddListing = () => (
-    <Button variant="contained" size='small' sx={{backgroundColor: '#2962FF', textTransform: 'capitalize'}}>
-      <Typography
-        noWrap
-        fontSize={13}
-        color='#FFFFFF'
-      >
-        Add Listings
-      </Typography>
-    </Button>
-)
+  <Button
+    variant="contained"
+    sx={({ palette }) => ({
+      backgroundColor: palette.primary.main,
+      textTransform: 'capitalize',
+    })}
+  >
+    <Typography
+      noWrap
+      sx={({ typography }) => ({
+        fontSize: typography.subtitle2,
+      })}
+    >
+      Add Listings
+    </Typography>
+  </Button>
+);
 
 export default AddListing;
