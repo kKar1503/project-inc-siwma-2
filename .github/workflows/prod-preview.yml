@@ -11,7 +11,7 @@ on:
 
 jobs:
   preview-marketplace:
-    environment: development
+    environment: staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
