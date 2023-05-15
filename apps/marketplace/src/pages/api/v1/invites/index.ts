@@ -4,6 +4,12 @@ import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { DuplicateError } from '@inc/errors';
 import { validateEmail, validateName } from '@/utils/api/validate';
+import sendEmails from '@inc/send-in-blue/sendEmails';
+import {
+  getContentFor,
+  BulkInviteEmailRequestBody,
+  EmailTemplate,
+} from '@inc/send-in-blue/templates';
 
 export const inviteCreationRequestBody = z.object({
   email: z.string(),
@@ -55,6 +61,35 @@ export default apiHandler({ allowAdminsOnly: true })
         expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       },
     });
+
+    // Sending Emails
+
+    // 1. Get the invite email template
+    const content = getContentFor(EmailTemplate.INVITE);
+
+    // 2. Format the content
+    const emailBody: BulkInviteEmailRequestBody = {
+      htmlContent: content,
+      subject: 'Join the SIWMA Marketplace',
+      messageVersions: [
+        {
+          to: [
+            {
+              email,
+              name,
+            },
+          ],
+          params: {
+            name,
+            companyName: 'SIWMA Marketplace', // TODO: Get the company name from the database
+            registrationUrl: `https://siwma.org/register?token=${tokenHash}`,
+          },
+        },
+      ],
+    };
+
+    // 3. Send the email
+    await sendEmails(emailBody);
 
     return res.status(200).json(formatAPIResponse({ inviteId: invite.id.toString() }));
   })
