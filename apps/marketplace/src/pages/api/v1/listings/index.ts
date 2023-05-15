@@ -98,7 +98,7 @@ export function formatListingResponse(
 export const listingsRequestBody = z.object({
   name: z.string(),
   description: z.string(),
-  price: z.number(),
+  price: z.number().gte(0),
   unitPrice: z.boolean().optional(),
   negotiable: z.boolean().optional(),
   categoryId: z.number(),
@@ -129,9 +129,9 @@ export default apiHandler()
       },
       name: queryParams.matching
         ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+          contains: queryParams.matching,
+          mode: 'insensitive',
+        }
         : undefined,
     };
 
@@ -196,15 +196,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value.toString(),
-                parameter: {
-                  connect: {
-                    id: parseToNumber(parameter.paramId, 'paramId'),
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value.toString(),
+              parameter: {
+                connect: {
+                  id: parseToNumber(parameter.paramId, 'paramId'),
                 },
-              })),
-            }
+              },
+            })),
+          }
           : undefined,
       },
       include: {

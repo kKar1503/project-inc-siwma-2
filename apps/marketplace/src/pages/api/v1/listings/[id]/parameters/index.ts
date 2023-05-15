@@ -42,7 +42,7 @@ const getListingParameters = async (req: APIRequestType, res: NextApiResponse) =
   });
 
   const formattedParameters = formatParametersResponse(parameters);
-  res.status(200).json(formatAPIResponse({ formattedParameters }));
+  res.status(200).json(formatAPIResponse(formattedParameters));
 };
 
 const parameterSchema = z.object({

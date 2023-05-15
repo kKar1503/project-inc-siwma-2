@@ -44,14 +44,14 @@ interface Parameter {
 
 // Define the schema for the request body
 const putListingRequestBody = z.object({
-  name: z.string(),
-  description: z.string(),
-  price: z.number(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  price: z.number().gte(0).optional(),
   unitPrice: z.boolean().optional(),
   negotiable: z.boolean().optional(),
-  categoryId: z.number(),
-  type: z.nativeEnum(ListingType),
-  listingsParametersValues: z
+  categoryId: z.number().optional(),
+  type: z.nativeEnum(ListingType).optional(),
+  parameters: z
     .array(
       z.object({
         paramId: z.string(),
@@ -115,8 +115,8 @@ export default apiHandler()
       },
     });
 
-    if (data.listingsParametersValues) {
-      const parameterUpdates = data.listingsParametersValues.map((parameter: Parameter) =>
+    if (data.parameters) {
+      const parameterUpdates = data.parameters.map((parameter: Parameter) =>
         PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {
