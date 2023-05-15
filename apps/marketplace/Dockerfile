@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 # Installing Dependencies
-RUN npm install -g pnpm && pnpm clean-i
+RUN npm install -g pnpm && pnpm ci
 
 # DATABASE_URL for Prisma
 ARG DATABASE_URL
