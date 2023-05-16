@@ -1,4 +1,3 @@
-import { ReactNode, useState, SyntheticEvent } from 'react';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -11,7 +10,7 @@ import { useTheme, styled } from '@mui/material/styles';
 const categoryPageData = [
   {
     id: '1',
-    name: 'A',
+    name: 'Beams',
     description: 'Description1',
     image:
       'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
@@ -20,7 +19,7 @@ const categoryPageData = [
   },
   {
     id: '2',
-    name: 'lorem ipsum',
+    name: 'Angles',
     description: 'Description1',
     image:
       'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
@@ -29,7 +28,7 @@ const categoryPageData = [
   },
   {
     id: '3',
-    name: 'cmd + window',
+    name: 'Channels',
     description: 'Description1',
     image:
       'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
@@ -38,7 +37,7 @@ const categoryPageData = [
   },
   {
     id: '4',
-    name: 'rshlck',
+    name: 'Gratings',
     description: 'Description1',
     image:
       'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
@@ -47,7 +46,7 @@ const categoryPageData = [
   },
   {
     id: '5',
-    name: 'cocint',
+    name: 'Hollo Sections',
     description: 'Description1',
     image:
       'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
@@ -56,7 +55,7 @@ const categoryPageData = [
   },
   {
     id: '6',
-    name: 'huhu',
+    name: 'Plates',
     description: 'Description1',
     image:
       'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
@@ -65,7 +64,34 @@ const categoryPageData = [
   },
   {
     id: '7',
-    name: 'gotoe',
+    name: 'Purlins',
+    description: 'Description1',
+    image:
+      'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
+    crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
+    active: true,
+  },
+  {
+    id: '8',
+    name: 'Round Bar',
+    description: 'Description1',
+    image:
+      'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
+    crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
+    active: true,
+  },
+  {
+    id: '9',
+    name: 'Sheet Piles',
+    description: 'Description1',
+    image:
+      'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
+    crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
+    active: true,
+  },
+  {
+    id: '10',
+    name: 'Square Bar',
     description: 'Description1',
     image:
       'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
@@ -74,65 +100,101 @@ const categoryPageData = [
   },
 ];
 
-// export const getServerSideProps = async ({ query } : { query:any }) => {
-//   // api call to get category names and images
+interface Image {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  crossSectionIMage: string;
+  active: boolean;
+}
 
-//   const { id } = query;
+export type CategoryPageProps = {
+  data: Image[];
+};
 
-//   const data = categoryPageData[id - 1];
+export const getServerSideProps = async () => {
+  // api call to get category names and images
 
-//   return {
-//     props: {
-//       data,
-//     },
-//   };
-// };
+  const data = categoryPageData;
 
-// const StyledTab = styled(Tab)(({ theme }) => {{
+  return {
+    props: {
+      data,
+    },
+  };
+};
 
-// }});
-
-const CategoriesPage = () => {
+const CategoriesPage = ({ data }: CategoryPageProps) => {
   const theme = useTheme();
 
   return (
     <Box
       sx={() => ({
-        width: '73%',
+        width: '80%',
         height: 'full',
-        bgcolor: theme.palette.common.white,
-        borderRadius: theme.shape,
+        mr: 'auto',
+        ml: 'auto',
+        maxHeight: 'xl',
       })}
     >
-      <Grid sx={{ flexGrow: 1 }} container spacing={2}>
-        <Grid item sx={({ spacing }) => ({
+      <Typography
+        sx={({ spacing }) => ({
+          pl: spacing(4),
           pt: spacing(3),
-          pl: '160px',
-          pr: '160px',
-          pb: spacing(3),
-        })}>
-          <Grid container justifyContent="center">
-            {categoryPageData.map(({ id, name, image }) => (
-              <Grid key={id} item>
-                <Card sx={{ maxWidth: 345 }}>
-                  <CardActionArea>
-                    <CardMedia component="img" height="140" image={image} />
-                    <CardContent>
-                      <Typography
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                        marginRight="auto"
-                        marginLeft="auto"
-                      >
-                        {name}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          fontWeight: 500,
+        })}
+        variant="h3"
+      >
+        More Metal Types
+      </Typography>
+      <Typography
+        sx={({ spacing }) => ({
+          pl: spacing(4),
+          pt: spacing(1),
+          fontWeight: 500,
+        })}
+        variant="h5"
+      >
+        Choose from over 8,000 types of shapes and grades of metals!
+      </Typography>
+
+      <Grid
+        sx={({ spacing }) => ({
+          pt: spacing(4),
+          pb: spacing(4),
+        })}
+      >
+        <Grid
+          container
+          columnSpacing={3}
+          rowSpacing={3}
+          sx={() => ({
+            direction: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          })}
+        >
+          {data.map(({ id, name, image }) => (
+            <Grid key={id} item>
+              <Card sx={{ maxWidth: 345 }}>
+                <CardActionArea>
+                  <CardMedia component="img" height="140" image={image} />
+                  <CardContent>
+                    <Typography
+                      gutterBottom
+                      variant="body1"
+                      sx={{
+                        fontWeight: 500,
+                      }}
+                    >
+                      {name}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </Grid>
     </Box>
