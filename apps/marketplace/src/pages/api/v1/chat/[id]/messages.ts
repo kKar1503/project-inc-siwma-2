@@ -1,26 +1,14 @@
 import { apiHandler, formatAPIResponse, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError, AuthError } from '@inc/errors';
+import { NotFoundError, InvalidRangeError, ForbiddenError } from '@inc/errors';
 import { z } from 'zod';
 import { checkChatExists } from '.';
 
 // Zod schema for the GET request query parameters
 const chatRequestQuery = z.object({
   id: z.string().uuid(),
-  lastIdPointer: z
-    .string()
-    .transform(zodParseToNumber)
-    .refine((value) => typeof value === 'number' && !Number.isNaN(value), {
-      message: 'Invalid lastIdPointer',
-    })
-    .optional(),
-  limit: z
-    .string()
-    .transform(zodParseToNumber)
-    .refine((value) => value >= 1 && value <= 10, {
-      message: 'Invalid limit',
-    })
-    .optional(),
+  lastIdPointer: z.string().transform(zodParseToNumber).optional(),
+  limit: z.string().transform(zodParseToNumber).optional(),
 });
 
 async function getMessages(chatId: string, lastIdPointer: number, limit: number) {
@@ -43,7 +31,17 @@ async function getMessages(chatId: string, lastIdPointer: number, limit: number)
 
 export default apiHandler().get(async (req, res) => {
   // Parse and validate the request query parameters
-  const { id, lastIdPointer, limit } = chatRequestQuery.parse(req.query);
+  let { id, lastIdPointer, limit } = chatRequestQuery.parse(req.query);
+
+  // Verify the limit
+  if (limit !== undefined) {
+    if (limit < 1 || limit > 10) {
+      throw new InvalidRangeError('limit');
+    }
+  } else {
+    // Default limit
+    limit = 10;
+  }
 
   // Fetch the chat room details
   const chat = await checkChatExists(id);
@@ -59,11 +57,11 @@ export default apiHandler().get(async (req, res) => {
     !req.token.user ||
     (req.token.user.id !== chat.buyer && req.token.user.id !== chat.seller)
   ) {
-    throw new AuthError();
+    throw new ForbiddenError();
   }
 
   // Fetch messages
-  const messages = await getMessages(id, lastIdPointer || 0, limit || 10);
+  const messages = await getMessages(id, lastIdPointer || 0, limit);
 
   // Format messages
   const formattedMessages = messages.map((message) => ({
