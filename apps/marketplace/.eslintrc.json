@@ -4,7 +4,8 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["next", "airbnb", "prettier"],
+  "extends": ["next", "airbnb", "prettier", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
@@ -12,6 +13,8 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
+  "root": true,
+  "plugins": ["@typescript-eslint"],
   "globals": {
     "JSX": true
   },
@@ -34,11 +37,10 @@
     "quotes": ["error", "single", { "allowTemplateLiterals": true, "avoidEscape": true }],
     "object-curly-newline": "off",
     "operator-linebreak": ["error", "after", { "overrides": { "?": "before", ":": "before" } }],
-    "no-unused-vars": [
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
       "warn",
       {
-        "vars": "all",
-        "args": "after-used",
         "ignoreRestSiblings": true
       }
     ],
