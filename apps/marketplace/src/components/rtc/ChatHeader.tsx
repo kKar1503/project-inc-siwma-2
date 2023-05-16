@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
@@ -11,7 +11,6 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import ReportModal from '../modal/ReportModal';
 import DeleteChat from '../modal/DeleteChat';
 
-
 export type ChatHeaderProps = {
   profilePic: string;
   companyName: string;
@@ -19,10 +18,10 @@ export type ChatHeaderProps = {
 };
 
 const ChatHeader = ({ profilePic, companyName, available }: ChatHeaderProps) => {
-  const [openMenu, setOpenMenu] = React.useState<null | HTMLElement>(null);
-  const [openReport, setOpenReport] = React.useState(false);
-  const [openDelete, setOpenDelete] = React.useState(false);
-  const [selectInput, setSelectInput] = React.useState<string>('');
+  const [openMenu, setOpenMenu] = useState<null | HTMLElement>(null);
+  const [openReport, setOpenReport] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectInput, setSelectInput] = useState<string>('');
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenMenu(event.currentTarget);

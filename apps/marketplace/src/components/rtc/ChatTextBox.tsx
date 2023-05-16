@@ -28,7 +28,7 @@ const ChatTextBox = ({
     if (event.target.files) {
       const imageFile = event.target.files[0];
       if (!imageFile.type.match(imageMimeType)) {
-        // will change to notification when notification component is added 
+        // will change to notification when notification component is added
         alert('Only Image file is allowed');
         return;
       }

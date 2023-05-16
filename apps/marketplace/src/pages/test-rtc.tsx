@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ChatHeader from '@/components/rtc/ChatHeader';
@@ -6,12 +6,11 @@ import ChatSubHeader from '@/components/rtc/ChatSubHeader';
 import ChatBox, { ChatBoxProps } from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
 
-
 const ChatRoom = () => {
-  const [makeOffer, setMakeOffer] = React.useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
-  const [inputText, setInputText] = React.useState<string>('');
-  const [onSend, setOnSend] = React.useState<boolean>(false);
+  const [makeOffer, setMakeOffer] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [inputText, setInputText] = useState<string>('');
+  const [onSend, setOnSend] = useState<boolean>(false);
   const messages: ChatBoxProps['roomData'] = [
     {
       id: '21',
@@ -85,7 +84,7 @@ const ChatRoom = () => {
   return (
     <Box display="flex">
       <Box
-        sx={({shadows, palette }) => ({
+        sx={({ shadows, palette }) => ({
           boxShadow: shadows[3],
           bgcolor: palette.grey[400],
           width: 1 / 3,

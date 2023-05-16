@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -23,8 +23,8 @@ const ChatSubHeader = ({
   makeOffer,
   setMakeOffer,
 }: ChatSubHeaderProps) => {
-  const [openOffer, setOpenOffer] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState<number>(0);
+  const [openOffer, setOpenOffer] = useState(false);
+  const [inputValue, setInputValue] = useState<number>(0);
   const handleMakeOffer = () => {
     setMakeOffer(true);
     setOpenOffer(true);
