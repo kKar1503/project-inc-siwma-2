@@ -13,6 +13,7 @@ import ImageUploadForm, {
   ImageProps,
 } from '@/components/marketplace/createListing/ImageUploadForm';
 import CategoryForm from '@/components/marketplace/createListing/CategoryForm';
+import OnLeaveModal from '@/components/modal/OnLeaveModal';
 
 const CreateListingPage = () => {
   const [listingType, setListingType] = useState<string>('');
@@ -24,6 +25,7 @@ const CreateListingPage = () => {
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     console.log(`Listing Type: ${listingType}`);
@@ -45,6 +47,7 @@ const CreateListingPage = () => {
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    setOpen(true);
   };
 
   return (
@@ -74,6 +77,7 @@ const CreateListingPage = () => {
             <Button variant="contained" type="submit" onClick={handleCancel}>
               Cancel Listing
             </Button>
+            <OnLeaveModal open={open} setOpen={setOpen} />
           </Grid>
           <Grid item xs={12} md={12} sx={{ width: '100%' }}>
             <Divider />
