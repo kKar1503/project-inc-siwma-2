@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import MakeOfferModal from '../modal/MakeOfferModal';
 
 export type ChatSubHeaderProps = {
   itemPic: string;
@@ -22,9 +23,13 @@ const ChatSubHeader = ({
   makeOffer,
   setMakeOffer,
 }: ChatSubHeaderProps) => {
+  const [openOffer, setOpenOffer] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState<number>(0);
   const handleMakeOffer = () => {
     setMakeOffer(true);
+    setOpenOffer(true);
   };
+
   return (
     <Box
       sx={({ spacing, palette }) => ({
@@ -108,6 +113,12 @@ const ChatSubHeader = ({
       >
         Make Offer
       </Button>
+      <MakeOfferModal
+        open={openOffer}
+        setOpen={setOpenOffer}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+      />
     </Box>
   );
 };

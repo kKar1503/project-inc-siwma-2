@@ -8,6 +8,9 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import Divider from '@mui/material/Divider';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import ReportModal from '../modal/ReportModal';
+import DeleteChat from '../modal/DeleteChat';
+
 
 export type ChatHeaderProps = {
   profilePic: string;
@@ -17,6 +20,9 @@ export type ChatHeaderProps = {
 
 const ChatHeader = ({ profilePic, companyName, available }: ChatHeaderProps) => {
   const [openMenu, setOpenMenu] = React.useState<null | HTMLElement>(null);
+  const [openReport, setOpenReport] = React.useState(false);
+  const [openDelete, setOpenDelete] = React.useState(false);
+  const [selectInput, setSelectInput] = React.useState<string>('');
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenMenu(event.currentTarget);
@@ -25,6 +31,7 @@ const ChatHeader = ({ profilePic, companyName, available }: ChatHeaderProps) => 
   const handleClose = () => {
     setOpenMenu(null);
   };
+
   return (
     <Box
       sx={({ spacing, palette }) => ({
@@ -72,18 +79,20 @@ const ChatHeader = ({ profilePic, companyName, available }: ChatHeaderProps) => 
       </IconButton>
       <Menu anchorEl={openMenu} open={Boolean(openMenu)} onClose={handleClose}>
         <MenuItem
-          onClick={handleClose}
+          onClick={() => setOpenDelete(true)}
           sx={({ typography }) => ({ fontSize: typography.subtitle1 })}
         >
           Delete Chat
         </MenuItem>
+        <DeleteChat open={openDelete} setOpen={setOpenDelete} />
         <Divider sx={({ spacing }) => ({ mx: spacing(1) })} />
         <MenuItem
-          onClick={handleClose}
+          onClick={() => setOpenReport(true)}
           sx={({ typography }) => ({ fontSize: typography.subtitle1 })}
         >
           Report User
         </MenuItem>
+        <ReportModal open={openReport} setOpen={setOpenReport} />
       </Menu>
     </Box>
   );
