@@ -37,12 +37,12 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
+  authenticate: Authenticate;
 
   // Server Events
   rooms: Record<string, Room>;
   joinedRoom: Room;
   roomMessage: RoomMessage;
-  authenticate: Authenticate;
   serverPing: string;
 };
 

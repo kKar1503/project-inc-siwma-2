@@ -11,6 +11,11 @@ import { validateToken } from '@inc/auth';
  * @param token The token to check
  */
 async function validateAccessToken(userId: string, token: string) {
+  // Check if a user id and access token were provided
+  if (!userId || !token) {
+    throw new ForbiddenError(userId);
+  }
+
   // Retrieve the token from the database
   const accessToken = await PrismaClient.accessTokens.findFirst({
     where: {

@@ -3,7 +3,8 @@ import logger from './utils/logger';
 import { EventFile } from '@inc/types';
 import { EVENTS } from '@inc/events';
 import * as eventModules from './events';
-import socketGuardMiddleware from './middlewares/socketGuardMiddleware';
+import { socketGuardMiddleware } from './middlewares';
+import errorHandler from './utils/errorHandler';
 
 const events: Record<string, EventFile> = Object(eventModules);
 
@@ -20,8 +21,18 @@ export default (io: Server) => {
     // Attach events
     const eventsAttached: string[] = [];
     for (const event of Object.values(events)) {
-      const { callback, eventName, type } = event(io);
-      socket[type](eventName, callback);
+      // Deconstruct event object
+      const { callback, eventName, type } = event(io, socket);
+
+      // Wrap the event in the error handler
+      const wrappedEvent = errorHandler<typeof callback>(callback);
+
+      try {
+        socket[type](eventName, wrappedEvent);
+      } catch (error) {
+        console.log('ther error');
+      }
+
       eventsAttached.push(eventName);
     }
 

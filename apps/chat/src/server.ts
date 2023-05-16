@@ -33,7 +33,7 @@ setInterval(() => {
 }, 5000);
 
 httpServer.listen(port, host, () => {
-  logger.info('Server has started.');
+  logger.info(`Server has started on port ${port}.`);
 
   socket(io);
 });
