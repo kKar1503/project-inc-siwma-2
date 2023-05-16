@@ -9,6 +9,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@inc/utils": "workspace:*",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.14",
     "@mui/utils": "^5.12.3",
