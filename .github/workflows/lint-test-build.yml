@@ -66,9 +66,9 @@ jobs:
         with:
           envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
           envkey_NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          envkey_NEXTAUTH_URL: http://localhost:3000
-          envkey_NEXT_BUILD_OPTION: ignoreType
-          envkey_NEXT_ESLINT_OPTION: ignoreLint
+          envkey_NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          envkey_NEXT_BUILD_OPTION: ${{ vars.NEXT_BUILD_OPTION }}
+          envkey_NEXT_ESLINT_OPTION: ${{ vars.NEXT_ESLINT_OPTION }}
           directory: 'apps/marketplace'
           file_name: .env.local
           fail_on_empty: true
