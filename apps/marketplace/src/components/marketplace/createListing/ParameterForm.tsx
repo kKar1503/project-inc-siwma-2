@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -32,6 +32,50 @@ export type ParameterProps = {
   options?: string[];
 };
 
+// sample data based on weight, dimension, two choices, many choices, and open-ended
+const sampleData = [
+  {
+    id: '1',
+    name: 'weight',
+    displayName: 'Weight',
+    type: 'WEIGHT',
+    dataType: 'NUMBER',
+    options: [],
+  },
+  {
+    id: '2',
+    name: 'dimension',
+    displayName: 'Dimension',
+    type: 'DIMENSION',
+    dataType: 'NUMBER',
+    options: [],
+  },
+  {
+    id: '3',
+    name: 'color',
+    displayName: 'Color',
+    type: 'TWO_CHOICES',
+    dataType: 'STRING',
+    options: ['Red', 'Blue'],
+  },
+  {
+    id: '4',
+    name: 'size',
+    displayName: 'Size',
+    type: 'MANY_CHOICES',
+    dataType: 'STRING',
+    options: ['Small', 'Medium', 'Large'],
+  },
+  {
+    id: '5',
+    name: 'description',
+    displayName: 'Description',
+    type: 'OPEN_ENDED',
+    dataType: 'STRING',
+    options: [],
+  },
+];
+
 const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
   const [displayParameters, setDisplayParameters] = useState<ParameterProps[]>([]);
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
@@ -44,11 +88,7 @@ const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
   }, [category, formValuesArray, setParameters]);
 
   const handleFormValueChange = (
-    event:
-      | React.ChangeEvent<
-          HTMLInputElement | HTMLTextAreaElement | { name?: string; value: string | boolean }
-        >
-      | SelectChangeEvent<string>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>,
     parameterId: string
   ) => {
     // Update the form values state

@@ -13,15 +13,27 @@ export type ImageProps = {
   url: string;
 };
 
+export type PreviewImageProps = {
+  file: File;
+  preview: string;
+};
+
 export type SetImageProps = {
   setImages: (parameters: ImageProps[]) => void;
 };
 
 const ImageUploadForm = ({ setImages }: SetImageProps) => {
-  const [images, setPreivewImages] = useState<{ file: File; preview: string }[]>([]);
+  const [images, setPreivewImages] = useState<PreviewImageProps[]>([]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImages = Array.from(e.target.files || []);
+
+    if (selectedImages.length + images.length > 10) {
+      // Display feedback for exceeding the limit
+      alert('You can only upload up to 10 images.');
+      return;
+    }
+
     const previewImages = selectedImages.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
@@ -58,7 +70,9 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
               <Image
                 src={preview}
                 alt={file.name}
-                style={{ width: '100px', height: '100px', paddingRight: '1rem' }}
+                width={100}
+                height={100}
+                style={{ paddingRight: '1rem' }}
                 onClick={() => openFullImage(preview)}
               />
               <IconButton

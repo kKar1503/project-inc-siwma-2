@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
+export type ListingTypeProps = 'Buying' | 'Selling';
+
 export type ListingTypeFormProps = {
   setListingType: (type: string) => void;
 };
 
 const ListingTypeForm = ({ setListingType }: ListingTypeFormProps) => {
-  const [selectedButton, setSelectedButton] = useState('Buying');
+  const [selectedButton, setSelectedButton] = useState<ListingTypeProps>();
 
-  const handleButtonClick = (type: string) => {
+  const handleButtonClick = (type: ListingTypeProps) => {
     setListingType(type);
     setSelectedButton(type);
   };
