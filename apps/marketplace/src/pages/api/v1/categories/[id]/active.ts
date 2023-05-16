@@ -8,7 +8,7 @@ type ResponseBody = {
 
 export default apiHandler({ allowAdminsOnly: true }).patch(async (req, res) => {
   const { id } = req.query;
-  const categoryid = parseToNumber(id as string);
+  const categoryid = parseToNumber(id as string, 'Category Id');
 
   const response: ResponseBody = await PrismaClient.$queryRaw`
         UPDATE "category" SET "active" = NOT "active" WHERE "id" = ${categoryid} RETURNING "active"
