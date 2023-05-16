@@ -1,16 +1,17 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { ChatBoxProps } from '@/components/rtc/ChatBox';
-import ChatRoom from '@/components/rtc/ChatRoom';
+import ChatHeader from '@/components/rtc/ChatHeader';
+import ChatSubHeader from '@/components/rtc/ChatSubHeader';
+import ChatBox, { ChatBoxProps } from '@/components/rtc/ChatBox';
+import ChatTextBox from '@/components/rtc/ChatTextBox';
 
 
-const TestChat = () => {
+const ChatRoom = () => {
   const [makeOffer, setMakeOffer] = React.useState<boolean>(false);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [inputText, setInputText] = React.useState<string>('');
-  const [onSend, setOnsend] = React.useState<boolean>(false);
-
+  const [onSend, setOnSend] = React.useState<boolean>(false);
   const messages: ChatBoxProps['roomData'] = [
     {
       id: '21',
@@ -84,7 +85,7 @@ const TestChat = () => {
   return (
     <Box display="flex">
       <Box
-        sx={({ shadows, palette }) => ({
+        sx={({shadows, palette }) => ({
           boxShadow: shadows[3],
           bgcolor: palette.grey[400],
           width: 1 / 3,
@@ -94,25 +95,32 @@ const TestChat = () => {
       >
         <Typography>hi</Typography>
       </Box>
-      <ChatRoom
-        roomData={messages}
-        companyName="Hi Metals PTE LTD"
-        profilePic="/static/images/avatar/2.jpg"
-        progressStatus="In Progress"
-        itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
-        itemName="Hi Metals PTE LTD"
-        itemPrice={200.80}
-        makeOffer={makeOffer}
-        setMakeOffer={setMakeOffer}
-        inputText={inputText}
-        setInputText={setInputText}
-        selectedFile={selectedFile}
-        setSelectedFile={setSelectedFile}
-        onSend={onSend}
-        setOnSend={setOnsend}
-      />
+      <Box sx={{ width: 2 / 3 }}>
+        <ChatHeader
+          profilePic="/static/images/avatar/2.jpg"
+          companyName="Hi Metals PTE LTD"
+          available
+        />
+        <ChatSubHeader
+          itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
+          itemName="Hi Metals PTE LTD"
+          available
+          itemPrice={200.8}
+          makeOffer={makeOffer}
+          setMakeOffer={setMakeOffer}
+        />
+        <ChatBox roomData={messages} loginId="d44b8403-aa90-4d92-a4c6-d0a1e2fad0af" />
+        <ChatTextBox
+          selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
+          inputText={inputText}
+          setInputText={setInputText}
+          onSend={onSend}
+          setOnSend={setOnSend}
+        />
+      </Box>
     </Box>
   );
 };
 
-export default TestChat;
+export default ChatRoom;

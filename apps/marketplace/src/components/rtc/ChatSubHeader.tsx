@@ -9,7 +9,7 @@ export type ChatSubHeaderProps = {
   itemPic: string;
   itemName: string;
   itemPrice: number;
-  progressStatus: 'In Progress' | 'Sold';
+  available: boolean;
   makeOffer: boolean;
   setMakeOffer: (val: boolean) => void;
 };
@@ -18,7 +18,7 @@ const ChatSubHeader = ({
   itemPic,
   itemName,
   itemPrice,
-  progressStatus,
+  available,
   makeOffer,
   setMakeOffer,
 }: ChatSubHeaderProps) => {
@@ -70,22 +70,22 @@ const ChatSubHeader = ({
               borderRadius: 2,
             })}
           >
-            Reserved
+            {available ? 'Available' : 'Sold'}
           </Typography>
         </Box>
       </IconButton>
       <Box sx={{ flexGrow: 1 }}>
         <Typography
-          sx={({ spacing }) => ({
-            fontSize: 'h5',
+          sx={({ spacing, typography }) => ({
+            fontSize: typography.h5,
             marginLeft: spacing(4),
           })}
         >
           {itemName}
         </Typography>
         <Typography
-          sx={({ spacing }) => ({
-            fontSize: 'h5',
+          sx={({ spacing, typography }) => ({
+            fontSize: typography.h5,
             marginLeft: spacing(4),
             fontWeight: 'bold',
           })}
@@ -96,8 +96,8 @@ const ChatSubHeader = ({
 
       <Button
         onClick={handleMakeOffer}
-        sx={({ palette, spacing }) => ({
-          fontSize: 'h6',
+        sx={({ palette, spacing, typography }) => ({
+          fontSize: typography.subtitle2,
           bgcolor: palette.primary.main,
           color: palette.common.white,
           px: spacing(2),
