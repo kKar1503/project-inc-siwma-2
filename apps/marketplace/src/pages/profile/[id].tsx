@@ -6,11 +6,13 @@ import { ProductListingItemProps } from '@/components/marketplace/listing/Produc
 import { ReviewProps } from '@/components/marketplace/profilePage/ReviewMessage';
 import ListingsTab from '@/components/marketplace/profilePage/ListingsTab';
 import ReviewsTab from '@/components/marketplace/profilePage/ReviewsTab';
+import TabPanel from '@/components/marketplace/profilePage/TabPanel';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
-import { ReactNode, useState, SyntheticEvent } from 'react';
+import { GetServerSidePropsContext, NextApiRequest } from 'next';
+import { useState, SyntheticEvent } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 
 // eslint-disable-next-line no-unused-vars
@@ -368,12 +370,16 @@ const reviewsTestData = [
   },
 ];
 
-export const getServerSideProps = async ({ query }: { query: any }) => {
+export const getServerSideProps = async ({
+  query,
+}: GetServerSidePropsContext<{ id?: string | string[] }>) => {
   // api call to get user details go here
   // if user does not exist, return error code and redirect to wherever appropriate
 
-  const { id } = query;
-  if (!Number.isInteger(parseFloat(id))) {
+  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const intCheck = !id || !Number.isInteger(parseFloat(id));
+
+  if (intCheck) {
     // Redirect to the index page
     return {
       redirect: {
@@ -382,16 +388,9 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
     };
   }
 
-  // just for testing purposes
-  if (id > profileDetailData.length) {
-    return {
-      redirect: {
-        destination: '/',
-      },
-    };
-  }
+  const numericId = parseInt(id, 10);
 
-  const data = profileDetailData[id - 1];
+  const data = profileDetailData[numericId - 1];
   const serverSideListings = marketplaceListingsData;
   const serverSideReviews = reviewsTestData;
 
@@ -402,26 +401,6 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
       serverSideReviews,
     },
   };
-};
-
-interface TabPanelProps {
-  children?: ReactNode;
-  dir?: string;
-  index: number;
-  value: number;
-  height: string;
-}
-
-const TabPanel = (props: TabPanelProps) => {
-  const { children, value, index, height, ...other } = props;
-
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
-      {value === index && (
-        <Box sx={{ p: 3, height: { height }, overflowY: 'auto' }}>{children}</Box>
-      )}
-    </div>
-  );
 };
 
 const StyledTab = styled(Tab)(({ theme }) => ({
@@ -508,19 +487,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
             justifyContent: 'space-between',
           })}
         >
-          <ProfileDetailCard
-            ownerId={data.ownerId}
-            username={data.username}
-            name={data.name}
-            company={data.company}
-            email={data.email}
-            profilePic={data.profilePic}
-            telegramUsername={data.telegramUsername}
-            bio={data.bio}
-            mobileNumber={data.mobileNumber}
-            rating={data.rating}
-            reviews={data.reviews}
-          />
+          <ProfileDetailCard data={data} />
           <Box
             sx={{
               width: '73%',

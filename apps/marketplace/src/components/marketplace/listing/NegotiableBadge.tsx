@@ -4,7 +4,7 @@ const NegotiableBadge = () => (
   <Chip
     sx={({ spacing, palette }) => ({
       mr: spacing(1),
-      bgcolor: palette.info[600], // warning color is orange, but too similar to sell badge
+      bgcolor: palette.info[600],
       fontWeight: 500,
       color: palette.common.white,
     })}

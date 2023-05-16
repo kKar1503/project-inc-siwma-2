@@ -10,6 +10,7 @@ import { red } from '@mui/material/colors';
 import { StarsRating } from '@inc/ui';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
@@ -32,34 +33,43 @@ export type ProductListingItemProps = {
   isOwnProfile: boolean;
 };
 
-const ProductListingItem = ({
-  productId,
-  img,
-  profileImg,
-  type,
-  name,
-  rating,
-  price,
-  negotiable,
-  ownerId,
-  ownerFullName,
-  createdAt,
-  companyName,
-  isUnitPrice,
-  isOwnProfile,
-}: ProductListingItemProps) => {
+export type ProductListingItemData = {
+  data: ProductListingItemProps;
+};
+
+const ProductListingItem = ({ data }: ProductListingItemData) => {
+  // destructure data
+  const {
+    productId,
+    img,
+    profileImg,
+    type,
+    name,
+    rating,
+    price,
+    negotiable,
+    ownerId,
+    ownerFullName,
+    createdAt,
+    companyName,
+    isUnitPrice,
+    isOwnProfile,
+  } = data;
+
   // save computation power to avoid multiple calculations on each render
   const datetime = useMemo(
     () => DateTime.fromISO(createdAt).toRelative({ locale: 'en-SG' }),
     [createdAt]
   );
 
+  const theme = useTheme();
+
   return (
     <Card
       sx={{
         maxWidth: 288,
-        maxHeight: 600,
-        border: '1px solid #C4C4C4',
+        maxHeight: '100%',
+        border: `1px solid ${theme.palette.grey[400]}`,
         transition: 'transform .2s',
         '&:hover': {
           transform: 'scale(1.03)',
@@ -112,7 +122,7 @@ const ProductListingItem = ({
             <Typography
               sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
               variant="body2"
-              color="text.primary"
+              color={theme.palette.text.primary}
               fontWeight={400}
               fontSize={20}
             >
@@ -124,7 +134,12 @@ const ProductListingItem = ({
               pb: spacing(2),
             })}
           >
-            <Typography variant="h4" color="text.primary" fontWeight="bold" fontSize={24}>
+            <Typography
+              variant="subtitle2"
+              color={theme.palette.text.primary}
+              fontWeight="bold"
+              fontSize={24}
+            >
               {new Intl.NumberFormat('en-SG', {
                 style: 'currency',
                 currency: 'SGD',
@@ -145,7 +160,7 @@ const ProductListingItem = ({
             pb: spacing(2),
           })}
         >
-          <Typography variant="subtitle1" color="text.secondary" fontSize={16}>
+          <Typography variant="subtitle1" color={theme.palette.text.secondary} fontSize={16}>
             {datetime}
           </Typography>
         </Box>

@@ -56,7 +56,7 @@ const ReviewsTab = ({
             fontSize: typography.subtitle1,
           })}
         >
-          ({totalReviews} Reviews)
+          ({totalReviews} {totalReviews === 1 ? ' Review' : ' Reviews'})
         </Typography>
       </Box>
       {/* vertial divider */}
@@ -83,31 +83,9 @@ const ReviewsTab = ({
     <Divider />
     {/* lower portion showing marketplace cards */}
     <Box>
-      {allReviews.map(
-        ({
-          ownerId,
-          noOfReviews,
-          createdAt,
-          profilePic,
-          rating,
-          username,
-          companyName,
-          body,
-          buyer,
-        }) => (
-          <ReviewMessage
-            ownerId={ownerId}
-            noOfReviews={noOfReviews}
-            createdAt={createdAt}
-            profilePic={profilePic}
-            rating={rating}
-            username={username}
-            companyName={companyName}
-            body={body}
-            buyer={buyer}
-          />
-        )
-      )}
+      {allReviews.map((review) => (
+        <ReviewMessage data={review} />
+      ))}
     </Box>
   </Box>
 );

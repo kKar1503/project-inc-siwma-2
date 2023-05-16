@@ -422,19 +422,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                 </CardActions>
               </Card>
 
-              <ProfileDetailCard
-                ownerId={data.ownerId}
-                username={data.username}
-                name={data.name}
-                company={data.company}
-                email={data.email}
-                profilePic={data.profilePic}
-                telegramUsername={data.telegramUsername}
-                bio={data.bio}
-                mobileNumber={data.mobileNumber}
-                rating={data.rating}
-                reviews={data.reviews}
-              />
+              <ProfileDetailCard data={data} />
             </Box>
           </form>
         </Container>

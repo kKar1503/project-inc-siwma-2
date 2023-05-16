@@ -21,17 +21,24 @@ export type ReviewProps = {
   buyer: boolean;
 };
 
-const ReviewMessage = ({
-  ownerId,
-  noOfReviews,
-  profilePic,
-  createdAt,
-  rating,
-  username,
-  companyName,
-  body,
-  buyer,
-}: ReviewProps) => {
+export type ReviewMessageData = {
+  data: ReviewProps;
+};
+
+const ReviewMessage = ({ data }: ReviewMessageData) => {
+  // destructure data
+  const {
+    ownerId,
+    noOfReviews,
+    profilePic,
+    createdAt,
+    rating,
+    username,
+    companyName,
+    body,
+    buyer,
+  } = data;
+
   const datetime = useMemo(
     () => DateTime.fromISO(createdAt).toRelative({ locale: 'en-SG' }),
     [createdAt]

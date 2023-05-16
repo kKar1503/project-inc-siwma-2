@@ -11,8 +11,8 @@ const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
 
 export type ListingsTabProps = {
   allListings: ProductListingItemProps[];
-  filterListings: (newData: string) => void;
-  sortByListings: (newData: string) => void;
+  filterListings: (newData: (typeof filterValues)[number]) => void;
+  sortByListings: (newData: (typeof sortValues)[number]) => void;
 };
 
 const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTabProps) => (
@@ -48,41 +48,9 @@ const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTa
         rowGap: spacing(3),
       })}
     >
-      {allListings.map(
-        ({
-          productId,
-          img,
-          profileImg,
-          type,
-          name,
-          rating,
-          price,
-          negotiable,
-          ownerId,
-          ownerFullName,
-          createdAt,
-          companyName,
-          isUnitPrice,
-          isOwnProfile,
-        }: ProductListingItemProps) => (
-          <ProductListingItem
-            productId={productId}
-            img={img}
-            profileImg={profileImg}
-            type={type}
-            name={name}
-            rating={rating}
-            price={price}
-            negotiable={negotiable}
-            ownerId={ownerId}
-            ownerFullName={ownerFullName}
-            createdAt={createdAt}
-            companyName={companyName}
-            isUnitPrice={isUnitPrice}
-            isOwnProfile={isOwnProfile}
-          />
-        )
-      )}
+      {allListings.map((listing) => (
+        <ProductListingItem data={listing} />
+      ))}
     </Box>
   </Box>
 );

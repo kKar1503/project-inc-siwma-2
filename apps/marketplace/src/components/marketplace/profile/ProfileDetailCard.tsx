@@ -26,149 +26,159 @@ export type ProfileDetailCardProps = {
   ownerId: number;
 };
 
-const ProfileDetailCard = ({
-  username,
-  name,
-  email,
-  company,
-  profilePic,
-  mobileNumber,
-  telegramUsername,
-  bio,
-  rating,
-  reviews,
-  ownerId,
-}: ProfileDetailCardProps) => (
-  <Card sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-    <CardHeader
-      titleTypographyProps={{
-        fontSize: 16,
-      }}
-      subheaderTypographyProps={{
-        fontSize: 16,
-      }}
-      title="Your Profile"
-      subheader="View your profile details here"
-    />
-    <Divider variant="middle" sx={{ height: '1px' }} />
-    <CardContent>
-      <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{profilePic}</Avatar>
-      <Typography sx={{ fontWeight: 'bold' }}>{name}</Typography>
-      <Typography variant="body2">{company}</Typography>
-      <Typography>@{username}</Typography>
-      <Typography>{email}</Typography>
+export type ProfileDetailCardData = {
+  data: ProfileDetailCardProps;
+};
 
-      <Box
-        sx={({ spacing }) => ({
-          mt: spacing(1),
-          display: 'flex',
-          alignItems: 'center',
-        })}
-      >
-        <Typography
+const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
+  // destructure data
+
+  const {
+    username,
+    name,
+    email,
+    company,
+    profilePic,
+    mobileNumber,
+    telegramUsername,
+    bio,
+    rating,
+    reviews,
+    ownerId,
+  } = data;
+
+  return (
+    <Card sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <CardHeader
+        titleTypographyProps={{
+          fontSize: 16,
+        }}
+        subheaderTypographyProps={{
+          fontSize: 16,
+        }}
+        title="Your Profile"
+        subheader="View your profile details here"
+      />
+      <Divider variant="middle" sx={{ height: '1px' }} />
+      <CardContent>
+        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{profilePic}</Avatar>
+        <Typography sx={{ fontWeight: 'bold' }}>{name}</Typography>
+        <Typography variant="body2">{company}</Typography>
+        <Typography>@{username}</Typography>
+        <Typography>{email}</Typography>
+
+        <Box
           sx={({ spacing }) => ({
-            mr: spacing(1),
+            mt: spacing(1),
+            display: 'flex',
+            alignItems: 'center',
           })}
         >
-          {rating.toFixed(1)}
-        </Typography>
-        <StarsRating rating={rating} />
-        <Typography
+          <Typography
+            sx={({ spacing }) => ({
+              mr: spacing(1),
+            })}
+          >
+            {rating.toFixed(1)}
+          </Typography>
+          <StarsRating rating={rating} />
+          <Typography
+            sx={({ spacing }) => ({
+              ml: spacing(1),
+            })}
+          >
+            ({reviews} {reviews === 1 ? ' Review' : ' Reviews'})
+          </Typography>
+        </Box>
+      </CardContent>
+      <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
+      <CardContent>
+        <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
+        <Typography>{bio}</Typography>
+      </CardContent>
+      <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
+      <CardContent>
+        <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
+        <Box
           sx={({ spacing }) => ({
-            ml: spacing(1),
+            mt: spacing(1),
+            display: 'flex',
+            alignItems: 'center',
           })}
         >
-          ({reviews} Reviews)
-        </Typography>
-      </Box>
-    </CardContent>
-    <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
-    <CardContent>
-      <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
-      <Typography>{bio}</Typography>
-    </CardContent>
-    <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
-    <CardContent>
-      <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
-      <Box
-        sx={({ spacing }) => ({
-          mt: spacing(1),
-          display: 'flex',
-          alignItems: 'center',
-        })}
-      >
-        <TelegramIcon
-          sx={({ spacing, palette }) => ({
-            borderRadius: spacing(2),
-            pr: '2px',
-            color: palette.common.white,
-            backgroundColor: '#0088cc',
-          })}
-        />
-        <Typography
+          <TelegramIcon
+            sx={({ spacing, palette }) => ({
+              borderRadius: spacing(2),
+              pr: '2px',
+              color: palette.common.white,
+              backgroundColor: '#0088cc',
+            })}
+          />
+          <Typography
+            sx={({ spacing }) => ({
+              ml: spacing(1),
+            })}
+          >
+            {telegramUsername}
+          </Typography>
+        </Box>
+        <Box
           sx={({ spacing }) => ({
-            ml: spacing(1),
+            mt: spacing(1),
+            display: 'flex',
+            alignItems: 'center',
           })}
         >
-          {telegramUsername}
-        </Typography>
-      </Box>
-      <Box
-        sx={({ spacing }) => ({
-          mt: spacing(1),
-          display: 'flex',
-          alignItems: 'center',
-        })}
-      >
-        <WhatsAppIcon
-          sx={({ spacing, palette }) => ({
-            borderRadius: spacing(2),
-            p: '1px',
-            color: palette.common.white,
-            backgroundColor: '#25D366',
-          })}
-        />
-        <Typography
-          sx={({ spacing }) => ({
-            ml: spacing(1),
-          })}
-        >
-          +65 {mobileNumber}
-        </Typography>
-      </Box>
-    </CardContent>
-    <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
-      <Box sx={{ width: '98%' }}>
-        <Button
-          component={Link}
-          href={`/profile/${ownerId}/edit-profile`}
-          variant="contained"
-          type="submit"
-          sx={({ spacing }) => ({
-            width: '100%',
-            mb: spacing(2),
-            mt: spacing(2),
-            fontWeight: 'bold',
-          })}
-        >
-          Edit profile
-        </Button>
-        <Button
-          component={Link}
-          href="/logout"
-          variant="contained"
-          type="submit"
-          color="error"
-          sx={({ spacing }) => ({
-            width: '100%',
-            mb: spacing(1),
-            fontWeight: 'bold',
-          })}
-        >
-          Logout
-        </Button>
-      </Box>
-    </CardActions>
-  </Card>
-);
+          <WhatsAppIcon
+            sx={({ spacing, palette }) => ({
+              borderRadius: spacing(2),
+              p: '1px',
+              color: palette.common.white,
+              backgroundColor: '#25D366',
+            })}
+          />
+          <Typography
+            sx={({ spacing }) => ({
+              ml: spacing(1),
+            })}
+          >
+            +65 {mobileNumber}
+          </Typography>
+        </Box>
+      </CardContent>
+      <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
+        <Box sx={{ width: '98%' }}>
+          <Button
+            component={Link}
+            href={`/profile/${ownerId}/edit-profile`}
+            variant="contained"
+            type="submit"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mb: spacing(2),
+              mt: spacing(2),
+              fontWeight: 'bold',
+            })}
+          >
+            Edit profile
+          </Button>
+          <Button
+            component={Link}
+            href="/logout"
+            variant="contained"
+            type="submit"
+            color="error"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mb: spacing(1),
+              fontWeight: 'bold',
+            })}
+          >
+            Logout
+          </Button>
+        </Box>
+      </CardActions>
+    </Card>
+  );
+};
 export default ProfileDetailCard;
