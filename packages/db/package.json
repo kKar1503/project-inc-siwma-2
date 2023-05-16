@@ -1,6 +1,7 @@
 {
   "name": "@inc/db",
   "version": "0.0.0",
+  "main": "index.ts",
   "scripts": {
     "prisma:generate": "prisma generate",
     "prisma:patchCasing": "node ./prisma/scripts/casingFix.js && prisma format && prisma generate",
