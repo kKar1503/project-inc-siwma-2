@@ -1,6 +1,6 @@
-import { apiHandler, formatAPIResponse, parseToNumber, zodParseToInteger, zodParseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, zodParseToInteger, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError, ForbiddenError } from '@inc/errors';
+import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
 import { ListingType } from '@prisma/client';
 import z from 'zod';
 import { formatSingleListingResponse, getQueryParameters, parseListingId } from '..';
@@ -61,6 +61,21 @@ const putListingRequestBody = z.object({
     .optional(),
 });
 
+async function getValidParametersForCategory(categoryId: number): Promise<string[]> {
+  // Fetch valid parameters for the category
+  const validParameters = await PrismaClient.category.findUnique({
+    where: { id: categoryId },
+    include: { categoriesParameters: true },
+  });
+
+  if (!validParameters) {
+    throw new NotFoundError(`Category with id '${categoryId}'`);
+  }
+
+  // Return an array of valid parameter ids
+  return validParameters.categoriesParameters.map((param) => param.parameterId.toString());
+}
+
 export default apiHandler()
   .get(async (req, res) => {
     const queryParams = getQueryParameters.parse(req.query);
@@ -92,6 +107,20 @@ export default apiHandler()
 
     // Validate the request body
     const data = putListingRequestBody.parse(req.body);
+
+    if (data.categoryId) {
+      // Get valid parameters for the listing's category
+      const validParameters = await getValidParametersForCategory(data.categoryId);
+
+      // Check that each paramId is a valid parameter for the category
+      if (data.parameters) {
+        for (let parameter of data.parameters) {
+          if (!validParameters.includes(parameter.paramId.toString())) {
+            throw new ParamError('paramId');
+          }
+        }
+      }
+    }
 
     // Do not remove this, it is necessary to update the listing
     const updatedListing = await PrismaClient.listing.update({

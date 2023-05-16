@@ -48,7 +48,6 @@ export type ListingResponse = {
   negotiable?: boolean;
   categoryId: string;
   type: ListingType;
-  active: boolean;
   owner: string;
   parameters?: Array<{
     paramId: string;
@@ -90,7 +89,6 @@ export function formatSingleListingResponse(
     categoryId: listing.categoryId.toString(),
     type: listing.type,
     owner: listing.owner,
-    active: listing.active,
   };
 
   if (includeParameters && listing.listingsParametersValues) {
@@ -135,7 +133,6 @@ export default apiHandler()
 
     // Filter options
     const whereOptions: Prisma.ListingWhereInput = {
-      active: true,
       categoryId: queryParams.category ? queryParams.category : undefined,
       negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
       price: {
@@ -159,9 +156,6 @@ export default apiHandler()
       switch (queryParams.sortBy.toLowerCase()) {
         case 'price':
           sortByOptions = { price: 'asc' };
-          break;
-        case 'active':
-          sortByOptions = { active: 'asc' };
           break;
         default:
           break;
@@ -219,7 +213,6 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
-        active: true,
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
