@@ -26,6 +26,7 @@ export async function checkListingExists($id: string | number) {
         },
       },
       listingsParametersValues: true,
+      offersOffersListingTolistings: true,
     },
   });
 
@@ -174,6 +175,7 @@ export default apiHandler()
           },
         },
         listingsParametersValues: true,
+        offersOffersListingTolistings: true,
       },
     });
 

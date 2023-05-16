@@ -49,6 +49,7 @@ export type ListingResponse = {
   categoryId: string;
   type: ListingType;
   owner: string;
+  open: boolean;
   parameters?: Array<{
     paramId: string;
     value: string;
@@ -59,6 +60,9 @@ export type ListingWithParameters = Listing & {
   listingsParametersValues: Array<{
     parameterId: number;
     value: string;
+  }>;
+  offersOffersListingTolistings: Array<{
+    accepted: boolean;
   }>;
 };
 
@@ -89,6 +93,7 @@ export function formatSingleListingResponse(
     categoryId: listing.categoryId.toString(),
     type: listing.type,
     owner: listing.owner,
+    open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
   };
 
   if (includeParameters && listing.listingsParametersValues) {
@@ -141,9 +146,9 @@ export default apiHandler()
       },
       name: queryParams.matching
         ? {
-          contains: queryParams.matching,
-          mode: 'insensitive',
-        }
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
         : undefined,
     };
 
@@ -170,12 +175,20 @@ export default apiHandler()
       take: queryParams.limit,
       include: {
         listingsParametersValues: queryParams.includeParameters,
+        offersOffersListingTolistings: true,
       },
     });
 
     res
       .status(200)
-      .json(formatAPIResponse(formatListingResponse(listings, queryParams.includeParameters)));
+      .json(
+        formatAPIResponse(
+          formatListingResponse(
+            listings as unknown as ListingWithParameters[],
+            queryParams.includeParameters
+          )
+        )
+      );
   })
   .post(async (req, res) => {
     const data = listingsRequestBody.parse(req.body);
@@ -194,9 +207,7 @@ export default apiHandler()
 
     // Check if all required parameters for the category are provided
     const requiredParameters = await getRequiredParametersForCategory(data.categoryId);
-    const providedParameters = data.parameters
-      ? data.parameters.map((param) => param.paramId)
-      : [];
+    const providedParameters = data.parameters ? data.parameters.map((param) => param.paramId) : [];
 
     requiredParameters.forEach((reqParam) => {
       if (!providedParameters.includes(reqParam)) {
@@ -216,15 +227,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
