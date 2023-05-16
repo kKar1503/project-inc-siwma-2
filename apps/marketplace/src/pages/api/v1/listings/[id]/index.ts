@@ -115,11 +115,11 @@ export default apiHandler()
 
       // Check that each paramId is a valid parameter for the category
       if (data.parameters) {
-        for (let parameter of data.parameters) {
+        data.parameters.forEach((parameter) => {
           if (!validParameters.includes(parameter.paramId.toString())) {
             throw new ParamError('paramId');
           }
-        }
+        });
       }
     }
 
