@@ -12,6 +12,7 @@ import {
   UnknownError,
   UnknownS3Error,
   ParamTooShortError,
+  QueryError,
 } from '@inc/errors';
 
 import { NextApiResponse } from 'next';
@@ -36,6 +37,12 @@ function handleZodError(error: ZodError) {
       if (err.received === 'undefined') {
         // Yes it was, return a param error
         return new ParamRequiredError(err.path[0].toString()).toJSON();
+      }
+
+      // Check if it was due to a invalid request body
+      if (err.path.length === 0) {
+        // Yes it was, return a query error
+        return new QueryError().toJSON();
       }
 
       // Return a param type error
