@@ -97,8 +97,8 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
         </Stack>
       </Box>
       <Box sx={{ display: 'flex' }}>
-        <Stack direction="row" spacing={-1}>
-          <Typography sx={{ mx: 2, fontWeight: 'bold' }}>{rating.toFixed(1)}</Typography>
+        <Stack direction="row" spacing={1}>
+          <Typography sx={{ ml: 2, fontWeight: 'bold' }}>{rating.toFixed(1)}</Typography>
           <StarsRating rating={rating} />
         </Stack>
       </Box>
