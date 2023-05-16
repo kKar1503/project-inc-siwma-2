@@ -5,12 +5,12 @@
   "scripts": {
     "build": "next build",
     "build:prod": "pnpm run share-static-hardlink && next build",
-    "clean": "rimraf ./.next ./out ./coverage ./tsconfig.tsbuildinfo ./node_modules/.cache",
+    "clean": "pnpx rimraf ./.next ./out ./coverage ./tsconfig.tsbuildinfo ./node_modules/.cache",
     "dev": "next dev",
     "lint": "next lint",
     "lint:type": "tsc --noEmit --incremental false",
-    "share-static-hardlink": "rimraf ./public/shared && syncdir ../../static/assets ./public/shared --copy",
-    "share-static-symlink": "rimraf ./public/shared && symlink-dir ../../static/assets ./public/shared",
+    "share-static-hardlink": "pnpx rimraf ./public/shared && syncdir ../../static/assets ./public/shared --copy",
+    "share-static-symlink": "pnpx rimraf ./public/shared && symlink-dir ../../static/assets ./public/shared",
     "serve": "next start"
   },
   "dependencies": {
