@@ -17,7 +17,6 @@ import AddListing from './AddListing';
 import Profile from './Profile';
 
 const NavBar = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
 
   const isMobileMenuOpen = mobileMoreAnchorEl !== null;
@@ -27,7 +26,6 @@ const NavBar = () => {
   };
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
     handleMobileMenuClose();
   };
 

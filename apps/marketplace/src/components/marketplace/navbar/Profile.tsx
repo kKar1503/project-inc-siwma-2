@@ -10,7 +10,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import EditNotificationsIcon from '@mui/icons-material/EditNotifications';
 
-const Profile = () => {
+export type UserNameProps = {
+  userName: string;
+};
+
+const Profile = ({ userName }: UserNameProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const isMenuOpen = anchorEl !== null;
@@ -23,13 +27,11 @@ const Profile = () => {
     setAnchorEl(null);
   };
 
-  const userName = 'John';
-
   return (
     <>
       <IconButton size="medium" onClick={handleProfileMenuOpen} sx={{ marginLeft: '1rem' }}>
         <AccountCircle
-          sx={({ spacing, typography, palette }) => ({
+          sx={({ typography, palette }) => ({
             fontSize: typography.h5,
             color: palette.text.secondary,
           })}
