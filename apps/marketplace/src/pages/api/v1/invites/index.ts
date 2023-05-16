@@ -2,7 +2,12 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import { DuplicateError } from '@inc/errors';
+import {
+  DuplicateError,
+  EmailSendError,
+  NotFoundError,
+  EmailTemplateNotFoundError,
+} from '@inc/errors';
 import { validateEmail, validateName } from '@/utils/api/validate';
 import sendEmails from '@inc/send-in-blue/sendEmails';
 import {
@@ -64,8 +69,37 @@ export default apiHandler({ allowAdminsOnly: true })
 
     // Sending Emails
 
+    // Find the company name
+    const companyRecord = await client.companies.findUnique({
+      where: {
+        id: companyId,
+      },
+      select: {
+        name: true,
+      },
+    });
+
+    if (!companyRecord) {
+      // This should never happen
+      throw new NotFoundError('Company');
+    }
+
     // 1. Get the invite email template
-    const content = getContentFor(EmailTemplate.INVITE);
+    let content: string;
+
+    try {
+      content = getContentFor(EmailTemplate.INVITE);
+    } catch (e) {
+      // This should never happen, but if it does, we should delete the invite
+
+      await client.invite.delete({
+        where: {
+          id: invite.id,
+        },
+      });
+
+      throw new EmailTemplateNotFoundError();
+    }
 
     // 2. Format the content
     const emailBody: BulkInviteEmailRequestBody = {
@@ -81,15 +115,26 @@ export default apiHandler({ allowAdminsOnly: true })
           ],
           params: {
             name,
-            companyName: 'SIWMA Marketplace', // TODO: Get the company name from the database
-            registrationUrl: `https://siwma.org/register?token=${tokenHash}`,
+            companyName: companyRecord.name,
+            registrationUrl: `${process.env.FRONTEND_URL}/register?token=${tokenHash}`,
           },
         },
       ],
     };
 
     // 3. Send the email
-    await sendEmails(emailBody);
+    const emailResponse = await sendEmails(emailBody);
+
+    if (!emailResponse.success) {
+      // Since the email failed to send, we should delete the invite too
+      await client.invite.delete({
+        where: {
+          id: invite.id,
+        },
+      });
+
+      throw emailResponse.error ?? new EmailSendError();
+    }
 
     return res.status(200).json(formatAPIResponse({ inviteId: invite.id.toString() }));
   })
