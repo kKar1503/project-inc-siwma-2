@@ -58,6 +58,9 @@ importers:
       '@inc/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@inc/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
       '@inc/events':
         specifier: workspace:*
         version: link:../../packages/events
@@ -85,6 +88,9 @@ importers:
       socket.io:
         specifier: ^4.6.1
         version: 4.6.1
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
     devDependencies:
       '@inc/types':
         specifier: workspace:*
