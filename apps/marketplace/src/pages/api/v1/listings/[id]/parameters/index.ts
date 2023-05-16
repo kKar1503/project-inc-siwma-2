@@ -1,5 +1,5 @@
 import { NextApiResponse } from 'next';
-import { apiHandler, formatAPIResponse, zodParseToInteger } from '@/utils/api';
+import { apiHandler, formatAPIResponse, zodParseToInteger, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import * as z from 'zod';
@@ -64,12 +64,12 @@ async function getValidParametersForCategory(categoryId: number): Promise<string
 
 const parameterSchema = z.object({
   paramId: z.string().transform(zodParseToInteger),
-  value: z.string(),
+  value: z.string().transform(zodParseToNumber),
 });
 
 type RequestBodyParameter = {
   paramId: number;
-  value: string;
+  value: number;
 };
 
 const createListingParameter = async (req: APIRequestType, res: NextApiResponse) => {
@@ -99,7 +99,7 @@ const createListingParameter = async (req: APIRequestType, res: NextApiResponse)
 
   const createdParameter = await PrismaClient.listingsParametersValue.create({
     data: {
-      value,
+      value: value.toString(),
       listing: {
         connect: {
           id,
@@ -158,7 +158,7 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
         },
       },
       data: {
-        value: param.value,
+        value: param.value.toString(),
       },
       select: {
         parameterId: true,

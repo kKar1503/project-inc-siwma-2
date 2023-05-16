@@ -121,7 +121,7 @@ export const listingsRequestBody = z.object({
   parameters: z
     .array(
       z.object({
-        paramId: z.string(),
+        paramId: z.string().transform(zodParseToInteger),
         value: z.string().transform(zodParseToNumber),
       })
     )
@@ -144,9 +144,9 @@ export default apiHandler()
       },
       name: queryParams.matching
         ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+          contains: queryParams.matching,
+          mode: 'insensitive',
+        }
         : undefined,
     };
 
@@ -201,7 +201,7 @@ export default apiHandler()
     // Check if all required parameters for the category are provided
     const requiredParameters = await getRequiredParametersForCategory(data.categoryId);
     const providedParameters = data.parameters
-      ? data.parameters.map((param) => parseToNumber(param.paramId, 'paramId'))
+      ? data.parameters.map((param) => param.paramId)
       : [];
 
     requiredParameters.forEach((reqParam) => {
@@ -223,15 +223,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value.toString(),
-                parameter: {
-                  connect: {
-                    id: parseToNumber(parameter.paramId, 'paramId'),
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value.toString(),
+              parameter: {
+                connect: {
+                  id: parameter.paramId,
                 },
-              })),
-            }
+              },
+            })),
+          }
           : undefined,
       },
       include: {

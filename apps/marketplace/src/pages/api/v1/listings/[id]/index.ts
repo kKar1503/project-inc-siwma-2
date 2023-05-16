@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber, zodParseToInteger, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError } from '@inc/errors';
 import { ListingType } from '@prisma/client';
@@ -38,7 +38,7 @@ export async function checkListingExists($id: string | number) {
 }
 
 interface Parameter {
-  paramId: string;
+  paramId: number;
   value: number;
 }
 
@@ -54,8 +54,8 @@ const putListingRequestBody = z.object({
   parameters: z
     .array(
       z.object({
-        paramId: z.string(),
-        value: z.number().refine((value) => value >= 0, {}),
+        paramId: z.string().transform(zodParseToInteger),
+        value: z.string().transform(zodParseToNumber),
       })
     )
     .optional(),
@@ -120,14 +120,14 @@ export default apiHandler()
         PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {
-              parameterId: parseToNumber(parameter.paramId, 'paramId'),
+              parameterId: parameter.paramId,
               listingId: id,
             },
           },
           update: { value: parameter.value.toString() },
           create: {
             value: parameter.value.toString(),
-            parameterId: parseToNumber(parameter.paramId, 'paramId'),
+            parameterId: parameter.paramId,
             listingId: id,
           },
         })
