@@ -112,7 +112,7 @@ model CompaniesBookmarks {
 model Invite {
   id        Int       @id(map: "invite_pk") @default(sequence(maxValue: 2147483647))
   name      String
-  email     String
+  email     String    @unique(map: "invite_un")
   token     String
   expiry    DateTime  @default(now()) @db.Timestamptz(6)
   companyId Int       @map("company_id")
