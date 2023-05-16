@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.js",
   "scripts": {
-    "build": "rimraf dist && tsc"
+    "build": "pnpx rimraf dist && tsc"
   },
   "dependencies": {
     "@inc/db": "workspace:*",
