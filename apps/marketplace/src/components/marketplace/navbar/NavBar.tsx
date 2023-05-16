@@ -69,7 +69,7 @@ const NavBar = () => {
 
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <IconButton size="medium" sx={{ marginLeft: '1rem' }}>
+          <IconButton size="medium">
             <TranslateIcon
               sx={({ typography, palette }) => ({
                 fontSize: typography.h5,
@@ -78,7 +78,12 @@ const NavBar = () => {
             />
           </IconButton>
 
-          <IconButton size="medium" sx={{ marginLeft: '1rem' }}>
+          <IconButton
+            size="medium"
+            sx={({ spacing }) => ({
+              ml: spacing(2),
+            })}
+          >
             <Badge>
               <MessageIcon
                 sx={({ typography, palette }) => ({
@@ -89,7 +94,12 @@ const NavBar = () => {
             </Badge>
           </IconButton>
 
-          <IconButton size="medium" sx={{ marginLeft: '1rem' }}>
+          <IconButton
+            size="medium"
+            sx={({ spacing }) => ({
+              ml: spacing(2),
+            })}
+          >
             <Badge>
               <NotificationsIcon
                 sx={({ typography, palette }) => ({
@@ -105,12 +115,15 @@ const NavBar = () => {
 
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
           <IconButton
-            size="large"
+            size="medium"
             aria-label="show more"
             aria-controls="primary-search-account-menu-mobile"
             aria-haspopup="true"
             onClick={handleMobileMenuOpen}
             color="inherit"
+            sx={({ spacing }) => ({
+              ml: spacing(2),
+            })}
           >
             <MenuIcon />
           </IconButton>
@@ -147,7 +160,7 @@ const NavBar = () => {
                   fontSize: typography.caption,
                   color: palette.text.secondary,
                   ml: spacing(1),
-                  mr: spacing(1),
+                  mr: spacing(2),
                 })}
               >
                 Translate
@@ -172,7 +185,7 @@ const NavBar = () => {
                   fontSize: typography.caption,
                   color: palette.text.secondary,
                   ml: spacing(1),
-                  mr: spacing(1),
+                  mr: spacing(2),
                 })}
               >
                 Message
@@ -198,7 +211,7 @@ const NavBar = () => {
                   fontSize: typography.caption,
                   color: palette.text.secondary,
                   ml: spacing(1),
-                  mr: spacing(1),
+                  mr: spacing(2),
                 })}
               >
                 Notification
@@ -212,7 +225,7 @@ const NavBar = () => {
                   fontSize: typography.caption,
                   color: palette.text.secondary,
                   ml: spacing(1),
-                  mr: spacing(1),
+                  mr: spacing(2),
                 })}
               >
                 Profile

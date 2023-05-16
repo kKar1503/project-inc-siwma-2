@@ -29,7 +29,13 @@ const Profile = ({ userName }: UserNameProps) => {
 
   return (
     <>
-      <IconButton size="medium" onClick={handleProfileMenuOpen} sx={{ marginLeft: '1rem' }}>
+      <IconButton
+        size="medium"
+        onClick={handleProfileMenuOpen}
+        sx={({ spacing }) => ({
+          ml: spacing(2),
+        })}
+      >
         <AccountCircle
           sx={({ typography, palette }) => ({
             fontSize: typography.h5,
