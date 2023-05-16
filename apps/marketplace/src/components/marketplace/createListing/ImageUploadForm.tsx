@@ -13,7 +13,7 @@ export type ImageProps = {
   url: string;
 };
 
-type SetImageProps = {
+export type SetImageProps = {
   setImages: (parameters: ImageProps[]) => void;
 };
 
@@ -64,14 +64,14 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
               <IconButton
                 aria-label="delete"
                 size="small"
-                sx={{
+                sx={({ palette }) => ({
                   position: 'absolute',
                   top: -15,
                   right: -20,
                   zIndex: 2000,
-                  color: 'primary.main',
-                  bgcolor: 'background.paper',
-                }}
+                  color: palette.primary.main,
+                  bgcolor: palette.common.white,
+                })}
                 onClick={() => handleImageRemove(index)}
               >
                 <CancelIcon />

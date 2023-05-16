@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
-type ListingTypeFormProps = {
+export type ListingTypeFormProps = {
   setListingType: (type: string) => void;
 };
 

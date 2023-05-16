@@ -18,12 +18,12 @@ export type ParameterFormProps = {
   value: string;
 };
 
-type SetParameterProps = {
+export type SetParameterProps = {
   setParameters: (parameters: ParameterFormProps[]) => void;
   category: string;
 };
 
-type ParameterProps = {
+export type ParameterProps = {
   id: string;
   name: string;
   displayName: string;
@@ -77,96 +77,93 @@ const ParameterForm = ({ setParameters, category }: SetParameterProps) => {
       </Grid>
 
       <Grid container item xs={12} md={12} spacing={2} sx={{ width: '100%' }}>
-        {displayParameters.length > 0 &&
-          displayParameters.map((parameter: ParameterProps) => {
-            switch (parameter.type) {
-              case ParameterType.WEIGHT:
-                return (
-                  <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
-                    <OutlinedInput
-                      className="outlined-adornment-weight"
-                      size="medium"
-                      endAdornment={<InputAdornment position="end">kg</InputAdornment>}
-                      aria-describedby="outlined-weight-helper-text"
-                      inputProps={{
-                        'aria-label': 'weight',
-                      }}
-                      fullWidth
-                      value={formValues[parameter.id]?.value || ''}
-                      onChange={(event) => handleFormValueChange(event, parameter.id)}
-                    />
-                  </Grid>
-                );
-              case ParameterType.DIMENSION:
-                return (
-                  <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
-                    <TextField
-                      size="medium"
-                      label={parameter.displayName}
-                      fullWidth
-                      value={formValues[parameter.id]?.value || ''}
-                      onChange={(event) => handleFormValueChange(event, parameter.id)}
-                    />
-                  </Grid>
-                );
-              case ParameterType.TWO_CHOICES:
-                return (
-                  <Grid item xs={12} md={12} sx={{ width: '100%', my: 2 }}>
-                    <FormLabel id="demo-radio-buttons-group-label">
-                      {parameter.displayName}
-                    </FormLabel>
-                    <RadioGroup
-                      value={formValues[parameter.id]?.value || ''}
-                      onChange={(event) => handleFormValueChange(event, parameter.id)}
-                    >
-                      {parameter.options &&
-                        parameter.options.map((option: string) => (
-                          <FormControlLabel
-                            key={option}
-                            value={option}
-                            control={<Radio />}
-                            label={option}
-                          />
-                        ))}
-                    </RadioGroup>
-                  </Grid>
-                );
-              case ParameterType.MANY_CHOICES:
-                return (
-                  <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
-                    <Select
-                      size="medium"
-                      label={parameter.displayName}
-                      fullWidth
-                      value={formValues[parameter.id]?.value || ''}
-                      onChange={(event) => handleFormValueChange(event, parameter.id)}
-                    >
-                      {parameter.options &&
-                        parameter.options.map((option: string) => (
-                          <MenuItem key={option} value={option}>
-                            {option}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </Grid>
-                );
-              case ParameterType.OPEN_ENDED:
-                return (
-                  <Grid item xs={12} md={12} sx={{ width: '100%', my: 2 }}>
-                    <TextField
-                      label={parameter.displayName}
-                      rows={4}
-                      value={formValues[parameter.id]?.value || ''}
-                      multiline
-                      fullWidth
-                      onChange={(event) => handleFormValueChange(event, parameter.id)}
-                    />
-                  </Grid>
-                );
-              default:
-                return null;
-            }
-          })}
+        {displayParameters.map((parameter: ParameterProps) => {
+          switch (parameter.type) {
+            case ParameterType.WEIGHT:
+              return (
+                <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
+                  <OutlinedInput
+                    className="outlined-adornment-weight"
+                    size="medium"
+                    endAdornment={<InputAdornment position="end">kg</InputAdornment>}
+                    aria-describedby="outlined-weight-helper-text"
+                    inputProps={{
+                      'aria-label': 'weight',
+                    }}
+                    fullWidth
+                    value={formValues[parameter.id]?.value || ''}
+                    onChange={(event) => handleFormValueChange(event, parameter.id)}
+                  />
+                </Grid>
+              );
+            case ParameterType.DIMENSION:
+              return (
+                <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
+                  <TextField
+                    size="medium"
+                    label={parameter.displayName}
+                    fullWidth
+                    value={formValues[parameter.id]?.value || ''}
+                    onChange={(event) => handleFormValueChange(event, parameter.id)}
+                  />
+                </Grid>
+              );
+            case ParameterType.TWO_CHOICES:
+              return (
+                <Grid item xs={12} md={12} sx={{ width: '100%', my: 2 }}>
+                  <FormLabel id="demo-radio-buttons-group-label">{parameter.displayName}</FormLabel>
+                  <RadioGroup
+                    value={formValues[parameter.id]?.value || ''}
+                    onChange={(event) => handleFormValueChange(event, parameter.id)}
+                  >
+                    {parameter.options &&
+                      parameter.options.map((option: string) => (
+                        <FormControlLabel
+                          key={option}
+                          value={option}
+                          control={<Radio />}
+                          label={option}
+                        />
+                      ))}
+                  </RadioGroup>
+                </Grid>
+              );
+            case ParameterType.MANY_CHOICES:
+              return (
+                <Grid item xs={4} md={4} sx={{ width: '100%', my: 2 }}>
+                  <Select
+                    size="medium"
+                    label={parameter.displayName}
+                    fullWidth
+                    value={formValues[parameter.id]?.value || ''}
+                    onChange={(event) => handleFormValueChange(event, parameter.id)}
+                  >
+                    {parameter.options &&
+                      parameter.options.map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </Grid>
+              );
+            case ParameterType.OPEN_ENDED:
+              return (
+                <Grid item xs={12} md={12} sx={{ width: '100%', my: 2 }}>
+                  <TextField
+                    label={parameter.displayName}
+                    rows={4}
+                    value={formValues[parameter.id]?.value || ''}
+                    multiline
+                    fullWidth
+                    onChange={(event) => handleFormValueChange(event, parameter.id)}
+                  />
+                </Grid>
+              );
+            default:
+              return null;
+          }
+        })}
 
         <Divider sx={{ my: 2 }} />
       </Grid>

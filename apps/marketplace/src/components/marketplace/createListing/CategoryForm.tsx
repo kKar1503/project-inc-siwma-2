@@ -4,12 +4,12 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 
-type SetCategoryProps = {
+export type SetCategoryProps = {
   setCategory: (category: string) => void;
 };
 
 const CategoryForm = ({ setCategory }: SetCategoryProps) => {
-  const [categoryOptions, setCategoryOptions] = useState<string[]>(['']);
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   useEffect(() => {

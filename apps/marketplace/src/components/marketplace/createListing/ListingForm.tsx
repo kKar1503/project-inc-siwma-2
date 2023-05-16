@@ -35,7 +35,7 @@ const ListingForm = ({
         variant="outlined"
         label="Listing Title"
         fullWidth
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange={(e) => {
           setTitle(e.target.value);
         }}
       />
@@ -45,7 +45,7 @@ const ListingForm = ({
       <OutlinedInput
         className="outlined-adornment-amount"
         startAdornment={<InputAdornment position="start">S$</InputAdornment>}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange={(e) => {
           setPrice(parseFloat(e.target.value));
         }}
       />
@@ -56,7 +56,7 @@ const ListingForm = ({
         value="negotiable"
         control={
           <Checkbox
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            onChange={(e) => {
               setNegotiable(e.target.checked);
             }}
           />
@@ -67,7 +67,7 @@ const ListingForm = ({
         value="unitPrice"
         control={
           <Checkbox
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            onChange={(e) => {
               setUnitPrice(e.target.checked);
             }}
           />
@@ -83,7 +83,7 @@ const ListingForm = ({
         label="Listing Description"
         fullWidth
         multiline
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange={(e) => {
           setDescription(e.target.value);
         }}
       />
