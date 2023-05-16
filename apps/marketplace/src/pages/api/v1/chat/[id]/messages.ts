@@ -31,8 +31,9 @@ async function getMessages(chatId: string, lastIdPointer: number, limit: number)
 
 export default apiHandler().get(async (req, res) => {
   // Parse and validate the request query parameters
-  let { id, lastIdPointer, limit } = chatRequestQuery.parse(req.query);
-
+  const { id, lastIdPointer } = chatRequestQuery.parse(req.query);
+  let { limit } = chatRequestQuery.parse(req.query);
+  
   // Verify the limit
   if (limit !== undefined) {
     if (limit < 1 || limit > 10) {

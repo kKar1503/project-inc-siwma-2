@@ -32,7 +32,8 @@ async function getUserChats(userId: string, lastIdPointer: string | undefined, l
 
 export default apiHandler().get(async (req, res) => {
   // Parse and validate user id, lastIdPointer and limit
-  let { id: userId, lastIdPointer, limit } = chatRequestQuery.parse(req.query);
+  const { id: userId, lastIdPointer } = chatRequestQuery.parse(req.query);
+  let { limit } = chatRequestQuery.parse(req.query);
 
   // Verify the limit
   if (limit !== undefined) {
