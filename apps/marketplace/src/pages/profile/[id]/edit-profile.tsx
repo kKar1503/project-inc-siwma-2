@@ -1,5 +1,8 @@
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Head from 'next/head';
+import ProfileDetailCard, {
+  ProfileDetailCardProps,
+} from '@/components/marketplace/profile/ProfileDetailCard';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
@@ -15,9 +18,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
-import ProfileDetailCard, {
-  ProfileDetailCardProps,
-} from '@/components/marketplace/profile/ProfileDetailCard';
+import { GetServerSidePropsContext, NextApiRequest } from 'next';
 
 const profileDetailData = [
   {
@@ -100,9 +101,17 @@ const profileDetailData = [
   },
 ];
 
-export const getServerSideProps = async ({ query }: { query: any }) => {
-  const { id } = query;
-  if (!Number.isInteger(parseFloat(id))) {
+export const getServerSideProps = async ({
+  query,
+}: GetServerSidePropsContext<{ id?: string | string[] }>) => {
+  // api call to get user details go here
+  // if user does not exist, return error code and redirect to wherever appropriate
+
+  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const intCheck = !id || !Number.isInteger(parseFloat(id));
+
+  if (intCheck) {
+    // Redirect to the index page
     return {
       redirect: {
         destination: '/',
@@ -110,15 +119,9 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
     };
   }
 
-  if (id > profileDetailData.length) {
-    return {
-      redirect: {
-        destination: '/',
-      },
-    };
-  }
+  const numericId = parseInt(id, 10);
 
-  const data = profileDetailData[id - 1];
+  const data = profileDetailData[numericId - 1];
 
   return {
     props: {
@@ -154,8 +157,8 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
     }
   };
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
     console.log({
       profilePic,
       name,
@@ -299,7 +302,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                     >
                       <TextField
                         label="Username"
-                        placeholder="@account_username"
+                        placeholder="account_username"
                         InputLabelProps={{ shrink: true }}
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
@@ -366,14 +369,14 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                     <FormControl fullWidth variant="outlined">
                       <TextField
                         label="Telegram Username"
-                        placeholder="@account_username"
+                        placeholder="account_username"
                         sx={({ spacing }) => ({
                           mr: spacing(2),
                         })}
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <TelegramIcon />
+                              <TelegramIcon />@
                             </InputAdornment>
                           ),
                         }}
@@ -385,11 +388,11 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                     <FormControl fullWidth variant="outlined">
                       <TextField
                         label="Whatsapp Number"
-                        placeholder="+65 8123 4567"
+                        placeholder="8123 4567"
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <WhatsAppIcon />
+                              <WhatsAppIcon />+65
                             </InputAdornment>
                           ),
                         }}
@@ -411,10 +414,11 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                       onClick={handleSubmit}
                       variant="contained"
                       type="submit"
-                      sx={{
+                      sx={({ spacing }) => ({
                         width: '100%',
                         mt: 'auto',
-                      }}
+                        mb: spacing(1),
+                      })}
                     >
                       Save Changes
                     </Button>

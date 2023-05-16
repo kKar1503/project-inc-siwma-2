@@ -111,7 +111,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               borderRadius: spacing(2),
               pr: '2px',
               color: palette.common.white,
-              backgroundColor: '#0088cc',
+              backgroundColor: palette.primary[500],
             })}
           />
           <Typography
@@ -134,7 +134,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               borderRadius: spacing(2),
               p: '1px',
               color: palette.common.white,
-              backgroundColor: '#25D366',
+              backgroundColor: palette.secondary.main
             })}
           />
           <Typography
