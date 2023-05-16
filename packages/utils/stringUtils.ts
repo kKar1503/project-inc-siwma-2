@@ -1,3 +1,5 @@
+const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
 /**
  * Capitalize the first letter of a string
  * @param text The text to capitalize the first letter of
@@ -6,6 +8,7 @@
 const capitalizeFirstLetter = (text: string) =>
   // Capitalize the first letter of a string
   text.charAt(0).toUpperCase() + text.slice(1);
+
 /**
  * Joins the elements of an array together into a readable string
  * @example
@@ -28,4 +31,23 @@ const arrayToString = (arr: (string | number)[], joinWord: string) => {
   return result;
 };
 
-export { capitalizeFirstLetter, arrayToString };
+/**
+ * Generates a random URL safe string
+ * @param {number} length The length of the string to generate
+ * @returns A random string
+ * @example
+ * generateString(10); // Returns 'aBcDeFgHiJ'
+ * generateString(5); // Returns 'aBcDe'
+ **/
+function generateString(length: number): string {
+  let result = ' ';
+  const charactersLength = characters.length;
+
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+}
+
+export { capitalizeFirstLetter, arrayToString, generateString };
