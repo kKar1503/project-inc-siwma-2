@@ -1,4 +1,7 @@
+import { EmailError } from '@inc/errors';
+
 export type BulkEmailResponseBody = {
   success: boolean;
-  message?: string;
+  error?: EmailError;
 };
+
