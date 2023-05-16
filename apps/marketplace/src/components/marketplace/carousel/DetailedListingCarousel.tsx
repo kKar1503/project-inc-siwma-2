@@ -9,7 +9,7 @@ import { autoPlay } from 'react-swipeable-views-utils';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-interface Image {
+export interface Image {
   id: string;
   fileName: string;
   url: string;
@@ -120,5 +120,3 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
 };
 
 export default DetailedListingCarousel;
-
-export { AutoPlaySwipeableViews };
