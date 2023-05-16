@@ -11,6 +11,19 @@
         ],
         "cacheDirectory": "tmp/nx/cache"
       }
+    },
+    "cloud": {
+      "runner": "nx-cloud",
+      "options": {
+        "cacheableOperations": [
+          "lint",
+          "build",
+          "test",
+          "prisma:compile"
+        ],
+        "cacheDirectory": "tmp/nx/cache",
+        "accessToken": "YWYzNGQzOTQtNmQwYy00ZDJiLTk2ZGUtOWUzMjExMDc1OTI1fHJlYWQtd3JpdGU="
+      }
     }
   },
   "namedInputs": {

@@ -7,9 +7,9 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 
-export const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-interface Image {
+export interface Image {
   id: string;
   companyId: string;
   image: string;
@@ -43,7 +43,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
   return (
     <Box sx={{ maxWidth: 'max', maxHeight: 300 }}>
       <AutoPlaySwipeableViews
-        axis='x'
+        axis="x"
         index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
