@@ -71,6 +71,7 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                   </Typography>
                 </Link>
                 <Typography
+                  variant="subtitle1"
                   sx={({ typography }) => ({
                     fontSize: typography.subtitle1,
                     flexGrow: 1,
@@ -79,7 +80,7 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                   &nbsp;review from {buyer ? 'buyer' : 'seller'}
                 </Typography>
               </Box>
-              <Typography sx={{ fontWeight: 'bold' }}>&#183;</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>&#183;</Typography>
               <Typography variant="body1" sx={{ flexGrow: 1 }}>
                 {datetime}
               </Typography>
@@ -98,7 +99,7 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Stack direction="row" spacing={1}>
-          <Typography sx={{ ml: 2, fontWeight: 'bold' }}>{rating.toFixed(1)}</Typography>
+          <Typography variant='body1' sx={{ ml: 2, fontWeight: 'bold' }}>{rating.toFixed(1)}</Typography>
           <StarsRating rating={rating} />
         </Stack>
       </Box>
