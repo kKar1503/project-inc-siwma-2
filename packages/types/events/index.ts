@@ -1,4 +1,13 @@
-import { Socket, Server } from 'socket.io';
+import { Socket as S, Server } from 'socket.io';
+
+// Socket.IO type extensions
+type Socket = S & {
+  authenticated?: boolean;
+  userId?: string;
+  token?: string;
+};
+
+type SocketNextHandler = (err?: Error | undefined) => void;
 
 type Room = {
   id: string;
@@ -39,7 +48,10 @@ type EventParams = {
 
 type Event = keyof EventParams;
 
-type EventFile = (io: Server) => {
+type EventFile = (
+  io: Server,
+  socket: Socket
+) => {
   [K in keyof EventParams]: {
     eventName: K;
     callback: (param: EventParams[K]) => void;
@@ -49,4 +61,6 @@ type EventFile = (io: Server) => {
 
 type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(event: E, param: P) => void;
 
-export type { Event, EventFile, TypedSocketEmitter };
+type MiddlewareFile = (socket: Socket, next: SocketNextHandler) => Promise<void>;
+
+export type { Event, EventFile, TypedSocketEmitter, MiddlewareFile };
