@@ -4,8 +4,12 @@ import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import bcrypt from 'bcrypt';
-import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@inc/errors';
+import { DuplicateError, InvalidRangeError, ParamInvalidError } from '@inc/errors';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
+import process from 'process';
+import s3Connection from '@/utils/s3Connection';
+
+export const UserBucketName = process.env.AWS_USER_BUCKET_NAME as string;
 
 const getUsersRequestBody = z.object({
   lastIdPointer: z.string().optional(),
@@ -54,7 +58,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         },
       });
 
-      const mappedUsers = users.map((user) => ({
+      const mappedUsersNoProfile = users.map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
@@ -68,8 +72,22 @@ export default apiHandler({ allowNonAuthenticated: true })
         bio: user.bio,
       }));
 
+      const bucket = await s3Connection.getBucket(UserBucketName);
+
+      const mappedUsers = await Promise.all(
+        mappedUsersNoProfile.map(async (user) => {
+          if (!user.profilePic) return user;
+          const s3Object = await bucket.getObject(user.profilePic);
+          const profilePic = await s3Object.generateLink();
+
+          return {
+            ...user,
+            profilePic,
+          };
+
+        }));
       return res.status(200).json(formatAPIResponse(mappedUsers));
-    }
+    },
   )
   .post(async (req: NextApiRequest, res: NextApiResponse) => {
     // Creates a new user from an existing invite
@@ -99,7 +117,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         'expiry',
         undefined,
         invite.expiry.toString(),
-        Date.now().toString()
+        Date.now().toString(),
       );
     }
 

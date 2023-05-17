@@ -1,10 +1,13 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
 import client, { UserContacts } from '@inc/db';
-import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
+import { ForbiddenError, NotFoundError, ParamRequiredError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
+import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
+import s3Connection from '@/utils/s3Connection';
+import { UserBucketName } from '@api/v1/users';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 
 const userIdSchema = z.object({
   id: z.string(),
@@ -15,7 +18,6 @@ const updateUserDetailsSchema = z.object({
   email: z.string().email().optional(),
   //   company is a number that represents the id of the company
   company: z.string().optional(),
-  profilePicture: z.string().optional(),
   mobileNumber: z.string().optional(),
   contactMethod: z.nativeEnum(UserContacts).optional(),
   bio: z.string().optional(),
@@ -73,7 +75,7 @@ export default apiHandler()
 
     const { id } = userIdSchema.parse(req.query);
     const parsedBody = updateUserDetailsSchema.parse(req.body);
-    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio, userComments } =
+    const { name, email, company, mobileNumber, contactMethod, bio, userComments } =
       parsedBody;
     let { password } = parsedBody;
 
@@ -129,6 +131,29 @@ export default apiHandler()
     if (!userExists) {
       throw new NotFoundError('User');
     }
+
+
+    const files = await getFilesFromRequest(req);
+    let { profilePicture } = userExists;
+    if (files.length > 0) {
+      const bucket = await s3Connection.getBucket(UserBucketName);
+      const createObject = async () => {
+        const s3Object = fileToS3Object(files[0]);
+        return bucket.createObject(s3Object);
+      };
+      const deleteObject = async () => {
+        if (!userExists.profilePicture) return;
+        await bucket.deleteObject(userExists.profilePicture);
+      };
+
+      const [profilePictureObject] = await Promise.all([
+        createObject(),
+        deleteObject(),
+      ]);
+
+      profilePicture = profilePictureObject.Id;
+    }
+
 
     const user = await client.users.update({
       where: {
@@ -188,5 +213,5 @@ export default apiHandler()
       });
 
       return res.status(204).end();
-    }
+    },
   );
