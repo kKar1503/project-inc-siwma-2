@@ -11,7 +11,7 @@ import parseFormData from '@/utils/parseFormData';
 import { ParamError } from '@inc/errors/src';
 import fs from 'fs';
 
-const zod = z.object({
+const companyInputValidation = z.object({
   companyId: z.string(),
   endDate: z.string().datetime(),
   startDate: z.string().datetime(),
@@ -20,7 +20,7 @@ const zod = z.object({
   link: z.string(),
 });
 
-const getBody = z.object({
+const getInputValidation = z.object({
   lastIdPointer: z.string().optional(),
   limit: z.string().optional(),
 });
@@ -51,11 +51,11 @@ export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   const data = await parseFormData(req);
   // Validate payload
-  const payload = zod.parse(req.body);
+  const payload = companyInputValidation.parse(req.body);
   const companyId = parseToNumber(payload.companyId);
 
   if (data === undefined || data.files === undefined || data.files.file === undefined) {
-    throw new ParamError(`advertisement`);
+    throw new ParamError(`advertisement image`);
   }
 
   const file = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
@@ -92,7 +92,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate admin
   const isAdmin = (req.token?.user.permissions === true);
-  const { limit, lastIdPointer } = getBody.parse(req.query);
+  const { limit, lastIdPointer } = getInputValidation.parse(req.query);
 
   let limitInt: number | undefined;
 

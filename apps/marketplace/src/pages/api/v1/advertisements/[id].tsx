@@ -12,7 +12,7 @@ import parseFormData from '@/utils/parseFormData';
 import fs from 'fs';
 
 
-const zod = z.object({
+const companyOptionalInputValidation = z.object({
   companyId: z.string().optional(),
   endDate: z.string().datetime().optional(),
   startDate: z.string().datetime().optional(),
@@ -47,7 +47,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   const data = await parseFormData(req);
   // Validate payload
   const id = parseToNumber(req.query.id as string);
-  const validatedPayload = zod.parse(req.body);
+  const validatedPayload = companyOptionalInputValidation.parse(req.body);
 
   // Check if user is admin
   const isAdmin = true; // this endpoint is admin only
