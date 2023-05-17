@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
+import { FormControl, InputLabel } from '@mui/material';
 
 export type SetCategoryProps = {
   setCategory: (category: string) => void;
@@ -14,7 +15,7 @@ const CategoryForm = ({ setCategory }: SetCategoryProps) => {
 
   useEffect(() => {
     // Get categories from backend
-    setCategoryOptions(['all', 'electronics', 'furniture', 'clothing', 'books', 'other']);
+    setCategoryOptions([]);
   }, []);
 
   const handleCategoryChange = (e: SelectChangeEvent<string>) => {
@@ -24,20 +25,17 @@ const CategoryForm = ({ setCategory }: SetCategoryProps) => {
 
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-      <Select
-        value={selectedCategory}
-        onChange={handleCategoryChange}
-        size="medium"
-        label="Select a category..."
-        fullWidth
-      >
-        {categoryOptions.map((category: string) => (
-          <MenuItem key={category} value={category}>
-            {category}
-          </MenuItem>
-        ))}
-      </Select>
-      <Divider sx={{ my: 2 }} />
+      <FormControl variant="outlined" fullWidth>
+        <InputLabel>Select a category...</InputLabel>
+        <Select value={selectedCategory} onChange={handleCategoryChange} size="medium" fullWidth>
+          {categoryOptions.map((category: string) => (
+            <MenuItem key={category} value={category}>
+              {category}
+            </MenuItem>
+          ))}
+        </Select>
+        <Divider sx={{ my: 2 }} />
+      </FormControl>
     </Grid>
   );
 };

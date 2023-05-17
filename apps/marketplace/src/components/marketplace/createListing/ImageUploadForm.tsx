@@ -34,6 +34,13 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
       return;
     }
 
+    const imageFiles = selectedImages.filter((file) => file.type.startsWith('image/'));
+    if (imageFiles.length !== selectedImages.length) {
+      // Display feedback for invalid file types
+      alert('Only image files are allowed.');
+      return;
+    }
+
     const previewImages = selectedImages.map((file) => ({
       file,
       preview: URL.createObjectURL(file),

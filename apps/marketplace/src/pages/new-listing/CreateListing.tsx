@@ -74,7 +74,14 @@ const CreateListingPage = () => {
             </Typography>
           </Grid>
           <Grid item xs={2} md={2} justifyContent="flex-end" sx={{ width: '100%' }}>
-            <Button variant="contained" type="submit" onClick={handleCancel}>
+            <Button
+              variant="contained"
+              type="submit"
+              onClick={handleCancel}
+              sx={({ palette }) => ({
+                backgroundColor: palette.error.main,
+              })}
+            >
               Cancel Listing
             </Button>
             <OnLeaveModal open={open} setOpen={setOpen} />
