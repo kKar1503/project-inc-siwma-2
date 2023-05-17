@@ -1,36 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import { FormControl, InputLabel } from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { CategoryParameterProps } from './ParameterForm';
 
-export type SetCategoryProps = {
-  setCategory: (category: string) => void;
+export type CategoryProps = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  crossSectionImage: string;
+  active: boolean;
+  parameters: CategoryParameterProps[];
 };
 
-const CategoryForm = ({ setCategory }: SetCategoryProps) => {
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+export type SetCategoryProps = {
+  setCategory: (category: CategoryProps | null) => void;
+  data: CategoryProps[];
+};
 
-  useEffect(() => {
-    // Get categories from backend
-    setCategoryOptions([]);
-  }, []);
+const CategoryForm = ({ setCategory, data }: SetCategoryProps) => {
+  const [selectedCategory, setSelectedCategory] = useState<CategoryProps | null>(null);
 
   const handleCategoryChange = (e: SelectChangeEvent<string>) => {
-    setSelectedCategory(e.target.value as string);
-    setCategory(e.target.value as string);
+    const categoryName = e.target.value as string;
+    const selectedCategory = data.find((category) => category.name === categoryName) || null;
+    setSelectedCategory(selectedCategory);
+    setCategory(selectedCategory);
   };
 
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <FormControl variant="outlined" fullWidth>
         <InputLabel>Select a category...</InputLabel>
-        <Select value={selectedCategory} onChange={handleCategoryChange} size="medium" fullWidth>
-          {categoryOptions.map((category: string) => (
-            <MenuItem key={category} value={category}>
-              {category}
+        <Select
+          value={selectedCategory ? selectedCategory.name : ''}
+          onChange={handleCategoryChange}
+          size="medium"
+          fullWidth
+        >
+          {data.map(({ id, name }) => (
+            <MenuItem key={id} value={name}>
+              {name}
             </MenuItem>
           ))}
         </Select>

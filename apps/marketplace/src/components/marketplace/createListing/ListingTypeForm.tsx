@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
-export type ListingTypeProps = 'Buying' | 'Selling';
+export type ListingTypeProps = 'BUY' | 'SELL';
 
 export type ListingTypeFormProps = {
-  setListingType: (type: string) => void;
+  setListingType: (type: ListingTypeProps) => void;
 };
 
 const ListingTypeForm = ({ setListingType }: ListingTypeFormProps) => {
-  const [selectedButton, setSelectedButton] = useState<ListingTypeProps>();
+  const [selectedButton, setSelectedButton] = useState<ListingTypeProps>('BUY');
 
   const handleButtonClick = (type: ListingTypeProps) => {
     setListingType(type);
@@ -22,8 +22,8 @@ const ListingTypeForm = ({ setListingType }: ListingTypeFormProps) => {
         <Grid item xs={6} md={6} sx={{ width: '100%', pr: 1 }}>
           <Button
             size="large"
-            variant={selectedButton === 'Buying' ? 'contained' : 'outlined'}
-            onClick={() => handleButtonClick('Buying')}
+            variant={selectedButton === 'BUY' ? 'contained' : 'outlined'}
+            onClick={() => handleButtonClick('BUY')}
             fullWidth
           >
             BUYING
@@ -32,8 +32,8 @@ const ListingTypeForm = ({ setListingType }: ListingTypeFormProps) => {
         <Grid item xs={6} md={6} sx={{ width: '100%', pl: 1 }}>
           <Button
             size="large"
-            variant={selectedButton === 'Selling' ? 'contained' : 'outlined'}
-            onClick={() => handleButtonClick('Selling')}
+            variant={selectedButton === 'SELL' ? 'contained' : 'outlined'}
+            onClick={() => handleButtonClick('SELL')}
             fullWidth
           >
             SELLING
