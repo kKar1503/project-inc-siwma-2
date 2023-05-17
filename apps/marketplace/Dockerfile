@@ -5,23 +5,23 @@ WORKDIR /app
 COPY . .
 
 # Installing Dependencies
-RUN npm install -g pnpm && pnpm clean-i
+RUN npm install -g pnpm && pnpm run ci
 
-# Set DATABASE_URL for Prisma
+# DATABASE_URL for Prisma
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
-# Get NextAuth URL and Secret
+# NextAuth URL and Secret
 ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
-
-# Set NextAuth URL and Secret
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
-# TODO: remove ignore for tserrors and eslint once all gone
-ENV NEXT_BUILD_OPTION="ignoreType"
-ENV NEXT_ESLINT_OPTION="ignoreLint"
+# Build Options
+ARG NEXT_BUILD_OPTION
+ARG NEXT_ESLINT_OPTION
+ENV NEXT_BUILD_OPTION=$NEXT_BUILD_OPTION
+ENV NEXT_ESLINT_OPTION=$NEXT_ESLINT_OPTION
 
 # Building NextJS
 RUN npx nx run @inc/marketplace:build:prod
@@ -33,15 +33,13 @@ FROM node:18.15.0-alpine3.17 as runner
 WORKDIR /app
 ENV NODE_ENV production
 
-# Set DATABASE_URL for Prisma
+# DATABASE_URL for Prisma
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
-# Get NextAuth URL and Secret
+# NextAuth URL and Secret
 ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
-
-# Set NextAuth URL and Secret
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
