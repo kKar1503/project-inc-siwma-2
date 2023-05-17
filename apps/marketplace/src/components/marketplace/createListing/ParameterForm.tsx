@@ -77,7 +77,7 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
           switch (parameter.type) {
             case ParameterType.WEIGHT:
               return (
-                <Grid item xs={4} md={4} sx={{ width: '100%' }}>
+                <Grid item xs={4} md={4} sx={{ width: '100%' }} key={parameter.id}>
                   <OutlinedInput
                     className="outlined-adornment-weight"
                     size="medium"
@@ -94,7 +94,7 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
               );
             case ParameterType.DIMENSION:
               return (
-                <Grid item xs={4} md={4} sx={{ width: '100%' }}>
+                <Grid item xs={4} md={4} sx={{ width: '100%' }} key={parameter.id}>
                   <TextField
                     size="medium"
                     label={parameter.displayName}
@@ -106,7 +106,7 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
               );
             case ParameterType.TWO_CHOICES:
               return (
-                <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+                <Grid item xs={12} md={12} sx={{ width: '100%' }} key={parameter.id}>
                   <FormLabel>{parameter.displayName}</FormLabel>
                   <RadioGroup
                     value={formValues[parameter.id]?.value || ''}
@@ -126,7 +126,7 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
               );
             case ParameterType.MANY_CHOICES:
               return (
-                <Grid item xs={4} md={4} sx={{ width: '100%' }}>
+                <Grid item xs={4} md={4} sx={{ width: '100%' }} key={parameter.id}>
                   <FormControl variant="outlined" fullWidth>
                     <InputLabel>{parameter.displayName}</InputLabel>
                     <Select
@@ -148,7 +148,7 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
               );
             case ParameterType.OPEN_ENDED:
               return (
-                <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+                <Grid item xs={12} md={12} sx={{ width: '100%' }} key={parameter.id}>
                   <TextField
                     label={parameter.displayName}
                     rows={4}
