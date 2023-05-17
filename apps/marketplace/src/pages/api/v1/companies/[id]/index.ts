@@ -111,8 +111,26 @@ export default apiHandler()
 
     const files = await getFilesFromRequest(req);
 
-    const bucket = await s3Connection.getBucket(CompanyBucketName);
-    const s3Object = await bucket.createObject(fileToS3Object(files[0]));
+    let { logo } = company;
+    if (files.length > 0) {
+      const bucket = await s3Connection.getBucket(CompanyBucketName);
+      const createObject = async () => {
+        const s3Object = fileToS3Object(files[0]);
+        return bucket.createObject(s3Object);
+      };
+      const deleteObject = async () => {
+        if (!company.logo) return;
+        await bucket.deleteObject(company.logo);
+      };
+
+      const [logoObject] = await Promise.all([
+        createObject(),
+        deleteObject(),
+      ]);
+
+      logo = logoObject.Id;
+    }
+
 
     // update the company
     const response = await PrismaClient.companies.update({
@@ -123,7 +141,7 @@ export default apiHandler()
         name,
         website,
         bio,
-        logo: s3Object.Id,
+        logo,
         comments,
       },
       select: {
