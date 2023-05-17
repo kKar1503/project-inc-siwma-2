@@ -7,6 +7,8 @@ import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
+import TextField from '@mui/material/TextField';
+import FormHelperText from '@mui/material/FormHelperText';
 
 export type ImageProps = {
   fileName: string;
@@ -24,20 +26,19 @@ export type SetImageProps = {
 
 const ImageUploadForm = ({ setImages }: SetImageProps) => {
   const [images, setPreivewImages] = useState<PreviewImageProps[]>([]);
+  const [error, setError] = useState('');
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImages = Array.from(e.target.files || []);
 
     if (selectedImages.length + images.length > 10) {
-      // Display feedback for exceeding the limit
-      alert('You can only upload up to 10 images.');
+      setError('You can only upload up to 10 images.');
       return;
     }
 
     const imageFiles = selectedImages.filter((file) => file.type.startsWith('image/'));
     if (imageFiles.length !== selectedImages.length) {
-      // Display feedback for invalid file types
-      alert('Only image files are allowed.');
+      setError('Only image files are allowed.');
       return;
     }
 
@@ -52,6 +53,8 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
       url: URL.createObjectURL(file),
     }));
     setImages(imageData);
+
+    setError('');
   };
 
   const handleImageRemove = (index: number) => {
@@ -60,6 +63,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
 
   const handleUploadClick = () => {
     setPreivewImages([]);
+    setError('');
   };
 
   const openFullImage = (url: string) => {
@@ -128,6 +132,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
           Upload a Photo
         </Button>
       </label>
+      {error && <FormHelperText sx={{ color: 'red' }}>{error}</FormHelperText>}
       {renderImages()}
       <Divider sx={{ my: 2 }} />
     </Grid>
