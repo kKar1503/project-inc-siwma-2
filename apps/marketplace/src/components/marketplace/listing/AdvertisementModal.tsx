@@ -5,12 +5,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogActions from '@mui/material/DialogActions'
+import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
 
 
 
 
-interface AdvertisementModalProps {
+export type AdvertisementModalProps = {
   id: number;
   companyName: string;
   description: string;
@@ -33,28 +34,50 @@ const AdvertisementModal = ( { id, companyName, description, url,  onClose, open
 
   return (
     <Dialog open={open} onClose={() => onClose(true)}>
-      <DialogTitle>{companyName}</DialogTitle>
+      <Box  display="flex" justifyContent="center">
+      <DialogTitle
+      sx={({palette}) => ({  
+        alignItems: 'center',
+        fontWeight: 'bold', 
+        color:  palette.common.black,
+        fontSize: 'h5'
+        })}>
+        {companyName}</DialogTitle>
+      </Box>
       <DialogContent>
-        <DialogContentText>{description}</DialogContentText>
+        <DialogContentText 
+        sx={({ palette}) => ({   
+          color:  palette.common.black,
+          fontSize: 'h6'
+        })}>
+        {description}</DialogContentText>
       </DialogContent>
+      
       <DialogActions>
-        <Button onClick={handleRedirect}  variant="contained"  sx={({ palette }) => ({
+        <Button onClick={handleRedirect}  variant="contained"  sx={({ palette,spacing }) => ({
+            marginTop: spacing(3),
+            marginBottom: spacing(2),
+            border: '4px',
             color:  palette.common.white,
             backgroundColor: palette.primary.main
           })}
           >
         Show Me!
         </Button>
-        <Button onClick={() => onClose(false)}
-          sx={({ palette }) => ({
+        <Button variant='outlined' onClick={() => onClose(false)}
+          sx={({ palette,spacing }) => ({
+            marginTop: spacing(3),
+            marginBottom: spacing(2),
+            marginRight: spacing(3),
+            border: '4px ',
             color: palette.common.black,
-            backgroundColor: palette.common.white
+            backgroundColor: palette.background.default
           })}
           >
           Close
         </Button>
       </DialogActions>
-    </Dialog>
+    </Dialog> 
   );
 };
 
