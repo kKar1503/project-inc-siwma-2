@@ -14,8 +14,8 @@ import fs from 'fs';
 
 const zod = z.object({
   companyId: z.string().optional(),
-  endDate: z.string().optional(),
-  startDate: z.string().optional(),
+  endDate: z.string().datetime().optional(),
+  startDate: z.string().datetime().optional(),
   active: z.boolean().optional(),
   description: z.string().optional(),
   link: z.string().optional(),
