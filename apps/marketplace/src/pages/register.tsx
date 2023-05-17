@@ -3,41 +3,50 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Grid from '@mui/material/Grid';
-import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
-import { signIn } from 'next-auth/react';
 
 const RegisterForm = () => {
-  // const [errorMessage, setErrorMessage] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const authResult = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
-    // if (!authResult?.ok) {
-    //   setErrorMessage(true);
-    // } else {
-    //   return router.push('/');
-    // }
-  };
 
-  console.log(companyName, userName, email, phoneNumber, password, confirmPassword);
+    if (!companyName || !userName || !email || !phoneNumber || !password || !confirmPassword) {
+      alert('Please fill in all the fields!');
+    } else if (password !== confirmPassword) {
+      alert('Password does not match! Please try again');
+      setPassword('');
+      setConfirmPassword('');
+    } else {
+      console.log(
+        'Company Name: ',
+        companyName,
+        'User Name: ',
+        userName,
+        'Email: ',
+        email,
+        'Phone Number: ',
+        phoneNumber,
+        'Password: ',
+        password,
+        'Confirm Password: ',
+        confirmPassword
+      );
+      setCompanyName('');
+      setUserName('');
+      setEmail('');
+      setPhoneNumber('');
+      setPassword('');
+      setConfirmPassword('');
+    }
+  };
 
   return (
     <Box>
@@ -63,7 +72,7 @@ const RegisterForm = () => {
               boxShadow: shadows[5],
               px: '8rem',
               pb: '10rem',
-              pt: spacing(3),
+              pt: spacing(2),
               position: 'relative',
               bgcolor: palette.common.white,
               ...shape,
@@ -77,7 +86,7 @@ const RegisterForm = () => {
                 justifyContent: 'center',
                 width: '80%',
                 height: '20%',
-                mb: spacing(2),
+                mb: spacing(1),
               })}
             >
               <Image src="/../public/images/siwma-logo.jpg" alt="logo" fill />
@@ -85,7 +94,7 @@ const RegisterForm = () => {
             <Divider flexItem />
             <Box
               sx={({ spacing }) => ({
-                mb: spacing(2),
+                mb: spacing(1),
               })}
             >
               <Typography
@@ -98,7 +107,7 @@ const RegisterForm = () => {
                 Register Here
               </Typography>
               <Typography
-                sx={({ spacing, typography }) => ({
+                sx={({ typography }) => ({
                   fontSize: typography.body2,
                 })}
               >
@@ -113,7 +122,7 @@ const RegisterForm = () => {
                 value={companyName}
                 variant="standard"
                 margin="normal"
-                onChange={(e) => setEmail(e.target.value)} // change later!
+                onChange={(e) => setCompanyName(e.target.value)}
               />
 
               <TextField
@@ -123,7 +132,7 @@ const RegisterForm = () => {
                 value={userName}
                 variant="standard"
                 margin="normal"
-                onChange={(e) => setEmail(e.target.value)} // change later!
+                onChange={(e) => setUserName(e.target.value)}
               />
 
               <TextField
@@ -132,7 +141,7 @@ const RegisterForm = () => {
                 value={email}
                 variant="standard"
                 margin="normal"
-                onChange={(e) => setEmail(e.target.value)} // change later!
+                onChange={(e) => setEmail(e.target.value)}
                 sx={{ width: '45.3%' }}
               />
 
@@ -142,7 +151,7 @@ const RegisterForm = () => {
                 value={phoneNumber}
                 variant="standard"
                 margin="normal"
-                onChange={(e) => setEmail(e.target.value)} // change later!
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 sx={({ spacing }) => ({
                   ml: spacing(4),
                   width: '45.3%',
@@ -170,48 +179,14 @@ const RegisterForm = () => {
                 value={confirmPassword}
                 type="password"
                 variant="standard"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 sx={({ spacing }) => ({
                   mt: spacing(1),
                   ml: spacing(4),
                   width: '45.3%',
                 })}
               />
-              {/* {errorMessage && (
-                <Typography
-                  sx={({ palette, spacing }) => ({
-                    color: palette.error.main,
-                    my: spacing(2),
-                  })}
-                >
-                  Invalid email or password!
-                </Typography>
-              )} */}
-              {/* <Grid
-                container
-                sx={({ spacing }) => ({
-                  my: spacing(4),
-                })}
-              >
-                <Grid item xs>
-                  <FormControlLabel
-                    control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
-                  />
-                </Grid>
-                <Grid item>
-                  <Link href="/forgot-your-password">
-                    <Typography
-                      sx={({ spacing, palette }) => ({
-                        mt: spacing(1),
-                        color: palette.primary.main,
-                      })}
-                    >
-                      Forgot your password?
-                    </Typography>
-                  </Link>
-                </Grid>
-              </Grid> */}
+
               <Button
                 type="submit"
                 fullWidth
