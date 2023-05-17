@@ -22,6 +22,23 @@ const parseToNumber = (string: string, key?: string) => {
 };
 
 /**
+ * Splits a string up to an array
+ * @param string The string to split
+ * @returns The split string
+ */
+const parseArray = (string: string | string[]) => {
+  // Check if an array was passed in
+  if (Array.isArray(string)) {
+    return string;
+  }
+
+  // Attempt to split the string into an array
+  const result = string.split(',');
+
+  return result;
+};
+
+/**
  * Format the API response into a JSON-API compliant response
  * @param response The response to format
  * @returns A JSON-API compliant response
@@ -47,4 +64,4 @@ const formatAPIResponse = (response: object | object[]) => {
   };
 };
 
-export { parseToNumber, formatAPIResponse };
+export { parseToNumber, parseArray, formatAPIResponse };
