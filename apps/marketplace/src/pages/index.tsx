@@ -2,7 +2,6 @@ import Head from 'next/head';
 import { Button } from '@inc/ui';
 import type { Person } from '@inc/types';
 import { signIn, useSession } from 'next-auth/react';
-import AdvertisementModal from '@/components/marketplace/listing/AdvertisementModal';
 
 // eslint-disable-next-line no-unused-vars
 const p: Person = {
