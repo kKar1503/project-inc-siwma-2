@@ -1,16 +1,17 @@
-import { NotFoundError, ParamError, ForbiddenError } from '@inc/errors';
-import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
+import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { getResponseBody, queryResult } from '..';
+import { CompanyBucketName, getResponseBody, queryResult } from '..';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import s3Connection from '@/utils/s3Connection';
 
 const editCompanyRequestBody = z.object({
   name: z.string().optional(),
   website: z.string().optional(),
   bio: z.string().optional(),
   comments: z.string().optional(),
-  image: z.string().optional(),
 });
 
 function parseCompanyId(id: string | undefined): number {
@@ -68,11 +69,16 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
+    if (response.logo) {
+      const bucket = await s3Connection.getBucket(CompanyBucketName);
+      const s3Object = await bucket.getObject(response.logo);
+      response.logo = await s3Object.generateLink();
+    }
     return res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .put(async (req, res) => {
     const { id } = req.query;
-    const { name, website, bio, comments, image } = editCompanyRequestBody.parse(req.body);
+    const { name, website, bio, comments } = editCompanyRequestBody.parse(req.body);
 
     const companyid = parseCompanyId(id as string);
     const isAdmin = req.token?.user.permissions === 1;
@@ -103,6 +109,11 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
+    const files = await getFilesFromRequest(req);
+
+    const bucket = await s3Connection.getBucket(CompanyBucketName);
+    const s3Object = await bucket.createObject(fileToS3Object(files[0]));
+
     // update the company
     const response = await PrismaClient.companies.update({
       where: {
@@ -112,7 +123,7 @@ export default apiHandler()
         name,
         website,
         bio,
-        logo: image,
+        logo: s3Object.Id,
         comments,
       },
       select: {

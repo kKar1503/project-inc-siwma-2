@@ -3,12 +3,16 @@ import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import s3Connection from '@/utils/s3Connection';
+import * as process from 'process';
+
+export const CompanyBucketName = process.env.AWS_COMPANY_BUCKET_NAME as string;
 
 const createCompanyRequestBody = z.object({
   name: z.string(),
   website: z.string(),
   comments: z.string(),
-  image: z.string().optional(),
 });
 
 const getCompaniesRequestBody = z.object({
@@ -58,7 +62,7 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
 
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, website, comments, image } = createCompanyRequestBody.parse(req.body);
+    const { name, website, comments } = createCompanyRequestBody.parse(req.body);
 
     if (!name || name.trim().length === 0) {
       throw new ParamError('name');
@@ -71,11 +75,17 @@ export default apiHandler()
       throw new ParamError('website');
     }
 
+    const files = await getFilesFromRequest(req);
+
+    const bucket = await s3Connection.getBucket(CompanyBucketName);
+    const s3Object = await bucket.createObject(fileToS3Object(files[0]));
+
+
     const response = await PrismaClient.companies.create({
       data: {
         name,
         website,
-        logo: image,
+        logo: s3Object.Id,
         comments,
       },
     });
@@ -87,7 +97,7 @@ export default apiHandler()
 
     const { lastIdPointer = '0', limit = '10', name } = getCompaniesRequestBody.parse(req.query);
 
-    const response = await PrismaClient.companies.findMany({
+    const responseNoLogo = await PrismaClient.companies.findMany({
       select: {
         id: true,
         name: true,
@@ -108,6 +118,17 @@ export default apiHandler()
       },
       take: parseToNumber(limit),
     });
+
+    const bucket = await s3Connection.getBucket(CompanyBucketName);
+    const response = await Promise.all(responseNoLogo.map(async (r) => {
+      const logoId = r.logo;
+      if (!logoId) return r;
+      const logo = await bucket.getObject(logoId);
+      return {
+        ...r,
+        logo: await logo.generateLink(),
+      };
+    }));
 
     res.status(200).json(formatAPIResponse(formatResponse(response)));
   });
