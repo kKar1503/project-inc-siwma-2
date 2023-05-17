@@ -76,6 +76,9 @@ export default apiHandler()
     }
 
     const files = await getFilesFromRequest(req);
+    if(files.length === 0) {
+      throw new ParamError('company logo');
+    }
 
     const bucket = await s3Connection.getBucket(CompanyBucketName);
     const s3Object = await bucket.createObject(fileToS3Object(files[0]));
