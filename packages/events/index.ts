@@ -12,6 +12,7 @@ export const EVENTS = {
     CREATE_ROOM: 'createRoom',
     SEND_MESSAGE: 'sendMessage',
     PING: 'clientPing',
+    READ: 'read',
   },
 
   // Server Events
