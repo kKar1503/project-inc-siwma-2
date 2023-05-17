@@ -100,7 +100,6 @@ function handleS3Error(error: { name: string }) {
 function handleError($error: Error & { type?: string }): ErrorJSON[] {
   // An error occurred
   let error = $error;
-
   console.log({ error });
 
   // Check if it was a zod error
