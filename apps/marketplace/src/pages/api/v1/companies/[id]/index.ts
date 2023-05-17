@@ -3,9 +3,9 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { CompanyBucketName, getResponseBody, queryResult } from '..';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
+import { CompanyBucketName, getResponseBody, queryResult } from '..';
 
 const editCompanyRequestBody = z.object({
   name: z.string().optional(),
