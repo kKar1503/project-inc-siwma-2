@@ -4,7 +4,7 @@ import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
-import { AdvertisementBucket, select, where } from '@api/v1/advertisements/index';
+import { AdvertisementBucketName, select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
@@ -37,6 +37,12 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   // Throw error if advertisement not found
   if (!advertisement) throw new NotFoundError(`advertisement`);
 
+
+  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
+  const image = await AdvertisementBucket.getObject(advertisement.image);
+
+  advertisement.image = await image.generateLink();
+
   // Return advertisement
   res.status(200).json(formatAPIResponse(advertisement));
 };
@@ -68,12 +74,12 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   const link = validatedPayload.link || advertisement.link;
 
   // if image has changed
-  let url = advertisement.image;
-  const files  = await getFilesFromRequest(req);
+  let objectID = advertisement.image;
+  const files = await getFilesFromRequest(req);
   if (files.length > 0) {
     const s3ObjectBuilder = fileToS3Object(files[0]);
 
-    const bucket = await s3Connection.getBucket(AdvertisementBucket);
+    const bucket = await s3Connection.getBucket(AdvertisementBucketName);
 
     // create new image and delete old image as aws doesn't support update
     // also do these in parallel for faster response
@@ -83,7 +89,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
         bucket.deleteObject(advertisement.image),
       ]);
     const [newS3Object] = awaitedPromise;
-    url = await newS3Object.generateLink();
+    objectID = await newS3Object.Id;
   }
 
 
@@ -92,7 +98,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     select: select(isAdmin),
     data: {
       companyId,
-      image: url,
+      image: objectID,
       endDate,
       startDate,
       active,
@@ -135,7 +141,7 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Delete image from s3
   const s3Promise = new Promise((resolve) => {
-    s3Connection.getBucket(AdvertisementBucket).then((bucket) => {
+    s3Connection.getBucket(AdvertisementBucketName).then((bucket) => {
       bucket.deleteObject(advertisement.image).then(resolve);
     });
   });

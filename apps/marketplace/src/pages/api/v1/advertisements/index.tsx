@@ -44,7 +44,8 @@ export const where = (isAdmin: boolean, other = {}) => isAdmin ? other : {
   ...other,
 };
 
-export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
+export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
+
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
@@ -56,8 +57,8 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     throw new ParamError(`advertisement image`);
   }
 
-  const bucket = await s3Connection.getBucket(AdvertisementBucket);
-  const s3Object = await bucket.createObject(fileToS3Object( files[0]));
+  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
+  const s3Object = await AdvertisementBucket.createObject(fileToS3Object(files[0]));
 
   // Create advertisement
   const advertisementId = (await PrismaClient.advertisements.create({
@@ -66,7 +67,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     data: {
       companyId,
-      image: await s3Object.generateLink(),
+      image: s3Object.Id,
       endDate: new Date(payload.endDate),
       startDate: new Date(payload.startDate),
       active: payload.active,
@@ -92,7 +93,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
 
   // Get advertisements
-  const advertisements = await PrismaClient.advertisements.findMany({
+  const advertisementsNoLink = await PrismaClient.advertisements.findMany({
     select: select(isAdmin),
     where: where(isAdmin, {
       id: {
@@ -101,6 +102,15 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     }),
     take: limitInt,
   });
+
+  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
+  const advertisements = await Promise.all(advertisementsNoLink.map(async (advertisement) => {
+    const image = await AdvertisementBucket.getObject(advertisement.image);
+    return {
+      ...advertisement,
+      link: await image.generateLink(),
+    };
+  }));
 
   // Return advertisements
   res.status(200).json(formatAPIResponse(advertisements));
