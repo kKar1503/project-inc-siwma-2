@@ -4,12 +4,10 @@ import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
-import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
 import { AdvertisementBucket, select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
-import { getFilesFromRequest } from '@/utils/parseFormData';
-import fs from 'fs';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 
 
 const companyOptionalInputValidation = z.object({
@@ -71,19 +69,11 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // if image has changed
   let url = advertisement.image;
-  const data = await getFilesFromRequest(req);
-  if (data.length > 0) {
-    const file = data[0];
+  const files  = await getFilesFromRequest(req);
+  if (files.length > 0) {
+    const s3ObjectBuilder = fileToS3Object(files[0]);
 
     const bucket = await s3Connection.getBucket(AdvertisementBucket);
-    const metadata = new Metadata({
-      'content-type': file.mimetype || 'image/jpeg',
-      'original-name': file.originalFilename || 'untitled-advertisement-image',
-      // "content-disposition": file.newFilename,
-    });
-    const buffer = fs.readFileSync(file.filepath);
-    const s3ObjectBuilder = new S3ObjectBuilder(buffer, metadata);
-
 
     // create new image and delete old image as aws doesn't support update
     // also do these in parallel for faster response

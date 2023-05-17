@@ -1,15 +1,13 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
 import s3Connection from '@/utils/s3Connection';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
 import { z } from 'zod';
-import { getFilesFromRequest } from '@/utils/parseFormData';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { ParamError } from '@inc/errors/src';
-import fs from 'fs';
 
 const companyInputValidation = z.object({
   companyId: z.string(),
@@ -53,20 +51,13 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   const payload = companyInputValidation.parse(req.body);
   const companyId = parseToNumber(payload.companyId);
 
-  const data = await getFilesFromRequest(req);
-  if (data.length === 0) {
+  const files = await getFilesFromRequest(req);
+  if (files.length === 0) {
     throw new ParamError(`advertisement image`);
   }
-  const file = data[0];
-  const buffer = fs.readFileSync(file.filepath);
-  // Create S3 object
-  const metadata = new Metadata({
-    'content-type': file.mimetype || 'image/jpeg',
-    'original-name': file.originalFilename || 'untitled-advertisement-image',
-    // "content-disposition": file.newFilename,
-  });
+
   const bucket = await s3Connection.getBucket(AdvertisementBucket);
-  const s3Object = await bucket.createObject(new S3ObjectBuilder(buffer, metadata));
+  const s3Object = await bucket.createObject(fileToS3Object( files[0]));
 
   // Create advertisement
   const advertisementId = (await PrismaClient.advertisements.create({
