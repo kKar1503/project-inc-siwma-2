@@ -1,5 +1,4 @@
-import React from 'react';
-import { useTheme } from '@mui/material/styles';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import MobileStepper from '@mui/material/MobileStepper';
 import Button from '@mui/material/Button';
@@ -10,7 +9,7 @@ import { autoPlay } from 'react-swipeable-views-utils';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-interface Image {
+export interface Image {
   id: string;
   fileName: string;
   url: string;
@@ -21,11 +20,9 @@ export type DetailedListingCarouselProps = {
 };
 
 const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
-  const theme = useTheme();
-
   const maxSteps = data.length;
 
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -40,9 +37,9 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
   };
 
   return (
-    <Box sx={{ maxHeight: 400, marginRight: 'auto', marginLeft:'auto' }}>
+    <Box sx={{ maxHeight: 400, marginRight: 'auto', marginLeft: 'auto' }}>
       <AutoPlaySwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        axis="x"
         index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
@@ -104,7 +101,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
           >
-            {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+            <KeyboardArrowRight />
           </Button>
         }
         backButton={
@@ -114,7 +111,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
             onClick={handleBack}
             disabled={activeStep === 0}
           >
-            {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+            <KeyboardArrowLeft />
           </Button>
         }
       />
