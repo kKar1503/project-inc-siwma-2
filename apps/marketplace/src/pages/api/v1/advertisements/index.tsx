@@ -7,7 +7,7 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
 import { z } from 'zod';
-import parseFormData from '@/utils/parseFormData';
+import { getFilesFromRequest } from '@/utils/parseFormData';
 import { ParamError } from '@inc/errors/src';
 import fs from 'fs';
 
@@ -49,16 +49,15 @@ export const where = (isAdmin: boolean, other = {}) => isAdmin ? other : {
 export const AdvertisementBucket = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
-  const data = await parseFormData(req);
   // Validate payload
   const payload = companyInputValidation.parse(req.body);
   const companyId = parseToNumber(payload.companyId);
 
-  if (data === undefined || data.files === undefined || data.files.file === undefined) {
+  const data = await getFilesFromRequest(req);
+  if (data.length === 0) {
     throw new ParamError(`advertisement image`);
   }
-
-  const file = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
+  const file = data[0];
   const buffer = fs.readFileSync(file.filepath);
   // Create S3 object
   const metadata = new Metadata({

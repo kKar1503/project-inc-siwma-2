@@ -8,7 +8,7 @@ import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
 import { AdvertisementBucket, select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
-import parseFormData from '@/utils/parseFormData';
+import { getFilesFromRequest } from '@/utils/parseFormData';
 import fs from 'fs';
 
 
@@ -44,7 +44,6 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
-  const data = await parseFormData(req);
   // Validate payload
   const id = parseToNumber(req.query.id as string);
   const validatedPayload = companyOptionalInputValidation.parse(req.body);
@@ -72,10 +71,9 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // if image has changed
   let url = advertisement.image;
-
-  if (data !== undefined && data.files !== undefined && data.files.file !== undefined) {
-    const file = Array.isArray(data.files.file) ? data.files.file[0] : data.files.file;
-
+  const data = await getFilesFromRequest(req);
+  if (data.length > 0) {
+    const file = data[0];
 
     const bucket = await s3Connection.getBucket(AdvertisementBucket);
     const metadata = new Metadata({
