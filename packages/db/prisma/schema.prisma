@@ -118,7 +118,6 @@ model Invite {
   companyId Int       @map("company_id")
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "invite_fk")
-  phone String? @unique(map: "invite_mobile_unique")
 
   @@map("invite")
 }
