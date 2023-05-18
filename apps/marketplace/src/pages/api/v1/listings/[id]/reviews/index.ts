@@ -1,27 +1,53 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@inc/db';
+import { NextApiResponse } from 'next';
+import { apiHandler, } from '@/utils/api';
 import { NotFoundError } from '@inc/errors';
-import z from 'zod';
+import PrismaClient from '@inc/db';
+import { APIRequestType } from '@/types/api-types';
+import { parseListingId } from '../../index';
+import { checkListingExists } from '../index';
 
-// Define the schema for the request parameters
-const getReviewsRequestParams = z.object({
-    id: z.string(),
-});
+/**
+ * Fetches all reviews for a listing
+ * @param id The listing id
+ * @returns An array of reviews for the listing
+ */
+const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
+    const id = parseListingId(req.query.id as string);
+    const listing = await checkListingExists(id);
+
+    if (!listing) {
+        throw new NotFoundError(`Listing with id '${id}' not found.`);
+    }
+
+    let orderBy;
+
+    switch (req.query.sortBy) {
+        case 'recent_newest':
+            orderBy = { createdAt: 'desc' };
+            break;
+        case 'recent_oldest':
+            orderBy = { createdAt: 'asc' };
+            break;
+        case 'highest_rating':
+            orderBy = { rating: 'desc' };
+            break;
+        case 'lowest_rating':
+            orderBy = { rating: 'asc' };
+            break;
+        default:
+            orderBy = {};
+            break;
+    }
+
+    const reviews = await PrismaClient.reviews.findMany({
+        where: {
+            listing: id,
+        },
+        orderBy,
+    });
+
+    res.status(200).json(reviews);
+};
 
 export default apiHandler()
-    .get(async (req, res) => {
-        const { id } = getReviewsRequestParams.parse(req.query);
-
-        // Retrieve the reviews for the user from the database
-        const reviews = await PrismaClient.reviews.findMany({
-            where: { userId: id },
-        });
-
-        // Check if the user has any reviews
-        if (reviews.length === 0) {
-            throw new NotFoundError(`No reviews found for user with id '${id}'`);
-        }
-
-        // Return the reviews
-        res.status(200).json(formatAPIResponse(reviews));
-    });
+    .get(getListingReviews);
