@@ -1,4 +1,4 @@
-import { Prisma, ListingType } from '../../../index';
+import { Prisma, ListingType, Listing } from '../../../index';
 
 interface IListings {
   id?: number;
@@ -7,14 +7,13 @@ interface IListings {
   price?: Prisma.Decimal;
   unitPrice?: boolean;
   negotiable?: boolean;
-  open?: boolean;
-  visibility?: boolean;
-  active?: boolean;
   categoryId: number;
   type: ListingType;
   owner: string;
   createdAt?: Date;
   updatedAt?: Date;
+  archived?: boolean;
+  deletedAt?: Date;
 }
 
 const Listings: IListings[] = [
@@ -67,10 +66,10 @@ const Listings: IListings[] = [
     description: 'square bar for buy (Stainless steel)',
     price: new Prisma.Decimal(69),
     negotiable: false,
-    open: false,
     categoryId: 9,
     type: ListingType.BUY,
     owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
+    archived: true,
   },
   {
     name: 'Square Bar [ CLOSING DOWN SALE ]',
@@ -94,10 +93,10 @@ const Listings: IListings[] = [
     name: '[USED] Round Hollow Bar 10"',
     description: 'Used hollow bar in amazing condition, please buy!',
     price: new Prisma.Decimal(100),
-    visibility: false,
     categoryId: 1,
     type: ListingType.BUY,
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
+    archived: true,
   },
   {
     name: 'Copper Square Bars (Grade CW103C / Cu Co1 Ni1 Be)',
@@ -112,10 +111,10 @@ const Listings: IListings[] = [
     description: 'Need to get rid fast.',
     price: new Prisma.Decimal(3),
     unitPrice: true,
-    open: false,
     categoryId: 3,
     type: ListingType.SELL,
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
+    archived: true,
   },
   {
     name: '(Grade 17-4PH) Stainless Steel Round Bars',
@@ -137,10 +136,10 @@ const Listings: IListings[] = [
     name: 'WTS Stainless Steel Hollow Sections URGENT',
     description: 'selling hollow sections, urgent sale',
     price: new Prisma.Decimal(237.23),
-    visibility: false,
     categoryId: 1,
     type: ListingType.SELL,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
+    archived: true,
   },
   {
     name: 'WTB Iron Sheet piles (must be a pile)',
@@ -212,20 +211,20 @@ const Listings: IListings[] = [
     name: 'CHS Stainless steel tubes',
     description: 'I have spare round steel tubes, feel free to contact for deals',
     price: new Prisma.Decimal(109),
-    visibility: false,
     categoryId: 1,
     type: ListingType.SELL,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
+    archived: true,
   },
   {
     name: 'buying square shaped bar of 304 Stainless Steel',
     description:
       'Square bar with excellent mechanical properties, resistance to many corrosive agents needed',
     price: new Prisma.Decimal(199),
-    visibility: false,
     categoryId: 9,
     type: ListingType.BUY,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
+    archived: true,
   },
   {
     name: '[BRAND NEW] Selling steel plates',
