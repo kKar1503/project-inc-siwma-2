@@ -117,32 +117,34 @@ model Invite {
   expiry    DateTime  @default(now()) @db.Timestamptz(6)
   companyId Int       @map("company_id")
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  phone     String?
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "invite_fk")
 
   @@map("invite")
 }
 
 model Listing {
-  id                            Int                       @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
-  name                          String
-  description                   String
-  price                         Decimal                   @default(0) @db.Decimal
-  unitPrice                     Boolean                   @default(false) @map("unit_price")
-  negotiable                    Boolean                   @default(true)
-  categoryId                    Int                       @map("category_id")
-  type                          ListingType
-  owner                         String                    @db.Uuid
-  createdAt                     DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                     DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  archived                      Boolean                   @default(false)
-  deletedAt                     DateTime                  @default(now()) @map("deleted_at") @db.Timestamptz(6)
-  category                      Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
-  users                         Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
-  listingBookmarks              ListingBookmarks[]
-  listingImages                 ListingImages[]
-  listingsParametersValues      ListingsParametersValue[]
-  offersOffersListingTolistings Offers[]                  @relation("offersListingTolisting")
-  roomsRoomsListingTolistings   Rooms[]                   @relation("roomsListingTolisting")
+  id                              Int                       @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
+  name                            String
+  description                     String
+  price                           Decimal                   @default(0) @db.Decimal
+  unitPrice                       Boolean                   @default(false) @map("unit_price")
+  negotiable                      Boolean                   @default(true)
+  categoryId                      Int                       @map("category_id")
+  type                            ListingType
+  owner                           String                    @db.Uuid
+  createdAt                       DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                       DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  archived                        Boolean                   @default(false)
+  deletedAt                       DateTime                  @default(now()) @map("deleted_at") @db.Timestamptz(6)
+  category                        Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
+  users                           Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
+  listingBookmarks                ListingBookmarks[]
+  listingImages                   ListingImages[]
+  listingsParametersValues        ListingsParametersValue[]
+  offersOffersListingTolistings   Offers[]                  @relation("offersListingTolisting")
+  reviewsReviewsListingTolistings Reviews[]                 @relation("reviewsListingTolisting")
+  roomsRoomsListingTolistings     Rooms[]                   @relation("roomsListingTolisting")
 
   @@map("listing")
 }
@@ -301,6 +303,8 @@ model Users {
   createdAt               DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   bio                     String?
   comments                String?
+  whatsappNumber          String?                @map("whatsapp_number")
+  telegramUsername        String?                @map("telegram_username")
   accessTokens            AccessTokens[]
   clicks                  Clicks[]
   listings                Listing[]
@@ -308,12 +312,36 @@ model Users {
   messages                Messages[]
   notificationSettings    NotificationSettings[]
   refreshTokens           RefreshTokens[]
+  reviews                 Reviews[]
   roomsRoomsSellerTousers Rooms[]                @relation("roomsSellerTousers")
   roomsRoomsBuyerTousers  Rooms[]                @relation("roomsBuyerTousers")
   userBookmarks           UserBookmarks[]
   companies               Companies              @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
 
   @@map("users")
+}
+
+model Reviews {
+  id                             Int      @id(map: "reviews_pk") @default(sequence())
+  review                         String
+  rating                         Int      @db.Int2
+  user                           String   @db.Uuid
+  listing                        Int
+  createdAt                      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  users                          Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk")
+  listingReviewsListingTolisting Listing  @relation("reviewsListingTolisting", fields: [listing], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk_1")
+
+  @@map("reviews")
+}
+
+model UserReports {
+  id        Int        @id(map: "user_reports_pk") @default(sequence(maxValue: 2147483647))
+  user      String     @db.Uuid
+  reporter  String     @db.Uuid
+  reason    ReasonType
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("user_reports")
 }
 
 enum ContentType {
@@ -345,6 +373,13 @@ enum ParameterType {
   TWO_CHOICES  @map("TWO CHOICES")
   MANY_CHOICES @map("MANY CHOICES")
   OPEN_ENDED   @map("OPEN ENDED")
+}
+
+enum ReasonType {
+  Offensive_Content_Behaviour @map("Offensive Content/Behaviour")
+  Suspicious_Account          @map("Suspicious Account")
+  Cancelling_on_deal          @map("Cancelling on deal")
+  Inaccurate_Listings         @map("Inaccurate Listings")
 }
 
 enum UserContacts {
