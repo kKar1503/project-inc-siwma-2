@@ -1,95 +1,240 @@
 import Head from 'next/head';
-import ProfileDetailCard, {
-  ProfileDetailCardProps,
-} from '@/components/marketplace/profile/ProfileDetailCard';
-
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
 import { ReactNode, useState, SyntheticEvent } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
+import DetailedListingCarousel, {
+  DetailedListingCarouselProps,
+} from '@/components/marketplace/carousel/DetailedListingCarousel';
+import { Card, CardContent, CardHeader, Divider, Grid, Paper, Typography } from '@mui/material';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
+import ChatNow from '@/components/marketplace/listing/ChatNow';
 
 // eslint-disable-next-line no-unused-vars
 
-// test data for profile component
-const profileDetailData = [
+// test data for carousel component
+const detailedListingData = [
   {
-    username: 'diggers',
-    name: 'John Tan',
-    email: 'digs@gmail.com',
-    company: 'Prof. Digging Ltd.',
-    profilePic: 'J',
-    mobileNumber: '2314 5324',
-    telegramUsername: '@digpeople',
-    bio: 'Introducing Professional Digging Limited, a leading mining company with a proven track record of excellence in the industry. With decades of experience in the mining business, we have established ourselves as a trusted and reliable provider of high-quality minerals and metals.',
-    rating: 3.3,
-    reviews: 336,
+    id: 1,
+    name: 'Item A',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed bibendum erat. Etiam malesuada, massa non blandit mattis, lacus mi dignissim nisl, non lacinia lectus sapien non mi. Vivamus nisi leo, auctor a urna vitae, aliquet consequat nisi. In quis dolor urna. Maecenas id mauris ultrices, bibendum neque lacinia, euismod felis. ',
+    price: 300,
+    unitPrice: false,
+    negotiable: true,
+    categoryId: '1',
+    type: 'SELL',
+    owner: {
+      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      name: 'Elon Musk',
+      email: 'elon.musk@example.com',
+      company: {
+        id: '1',
+        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+        bio: 'Owner bio',
+        image: '',
+        visible: true,
+      },
+      profilePic: null,
+      mobileNumber: '69694202',
+      contactMethod: 'email',
+      bio: null,
+    },
+    active: true,
+    parameter: [
+      {
+        paramId: '3',
+        value: 200,
+      },
+      {
+        paramId: '2',
+        value: 300,
+      },
+    ],
   },
+
   {
-    username: 'rock_hound',
-    name: 'Emily Stone',
-    email: 'emily.stone@gmail.com',
-    company: 'Stone Exploration Co.',
-    profilePic: 'E',
-    mobileNumber: '4590 2379',
-    telegramUsername: '@stone_explorer',
-    bio: 'At Stone Exploration Co., we specialize in the exploration and development of new mineral resources. Our team of experts uses cutting-edge technology to identify promising mineral deposits and assess their potential for commercial mining. We are dedicated to responsible mining practices that prioritize the safety of our workers and the protection of the environment.',
-    rating: 4.6,
-    reviews: 97,
+    id: 2,
+    name: 'Item B',
+    description: 'Listing description',
+    price: 300,
+    unitPrice: false,
+    negotiable: true,
+    categoryId: '1',
+    type: 'SELL',
+    owner: {
+      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      name: 'Elon Musk',
+      email: 'elon.musk@example.com',
+      company: {
+        id: '1',
+        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+        bio: 'Owner bio',
+        image: '',
+        visible: true,
+      },
+      profilePic: null,
+      mobileNumber: '69694202',
+      contactMethod: 'email',
+      bio: null,
+    },
+    active: true,
+    parameter: [
+      {
+        paramId: '3',
+        value: 200,
+      },
+      {
+        paramId: '2',
+        value: 300,
+      },
+    ],
   },
+
   {
-    username: 'ore_king',
-    name: 'David Hill',
-    email: 'david.hill@orekingdom.com',
-    company: 'Ore Kingdom Inc.',
-    profilePic: 'D',
-    mobileNumber: '9031 2150',
-    telegramUsername: '@ore_kingdom',
-    bio: 'Ore Kingdom Inc. is a leading provider of iron ore and other minerals to markets around the world. We have extensive experience in mining and processing high-quality ores and are committed to sustainable and responsible practices. Our team is dedicated to delivering the best possible products and services to our customers.',
-    rating: 4.8,
-    reviews: 215,
+    id: 3,
+    name: 'Item C',
+    description: 'Listing description',
+    price: 300,
+    unitPrice: false,
+    negotiable: true,
+    categoryId: '1',
+    type: 'SELL',
+    owner: {
+      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      name: 'Elon Musk',
+      email: 'elon.musk@example.com',
+      company: {
+        id: '1',
+        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+        bio: 'Owner bio',
+        image: '',
+        visible: true,
+      },
+      profilePic: null,
+      mobileNumber: '69694202',
+      contactMethod: 'email',
+      bio: null,
+    },
+    active: true,
+    parameter: [
+      {
+        paramId: '3',
+        value: 200,
+      },
+      {
+        paramId: '2',
+        value: 300,
+      },
+    ],
   },
+
   {
-    username: 'gold_digger',
-    name: 'Sarah Jones',
-    email: 'sjones@golddigger.com',
-    company: 'Gold Digger Mining Corp.',
-    profilePic: 'S',
-    mobileNumber: '5678 1234',
-    telegramUsername: '@gold_digger',
-    bio: 'Gold Digger Mining Corp. is a trusted provider of gold and other precious metals. Our team of experts has decades of experience in mining and processing high-quality ores, and we are committed to responsible practices that prioritize safety, sustainability, and environmental protection. We strive to exceed the expectations of our customers and provide them with the best possible products and services.',
-    rating: 4.3,
-    reviews: 184,
-  },
-  {
-    username: 'mining_pro',
-    name: 'Jackie Lee',
-    email: 'jackie.lee@miningpro.com',
-    company: 'Mining Pro Solutions',
-    profilePic: 'J',
-    mobileNumber: '7777 9999',
-    telegramUsername: '@mining_pro',
-    bio: 'Mining Pro Solutions provides cutting-edge solutions for the mining industry. Our team of experienced professionals specializes in the design, engineering, and implementation of advanced mining equipment and technologies that improve efficiency, safety, and productivity. We are committed to delivering the best possible solutions to our clients and helping them achieve their goals.',
-    rating: 4.9,
-    reviews: 102,
-  },
-  {
-    username: 'ore_genius',
-    name: 'Karen Chen',
-    email: 'karen.chen@oregenius.com',
-    company: 'Ore Genius Inc.',
-    profilePic: 'K',
-    mobileNumber: '1234 5678',
-    telegramUsername: '@ore_genius',
-    bio: 'Ore Genius Inc. is a cutting-edge provider of mineral exploration and analysis services. Our team of experts uses the latest technology to identify and assess mineral deposits, helping our clients make informed decisions about their mining operations. We are committed to delivering high-quality services that exceed our clients expectations and contribute to sustainable and responsible mining practices.',
-    rating: 4.5,
-    reviews: 76,
+    id: 4,
+    name: 'Item D',
+    description: 'Listing description',
+    price: 300,
+    unitPrice: false,
+    negotiable: true,
+    categoryId: '1',
+    type: 'SELL',
+    owner: {
+      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      name: 'Elon Musk',
+      email: 'elon.musk@example.com',
+      company: {
+        id: '1',
+        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+        bio: 'Owner bio',
+        image: '',
+        visible: true,
+      },
+      profilePic: null,
+      mobileNumber: '69694202',
+      contactMethod: 'email',
+      bio: null,
+    },
+    active: true,
+    parameter: [
+      {
+        paramId: '3',
+        value: 200,
+      },
+      {
+        paramId: '2',
+        value: 300,
+      },
+    ],
   },
 ];
 
+const carouselData = [
+  {
+    id: '4f18716b-ba33-4a98-9f9c-88df0ce50f51',
+    fileName: 'myimage-20230322T120000Z.jpg',
+    url: 'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
+  },
+  {
+    id: 'f45c0d48-b93e-45aa-8e33-7d9d3f1c4397',
+    fileName: 'myotherimage-20230321T080000Z.jpg',
+    url: 'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
+  },
+  {
+    id: '8b63d6f4-6d58-4f2c-b2f3-33d156ee3c4e',
+    fileName: 'myotherimage2-20230321T080000Z.jpg',
+    url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
+  },
+];
+
+export interface ListingData {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  unitPrice: boolean;
+  negotiable: boolean;
+  categoryId: string;
+  type: string;
+  owner: {
+    id: string;
+    name: string;
+    email: string;
+    company: {
+      id: string;
+      name: string;
+      website: string;
+      bio: string;
+      image: '';
+      visible: boolean;
+    };
+    profilePic: null;
+    mobileNumber: string;
+    contactMethod: string;
+    bio: null;
+  };
+  active: boolean;
+  parameter: [
+    {
+      paramId: string;
+      value: number;
+    },
+    {
+      paramId: string;
+      value: number;
+    }
+  ];
+}
+
+export type DetailedListingProps = {
+  data: ListingData;
+};
+
 export const getServerSideProps = async ({ query }: { query: any }) => {
-  // api call to get user details go here
+  // api call to get listing details go here
   // if user does not exist, return error code and redirect to wherever appropriate
 
   const { id } = query;
@@ -103,7 +248,7 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
   }
 
   // just for testing purposes
-  if (id > profileDetailData.length) {
+  if (id > detailedListingData.length) {
     return {
       redirect: {
         destination: '/',
@@ -111,161 +256,222 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
     };
   }
 
-  const data = profileDetailData[id - 1];
+  // const serverSideListings = detailedListingData[id - 1];
+  // const data = carouselData;
+  const data = detailedListingData[id - 1];
+
+  data.parameter.sort((a, b) => {
+    if (a.paramId < b.paramId) {
+      return -1;
+    }
+    if (a.paramId > b.paramId) {
+      return 1;
+    }
+    return 0;
+  });
 
   return {
     props: {
       data,
+      // serverSideListings,
     },
   };
 };
 
-interface TabPanelProps {
-  children?: ReactNode;
-  dir?: string;
-  index: number;
-  value: number;
-  height: string;
-}
-
-const TabPanel = (props: TabPanelProps) => {
-  const { children, value, index, height, ...other } = props;
-
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
-      {value === index && (
-        <Box sx={{ p: 3, height: { height }, overflowY: 'auto' }}>{children}</Box>
-      )}
-    </div>
-  );
-};
-
-const StyledTab = styled(Tab)(({ theme }) => ({
-  minHeight: 60,
-  bgcolor: theme.palette.common.white,
-  color: theme.palette.primary[400],
-  border: 1,
-  borderColor: theme.palette.primary[400],
-  borderRadius: theme.shape.borderRadius,
-  //   for some reason, half of this doesn't work??
-  //   upon further investigation seems like it's more specifically the ones regarding border, including the styles above
-  '&.Mui-selected': {
-    minHeight: 60,
-    color: theme.palette.common.white,
-    bgcolor: theme.palette.primary[400],
-    border: 1,
-    borderColor: theme.palette.primary[400],
-    borderRadius: theme.shape,
-  },
-}));
-
-const DetailedListingsPage = ({ data }: { data: ProfileDetailCardProps }) => {
+const DetailedListingPage = ({ data }: DetailedListingProps) => {
   const theme = useTheme();
-  const [value, setValue] = useState(0);
-
-  const handleChange = (event: SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-  const handleChangeIndex = (index: number) => {
-    setValue(index);
-  };
 
   return (
-    <>
-      <Head>
-        <title>{data.name}&lsquo;s Listings</title>
-        <meta name="description" content="Generated by create next app" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main>
-        <Box
-          sx={({ spacing }) => ({
-            pt: spacing(3),
-            pl: '160px',
-            pr: '160px',
-            pb: spacing(3),
-            height: '100vh;',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-          })}
-        >
-          <ProfileDetailCard
-            username={data.username}
-            name={data.name}
-            company={data.company}
-            email={data.email}
-            profilePic={data.profilePic}
-            telegramUsername={data.telegramUsername}
-            bio={data.bio}
-            mobileNumber={data.mobileNumber}
-            rating={data.rating}
-            reviews={data.reviews}
-          />
-          <Box
+    <main>
+      <DetailedListingCarousel data={carouselData}/>
+      <Box
+        sx={{
+          width: '60%',
+          height: 'full',
+          bgcolor: theme.palette.common.white,
+        }}
+      >
+        {/* <ChatNow /> */}
+        <Grid item>
+          <Grid
+            container
+            columns={12}
             sx={{
-              width: '73%',
-              height: 'full',
-              bgcolor: theme.palette.common.white,
-              borderRadius: theme.shape,
+              direction: 'row',
             }}
           >
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              variant="fullWidth"
-              sx={{
-                '& .MuiTabs-indicator': {
-                  display: 'none',
-                },
-              }}
+            <Grid item xs={11}>
+              <Typography
+                sx={({ spacing }) => ({
+                  fontWeight: 600,
+                  pl: spacing(2),
+                })}
+                variant="h6"
+              >
+                {data.name}
+              </Typography>
+              <Typography
+                sx={({ spacing }) => ({
+                  fontWeight: 700,
+                  pl: spacing(2),
+                  pb: spacing(2),
+                })}
+                variant="h5"
+              >
+                S${data.price}
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={1}
+              sx={({ spacing }) => ({
+                pt: spacing(2),
+                pr: spacing(2),
+              })}
             >
-              <StyledTab
-                label="Listings"
-                sx={{
-                  // added in-line styling here because styled() doesn't want to work
-                  border: 1,
-                  borderColor: theme.palette.primary[400],
-                  '&.Mui-selected': {
-                    minHeight: 60,
-                    color: theme.palette.common.white,
-                    bgcolor: theme.palette.primary[400],
-                    border: 1,
-                    borderColor: theme.palette.primary[400],
-                    borderRadius: theme.shape,
-                  },
-                }}
-              />
-              <StyledTab
-                label="Reviews"
-                sx={{
-                  border: 1,
-                  borderColor: theme.palette.primary[400],
-                  '&.Mui-selected': {
-                    minHeight: 60,
-                    color: theme.palette.common.white,
-                    bgcolor: theme.palette.primary[400],
-                    border: 1,
-                    borderColor: theme.palette.primary[400],
-                    borderRadius: theme.shape,
-                  },
-                }}
-              />
-            </Tabs>
-            <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
-              <TabPanel value={value} index={0} dir={theme.direction} height="90.5vh">
-                <ListingsTab />
-              </TabPanel>
-              <TabPanel value={value} index={1} dir={theme.direction} height="90.5vh">
-                <ReviewsTab userRating={data.rating} totalReviews={data.reviews} />
-              </TabPanel>
-            </SwipeableViews>
-          </Box>
+              <Grid container sx={{ direction: 'row' }}>
+                <Grid item xs={7}>
+                  <IosShareOutlinedIcon sx={{ fontSize: 30 }} />
+                </Grid>
+                <Grid item xs={5}>
+                  <BookmarkBorderOutlinedIcon sx={{ fontSize: 30 }} />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <Divider variant="middle" />
+
+        <Typography
+          sx={({ spacing }) => ({
+            pt: spacing(2),
+            pl: spacing(2),
+            fontWeight: 600,
+          })}
+          variant="h6"
+        >
+          Description
+        </Typography>
+        <Box
+          sx={({ spacing }) => ({
+            mt: 1,
+            pl: spacing(2),
+            display: 'flex',
+            alignItems: 'center',
+          })}
+        >
+          <Typography variant="body1">{data.description}</Typography>
         </Box>
-      </main>
-    </>
+        <Typography
+          sx={({ spacing }) => ({
+            pt: spacing(2),
+            pl: spacing(2),
+            fontWeight: 600,
+          })}
+          variant="h6"
+        >
+          Dimensions
+        </Typography>
+        <Box
+          sx={({ spacing }) => ({
+            pt: spacing(2),
+            pb: spacing(2),
+          })}
+        >
+          <Grid container columns={4}>
+            {data.parameter.map(({ paramId, value }) => (
+              // <Grid key={paramId}>
+              <Box
+                sx={({ spacing }) => ({
+                  pl: spacing(2),
+                  pr: spacing(2),
+                })}
+              >
+                <Typography sx={{ color: theme.palette.grey[500] }}>Dimension {paramId}</Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: 500,
+                  }}
+                >
+                  {value}
+                </Typography>
+              </Box>
+              // </Grid>
+            ))}
+          </Grid>
+        </Box>
+
+        <Divider variant="middle" />
+
+        <Box
+          sx={({ spacing }) => ({
+            pl: spacing(2),
+            pt: spacing(2),
+            pb: spacing(2),
+          })}
+        >
+          <Grid
+            container
+            sx={() => ({
+              direction: 'row',
+            })}
+          >
+            <Box
+              sx={({ spacing }) => ({
+                pr: spacing(2),
+              })}
+            >
+              <Typography sx={{ color: theme.palette.grey[500] }}>Negotiable?</Typography>
+              <Typography>{data.negotiable.toString()}</Typography>
+            </Box>
+            <Box
+              sx={({ spacing }) => ({
+                pr: spacing(2),
+              })}
+            >
+              <Typography sx={{ color: theme.palette.grey[500] }}>Unit Price?</Typography>
+              <Typography>{data.unitPrice.toString()}</Typography>
+            </Box>
+            <Box
+              sx={({ spacing }) => ({
+                pr: spacing(2),
+              })}
+            >
+              <Typography sx={{ color: theme.palette.grey[500] }}>Category?</Typography>
+              <Typography>{data.categoryId}</Typography>
+            </Box>
+            <Box
+              sx={({ spacing }) => ({
+                pr: spacing(2),
+              })}
+            >
+              <Typography sx={{ color: theme.palette.grey[500] }}>Posted On?</Typography>
+              <Typography>NIL</Typography>
+            </Box>
+
+            <Box
+              sx={({ spacing }) => ({
+                pr: spacing(2),
+              })}
+            >
+              <Typography sx={{ color: theme.palette.grey[500] }}>Posted By?</Typography>
+              <Typography>{data.owner.name}</Typography>
+            </Box>
+            <Box
+              sx={({ spacing }) => ({
+                pr: spacing(2),
+              })}
+            >
+              <Typography sx={{ color: theme.palette.grey[500] }}>Company?</Typography>
+              <Typography>{data.owner.company.name}</Typography>
+            </Box>
+          </Grid>
+        </Box>
+      </Box>
+    </main>
   );
 };
 
-export default DetailedListingsPage;
+export default DetailedListingPage;
