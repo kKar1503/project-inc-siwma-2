@@ -6,7 +6,14 @@ import {
   zodParseToInteger,
   zodParseToNumber,
 } from '@/utils/api';
-import PrismaClient, { Listing, ListingType, Prisma, Users, Companies, UserContacts } from '@inc/db';
+import PrismaClient, {
+  Listing,
+  ListingType,
+  Prisma,
+  Users,
+  Companies,
+  UserContacts,
+} from '@inc/db';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError, ParamError } from '@inc/errors';
@@ -91,7 +98,7 @@ export const getQueryParameters = z.object({
   lastIdPointer: z.string().transform(zodParseToInteger).optional(),
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
-  includeParameters: z.string().transform(zodParseToBoolean).optional().default('false'),
+  includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
   category: z.string().transform(zodParseToInteger).optional(),
   negotiable: z.string().transform(zodParseToBoolean).optional(),
   minPrice: z.string().transform(zodParseToNumber).optional(),
@@ -196,8 +203,17 @@ export default apiHandler()
 
     if (queryParams.sortBy) {
       switch (queryParams.sortBy.toLowerCase()) {
-        case 'price':
+        case 'price_desc':
+          sortByOptions = { price: 'desc' };
+          break;
+        case 'price_asc':
           sortByOptions = { price: 'asc' };
+          break;
+        case 'recent_newest':
+          sortByOptions = { createdAt: 'desc' };
+          break;
+        case 'recent_oldest':
+          sortByOptions = { createdAt: 'asc' };
           break;
         default:
           break;
