@@ -3,8 +3,8 @@ import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import { ListingType } from '@prisma/client';
 import z from 'zod';
-import { formatSingleListingResponse, getQueryParameters, ListingBucketName, parseListingId } from '..';
 import s3Connection from '@/utils/s3Connection';
+import { formatSingleListingResponse, getQueryParameters, ListingBucketName, parseListingId } from '..';
 
 // -- Functions --//
 
@@ -218,6 +218,8 @@ export default apiHandler()
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
     }
+    const bucket = await s3Connection.getBucket(ListingBucketName);
+    await Promise.all(listing.listingImages.map(async (image) => bucket.deleteObject(image.image)));
 
     await PrismaClient.listing.delete({
       where: { id },
