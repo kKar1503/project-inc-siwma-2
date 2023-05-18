@@ -1,8 +1,10 @@
 {
   "name": "@inc/db",
   "version": "0.0.0",
-  "main": "index.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
+    "build": "pnpx rimraf dist && tsc",
     "prisma:generate": "prisma generate",
     "prisma:patchCasing": "node ./prisma/scripts/casingFix.js && prisma format && prisma generate",
     "prisma:compile": "tsc --project tsconfig.compile.json",
@@ -12,13 +14,13 @@
     "seed": "ts-node prisma/seeding/seed.ts --transpileOnly"
   },
   "dependencies": {
-    "@prisma/client": "4.12.0"
+    "@prisma/client": "4.12.0",
+    "prisma": "4.12.0"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
     "@types/pluralize": "^0.0.29",
     "pluralize": "^8.0.0",
-    "prisma": "4.12.0",
     "ts-node": "^10.9.1"
   }
 }
