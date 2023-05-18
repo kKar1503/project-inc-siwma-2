@@ -3,6 +3,7 @@ import sibClient, { changeAPIKey } from './sib';
 import getAPIKey from './apiKey/apiKeys';
 import { BulkEmailRequestBody } from './templates';
 import { BulkEmailResponseBody } from './types/BulkEmailResponseBody';
+import { InvalidApiKeyError, InvalidSenderEmailError, EmailSendError } from '@inc/errors';
 
 /* This function sends emails to multiple recipients.
  * It uses SendInBlue's Transactional Email API.
@@ -13,12 +14,6 @@ export default async function sendEmails(
   parameters: BulkEmailRequestBody
 ): Promise<BulkEmailResponseBody> {
   const data: BulkEmailRequestBody = parameters;
-
-  // DEBUG
-  // console.log('Sending email to:');
-  // data.messageVersions.forEach((body) => {
-  //   console.log(body.to[0].email);
-  // });
 
   let apiKey: string | undefined;
   let senderEmail: string | undefined;
@@ -34,10 +29,17 @@ export default async function sendEmails(
     // Otherwise, get the API key from the environment variables.
   }
 
-  if (!apiKey || !senderEmail) {
+  if (!apiKey) {
     return {
       success: false,
-      message: 'An unexpected error occurred while sending the email.',
+      error: new InvalidApiKeyError(),
+    };
+  }
+
+  if (!senderEmail) {
+    return {
+      success: false,
+      error: new InvalidSenderEmailError(),
     };
   }
 
@@ -76,11 +78,9 @@ export default async function sendEmails(
       success: true,
     };
   } catch (error) {
-    // DEBUG
-    // console.log(error);
     return {
       success: false,
-      message: 'An unexpected error occurred while sending the email.',
+      error: new EmailSendError(),
     };
   }
 }
