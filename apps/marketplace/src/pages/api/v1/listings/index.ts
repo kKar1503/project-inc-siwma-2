@@ -59,12 +59,18 @@ export type ListingResponse = {
     paramId: string;
     value: string;
   }>;
+  images?: Array<{
+    image: string;
+  }>;
 };
 
 export type ListingWithParameters = Listing & {
   listingsParametersValues: Array<{
     parameterId: number;
     value: string;
+  }>;
+  listingImages: Array<{
+    image: string;
   }>;
   offersOffersListingTolistings: Array<{
     accepted: boolean;
@@ -76,6 +82,7 @@ export const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('false'),
+  includeImages: z.string().transform(zodParseToBoolean).optional().default('false'),
   category: z.string().transform(zodParseToInteger).optional(),
   negotiable: z.string().transform(zodParseToBoolean).optional(),
   minPrice: z.string().transform(zodParseToNumber).optional(),
@@ -107,6 +114,13 @@ export function formatSingleListingResponse(
       value: parameter.value,
     }));
   }
+
+  if (listing.listingImages) {
+    formattedListing.images = listing.listingImages.map((image) => ({
+      image: image.image,
+    }));
+  }
+
 
   return formattedListing;
 }
@@ -180,18 +194,27 @@ export default apiHandler()
       take: queryParams.limit,
       include: {
         listingsParametersValues: queryParams.includeParameters,
+        listingImages: queryParams.includeImages,
         offersOffersListingTolistings: true,
       },
     });
+
+    const bucket = await s3Connection.getBucket(ListingBucketName);
+    const listingResponse = Promise.all(formatListingResponse(
+      listings as unknown as ListingWithParameters[],
+      queryParams.includeParameters,
+    ).map(async (listing): Promise<ListingResponse> => ({
+      ...listing,
+      images: listing.images ? await Promise.all(listing.images.map(async (image) => ({
+        image: await bucket.getObjectUrl(image.image),
+      }))) : undefined,
+    })));
 
     res
       .status(200)
       .json(
         formatAPIResponse(
-          formatListingResponse(
-            listings as unknown as ListingWithParameters[],
-            queryParams.includeParameters,
-          ),
+          listingResponse,
         ),
       );
   })

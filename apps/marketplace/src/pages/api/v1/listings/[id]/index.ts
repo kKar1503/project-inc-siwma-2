@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse, zodParseToInteger, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
+import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import { ListingType } from '@prisma/client';
 import z from 'zod';
 import { formatSingleListingResponse, getQueryParameters, parseListingId } from '..';
@@ -26,6 +26,7 @@ export async function checkListingExists($id: string | number) {
         },
       },
       listingsParametersValues: true,
+      listingImages: true,
       offersOffersListingTolistings: true,
     },
   });
@@ -57,7 +58,7 @@ const putListingRequestBody = z.object({
       z.object({
         paramId: z.string().transform(zodParseToInteger),
         value: z.string().transform(zodParseToNumber),
-      })
+      }),
     )
     .optional(),
 });
@@ -160,7 +161,7 @@ export default apiHandler()
             parameterId: parameter.paramId,
             listingId: id,
           },
-        })
+        }),
       );
 
       await PrismaClient.$transaction(parameterUpdates);
@@ -175,6 +176,7 @@ export default apiHandler()
           },
         },
         listingsParametersValues: true,
+        listingImages: queryParams.includeImages,
         offersOffersListingTolistings: true,
       },
     });
