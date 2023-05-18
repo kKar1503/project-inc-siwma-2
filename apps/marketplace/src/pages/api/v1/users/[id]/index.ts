@@ -206,6 +206,11 @@ export default apiHandler()
         throw new NotFoundError('User');
       }
 
+      if (userExists.profilePicture) {
+        const bucket = await s3Connection.getBucket(UserBucketName);
+        await bucket.deleteObject(userExists.profilePicture);
+      }
+
       await client.users.delete({
         where: {
           id,

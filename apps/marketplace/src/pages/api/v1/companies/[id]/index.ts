@@ -171,6 +171,12 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
+    if (company.logo) {
+      const bucket = await s3Connection.getBucket(CompanyBucketName);
+      await bucket.deleteObject(company.logo);
+    }
+
+
     const response = await PrismaClient.companies.delete({
       where: {
         id: companyid,
