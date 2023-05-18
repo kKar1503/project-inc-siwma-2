@@ -15,9 +15,12 @@ import ProductListingItem, {
 
 type DisplayResultsProps = {
   children?: React.ReactNode;
+  title?: string;
+  filter: boolean;
+  data?: unknown;
 };
 
-const DisplayResults = ({ children }: DisplayResultsProps) => {
+const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) => {
   const Theme = useTheme();
   const isMediumScreen = useMediaQuery(Theme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -33,17 +36,99 @@ const DisplayResults = ({ children }: DisplayResultsProps) => {
   };
 
   useEffect(() => {
-    // Use the filter
-    // Create object
-    // Set items
-    setItems([]);
+    setItems([
+      {
+        img: '',
+        type: 'Buy',
+        href: '',
+        price: 69,
+        name: 'idk',
+        rating: 3,
+        negotiable: true,
+        ownerFullName: 'Jack AinsField',
+        ownerId: 'supgirl',
+        companyName: 'Apple',
+        isUnitPrice: true,
+        createdAt: '2021-10-10',
+      },
+      {
+        img: '',
+        type: 'Buy',
+        href: '',
+        price: 69,
+        name: 'idk',
+        rating: 3,
+        negotiable: true,
+        ownerFullName: 'Jack AinsField',
+        ownerId: 'supgirl',
+        companyName: 'Apple',
+        isUnitPrice: true,
+        createdAt: '2021-10-10',
+      },
+      {
+        img: '',
+        type: 'Buy',
+        href: '',
+        price: 69,
+        name: 'idk',
+        rating: 3,
+        negotiable: true,
+        ownerFullName: 'Jack AinsField',
+        ownerId: 'supgirl',
+        companyName: 'Apple',
+        isUnitPrice: true,
+        createdAt: '2021-10-10',
+      },
+      {
+        img: '',
+        type: 'Buy',
+        href: '',
+        price: 69,
+        name: 'idk',
+        rating: 3,
+        negotiable: true,
+        ownerFullName: 'Jack AinsField',
+        ownerId: 'supgirl',
+        companyName: 'Apple',
+        isUnitPrice: true,
+        createdAt: '2021-10-10',
+      },
+      {
+        img: '',
+        type: 'Buy',
+        href: '',
+        price: 69,
+        name: 'idk',
+        rating: 3,
+        negotiable: true,
+        ownerFullName: 'Jack AinsField',
+        ownerId: 'supgirl',
+        companyName: 'Apple',
+        isUnitPrice: true,
+        createdAt: '2021-10-10',
+      },
+      {
+        img: '',
+        type: 'Buy',
+        href: '',
+        price: 69,
+        name: 'idk',
+        rating: 3,
+        negotiable: true,
+        ownerFullName: 'Jack AinsField',
+        ownerId: 'supgirl',
+        companyName: 'Apple',
+        isUnitPrice: true,
+        createdAt: '2021-10-10',
+      },
+    ]);
   }, [sort, category, negotiation, minPrice, maxPrice]);
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       {children}
       <Grid container spacing={2}>
-        {!isMediumScreen && (
+        {!isMediumScreen && filter ? (
           <Grid item xs={12} md={2} sx={{ width: '100%', marginTop: 2 }}>
             <FilterForm
               setSort={setSort}
@@ -53,18 +138,36 @@ const DisplayResults = ({ children }: DisplayResultsProps) => {
               setMaxPrice={setMaxPrice}
             />
           </Grid>
+        ) : (
+          <Grid item xs={12} md={1} sx={{ width: '100%', marginTop: 2 }} />
         )}
 
         <Grid item xs={12} md={10} sx={{ width: '100%' }}>
           <Box sx={{ display: 'flex', margin: 2 }}>
             <Grid item xs={10} md={8} container justifyContent="flex-start">
               {items ? (
-                <Typography variant="h5">Displaying {items.length} search results for: </Typography>
+                <>
+                  <Grid item xs={12} md={12}>
+                    <Typography
+                      variant="h4"
+                      sx={({ typography }) => ({
+                        fontWeight: typography.fontWeightBold,
+                        mt: 4,
+                        mb: 2,
+                      })}
+                    >
+                      {title || 'Search Results'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={12}>
+                    <Typography variant="h5">{items.length} Listings</Typography>
+                  </Grid>
+                </>
               ) : (
                 <Typography variant="h5">Displaying 0 search results for: </Typography>
               )}
             </Grid>
-            {isMediumScreen && (
+            {isMediumScreen && filter && (
               <Grid item xs={2} container justifyContent="flex-end" alignContent="center">
                 <Button
                   sx={{ height: '45px' }}
