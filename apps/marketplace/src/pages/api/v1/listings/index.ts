@@ -6,7 +6,7 @@ import {
   zodParseToInteger,
   zodParseToNumber,
 } from '@/utils/api';
-import PrismaClient, { Listing, ListingType, Prisma } from '@inc/db';
+import PrismaClient, { Listing, ListingType, Prisma, Users, Companies, UserContacts } from '@inc/db';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError, ParamError } from '@inc/errors';
@@ -39,6 +39,24 @@ async function getRequiredParametersForCategory(categoryId: number): Promise<num
 }
 
 // -- Type definitions -- //
+export type OwnerResponse = {
+  id: string;
+  name: string;
+  email: string;
+  company: {
+    id: string;
+    name: string;
+    website: string | null;
+    bio: string | null;
+    image: string | null;
+    visible: boolean;
+  };
+  profilePic: string | null;
+  mobileNumber: string;
+  contactMethod: UserContacts;
+  bio: string | null;
+};
+
 export type ListingResponse = {
   id: string;
   name: string;
@@ -48,7 +66,7 @@ export type ListingResponse = {
   negotiable?: boolean;
   categoryId: string;
   type: ListingType;
-  owner: string;
+  owner: OwnerResponse;
   open: boolean;
   parameters?: Array<{
     paramId: string;
@@ -64,6 +82,9 @@ export type ListingWithParameters = Listing & {
   offersOffersListingTolistings: Array<{
     accepted: boolean;
   }>;
+  users: Users & {
+    companies: Companies;
+  };
 };
 
 export const getQueryParameters = z.object({
@@ -92,7 +113,23 @@ export function formatSingleListingResponse(
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
     type: listing.type,
-    owner: listing.owner,
+    owner: {
+      id: listing.users.id,
+      name: listing.users.name,
+      email: listing.users.email,
+      company: {
+        id: listing.users.companyId.toString(),
+        name: listing.users.companies.name,
+        website: listing.users.companies.website,
+        bio: listing.users.companies.bio,
+        image: listing.users.companies.logo,
+        visible: listing.users.companies.visibility,
+      },
+      profilePic: listing.users.profilePicture,
+      mobileNumber: listing.users.phone,
+      contactMethod: listing.users.contact,
+      bio: listing.users.bio,
+    },
     open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
   };
 
@@ -176,6 +213,11 @@ export default apiHandler()
       include: {
         listingsParametersValues: queryParams.includeParameters,
         offersOffersListingTolistings: true,
+        users: {
+          include: {
+            companies: true,
+          },
+        },
       },
     });
 
