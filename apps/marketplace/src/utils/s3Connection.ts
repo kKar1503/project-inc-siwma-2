@@ -1,5 +1,5 @@
 import { Regions, S3Lib } from '@inc/s3-simplified';
-import hashS3 from '@/utils/hash';
+import hashFn from '@/utils/timeBasedHash';
 
 const s3Connection = new S3Lib({
   accessKey: {
@@ -9,8 +9,11 @@ const s3Connection = new S3Lib({
   region: process.env.AWS_REGION as Regions,
 
   objectCreation: {
+    appendFileTypeToKey: false,
     hash: {
-      function: hashS3,
+      function: hashFn,
+      requireBuffer: false,
+      requireMetadata: false,
     },
   },
 });
