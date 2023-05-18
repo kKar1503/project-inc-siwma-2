@@ -4,7 +4,7 @@ import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import bcrypt from 'bcrypt';
-import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@inc/errors';
+import { DuplicateError, InvalidRangeError, ParamInvalidError } from '@inc/errors';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
 
 const getUsersRequestBody = z.object({
@@ -47,7 +47,7 @@ export default apiHandler({ allowNonAuthenticated: true })
           createdAt: true,
           enabled: true,
           profilePicture: true,
-          comments: true, // Only admins can access this endpoint so we can return comments
+          comments: true, // Only admins can access this endpoint, so we can return comments
           phone: true,
           contact: true,
           bio: true,
@@ -69,7 +69,7 @@ export default apiHandler({ allowNonAuthenticated: true })
       }));
 
       return res.status(200).json(formatAPIResponse(mappedUsers));
-    }
+    },
   )
   .post(async (req: NextApiRequest, res: NextApiResponse) => {
     // Creates a new user from an existing invite
@@ -99,7 +99,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         'expiry',
         undefined,
         invite.expiry.toString(),
-        Date.now().toString()
+        Date.now().toString(),
       );
     }
 
