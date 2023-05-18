@@ -1,6 +1,7 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { PrismaClient } from '@prisma/client';
+import PrismaClient, { UserReports } from '@inc/db';
 
 // -- Type Definitions --
 // Define the type of the response object
@@ -12,15 +13,15 @@ export type ReportResponse = {
   createdAt: Date;
 };
 
+const userIdSchema = z.object({
+  id: z.string(),
+});
+
 // -- Helper functions --
-export function formatGetReportResponse(
-  id: number,
-  user: string,
-  reporter: string,
-  reason: string,
-  //   eslint complaining about created_at not being in camelCase
-  createdAt: Date
-) {
+export function formatGetReportResponse(report: UserReports) {
+  // destructure report
+  const { id, user, reporter, reason, createdAt } = report;
+
   // construct the result
   const result: ReportResponse = {
     id,
@@ -30,7 +31,7 @@ export function formatGetReportResponse(
     createdAt,
   };
 
-  return formatAPIResponse(result);
+  return result;
 }
 
 export default apiHandler()
@@ -41,31 +42,22 @@ export default apiHandler()
     //  get user reports protected for admins view only
     async (req, res) => {
       // init user id query params
-      const { id } = req.query;
+      const { id } = userIdSchema.parse(req.query);
 
-      console.log(id);
+      // check if id matches uuid type
+      const uuid = z.string().uuid().parse(id);
 
-      const reports = await PrismaClient.report.findMany({
+      const reports = await PrismaClient.userReports.findMany({
         where: {
           user: {
-            id,
+            equals: uuid,
           },
         },
       });
 
-      console.log(reports);
-
       res
         .status(200)
-        .json(
-          formatGetReportResponse(
-            reports.id,
-            reports.user,
-            reports.reporter,
-            reports.reason,
-            reports.created_at
-          )
-        );
+        .json(formatAPIResponse(reports.map((report) => formatGetReportResponse(report))));
     }
   )
   .post(async (req, res) => {
