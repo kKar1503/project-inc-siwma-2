@@ -12,13 +12,13 @@ const deleteMessageEvent: EventFile = (io) => ({
     type: 'on',
     callback: async ({ room, message }) => {
         console.log('deleteMessageEvent');
-        try {
-            await deleteMessageFromDatabase(room, message);
-            io.emit(EVENTS.CLIENT.DELETE_MESSAGE, { data: { status: 'ok' } });
-        } catch (error) {
-            logger.error(`Error deleting message: ${error}`);
-            io.emit(EVENTS.CLIENT.DELETE_MESSAGE, { data: { status: 'error', error: error.message } });
-        }
+        // try {
+        //     await deleteMessageFromDatabase(room, message);
+        //     io.emit(EVENTS.CLIENT.DELETE_MESSAGE, { data: { status: 'ok' } });
+        // } catch (error) {
+        //     logger.error(`Error deleting message: ${error}`);
+        //     io.emit(EVENTS.CLIENT.DELETE_MESSAGE, { data: { status: 'error', error: error.message } });
+        // }
     },
 });
 
