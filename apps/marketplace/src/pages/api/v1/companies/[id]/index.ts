@@ -71,8 +71,7 @@ export default apiHandler()
 
     if (response.logo) {
       const bucket = await s3Connection.getBucket(CompanyBucketName);
-      const s3Object = await bucket.getObject(response.logo);
-      response.logo = await s3Object.generateLink();
+      response.logo = await bucket.getObjectUrl(response.logo);
     }
     return res.status(200).json(formatAPIResponse(formatResponse(response)));
   })

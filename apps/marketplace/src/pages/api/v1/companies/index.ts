@@ -126,10 +126,10 @@ export default apiHandler()
     const response = await Promise.all(responseNoLogo.map(async (r) => {
       const logoId = r.logo;
       if (!logoId) return r;
-      const logo = await bucket.getObject(logoId);
+      const logo = await bucket.getObjectUrl(logoId);
       return {
         ...r,
-        logo: await logo.generateLink(),
+        logo,
       };
     }));
 

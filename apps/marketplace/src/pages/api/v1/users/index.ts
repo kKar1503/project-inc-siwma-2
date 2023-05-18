@@ -77,8 +77,7 @@ export default apiHandler({ allowNonAuthenticated: true })
       const mappedUsers = await Promise.all(
         mappedUsersNoProfile.map(async (user) => {
           if (!user.profilePic) return user;
-          const s3Object = await bucket.getObject(user.profilePic);
-          const profilePic = await s3Object.generateLink();
+          const profilePic = await bucket.getObjectUrl(user.profilePic);
 
           return {
             ...user,
