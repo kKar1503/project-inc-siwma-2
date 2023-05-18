@@ -36,19 +36,19 @@ const AdvertisementModal = ( { id, companyName, description, url,  onClose, open
     <Dialog open={open} onClose={() => onClose(true)}>
       <Box  display="flex" justifyContent="center">
       <DialogTitle
-      sx={({palette}) => ({  
+      sx={({palette,typography}) => ({  
         alignItems: 'center',
         fontWeight: 'bold', 
         color:  palette.common.black,
-        fontSize: 'h5'
+        fontSize: typography.h5
         })}>
         {companyName}</DialogTitle>
       </Box>
       <DialogContent>
         <DialogContentText 
-        sx={({ palette}) => ({   
+        sx={({ palette , typography}) => ({   
           color:  palette.common.black,
-          fontSize: 'h6'
+          fontSize: typography.subtitle1
         })}>
         {description}</DialogContentText>
       </DialogContent>
