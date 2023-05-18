@@ -1,7 +1,13 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { z } from 'zod';
-import { ParamError, SameBuyerSellerError, NotSellerError, SellerNotOwnerError, ChatRoomExistsError } from '@inc/errors';
+import {
+  ParamError,
+  SameBuyerSellerError,
+  NotSellerError,
+  SellerNotOwnerError,
+  ChatRoomExistsError,
+} from '@inc/errors';
 
 // -- Type definitions -- //
 export type ChatResponse = {
@@ -50,7 +56,7 @@ export default apiHandler().post(async (req, res) => {
   });
 
   if (!listing) {
-    throw new ParamError('Listing');
+    throw new ParamError('listingId');
   }
 
   // Ensure the authenticated user is the buyer
