@@ -17,10 +17,11 @@ type DisplayResultsProps = {
   children?: React.ReactNode;
   title?: string;
   filter: boolean;
-  data?: unknown;
+  data?: ProductListingItemProps[] | undefined;
 };
 
 const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) => {
+  console.log(data);
   const Theme = useTheme();
   const isMediumScreen = useMediaQuery(Theme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -29,100 +30,10 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
   const [negotiation, setNegotiation] = useState<string>('');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
-  const [items, setItems] = useState<ProductListingItemProps[]>([]);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
-
-  useEffect(() => {
-    setItems([
-      {
-        img: '',
-        type: 'Buy',
-        href: '',
-        price: 69,
-        name: 'idk',
-        rating: 3,
-        negotiable: true,
-        ownerFullName: 'Jack AinsField',
-        ownerId: 'supgirl',
-        companyName: 'Apple',
-        isUnitPrice: true,
-        createdAt: '2021-10-10',
-      },
-      {
-        img: '',
-        type: 'Buy',
-        href: '',
-        price: 69,
-        name: 'idk',
-        rating: 3,
-        negotiable: true,
-        ownerFullName: 'Jack AinsField',
-        ownerId: 'supgirl',
-        companyName: 'Apple',
-        isUnitPrice: true,
-        createdAt: '2021-10-10',
-      },
-      {
-        img: '',
-        type: 'Buy',
-        href: '',
-        price: 69,
-        name: 'idk',
-        rating: 3,
-        negotiable: true,
-        ownerFullName: 'Jack AinsField',
-        ownerId: 'supgirl',
-        companyName: 'Apple',
-        isUnitPrice: true,
-        createdAt: '2021-10-10',
-      },
-      {
-        img: '',
-        type: 'Buy',
-        href: '',
-        price: 69,
-        name: 'idk',
-        rating: 3,
-        negotiable: true,
-        ownerFullName: 'Jack AinsField',
-        ownerId: 'supgirl',
-        companyName: 'Apple',
-        isUnitPrice: true,
-        createdAt: '2021-10-10',
-      },
-      {
-        img: '',
-        type: 'Buy',
-        href: '',
-        price: 69,
-        name: 'idk',
-        rating: 3,
-        negotiable: true,
-        ownerFullName: 'Jack AinsField',
-        ownerId: 'supgirl',
-        companyName: 'Apple',
-        isUnitPrice: true,
-        createdAt: '2021-10-10',
-      },
-      {
-        img: '',
-        type: 'Buy',
-        href: '',
-        price: 69,
-        name: 'idk',
-        rating: 3,
-        negotiable: true,
-        ownerFullName: 'Jack AinsField',
-        ownerId: 'supgirl',
-        companyName: 'Apple',
-        isUnitPrice: true,
-        createdAt: '2021-10-10',
-      },
-    ]);
-  }, [sort, category, negotiation, minPrice, maxPrice]);
 
   return (
     <Container maxWidth="xl">
@@ -139,13 +50,13 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
             />
           </Grid>
         ) : (
-          <Grid item xs={12} md={1} sx={{ width: '100%', marginTop: 2 }} />
+          <Grid item md={1} sx={{ width: '100%', marginTop: 2 }} />
         )}
 
         <Grid item xs={12} md={10} sx={{ width: '100%' }}>
           <Box sx={{ display: 'flex', margin: 2 }}>
             <Grid item xs={10} md={8} container justifyContent="flex-start">
-              {items ? (
+              {data ? (
                 <>
                   <Grid item xs={12} md={12}>
                     <Typography
@@ -160,7 +71,7 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
                     </Typography>
                   </Grid>
                   <Grid item xs={12} md={12}>
-                    <Typography variant="h5">{items.length} Listings</Typography>
+                    <Typography variant="h5">{data.length} Listings</Typography>
                   </Grid>
                 </>
               ) : (
@@ -192,9 +103,9 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
             )}
           </Box>
 
-          {items && items.length > 0 && (
+          {data && data.length > 0 && (
             <Grid container display="flex">
-              {items.map((item: ProductListingItemProps) => (
+              {data.map((item: ProductListingItemProps) => (
                 <Grid item xs={4} md={3} sx={{ mb: 2 }}>
                   <ProductListingItem {...item} />
                 </Grid>
@@ -202,7 +113,7 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
             </Grid>
           )}
 
-          {items.length === 0 && (
+          {data && data.length === 0 && (
             <Grid container justifyContent="center">
               <Typography>No items found.</Typography>
             </Grid>
