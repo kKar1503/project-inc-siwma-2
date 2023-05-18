@@ -279,6 +279,15 @@ const Marketplace = () => {
         </Box>
       </Box>
       <ListingStream listingItemsData={mockListings} />
+      <Box display="flex" justifyContent="center" paddingTop="4em">
+        <Box
+          sx={{
+            width: '80%',
+          }}
+        >
+          <Typography variant="h4">Recommended</Typography>
+        </Box>
+      </Box>
     </>
   );
 };
