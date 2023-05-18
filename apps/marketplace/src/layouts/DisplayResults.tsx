@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import ProductListingItem, {
   ProductListingItemProps,
 } from '@/components/marketplace/listing/ProductListingItem';
 
-type DisplayResultsProps = {
+export type DisplayResultsProps = {
   children?: React.ReactNode;
   title?: string;
   filter: boolean;
@@ -21,7 +21,6 @@ type DisplayResultsProps = {
 };
 
 const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) => {
-  console.log(data);
   const Theme = useTheme();
   const isMediumScreen = useMediaQuery(Theme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -106,7 +105,7 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
           {data && data.length > 0 && (
             <Grid container display="flex">
               {data.map((item: ProductListingItemProps) => (
-                <Grid item xs={4} md={3} sx={{ mb: 2 }}>
+                <Grid item xs={4} md={3} sx={{ mb: 2 }} key={item.name}>
                   <ProductListingItem {...item} />
                 </Grid>
               ))}
