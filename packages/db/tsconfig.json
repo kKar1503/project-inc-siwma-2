@@ -1,5 +1,12 @@
 {
-	"compilerOptions": {
-		"typeRoots": ["node_modules/@types"]
-	},
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "module": "CommonJS",
+    "target": "ESNext",
+    "outDir": "./dist",
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "prisma"]
 }
