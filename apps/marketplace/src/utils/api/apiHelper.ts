@@ -88,7 +88,7 @@ const zodParseToBoolean = ($string: string, ctx: z.RefinementCtx) => {
   }
 
   // The string is a boolean value, return the boolean
-  return Boolean(string);
+  return string === 'true';
 };
 
 /**
