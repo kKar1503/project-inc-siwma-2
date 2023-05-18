@@ -102,7 +102,7 @@ export const getServerSideProps = async () => {
 };
 
 const Bookmarks = ({ data }: { data: ProductListingItemProps[] }) => (
-  <DisplayResults filter data={data} title={title} />
+  <DisplayResults filter={false} data={data} title={title} />
 );
 
 export default Bookmarks;
