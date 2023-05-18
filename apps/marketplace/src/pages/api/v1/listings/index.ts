@@ -10,6 +10,11 @@ import PrismaClient, { Listing, ListingType, Prisma } from '@inc/db';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError, ParamError } from '@inc/errors';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import process from 'process';
+import s3Connection from '@/utils/s3Connection';
+
+export const ListingBucketName = process.env.AWS_LISTING_BUCKET_NAME as string;
 
 export function parseListingId($id: string) {
   // Parse and validate listing id provided
@@ -81,7 +86,7 @@ export const getQueryParameters = z.object({
 // -- Helper functions -- //
 export function formatSingleListingResponse(
   listing: ListingWithParameters,
-  includeParameters: boolean
+  includeParameters: boolean,
 ): ListingResponse {
   const formattedListing: ListingResponse = {
     id: listing.id.toString(),
@@ -108,7 +113,7 @@ export function formatSingleListingResponse(
 
 export function formatListingResponse(
   $listings: ListingWithParameters[],
-  includeParameters: boolean
+  includeParameters: boolean,
 ) {
   return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
 }
@@ -126,7 +131,7 @@ export const listingsRequestBody = z.object({
       z.object({
         paramId: z.string().transform(zodParseToInteger),
         value: z.string().transform(zodParseToNumber),
-      })
+      }),
     )
     .optional(),
 });
@@ -146,9 +151,9 @@ export default apiHandler()
       },
       name: queryParams.matching
         ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+          contains: queryParams.matching,
+          mode: 'insensitive',
+        }
         : undefined,
     };
 
@@ -185,9 +190,9 @@ export default apiHandler()
         formatAPIResponse(
           formatListingResponse(
             listings as unknown as ListingWithParameters[],
-            queryParams.includeParameters
-          )
-        )
+            queryParams.includeParameters,
+          ),
+        ),
       );
   })
   .post(async (req, res) => {
@@ -215,6 +220,12 @@ export default apiHandler()
       }
     });
 
+
+    const files = await getFilesFromRequest(req);
+    const bucket = await s3Connection.getBucket(ListingBucketName);
+    const objects = await Promise.all(files.map((file) => bucket.createObject(fileToS3Object(file))));
+
+
     const listing = await PrismaClient.listing.create({
       data: {
         name: data.name,
@@ -227,16 +238,21 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value.toString(),
-                parameter: {
-                  connect: {
-                    id: parameter.paramId,
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value.toString(),
+              parameter: {
+                connect: {
+                  id: parameter.paramId,
                 },
-              })),
-            }
+              },
+            })),
+          }
           : undefined,
+        listingImages: {
+          create: await Promise.all(objects.map(async (object) => ({
+            image: await object.generateLink(),
+          }))),
+        },
       },
       include: {
         listingsParametersValues: true,
