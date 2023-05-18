@@ -1,22 +1,109 @@
-import { ParamError, ParamInvalidError } from '@inc/errors';
+import { BaseError, ParamError, ParamInvalidError } from '@inc/errors';
+import { z } from 'zod';
 
 /**
  * Parse a string to a number
  * @param string The string to parse
+ * @param key The key of the param
+ * @param toInt Whether to parse to an integer
  * @returns The parsed number
  */
-const parseToNumber = (string: string, key?: string) => {
+const parseToNumber = (string: string, key: string | undefined, toInt?: boolean) => {
   // Attempt to parse from string to a number
   const result = Number(string);
 
-  // Check if the parsing was successful
-  if (string.length === 0 || Number.isNaN(result)) {
-    if (key) {
-      throw new ParamInvalidError(key, string);
-    } else {
-      throw new ParamError();
-    }
+  // Check if the result must be an integer
+  if (
+    string.length !== 0 && // The string is not empty
+    !Number.isNaN(result) && // The result is a number
+    (toInt === Number.isInteger(result) || !toInt) // The result is an integer if required
+  ) {
+    // The parsing was successful, return the result
+    return result;
   }
+
+  // Parsing unsuccessful
+  if (key) {
+    throw new ParamInvalidError(key, string);
+  } else {
+    throw new ParamError();
+  }
+};
+
+/**
+ * Parses a string to a number
+ * @param string The string to parse
+ * @param ctx The zod error context
+ * @param toInt Whether to parse to an integer
+ * @returns The parsed number
+ */
+const zodParseToNumber = (string: string, ctx: z.RefinementCtx, toInt?: boolean) => {
+  // Attempt to parse from string to a number
+  try {
+    const result = parseToNumber(string, String(ctx.path), toInt);
+    return result;
+  } catch (error) {
+    // An error occurred, add to zod error
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      params: {
+        response: error,
+      },
+    });
+
+    return z.NEVER;
+  }
+};
+
+/**
+ * Parses a string to integer
+ * @param string The string to parse
+ * @param ctx The zod error context
+ * @returns The parsed integer
+ */
+const zodParseToInteger = (string: string, ctx: z.RefinementCtx) =>
+  zodParseToNumber(string, ctx, true);
+
+/**
+ * Parses a string to boolean
+ * @param string The string to parse
+ * @param ctx The zod error context
+ * @returns The parsed boolean
+ */
+const zodParseToBoolean = ($string: string, ctx: z.RefinementCtx) => {
+  // Convert string to lowercase
+  const string = $string.toLowerCase();
+
+  // Check if the string is a boolean value
+  if (string !== 'true' && string !== 'false') {
+    // No it is not, add to zod error
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      params: {
+        response: new ParamInvalidError(String(ctx.path), string, ['true', 'false']),
+      },
+    });
+
+    return z.NEVER;
+  }
+
+  // The string is a boolean value, return the boolean
+  return string === 'true';
+};
+
+/**
+ * Splits a string up to an array
+ * @param string The string to split
+ * @returns The split string
+ */
+const parseArray = (string: string | string[]) => {
+  // Check if an array was passed in
+  if (Array.isArray(string)) {
+    return string;
+  }
+
+  // Attempt to split the string into an array
+  const result = string.split(',');
 
   return result;
 };
@@ -47,4 +134,11 @@ const formatAPIResponse = (response: object | object[]) => {
   };
 };
 
-export { parseToNumber, formatAPIResponse };
+export {
+  parseToNumber,
+  parseArray,
+  formatAPIResponse,
+  zodParseToNumber,
+  zodParseToInteger,
+  zodParseToBoolean,
+};
