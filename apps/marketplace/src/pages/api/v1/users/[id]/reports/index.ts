@@ -1,5 +1,6 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { PrismaClient } from '@prisma/client';
 
 // -- Type Definitions --
 // Define the type of the response object
@@ -39,10 +40,31 @@ export default apiHandler()
     }),
     //  get user reports protected for admins view only
     async (req, res) => {
+      // init user id query params
+      const { id } = req.query;
+
+      console.log(id);
+
+      const reports = await PrismaClient.report.findMany({
+        where: {
+          user: {
+            id,
+          },
+        },
+      });
+
+      console.log(reports);
+
       res
         .status(200)
         .json(
-          formatGetReportResponse(1, 'user', 'reporter', 'Offensive Content/Behaviour', new Date())
+          formatGetReportResponse(
+            reports.id,
+            reports.user,
+            reports.reporter,
+            reports.reason,
+            reports.created_at
+          )
         );
     }
   )
