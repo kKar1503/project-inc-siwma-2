@@ -57,7 +57,7 @@ const FilterForm = ({
   }, []);
 
   return (
-    <form style={{ padding: 1, marginTop: 2, width: '100%' }} onSubmit={handleSubmit}>
+    <form style={{ padding: 1, width: '100%' }} onSubmit={handleSubmit}>
       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
         Search Filter
       </Typography>

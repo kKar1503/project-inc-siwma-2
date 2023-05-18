@@ -37,7 +37,7 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
   return (
     <Container maxWidth="xl">
       {children}
-      <Grid container spacing={2}>
+      <Grid container spacing={4} mt={4}>
         {!isMediumScreen && filter ? (
           <Grid item xs={12} md={2} sx={{ width: '100%', marginTop: 2 }}>
             <FilterForm
@@ -53,7 +53,7 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
         )}
 
         <Grid item xs={12} md={10} sx={{ width: '100%' }}>
-          <Box sx={{ display: 'flex', margin: 2 }}>
+          <Box sx={{ display: 'flex' }}>
             <Grid item xs={10} md={8} container justifyContent="flex-start">
               {data ? (
                 <>
@@ -62,7 +62,6 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
                       variant="h4"
                       sx={({ typography }) => ({
                         fontWeight: typography.fontWeightBold,
-                        mt: 4,
                         mb: 2,
                       })}
                     >
@@ -103,9 +102,9 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
           </Box>
 
           {data && data.length > 0 && (
-            <Grid container display="flex">
+            <Grid container display="flex" spacing={2}>
               {data.map((item: ProductListingItemProps) => (
-                <Grid item xs={4} md={3} sx={{ mb: 2 }} key={item.name}>
+                <Grid item xs={4} md={3} key={item.name}>
                   <ProductListingItem {...item} />
                 </Grid>
               ))}
