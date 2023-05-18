@@ -13,7 +13,7 @@ export default apiHandler({ allowAdminsOnly: true }).patch(
     if (!id) {
       throw new ParamError('id');
     }
-    const companyid = parseToNumber(id as string);
+    const companyid = parseToNumber(id as string, 'id');
 
     const response: ResponseBody = await PrismaClient.$queryRaw`
         UPDATE "companies" SET "visibility" = NOT "visibility" WHERE "id" = ${companyid} RETURNING "visibility" AS "visible"
