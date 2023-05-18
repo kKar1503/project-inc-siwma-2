@@ -39,7 +39,15 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
       {children}
       <Grid container spacing={4} mt={4}>
         {!isMediumScreen && filter ? (
-          <Grid item xs={12} md={2} sx={{ width: '100%', marginTop: 2 }}>
+          <Grid
+            item
+            xs={12}
+            md={2}
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+          >
             <FilterForm
               setSort={setSort}
               setCategory={setCategory}
@@ -49,7 +57,14 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
             />
           </Grid>
         ) : (
-          <Grid item md={1} sx={{ width: '100%', marginTop: 2 }} />
+          <Grid
+            item
+            md={1}
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+          />
         )}
 
         <Grid item xs={12} md={10} sx={{ width: '100%' }}>
@@ -60,9 +75,9 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
                   <Grid item xs={12} md={12}>
                     <Typography
                       variant="h4"
-                      sx={({ typography }) => ({
+                      sx={({ typography, spacing }) => ({
                         fontWeight: typography.fontWeightBold,
-                        mb: 2,
+                        mb: spacing(2),
                       })}
                     >
                       {title || 'Search Results'}
@@ -87,7 +102,12 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
                   FILTER
                 </Button>
                 <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
-                  <Box sx={{ height: '100%', margin: 2 }}>
+                  <Box
+                    sx={({ spacing }) => ({
+                      height: '100%',
+                      m: spacing(2),
+                    })}
+                  >
                     <FilterForm
                       setSort={setSort}
                       setCategory={setCategory}

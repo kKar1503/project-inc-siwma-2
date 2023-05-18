@@ -43,12 +43,6 @@ const FilterForm = ({
     setNegotiation(negotiationOption);
     setMinPrice(minPriceOption);
     setMaxPrice(maxPriceOption);
-
-    console.log(`Sort: ${sortOption}`);
-    console.log(`Category: ${categoryOption}`);
-    console.log(`Negotiation: ${negotiationOption}`);
-    console.log(`Min Price: ${minPriceOption}`);
-    console.log(`Max Price: ${maxPriceOption}`);
   };
 
   useEffect(() => {
@@ -58,11 +52,22 @@ const FilterForm = ({
 
   return (
     <form style={{ padding: 1, width: '100%' }} onSubmit={handleSubmit}>
-      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+      <Typography
+        variant="h6"
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightBold,
+        })}
+      >
         Search Filter
       </Typography>
       <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>Sort By</FormLabel>
+      <FormLabel
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightMedium,
+        })}
+      >
+        Sort By
+      </FormLabel>
       <Select
         sx={{ height: '45px', width: '100%' }}
         onChange={(e) => setSortOption(e.target.value as SortProps)}
@@ -76,7 +81,13 @@ const FilterForm = ({
       </Select>
 
       <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>Category</FormLabel>
+      <FormLabel
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightMedium,
+        })}
+      >
+        Category
+      </FormLabel>
       <Select
         sx={{ height: '45px', width: '100%' }}
         onChange={(e) => setCategoryOption(e.target.value as string)}
@@ -90,14 +101,26 @@ const FilterForm = ({
       </Select>
 
       <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>Negotiability</FormLabel>
+      <FormLabel
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightMedium,
+        })}
+      >
+        Negotiability
+      </FormLabel>
       <RadioGroup onChange={(e) => setNegotiationOption(e.target.value)}>
         <FormControlLabel value="negotiable" control={<Radio />} label="Negotiable" />
         <FormControlLabel value="nonNegotiable" control={<Radio />} label="Non-Negotiable" />
       </RadioGroup>
 
       <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>Price</FormLabel>
+      <FormLabel
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightMedium,
+        })}
+      >
+        Price
+      </FormLabel>
       <Box sx={{ display: 'flex', marginBottom: 2 }}>
         <TextField
           id="min"
