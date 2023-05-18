@@ -17,6 +17,7 @@ import PrismaClient, {
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError, ParamError } from '@inc/errors';
+import parameters from '../parameters';
 
 export function parseListingId($id: string) {
   // Parse and validate listing id provided
@@ -99,6 +100,7 @@ export const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
+  params: z.string().optional(),
   category: z.string().transform(zodParseToInteger).optional(),
   negotiable: z.string().transform(zodParseToBoolean).optional(),
   minPrice: z.string().transform(zodParseToNumber).optional(),
@@ -180,6 +182,21 @@ export default apiHandler()
     // Parse the query parameters
     const queryParams = getQueryParameters.parse(req.query);
 
+    // Decode params if it exists
+    let decodedParams = null;
+    if (queryParams.params) {
+      decodedParams = JSON.parse(decodeURI(queryParams.params));
+      if (typeof decodedParams.paramId !== 'string' && typeof decodedParams.value !== 'string') {
+        throw new ParamError('paramId and value');
+      }
+      if (typeof decodedParams.paramId !== 'string') {
+        throw new ParamError('paramId');
+      }
+      if (typeof decodedParams.value !== 'string') {
+        throw new ParamError('value');
+      }
+    }
+
     // Filter options
     const whereOptions: Prisma.ListingWhereInput = {
       categoryId: queryParams.category ? queryParams.category : undefined,
@@ -192,6 +209,14 @@ export default apiHandler()
         ? {
             contains: queryParams.matching,
             mode: 'insensitive',
+          }
+        : undefined,
+      listingsParametersValues: decodedParams
+        ? {
+            some: {
+              parameterId: Number(decodedParams.paramId),
+              value: decodedParams.value,
+            },
           }
         : undefined,
     };
