@@ -18,7 +18,7 @@ function parseCompanyId(id: string | undefined): number {
   if (!id) {
     throw new ParamError('id');
   }
-  return parseToNumber(id);
+  return parseToNumber(id, 'id');
 }
 
 async function checkCompany(companyid: number) {
