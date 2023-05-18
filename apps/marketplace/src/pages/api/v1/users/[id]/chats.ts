@@ -10,7 +10,7 @@ const chatRequestQuery = z.object({
   limit: z
     .string()
     .optional()
-    .transform((value) => (value ? parseToNumber(value) : 10))
+    .transform((value) => (value ? parseToNumber(value, 'limit') : 10))
     .refine((value) => value >= 1 && value <= 10, {
       message: 'Invalid limit',
     }),
