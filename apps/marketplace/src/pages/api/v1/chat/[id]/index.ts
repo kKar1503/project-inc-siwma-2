@@ -1,6 +1,6 @@
-import { apiHandler } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError, AuthError } from '@inc/errors';
+import { NotFoundError } from '@inc/errors';
 import { formatChatResponse } from '..';
 
 function parseChatId($uuid: string) {
@@ -45,16 +45,15 @@ export default apiHandler().get(async (req, res) => {
   // Check if the chat exists
   const chat = await checkChatExists(id);
 
-  // Check if the user is logged in
-  if (!req.token || !req.token.user) {
-    throw new AuthError();
-  }
-
   // Verify if the user is a participant of the chat room
-  if (req.token.user.id !== chat.buyer && req.token.user.id !== chat.seller) {
+  if (
+    !req.token ||
+    !req.token.user ||
+    (req.token.user.id !== chat.buyer && req.token.user.id !== chat.seller)
+  ) {
     throw new NotFoundError('chat room');
   }
 
   // Return the result
-  res.status(200).json(formatChatResponse(chat));
+  res.status(200).json(formatAPIResponse(formatChatResponse(chat)));
 });
