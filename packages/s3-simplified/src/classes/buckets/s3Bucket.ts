@@ -34,8 +34,19 @@ export class S3Bucket implements S3BucketService {
         return this.internal.getObject(key, this.config);
     }
 
+    public async getObjectUrl(key: string): Promise<string> {
+        await this.assertExists(key);
+        return await this.internal.isPublic() ?
+          this.internal.generatePublicUrl(key) :
+          await this.internal.generateSignedUrl(key, this.config.signedUrl);
+    }
+
     public async getObjects(keys: string[]): Promise<IS3Object[]> {
         return Promise.all(keys.map(key => this.getObject(key)));
+    }
+
+    public async getObjectUrls(keys: string[]): Promise<string[]> {
+        return Promise.all(keys.map(key => this.getObjectUrl(key)));
     }
 
     public async deleteObject(key: string): Promise<void> {
