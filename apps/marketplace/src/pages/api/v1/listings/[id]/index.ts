@@ -3,7 +3,8 @@ import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import { ListingType } from '@prisma/client';
 import z from 'zod';
-import { formatSingleListingResponse, getQueryParameters, parseListingId } from '..';
+import { formatSingleListingResponse, getQueryParameters, ListingBucketName, parseListingId } from '..';
+import s3Connection from '@/utils/s3Connection';
 
 // -- Functions --//
 
@@ -87,9 +88,19 @@ export default apiHandler()
     const listing = await checkListingExists(id);
 
     // Return the result
+
+    const response = formatSingleListingResponse(listing, queryParams.includeParameters);
+
+    if (queryParams.includeImages) {
+      const bucket = await s3Connection.getBucket(ListingBucketName);
+      response.images = await Promise.all(listing.listingImages.map(async (image) => ({
+        image: await bucket.getObjectUrl(image.image),
+      })));
+    }
+
     res
       .status(200)
-      .json(formatAPIResponse(formatSingleListingResponse(listing, queryParams.includeParameters)));
+      .json(formatAPIResponse(response));
   })
   .put(async (req, res) => {
     const queryParams = getQueryParameters.parse(req.query);
@@ -189,8 +200,8 @@ export default apiHandler()
       .status(200)
       .json(
         formatAPIResponse(
-          formatSingleListingResponse(completeListing, queryParams.includeParameters)
-        )
+          formatSingleListingResponse(completeListing, queryParams.includeParameters),
+        ),
       );
   })
   .delete(async (req, res) => {
