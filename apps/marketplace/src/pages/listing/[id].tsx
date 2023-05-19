@@ -1,22 +1,24 @@
-import Head from 'next/head';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { ReactNode, useState, SyntheticEvent } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import DetailedListingCarousel, {
-  DetailedListingCarouselProps,
+  Image,
 } from '@/components/marketplace/carousel/DetailedListingCarousel';
-import { Paper, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
+import ChatNow from '@/components/marketplace/listing/ChatNow';
+import SellBadge from '@/components/marketplace/listing/SellBadge';
+import BuyBadge from '@/components/marketplace/listing/BuyBadge';
+import { UmbrellaRounded } from '@mui/icons-material';
 
-// eslint-disable-next-line no-unused-vars
-
-// test data for carousel component
-const detailListingData = [
+// Test Data for listing details
+const detailedListingData = [
   {
     id: 1,
-    name: 'Company A',
-    description: 'Listing description',
+    name: 'Item A',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed bibendum erat. Etiam malesuada, massa non blandit mattis, lacus mi dignissim nisl, non lacinia lectus sapien non mi. Vivamus nisi leo, auctor a urna vitae, aliquet consequat nisi. In quis dolor urna. Maecenas id mauris ultrices, bibendum neque lacinia, euismod felis. ',
     price: 300,
     unitPrice: false,
     negotiable: true,
@@ -50,11 +52,12 @@ const detailListingData = [
         value: 300,
       },
     ],
+    createdAt: '2023-05-15T18:03:01.036Z',
   },
 
   {
     id: 2,
-    name: 'Company B',
+    name: 'Item B',
     description: 'Listing description',
     price: 300,
     unitPrice: false,
@@ -89,11 +92,12 @@ const detailListingData = [
         value: 300,
       },
     ],
+    createdAt: '2023-05-15T18:03:01.036Z',
   },
 
   {
     id: 3,
-    name: 'Compnay C',
+    name: 'Item C',
     description: 'Listing description',
     price: 300,
     unitPrice: false,
@@ -128,11 +132,12 @@ const detailListingData = [
         value: 300,
       },
     ],
+    createdAt: '2023-05-15T18:03:01.036Z',
   },
 
   {
     id: 4,
-    name: 'Company D',
+    name: 'Item D',
     description: 'Listing description',
     price: 300,
     unitPrice: false,
@@ -167,9 +172,11 @@ const detailListingData = [
         value: 300,
       },
     ],
+    createdAt: '2023-05-15T18:03:01.036Z',
   },
 ];
 
+// test data for carousel component
 const carouselData = [
   {
     id: '4f18716b-ba33-4a98-9f9c-88df0ce50f51',
@@ -187,6 +194,99 @@ const carouselData = [
     url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
   },
 ];
+
+// test data for categories
+const categoryData = [
+  {
+    id: '1',
+    name: 'Cat 1',
+    description: 'Description2',
+    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+    active: true,
+    parameters: [
+      {
+        parameterId: '1',
+        required: true,
+      },
+      {
+        parameterId: '2',
+        required: true,
+      },
+      {
+        parameterId: '3',
+        required: false,
+      },
+    ],
+  },
+  {
+    id: '2',
+    name: 'Cat 2',
+    description: 'Description2',
+    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+    active: true,
+    parameters: [
+      {
+        parameterId: '1',
+        required: true,
+      },
+      {
+        parameterId: '2',
+        required: true,
+      },
+      {
+        parameterId: '3',
+        required: false,
+      },
+    ],
+  },
+  {
+    id: '3',
+    name: 'Cat 3',
+    description: 'Description2',
+    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+    active: true,
+    parameters: [
+      {
+        parameterId: '1',
+        required: true,
+      },
+      {
+        parameterId: '2',
+        required: true,
+      },
+      {
+        parameterId: '3',
+        required: false,
+      },
+    ],
+  },
+];
+
+export interface CategoryData {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  crossSectionImage: string;
+  active: boolean;
+  parameters: [
+    {
+      parameterId: string;
+      required: boolean;
+    },
+    {
+      parameterId: string;
+      required: boolean;
+    },
+    {
+      parameterId: string;
+      required: boolean;
+    }
+  ];
+}
 
 export interface ListingData {
   id: number;
@@ -225,15 +325,11 @@ export interface ListingData {
       value: number;
     }
   ];
+  createdAt: string;
 }
 
-export type CategoryPageProps = {
-  data: ListingData[];
-};
-
 export const getServerSideProps = async ({ query }: { query: any }) => {
-  // api call to get user details go here
-  // if user does not exist, return error code and redirect to wherever appropriate
+  // api call to get listing details go here
 
   const { id } = query;
   if (!Number.isInteger(parseFloat(id))) {
@@ -246,7 +342,7 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
   }
 
   // just for testing purposes
-  if (id > detailListingData.length) {
+  if (id > detailedListingData.length) {
     return {
       redirect: {
         destination: '/',
@@ -254,97 +350,275 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
     };
   }
 
-  const data = detailListingData[id - 1];
-  const serverSideListings = carouselData;
+  const data = detailedListingData[id - 1];
+  const serverSideListingCarousel = carouselData;
+
+  data.parameter.sort((a, b) => {
+    if (a.paramId < b.paramId) {
+      return -1;
+    }
+    if (a.paramId > b.paramId) {
+      return 1;
+    }
+    return 0;
+  });
 
   return {
     props: {
       data,
-      serverSideListings,
+      serverSideListingCarousel,
+      categoryData,
     },
   };
 };
 
-// const TabPanel = (props: TabPanelProps) => {
-//   const { children, value, index, height, ...other } = props;
-
-//   return (
-//     <div role="tabpanel" hidden={value !== index} id={`full-width-tabpanel-${index}`} {...other}>
-//       {value === index && (
-//         <Box sx={{ p: 3, height: { height }, overflowY: 'auto' }}>{children}</Box>
-//       )}
-//     </div>
-//   );
-// };
-
-const StyledTab = styled(Tab)(({ theme }) => ({
-  minHeight: 60,
-  bgcolor: theme.palette.common.white,
-  color: theme.palette.primary[400],
-  border: 1,
-  borderColor: theme.palette.primary[400],
-  borderRadius: theme.shape.borderRadius,
-  //   for some reason, half of this doesn't work??
-  //   upon further investigation seems like it's more specifically the ones regarding border, including the styles above
-  '&.Mui-selected': {
-    minHeight: 60,
-    color: theme.palette.common.white,
-    bgcolor: theme.palette.primary[400],
-    border: 1,
-    borderColor: theme.palette.primary[400],
-    borderRadius: theme.shape,
-  },
-}));
-
 const DetailedListingPage = ({
   data,
-}: // serverSideListings,
-{
-  data: DetailedListingCarouselProps;
-  // serverSideListings: carouselData[];
+  serverSideListingCarousel,
+  categoryData,
+}: {
+  data: ListingData;
+  serverSideListingCarousel: Image[];
+  categoryData: CategoryData[];
 }) => {
   const theme = useTheme();
-  const [value, setValue] = useState(0);
-  // when filter/sorts are called use set states to set the new listings/reviews again
-  // const [listings, setListings] = useState(serverSideListings);
+
+  const parseISOstring = (s: string) =>  {
+    const b = s.split(/\D+/);
+    const newDate = `${b[2]} ${b[1]} ${b[0]}` 
+    return newDate
+}
 
   return (
-    <>
-      <Head>
-        <title>{data.name}&lsquo;s Listings</title>
-        <meta name="description" content="Generated by create next app" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main>
+    <main>
+      <Box
+        sx={({ spacing }) => ({
+          pt: spacing(4),
+          height: 2000,
+          width: '100%',
+          bgcolor: theme.palette.common.white,
+        })}
+      >
+        <DetailedListingCarousel data={serverSideListingCarousel} />
         <Box
-          sx={({ spacing }) => ({
-            pt: spacing(3),
-            pl: '160px',
-            pr: '160px',
-            pb: spacing(3),
-            height: '100vh;',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-          })}
+          sx={{
+            width: '70%',
+            height: 'full',
+            mr: 'auto',
+            ml: 'auto',
+          }}
         >
-          {/* <DetailedListingCarousel data={data} /> */}
-          <Box
-            sx={{
-              width: '73%',
-              height: 'full',
-              bgcolor: theme.palette.common.white,
-              borderRadius: theme.shape,
-            }}
-          >
-            <Paper>
-              <Typography>Hello</Typography>
-            </Paper>
-          </Box>
+          <Grid container columns={12} sx={{ direction: 'row' }}>
+            <Grid item xs={8} sx={({ spacing }) => ({ pl: spacing(5) })}>
+              <Grid
+                container
+                columns={12}
+                sx={{
+                  direction: 'row',
+                }}
+              >
+                <Grid item xs={10}>
+                  <Grid
+                    container
+                    sx={({ spacing }) => ({
+                      directon: 'row',
+                      pt: spacing(2),
+                      pb: spacing(2),
+                      pl: spacing(2),
+                    })}
+                  >
+                    <Box>
+                      {data.type === 'BUY' && <BuyBadge />}
+                      {data.type === 'SELL' && <SellBadge />}
+                    </Box>
+                    <Typography
+                      sx={({ spacing }) => ({
+                        fontWeight: 600,
+                        pl: spacing(2),
+                      })}
+                      variant="h6"
+                    >
+                      {data.name}
+                    </Typography>
+                  </Grid>
+
+                  <Typography
+                    sx={({ spacing }) => ({
+                      fontWeight: 700,
+                      pl: spacing(2),
+                      pb: spacing(2),
+                    })}
+                    variant="h5"
+                  >
+                    S${data.price}
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={2}
+                  sx={({ spacing }) => ({
+                    pt: spacing(2),
+                    pr: spacing(2),
+                  })}
+                >
+                  <Grid container sx={{ direction: 'row' }}>
+                    <Grid item xs={6}>
+                      <IosShareOutlinedIcon sx={{ fontSize: 30 }} />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <BookmarkBorderOutlinedIcon sx={{ fontSize: 30 }} />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Divider variant="middle" />
+
+              <Typography
+                sx={({ spacing }) => ({
+                  pt: spacing(2),
+                  pl: spacing(2),
+                  fontWeight: 600,
+                })}
+                variant="h6"
+              >
+                Description
+              </Typography>
+              <Box
+                sx={({ spacing }) => ({
+                  mt: 1,
+                  pl: spacing(2),
+                  display: 'flex',
+                  alignItems: 'center',
+                })}
+              >
+                <Typography variant="body1">{data.description}</Typography>
+              </Box>
+              <Typography
+                sx={({ spacing }) => ({
+                  pt: spacing(2),
+                  pl: spacing(2),
+                  fontWeight: 600,
+                })}
+                variant="h6"
+              >
+                Dimensions
+              </Typography>
+              <Box
+                sx={({ spacing }) => ({
+                  pt: spacing(2),
+                  pb: spacing(2),
+                })}
+              >
+                <Grid container columns={4}>
+                  {data.parameter.map(({ paramId, value }) => (
+                    // <Grid key={paramId}>
+                    <Box
+                      sx={({ spacing }) => ({
+                        pl: spacing(2),
+                        pr: spacing(2),
+                      })}
+                    >
+                      <Typography sx={{ color: theme.palette.grey[500] }}>
+                        Dimension {paramId}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 500,
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                    </Box>
+                    // </Grid>
+                  ))}
+                </Grid>
+              </Box>
+
+              <Divider variant="middle" />
+
+              <Box
+                sx={({ spacing }) => ({
+                  pl: spacing(2),
+                  pt: spacing(2),
+                  pb: spacing(2),
+                })}
+              >
+                <Grid
+                  container
+                  sx={() => ({
+                    direction: 'row',
+                  })}
+                >
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Negotiable?</Typography>
+                    <Typography>{data.negotiable ? 'Yes' : 'No'}</Typography>
+                  </Box>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Unit Price?</Typography>
+                    <Typography>{data.unitPrice ? 'Yes' : 'No'}</Typography>
+                  </Box>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Category?</Typography>
+                    <Typography>
+                      {categoryData.find((x) => x.id === data.categoryId)?.name}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted On?</Typography>
+                    <Typography>{parseISOstring(data.createdAt)}</Typography>
+                  </Box>
+
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted By?</Typography>
+                    <Typography>{data.owner.name}</Typography>
+                  </Box>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Company?</Typography>
+                    <Typography>{data.owner.company.name}</Typography>
+                  </Box>
+                </Grid>
+              </Box>
+            </Grid>
+            <Grid
+              item
+              xs={4}
+              sx={({ spacing }) => ({
+                pt: spacing(2),
+                pl: spacing(5),
+              })}
+            >
+              <ChatNow data={data} />
+            </Grid>
+          </Grid>
         </Box>
-      </main>
-    </>
+      </Box>
+    </main>
   );
 };
 
