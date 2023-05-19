@@ -78,7 +78,25 @@ export default apiHandler()
 
     const { id: reporteeId } = userIdSchema.parse(req.query);
     const reporterId = req.token?.user.id;
-    const { reason } = updateReportSchema.parse(req.body);
+    let { reason } = req.body;
+
+    const regexBreakpoint = /[\s/]/;
+
+    reason = reason.split(regexBreakpoint).join('_');
+
+    // throws error if reason doesn't match db enum
+    if (
+      reason !== ReasonType.Offensive_Content_Behaviour &&
+      reason !== ReasonType.Cancelling_on_deal &&
+      reason !== ReasonType.Suspicious_Account &&
+      reason !== ReasonType.Inaccurate_Listings
+    ) {
+      throw new NotFoundError('Reason');
+    }
+
+    // validates against ReasonType enum from zod
+    // destructures reason from object body
+    ({ reason } = updateReportSchema.parse({ reason }));
 
     // check if reporteeId matches uuid type
     const reportee = await PrismaClient.users.findUnique({
@@ -101,5 +119,3 @@ export default apiHandler()
 
     res.status(201).json(formatAPIResponse({ reportId: postReport.id }));
   });
-
-// get call returns all reports from user with specific id, if no reports are found, returns empty array
