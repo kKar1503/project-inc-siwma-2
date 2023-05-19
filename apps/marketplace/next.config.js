@@ -37,6 +37,7 @@ const nextConfig = {
             'www.google.com',
             'www.asiamediajournal.com',
             'via.placeholder.com',
+            'siwma.org.sg',
           ]
         : [],
   },

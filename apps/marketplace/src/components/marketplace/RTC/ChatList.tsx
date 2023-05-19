@@ -1,7 +1,8 @@
-'use client'
+
 
 import React, {  useState } from 'react'
 import Box from '@mui/material/Box'
+import {TextField,alpha} from '@mui/material'
 import Typography from '@mui/material/Typography'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
@@ -13,8 +14,10 @@ import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Divider from '@mui/material/Divider'
 import Badge from '@mui/material/Badge'
 import Image from 'next/image'
+import { DateTime } from 'luxon'
 
-interface Chat {
+
+export interface Chat {
 	id: string
 	company: string
 	category: string
@@ -37,7 +40,8 @@ const ChatList = ({
 }) => {
 	const [category, setCategory] = useState<CategoryType>('all')
 	const [activeItem, setActiveItem] = useState<number | null>(null)
-
+	const myColor = alpha('#000000', 0.04);
+	
 	const handleCategoryChange = (event: SelectChangeEvent) => {
 		setCategory(event.target.value as CategoryType)
 	}
@@ -50,8 +54,8 @@ const ChatList = ({
 			(chat) =>
 				chat.category.toLowerCase() === category.toLowerCase() && chat.inProgress
 		)
-		console.log({ filteredItems, category })
 		return filteredItems
+		
 	}
 
 	return (
@@ -61,7 +65,7 @@ const ChatList = ({
 					<Typography
 						variant='h6'
 						sx={({ palette }) => ({
-							color: palette.primary.main,
+							color: palette.common.black,
 						})}
 					>
 						Conversations
@@ -70,7 +74,7 @@ const ChatList = ({
 						variant='subtitle1'
 						sx={{ display: 'flex', alignItems: 'center' }}
 					>
-						{filteredChats.length} Active Chats
+						{filteredChats(category, chats).length} Active Chats
 					</Typography>
 				</Box>
 				<FormControl
@@ -89,16 +93,16 @@ const ChatList = ({
 						sx={({ spacing }) => ({
 							'& .MuiSelect-select': { p: spacing(0) },
 							'& fieldset': {
-								border: 'none',
+								border: spacing(0),
 							},
 							'&::hover': {
-								border: 'none',
+								border: spacing(0),
 							},
 							'&::before': {
-								border: 'none',
+								border: spacing(0),
 							},
 							'&::after': {
-								border: 'none',
+								border: spacing(0),
 							},
 						})}
 					>
@@ -107,19 +111,39 @@ const ChatList = ({
 						<MenuItem value='Selling'>Selling</MenuItem>
 					</Select>
 				</FormControl>
-				<input
-					placeholder='Search Message,Listings'
-					style={{
-						display: 'block',
-						background: '#f6f6f6',
-						padding: '10px 7px',
-						borderRadius: '8px',
-						outline: 'none',
-						border: 'none',
-					}}
-					onChange={onChange}
-				/>
+			
+				<TextField
+				InputProps={{ disableUnderline: true }}
+				placeholder="Search Message,Listings,username"
+				variant="filled"
+				fullWidth
+				sx={({ spacing }) => ({
+				'& .MuiFilledInput-root': {
+					background: myColor ,
+					borderRadius: '4px',
+					'&:hover': {
+					background: myColor,
+					},
+				},
+				'& .MuiInputBase-input': {
+					padding: '10px 7px',
+				},
+				'& .MuiOutlinedInput-root': {
+					borderRadius: '4px',
+					'& fieldset': {
+					border: spacing(0),
+					outline: 'none',
+					},
+					'&:hover fieldset': {
+					border: spacing(0),
+					outline: 'none',
+					},
+				},
+				})}
+				
+					/>
 			</Box>
+
 			<Divider
 				sx={({ palette }) => ({
 					borderColor: palette.grey[600],
@@ -138,7 +162,6 @@ const ChatList = ({
 							})}
 						>
 							<ListItemAvatar>
-								{/* <Avatar>{chat.company[0]}</Avatar> */}
 								<Badge
 									overlap='circular'
 									color="error"
@@ -156,18 +179,20 @@ const ChatList = ({
 							<ListItemText>
 								<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
 									<Typography
-										sx={({ palette, typography }) => ({
+										sx={({  typography }) => ({
 											fontSize: typography.h6,
 										})}
 									>
 										{chat.company}
 									</Typography>
 									<Typography
-										sx={({ palette, typography }) => ({
+										sx={({  typography }) => ({
 											fontSize: typography.body2,
 										})}
 									>
-										{chat.date}
+										{DateTime.fromISO(chat.date)
+											.setLocale('en')
+											.toFormat('f')}
 									</Typography>
 								</Box>
 								<Typography
