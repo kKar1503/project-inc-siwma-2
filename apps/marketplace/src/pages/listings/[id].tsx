@@ -1,18 +1,17 @@
-import Head from 'next/head';
 import Box from '@mui/material/Box';
 import { ReactNode, useState, SyntheticEvent } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import DetailedListingCarousel, {
   DetailedListingCarouselProps,
 } from '@/components/marketplace/carousel/DetailedListingCarousel';
-import { Card, CardContent, CardHeader, Divider, Grid, Paper, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
 import ChatNow from '@/components/marketplace/listing/ChatNow';
+import SellBadge from '@/components/marketplace/listing/SellBadge';
+import BuyBadge from '@/components/marketplace/listing/BuyBadge';
 
-// eslint-disable-next-line no-unused-vars
-
-// test data for carousel component
+// Test Data for listing details
 const detailedListingData = [
   {
     id: 1,
@@ -172,6 +171,7 @@ const detailedListingData = [
   },
 ];
 
+// test data for carousel component
 const carouselData = [
   {
     id: '4f18716b-ba33-4a98-9f9c-88df0ce50f51',
@@ -187,6 +187,78 @@ const carouselData = [
     id: '8b63d6f4-6d58-4f2c-b2f3-33d156ee3c4e',
     fileName: 'myotherimage2-20230321T080000Z.jpg',
     url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
+  },
+];
+
+// test data for categories
+const categoryData = [
+  {
+    id: '1',
+    name: 'Cat 1',
+    description: 'Description2',
+    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+    active: true,
+    parameters: [
+      {
+        parameterId: '1',
+        required: true,
+      },
+      {
+        parameterId: '2',
+        required: true,
+      },
+      {
+        parameterId: '3',
+        required: false,
+      },
+    ],
+  },
+
+  {
+    id: '2',
+    name: 'Cat 2',
+    description: 'Description2',
+    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+    active: true,
+    parameters: [
+      {
+        parameterId: '1',
+        required: true,
+      },
+      {
+        parameterId: '2',
+        required: true,
+      },
+      {
+        parameterId: '3',
+        required: false,
+      },
+    ],
+  },
+
+  {
+    id: '3',
+    name: 'Cat 3',
+    description: 'Description2',
+    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+    active: true,
+    parameters: [
+      {
+        parameterId: '1',
+        required: true,
+      },
+      {
+        parameterId: '2',
+        required: true,
+      },
+      {
+        parameterId: '3',
+        required: false,
+      },
+    ],
   },
 ];
 
@@ -235,7 +307,6 @@ export type DetailedListingProps = {
 
 export const getServerSideProps = async ({ query }: { query: any }) => {
   // api call to get listing details go here
-  // if user does not exist, return error code and redirect to wherever appropriate
 
   const { id } = query;
   if (!Number.isInteger(parseFloat(id))) {
@@ -256,7 +327,6 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
     };
   }
 
-  // const serverSideListings = detailedListingData[id - 1];
   // const data = carouselData;
   const data = detailedListingData[id - 1];
 
@@ -283,190 +353,221 @@ const DetailedListingPage = ({ data }: DetailedListingProps) => {
 
   return (
     <main>
-      <DetailedListingCarousel data={carouselData}/>
-      <Box
-        sx={{
-          width: '60%',
-          height: 'full',
-          bgcolor: theme.palette.common.white,
-        }}
-      >
-        {/* <ChatNow /> */}
-        <Grid item>
-          <Grid
-            container
-            columns={12}
-            sx={{
-              direction: 'row',
-            }}
-          >
-            <Grid item xs={11}>
+      <Box sx={{ height: '100%', width: '100%', bgcolor: theme.palette.common.white }}>
+        <DetailedListingCarousel data={carouselData} />
+        <Box
+          sx={{
+            width: '70%',
+            height: 'full',
+            mr: 'auto',
+            ml: 'auto',
+          }}
+        >
+          <Grid container columns={12} sx={{ direction: 'row' }}>
+            <Grid item xs={8}>
+              <Grid
+                container
+                columns={12}
+                sx={{
+                  direction: 'row',
+                }}
+              >
+                <Grid item xs={10}>
+                  <Grid
+                    container
+                    sx={({ spacing }) => ({
+                      directon: 'row',
+                      pt: spacing(2),
+                      pb: spacing(2),
+                      pl: spacing(2),
+                    })}
+                  >
+                    <Box>
+                      {data.type === 'BUY' && <BuyBadge />}
+                      {data.type === 'SELL' && <SellBadge />}
+                    </Box>
+                    <Typography
+                      sx={({ spacing }) => ({
+                        fontWeight: 600,
+                        pl: spacing(2),
+                      })}
+                      variant="h6"
+                    >
+                      {data.name}
+                    </Typography>
+                  </Grid>
+
+                  <Typography
+                    sx={({ spacing }) => ({
+                      fontWeight: 700,
+                      pl: spacing(2),
+                      pb: spacing(2),
+                    })}
+                    variant="h5"
+                  >
+                    S${data.price}
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={2}
+                  sx={({ spacing }) => ({
+                    pt: spacing(2),
+                    pr: spacing(2),
+                  })}
+                >
+                  <Grid container sx={{ direction: 'row' }}>
+                    <Grid item xs={6}>
+                      <IosShareOutlinedIcon sx={{ fontSize: 30 }} />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <BookmarkBorderOutlinedIcon sx={{ fontSize: 30 }} />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Divider variant="middle" />
+
               <Typography
                 sx={({ spacing }) => ({
-                  fontWeight: 600,
+                  pt: spacing(2),
                   pl: spacing(2),
+                  fontWeight: 600,
                 })}
                 variant="h6"
               >
-                {data.name}
+                Description
               </Typography>
+              <Box
+                sx={({ spacing }) => ({
+                  mt: 1,
+                  pl: spacing(2),
+                  display: 'flex',
+                  alignItems: 'center',
+                })}
+              >
+                <Typography variant="body1">{data.description}</Typography>
+              </Box>
               <Typography
                 sx={({ spacing }) => ({
-                  fontWeight: 700,
+                  pt: spacing(2),
                   pl: spacing(2),
+                  fontWeight: 600,
+                })}
+                variant="h6"
+              >
+                Dimensions
+              </Typography>
+              <Box
+                sx={({ spacing }) => ({
+                  pt: spacing(2),
                   pb: spacing(2),
                 })}
-                variant="h5"
               >
-                S${data.price}
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={1}
-              sx={({ spacing }) => ({
-                pt: spacing(2),
-                pr: spacing(2),
-              })}
-            >
-              <Grid container sx={{ direction: 'row' }}>
-                <Grid item xs={7}>
-                  <IosShareOutlinedIcon sx={{ fontSize: 30 }} />
+                <Grid container columns={4}>
+                  {data.parameter.map(({ paramId, value }) => (
+                    // <Grid key={paramId}>
+                    <Box
+                      sx={({ spacing }) => ({
+                        pl: spacing(2),
+                        pr: spacing(2),
+                      })}
+                    >
+                      <Typography sx={{ color: theme.palette.grey[500] }}>
+                        Dimension {paramId}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 500,
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                    </Box>
+                    // </Grid>
+                  ))}
                 </Grid>
-                <Grid item xs={5}>
-                  <BookmarkBorderOutlinedIcon sx={{ fontSize: 30 }} />
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+              </Box>
 
-        <Divider variant="middle" />
+              <Divider variant="middle" />
 
-        <Typography
-          sx={({ spacing }) => ({
-            pt: spacing(2),
-            pl: spacing(2),
-            fontWeight: 600,
-          })}
-          variant="h6"
-        >
-          Description
-        </Typography>
-        <Box
-          sx={({ spacing }) => ({
-            mt: 1,
-            pl: spacing(2),
-            display: 'flex',
-            alignItems: 'center',
-          })}
-        >
-          <Typography variant="body1">{data.description}</Typography>
-        </Box>
-        <Typography
-          sx={({ spacing }) => ({
-            pt: spacing(2),
-            pl: spacing(2),
-            fontWeight: 600,
-          })}
-          variant="h6"
-        >
-          Dimensions
-        </Typography>
-        <Box
-          sx={({ spacing }) => ({
-            pt: spacing(2),
-            pb: spacing(2),
-          })}
-        >
-          <Grid container columns={4}>
-            {data.parameter.map(({ paramId, value }) => (
-              // <Grid key={paramId}>
               <Box
                 sx={({ spacing }) => ({
                   pl: spacing(2),
-                  pr: spacing(2),
+                  pt: spacing(2),
+                  pb: spacing(2),
                 })}
               >
-                <Typography sx={{ color: theme.palette.grey[500] }}>Dimension {paramId}</Typography>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontWeight: 500,
-                  }}
+                <Grid
+                  container
+                  sx={() => ({
+                    direction: 'row',
+                  })}
                 >
-                  {value}
-                </Typography>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Negotiable?</Typography>
+                    <Typography>{data.negotiable.toString()}</Typography>
+                  </Box>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Unit Price?</Typography>
+                    <Typography>{data.unitPrice.toString()}</Typography>
+                  </Box>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Category?</Typography>
+                    <Typography>{data.categoryId}</Typography>
+                  </Box>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted On?</Typography>
+                    <Typography>NIL</Typography>
+                  </Box>
+
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted By?</Typography>
+                    <Typography>{data.owner.name}</Typography>
+                  </Box>
+                  <Box
+                    sx={({ spacing }) => ({
+                      pr: spacing(2),
+                    })}
+                  >
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Company?</Typography>
+                    <Typography>{data.owner.company.name}</Typography>
+                  </Box>
+                </Grid>
               </Box>
-              // </Grid>
-            ))}
-          </Grid>
-        </Box>
-
-        <Divider variant="middle" />
-
-        <Box
-          sx={({ spacing }) => ({
-            pl: spacing(2),
-            pt: spacing(2),
-            pb: spacing(2),
-          })}
-        >
-          <Grid
-            container
-            sx={() => ({
-              direction: 'row',
-            })}
-          >
-            <Box
+            </Grid>
+            <Grid
+              item
+              xs={4}
               sx={({ spacing }) => ({
-                pr: spacing(2),
+                pt: spacing(2),
+                pl: spacing(4),
               })}
             >
-              <Typography sx={{ color: theme.palette.grey[500] }}>Negotiable?</Typography>
-              <Typography>{data.negotiable.toString()}</Typography>
-            </Box>
-            <Box
-              sx={({ spacing }) => ({
-                pr: spacing(2),
-              })}
-            >
-              <Typography sx={{ color: theme.palette.grey[500] }}>Unit Price?</Typography>
-              <Typography>{data.unitPrice.toString()}</Typography>
-            </Box>
-            <Box
-              sx={({ spacing }) => ({
-                pr: spacing(2),
-              })}
-            >
-              <Typography sx={{ color: theme.palette.grey[500] }}>Category?</Typography>
-              <Typography>{data.categoryId}</Typography>
-            </Box>
-            <Box
-              sx={({ spacing }) => ({
-                pr: spacing(2),
-              })}
-            >
-              <Typography sx={{ color: theme.palette.grey[500] }}>Posted On?</Typography>
-              <Typography>NIL</Typography>
-            </Box>
-
-            <Box
-              sx={({ spacing }) => ({
-                pr: spacing(2),
-              })}
-            >
-              <Typography sx={{ color: theme.palette.grey[500] }}>Posted By?</Typography>
-              <Typography>{data.owner.name}</Typography>
-            </Box>
-            <Box
-              sx={({ spacing }) => ({
-                pr: spacing(2),
-              })}
-            >
-              <Typography sx={{ color: theme.palette.grey[500] }}>Company?</Typography>
-              <Typography>{data.owner.company.name}</Typography>
-            </Box>
+              <ChatNow data={data} />
+            </Grid>
           </Grid>
         </Box>
       </Box>
