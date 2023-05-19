@@ -18,31 +18,14 @@ export type ReportResponse = {
   createdAt: Date;
 };
 
-const updateReportSchema = z.object({
+export const updateReportSchema = z.object({
   // validates against ReasonType enum from zod
   reason: z.nativeEnum(ReasonType),
 });
 
-const userIdSchema = z.object({
+export const userIdSchema = z.object({
   id: z.string().uuid(),
 });
-
-// -- Helper functions --
-export function formatGetReportResponse(report: UserReports) {
-  // destructure report
-  const { id, user, reporter, reason, createdAt } = report;
-
-  // construct the result
-  const result: ReportResponse = {
-    id,
-    user,
-    reporter,
-    reason,
-    createdAt,
-  };
-
-  return result;
-}
 
 export default apiHandler()
   .get(
@@ -65,9 +48,7 @@ export default apiHandler()
         },
       });
 
-      res
-        .status(200)
-        .json(formatAPIResponse(reports.map((report) => formatGetReportResponse(report))));
+      res.status(200).json(formatAPIResponse(reports.map((report) => report)));
     }
   )
   .post(async (req, res) => {
