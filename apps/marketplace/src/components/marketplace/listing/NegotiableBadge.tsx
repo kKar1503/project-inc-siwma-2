@@ -5,7 +5,7 @@ const NegotiableBadge = () => (
     sx={{
       color: '#FFFFFF',
       fontWeight: 'bold',
-      mr: 0.5,
+      mr: 1,
     }}
     color="warning"
     label="Negotiable"

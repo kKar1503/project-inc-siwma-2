@@ -6,7 +6,7 @@ const SellBadge = () => (
       backgroundColor: '#F86262',
       color: '#FFFFFF',
       fontWeight: 'bold',
-      mr: 0.5,
+      mr: 1,
     }}
     label="Selling"
   />

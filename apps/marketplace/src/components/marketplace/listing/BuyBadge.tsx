@@ -6,7 +6,7 @@ const BuyBadge = () => (
       backgroundColor: '#34D399',
       color: '#FFFFFF',
       fontWeight: 'bold',
-      mr: 0.5,
+      mr: 1,
     }}
     label="Buying"
   />
