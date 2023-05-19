@@ -4,6 +4,7 @@ import getAPIKey from './apiKey/apiKeys';
 import { BulkEmailRequestBody } from './templates';
 import { BulkEmailResponseBody } from './types/BulkEmailResponseBody';
 import { InvalidApiKeyError, InvalidSenderEmailError, EmailSendError } from '@inc/errors';
+import { SendSmtpEmail } from 'sib-api-v3-sdk';
 
 /* This function sends emails to multiple recipients.
  * It uses SendInBlue's Transactional Email API.
@@ -11,9 +12,9 @@ import { InvalidApiKeyError, InvalidSenderEmailError, EmailSendError } from '@in
  */
 
 export default async function sendEmails(
-  parameters: BulkEmailRequestBody
+  parameters: SendSmtpEmail
 ): Promise<BulkEmailResponseBody> {
-  const data: BulkEmailRequestBody = parameters;
+  const data: SendSmtpEmail = parameters;
 
   let apiKey: string | undefined;
   let senderEmail: string | undefined;
@@ -47,7 +48,7 @@ export default async function sendEmails(
 
   const apiInstance = new sibClient.TransactionalEmailsApi();
 
-  const email = {
+  const email: SendSmtpEmail = {
     sender: {
       email: senderEmail,
       name: 'SIWMA Marketplace',

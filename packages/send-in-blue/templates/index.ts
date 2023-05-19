@@ -1,5 +1,6 @@
 // Emails are structured as HTML
 
+import { SendSmtpEmailTo } from 'sib-api-v3-sdk';
 import invite from './InviteTemplate.html';
 import notification from './NotificationTemplate.html';
 
@@ -30,13 +31,10 @@ export function getContentFor(template: EmailTemplate): string {
 
 // When adding a new template, build on top of this class.
 export abstract class BulkEmailRequestBody {
-  abstract htmlContent: string; // HTML content of the email
-  abstract subject: string; // Subject of the email
-  abstract messageVersions: {
-    to: {
-      email: string; // Email address of the recipient
-      name: string; // Name of the recipient (to be shown in the email's recipient field)
-    }[];
+  abstract htmlContent?: string; // HTML content of the email
+  abstract subject?: string; // Subject of the email
+  abstract messageVersions?: {
+    to: SendSmtpEmailTo[];
     params: {};
   }[];
 }
@@ -45,10 +43,7 @@ export class BulkInviteEmailRequestBody extends BulkEmailRequestBody {
   htmlContent: string; // HTML content of the email
   subject: string; // Subject of the email
   messageVersions: {
-    to: {
-      email: string; // Email address of the recipient
-      name: string; // Name of the recipient (to be shown in the email's recipient field)
-    }[];
+    to: SendSmtpEmailTo[];
     params: {
       name: string; // Name of the recipient (to be shown in the email's content)
       companyName: string; // Name of the user's company
@@ -61,10 +56,7 @@ export class BulkNotificationEmailRequestBody extends BulkEmailRequestBody {
   htmlContent: string; // HTML content of the email
   subject: string; // Subject of the email
   messageVersions: {
-    to: {
-      email: string; // Email address of the recipient
-      name: string; // Name of the recipient (to be shown in the email's recipient field)
-    }[];
+    to: SendSmtpEmailTo[];
     params: {
       name: string; // Name of the recipient (to be shown in the email's content)
       notifications: string; // User's notifications, combined into a single string
