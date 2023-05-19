@@ -20,6 +20,7 @@ const images = z
   )
   .optional();
 const coverImage = z.string().optional();
+const createdAt = z.string();
 
 const company = z.object({
   id: z.string(),
@@ -65,6 +66,7 @@ const listing = z.object({
   owner,
   active,
   parameters: z.array(parameter),
+  createdAt,
 });
 
 // -- Define review schema -- //
