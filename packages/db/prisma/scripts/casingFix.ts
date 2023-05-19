@@ -32,6 +32,7 @@ const SUPPORTED_ENUMS = [
   'ParameterType',
   'UserContacts',
   'ContentType',
+  'ReasonType',
 ];
 
 function isKnexInternalModel(typeName: string) {
