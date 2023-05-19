@@ -7,7 +7,7 @@ const readEvent: EventFile = (io) => ({
   type: 'on',
   callback: ({ room, message }) => {
     logger.info(`Message ${message} read`);
-    io.to(room).emit(EVENTS.CLIENT.READ, { room: room, message: message });
+    io.to(room).emit(EVENTS.SERVER.READ, { room: room, message: message });
   },
 });
 
