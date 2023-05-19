@@ -5,14 +5,13 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import ListingTypeForm, {
   ListingTypeProps,
 } from '@/components/marketplace/createListing/ListingTypeForm';
 import ListingForm from '@/components/marketplace/createListing/ListingForm';
 import ParameterForm, {
-  CategoryParametersProps,
   ParameterFormProps,
-  ParameterProps,
 } from '@/components/marketplace/createListing/ParameterForm';
 import ImageUploadForm, {
   ImageProps,
@@ -110,31 +109,16 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
   }, [category]);
 
   return (
-    <Container>
+    <Container maxWidth="lg" sx={{ boxShadow: 4, padding: 2, marginTop: 2, marginBottom: 2 }}>
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={2} boxShadow={5} display="flex" position="relative">
+        <Grid container spacing={2}>
           <Grid item xs={12} md={12} sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               Create Listing
             </Typography>
-          </Grid>
-          <Grid item xs={10} md={10} justifyContent="flex-start" sx={{ width: '100%' }}>
             <Typography variant="body1">
               Create a buy or a sell listing to be shared on your profile.
             </Typography>
-          </Grid>
-          <Grid item xs={2} md={2} justifyContent="flex-end" sx={{ width: '100%' }}>
-            <Button
-              variant="contained"
-              type="submit"
-              onClick={handleCancel}
-              sx={({ palette }) => ({
-                backgroundColor: palette.error.main,
-              })}
-            >
-              Cancel Listing
-            </Button>
-            <OnLeaveModal open={openCancelModal} setOpen={setOpenCancelModal} />
           </Grid>
           <Grid item xs={12} md={12} sx={{ width: '100%' }}>
             <Divider />
@@ -152,13 +136,23 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
             setDescription={setDescription}
           />
 
-          <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-            {error && (
-              <Typography variant="body1" color="error" sx={{ mb: '1rem' }}>
-                {error}
-              </Typography>
-            )}
-            <Button variant="contained" type="submit" fullWidth sx={{ mt: '1rem' }}>
+          <Grid item xs={6} md={6} sx={{ width: '100%' }}>
+            <Button
+              variant="contained"
+              type="submit"
+              size="large"
+              onClick={handleCancel}
+              sx={({ palette }) => ({
+                backgroundColor: palette.error.main,
+              })}
+              fullWidth
+            >
+              Cancel Listing
+            </Button>
+            <OnLeaveModal open={openCancelModal} setOpen={setOpenCancelModal} />
+          </Grid>
+          <Grid item xs={6} md={6} sx={{ width: '100%' }}>
+            <Button variant="contained" type="submit" size="large" fullWidth>
               CREATE LISTING
             </Button>
           </Grid>

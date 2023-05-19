@@ -25,12 +25,14 @@ export type ParameterFormProps = {
   value: string;
 };
 
+export type dataTypeProps = 'string' | 'number' | 'boolean';
+
 export type ParameterProps = {
   id: string;
   name: string;
   displayName: string;
   type: string;
-  dataType: string;
+  dataType: dataTypeProps;
   options?: string[];
 };
 
