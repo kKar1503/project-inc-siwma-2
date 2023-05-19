@@ -5,7 +5,7 @@ import {bucketStatus} from "../../types";
 import {pruneAndMerge} from "../../utils/DeepPartial";
 import {S3BucketInternal} from "../buckets/s3BucketInternal";
 
-export class S3libInternal {
+export class S3LibInternal {
     protected readonly s3: S3;
     public readonly config: Config
 
