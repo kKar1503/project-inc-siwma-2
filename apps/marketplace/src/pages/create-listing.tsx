@@ -5,7 +5,6 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import ListingTypeForm, {
   ListingTypeProps,
 } from '@/components/marketplace/createListing/ListingTypeForm';
@@ -57,7 +56,6 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
 
   const sortCategoryParameters = async () => {
     const categoryParameters: string[] = [];
@@ -79,7 +77,6 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
     e.preventDefault();
 
     if (!category || !category.id) {
-      setError('Please select a category');
       return;
     }
 

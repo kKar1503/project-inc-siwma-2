@@ -7,7 +7,6 @@ import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
-import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 
 export type ImageProps = {
