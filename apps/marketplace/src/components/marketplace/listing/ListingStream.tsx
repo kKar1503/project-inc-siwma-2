@@ -32,7 +32,7 @@ const ListingStream: React.FC<Props> = ({ listingItemsData }) => {
           {listingItemsData.map((item) => {
             return (
               <Box sx={{ width: '288px', margin: '0 24px' }}>
-                <ProductListingItem {...item} />
+                <ProductListingItem data={item} />
               </Box>
             );
           })}

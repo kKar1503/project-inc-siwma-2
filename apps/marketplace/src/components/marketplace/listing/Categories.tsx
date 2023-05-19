@@ -18,7 +18,7 @@ const CategoryCard: React.FC<Category> = ({ name, src, href }) => (
     <CardActionArea href={href}>
       <CardMedia sx={{ height: 140 }} image={src} title={name} />
       <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography sx={{padding: '0'}} gutterBottom variant="h6" component="div">
           {name}
         </Typography>
       </CardContent>
