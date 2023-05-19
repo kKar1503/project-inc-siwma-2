@@ -1,24 +1,27 @@
 import { ReactNode, Children, useEffect, useRef } from 'react';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import { generateString } from '@inc/utils';
+import { SxProps, Theme } from '@mui/material';
 
 interface InfiniteScrollProps {
-  // FIXME: i have no clue what i am doing
   children: ReactNode[];
+  inverse?: boolean;
   onLoadMore: () => void;
   loading: boolean;
   reachedMaxItems: boolean;
-  sx?: string;
-  wrapperSx?: string;
+  sx?: SxProps<Theme>;
+  wrapperSx?: SxProps<Theme>;
 }
 
 const InfiniteScroll = ({
   children,
+  inverse = false,
   onLoadMore,
   loading,
   reachedMaxItems,
-  sx = '',
-  wrapperSx = '',
+  sx = {},
+  wrapperSx = {},
 }: InfiniteScrollProps) => {
   const lastItemRef = useRef<Element>(null);
   const observerRef = useRef<IntersectionObserver>(null);
@@ -43,6 +46,7 @@ const InfiniteScroll = ({
 
     return () => {
       if (lastItem) {
+        lastItem.scrollTo(0, lastItem.scrollHeight);
         observerRef.current.unobserve(lastItem);
       }
     };
@@ -50,27 +54,26 @@ const InfiniteScroll = ({
 
   return (
     <>
-      <Box sx={{ sx }}>
+      <Box sx={sx}>
         {children !== null &&
           children !== undefined &&
           Children.map(children, (child, index) => {
             if (index === children.length - 1) {
               return (
-                <Box key={generateString(4)} sx={{ wrapperSx }} ref={lastItemRef}>
-                  sx.
+                <Box key={generateString(4)} sx={wrapperSx} ref={lastItemRef}>
                   {child}
                 </Box>
               );
             }
             return (
-              <Box key={generateString(4)} sx={{ wrapperSx }}>
+              <Box key={generateString(4)} sx={wrapperSx}>
                 {child}
               </Box>
             );
           })}
       </Box>
 
-      {loading && <Box className="text-center my-5">Loading more items...</Box>}
+      {loading && <CircularProgress />}
       {reachedMaxItems && (
         <Box className="text-center my-5">You&apos;ve reached the end of the universe!</Box>
       )}
