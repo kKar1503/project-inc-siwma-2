@@ -27,7 +27,8 @@ const bulkInviteSchema = z.array(
 );
 
 export default apiHandler({
-  allowAdminsOnly: true,
+  // allowAdminsOnly: true,
+  allowNonAuthenticated: true,
 }).post(async (req, res) => {
   // https://docs.google.com/document/d/1CtwAkM3uPCvJXwlQOZwavxbMG-sa8FkMa3r0ZbnHUlo/edit#heading=h.rq1g0ltfj4ji
 
@@ -38,9 +39,7 @@ export default apiHandler({
    * On the frontend, you may assume that all invites that aren't returned in the failed array were created successfully.
    */
 
-  const { emails } = req.body;
-
-  const parsedInvites = bulkInviteSchema.parse(emails);
+  const parsedInvites = bulkInviteSchema.parse(req.body);
 
   const errors: Error[] = [];
 
@@ -63,12 +62,11 @@ export default apiHandler({
     where: {
       OR: parsedInvites.map((invite) => ({
         email: invite.email,
-        mobileNumber: invite.mobileNumber,
+        phone: invite.mobileNumber,
       })),
     },
   });
 
-  // Filter out existing users
   const duplicateInvites = parsedInvites.filter((invite) =>
     existingUsers.find((user) => user.email === invite.email || user.phone === invite.mobileNumber)
   );
@@ -80,6 +78,22 @@ export default apiHandler({
     );
   });
 
+  // Find invites that have the same email or phone number as another invite
+  parsedInvites.forEach((invite) => {
+    const duplicate = parsedInvites.find(
+      (otherInvite) =>
+        otherInvite.email === invite.email || otherInvite.mobileNumber === invite.mobileNumber
+    );
+
+    if (duplicate && duplicate !== invite) {
+      // If the duplicate invite is not the same invite, remove it from the array and add the error to the errors array
+      parsedInvites.splice(parsedInvites.indexOf(duplicate), 1);
+      errors.push(
+        new DuplicateError(`invite with email ${invite.email} or phone ${invite.mobileNumber}`)
+      );
+    }
+  });
+
   const newUsers = parsedInvites.filter(
     (invite) =>
       !existingUsers.find(
@@ -89,30 +103,26 @@ export default apiHandler({
 
   const successfullyCreatedInvites: { name: string; email: string; company: string }[] = [];
 
-  // Create invites for new users
-  newUsers.forEach(async (invite) => {
+  const createInvites = async (invite: {
+    email: string;
+    name: string;
+    company: string;
+    mobileNumber: string;
+  }) => {
     const { email, name, company, mobileNumber } = invite;
     try {
-      // Company represents the company name, get the id from the db
       const companyObj = await client.companies.findFirst({
         where: {
           name: company,
         },
       });
-
       if (!companyObj) {
         errors.push(new NotFoundError(`company named ${company}`));
-        return; // Return in a forEach loop is like continue in a for loop 🤷
+        return;
       }
-
-      // Create token: user's name, email, the current date, and a random string
       const tokenString = `${name}${email}${new Date().toISOString()}${Math.random()}`;
-
-      // Use bcrypt to hash the token
       const salt = await bcrypt.genSalt(10);
       const tokenHash = await bcrypt.hash(tokenString, salt);
-
-      // Create invite
       await client.invite.create({
         data: {
           email,
@@ -123,7 +133,6 @@ export default apiHandler({
           expiry: new Date(),
         },
       });
-
       successfullyCreatedInvites.push({
         name,
         email,
@@ -136,62 +145,66 @@ export default apiHandler({
         errors.push(new UnknownError());
       }
     }
-  });
-
-  // Send emails to new users
-
-  // 1. Get the invite email template
-  let content: string;
-
-  try {
-    content = getContentFor(EmailTemplate.INVITE);
-  } catch (e) {
-    // This should never happen, but if it does, we should delete the created invites
-
-    await client.invite.deleteMany({
-      where: {
-        email: {
-          in: newUsers.map((invite) => invite.email),
-        },
-      },
-    });
-
-    throw new EmailTemplateNotFoundError();
-  }
-
-  // 2. Format the content
-  const emailBody: BulkInviteEmailRequestBody = {
-    htmlContent: content,
-    subject: 'You have been invited to join the SIWMA Marketplace',
-    messageVersions: successfullyCreatedInvites.map((invite) => ({
-      to: [
-        {
-          email: invite.email,
-          name: invite.name,
-        },
-      ],
-      params: {
-        name: invite.name,
-        companyName: invite.company,
-        registrationUrl: 'https://siwmae.com/register',
-      },
-    })),
   };
 
-  // 3. Send the email
-  const emailResponse = await sendEmails(emailBody);
+  const invitePromises = newUsers.map((invite) => createInvites(invite));
+  await Promise.all(invitePromises);
 
-  if (!emailResponse.success) {
-    // Since the email failed to send, we should delete the invites that were created
-    successfullyCreatedInvites.forEach(async (invite) => {
-      await client.invite.delete({
+  // Send emails to new users, if any
+  if (successfullyCreatedInvites.length > 0) {
+    // 1. Get the invite email template
+    let content: string;
+
+    try {
+      content = getContentFor(EmailTemplate.INVITE);
+    } catch (e) {
+      // This should never happen, but if it does, we should delete the created invites
+
+      await client.invite.deleteMany({
         where: {
-          email: invite.email,
+          email: {
+            in: newUsers.map((invite) => invite.email),
+          },
         },
       });
-    });
 
-    throw emailResponse.error ?? new EmailSendError();
+      throw new EmailTemplateNotFoundError();
+    }
+
+    // 2. Format the content
+    const emailBody: BulkInviteEmailRequestBody = {
+      htmlContent: content,
+      subject: 'You have been invited to join the SIWMA Marketplace',
+      messageVersions: successfullyCreatedInvites.map((invite) => ({
+        to: [
+          {
+            email: invite.email,
+            name: invite.name,
+          },
+        ],
+        params: {
+          name: invite.name,
+          companyName: invite.company,
+          registrationUrl: 'https://siwmae.com/register',
+        },
+      })),
+    };
+
+    // 3. Send the email
+    const emailResponse = await sendEmails(emailBody);
+
+    if (!emailResponse.success) {
+      // Since the email failed to send, we should delete the invites that were created
+      successfullyCreatedInvites.forEach(async (invite) => {
+        await client.invite.delete({
+          where: {
+            email: invite.email,
+          },
+        });
+      });
+
+      throw emailResponse.error ?? new EmailSendError();
+    }
   }
 
   if (errors.length === 0) {
