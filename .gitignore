@@ -7,8 +7,8 @@ dist
 packages/db/prisma/scripts/casingFix.js
 tmp/**/*
 packages/events/index.js
+packages/events/index.js.map
 packages/events/index.d.ts
-packages/errors/index.js
 
 #macOS
 .DS_Store

@@ -3,6 +3,7 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "esModuleInterop": true,
+    "emitDeclarationOnly": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "module": "CommonJS",

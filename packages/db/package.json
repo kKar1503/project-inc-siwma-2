@@ -1,10 +1,10 @@
 {
   "name": "@inc/db",
   "version": "0.0.0",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "pnpx rimraf dist && tsc",
+    "build": "npx rimraf dist && tsc && node esbuild.config.js",
     "prisma:generate": "prisma generate",
     "prisma:patchCasing": "node ./prisma/scripts/casingFix.js && prisma format && prisma generate",
     "prisma:compile": "tsc --project tsconfig.compile.json",

@@ -13,7 +13,7 @@ COPY static ./static
 COPY .npmrc nx.json package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Installing Dependencies
-RUN npm install -g pnpm
+RUN npm install -g pnpm rimraf
 RUN pnpm install --frozen-lockfile
 
 # Building SocketIO server

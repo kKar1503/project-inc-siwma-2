@@ -15,7 +15,7 @@
     "build:errors": "nx run @inc/errors:build",
     "build:send-in-blue": "nx run @inc/send-in-blue:build",
     "ci": "pnpm install --frozen-lockfile",
-    "clean": "pnpx rimraf --glob */**/node_modules && pnpx rimraf node_modules",
+    "clean": "npx rimraf --glob */**/node_modules && npx rimraf node_modules",
     "lint": "nx run-many -t lint",
     "postinstall": "pnpm --filter db prisma:generate && echo Please restart your VSCode to make your Prisma Client work.",
     "prisma:fix": "nx run @inc/db:prisma:compile && nx run @inc/db:prisma:patchCasing"
@@ -23,6 +23,8 @@
   "author": "Kar",
   "devDependencies": {
     "@types/node": "20.1.4",
+    "esbuild": "0.17.19",
+    "esbuild-node-externals": "1.7.0",
     "eslint": "8.36.0",
     "nx": "16.1.4",
     "nx-cloud": "16.0.5",

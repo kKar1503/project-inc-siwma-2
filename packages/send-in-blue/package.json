@@ -2,9 +2,9 @@
   "name": "@inc/send-in-blue",
   "version": "0.0.0",
   "main": "dist/index.js",
-  "types": "dist/index.d.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "pnpx rimraf dist && tsc"
+    "build": "npx rimraf dist && tsc && node esbuild.config.js"
   },
   "dependencies": {
     "@inc/db": "workspace:*",

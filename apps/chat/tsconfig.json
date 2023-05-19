@@ -6,7 +6,8 @@
         "declaration": true,
         "module": "CommonJS",
         "target": "ESNext",
-        "outDir": "./dist"
+        "emitDeclarationOnly": true,
+        "outFile": "./dist/index.d.ts",
     },
     "include": [
         "."
@@ -14,6 +15,7 @@
     "exclude": [
         "dist",
         "node_modules",
-        "**/*.spec.ts"
+        "**/*.spec.ts",
+        "esbuild.config.js"
     ]
 }
