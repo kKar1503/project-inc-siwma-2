@@ -100,7 +100,7 @@ export default apiHandler({
       )
   );
 
-  const successfullyCreatedInvites: { name: string; email: string; company: string }[] = [];
+  const successfullyCreatedInvites: { name: string; email: string; company: string, tokenHash: string }[] = [];
 
   const createInvites = async (invite: {
     email: string;
@@ -141,6 +141,7 @@ export default apiHandler({
           name,
           email,
           company,
+          tokenHash
         });
       });
     } catch (e) {
@@ -191,7 +192,7 @@ export default apiHandler({
         params: {
           name: invite.name,
           companyName: invite.company,
-          registrationUrl: 'https://siwmae.com/register',
+          registrationUrl: `${process.env.FRONTEND_URL}/register?token=${invite.tokenHash}`,
         },
       })),
     };
