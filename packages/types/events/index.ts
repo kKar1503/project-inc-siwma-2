@@ -13,6 +13,11 @@ type RoomMessage = {
   time: Date;
 };
 
+type StartType = {
+  sender: string, 
+  room: string
+}
+
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
   // Connections
@@ -23,16 +28,14 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
-  startType: { 
-    sender: string, 
-    room: string
-  };
+  clientStartType: StartType;
 
   // Server Events
   rooms: Record<string, Room>;
   joinedRoom: Room;
   roomMessage: RoomMessage;
   serverPing: string;
+  serverStartType: StartType;
 };
 
 type Event = keyof EventParams;

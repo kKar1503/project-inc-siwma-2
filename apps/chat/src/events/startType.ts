@@ -7,7 +7,7 @@ const startType: EventFile = (io) => ({
   type: 'on',
   callback: ({ sender, room }) => {
     logger.info(`User ${sender} starts typing`);
-    io.to(room).emit(EVENTS.CLIENT.START_TYPE, { sender: sender, room: room})
+    io.to(room).emit(EVENTS.SERVER.START_TYPE, { sender: sender, room: room})
   },
 });
 
