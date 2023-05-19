@@ -2,12 +2,12 @@ import { Chip } from '@mui/material';
 
 const SellBadge = () => (
   <Chip
-    sx={{
-      backgroundColor: '#F86262',
-      color: '#FFFFFF',
+    sx={({ spacing, palette }) => ({
+      mr: spacing(1),
+      bgcolor: palette.error[500],
       fontWeight: 'bold',
-      mr: 1,
-    }}
+      color: palette.common.white,
+    })}
     label="Selling"
   />
 );
