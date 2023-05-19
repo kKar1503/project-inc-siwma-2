@@ -66,8 +66,28 @@ export default apiHandler({
     },
   });
 
+  // Find users that have the same email or phone number as another user
+  const existingInvites = await client.invite.findMany({
+    where: {
+      OR: parsedInvites.map((invite) => ({
+        email: invite.email,
+        phone: invite.mobileNumber,
+      })),
+    },
+  });
+
   const duplicateInvites = parsedInvites.filter((invite) =>
     existingUsers.find((user) => user.email === invite.email || user.phone === invite.mobileNumber)
+  );
+
+  // Find invites that have the same email or phone number as an existing invite
+  duplicateInvites.push(
+    ...parsedInvites.filter((invite) =>
+      existingInvites.find(
+        (existingInvite) =>
+          existingInvite.email === invite.email || existingInvite.phone === invite.mobileNumber
+      )
+    )
   );
 
   // Filter out existing users and add them to the errors array
