@@ -1,10 +1,15 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import PrismaClient, { UserReports } from '@inc/db';
+import PrismaClient, { ReasonType, UserReports } from '@inc/db';
+import { NotFoundError } from '@inc/errors';
 
 // -- Type Definitions --
 // Define the type of the response object
+export type PostReportResponse = {
+  reportId: string;
+};
+
 export type ReportResponse = {
   id: number;
   user: string;
@@ -13,8 +18,13 @@ export type ReportResponse = {
   createdAt: Date;
 };
 
+const updateReportSchema = z.object({
+  // validates against ReasonType enum from zod
+  reason: z.nativeEnum(ReasonType),
+});
+
 const userIdSchema = z.object({
-  id: z.string(),
+  id: z.string().uuid(),
 });
 
 // -- Helper functions --
@@ -65,6 +75,31 @@ export default apiHandler()
     // success 201 response returns reportId
     // endpoint refers to reportee's id and reporter's id grab from auth cookie
     // request body "reason" : "string reason for report"
+
+    const { id: reporteeId } = userIdSchema.parse(req.query);
+    const reporterId = req.token?.user.id;
+    const { reason } = updateReportSchema.parse(req.body);
+
+    // check if reporteeId matches uuid type
+    const reportee = await PrismaClient.users.findUnique({
+      where: {
+        id: reporteeId,
+      },
+    });
+
+    if (!reportee) {
+      throw new NotFoundError('User');
+    }
+
+    const postReport = await PrismaClient.userReports.create({
+      data: {
+        user: reporteeId,
+        reporter: reporterId,
+        reason,
+      },
+    });
+
+    res.status(201).json(formatAPIResponse({ reportId: postReport.id }));
   });
 
 // get call returns all reports from user with specific id, if no reports are found, returns empty array
