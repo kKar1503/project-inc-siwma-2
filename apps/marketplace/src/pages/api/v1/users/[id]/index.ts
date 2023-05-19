@@ -17,6 +17,8 @@ const updateUserDetailsSchema = z.object({
   company: z.string().optional(),
   profilePicture: z.string().optional(),
   mobileNumber: z.string().optional(),
+  whatsappNumber: z.string().optional(),
+  telegramUsername: z.string().optional(),
   contactMethod: z.nativeEnum(UserContacts).optional(),
   bio: z.string().optional(),
   password: z.string().optional(),
@@ -44,6 +46,8 @@ export default apiHandler()
         comments: isAdmin, // Only admins can see comments
         phone: true,
         contact: true,
+        whatsappNumber: true,
+        telegramUsername: true,
         bio: true,
       },
     });
@@ -62,6 +66,8 @@ export default apiHandler()
       profilePic: user.profilePicture,
       mobileNumber: user.phone,
       contactMethod: user.contact,
+      whatsappNumber: user.whatsappNumber,
+      telegramUsername: user.telegramUsername,
       bio: user.bio,
       ...(isAdmin && { comments: user.comments }),
     };
@@ -73,7 +79,7 @@ export default apiHandler()
 
     const { id } = userIdSchema.parse(req.query);
     const parsedBody = updateUserDetailsSchema.parse(req.body);
-    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio, userComments } =
+    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio, userComments,whatsappNumber,telegramUsername } =
       parsedBody;
     let { password } = parsedBody;
 
@@ -92,6 +98,11 @@ export default apiHandler()
       const salt = await bcrypt.genSalt(10);
       password = await bcrypt.hash(password, salt);
     }
+
+    if (whatsappNumber) {
+      validatePhone(whatsappNumber);
+    }
+
 
     // Users can edit their own details, and admins can edit anyone's details
     // Therefore, we cannot simply block the entire endpoint for non-admin users
@@ -142,6 +153,8 @@ export default apiHandler()
         profilePicture,
         phone: mobileNumber,
         contact: contactMethod,
+        whatsappNumber,
+        telegramUsername,
         bio,
         comments: userComments,
       },
@@ -156,6 +169,8 @@ export default apiHandler()
       enabled: user.enabled,
       profilePic: user.profilePicture,
       mobileNumber: user.phone,
+      whatsappNumber: user.whatsappNumber,
+      telegramUsername: user.telegramUsername,
       contactMethod: user.contact,
       bio: user.bio,
       ...(isAdmin && { comments: user.comments }),
