@@ -2,7 +2,7 @@ import {CreateBucketCommand, DeleteBucketCommand, HeadBucketCommand, ListBuckets
 import {Config, UserConfig} from "../../interfaces/config";
 import {defaultConfig} from "../../utils";
 import {bucketStatus} from "../../types";
-import {pruneAndMerge} from "../../utils/DeepPartial";
+import {pruneAndMerge} from "../../utils/deepPartial";
 import {S3BucketInternal} from "../buckets/s3BucketInternal";
 
 export class S3LibInternal {

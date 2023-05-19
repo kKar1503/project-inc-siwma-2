@@ -1,5 +1,5 @@
 import {Regions} from "../types";
-import {DeepPartial} from "../utils/DeepPartial";
+import {DeepPartial} from "../utils/deepPartial";
 import {IHashFunction} from "./IHashFunction";
 
 /**
