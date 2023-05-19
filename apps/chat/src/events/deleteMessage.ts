@@ -10,7 +10,7 @@ async function deleteMessageFromDatabase(room: string, message: string): Promise
 const deleteMessageEvent: EventFile = (io) => ({
     eventName: EVENTS.CLIENT.DELETE_MESSAGE,
     type: 'on',
-    callback: async ({ room, message }) => {
+    callback: async ({ }) => {
         console.log('deleteMessageEvent');
         // try {
         //     await deleteMessageFromDatabase(room, message);

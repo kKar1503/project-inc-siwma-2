@@ -1,1 +1,1 @@
-export { default as deleteMessage } from './deleteMesssage';
+export { default as deleteMessage } from './deleteMessage';
