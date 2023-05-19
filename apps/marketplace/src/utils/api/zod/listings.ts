@@ -35,7 +35,7 @@ const owner = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string(),
-  company: company,
+  company,
   profilePic: z.string().optional(),
   mobileNumber: z.string(),
   contactMethod: z.string(),
