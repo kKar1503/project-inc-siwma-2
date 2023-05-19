@@ -158,10 +158,16 @@ const CreateListingPage = ({
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [open, setOpen] = useState<boolean>(false);
+  const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!category || !category.id) {
+      setError('Please select a category');
+      return;
+    }
 
     const formData: CreateListingProps = {
       name: title,
@@ -169,7 +175,7 @@ const CreateListingPage = ({
       price,
       unitPrice,
       negotiable,
-      categoryId: category?.id || '',
+      categoryId: category.id,
       listingType,
       images,
       coverImage: null,
@@ -183,22 +189,13 @@ const CreateListingPage = ({
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setOpen(true);
+    setOpenCancelModal(true);
   };
 
   return (
     <Container>
       <form onSubmit={handleSubmit}>
-        <Grid
-          container
-          spacing={2}
-          boxShadow={5}
-          alignContent="center"
-          display="flex"
-          position="relative"
-          padding="1rem"
-          margin="1rem"
-        >
+        <Grid container spacing={4} boxShadow={5} display="flex" position="relative">
           <Grid item xs={12} md={12} sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               Create Listing
@@ -220,7 +217,7 @@ const CreateListingPage = ({
             >
               Cancel Listing
             </Button>
-            <OnLeaveModal open={open} setOpen={setOpen} />
+            <OnLeaveModal open={openCancelModal} setOpen={setOpenCancelModal} />
           </Grid>
           <Grid item xs={12} md={12} sx={{ width: '100%' }}>
             <Divider />
@@ -239,6 +236,11 @@ const CreateListingPage = ({
           />
 
           <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+            {error && (
+              <Typography variant="body1" color="error" sx={{ mb: '1rem' }}>
+                {error}
+              </Typography>
+            )}
             <Button variant="contained" type="submit" fullWidth sx={{ mt: '1rem' }}>
               CREATE LISTING
             </Button>
