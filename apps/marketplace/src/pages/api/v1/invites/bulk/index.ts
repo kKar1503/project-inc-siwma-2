@@ -109,33 +109,39 @@ export default apiHandler({
     mobileNumber?: string;
   }) => {
     const { email, name, company, mobileNumber } = invite;
+    
     try {
-      const companyObj = await client.companies.findFirst({
-        where: {
-          name: company,
-        },
-      });
-      if (!companyObj) {
-        errors.push(new NotFoundError(`company named ${company}`));
-        return;
-      }
-      const tokenString = `${name}${email}${new Date().toISOString()}${Math.random()}`;
-      const salt = await bcrypt.genSalt(10);
-      const tokenHash = await bcrypt.hash(tokenString, salt);
-      await client.invite.create({
-        data: {
-          email,
+      await client.$transaction(async (prisma) => {
+        const companyObj = await prisma.companies.findFirst({
+          where: {
+            name: company,
+          },
+        });
+    
+        if (!companyObj) {
+          throw new NotFoundError(`Company named ${company} not found`);
+        }
+    
+        const tokenString = `${name}${email}${new Date().toISOString()}${Math.random()}`;
+        const salt = await bcrypt.genSalt(10);
+        const tokenHash = await bcrypt.hash(tokenString, salt);
+    
+        await prisma.invite.create({
+          data: {
+            email,
+            name,
+            companyId: companyObj.id,
+            phone: mobileNumber,
+            token: tokenHash,
+            expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+          },
+        });
+    
+        successfullyCreatedInvites.push({
           name,
-          companyId: companyObj.id,
-          phone: mobileNumber,
-          token: tokenHash,
-          expiry: new Date(),
-        },
-      });
-      successfullyCreatedInvites.push({
-        name,
-        email,
-        company,
+          email,
+          company,
+        });
       });
     } catch (e) {
       if (e instanceof Error) {
@@ -145,9 +151,10 @@ export default apiHandler({
       }
     }
   };
-
+  
   const invitePromises = newUsers.map((invite) => createInvites(invite));
   await Promise.all(invitePromises);
+  
 
   // Send emails to new users, if any
   if (successfullyCreatedInvites.length > 0) {
