@@ -3,7 +3,7 @@ declare namespace SibApiV3Sdk {
 
 	class TransactionalEmailsApi {
 		constructor(apiClient?: IApiClient)
-		sendTransacEmail(email: SendSmtpEmail): Promise<CreateSmtpEmail>
+		sendTransacEmail<T extends Record<string, string>>(email: SendSmtpEmail<T>): Promise<CreateSmtpEmail>
 	}
 
 	export interface CreateSmtpEmail {
@@ -11,7 +11,7 @@ declare namespace SibApiV3Sdk {
 		messageIds?: string[],
 	}
 
-	export interface SendSmtpEmail {
+	export interface SendSmtpEmail<T extends Record<string, string> = {}> {
 		sender?: SendSmtpEmailSender,
 		to?: SendSmtpEmailTo[],
 		bcc?: SendSmtpEmailBcc[],
@@ -23,7 +23,7 @@ declare namespace SibApiV3Sdk {
 		attachment?:SendSmtpEmailAttachment[],
 		headers?: Record<string, string>,
 		templateId?: number,
-		params?: Record<string, string>,
+		params?: T,
 		messageVersions?: SendSmtpEmailMessageVersions[],
 		tags?: string[],
 		scheduledAt?: Date,
