@@ -1,144 +1,67 @@
-import {Regions} from "../types";
-import {DeepPartial} from "../utils/deepPartial";
-import {IHashFunction} from "./IHashFunction";
+import { Regions } from '../types';
+import { DeepPartial } from '../utils/deepPartial';
+import { IHashFunction } from './IHashFunction';
 
 /**
- * The keys for the aws account
+ * The keys for the AWS account and settings for multipart upload, signed urls
  */
 export interface AccessKey {
-    id: string,
-    secret: string,
+  id: string,
+  secret: string,
 }
 
-/**
- * The settings for multipart upload
- */
 export interface MultiPartUploadConfig {
-
-    /**
-     * The maximum size of each part in bytes
-     */
-    maxPartSize: number,
-
-    /**
-     * The threshold for multipart upload to be used instead of the regular upload
-     */
-    enabledThreshold: number,
+  maxPartSize: number,
+  enabledThreshold: number,
 }
-
-/**
- * The settings for signed urls
- */
 
 export interface SignedUrlConfig {
-
-    /**
-     * The expiration time of the signed url in seconds
-     */
-    expiration: number,
+  expiration: number,
 }
 
 /**
- * The required configuration for the s3 library
+ * The required and optional configurations for the S3 library
  */
-export interface RequiredConfig {
-    /**
-     * The region of the aws to fetch the bucket from
-     * @see {@link Regions}
-     */
-    region: Regions,
+export interface AuthConfig {
+  region: Regions,
+  accessKey: AccessKey,
 }
 
-/**
- * The required configuration for the s3 library
- */
-export interface CredentialsConfig {
-
-    /**
-     * The access key and secret access key of the aws account
-     */
-    accessKey: AccessKey,
-}
-
-/**
- * The required configuration for the s3 library
- * @note This configuration only affects new uploads, not existing ones
- */
 export interface HashFunctionConfig {
-    /**
-     * The hash function to use
-     * @note This would only affect new uploads, not existing ones
-     */
-    function: IHashFunction,
-
-    /**
-     * If the hash function requires a buffer
-     * @note this should slightly speed up the hashing process
-     */
-    requireBuffer: boolean,
-
-    /**
-     * If the hash function requires the metadata
-     * @note this should slightly speed up the hashing process
-     */
-    requireMetadata: boolean,
+  function: IHashFunction,
+  requireBuffer: boolean,
+  requireMetadata: boolean,
 }
 
-/**
- * The required configuration for the s3 library
- * @note This configuration only affects new uploads, not existing ones
- */
 export interface ObjectCreationConfig {
+  appendFileTypeToKey: boolean,
+  multiPartUpload: MultiPartUploadConfig,
 
-    /**
-     * Whether to append the file type to the key
-     * e.g. if the key is "test" and the file type is "png", the key will be "test.png"
-     * The reason why you might want this is that it allows you to set the content type of the file in AWS directly without having to look at the metadata
-     * @note This would only affect new uploads, not existing ones
-     */
-    appendFileTypeToKey: boolean,
-
-    /**
-     * The hash function to use
-     * @note This would only affect new uploads, not existing ones
-     */
-    hash: HashFunctionConfig,
-
-
-    /**
-     * The settings for multipart upload
-     */
-    multiPartUpload: MultiPartUploadConfig
+  hash: HashFunctionConfig,
 }
 
-/**
- * The optional configuration for the s3 library
- */
+export interface PartialObjectCreationConfig {
+  appendFileTypeToKey: boolean,
+  multiPartUpload: MultiPartUploadConfig,
+}
 export interface OptionalConfig {
-
-    /**
-     * The settings for signed urls
-     */
-    signedUrl: SignedUrlConfig
-
-    /**
-     * Whether to append the file type to the key
-     * e.g. if the key is "test" and the file type is "png", the key will be "test.png"
-     * The reason why you might want this is that it allows you to set the content type of the file in AWS directly without having to look at the metadata
-     * @note This would only affect new uploads, not existing ones
-     */
-    objectCreation: ObjectCreationConfig,
+  signedUrl: SignedUrlConfig,
+  objectCreation: PartialObjectCreationConfig,
 }
 
 /**
- * The configuration for the s3 library
+ * The configuration for the S3 library
  */
-export interface Config extends RequiredConfig, OptionalConfig {
+export interface Config extends AuthConfig {
+  signedUrl: SignedUrlConfig,
+  objectCreation: ObjectCreationConfig
 }
 
-/**
- * The configuration for the s3 library
- */
-export interface UserConfig extends RequiredConfig, CredentialsConfig, DeepPartial<OptionalConfig> {
+export interface RequiredConfig extends DeepPartial<OptionalConfig> {
+  objectCreation: DeepPartial<PartialObjectCreationConfig> & {
+    hash: HashFunctionConfig,
+  };
 }
 
+export interface UserConfig extends AuthConfig, RequiredConfig {
+}

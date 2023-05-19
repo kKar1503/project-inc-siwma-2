@@ -1,5 +1,4 @@
 import {OptionalConfig} from "../interfaces/config";
-import {defaultHashFallback} from "./defaultHashFallback";
 export const defaultConfig: OptionalConfig = {
 
     signedUrl: {
@@ -12,10 +11,5 @@ export const defaultConfig: OptionalConfig = {
             enabledThreshold: 100 * 1024 * 1024,
         },
         appendFileTypeToKey: true,
-        hash: {
-            function :defaultHashFallback,
-            requireBuffer: false,
-            requireMetadata: false,
-        }
     }
 }
