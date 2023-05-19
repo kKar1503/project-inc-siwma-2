@@ -1,6 +1,6 @@
 // Emails are structured as HTML
 
-import { SendSmtpEmailTo } from 'sib-api-v3-sdk';
+import { SendSmtpEmailTo, SendSmtpEmail } from 'sib-api-v3-sdk';
 import invite from './InviteTemplate.html';
 import notification from './NotificationTemplate.html';
 
@@ -23,28 +23,18 @@ export function getContentFor(template: EmailTemplate): string {
   }
 }
 
-/* SendInBlue requires messageVersions to be an array.
- * But if you do this, every user specified in the messageVersions array will receive the same email.
- * So we just create as many messageVersions as there are users.
- * Each messageVersion is a different email that will be sent to a different user.
- */
+type BulkInviteRequestParams = {
+  name: string; // Name of the recipient (to be shown in the email's content)
+  companyName: string; // Name of the user's company
+  registrationUrl: string; // URL for the recipient to finish registration
+};
 
-// When adding a new template, build on top of this class.
-export abstract class BulkEmailRequestBody {
-  abstract htmlContent?: string; // HTML content of the email
-  abstract subject?: string; // Subject of the email
-  abstract messageVersions?: {
-    to: SendSmtpEmailTo[];
-    params: {};
-  }[];
-}
-
-export class BulkInviteEmailRequestBody extends BulkEmailRequestBody {
+export class BulkInviteEmailRequestBody implements SendSmtpEmail<BulkInviteRequestParams> {
   htmlContent: string; // HTML content of the email
   subject: string; // Subject of the email
   messageVersions: {
     to: SendSmtpEmailTo[];
-    params: {
+    params?: {
       name: string; // Name of the recipient (to be shown in the email's content)
       companyName: string; // Name of the user's company
       registrationUrl: string; // URL for the recipient to finish registration
@@ -52,7 +42,15 @@ export class BulkInviteEmailRequestBody extends BulkEmailRequestBody {
   }[];
 }
 
-export class BulkNotificationEmailRequestBody extends BulkEmailRequestBody {
+type BulkNotificationRequestParams = {
+  name: string; // Name of the recipient (to be shown in the email's content)
+  notifications: string; // User's notifications, combined into a single string
+  notificationSettingsUrl: string; // URL for the recipient to adjust their notification settings
+};
+
+export class BulkNotificationEmailRequestBody
+  implements SendSmtpEmail<BulkNotificationRequestParams>
+{
   htmlContent: string; // HTML content of the email
   subject: string; // Subject of the email
   messageVersions: {

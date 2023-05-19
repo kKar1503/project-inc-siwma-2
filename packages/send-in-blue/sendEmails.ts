@@ -1,7 +1,6 @@
 import client from '@inc/db';
 import sibClient, { changeAPIKey } from './sib';
 import getAPIKey from './apiKey/apiKeys';
-import { BulkEmailRequestBody } from './templates';
 import { BulkEmailResponseBody } from './types/BulkEmailResponseBody';
 import { InvalidApiKeyError, InvalidSenderEmailError, EmailSendError } from '@inc/errors';
 import { SendSmtpEmail } from 'sib-api-v3-sdk';
@@ -11,8 +10,8 @@ import { SendSmtpEmail } from 'sib-api-v3-sdk';
  * You should use this function to send emails to multiple users at once instead of using a single email function multiple times.
  */
 
-export default async function sendEmails(
-  parameters: SendSmtpEmail
+export default async function sendEmails<T extends Record<string, string>>(
+  parameters: SendSmtpEmail<T>
 ): Promise<BulkEmailResponseBody> {
   const data: SendSmtpEmail = parameters;
 
