@@ -16,8 +16,8 @@ export const defaultConfig: OptionalConfig = {
         appendFileTypeToKey: true,
         hash: {
             function :defaultHashFallback,
-            requireBuffer: true,
-            requireMetadata: true,
+            requireBuffer: false,
+            requireMetadata: false,
         }
     }
 }
