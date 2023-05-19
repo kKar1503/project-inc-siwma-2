@@ -5,6 +5,7 @@ import { EVENTS } from '@inc/events';
 
 async function deleteMessageFromDatabase(room: string, message: string): Promise<void> {
     // Logic to delete message from database
+    // tesing
 }
 
 const deleteMessageEvent: EventFile = (io) => ({
