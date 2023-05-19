@@ -17,7 +17,6 @@ import PrismaClient, {
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError, ParamError } from '@inc/errors';
-import parameters from '../parameters';
 
 export function parseListingId($id: string) {
   // Parse and validate listing id provided
@@ -80,6 +79,7 @@ export type ListingResponse = {
     paramId: string;
     value: string;
   }>;
+  createdAt: Date;
 };
 
 export type ListingWithParameters = Listing & {
@@ -140,6 +140,7 @@ export function formatSingleListingResponse(
       bio: listing.users.bio,
     },
     open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    createdAt: listing.createdAt,
   };
 
   if (includeParameters && listing.listingsParametersValues) {
