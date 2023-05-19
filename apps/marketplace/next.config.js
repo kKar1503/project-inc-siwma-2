@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
 
 /** @type {import('next').NextConfig} */
@@ -17,12 +18,18 @@ const nextConfig = {
   outputFileTracing: process.env.NODE_ENV === 'production',
   webpack: (config, { isServer }) => {
     if (!isServer) {
+      // eslint-disable-next-line no-param-reassign
       config.resolve.fallback = { ...config.resolve.fallback, fs: false };
     }
 
     if (isServer) {
       config.plugins.push(new PrismaPlugin());
     }
+
+    config.module.rules.push({
+      test: /\.html$/,
+      loader: 'html-loader',
+    });
 
     return config;
   },
