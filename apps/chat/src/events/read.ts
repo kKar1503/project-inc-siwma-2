@@ -5,9 +5,9 @@ import { EVENTS } from '@inc/events';
 const readEvent: EventFile = (io) => ({
   eventName: EVENTS.CLIENT.READ,
   type: 'on',
-  callback: ({ roomId, messageId }) => {
-    logger.info(`Message ${messageId} read`);
-    io.to(roomId).emit(EVENTS.CLIENT.READ, { room: roomId, message: messageId });
+  callback: ({ room, message }) => {
+    logger.info(`Message ${message} read`);
+    io.to(room).emit(EVENTS.CLIENT.READ, { room: room, message: message });
   },
 });
 

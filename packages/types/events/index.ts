@@ -24,8 +24,8 @@ type EventParams = {
   sendMessage: RoomMessage;
   clientPing: string;
   read: {
-    roomId: string,
-    messageId: string,
+    room: string,
+    message: string,
   }
 
   // Server Events
