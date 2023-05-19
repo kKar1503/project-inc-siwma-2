@@ -4,17 +4,17 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import { FormControl, InputLabel } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { CategoryParameterProps } from './ParameterForm';
+import { CategoryParametersProps } from './ParameterForm';
 
-export type CategoryProps = {
+export interface CategoryProps {
   id: string;
   name: string;
   description: string;
   image: string;
   crossSectionImage: string;
   active: boolean;
-  parameters: CategoryParameterProps[];
-};
+  parameters: CategoryParametersProps[];
+}
 
 export type SetCategoryProps = {
   setCategory: (category: CategoryProps | null) => void;

@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export type CategoryParameterProps = {
+export type CategoryParametersProps = {
   parameterId: string;
   required: boolean;
 };
@@ -53,11 +53,12 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
     }));
 
     // Convert the form values object to an array and update the form values array state
-    const formValuesArray = Object.values({
+    const updatedFormValues = {
       ...formValues,
       [parameterId]: { paramId: parameterId, value: event.target.value as string },
-    });
+    };
 
+    const formValuesArray = Object.values(updatedFormValues);
     setParameters(formValuesArray);
   };
 
