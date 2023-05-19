@@ -39,7 +39,7 @@ function zodPathToString(path: (string | number)[]) {
       result += `[${path[i]}]`;
     } else {
       // It is a string, add it to the result
-      result += (i > 0 ? '.' : '') + `${path[i]}`;
+      result += `${i > 0 ? '.' : ''}${path[i]}`;
     }
   }
 
