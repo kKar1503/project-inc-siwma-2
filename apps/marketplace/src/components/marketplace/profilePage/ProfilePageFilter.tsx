@@ -1,7 +1,8 @@
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem'; 
+import MenuItem from '@mui/material/MenuItem';
+import { SearchBar } from '@inc/ui';
 
 export type FilterProps = {
   filter: string;
@@ -24,7 +25,7 @@ const ProfilePageFilter = ({ filter, setFilter, sort, setSort }: FilterProps) =>
       }}
     >
       <>
-        {/* Here goes the Searchbar */}
+        <SearchBar />
 
         <Typography
           noWrap
