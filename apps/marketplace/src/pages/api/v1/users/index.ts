@@ -51,9 +51,11 @@ export default apiHandler({ allowNonAuthenticated: true })
           createdAt: true,
           enabled: true,
           profilePicture: true,
-          comments: true, // Only admins can access this endpoint so we can return comments
+          comments: true, // Only admins can access this endpoint, so we can return comments
           phone: true,
           contact: true,
+          whatsappNumber: true,
+          telegramUsername: true,
           bio: true,
         },
       });
@@ -67,6 +69,8 @@ export default apiHandler({ allowNonAuthenticated: true })
         enabled: user.enabled,
         profilePic: user.profilePicture,
         comments: user.comments,
+        whatsappNumber: user.whatsappNumber,
+        telegramUsername: user.telegramUsername,
         mobileNumber: user.phone,
         contactMethod: user.contact,
         bio: user.bio,

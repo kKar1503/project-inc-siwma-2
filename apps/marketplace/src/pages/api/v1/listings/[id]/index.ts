@@ -22,8 +22,8 @@ export async function checkListingExists($id: string | number) {
     where: { id },
     include: {
       users: {
-        select: {
-          companyId: true,
+        include: {
+          companies: true,
         },
       },
       listingsParametersValues: true,
@@ -149,11 +149,12 @@ export default apiHandler()
       },
       include: {
         users: {
-          select: {
-            companyId: true,
+          include: {
+            companies: true,
           },
         },
         listingsParametersValues: true,
+        offersOffersListingTolistings: true,
       },
     });
 
@@ -182,8 +183,8 @@ export default apiHandler()
       where: { id },
       include: {
         users: {
-          select: {
-            companyId: true,
+          include: {
+            companies: true,
           },
         },
         listingsParametersValues: true,

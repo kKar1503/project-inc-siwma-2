@@ -6,7 +6,14 @@ import {
   zodParseToInteger,
   zodParseToNumber,
 } from '@/utils/api';
-import PrismaClient, { Listing, ListingType, Prisma } from '@inc/db';
+import PrismaClient, {
+  Listing,
+  ListingType,
+  Prisma,
+  Users,
+  Companies,
+  UserContacts,
+} from '@inc/db';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError, ParamError } from '@inc/errors';
@@ -44,6 +51,24 @@ async function getRequiredParametersForCategory(categoryId: number): Promise<num
 }
 
 // -- Type definitions -- //
+export type OwnerResponse = {
+  id: string;
+  name: string;
+  email: string;
+  company: {
+    id: string;
+    name: string;
+    website: string | null;
+    bio: string | null;
+    image: string | null;
+    visible: boolean;
+  };
+  profilePic: string | null;
+  mobileNumber: string;
+  contactMethod: UserContacts;
+  bio: string | null;
+};
+
 export type ListingResponse = {
   id: string;
   name: string;
@@ -53,7 +78,7 @@ export type ListingResponse = {
   negotiable?: boolean;
   categoryId: string;
   type: ListingType;
-  owner: string;
+  owner: OwnerResponse;
   open: boolean;
   parameters?: Array<{
     paramId: string;
@@ -62,6 +87,7 @@ export type ListingResponse = {
   images?: Array<{
     image: string;
   }>;
+  createdAt: Date;
 };
 
 export type ListingWithParameters = Listing & {
@@ -75,6 +101,9 @@ export type ListingWithParameters = Listing & {
   offersOffersListingTolistings: Array<{
     accepted: boolean;
   }>;
+  users: Users & {
+    companies: Companies;
+  };
 };
 
 export const getQueryParameters = z.object({
@@ -83,6 +112,7 @@ export const getQueryParameters = z.object({
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('false'),
   includeImages: z.string().transform(zodParseToBoolean).optional().default('false'),
+  params: z.string().optional(),
   category: z.string().transform(zodParseToInteger).optional(),
   negotiable: z.string().transform(zodParseToBoolean).optional(),
   minPrice: z.string().transform(zodParseToNumber).optional(),
@@ -104,8 +134,25 @@ export function formatSingleListingResponse(
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
     type: listing.type,
-    owner: listing.owner,
+    owner: {
+      id: listing.users.id,
+      name: listing.users.name,
+      email: listing.users.email,
+      company: {
+        id: listing.users.companyId.toString(),
+        name: listing.users.companies.name,
+        website: listing.users.companies.website,
+        bio: listing.users.companies.bio,
+        image: listing.users.companies.logo,
+        visible: listing.users.companies.visibility,
+      },
+      profilePic: listing.users.profilePicture,
+      mobileNumber: listing.users.phone,
+      contactMethod: listing.users.contact,
+      bio: listing.users.bio,
+    },
     open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    createdAt: listing.createdAt,
   };
 
   if (includeParameters && listing.listingsParametersValues) {
@@ -155,6 +202,21 @@ export default apiHandler()
     // Parse the query parameters
     const queryParams = getQueryParameters.parse(req.query);
 
+    // Decode params if it exists
+    let decodedParams = null;
+    if (queryParams.params) {
+      decodedParams = JSON.parse(decodeURI(queryParams.params));
+      if (typeof decodedParams.paramId !== 'string' && typeof decodedParams.value !== 'string') {
+        throw new ParamError('paramId and value');
+      }
+      if (typeof decodedParams.paramId !== 'string') {
+        throw new ParamError('paramId');
+      }
+      if (typeof decodedParams.value !== 'string') {
+        throw new ParamError('value');
+      }
+    }
+
     // Filter options
     const whereOptions: Prisma.ListingWhereInput = {
       categoryId: queryParams.category ? queryParams.category : undefined,
@@ -169,6 +231,14 @@ export default apiHandler()
           mode: 'insensitive',
         }
         : undefined,
+      listingsParametersValues: decodedParams
+        ? {
+            some: {
+              parameterId: Number(decodedParams.paramId),
+              value: decodedParams.value,
+            },
+          }
+        : undefined,
     };
 
     // Sorting options
@@ -178,8 +248,17 @@ export default apiHandler()
 
     if (queryParams.sortBy) {
       switch (queryParams.sortBy.toLowerCase()) {
-        case 'price':
+        case 'price_desc':
+          sortByOptions = { price: 'desc' };
+          break;
+        case 'price_asc':
           sortByOptions = { price: 'asc' };
+          break;
+        case 'recent_newest':
+          sortByOptions = { createdAt: 'desc' };
+          break;
+        case 'recent_oldest':
+          sortByOptions = { createdAt: 'asc' };
           break;
         default:
           break;
@@ -196,6 +275,11 @@ export default apiHandler()
         listingsParametersValues: queryParams.includeParameters,
         listingImages: queryParams.includeImages,
         offersOffersListingTolistings: true,
+        users: {
+          include: {
+            companies: true,
+          },
+        },
       },
     });
 
