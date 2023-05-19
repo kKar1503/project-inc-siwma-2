@@ -19,7 +19,7 @@ import sendEmails from '@inc/send-in-blue/sendEmails';
 
 const bulkInviteSchema = z.array(
   z.object({
-    mobileNumber: z.string(),
+    mobileNumber: z.string().optional(),
     name: z.string(),
     email: z.string(),
     company: z.string(),
@@ -27,8 +27,7 @@ const bulkInviteSchema = z.array(
 );
 
 export default apiHandler({
-  // allowAdminsOnly: true,
-  allowNonAuthenticated: true,
+  allowAdminsOnly: true,
 }).post(async (req, res) => {
   // https://docs.google.com/document/d/1CtwAkM3uPCvJXwlQOZwavxbMG-sa8FkMa3r0ZbnHUlo/edit#heading=h.rq1g0ltfj4ji
 
@@ -107,7 +106,7 @@ export default apiHandler({
     email: string;
     name: string;
     company: string;
-    mobileNumber: string;
+    mobileNumber?: string;
   }) => {
     const { email, name, company, mobileNumber } = invite;
     try {
