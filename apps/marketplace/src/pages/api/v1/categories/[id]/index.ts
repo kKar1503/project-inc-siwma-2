@@ -23,7 +23,7 @@ function parseId(id: string | undefined): number {
   if (!id) {
     throw new ParamError('id');
   }
-  return parseToNumber(id);
+  return parseToNumber(id, 'id');
 }
 
 function formatResponse(response: queryResult): getResponse {
