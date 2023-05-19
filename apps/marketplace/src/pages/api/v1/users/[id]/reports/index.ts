@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import PrismaClient, { ReasonType, UserReports } from '@inc/db';
