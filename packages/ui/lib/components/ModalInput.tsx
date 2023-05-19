@@ -43,6 +43,11 @@ const ModalInput = ({
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
   const isMinWidth = useMediaQuery('(min-width:600px)');
+  const handleCancel = () => {
+    setOpen(false);
+    setLeftButtonState(true);
+    setselectInput(0);
+  };
 
   return (
     <div>
@@ -123,7 +128,7 @@ const ModalInput = ({
                         marginTop: spacing(2),
                         padding: isMinWidth ? '7px 20px' : '2px 4px',
                       })}
-                      onClick={() => setLeftButtonState(true)}
+                      onClick={handleCancel}
                     >
                       <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
                         {leftButtonText}
