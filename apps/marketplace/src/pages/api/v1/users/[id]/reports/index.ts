@@ -82,6 +82,7 @@ export default apiHandler()
 
     const regexBreakpoint = /[\s/]/;
 
+    // splits reason string by space or slash and joins with underscore to match db enum
     reason = reason.split(regexBreakpoint).join('_');
 
     // throws error if reason doesn't match db enum
