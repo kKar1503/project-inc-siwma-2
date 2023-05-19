@@ -23,6 +23,10 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
+  startType: { 
+    sender: string, 
+    room: string
+  };
 
   // Server Events
   rooms: Record<string, Room>;
