@@ -1,22 +1,19 @@
+import {randomBytes} from 'crypto';
+
 const timeLength = 16;
 const randomLength = 16;
 
-const timeBasedHash = async (): Promise<string> => {
-  let d = new Date().getTime();
-  // use high-precision timer if available
-  if (typeof performance !== 'undefined' && typeof performance.now === 'function') d += performance.now();
-  let firstHalf = d.toString(16).replace('.', '');
-  firstHalf = firstHalf.length > timeLength ? firstHalf.substring(0, timeLength) : firstHalf.padStart(timeLength, '0');
+const getTime = (() => typeof performance !== 'undefined' && typeof performance.now === 'function'
+  ? () => performance.timeOrigin + performance.now()
+  : () => Date.now())();
 
-  let lastHalf = '';
-  for (let i = 0; i < randomLength; i++) {
-    // eslint-disable-next-line no-bitwise
-    const r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    // eslint-disable-next-line no-bitwise
-    lastHalf += (r & 0x3 | 0x8).toString(16);
-  }
+const timeBasedHash = async () => {
+  let time = getTime().toString(16).replace('.', '');
+  time = time.length > timeLength ? time.substring(0, timeLength) : time.padStart(timeLength, '0');
 
-  return `${firstHalf}${lastHalf}`;
+  const random = (await randomBytes(randomLength/2)).toString('hex');
+
+  return `${time}${random}`;
 };
+
 export default timeBasedHash;
