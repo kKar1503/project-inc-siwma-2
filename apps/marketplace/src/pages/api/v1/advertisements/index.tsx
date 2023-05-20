@@ -50,7 +50,7 @@ export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const payload = companyInputValidation.parse(req.body);
-  const companyId = parseToNumber(payload.companyId);
+  const companyId = parseToNumber(payload.companyId,'id');
 
   const files = await getFilesFromRequest(req);
   if (files.length === 0) {
