@@ -100,13 +100,13 @@ export default apiHandler()
       },
       where: {
         id: {
-          gt: parseToNumber(lastIdPointer),
+          gt: parseToNumber(lastIdPointer, 'lastIdPointer'),
         },
         name: {
           contains: name,
         },
       },
-      take: parseToNumber(limit),
+      take: parseToNumber(limit, 'limit'),
     });
 
     res.status(200).json(formatAPIResponse(formatResponse(response)));
