@@ -68,7 +68,7 @@ export type ListingResponse = {
   id: string;
   name: string;
   description: string;
-  price: Number;
+  price: number;
   unitPrice?: boolean;
   negotiable?: boolean;
   categoryId: string;
