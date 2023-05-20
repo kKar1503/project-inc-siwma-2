@@ -208,17 +208,17 @@ export default apiHandler()
       },
       name: queryParams.matching
         ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+          contains: queryParams.matching,
+          mode: 'insensitive',
+        }
         : undefined,
       listingsParametersValues: decodedParams
         ? {
-            some: {
-              parameterId: Number(decodedParams.paramId),
-              value: decodedParams.value,
-            },
-          }
+          some: {
+            parameterId: Number(decodedParams.paramId),
+            value: decodedParams.value,
+          },
+        }
         : undefined,
     };
 
@@ -311,15 +311,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value.toString(),
-                parameter: {
-                  connect: {
-                    id: parameter.paramId,
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value.toString(),
+              parameter: {
+                connect: {
+                  id: parameter.paramId,
                 },
-              })),
-            }
+              },
+            })),
+          }
           : undefined,
       },
       include: {
