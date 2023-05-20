@@ -139,13 +139,35 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
         (parameter) => parameter.id === parameterId
       );
 
-      if (required && detailedParameter && !parameter) {
-        newParameterErrors.push({
-          parameterId,
-          error: `${detailedParameter.displayName} is required`,
-        });
+      if (detailedParameter) {
+        if (!parameter && required) {
+          newParameterErrors.push({
+            parameterId,
+            error: `${detailedParameter.displayName} is required`,
+          });
+        }
+
+        switch (detailedParameter.dataType) {
+          case 'number':
+            if (parameter && !Number.isNaN(parameter.value)) {
+              newParameterErrors.push({
+                parameterId,
+                error: `${detailedParameter.displayName} must be a number`,
+              });
+            }
+            break;
+          case 'boolean':
+            if (parameter && typeof parameter.value !== 'boolean') {
+              newParameterErrors.push({
+                parameterId,
+                error: `${detailedParameter.displayName} must be a boolean`,
+              });
+            }
+            break;
+          default:
+            break;
+        }
       }
-      // check if value fits the datatype
     });
 
     setParameterErrors(newParameterErrors);
