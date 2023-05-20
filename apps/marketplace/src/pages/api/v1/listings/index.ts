@@ -68,13 +68,15 @@ export type ListingResponse = {
   id: string;
   name: string;
   description: string;
-  price: Decimal;
+  price: Number;
   unitPrice?: boolean;
   negotiable?: boolean;
   categoryId: string;
   type: ListingType;
   owner: OwnerResponse;
   open: boolean;
+  rating: number | null;
+  reviewCount: number;
   parameters?: Array<{
     paramId: string;
     value: string;
@@ -109,15 +111,30 @@ export const getQueryParameters = z.object({
 });
 
 // -- Helper functions -- //
-export function formatSingleListingResponse(
+export async function formatSingleListingResponse(
   listing: ListingWithParameters,
   includeParameters: boolean
-): ListingResponse {
+): Promise<ListingResponse> {
+  const { _avg, _count } = await PrismaClient.reviews.aggregate({
+    _avg: {
+      rating: true,
+    },
+    _count: {
+      rating: true,
+    },
+    where: {
+      listing: listing.id,
+    },
+  });
+
+  const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+  const reviewCount = _count && _count.rating;
+
   const formattedListing: ListingResponse = {
     id: listing.id.toString(),
     name: listing.name,
     description: listing.description,
-    price: listing.price,
+    price: Number(listing.price),
     unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
@@ -141,6 +158,8 @@ export function formatSingleListingResponse(
     },
     open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
     createdAt: listing.createdAt,
+    rating,
+    reviewCount,
   };
 
   if (includeParameters && listing.listingsParametersValues) {
@@ -153,11 +172,13 @@ export function formatSingleListingResponse(
   return formattedListing;
 }
 
-export function formatListingResponse(
+export async function formatListingResponse(
   $listings: ListingWithParameters[],
   includeParameters: boolean
 ) {
-  return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
+  return Promise.all(
+    $listings.map((listing) => formatSingleListingResponse(listing, includeParameters))
+  );
 }
 
 export const listingsRequestBody = z.object({
@@ -260,6 +281,7 @@ export default apiHandler()
             companies: true,
           },
         },
+        reviewsReviewsListingTolistings: true,
       },
     });
 
@@ -267,7 +289,7 @@ export default apiHandler()
       .status(200)
       .json(
         formatAPIResponse(
-          formatListingResponse(
+          await formatListingResponse(
             listings as unknown as ListingWithParameters[],
             queryParams.includeParameters
           )

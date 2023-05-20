@@ -27,6 +27,7 @@ export async function checkListingExists($id: string | number) {
       },
       listingsParametersValues: true,
       offersOffersListingTolistings: true,
+      reviewsReviewsListingTolistings: true,
     },
   });
 
@@ -52,6 +53,8 @@ const putListingRequestBody = z.object({
   negotiable: z.boolean().optional(),
   categoryId: z.number().optional(),
   type: z.nativeEnum(ListingType).optional(),
+  rating: z.number().optional(),
+  reviewCount: z.number().optional(),
   parameters: z
     .array(
       z.object({
@@ -88,7 +91,9 @@ export default apiHandler()
     // Return the result
     res
       .status(200)
-      .json(formatAPIResponse(formatSingleListingResponse(listing, queryParams.includeParameters)));
+      .json(
+        formatAPIResponse(await formatSingleListingResponse(listing, queryParams.includeParameters))
+      );
   })
   .put(async (req, res) => {
     const queryParams = getQueryParameters.parse(req.query);
@@ -188,7 +193,7 @@ export default apiHandler()
       .status(200)
       .json(
         formatAPIResponse(
-          formatSingleListingResponse(completeListing, queryParams.includeParameters)
+          await formatSingleListingResponse(completeListing, queryParams.includeParameters)
         )
       );
   })
