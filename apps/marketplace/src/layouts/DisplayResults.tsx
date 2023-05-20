@@ -103,8 +103,8 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
           {data && data.length > 0 && (
             <Grid container display="flex" spacing={2}>
               {data.map((item: ProductListingItemProps) => (
-                <Grid item xs={4} md={3} key={item.name}>
-                  <ProductListingItem {...item} />
+                <Grid item xs={4} md={3} key={item.productId}>
+                  <ProductListingItem data={item} />
                 </Grid>
               ))}
             </Grid>
