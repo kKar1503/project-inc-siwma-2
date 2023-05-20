@@ -18,7 +18,7 @@ export default async function sendEmails<T extends Record<string, string>>(
   let apiKey: string | undefined;
   let senderEmail: string | undefined;
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' && data.messageVersions) {
     // If in development, get the API key from the database.
     const retrieved = await getAPIKey(data.messageVersions.length);
     apiKey = retrieved.key?.key;
@@ -60,7 +60,7 @@ export default async function sendEmails<T extends Record<string, string>>(
   try {
     await apiInstance.sendTransacEmail(email);
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && data.messageVersions) {
       // If in development, update the API Key usage count
       await client.sibkeys.update({
         where: {

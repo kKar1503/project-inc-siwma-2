@@ -30,8 +30,8 @@ type BulkInviteRequestParams = {
 };
 
 export class BulkInviteEmailRequestBody implements SendSmtpEmail<BulkInviteRequestParams> {
-  htmlContent: string; // HTML content of the email
-  subject: string; // Subject of the email
+  htmlContent!: string; // HTML content of the email
+  subject!: string; // Subject of the email
   messageVersions: {
     to: SendSmtpEmailTo[];
     params?: {
@@ -51,8 +51,8 @@ type BulkNotificationRequestParams = {
 export class BulkNotificationEmailRequestBody
   implements SendSmtpEmail<BulkNotificationRequestParams>
 {
-  htmlContent: string; // HTML content of the email
-  subject: string; // Subject of the email
+  htmlContent!: string; // HTML content of the email
+  subject!: string; // Subject of the email
   messageVersions: {
     to: SendSmtpEmailTo[];
     params: {
