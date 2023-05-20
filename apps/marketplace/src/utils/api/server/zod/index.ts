@@ -1,10 +1,10 @@
-export { default as categoriesSchema } from './categories';
+export { default as categorySchema } from './categories';
 export { default as chatSchema } from './chat';
-export { default as companiesSchema } from './companies';
+export { default as companySchema } from './companies';
 export { default as inviteSchema } from './invites';
-export { default as listingsSchema } from './listings';
-export { default as paramsSchema } from './parameters';
-export { default as usersSchema } from './users';
+export { default as listingSchema } from './listings';
+export { default as paramSchema } from './parameters';
+export { default as userSchema } from './users';
 
 export * from './categories';
 export * from './chat';

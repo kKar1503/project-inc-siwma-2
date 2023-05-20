@@ -3,7 +3,7 @@ import PrismaClient from '@inc/db';
 import { Parameter, ParameterType } from '@prisma/client';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamSizeError } from '@inc/errors';
-import { paramsSchema, ParamsRequestBody } from '@/utils/api/server/zod';
+import { paramSchema, ParamsRequestBody } from '@/utils/api/server/zod';
 import { ParameterResponseBody } from '@/utils/api/client/zod';
 
 // -- Helper functions -- //
@@ -85,7 +85,7 @@ export default apiHandler()
     async (req, res) => {
       // Create a new parameter (admins only)
       // Parse and validate the request body
-      const data = paramsSchema.post.body.parse(req.body);
+      const data = paramSchema.post.body.parse(req.body);
 
       // Validate parameter options
       validateOptions(data);

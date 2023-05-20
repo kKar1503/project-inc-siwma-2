@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { usersSchema } from '@/utils/api/server/zod';
+import { userSchema } from '@/utils/api/server/zod';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 
@@ -12,7 +12,7 @@ export default apiHandler()
     //  get user reports protected for admins view only
     async (req, res) => {
       // init user id query params
-      const { id } = usersSchema.userId.parse(req.query);
+      const { id } = userSchema.userId.parse(req.query);
 
       const reports = await PrismaClient.userReports.findMany({
         where: {
@@ -31,7 +31,7 @@ export default apiHandler()
     // endpoint refers to reportee's id and reporter's id grab from auth cookie
     // request body "reason" : "string reason for report"
 
-    const { id: reporteeId } = usersSchema.userId.parse(req.query);
+    const { id: reporteeId } = userSchema.userId.parse(req.query);
     const reporterId = req.token?.user.id;
     const { reason: $reason } = req.body;
 
@@ -42,7 +42,7 @@ export default apiHandler()
 
     // validates against ReasonType enum from zod
     // destructures reason from object body
-    const parsedReason = usersSchema.report.post.body.parse(reason);
+    const parsedReason = userSchema.report.post.body.parse(reason);
 
     // check if reporteeId matches uuid type
     const reportee = await PrismaClient.users.findUnique({

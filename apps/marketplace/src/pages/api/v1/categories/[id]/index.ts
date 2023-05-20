@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { categoriesSchema } from '@/utils/api/server/zod';
+import { categorySchema } from '@/utils/api/server/zod';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
 import { QueryResult, formatParamters } from '../index';
 
@@ -39,7 +39,7 @@ async function checkCategory(categoryId: number) {
 export default apiHandler()
   .get(async (req, res) => {
     const { id } = req.query;
-    const { includeParameters = 'false' } = categoriesSchema.get.query.parse(req.query);
+    const { includeParameters = 'false' } = categorySchema.get.query.parse(req.query);
     const include = includeParameters === 'true';
 
     const response: QueryResult | null = await PrismaClient.category.findFirst({
@@ -69,7 +69,7 @@ export default apiHandler()
     const { id } = req.query;
 
     const { name, description, image, crossSectionImage, parameters } =
-      categoriesSchema.put.body.parse(req.body);
+      categorySchema.put.body.parse(req.body);
 
     const categoryId = parseId(id as string);
 

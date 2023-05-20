@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
-import { listingsSchema } from '@/utils/api/server/zod';
+import { listingSchema } from '@/utils/api/server/zod';
 import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
@@ -53,7 +53,7 @@ async function getValidParametersForCategory(categoryId: number): Promise<string
 
 export default apiHandler()
   .get(async (req, res) => {
-    const queryParams = listingsSchema.get.query.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
     const id = parseListingId(req.query.id as string);
@@ -65,7 +65,7 @@ export default apiHandler()
       .json(formatAPIResponse(formatSingleListingResponse(listing, queryParams.includeParameters)));
   })
   .put(async (req, res) => {
-    const queryParams = listingsSchema.get.query.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
@@ -81,7 +81,7 @@ export default apiHandler()
     }
 
     // Validate the request body
-    const data = listingsSchema.put.body.parse(req.body);
+    const data = listingSchema.put.body.parse(req.body);
 
     if (data.categoryId) {
       // Get valid parameters for the listing's category

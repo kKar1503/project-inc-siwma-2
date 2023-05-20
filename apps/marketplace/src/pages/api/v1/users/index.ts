@@ -5,7 +5,7 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import bcrypt from 'bcrypt';
 import { DuplicateError, InvalidRangeError, ParamInvalidError } from '@inc/errors';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
-import { usersSchema } from '@/utils/api/server/zod';
+import { userSchema } from '@/utils/api/server/zod';
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
@@ -13,7 +13,7 @@ export default apiHandler({ allowNonAuthenticated: true })
       allowAdminsOnly: true,
     }),
     async (req: NextApiRequest, res: NextApiResponse) => {
-      const { limit, lastIdPointer } = usersSchema.get.query.parse(req.query);
+      const { limit, lastIdPointer } = userSchema.get.query.parse(req.query);
 
       let limitInt: number | undefined;
 
@@ -69,7 +69,7 @@ export default apiHandler({ allowNonAuthenticated: true })
     // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.5t8qrsbif9ei
 
     // Parse the request body with zod
-    const { token, mobileNumber, password } = usersSchema.post.body.parse(req.body);
+    const { token, mobileNumber, password } = userSchema.post.body.parse(req.body);
 
     validatePhone(mobileNumber);
     validatePassword(password);

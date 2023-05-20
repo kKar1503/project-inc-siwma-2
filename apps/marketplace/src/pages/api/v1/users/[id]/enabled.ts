@@ -1,12 +1,12 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { usersSchema } from '@/utils/api/server/zod';
+import { userSchema } from '@/utils/api/server/zod';
 import client from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 
 export default apiHandler({
   allowAdminsOnly: true,
 }).patch(async (req, res) => {
-  const { id } = usersSchema.userId.parse(req.query);
+  const { id } = userSchema.userId.parse(req.query);
 
   // Verify that the user exists
   const userExists = await client.users.findUnique({

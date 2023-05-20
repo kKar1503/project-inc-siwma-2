@@ -1,7 +1,7 @@
 import { apiHandler } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
-import { paramsSchema } from '@/utils/api/server/zod';
+import { paramSchema } from '@/utils/api/server/zod';
 import { formatParamResponse, validateOptions } from '..';
 
 // -- Functions --//
@@ -53,7 +53,7 @@ export default apiHandler({
     await checkParamExists(id);
 
     // Parse and validate the request body
-    const data = paramsSchema.post.body.partial().parse(req.body);
+    const data = paramSchema.post.body.partial().parse(req.body);
 
     // Validate parameter options
     if (data.type != null) {

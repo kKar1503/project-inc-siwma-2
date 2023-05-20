@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient, { Companies } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
-import { companiesSchema } from '@/utils/api/server/zod';
+import { companySchema } from '@/utils/api/server/zod';
 import { CompanyResponseBody } from '@/utils/api/client/zod';
 
 function formatResponse(response: Companies[]): CompanyResponseBody[] {
@@ -24,7 +24,7 @@ function formatResponse(response: Companies[]): CompanyResponseBody[] {
 
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, website, comments, image } = companiesSchema.post.body.parse(req.body);
+    const { name, website, comments, image } = companySchema.post.body.parse(req.body);
 
     if (!name || name.trim().length === 0) {
       throw new ParamError('name');
@@ -51,7 +51,7 @@ export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { lastIdPointer = 0, limit = 10, name } = companiesSchema.get.query.parse(req.query);
+    const { lastIdPointer = 0, limit = 10, name } = companySchema.get.query.parse(req.query);
 
     const response = await PrismaClient.companies.findMany({
       select: {

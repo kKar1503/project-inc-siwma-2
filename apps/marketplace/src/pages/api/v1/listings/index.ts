@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { Listing, Prisma, Users, Companies } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
-import { listingsSchema } from '@/utils/api/server/zod';
+import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
 
 export type ListingWithParameters = Listing & {
@@ -99,7 +99,7 @@ export function formatListingResponse(
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
-    const queryParams = listingsSchema.get.query.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
     // Decode params if it exists
     let decodedParams = null;
@@ -193,7 +193,7 @@ export default apiHandler()
       );
   })
   .post(async (req, res) => {
-    const data = listingsSchema.post.body.parse(req.body);
+    const data = listingSchema.post.body.parse(req.body);
 
     // Use the user ID from the request object
     const userId = req.token?.user?.id;

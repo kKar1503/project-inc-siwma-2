@@ -4,13 +4,13 @@ import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
-import { usersSchema } from '@/utils/api/server/zod';
+import { userSchema } from '@/utils/api/server/zod';
 
 export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { id } = usersSchema.userId.parse(req.query);
+    const { id } = userSchema.userId.parse(req.query);
 
     const user = await client.users.findUnique({
       where: {
@@ -58,8 +58,8 @@ export default apiHandler()
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { id } = usersSchema.userId.parse(req.query);
-    const parsedBody = usersSchema.put.body.parse(req.body);
+    const { id } = userSchema.userId.parse(req.query);
+    const parsedBody = userSchema.put.body.parse(req.body);
     const {
       name,
       email,
@@ -173,7 +173,7 @@ export default apiHandler()
       allowAdminsOnly: true,
     }),
     async (req, res) => {
-      const { id } = usersSchema.userId.parse(req.query);
+      const { id } = userSchema.userId.parse(req.query);
 
       // Verify that the user exists
       const userExists = await client.users.findUnique({

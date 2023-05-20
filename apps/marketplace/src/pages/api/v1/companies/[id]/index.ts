@@ -2,7 +2,7 @@ import { NotFoundError, ParamError, ForbiddenError } from '@inc/errors';
 import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
 import PrismaClient, { Companies } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { companiesSchema } from '@/utils/api/server/zod';
+import { companySchema } from '@/utils/api/server/zod';
 import { CompanyResponseBody } from '@/utils/api/client/zod';
 
 function parseCompanyId(id: string | undefined): number {
@@ -64,7 +64,7 @@ export default apiHandler()
   })
   .put(async (req, res) => {
     const { id } = req.query;
-    const { name, website, bio, comments, image } = companiesSchema.put.body.parse(req.body);
+    const { name, website, bio, comments, image } = companySchema.put.body.parse(req.body);
 
     const companyid = parseCompanyId(id as string);
     const isAdmin = req.token?.user.permissions === 1;
