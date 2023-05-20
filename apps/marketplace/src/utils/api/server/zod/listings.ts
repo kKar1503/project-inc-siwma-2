@@ -58,6 +58,12 @@ const createParameter = z.object({
 
 const updateParameters = z.array(createParameter);
 
+export type GetListingsQueryParameter = z.infer<typeof getQueryParameters>;
+export type PostListingsRequestBody = z.infer<typeof listingsRequestBody>;
+export type PutListingsRequestBody = z.infer<typeof putListingRequestBody>;
+export type PostListingParameterRequestBody = z.infer<typeof createParameter>;
+export type PutListingParameterRequestBody = z.infer<typeof updateParameters>;
+
 export default {
   get: {
     query: getQueryParameters,

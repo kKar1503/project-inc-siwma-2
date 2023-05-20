@@ -37,6 +37,11 @@ const updateUserDetailsSchema = z
 
 const createReportSchema = z.nativeEnum(ReasonType);
 
+export type GetUsersQueryParameter = z.infer<typeof getUsersQuery>;
+export type PostUserRequestBody = z.infer<typeof userCreationRequestBody>;
+export type PutUserRequestBody = z.infer<typeof updateUserDetailsSchema>;
+export type PostReportRequestBody = z.infer<typeof createReportSchema>;
+
 export default {
   get: {
     query: getUsersQuery,

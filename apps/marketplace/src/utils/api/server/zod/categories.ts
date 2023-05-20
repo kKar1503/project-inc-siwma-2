@@ -31,6 +31,10 @@ const editCategoryRequestBody = z.object({
     .optional(),
 });
 
+export type GetCategoriesQueryParameter = z.infer<typeof getCategoriesQueryParameter>;
+export type PostCategoryRequestBody = z.infer<typeof categoryRequestBody>;
+export type PutCategoryRequestBody = z.infer<typeof editCategoryRequestBody>;
+
 export default {
   get: {
     query: getCategoriesQueryParameter,

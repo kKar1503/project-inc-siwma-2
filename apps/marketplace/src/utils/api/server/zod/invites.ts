@@ -28,6 +28,12 @@ const getInvitesQuery = z.object({
   limit: z.string().optional(),
 });
 
+export type GetInvitesQueryParameter = z.infer<typeof getInvitesQuery>;
+export type PostInviteRequestBody = z.infer<typeof inviteCreationRequestBody>;
+export type PostBulkInviteRequestBody = z.infer<typeof bulkInviteSchema>;
+export type DeleteInviteQueryParameter = z.infer<typeof emailSchema>;
+export type GetTokenQueryParameter = z.infer<typeof tokenSchema>;
+
 export default {
   token: {
     get: {

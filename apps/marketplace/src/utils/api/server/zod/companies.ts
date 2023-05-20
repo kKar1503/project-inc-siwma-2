@@ -22,8 +22,12 @@ const editCompanyRequestBody = z.object({
   image: z.string().optional(),
 });
 
+export type PostCompanyRequestBody = z.infer<typeof createCompanyRequestBody>;
+export type GetCompaniesQueryParameter = z.infer<typeof getCompaniesQueryParams>;
+export type PutCompanyRequestBody = z.infer<typeof editCompanyRequestBody>;
+
 export default {
-  create: {
+  post: {
     body: createCompanyRequestBody,
   },
   get: {
