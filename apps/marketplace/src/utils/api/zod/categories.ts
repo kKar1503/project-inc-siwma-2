@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const categoryId = = z.string().transform((val) => Number(val));
+const categoryId = z.string().transform((val) => Number(val));
 const name = z.string();
 const description = z.string();
 const image = z.string().url();
