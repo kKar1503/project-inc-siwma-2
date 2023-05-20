@@ -10,6 +10,7 @@ type RoomMessage = {
   roomId: string;
   message: string;
   username: string;
+  contentType: string;
   time: Date;
 };
 
@@ -41,9 +42,6 @@ type EventFile = (io: Server) => {
   };
 }[keyof EventParams];
 
-type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(
-  event: E,
-  param: P
-) => void;
+type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(event: E, param: P) => void;
 
 export type { Event, EventFile, TypedSocketEmitter };
