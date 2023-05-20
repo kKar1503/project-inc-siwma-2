@@ -1,0 +1,13 @@
+{
+	"name": "@types/sib-api-v3-sdk",
+	"main": "",
+	"types": "index.d.ts",
+	"exports": {
+		".": {
+			"types": {
+				"default": "./index.d.ts"
+			}
+		},
+		"./package.json": "./package.json"
+	}
+}
