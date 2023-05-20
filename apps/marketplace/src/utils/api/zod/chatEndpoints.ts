@@ -16,7 +16,7 @@ export const getChatMessages = z
     content_type: z.string(),
     read: z.boolean(),
     content: z.string().optional(),
-    offer: z.number().optional(),
+    offer: z.string().optional().transform((val) => val ? Number(val) : undefined),
     author: z.string().uuid(),
     created_at: z.date(),
   })

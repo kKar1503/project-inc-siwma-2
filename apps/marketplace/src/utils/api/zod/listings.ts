@@ -5,10 +5,10 @@ import { z } from 'zod';
 const id = z.string().transform((val) => Number(val));
 const name = z.string();
 const description = z.string();
-const price = z.number();
+const price = z.string().transform((val) => Number(val));
 const unitPrice = z.boolean().optional();
 const negotiable = z.boolean().optional();
-const categoryId = z.number();
+const categoryId = z.string().transform((val) => Number(val));
 const type = z.nativeEnum(ListingType);
 const images = z
   .array(
