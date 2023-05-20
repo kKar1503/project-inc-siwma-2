@@ -31,7 +31,7 @@ const InfiniteScrollingPage = () => {
         setTodos((prev) => [...prev, data]);
         
         if (scrollRef.current && scrollRef.current.scrollHeight > window.screen.height) {
-          scrollRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
+          scrollRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
         }
       },
     }
