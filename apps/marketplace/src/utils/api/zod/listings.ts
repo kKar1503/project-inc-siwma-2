@@ -2,7 +2,7 @@ import { ListingType } from '@prisma/client';
 import { z } from 'zod';
 
 // -- Define properties -- //
-const id = z.number();
+const id = z.string().transform((val) => Number(val));
 const name = z.string();
 const description = z.string();
 const price = z.number();

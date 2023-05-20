@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const companyId = z.number();
+const companyId = z.string().transform((val) => Number(val));
 const image = z.string().url();
 const description = z.string();
 const link = z.string().url();
