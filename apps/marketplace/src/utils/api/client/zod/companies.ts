@@ -7,12 +7,12 @@ const createCompany = z.object({
 const getCompany = z.object({
   id: z.string(),
   name: z.string(),
-  bio: z.string(),
-  website: z.string(),
-  image: z.string(),
+  bio: z.string().nullable(),
+  website: z.string().nullable(),
+  image: z.string().nullable(),
   visible: z.boolean(),
-  comments: z.string().optional(),
-  createdAt: z.date().optional(),
+  comments: z.string().nullable(),
+  createdAt: z.date(),
 });
 
 const getCompanies = getCompany.array();
@@ -24,6 +24,8 @@ const toggleCompany = z.object({
 });
 
 const deleteCompany = z.object({});
+
+export type CompanyResponseBody = z.infer<typeof getCompany>;
 
 export default {
   create: createCompany,

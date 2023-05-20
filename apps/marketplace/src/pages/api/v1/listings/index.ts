@@ -1,22 +1,21 @@
-import {
-  apiHandler,
-  formatAPIResponse,
-  parseToNumber,
-  zodParseToBoolean,
-  zodParseToInteger,
-  zodParseToNumber,
-} from '@/utils/api';
-import PrismaClient, {
-  Listing,
-  ListingType,
-  Prisma,
-  Users,
-  Companies,
-  UserContacts,
-} from '@inc/db';
-import { Decimal } from '@prisma/client/runtime';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import PrismaClient, { Listing, Prisma, Users, Companies } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { listingsSchema } from '@/utils/api/server/zod';
+import { ListingResponseBody } from '@/utils/api/client/zod';
+
+export type ListingWithParameters = Listing & {
+  listingsParametersValues: Array<{
+    parameterId: number;
+    value: string;
+  }>;
+  offersOffersListingTolistings: Array<{
+    accepted: boolean;
+  }>;
+  users: Users & {
+    companies: Companies;
+  };
+};
 
 export function parseListingId($id: string) {
   // Parse and validate listing id provided
@@ -45,66 +44,16 @@ async function getRequiredParametersForCategory(categoryId: number): Promise<num
   return categoryParameters.map((param) => param.parameterId);
 }
 
-// -- Type definitions -- //
-export type OwnerResponse = {
-  id: string;
-  name: string;
-  email: string;
-  company: {
-    id: string;
-    name: string;
-    website: string | null;
-    bio: string | null;
-    image: string | null;
-    visible: boolean;
-  };
-  profilePic: string | null;
-  mobileNumber: string;
-  contactMethod: UserContacts;
-  bio: string | null;
-};
-
-export type ListingResponse = {
-  id: string;
-  name: string;
-  description: string;
-  price: Decimal;
-  unitPrice?: boolean;
-  negotiable?: boolean;
-  categoryId: string;
-  type: ListingType;
-  owner: OwnerResponse;
-  open: boolean;
-  parameters?: Array<{
-    paramId: string;
-    value: string;
-  }>;
-  createdAt: Date;
-};
-
-export type ListingWithParameters = Listing & {
-  listingsParametersValues: Array<{
-    parameterId: number;
-    value: string;
-  }>;
-  offersOffersListingTolistings: Array<{
-    accepted: boolean;
-  }>;
-  users: Users & {
-    companies: Companies;
-  };
-};
-
 // -- Helper functions -- //
 export function formatSingleListingResponse(
   listing: ListingWithParameters,
   includeParameters: boolean
-): ListingResponse {
-  const formattedListing: ListingResponse = {
+): ListingResponseBody {
+  const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
     name: listing.name,
     description: listing.description,
-    price: listing.price,
+    price: listing.price.toNumber(),
     unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
@@ -127,7 +76,7 @@ export function formatSingleListingResponse(
       bio: listing.users.bio,
     },
     open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
-    createdAt: listing.createdAt,
+    createdAt: listing.createdAt.toISOString(),
   };
 
   if (includeParameters && listing.listingsParametersValues) {

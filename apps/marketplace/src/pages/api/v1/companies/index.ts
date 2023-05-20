@@ -1,33 +1,12 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import PrismaClient from '@inc/db';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
+import PrismaClient, { Companies } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
 import { companiesSchema } from '@/utils/api/server/zod';
+import { CompanyResponseBody } from '@/utils/api/client/zod';
 
-export type queryResult = {
-  id: number;
-  name: string;
-  website: string | null;
-  bio: string | null;
-  logo: string | null;
-  visibility: boolean;
-  comments: string | null;
-  createdAt?: Date;
-};
-
-export type getResponseBody = {
-  id: string;
-  name: string;
-  website: string | null;
-  bio: string | null;
-  image: string | null;
-  visible: boolean;
-  comments?: string | null;
-  createdAt?: Date;
-};
-
-function formatResponse(response: queryResult[]): getResponseBody[] {
-  const temp: getResponseBody[] = [];
+function formatResponse(response: Companies[]): CompanyResponseBody[] {
+  const temp: CompanyResponseBody[] = [];
   response.forEach((r) => {
     temp.push({
       id: r.id.toString(),

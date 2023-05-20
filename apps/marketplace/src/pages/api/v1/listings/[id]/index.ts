@@ -5,7 +5,6 @@ import { listingsSchema } from '@/utils/api/server/zod';
 import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
-
 /**
  * Checks if a listing exists
  * @param id The listing id
@@ -35,11 +34,6 @@ export async function checkListingExists($id: string | number) {
   }
 
   return listing;
-}
-
-interface Parameter {
-  paramId: number;
-  value: number;
 }
 
 async function getValidParametersForCategory(categoryId: number): Promise<string[]> {
@@ -104,7 +98,7 @@ export default apiHandler()
     }
 
     // Do not remove this, it is necessary to update the listing
-    const updatedListing = await PrismaClient.listing.update({
+    await PrismaClient.listing.update({
       where: { id },
       data: {
         name: data.name,
@@ -127,7 +121,7 @@ export default apiHandler()
     });
 
     if (data.parameters) {
-      const parameterUpdates = data.parameters.map((parameter: Parameter) =>
+      const parameterUpdates = data.parameters.map((parameter) =>
         PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {

@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import chat from '@/utils/api/server/zod/chat';
+import { chatSchema } from '@/utils/api/server/zod';
 import PrismaClient, { Rooms } from '@inc/db';
 import {
   ParamError,
@@ -8,18 +8,6 @@ import {
   SellerNotOwnerError,
   ChatRoomExistsError,
 } from '@inc/errors';
-
-// -- Type definitions -- //
-export type ChatResponse = {
-  id: number;
-  author: string;
-  room: string;
-  read: boolean;
-  createdAt: Date;
-  contentType: string;
-  offer: number;
-  content: string;
-};
 
 // -- Helper functions -- //
 export function formatChatResponse(chatData: Rooms) {
@@ -32,7 +20,7 @@ export function formatChatResponse(chatData: Rooms) {
 
 export default apiHandler().post(async (req, res) => {
   // Parse and validate the request body
-  const parseResult = chat.post.body.parse(req.body);
+  const parseResult = chatSchema.post.body.parse(req.body);
 
   const data = parseResult;
 

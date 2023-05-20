@@ -9,18 +9,19 @@ const active = z.boolean();
 const parameterId = z.string();
 const required = z.boolean();
 
-const parameters = z.object({
+const parameter = z.object({
   parameterId,
   required,
 });
 
 const category = z.object({
+  id: categoryId,
   name,
   description,
   image,
   crossSectionImage,
   active,
-  parameters: parameters.array().optional(),
+  parameters: parameter.array().optional(),
 });
 
 const createCategory = z.object({ categoryId });
@@ -28,6 +29,9 @@ const getCategories = category.array();
 const getCategory = category;
 const updateCategory = category;
 const deleteCategory = z.object({});
+
+export type CategoryResponseBody = z.infer<typeof getCategory>;
+export type CatgeoryParameter = z.infer<typeof parameter>;
 
 export default {
   create: createCategory,

@@ -3,7 +3,8 @@ import PrismaClient from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { categoriesSchema } from '@/utils/api/server/zod';
-import { getResponse, queryResult, formatParamters } from '../index';
+import { CategoryResponseBody } from '@/utils/api/client/zod';
+import { QueryResult, formatParamters } from '../index';
 
 function parseId(id: string | undefined): number {
   if (!id) {
@@ -12,7 +13,7 @@ function parseId(id: string | undefined): number {
   return parseToNumber(id, 'id');
 }
 
-function formatResponse(response: queryResult): getResponse {
+function formatResponse(response: QueryResult): CategoryResponseBody {
   return {
     id: response.id.toString(),
     name: response.name,
@@ -41,7 +42,7 @@ export default apiHandler()
     const { includeParameters = 'false' } = categoriesSchema.get.query.parse(req.query);
     const include = includeParameters === 'true';
 
-    const response: queryResult | null = await PrismaClient.category.findFirst({
+    const response: QueryResult | null = await PrismaClient.category.findFirst({
       where: {
         id: parseId(id as string),
       },

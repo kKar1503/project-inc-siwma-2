@@ -25,9 +25,9 @@ const createdAt = z.string();
 const company = z.object({
   id: z.string(),
   name: z.string(),
-  website: z.string().optional(),
-  bio: z.string().optional(),
-  image: z.string().optional(),
+  website: z.string().nullable(),
+  bio: z.string().nullable(),
+  image: z.string().nullable(),
   visible: z.boolean().optional(),
 });
 
@@ -36,10 +36,10 @@ const owner = z.object({
   name: z.string(),
   email: z.string(),
   company,
-  profilePic: z.string().optional(),
+  profilePic: z.string().nullable(),
   mobileNumber: z.string(),
   contactMethod: z.string(),
-  bio: z.string().optional(),
+  bio: z.string().nullable(),
 });
 
 const parameter = z
@@ -49,7 +49,7 @@ const parameter = z
   })
   .optional();
 
-const active = z.boolean();
+const open = z.boolean();
 
 // -- Define listing schema -- //
 const listing = z.object({
@@ -64,15 +64,15 @@ const listing = z.object({
   images,
   coverImage,
   owner,
-  active,
-  parameters: z.array(parameter),
+  open,
+  parameters: z.array(parameter).optional(),
   createdAt,
 });
 
 // -- Define review schema -- //
 const review = z.object({
   id: z.string(),
-  review: z.string(), 
+  review: z.string(),
   rating: z.number(),
   userId: z.string(),
   listingId: z.string(),
@@ -133,6 +133,9 @@ const deleteListing = z.object({});
 
 // DELETE /listings/:id/images/:imageId
 const deleteListingImage = z.object({});
+
+export type ListingParameter = z.infer<typeof parameter>;
+export type ListingResponseBody = z.infer<typeof listing>;
 
 export default {
   create: createListing,

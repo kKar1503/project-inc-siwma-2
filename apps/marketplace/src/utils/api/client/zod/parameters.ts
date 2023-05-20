@@ -2,7 +2,7 @@ import { DataType, ParameterType } from '@prisma/client';
 import { z } from 'zod';
 
 // -- Define properties -- //
-const id= z.string();
+const id = z.string();
 const name = z.string();
 const displayName = z.string();
 const type = z.nativeEnum(ParameterType);
@@ -41,6 +41,8 @@ const toggleParameter = z.object({ active });
 
 // DELETE /parameters/:id
 const deleteParameter = z.object({});
+
+export type ParameterResponseBody = z.infer<typeof parameter>;
 
 export default {
   create: createParameter,

@@ -1,22 +1,8 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { usersSchema } from '@/utils/api/server/zod';
-import PrismaClient, { ReasonType } from '@inc/db';
+import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
-
-// -- Type Definitions --
-// Define the type of the response object
-export type PostReportResponse = {
-  reportId: string;
-};
-
-export type ReportResponse = {
-  id: number;
-  user: string;
-  reporter: string;
-  reason: string;
-  createdAt: Date;
-};
 
 export default apiHandler()
   .get(

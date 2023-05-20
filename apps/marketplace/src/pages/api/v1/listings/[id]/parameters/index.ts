@@ -1,18 +1,41 @@
 import { NextApiResponse } from 'next';
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@inc/db';
+import PrismaClient, { ListingsParametersValue } from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import { APIRequestType } from '@/types/api-types';
 import { listingsSchema } from '@/utils/api/server/zod';
+import { ListingParameter } from '@/utils/api/client/zod';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
 
 // -- Functions --//
-function formatParametersResponse(parameters: { parameterId: number; value: string }[]): any[] {
+function formatParametersResponse(
+  parameters: Pick<ListingsParametersValue, 'parameterId' | 'value'>[]
+): ListingParameter[] {
   return parameters.map(({ parameterId, value }) => ({
-    paramId: parameterId,
+    paramId: parameterId.toString(),
     value,
   }));
+}
+
+/**
+ * Fetches valid parameters for a category
+ * @param categoryId The category id
+ * @returns An array of valid parameter ids for the category
+ */
+async function getValidParametersForCategory(categoryId: number): Promise<string[]> {
+  // Fetch valid parameters for the category
+  const validParameters = await PrismaClient.category.findUnique({
+    where: { id: categoryId },
+    include: { categoriesParameters: true },
+  });
+
+  if (!validParameters) {
+    throw new NotFoundError(`Category with id '${categoryId}'`);
+  }
+
+  // Return an array of valid parameter ids
+  return validParameters.categoriesParameters.map((param) => param.parameterId.toString());
 }
 
 /**
@@ -39,31 +62,6 @@ const getListingParameters = async (req: APIRequestType, res: NextApiResponse) =
 
   const formattedParameters = formatParametersResponse(parameters);
   res.status(200).json(formatAPIResponse(formattedParameters));
-};
-
-/**
- * Fetches valid parameters for a category
- * @param categoryId The category id
- * @returns An array of valid parameter ids for the category
- */
-async function getValidParametersForCategory(categoryId: number): Promise<string[]> {
-  // Fetch valid parameters for the category
-  const validParameters = await PrismaClient.category.findUnique({
-    where: { id: categoryId },
-    include: { categoriesParameters: true },
-  });
-
-  if (!validParameters) {
-    throw new NotFoundError(`Category with id '${categoryId}'`);
-  }
-
-  // Return an array of valid parameter ids
-  return validParameters.categoriesParameters.map((param) => param.parameterId.toString());
-}
-
-type RequestBodyParameter = {
-  paramId: number;
-  value: number;
 };
 
 const createListingParameter = async (req: APIRequestType, res: NextApiResponse) => {
@@ -140,7 +138,7 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
   const parameters = listingsSchema.parameters.put.body.parse(req.body);
 
   // Update the parameters in the database and format the response
-  const updatePromises = parameters.map((param: RequestBodyParameter) => {
+  const updatePromises = parameters.map((param) => {
     const parameterId = param.paramId;
 
     // Update the parameter value

@@ -1,20 +1,10 @@
 import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { DataType, Parameter, ParameterType } from '@prisma/client';
+import { Parameter, ParameterType } from '@prisma/client';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamSizeError } from '@inc/errors';
 import { paramsSchema, ParamsRequestBody } from '@/utils/api/server/zod';
-
-// -- Type definitions -- //
-// Define the type of the response object
-export type ParamResponse = {
-  id: string;
-  name: string;
-  displayName: string;
-  type: ParameterType;
-  dataType: DataType;
-  active: boolean;
-};
+import { ParameterResponseBody } from '@/utils/api/client/zod';
 
 // -- Helper functions -- //
 export function formatParamResponse($parameters: Parameter | Parameter[]) {
@@ -28,7 +18,7 @@ export function formatParamResponse($parameters: Parameter | Parameter[]) {
   }
 
   // Construct the result
-  const result: ParamResponse[] = parameters.map((parameter) => ({
+  const result: ParameterResponseBody[] = parameters.map((parameter) => ({
     id: parameter.id.toString(),
     name: parameter.name,
     displayName: parameter.displayName,
