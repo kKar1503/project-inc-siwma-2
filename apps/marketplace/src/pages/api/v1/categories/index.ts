@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient, { CategoriesParameters } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
-import categories from '@/utils/api/server/zod/categories';
+import { categoriesSchema } from '@/utils/api/server/zod';
 
 export type queryResult = {
   id: number;
@@ -60,7 +60,7 @@ function formatResponse(response: queryResult[]): getResponse[] {
 
 export default apiHandler()
   .get(async (req, res) => {
-    const { includeParameters = 'false' } = categories.get.query.parse(req.query);
+    const { includeParameters = 'false' } = categoriesSchema.get.query.parse(req.query);
     const include = includeParameters === 'true';
 
     const response: queryResult[] = await PrismaClient.category.findMany({
@@ -80,9 +80,8 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, description, image, crossSectionImage, parameters } = categories.post.body.parse(
-      req.body
-    );
+    const { name, description, image, crossSectionImage, parameters } =
+      categoriesSchema.post.body.parse(req.body);
 
     if (name != null && name.trim().length === 0) {
       throw new ParamError('name');
