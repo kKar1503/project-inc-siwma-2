@@ -1,23 +1,9 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import { z } from 'zod';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { getCategoriesQueryParameter, getResponse, queryResult, formatParamters } from '../index';
-
-const editCategoryRequestBody = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  image: z.string().optional(),
-  crossSectionImage: z.string().optional(),
-  parameters: z
-    .object({
-      parameterId: z.number(),
-      required: z.boolean(),
-    })
-    .array()
-    .optional(),
-});
+import categories from '@/utils/api/server/zod/categories';
+import { getResponse, queryResult, formatParamters } from '../index';
 
 function parseId(id: string | undefined): number {
   if (!id) {
@@ -52,7 +38,7 @@ async function checkCategory(categoryId: number) {
 export default apiHandler()
   .get(async (req, res) => {
     const { id } = req.query;
-    const { includeParameters = 'false' } = getCategoriesQueryParameter.parse(req.query);
+    const { includeParameters = 'false' } = categories.get.query.parse(req.query);
     const include = includeParameters === 'true';
 
     const response: queryResult | null = await PrismaClient.category.findFirst({
@@ -81,8 +67,9 @@ export default apiHandler()
   .put(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { id } = req.query;
 
-    const { name, description, image, crossSectionImage, parameters } =
-      editCategoryRequestBody.parse(req.body);
+    const { name, description, image, crossSectionImage, parameters } = categories.put.body.parse(
+      req.body
+    );
 
     const categoryId = parseId(id as string);
 
@@ -97,7 +84,7 @@ export default apiHandler()
 
     if (parameters) {
       parameters.forEach(async (parameter) => {
-        const response2 = await PrismaClient.categoriesParameters.update({
+        await PrismaClient.categoriesParameters.update({
           where: {
             categoryId_parameterId: {
               categoryId: parseId(id as string),
@@ -147,7 +134,7 @@ export default apiHandler()
       throw new NotFoundError('Category');
     }
 
-    const response = await PrismaClient.category.delete({
+    await PrismaClient.category.delete({
       where: {
         id: categoryId,
       },

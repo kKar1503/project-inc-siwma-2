@@ -1,8 +1,8 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { z } from 'zod';
 import PrismaClient, { CategoriesParameters } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
+import categories from '@/utils/api/server/zod/categories';
 
 export type queryResult = {
   id: number;
@@ -28,23 +28,6 @@ export type getResponse = {
   active?: boolean;
   parameters?: parameter[];
 };
-
-export const getCategoriesQueryParameter = z.object({
-  includeParameters: z.string().optional(),
-});
-
-export const categoryRequestBody = z.object({
-  name: z.string(),
-  description: z.string(),
-  image: z.string(),
-  crossSectionImage: z.string(),
-  parameters: z
-    .object({
-      parameterId: z.number(),
-      required: z.boolean(),
-    })
-    .array(),
-});
 
 export function formatParamters(parameters: CategoriesParameters[] | undefined): parameter[] {
   const temp: parameter[] = [];
@@ -77,7 +60,7 @@ function formatResponse(response: queryResult[]): getResponse[] {
 
 export default apiHandler()
   .get(async (req, res) => {
-    const { includeParameters = 'false' } = getCategoriesQueryParameter.parse(req.query);
+    const { includeParameters = 'false' } = categories.get.query.parse(req.query);
     const include = includeParameters === 'true';
 
     const response: queryResult[] = await PrismaClient.category.findMany({
@@ -97,7 +80,7 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, description, image, crossSectionImage, parameters } = categoryRequestBody.parse(
+    const { name, description, image, crossSectionImage, parameters } = categories.post.body.parse(
       req.body
     );
 
