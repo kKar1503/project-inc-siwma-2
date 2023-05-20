@@ -135,80 +135,74 @@ export const getServerSideProps = async () => {
   };
 };
 
-const CategoriesPage = ({ data }: CategoryPageProps) => {
-  const theme = useTheme();
+const CategoriesPage = ({ data }: CategoryPageProps) => (
+  <Box
+    sx={() => ({
+      width: '80%',
+      height: 'full',
+      mr: 'auto',
+      ml: 'auto',
+      maxHeight: 'xl',
+    })}
+  >
+    <Typography
+      sx={({ spacing }) => ({
+        pl: spacing(4),
+        pt: spacing(3),
+      })}
+      variant="h3"
+    >
+      More Metal Types
+    </Typography>
+    <Typography
+      sx={({ spacing }) => ({
+        pl: spacing(4),
+        pt: spacing(1),
+        fontWeight: 500,
+      })}
+      variant="h5"
+    >
+      Choose from over 8,000 types of shapes and grades of metals!
+    </Typography>
 
-  return (
-    <Box
-      sx={() => ({
-        width: '80%',
-        height: 'full',
-        mr: 'auto',
-        ml: 'auto',
-        maxHeight: 'xl',
+    <Grid
+      sx={({ spacing }) => ({
+        py: spacing(4),
       })}
     >
-      <Typography
-        sx={({ spacing }) => ({
-          pl: spacing(4),
-          pt: spacing(3),
-          fontWeight: 500,
-        })}
-        variant="h3"
-      >
-        More Metal Types
-      </Typography>
-      <Typography
-        sx={({ spacing }) => ({
-          pl: spacing(4),
-          pt: spacing(1),
-          fontWeight: 500,
-        })}
-        variant="h5"
-      >
-        Choose from over 8,000 types of shapes and grades of metals!
-      </Typography>
-
       <Grid
-        sx={({ spacing }) => ({
-          pt: spacing(4),
-          pb: spacing(4),
-        })}
+        container
+        columnSpacing={3}
+        rowSpacing={3}
+        sx={{
+          direction: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <Grid
-          container
-          columnSpacing={3}
-          rowSpacing={3}
-          sx={() => ({
-            direction: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-          })}
-        >
-          {data.map(({ id, name, image }) => (
-            <Grid key={id} item>
-              <Card sx={{ maxWidth: 345 }}>
-                <CardActionArea>
-                  <CardMedia component="img" height="140" image={image} />
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="body1"
-                      sx={{
-                        fontWeight: 500,
-                      }}
-                    >
-                      {name}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        {data.map(({ id, name, image }) => (
+          <Grid key={id} item>
+            <Card>
+              <CardActionArea>
+                <CardMedia component="img" height="140" image={image} />
+                <CardContent>
+                  <Typography
+                    gutterBottom
+                    variant="body1"
+                    sx={{
+                      fontWeight: 500,
+                    }}
+                  >
+                    {name}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
-    </Box>
-  );
-};
+    </Grid>
+  </Box>
+);
 
 export default CategoriesPage;
