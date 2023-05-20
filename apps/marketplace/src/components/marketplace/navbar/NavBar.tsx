@@ -110,7 +110,7 @@ const NavBar = () => {
             </Badge>
           </IconButton>
 
-          <Profile />
+          <Profile userName="Placeholder username" />
         </Box>
 
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -219,7 +219,7 @@ const NavBar = () => {
             </MenuItem>
 
             <MenuItem>
-              <Profile />
+              <Profile userName="Placeholder username" />
               <Typography
                 sx={({ spacing, typography, palette }) => ({
                   fontSize: typography.caption,
