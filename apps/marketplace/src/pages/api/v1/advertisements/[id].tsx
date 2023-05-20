@@ -49,7 +49,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
-  const id = parseToNumber(req.query.id as string);
+  const id = parseToNumber(req.query.id as string,'id');
   const validatedPayload = companyOptionalInputValidation.parse(req.body);
 
   // Check if user is admin
@@ -117,7 +117,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate query params
-  const id = parseToNumber(req.query.id as string);
+  const id = parseToNumber(req.query.id as string,'id');
 
   // Check if advertisement exists, if yes get the image url
   const advertisement = await PrismaClient.advertisements.findUnique({
