@@ -1,21 +1,8 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
-
-const createCompanyRequestBody = z.object({
-  name: z.string(),
-  website: z.string(),
-  comments: z.string(),
-  image: z.string().optional(),
-});
-
-const getCompaniesRequestBody = z.object({
-  lastIdPointer: z.string().optional(),
-  limit: z.string().optional(),
-  name: z.string().optional(),
-});
+import { companiesSchema } from '@/utils/api/server/zod';
 
 export type queryResult = {
   id: number;
@@ -58,7 +45,7 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
 
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, website, comments, image } = createCompanyRequestBody.parse(req.body);
+    const { name, website, comments, image } = companiesSchema.create.body.parse(req.body);
 
     if (!name || name.trim().length === 0) {
       throw new ParamError('name');
@@ -85,7 +72,7 @@ export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { lastIdPointer = '0', limit = '10', name } = getCompaniesRequestBody.parse(req.query);
+    const { lastIdPointer = 0, limit = 10, name } = companiesSchema.get.query.parse(req.query);
 
     const response = await PrismaClient.companies.findMany({
       select: {
@@ -100,13 +87,13 @@ export default apiHandler()
       },
       where: {
         id: {
-          gt: parseToNumber(lastIdPointer, 'lastIdPointer'),
+          gt: lastIdPointer,
         },
         name: {
           contains: name,
         },
       },
-      take: parseToNumber(limit, 'limit'),
+      take: limit,
     });
 
     res.status(200).json(formatAPIResponse(formatResponse(response)));

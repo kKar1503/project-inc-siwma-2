@@ -1,17 +1,9 @@
 import { NotFoundError, ParamError, ForbiddenError } from '@inc/errors';
 import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { companiesSchema } from '@/utils/api/server/zod';
 import { getResponseBody, queryResult } from '..';
-
-const editCompanyRequestBody = z.object({
-  name: z.string().optional(),
-  website: z.string().optional(),
-  bio: z.string().optional(),
-  comments: z.string().optional(),
-  image: z.string().optional(),
-});
 
 function parseCompanyId(id: string | undefined): number {
   if (!id) {
@@ -72,7 +64,7 @@ export default apiHandler()
   })
   .put(async (req, res) => {
     const { id } = req.query;
-    const { name, website, bio, comments, image } = editCompanyRequestBody.parse(req.body);
+    const { name, website, bio, comments, image } = companiesSchema.put.body.parse(req.body);
 
     const companyid = parseCompanyId(id as string);
     const isAdmin = req.token?.user.permissions === 1;
@@ -143,7 +135,7 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
-    const response = await PrismaClient.companies.delete({
+    await PrismaClient.companies.delete({
       where: {
         id: companyid,
       },
