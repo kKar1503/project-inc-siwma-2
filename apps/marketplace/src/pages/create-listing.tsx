@@ -189,7 +189,7 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setOpenCreateModal(true);
+
     // reset errors
     setCategoryError('');
     setParameterErrors([]);
@@ -223,7 +223,7 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
     };
 
     await client.post(`v1/listings/`, formData);
-    // setOpenCreateModal(true);
+    setOpenCreateModal(true);
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
