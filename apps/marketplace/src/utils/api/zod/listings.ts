@@ -73,7 +73,7 @@ const listing = z.object({
 const review = z.object({
   id: z.string(),
   review: z.string(),
-  rating: z.number(),
+  rating: z.string().transform((val) => Number(val)),
   userId: z.string(),
   listingId: z.string(),
   createdAt: z.string(),
