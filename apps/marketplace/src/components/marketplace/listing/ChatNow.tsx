@@ -45,12 +45,17 @@ export interface userDetails {
 }
 
 export type ChatNowProps = {
-  data: userDetails
+  data: userDetails;
 };
 
 const ChatNow = ({ data }: ChatNowProps) => (
   <Card
-    sx={{ maxWidth: 300, maxHeight: 400, border: '1px solid #C4C4C4', backgroundColor: '#F0F1F1' }}
+    sx={({ palette }) => ({
+      maxWidth: 300,
+      maxHeight: 400,
+      border: palette.grey[300],
+      backgroundColor: palette.grey[100],
+    })}
   >
     <CardContent sx={{ pl: 2 }}>
       <Box
@@ -63,15 +68,23 @@ const ChatNow = ({ data }: ChatNowProps) => (
           paddingBottom: 2,
         }}
       >
-        <Avatar sx={{ mb: 1.5 }}>{data.owner.profilePic}</Avatar>
+        <Avatar sx={({ spacing }) => ({ mb: spacing(2) })}>{data.owner.profilePic}</Avatar>
         <Box sx={{ pb: 2, marginLeft: 2 }}>
-          <Typography variant="body2" color="text.primary" fontWeight={500} fontSize={16}>
+          <Typography
+            variant="body2"
+            fontWeight={500}
+            fontSize={16}
+            sx={({ palette }) => ({ color: palette.common.black })}
+          >
             {data.owner.company.name}
           </Typography>
         </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Button variant="contained" sx={{ width: 250, backgroundColor: '#2563EB' }}>
+        <Button
+          variant="contained"
+          sx={({ palette }) => ({ width: 250, backgroundColor: palette.primary.main })}
+        >
           Chat Now
         </Button>
       </Box>
