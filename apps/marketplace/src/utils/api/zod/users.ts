@@ -10,6 +10,8 @@ const enabled = z.boolean();
 const profilePic = z.string().url();
 const comments = z.string().optional(); // Only returned for admins
 const mobileNumber = z.string();
+const whatsappNumber = z.string();
+const telegramUsername = z.string();
 const contactMethod = z.nativeEnum(UserContacts);
 const bio = z.string();
 
@@ -23,6 +25,8 @@ const user = z.object({
   enabled,
   profilePic,
   mobileNumber,
+  whatsappNumber,
+  telegramUsername,
   contactMethod,
   bio,
 });
@@ -36,7 +40,7 @@ export const toggleUser = z.object({
   visible: enabled,
 });
 export const createUser = z.object({
-  userId: id
+  userId: id,
 });
 export const getUser = user;
 export const updateUser = user;

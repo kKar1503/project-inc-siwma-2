@@ -117,7 +117,7 @@ model Invite {
   expiry    DateTime  @default(now()) @db.Timestamptz(6)
   companyId Int       @map("company_id")
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  phone     String?
+  phone     String?   @unique(map: "invite_un1")
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "invite_fk")
 
   @@map("invite")
@@ -256,6 +256,19 @@ model RefreshTokens {
   @@map("refresh_tokens")
 }
 
+model Reviews {
+  id                             Int      @id(map: "reviews_pk") @default(sequence())
+  review                         String
+  rating                         Int      @db.Int2
+  user                           String   @db.Uuid
+  listing                        Int
+  createdAt                      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  users                          Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk")
+  listingReviewsListingTolisting Listing  @relation("reviewsListingTolisting", fields: [listing], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk_1")
+
+  @@map("reviews")
+}
+
 model Rooms {
   id                           String     @id(map: "rooms_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   seller                       String     @db.Uuid
@@ -289,6 +302,16 @@ model UserBookmarks {
   @@map("user_bookmarks")
 }
 
+model UserReports {
+  id        Int        @id(map: "user_reports_pk") @default(sequence(maxValue: 2147483647))
+  user      String     @db.Uuid
+  reporter  String     @db.Uuid
+  reason    ReasonType
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("user_reports")
+}
+
 model Users {
   id                      String                 @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email                   String                 @unique(map: "users_un")
@@ -319,29 +342,6 @@ model Users {
   companies               Companies              @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
 
   @@map("users")
-}
-
-model Reviews {
-  id                             Int      @id(map: "reviews_pk") @default(sequence())
-  review                         String
-  rating                         Int      @db.Int2
-  user                           String   @db.Uuid
-  listing                        Int
-  createdAt                      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  users                          Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk")
-  listingReviewsListingTolisting Listing  @relation("reviewsListingTolisting", fields: [listing], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk_1")
-
-  @@map("reviews")
-}
-
-model UserReports {
-  id        Int        @id(map: "user_reports_pk") @default(sequence(maxValue: 2147483647))
-  user      String     @db.Uuid
-  reporter  String     @db.Uuid
-  reason    ReasonType
-  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@map("user_reports")
 }
 
 enum ContentType {
