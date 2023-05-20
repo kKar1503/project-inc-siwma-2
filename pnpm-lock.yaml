@@ -61,9 +61,6 @@ importers:
       '@inc/events':
         specifier: workspace:*
         version: link:../../packages/events
-      '@types/formidable':
-        specifier: 2.0.6
-        version: 2.0.6
       dayjs:
         specifier: ^1.11.7
         version: 1.11.7
@@ -98,6 +95,9 @@ importers:
       '@types/express':
         specifier: ^4.17.17
         version: 4.17.17
+      '@types/formidable':
+        specifier: 2.0.6
+        version: 2.0.6
       '@types/node':
         specifier: 18.15.3
         version: 18.15.3
@@ -161,9 +161,6 @@ importers:
       '@types/bcrypt':
         specifier: ^5.0.0
         version: 5.0.0
-      '@types/formidable':
-        specifier: 2.0.6
-        version: 2.0.6
       '@types/react-swipeable-views':
         specifier: ^0.13.1
         version: 0.13.1
@@ -237,6 +234,9 @@ importers:
       '@inc/types':
         specifier: workspace:*
         version: link:../../packages/types
+      '@types/formidable':
+        specifier: 2.0.6
+        version: 2.0.6
       '@types/luxon':
         specifier: ^3.3.0
         version: 3.3.0
@@ -2430,7 +2430,7 @@ packages:
     resolution: {integrity: sha512-L4HcrA05IgQyNYJj6kItuIkXrInJvsXTPC5B1i64FggWKKqSL+4hgt7asiSNva75AoLQjq29oPxFfU4GAQ6Z2w==}
     dependencies:
       '@types/node': 20.1.4
-    dev: false
+    dev: true
 
   /@types/json-schema@7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
