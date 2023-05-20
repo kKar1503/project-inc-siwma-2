@@ -21,7 +21,7 @@ const companyOptionalInputValidation = z.object({
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
-  const id = parseToNumber(req.query.id as string);
+  const id = parseToNumber(req.query.id as string, 'id');
 
   // Check if user is admin
   const isAdmin = (req.token?.user.permissions === true);
