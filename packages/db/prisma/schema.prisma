@@ -117,7 +117,7 @@ model Invite {
   expiry    DateTime  @default(now()) @db.Timestamptz(6)
   companyId Int       @map("company_id")
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  phone     String?
+  phone     String?   @unique(map: "invite_un1")
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "invite_fk")
 
   @@map("invite")
