@@ -22,6 +22,7 @@ import ImageUploadForm, {
 } from '@/components/marketplace/createListing/ImageUploadForm';
 import CategoryForm, { CategoryProps } from '@/components/marketplace/createListing/CategoryForm';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
+import OnCreateModal from '@/components/modal/OnCreateModal';
 
 export interface CreateListingProps {
   name: string;
@@ -51,6 +52,7 @@ export const getServerSideProps = async () => {
 };
 
 const CreateListingPage = ({ data }: CreateListingDataProps) => {
+  // form data
   const [listingType, setListingType] = useState<ListingTypeProps>('BUY');
   const [category, setCategory] = useState<CategoryProps | null>(null);
   const [images, setImages] = useState<ImageProps[]>([]);
@@ -62,6 +64,9 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+
+  // modals
+  const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
 
   // validation
@@ -92,15 +97,8 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!category || !category.id) {
-      setCategoryError('Category is required');
-      return;
-    }
-
-    // listing form validation
+  // validation for listing form
+  const listingValidation = () => {
     let formIsValid = true;
     const newErrors: ListingValidationProps = {
       nameError: '',
@@ -125,13 +123,17 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
 
     if (!formIsValid) {
       setListingErrors(newErrors);
-      return;
+      return false;
     }
 
-    // parameter form validation
+    return formIsValid;
+  };
+
+  // validation for parameters
+  const ParameterValidation = () => {
+    let formIsValid = true;
     const newParameterErrors: ParameterValidationProps[] = [];
 
-    // validate required parameters
     categoryParameters.forEach((categoryParameter) => {
       const { parameterId, required } = categoryParameter;
       const parameter = parameters.find((parameter) => parameter.paramId === parameterId);
@@ -139,39 +141,74 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
         (parameter) => parameter.id === parameterId
       );
 
-      if (detailedParameter) {
-        if (!parameter && required) {
-          newParameterErrors.push({
-            parameterId,
-            error: `${detailedParameter.displayName} is required`,
-          });
-        }
+      if (!detailedParameter) {
+        return;
+      }
 
-        switch (detailedParameter.dataType) {
-          case 'number':
-            if (parameter && !Number.isNaN(parameter.value)) {
-              newParameterErrors.push({
-                parameterId,
-                error: `${detailedParameter.displayName} must be a number`,
-              });
-            }
-            break;
-          case 'boolean':
-            if (parameter && typeof parameter.value !== 'boolean') {
-              newParameterErrors.push({
-                parameterId,
-                error: `${detailedParameter.displayName} must be a boolean`,
-              });
-            }
-            break;
-          default:
-            break;
-        }
+      if (!parameter && required) {
+        newParameterErrors.push({
+          parameterId,
+          error: `${detailedParameter.displayName} is required`,
+        });
+      }
+
+      if (!parameter) {
+        return;
+      }
+
+      switch (detailedParameter.dataType) {
+        case 'number':
+          if (!Number.isNaN(parameter.value)) {
+            newParameterErrors.push({
+              parameterId,
+              error: `${detailedParameter.displayName} must be a number`,
+            });
+          }
+          break;
+        case 'boolean':
+          if (typeof parameter.value !== 'boolean') {
+            newParameterErrors.push({
+              parameterId,
+              error: `${detailedParameter.displayName} must be a boolean`,
+            });
+          }
+          break;
+        default:
+          break;
       }
     });
 
     setParameterErrors(newParameterErrors);
 
+    if (newParameterErrors.length > 0) {
+      formIsValid = false;
+    }
+
+    return formIsValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setOpenCreateModal(true);
+    // reset errors
+    setCategoryError('');
+    setParameterErrors([]);
+    setListingErrors({
+      nameError: '',
+      descriptionError: '',
+      priceError: '',
+    });
+
+    if (!category || !category.id) {
+      setCategoryError('Category is required');
+      return;
+    }
+
+    if (!listingValidation() && !ParameterValidation()) {
+      return;
+    }
+
+    // backend api currently have conflicts
     const formData: CreateListingProps = {
       name: title,
       description,
@@ -186,6 +223,7 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
     };
 
     await client.post(`v1/listings/`, formData);
+    // setOpenCreateModal(true);
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -251,6 +289,7 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
             <Button variant="contained" type="submit" size="large" fullWidth>
               CREATE LISTING
             </Button>
+            <OnCreateModal open={openCreateModal} setOpen={setOpenCreateModal} />
           </Grid>
         </Grid>
       </form>

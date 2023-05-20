@@ -161,9 +161,9 @@ const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
                     <Select
                       size="medium"
                       label={parameter.displayName}
-                      fullWidth
                       value={formValues[parameter.id]?.value || ''}
                       onChange={(event) => handleFormValueChange(event, parameter.id)}
+                      fullWidth
                     >
                       {parameter.options &&
                         parameter.options.map((option: string) => (
@@ -180,15 +180,15 @@ const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
                 <Grid item xs={12} md={12} sx={{ width: '100%' }} key={parameter.id}>
                   <TextField
                     label={parameter.displayName}
-                    rows={4}
                     value={formValues[parameter.id]?.value || ''}
-                    multiline
-                    fullWidth
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
                     error={errors.some((error) => error.parameterId === parameter.id)}
                     helperText={handleErrorMessage(
                       errors.find((error) => error.parameterId === parameter.id)
                     )}
+                    rows={4}
+                    multiline
+                    fullWidth
                   />
                 </Grid>
               );
