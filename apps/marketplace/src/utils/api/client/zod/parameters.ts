@@ -22,22 +22,32 @@ const parameter = z.object({
 });
 
 // POST /parameters
-export const createParameter = z.object({ parameterId: id });
+const createParameter = z.object({ parameterId: id });
 
 // GET /parameters
-export const getParameters = z.array(parameter);
+const getParameters = z.array(parameter);
 
 // GET /parameters/types
-export const getParameterTypes = z.array(type);
+const getParameterTypes = z.array(type);
 
 // GET /parameters/data-types
-export const getParameterDataTypes = z.array(dataType);
+const getParameterDataTypes = z.array(dataType);
 
 // PUT /parameters/:id
-export const updateParameter = parameter;
+const updateParameter = parameter;
 
 // PATCH /parameters/:id
-export const toggleParameter = z.object({ active });
+const toggleParameter = z.object({ active });
 
 // DELETE /parameters/:id
-export const deleteParameter = z.object({});
+const deleteParameter = z.object({});
+
+export default {
+  create: createParameter,
+  getAll: getParameters,
+  getTypes: getParameterTypes,
+  getDataTypes: getParameterDataTypes,
+  update: updateParameter,
+  toggle: toggleParameter,
+  delete: deleteParameter,
+};

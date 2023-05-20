@@ -1,16 +1,16 @@
 import { z } from 'zod';
 
-export const createChatRoom = z.object({
+const createChatRoom = z.object({
   room: z.string().uuid(),
 });
 
-export const getChatRoom = z.object({
+const getChatRoom = z.object({
   id: z.string().uuid(),
   seller: z.string().uuid(),
   buyer: z.string().uuid(),
 });
 
-export const getChatMessages = z
+const getChatMessages = z
   .object({
     id: z.string(),
     content_type: z.string(),
@@ -22,7 +22,7 @@ export const getChatMessages = z
   })
   .array();
 
-export const getUserChats = z
+const getUserChats = z
   .object({
     id: z.string().uuid(),
     seller: z.string().uuid(),
@@ -31,3 +31,14 @@ export const getUserChats = z
     created_at: z.date(),
   })
   .array();
+
+export default {
+  room: {
+    create: createChatRoom,
+    get: getChatRoom,
+  },
+  message: {
+    get: getChatMessages,
+  },
+  getByUser: getUserChats,
+};

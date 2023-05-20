@@ -13,10 +13,17 @@ const invite = z.object({
 });
 
 // Response Schemas
-export const createInvite = z.object({
+const createInvite = z.object({
   inviteId: id,
 });
 
-export const deleteInvite = z.object({});
-export const getInvite = invite;
-export const getInvites = invite.array();
+const deleteInvite = z.object({});
+const getInvite = invite;
+const getInvites = invite.array();
+
+export default {
+  create: createInvite,
+  delete: deleteInvite,
+  getById: getInvite,
+  getAll: getInvites,
+};

@@ -23,8 +23,16 @@ const category = z.object({
   parameters: parameters.array().optional(),
 });
 
-export const createCategory = z.object({ categoryId });
-export const getCategories = category.array();
-export const getCategory = category;
-export const updateCategory = category;
-export const deleteCategory = z.object({});
+const createCategory = z.object({ categoryId });
+const getCategories = category.array();
+const getCategory = category;
+const updateCategory = category;
+const deleteCategory = z.object({});
+
+export default {
+  create: createCategory,
+  getAll: getCategories,
+  getById: getCategory,
+  update: updateCategory,
+  delete: deleteCategory,
+};
