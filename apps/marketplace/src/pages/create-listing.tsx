@@ -123,7 +123,6 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
 
     if (!formIsValid) {
       setListingErrors(newErrors);
-      return false;
     }
 
     return formIsValid;
