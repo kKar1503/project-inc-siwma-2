@@ -35,7 +35,10 @@ const updateUserDetailsSchema = z
   })
   .partial();
 
-const createReportSchema = z.nativeEnum(ReasonType);
+const createReportSchema = z.object({
+  // validates against ReasonType enum from zod
+  reason: z.nativeEnum(ReasonType),
+});
 
 export type GetUsersQueryParameter = z.infer<typeof getUsersQuery>;
 export type PostUserRequestBody = z.infer<typeof userCreationRequestBody>;

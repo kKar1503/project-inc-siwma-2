@@ -33,16 +33,7 @@ export default apiHandler()
 
     const { id: reporteeId } = userSchema.userId.parse(req.query);
     const reporterId = req.token?.user.id;
-    const { reason: $reason } = req.body;
-
-    const regexBreakpoint = /[\s/]/;
-
-    // splits reason string by space or slash and joins with underscore to match db enum
-    const reason = $reason.split(regexBreakpoint).join('_');
-
-    // validates against ReasonType enum from zod
-    // destructures reason from object body
-    const parsedReason = userSchema.report.post.body.parse(reason);
+    const { reason } = userSchema.report.post.body.parse(req.body);
 
     // check if reporteeId matches uuid type
     const reportee = await PrismaClient.users.findUnique({
@@ -59,7 +50,7 @@ export default apiHandler()
       data: {
         user: reporteeId,
         reporter: reporterId,
-        reason: parsedReason,
+        reason,
       },
     });
 
