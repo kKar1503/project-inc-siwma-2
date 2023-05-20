@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const id = z.string().transform((val) => Number(val));
+const id = z.string();
 const name = z.string();
 const email = z.string();
 const companyId = z.string();

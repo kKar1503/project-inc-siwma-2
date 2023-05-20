@@ -5,7 +5,7 @@ export const createCompany = z.object({
 });
 
 export const getCompany = z.object({
-  id: z.string().transform((val) => Number(val)),
+  id: z.string(),
   name: z.string(),
   bio: z.string(),
   website: z.string(),

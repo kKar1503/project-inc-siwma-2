@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-const categoryId = z.string().transform((val) => Number(val));
+const categoryId = z.string();
 const name = z.string();
 const description = z.string();
 const image = z.string().url();
 const crossSectionImage = z.string().url();
 const active = z.boolean();
-const parameterId = z.string().transform((val) => Number(val));
+const parameterId = z.string();
 const required = z.boolean();
 
 const parameters = z.object({
