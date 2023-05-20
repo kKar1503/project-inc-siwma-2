@@ -5,7 +5,7 @@ import { z } from 'zod';
 const id = z.string();
 const name = z.string();
 const description = z.string();
-const price = z.string();
+const price = z.number();
 const unitPrice = z.boolean().optional();
 const negotiable = z.boolean().optional();
 const categoryId = z.string();
@@ -72,8 +72,8 @@ const listing = z.object({
 // -- Define review schema -- //
 const review = z.object({
   id: z.string(),
-  review: z.string(),
-  rating: z.string(),
+  review: z.string(), 
+  rating: z.number(),
   userId: z.string(),
   listingId: z.string(),
   createdAt: z.string(),
