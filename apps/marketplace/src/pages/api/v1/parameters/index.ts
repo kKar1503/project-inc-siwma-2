@@ -1,9 +1,9 @@
 import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { z } from 'zod';
 import { DataType, Parameter, ParameterType } from '@prisma/client';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamSizeError } from '@inc/errors';
+import { paramsSchema, ParamsRequestBody } from '@/utils/api/server/zod';
 
 // -- Type definitions -- //
 // Define the type of the response object
@@ -40,20 +40,6 @@ export function formatParamResponse($parameters: Parameter | Parameter[]) {
 
   return formatAPIResponse(result);
 }
-
-/**
- * Zod schema for the POST / PUT request body
- */
-export const paramsRequestBody = z.object({
-  // Define the request body schema
-  name: z.string().min(1),
-  displayName: z.string().min(1),
-  type: z.nativeEnum(ParameterType),
-  dataType: z.nativeEnum(DataType),
-  options: z.string().array().optional(),
-});
-
-export type ParamsRequestBody = z.infer<typeof paramsRequestBody>;
 
 /**
  * Validation functions
@@ -109,7 +95,7 @@ export default apiHandler()
     async (req, res) => {
       // Create a new parameter (admins only)
       // Parse and validate the request body
-      const data = paramsRequestBody.parse(req.body);
+      const data = paramsSchema.post.body.parse(req.body);
 
       // Validate parameter options
       validateOptions(data);
