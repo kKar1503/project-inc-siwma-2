@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import PrismaClient, { ReasonType, UserReports } from '@inc/db';
+import { usersSchema } from '@/utils/api/server/zod';
+import PrismaClient, { ReasonType } from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 
 // -- Type Definitions --
@@ -18,15 +18,6 @@ export type ReportResponse = {
   createdAt: Date;
 };
 
-export const updateReportSchema = z.object({
-  // validates against ReasonType enum from zod
-  reason: z.nativeEnum(ReasonType),
-});
-
-export const userIdSchema = z.object({
-  id: z.string().uuid(),
-});
-
 export default apiHandler()
   .get(
     apiGuardMiddleware({
@@ -35,15 +26,12 @@ export default apiHandler()
     //  get user reports protected for admins view only
     async (req, res) => {
       // init user id query params
-      const { id } = userIdSchema.parse(req.query);
-
-      // check if id matches uuid type
-      const uuid = z.string().uuid().parse(id);
+      const { id } = usersSchema.userId.parse(req.query);
 
       const reports = await PrismaClient.userReports.findMany({
         where: {
           user: {
-            equals: uuid,
+            equals: id,
           },
         },
       });
@@ -57,28 +45,18 @@ export default apiHandler()
     // endpoint refers to reportee's id and reporter's id grab from auth cookie
     // request body "reason" : "string reason for report"
 
-    const { id: reporteeId } = userIdSchema.parse(req.query);
+    const { id: reporteeId } = usersSchema.userId.parse(req.query);
     const reporterId = req.token?.user.id;
-    let { reason } = req.body;
+    const { reason: $reason } = req.body;
 
     const regexBreakpoint = /[\s/]/;
 
     // splits reason string by space or slash and joins with underscore to match db enum
-    reason = reason.split(regexBreakpoint).join('_');
-
-    // throws error if reason doesn't match db enum
-    if (
-      reason !== ReasonType.Offensive_Content_Behaviour &&
-      reason !== ReasonType.Cancelling_on_deal &&
-      reason !== ReasonType.Suspicious_Account &&
-      reason !== ReasonType.Inaccurate_Listings
-    ) {
-      throw new NotFoundError('Reason');
-    }
+    const reason = $reason.split(regexBreakpoint).join('_');
 
     // validates against ReasonType enum from zod
     // destructures reason from object body
-    ({ reason } = updateReportSchema.parse({ reason }));
+    const parsedReason = usersSchema.report.post.body.parse(reason);
 
     // check if reporteeId matches uuid type
     const reportee = await PrismaClient.users.findUnique({
@@ -95,7 +73,7 @@ export default apiHandler()
       data: {
         user: reporteeId,
         reporter: reporterId,
-        reason,
+        reason: parsedReason,
       },
     });
 
