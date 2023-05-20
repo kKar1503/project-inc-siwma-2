@@ -15,7 +15,7 @@ export interface Image {
   image: string;
   active: boolean;
   startDate: string;
-  endDate: number;
+  endDate: string;
   description: string;
   link: string;
 }

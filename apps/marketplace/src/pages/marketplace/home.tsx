@@ -96,13 +96,22 @@ const mockAdvertisements: Array<Image> = [
   {
     id: '1',
     companyId: '1',
-    image:
-      'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
+    image: '550e8400-e29b-41d4-a716-446655440000.png',
     active: true,
-    startDate: '22 March 2023',
-    endDate: 1,
-    description: '',
-    link: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
+    startDate: '2023-01-18 13:25:45',
+    endDate: '2023-03-18 13:25:45',
+    description: 'Advertisement Description',
+    link: 'https://example.com',
+  },
+  {
+    id: '2',
+    companyId: '1',
+    image: '550e8400-e29b-41d4-a716-446655440000.png',
+    active: true,
+    startDate: '2023-01-18 13:25:45',
+    endDate: '2023-03-18 13:25:45',
+    description: 'Advertisement Description',
+    link: 'https://example.com',
   },
 ];
 
@@ -157,7 +166,6 @@ const Marketplace = () => {
     //     setAdvertisements(data.data);
     //   } catch (error) {
     //     console.error('Error fetching data:', error);
-    //     // Handle error state or display an error message
     //   }
     // }
 
@@ -165,14 +173,14 @@ const Marketplace = () => {
       try {
         const response = await fetch('/api/v1/listings');
         const data = await response.json();
-        const listingsData: Array<ProductListingItemProps> = []
+        const listingsData: Array<ProductListingItemProps> = [];
         console.log(data);
 
         // Change later
         const listings = mockListings;
 
         // Mutate Data to fit ProductListingItemProps
-        listings.forEach(listing => {
+        listings.forEach((listing) => {
           const newListingsObj = {
             productId: +listing.id,
             img: '',
@@ -188,16 +196,15 @@ const Marketplace = () => {
             companyName: listing.owner.company.name,
             isUnitPrice: listing.unitPrice,
             isOwnProfile: true,
-          }
+          };
 
-          listingsData.push(newListingsObj)
-        })
+          listingsData.push(newListingsObj);
+        });
 
-        console.log(listingsData)
+        console.log(listingsData);
         setListings(listingsData);
       } catch (error) {
         console.error('Error fetching data:', error);
-        // Handle error state or display an error message
       }
     };
 
