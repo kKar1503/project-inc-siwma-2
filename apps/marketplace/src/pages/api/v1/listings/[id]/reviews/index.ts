@@ -19,7 +19,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
         throw new NotFoundError(`Listing with id '${id}' not found.`);
     }
 
-    let orderBy;
+    let orderBy: Prisma.ReviewsOrderByWithRelationInput = {};
 
     switch (req.query.sortBy) {
         case 'recent_newest':
@@ -35,7 +35,6 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
             orderBy = { rating: 'asc' };
             break;
         default:
-            orderBy = {};
             break;
     }
 
@@ -43,6 +42,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
         where: {
             listing: id,
         },
+        orderBy: orderBy,
     });
 
     res.status(200).json(reviews);
