@@ -14,9 +14,9 @@ import PrismaClient, {
   Companies,
   UserContacts,
 } from '@inc/db';
-import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError, ParamError } from '@inc/errors';
+import { listingsSchema } from '@/utils/api/server/zod';
 
 export function parseListingId($id: string) {
   // Parse and validate listing id provided
@@ -95,19 +95,6 @@ export type ListingWithParameters = Listing & {
   };
 };
 
-export const getQueryParameters = z.object({
-  lastIdPointer: z.string().transform(zodParseToInteger).optional(),
-  limit: z.string().transform(zodParseToInteger).optional(),
-  matching: z.string().optional(),
-  includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z.string().optional(),
-  category: z.string().transform(zodParseToInteger).optional(),
-  negotiable: z.string().transform(zodParseToBoolean).optional(),
-  minPrice: z.string().transform(zodParseToNumber).optional(),
-  maxPrice: z.string().transform(zodParseToNumber).optional(),
-  sortBy: z.string().optional(),
-});
-
 // -- Helper functions -- //
 export function formatSingleListingResponse(
   listing: ListingWithParameters,
@@ -160,28 +147,10 @@ export function formatListingResponse(
   return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
 }
 
-export const listingsRequestBody = z.object({
-  name: z.string(),
-  description: z.string(),
-  price: z.number().gte(0),
-  unitPrice: z.boolean().optional(),
-  negotiable: z.boolean().optional(),
-  categoryId: z.number(),
-  type: z.nativeEnum(ListingType),
-  parameters: z
-    .array(
-      z.object({
-        paramId: z.string().transform(zodParseToInteger),
-        value: z.string().transform(zodParseToNumber),
-      })
-    )
-    .optional(),
-});
-
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingsSchema.get.query.parse(req.query);
 
     // Decode params if it exists
     let decodedParams = null;
@@ -275,7 +244,7 @@ export default apiHandler()
       );
   })
   .post(async (req, res) => {
-    const data = listingsRequestBody.parse(req.body);
+    const data = listingsSchema.post.body.parse(req.body);
 
     // Use the user ID from the request object
     const userId = req.token?.user?.id;

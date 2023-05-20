@@ -1,12 +1,11 @@
 import { NextApiResponse } from 'next';
-import { apiHandler, formatAPIResponse, zodParseToInteger, zodParseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
-import * as z from 'zod';
 import { APIRequestType } from '@/types/api-types';
+import { listingsSchema } from '@/utils/api/server/zod';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
-import parameters from '../../../parameters';
 
 // -- Functions --//
 function formatParametersResponse(parameters: { parameterId: number; value: string }[]): any[] {
@@ -62,11 +61,6 @@ async function getValidParametersForCategory(categoryId: number): Promise<string
   return validParameters.categoriesParameters.map((param) => param.parameterId.toString());
 }
 
-const parameterSchema = z.object({
-  paramId: z.string().transform(zodParseToInteger),
-  value: z.string().transform(zodParseToNumber),
-});
-
 type RequestBodyParameter = {
   paramId: number;
   value: number;
@@ -87,7 +81,7 @@ const createListingParameter = async (req: APIRequestType, res: NextApiResponse)
     throw new ForbiddenError();
   }
 
-  const { paramId, value } = parameterSchema.parse(req.body);
+  const { paramId, value } = listingsSchema.parameters.post.body.parse(req.body);
 
   // Get valid parameters for the listing's category
   const validParameters = await getValidParametersForCategory(listing.categoryId);
@@ -143,7 +137,7 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
     throw new ForbiddenError();
   }
 
-  const parameters = z.array(parameterSchema).parse(req.body);
+  const parameters = listingsSchema.parameters.put.body.parse(req.body);
 
   // Update the parameters in the database and format the response
   const updatePromises = parameters.map((param: RequestBodyParameter) => {
