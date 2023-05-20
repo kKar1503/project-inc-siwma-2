@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -29,13 +29,13 @@ const InfiniteScrollingPage = () => {
     {
       onSuccess: (data) => {
         setTodos((prev) => [...prev, data]);
+        
+        if (scrollRef.current && scrollRef.current.scrollHeight > window.screen.height) {
+          scrollRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
+        }
       },
     }
   );
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
-  }, []);
 
   return (
     <>
@@ -45,14 +45,13 @@ const InfiniteScrollingPage = () => {
         sx={{
           height: '60px',
           width: '60px',
-          position: 'absolute',
+          position: 'fixed',
           borderRadius: '100%',
           right: '15px',
           bottom: '15px',
         }}
         onClick={() => {
-          console.log('scrollRef.current?.scrollHeight', scrollRef.current);
-          scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+          scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }}
       >
         <ArrowDownward sx={{ height: '30px', width: '30px' }} />
@@ -65,7 +64,6 @@ const InfiniteScrollingPage = () => {
           <InfiniteScroll
             sx={{ display: 'flex', flexDirection: 'column-reverse' }}
             wrapperSx={{ border: 'solid', borderColor: 'red' }}
-            inverse
             onLoadMore={refetch}
             loading={isLoading}
             reachedMaxItems={false}

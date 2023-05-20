@@ -6,7 +6,6 @@ import { SxProps, Theme } from '@mui/material';
 
 interface InfiniteScrollProps {
   children: ReactNode[];
-  inverse?: boolean;
   onLoadMore: () => void;
   loading: boolean;
   reachedMaxItems: boolean;
@@ -16,7 +15,6 @@ interface InfiniteScrollProps {
 
 const InfiniteScroll = ({
   children,
-  inverse = false,
   onLoadMore,
   loading,
   reachedMaxItems,
@@ -50,11 +48,13 @@ const InfiniteScroll = ({
         observerRef.current.unobserve(lastItem);
       }
     };
-  }, [children, lastItemRef, loading, onLoadMore, reachedMaxItems]);
+  }, [children, lastItemRef, onLoadMore, reachedMaxItems]);
 
   return (
     <>
       <Box sx={sx}>
+        {loading && <CircularProgress />}
+
         {children !== null &&
           children !== undefined &&
           Children.map(children, (child, index) => {
@@ -73,7 +73,6 @@ const InfiniteScroll = ({
           })}
       </Box>
 
-      {loading && <CircularProgress />}
       {reachedMaxItems && (
         <Box className="text-center my-5">You&apos;ve reached the end of the universe!</Box>
       )}
