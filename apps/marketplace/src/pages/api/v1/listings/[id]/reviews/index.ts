@@ -1,16 +1,24 @@
 import { NextApiResponse } from 'next';
-import { apiHandler } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NotFoundError, ForbiddenError } from '@inc/errors';
 import PrismaClient from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
 
+import { z } from 'zod';
+
 /**
  * Fetches all reviews for a listing
  * @param id The listing id
  * @returns An array of reviews for the listing
  */
+// Define the Zod validation schema
+const reviewRequestBody = z.object({
+    review: z.string(),
+    rating: z.number().min(0).max(5),
+});
+
 const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
     const id = parseListingId(req.query.id as string);
     const listing = await checkListingExists(id);
@@ -39,6 +47,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
             break;
     }
 
+
     const reviews = await PrismaClient.reviews.findMany({
         where: {
             listing: id,
@@ -61,7 +70,7 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
     const userRole = req.token?.user?.role;
 
     const listing = await checkListingExists(id);
-    const { review, rating } = req.body;
+    const { review, rating } = reviewRequestBody.parse(req.body);
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
@@ -75,15 +84,14 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
     // Add the new review
     const createdReview = await PrismaClient.reviews.create({
         data: {
-            id: 7,
+            id: 10,
             review: review,
             rating: rating,
             user: userId,
             listing: id,
         },
     });
-
-    res.status(201).json(createdReview);
+    res.status(201).json(formatAPIResponse({ createdReview }));
 };
 
 export default apiHandler()
