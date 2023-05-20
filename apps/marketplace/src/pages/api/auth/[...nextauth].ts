@@ -11,9 +11,9 @@ export const authOptions: NextAuthOptions = {
       // Initialise result
       const result = session;
 
-      if (session?.user && typeof token.uid === 'string') {
-        result.user.id = token.uid;
-      }
+      // Append user data to the session
+      result.user.id = token.user.id;
+      result.user.permissions = token.user.permissions;
 
       return result;
     },
