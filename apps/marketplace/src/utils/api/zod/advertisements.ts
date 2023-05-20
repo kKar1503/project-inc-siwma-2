@@ -5,8 +5,7 @@ const image = z.string().url();
 const description = z.string();
 const link = z.string().url();
 // Admin Fields
-// default is true because if we are not admin, we would not be able to see fields that are not active
-const active = z.string().optional().default('true').transform((val) => val === 'true');
+const active = z.boolean().optional();
 const startDate = z.date().optional();
 const endDate = z.date().optional();
 

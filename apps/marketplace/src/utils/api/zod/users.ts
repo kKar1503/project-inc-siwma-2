@@ -6,7 +6,7 @@ const name = z.string();
 const email = z.string();
 const company = z.string();
 const createdAt = z.date();
-const enabled =  z.string().transform((val) => val === 'true');
+const enabled = z.boolean();
 const profilePic = z.string().url();
 const comments = z.string().optional(); // Only returned for admins
 const mobileNumber = z.string();

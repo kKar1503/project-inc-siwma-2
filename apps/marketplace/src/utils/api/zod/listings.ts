@@ -6,8 +6,8 @@ const id = z.string().transform((val) => Number(val));
 const name = z.string();
 const description = z.string();
 const price = z.string().transform((val) => Number(val));
-const unitPrice = z.string().optional().transform((val) => val ? val === 'true' : undefined);
-const negotiable = z.string().optional().transform((val) => val ? val === 'true' : undefined);
+const unitPrice = z.boolean().optional();
+const negotiable = z.boolean().optional();
 const categoryId = z.string().transform((val) => Number(val));
 const type = z.nativeEnum(ListingType);
 const images = z
@@ -16,7 +16,7 @@ const images = z
       id: z.string(),
       filename: z.string(),
       url: z.string(),
-    }),
+    })
   )
   .optional();
 const coverImage = z.string().optional();
@@ -28,7 +28,7 @@ const company = z.object({
   website: z.string().optional(),
   bio: z.string().optional(),
   image: z.string().optional(),
-  visible: z.string().optional().transform((val) => val ? val === 'true' : undefined),
+  visible: z.boolean().optional(),
 });
 
 const owner = z.object({
@@ -49,7 +49,7 @@ const parameter = z
   })
   .optional();
 
-const active = z.string().transform((val) => val === 'true');
+const active = z.boolean();
 
 // -- Define listing schema -- //
 const listing = z.object({

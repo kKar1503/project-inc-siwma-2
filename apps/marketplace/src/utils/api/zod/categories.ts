@@ -5,9 +5,9 @@ const name = z.string();
 const description = z.string();
 const image = z.string().url();
 const crossSectionImage = z.string().url();
-const active = z.string().transform((val) => val === 'true');
+const active = z.boolean();
 const parameterId = z.string().transform((val) => Number(val));
-const required =  z.string().transform((val) => val === 'true');
+const required = z.boolean();
 
 const parameters = z.object({
   parameterId,

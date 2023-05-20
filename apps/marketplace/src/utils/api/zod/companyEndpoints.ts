@@ -10,7 +10,7 @@ export const getCompany = z.object({
   bio: z.string(),
   website: z.string(),
   image: z.string(),
-  visible: z.string().transform((val) => val === 'true'),
+  visible: z.boolean(),
   comments: z.string().optional(),
   createdAt: z.date().optional(),
 });
@@ -20,7 +20,7 @@ export const getCompanies = getCompany.array();
 export const editCompany = getCompany;
 
 export const toggleCompany = z.object({
-  visible: z.string().transform((val) => val === 'true'),
+  visible: z.boolean(),
 });
 
 export const deleteCompany = z.object({});
