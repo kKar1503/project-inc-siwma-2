@@ -14,4 +14,4 @@ type TNotificationType = keyof typeof NotificationType;
 type TParameterType = keyof typeof ParameterType;
 type TUserContacts = keyof typeof UserContacts;
 
-export { TContentType, TDataType, TListingType, TNotificationType, TParameterType, TUserContacts };
+export type { TContentType, TDataType, TListingType, TNotificationType, TParameterType, TUserContacts };

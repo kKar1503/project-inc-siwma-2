@@ -292,6 +292,8 @@ importers:
         specifier: 5.0.2
         version: 5.0.2
 
+  packages/@types/sib: {}
+
   packages/configs: {}
 
   packages/db:
@@ -362,6 +364,9 @@ importers:
       '@types/node':
         specifier: 18.15.3
         version: 18.15.3
+      '@types/sib-api-v3-sdk':
+        specifier: workspace:*
+        version: link:../@types/sib
 
   packages/types:
     dependencies:
