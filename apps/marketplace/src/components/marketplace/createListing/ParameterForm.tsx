@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
@@ -15,33 +14,39 @@ import MenuItem from '@mui/material/MenuItem';
 import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export type CategoryParametersProps = {
-  parameterId: string;
-  required: boolean;
-};
-
-export type ParameterFormProps = {
-  paramId: string;
-  value: string;
-};
-
 export type dataTypeProps = 'string' | 'number' | 'boolean';
 
-export type ParameterProps = {
+export interface ParameterFormProps {
+  paramId: string;
+  value: string;
+}
+
+export interface CategoryParametersProps {
+  parameterId: string;
+  required: boolean;
+}
+
+export interface ParameterValidationProps {
+  parameterId: string;
+  error: string;
+}
+
+export interface ParameterProps {
   id: string;
   name: string;
   displayName: string;
   type: string;
   dataType: dataTypeProps;
   options?: string[];
-};
+}
 
-export type SetParameterProps = {
+export interface SetParameterProps {
   setParameters: (parameters: ParameterFormProps[]) => void;
   data: ParameterProps[];
-};
+  errors: ParameterValidationProps[];
+}
 
-const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
+const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
 
   const handleFormValueChange = (
@@ -64,6 +69,13 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
     setParameters(formValuesArray);
   };
 
+  const handleErrorMessage = (parameterError: ParameterValidationProps | undefined) => {
+    if (parameterError) {
+      return parameterError.error;
+    }
+    return '';
+  };
+
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <Grid item xs={12} md={12} mb={2} sx={{ width: '100%' }}>
@@ -74,24 +86,26 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
           Enter the parameters specific to the chosen category
         </Typography>
       </Grid>
-
       <Grid container item xs={12} md={12} spacing={2} sx={{ width: '100%' }}>
         {data.map((parameter: ParameterProps) => {
           switch (parameter.type) {
             case ParameterType.WEIGHT:
               return (
                 <Grid item xs={4} md={4} sx={{ width: '100%' }} key={parameter.id}>
-                  <OutlinedInput
+                  <TextField
                     className="outlined-adornment-weight"
                     size="medium"
-                    endAdornment={<InputAdornment position="end">kg</InputAdornment>}
-                    aria-describedby="outlined-weight-helper-text"
-                    inputProps={{
-                      'aria-label': 'weight',
+                    label={parameter.displayName}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">kg</InputAdornment>,
                     }}
-                    fullWidth
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
+                    error={errors.some((error) => error.parameterId === parameter.id)}
+                    helperText={handleErrorMessage(
+                      errors.find((error) => error.parameterId === parameter.id)
+                    )}
+                    fullWidth
                   />
                 </Grid>
               );
@@ -104,13 +118,21 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
                     fullWidth
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
+                    error={errors.some((error) => error.parameterId === parameter.id)}
+                    helperText={handleErrorMessage(
+                      errors.find((error) => error.parameterId === parameter.id)
+                    )}
                   />
                 </Grid>
               );
             case ParameterType.TWO_CHOICES:
               return (
                 <Grid item xs={12} md={12} sx={{ width: '100%' }} key={parameter.id}>
-                  <FormLabel>{parameter.displayName}</FormLabel>
+                  {errors.some((error) => error.parameterId === parameter.id) ? (
+                    <FormLabel error>{parameter.displayName} is required</FormLabel>
+                  ) : (
+                    <FormLabel>{parameter.displayName}</FormLabel>
+                  )}
                   <RadioGroup
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
@@ -131,7 +153,11 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
               return (
                 <Grid item xs={4} md={4} sx={{ width: '100%' }} key={parameter.id}>
                   <FormControl variant="outlined" fullWidth>
-                    <InputLabel>{parameter.displayName}</InputLabel>
+                    {errors.some((error) => error.parameterId === parameter.id) ? (
+                      <InputLabel error>{parameter.displayName} is required</InputLabel>
+                    ) : (
+                      <InputLabel>{parameter.displayName}</InputLabel>
+                    )}
                     <Select
                       size="medium"
                       label={parameter.displayName}
@@ -159,6 +185,10 @@ const ParameterForm = ({ setParameters, data }: SetParameterProps) => {
                     multiline
                     fullWidth
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
+                    error={errors.some((error) => error.parameterId === parameter.id)}
+                    helperText={handleErrorMessage(
+                      errors.find((error) => error.parameterId === parameter.id)
+                    )}
                   />
                 </Grid>
               );

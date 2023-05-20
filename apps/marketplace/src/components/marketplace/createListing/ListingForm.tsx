@@ -3,9 +3,14 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+
+export interface ListingValidationProps {
+  nameError: string;
+  descriptionError: string;
+  priceError: string;
+}
 
 export type SetListingProps = {
   setTitle: (title: string) => void;
@@ -13,6 +18,7 @@ export type SetListingProps = {
   setNegotiable: (negotiable: boolean) => void;
   setUnitPrice: (unitPrice: boolean) => void;
   setDescription: (description: string) => void;
+  errors: ListingValidationProps;
 };
 
 const ListingForm = ({
@@ -21,6 +27,7 @@ const ListingForm = ({
   setNegotiable,
   setUnitPrice,
   setDescription,
+  errors,
 }: SetListingProps) => (
   <>
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
@@ -34,6 +41,8 @@ const ListingForm = ({
         size="medium"
         variant="outlined"
         label="Listing Title"
+        error={Boolean(errors.nameError)}
+        helperText={errors.nameError}
         fullWidth
         onChange={(e) => {
           setTitle(e.target.value);
@@ -42,9 +51,14 @@ const ListingForm = ({
     </Grid>
 
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-      <OutlinedInput
+      <TextField
         className="outlined-adornment-amount"
-        startAdornment={<InputAdornment position="start">S$</InputAdornment>}
+        fullWidth
+        error={Boolean(errors.priceError)}
+        helperText={errors.priceError}
+        InputProps={{
+          startAdornment: <InputAdornment position="start">S$</InputAdornment>,
+        }}
         onChange={(e) => {
           setPrice(parseFloat(e.target.value));
         }}
@@ -83,6 +97,8 @@ const ListingForm = ({
         label="Listing Description"
         fullWidth
         multiline
+        error={Boolean(errors.descriptionError)}
+        helperText={errors.descriptionError}
         onChange={(e) => {
           setDescription(e.target.value);
         }}

@@ -8,9 +8,14 @@ import Button from '@mui/material/Button';
 import ListingTypeForm, {
   ListingTypeProps,
 } from '@/components/marketplace/createListing/ListingTypeForm';
-import ListingForm from '@/components/marketplace/createListing/ListingForm';
+import ListingForm, {
+  ListingValidationProps,
+} from '@/components/marketplace/createListing/ListingForm';
 import ParameterForm, {
+  ParameterProps,
   ParameterFormProps,
+  CategoryParametersProps,
+  ParameterValidationProps,
 } from '@/components/marketplace/createListing/ParameterForm';
 import ImageUploadForm, {
   ImageProps,
@@ -50,6 +55,8 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
   const [category, setCategory] = useState<CategoryProps | null>(null);
   const [images, setImages] = useState<ImageProps[]>([]);
   const [parameters, setParameters] = useState<ParameterFormProps[]>([]);
+  const [detailedParameters, setDetailedParameters] = useState<ParameterProps[]>([]);
+  const [categoryParameters, setCategoryParameters] = useState<CategoryParametersProps[]>([]);
   const [price, setPrice] = useState<number>(0);
   const [negotiable, setNegotiable] = useState<boolean>(false);
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
@@ -57,19 +64,31 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
   const [description, setDescription] = useState<string>('');
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
 
+  // validation
+  const [categoryError, setCategoryError] = useState<string>('');
+  const [parameterErrors, setParameterErrors] = useState<ParameterValidationProps[]>([]);
+  const [listingErrors, setListingErrors] = useState<ListingValidationProps>({
+    nameError: '',
+    descriptionError: '',
+    priceError: '',
+  });
+
   const sortCategoryParameters = async () => {
-    const categoryParameters: string[] = [];
+    const parameterIds: string[] = [];
+    const categoryParameters: CategoryParametersProps[] = [];
 
     if (category != null) {
-      // id, required
       category.parameters.forEach((parameter) => {
         const { parameterId } = parameter;
-        categoryParameters.push(parameterId);
+        parameterIds.push(parameterId);
+        categoryParameters.push(parameter);
       });
 
-      const { data } = await client.get(`/v1/parameters?ids=${categoryParameters}`);
+      // currently endpoint doesn't work and returns all parameters.
+      const { data } = await client.get(`/v1/parameters?ids=${parameterIds}`);
 
-      setParameters(data.data);
+      setCategoryParameters(categoryParameters);
+      setDetailedParameters(data.data);
     }
   };
 
@@ -77,8 +96,59 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
     e.preventDefault();
 
     if (!category || !category.id) {
+      setCategoryError('Category is required');
       return;
     }
+
+    // listing form validation
+    let formIsValid = true;
+    const newErrors: ListingValidationProps = {
+      nameError: '',
+      descriptionError: '',
+      priceError: '',
+    };
+
+    if (title.trim() === '') {
+      newErrors.nameError = 'Name is required';
+      formIsValid = false;
+    }
+
+    if (description.trim() === '') {
+      newErrors.descriptionError = 'Description is required';
+      formIsValid = false;
+    }
+
+    if (price <= 0) {
+      newErrors.priceError = 'Price must be greater than 0';
+      formIsValid = false;
+    }
+
+    if (!formIsValid) {
+      setListingErrors(newErrors);
+      return;
+    }
+
+    // parameter form validation
+    const newParameterErrors: ParameterValidationProps[] = [];
+
+    // validate required parameters
+    categoryParameters.forEach((categoryParameter) => {
+      const { parameterId, required } = categoryParameter;
+      const parameter = parameters.find((parameter) => parameter.paramId === parameterId);
+      const detailedParameter = detailedParameters.find(
+        (parameter) => parameter.id === parameterId
+      );
+
+      if (required && detailedParameter && !parameter) {
+        newParameterErrors.push({
+          parameterId,
+          error: `${detailedParameter.displayName} is required`,
+        });
+      }
+      // check if value fits the datatype
+    });
+
+    setParameterErrors(newParameterErrors);
 
     const formData: CreateListingProps = {
       name: title,
@@ -122,15 +192,22 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
           </Grid>
 
           <ListingTypeForm setListingType={setListingType} />
-          <CategoryForm setCategory={setCategory} data={data} />
+          {data && <CategoryForm setCategory={setCategory} data={data} error={categoryError} />}
           <ImageUploadForm setImages={setImages} />
-          {category && <ParameterForm setParameters={setParameters} data={[]} />}
+          {category && (
+            <ParameterForm
+              setParameters={setParameters}
+              data={detailedParameters}
+              errors={parameterErrors}
+            />
+          )}
           <ListingForm
             setTitle={setTitle}
             setPrice={setPrice}
             setNegotiable={setNegotiable}
             setUnitPrice={setUnitPrice}
             setDescription={setDescription}
+            errors={listingErrors}
           />
 
           <Grid item xs={6} md={6} sx={{ width: '100%' }}>

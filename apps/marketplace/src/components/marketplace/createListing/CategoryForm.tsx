@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
@@ -19,10 +19,20 @@ export interface CategoryProps {
 export type SetCategoryProps = {
   setCategory: (category: CategoryProps | null) => void;
   data: CategoryProps[];
+  error: string;
 };
 
-const CategoryForm = ({ setCategory, data }: SetCategoryProps) => {
+const CategoryForm = ({ setCategory, data, error }: SetCategoryProps) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryProps | null>(null);
+  const [validateError, setValidateError] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (error) {
+      setValidateError(true);
+    } else {
+      setValidateError(false);
+    }
+  }, [error]);
 
   const handleCategoryChange = (e: SelectChangeEvent<string>) => {
     const categoryName = e.target.value as string;
@@ -33,8 +43,8 @@ const CategoryForm = ({ setCategory, data }: SetCategoryProps) => {
 
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-      <FormControl variant="outlined" fullWidth>
-        <InputLabel>Select a category...</InputLabel>
+      <FormControl variant="outlined" error={validateError} fullWidth>
+        {error ? <InputLabel>{error}</InputLabel> : <InputLabel>Select a category...</InputLabel>}
         <Select
           value={selectedCategory ? selectedCategory.name : ''}
           onChange={handleCategoryChange}
