@@ -1,15 +1,8 @@
-import { apiHandler, formatAPIResponse, zodParseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, InvalidRangeError, ForbiddenError } from '@inc/errors';
-import { z } from 'zod';
+import { chatSchema } from '@/utils/api/server/zod';
 import { checkChatExists } from '.';
-
-// Zod schema for the GET request query parameters
-const chatRequestQuery = z.object({
-  id: z.string().uuid(),
-  lastIdPointer: z.string().transform(zodParseToNumber).optional(),
-  limit: z.string().transform(zodParseToNumber).optional(),
-});
 
 async function getMessages(chatId: string, lastIdPointer: number, limit: number) {
   // Fetch messages for the chat room
@@ -31,17 +24,13 @@ async function getMessages(chatId: string, lastIdPointer: number, limit: number)
 
 export default apiHandler().get(async (req, res) => {
   // Parse and validate the request query parameters
-  const { id, lastIdPointer } = chatRequestQuery.parse(req.query);
-  let { limit } = chatRequestQuery.parse(req.query);
+  const { id, lastIdPointer, limit = 10 } = chatSchema.messages.get.query.parse(req.query);
 
   // Verify the limit
   if (limit !== undefined) {
     if (limit < 1 || limit > 10) {
       throw new InvalidRangeError('limit');
     }
-  } else {
-    // Default limit
-    limit = 10;
   }
 
   // Fetch the chat room details

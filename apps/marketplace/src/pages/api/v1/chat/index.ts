@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@inc/db';
-import { z } from 'zod';
+import chat from '@/utils/api/server/zod/chat';
+import PrismaClient, { Rooms } from '@inc/db';
 import {
   ParamError,
   SameBuyerSellerError,
@@ -22,7 +22,7 @@ export type ChatResponse = {
 };
 
 // -- Helper functions -- //
-export function formatChatResponse(chatData: any) {
+export function formatChatResponse(chatData: Rooms) {
   return {
     id: chatData.id,
     seller: chatData.seller,
@@ -30,18 +30,9 @@ export function formatChatResponse(chatData: any) {
   };
 }
 
-/**
- * Zod schema for the POST request body
- */
-export const chatRequestBody = z.object({
-  sellerId: z.string().uuid(),
-  buyerId: z.string().uuid(),
-  listingId: z.number(),
-});
-
 export default apiHandler().post(async (req, res) => {
   // Parse and validate the request body
-  const parseResult = chatRequestBody.parse(req.body);
+  const parseResult = chat.post.body.parse(req.body);
 
   const data = parseResult;
 
