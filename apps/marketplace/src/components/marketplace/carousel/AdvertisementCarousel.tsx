@@ -16,6 +16,7 @@ export interface Image {
   active: boolean;
   startDate: string;
   endDate: number;
+  description: string;
   link: string;
 }
 
@@ -49,7 +50,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
         enableMouseEvents
       >
         {data.map((step, index) => (
-          <div>
+          <div key={step.id}>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
                 sx={{

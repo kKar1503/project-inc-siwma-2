@@ -18,28 +18,24 @@ const Scroll = styled('div')({
   },
 });
 
-const ListingStream: React.FC<Props> = ({ listingItemsData }) => {
-  return (
-    <Scroll sx={{paddingTop: '2rem'}}>
-      <Box sx={{ margin: 'auto', overflow: 'hidden', position: 'relative', width: 'auto' }}>
-        <Box
-          sx={{
-            animation: 'scroll 32s linear infinite',
-            display: 'flex',
-            width: 'calc(288px * 14 + (48px * 14))'
-          }}
-        >
-          {listingItemsData.map((item) => {
-            return (
-              <Box sx={{ width: '288px', margin: '0 24px' }}>
-                <ProductListingItem data={item} />
-              </Box>
-            );
-          })}
-        </Box>
+const ListingStream: React.FC<Props> = ({ listingItemsData }) => (
+  <Scroll sx={{ paddingTop: '2rem' }}>
+    <Box sx={{ margin: 'auto', overflow: 'hidden', position: 'relative', width: 'auto' }}>
+      <Box
+        sx={{
+          animation: 'scroll 32s linear infinite',
+          display: 'flex',
+          width: 'calc(288px * 14 + (48px * 14))',
+        }}
+      >
+        {listingItemsData.map((item) => (
+          <Box sx={{ width: '288px', margin: '0 24px' }} key={item.productId}>
+            <ProductListingItem data={item} />
+          </Box>
+        ))}
       </Box>
-    </Scroll>
-  );
-};
+    </Box>
+  </Scroll>
+);
 
 export default ListingStream;

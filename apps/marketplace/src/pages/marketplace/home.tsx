@@ -1,5 +1,5 @@
 /* eslint-disable arrow-body-style */
-import React from 'react';
+import React, { useEffect } from 'react';
 import Carousel, { Image } from '@/components/marketplace/carousel/AdvertisementCarousel';
 import ListingStream from '@/components/marketplace/listing/ListingStream';
 
@@ -8,228 +8,87 @@ import ProductListingItem, {
 } from '@/components/marketplace/listing/ProductListingItem';
 import { Box, Grid, Link, Typography, useMediaQuery, useTheme } from '@mui/material';
 import CategoryCard, { Category } from '@/components/marketplace/listing/Categories';
+import NavBar from '@/components/marketplace/navbar/NavBar';
 
-const mockListings: Array<ProductListingItemProps> = [
+export type TListings = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  unitPrice: boolean;
+  negotiable: boolean;
+  categoryId: string;
+  type: 'SELL' | 'BUY';
+  owner: {
+    id: string;
+    name: string;
+    email: string;
+    company: {
+      id: string;
+      name: string;
+      website: string;
+      bio: string;
+      image: string;
+      visible: boolean;
+    };
+    profilePic: string | null;
+    mobileNumber: string;
+    contactMethod: string;
+    bio: string | null;
+  };
+  active: boolean;
+  parameter: [
+    {
+      paramId: string;
+      value: number;
+    },
+    {
+      paramId: string;
+      value: number;
+    }
+  ];
+  createdAt: string;
+};
+
+const mockListings: Array<TListings> = [
   {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
+    id: '1',
+    name: 'Aluminium I-Beams',
+    description: 'Listing description',
+    price: 300,
+    unitPrice: false,
     negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
-  },
-  {
-    productId: 1,
-    img: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
-    profileImg:
-      'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg',
-    type: 'NFT',
-    name: 'Bored Ape',
-    rating: 10,
-    price: 20000,
-    negotiable: true,
-    ownerId: '',
-    ownerFullName: 'GYIN',
-    createdAt: '22 March 2014',
-    companyName: 'SV',
-    isUnitPrice: true,
-    isOwnProfile: true,
+    categoryId: '1',
+    type: 'SELL',
+    owner: {
+      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      name: 'Elon Musk',
+      email: 'elon.musk@example.com',
+      company: {
+        id: '1',
+        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+        bio: 'Owner bio',
+        image: '',
+        visible: true,
+      },
+      profilePic: null,
+      mobileNumber: '69694202',
+      contactMethod: 'email',
+      bio: null,
+    },
+    active: true,
+    parameter: [
+      {
+        paramId: '3',
+        value: 200,
+      },
+      {
+        paramId: '2',
+        value: 300,
+      },
+    ],
+    createdAt: '2023-05-15T18:03:01.036Z',
   },
 ];
 
@@ -242,6 +101,7 @@ const mockAdvertisements: Array<Image> = [
     active: true,
     startDate: '22 March 2023',
     endDate: 1,
+    description: '',
     link: 'https://uploads-ssl.webflow.com/61c0120d981c8f9d9322c0e0/61ca497efc91881256158064_blog%20article.png',
   },
 ];
@@ -280,11 +140,75 @@ const Categories: Array<Category> = [
 ];
 
 const Marketplace = () => {
+  const [listings, setListings] = React.useState<Array<ProductListingItemProps>>([]);
+  const [popularListings, setPopularListings] = React.useState<Array<ProductListingItemProps>>([]);
+  const [advertisements, setAdvertisements] = React.useState<Array<Image>>([]);
   const theme = useTheme();
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  useEffect(() => {
+    // const fetchAdvertisements = async () => {
+    //   try {
+    //     const response = await fetch('/api/v1/advertisement');
+    //     const data = await response.json();
+    //     console.log(data);
+    //     // Handle the data or update state
+
+    //     setAdvertisements(data.data);
+    //   } catch (error) {
+    //     console.error('Error fetching data:', error);
+    //     // Handle error state or display an error message
+    //   }
+    // }
+
+    const fetchListings = async () => {
+      try {
+        const response = await fetch('/api/v1/listings');
+        const data = await response.json();
+        const listingsData: Array<ProductListingItemProps> = []
+        console.log(data);
+
+        // Change later
+        const listings = mockListings;
+
+        // Mutate Data to fit ProductListingItemProps
+        listings.forEach(listing => {
+          const newListingsObj = {
+            productId: +listing.id,
+            img: '',
+            profileImg: listing.owner.profilePic!,
+            type: listing.type,
+            name: listing.name,
+            rating: +'4',
+            price: listing.price,
+            negotiable: listing.negotiable,
+            ownerId: listing.owner.id,
+            ownerFullName: listing.owner.name,
+            createdAt: listing.createdAt,
+            companyName: listing.owner.company.name,
+            isUnitPrice: listing.unitPrice,
+            isOwnProfile: true,
+          }
+
+          listingsData.push(newListingsObj)
+        })
+
+        console.log(listingsData)
+        setListings(listingsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Handle error state or display an error message
+      }
+    };
+
+    // Advertisements API not created yet
+    // fetchAdvertisements();
+    fetchListings();
+  }, []);
+
   return (
     <>
-      {/* Navbar goes here */}
+      <NavBar />
       <Carousel data={mockAdvertisements} />
       <Box display="flex" justifyContent="center" paddingTop="2em">
         <Box
@@ -295,8 +219,8 @@ const Marketplace = () => {
             width: '80%',
           }}
         >
-          <Typography sx={{fontSize: isMediumScreen ? '22px': '36px'}}>Categories</Typography>
-          <Link href="/" sx={{fontSize: isMediumScreen ? '22px': '36px'}}>
+          <Typography sx={{ fontSize: isMediumScreen ? '22px' : '36px' }}>Categories</Typography>
+          <Link href="/" sx={{ fontSize: isMediumScreen ? '22px' : '36px' }}>
             View All Categories
           </Link>
         </Box>
@@ -305,7 +229,7 @@ const Marketplace = () => {
         <Grid container spacing={2} width="80%">
           {Categories.map((category) => {
             return (
-              <Grid item xl={2} lg={3} md={4} sm={6} xs={12}>
+              <Grid item xl={2} lg={3} md={4} sm={6} xs={12} key={category.name}>
                 <CategoryCard {...category} />
               </Grid>
             );
@@ -321,7 +245,7 @@ const Marketplace = () => {
           <Typography variant="h4">Popular</Typography>
         </Box>
       </Box>
-      <ListingStream listingItemsData={mockListings} />
+      <ListingStream listingItemsData={listings} />
       <Box display="flex" justifyContent="center" paddingTop="4em">
         <Box
           sx={{
@@ -333,9 +257,9 @@ const Marketplace = () => {
       </Box>
       <Box display="flex" justifyContent="center" paddingTop="2em">
         <Grid container spacing={2} width="80%">
-          {mockListings.map((item) => {
+          {listings.map((item) => {
             return (
-              <Grid item xl={2} lg={3} md={4} sm={6} xs={12}>
+              <Grid item xl={2} lg={3} md={4} sm={6} xs={12} key={item.productId}>
                 <ProductListingItem data={item} />
               </Grid>
             );
