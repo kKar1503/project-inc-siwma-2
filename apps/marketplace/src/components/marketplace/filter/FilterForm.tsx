@@ -52,14 +52,6 @@ const FilterForm = ({
 
   return (
     <form style={{ padding: 1, width: '100%' }} onSubmit={handleSubmit}>
-      <Typography
-        variant="h6"
-        sx={({ typography }) => ({
-          fontWeight: typography.fontWeightBold,
-        })}
-      >
-        Search Filter
-      </Typography>
       <Divider sx={{ my: 2 }} />
       <FormLabel
         sx={({ typography }) => ({

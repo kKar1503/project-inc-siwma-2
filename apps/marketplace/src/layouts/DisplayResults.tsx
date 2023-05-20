@@ -15,12 +15,11 @@ import ProductListingItem, {
 
 export type DisplayResultsProps = {
   children?: React.ReactNode;
-  title?: string;
   filter: boolean;
   data?: ProductListingItemProps[] | undefined;
 };
 
-const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) => {
+const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
   const Theme = useTheme();
   const isMediumScreen = useMediaQuery(Theme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -36,7 +35,6 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
 
   return (
     <Container maxWidth="xl">
-      {children}
       <Grid container spacing={4} mt={4}>
         {!isMediumScreen && filter ? (
           <Grid
@@ -70,31 +68,12 @@ const DisplayResults = ({ children, filter, title, data }: DisplayResultsProps) 
         <Grid item xs={12} md={10} sx={{ width: '100%' }}>
           <Box sx={{ display: 'flex' }}>
             <Grid item xs={10} md={8} container justifyContent="flex-start">
-              {data ? (
-                <>
-                  <Grid item xs={12} md={12}>
-                    <Typography
-                      variant="h4"
-                      sx={({ typography, spacing }) => ({
-                        fontWeight: typography.fontWeightBold,
-                        mb: spacing(2),
-                      })}
-                    >
-                      {title || 'Search Results'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <Typography variant="h5">{data.length} Listings</Typography>
-                  </Grid>
-                </>
-              ) : (
-                <Typography variant="h5">Displaying 0 search results for: </Typography>
-              )}
+              {children}
             </Grid>
             {isMediumScreen && filter && (
               <Grid item xs={2} container justifyContent="flex-end" alignContent="center">
                 <Button
-                  sx={{ height: '45px' }}
+                  size="large"
                   variant="outlined"
                   onClick={toggleDrawer}
                   endIcon={<FilterAltIcon />}
