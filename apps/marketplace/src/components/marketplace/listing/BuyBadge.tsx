@@ -2,12 +2,12 @@ import { Chip } from '@mui/material';
 
 const BuyBadge = () => (
   <Chip
-    sx={{
-      backgroundColor: '#34D399',
-      color: '#FFFFFF',
+    sx={({ spacing, palette }) => ({
+      mr: spacing(1),
+      bgcolor: palette.secondary[500],
       fontWeight: 'bold',
-      mr: 0.5,
-    }}
+      color: palette.common.white,
+    })}
     label="Buying"
   />
 );

@@ -1,19 +1,13 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { ForbiddenError } from '@inc/errors';
+import { ForbiddenError, InvalidRangeError } from '@inc/errors';
 import { z } from 'zod';
 
 // Zod schema for the GET request query parameters
 const chatRequestQuery = z.object({
   id: z.string().uuid(),
   lastIdPointer: z.string().uuid().optional(),
-  limit: z
-    .string()
-    .optional()
-    .transform((value) => (value ? parseToNumber(value) : 10))
-    .refine((value) => value >= 1 && value <= 10, {
-      message: 'Invalid limit',
-    }),
+  limit: z.string().transform(zodParseToNumber).optional(),
 });
 
 async function getUserChats(userId: string, lastIdPointer: string | undefined, limit: number) {
@@ -38,7 +32,18 @@ async function getUserChats(userId: string, lastIdPointer: string | undefined, l
 
 export default apiHandler().get(async (req, res) => {
   // Parse and validate user id, lastIdPointer and limit
-  const { id: userId, lastIdPointer, limit } = chatRequestQuery.parse(req.query);
+  const { id: userId, lastIdPointer } = chatRequestQuery.parse(req.query);
+  let { limit } = chatRequestQuery.parse(req.query);
+
+  // Verify the limit
+  if (limit !== undefined) {
+    if (limit < 1 || limit > 10) {
+      throw new InvalidRangeError('limit');
+    }
+  } else {
+    // Default limit
+    limit = 10;
+  }
 
   // Verify if the user is the one requesting
   if (!req.token || !req.token.user || req.token.user.id !== userId) {

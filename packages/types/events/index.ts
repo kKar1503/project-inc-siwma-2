@@ -19,6 +19,7 @@ type RoomMessage = {
   roomId: string;
   message: string;
   username: string;
+  contentType: string;
   time: Date;
 };
 
