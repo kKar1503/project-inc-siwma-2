@@ -24,27 +24,6 @@ const RegisterForm = () => {
       alert('Password does not match! Please try again');
       setPassword('');
       setConfirmPassword('');
-    } else {
-      console.log(
-        'Company Name: ',
-        companyName,
-        'User Name: ',
-        userName,
-        'Email: ',
-        email,
-        'Phone Number: ',
-        phoneNumber,
-        'Password: ',
-        password,
-        'Confirm Password: ',
-        confirmPassword
-      );
-      setCompanyName('');
-      setUserName('');
-      setEmail('');
-      setPhoneNumber('');
-      setPassword('');
-      setConfirmPassword('');
     }
   };
 
@@ -56,7 +35,7 @@ const RegisterForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/../public/images/siwma-bg.png" alt="background_pic" fill />
+        <Image src="/images/siwma-bg.png" alt="background_pic" fill />
         <Container
           component="main"
           maxWidth="md"
@@ -89,7 +68,7 @@ const RegisterForm = () => {
                 mb: spacing(1),
               })}
             >
-              <Image src="/../public/images/siwma-logo.jpg" alt="logo" fill />
+              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
             </Box>
             <Divider flexItem />
             <Box

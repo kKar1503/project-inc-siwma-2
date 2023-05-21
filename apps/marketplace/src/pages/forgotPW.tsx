@@ -29,7 +29,7 @@ const ForgetPW = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/../public/images/siwma-bg.png" alt="background_pic" fill />
+        <Image src="/images/siwma-bg.png" alt="background_pic" fill />
         <Container
           component="main"
           maxWidth="md"
@@ -62,7 +62,7 @@ const ForgetPW = () => {
                 mb: spacing(2),
               })}
             >
-              <Image src="/../public/images/siwma-logo.jpg" alt="logo" fill />
+              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
             </Box>
             <Divider flexItem />
             <Box
@@ -85,7 +85,7 @@ const ForgetPW = () => {
                   fontSize: typography.body2,
                 })}
               >
-                Pelase enter your email.
+                Please enter your email.
               </Typography>
               <Typography
                 sx={({ typography }) => ({
