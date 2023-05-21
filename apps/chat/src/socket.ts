@@ -25,14 +25,9 @@ export default (io: Server) => {
       const { callback, eventName, type } = event(io, socket);
 
       // Wrap the event in the error handler
-      const wrappedEvent = errorHandler<typeof callback>(callback);
+      const wrappedEvent = errorHandler(socket, callback);
 
-      try {
-        socket[type](eventName, wrappedEvent);
-      } catch (error) {
-        console.log('ther error');
-      }
-
+      socket[type](eventName, wrappedEvent as (...args: any[]) => void);
       eventsAttached.push(eventName);
     }
 

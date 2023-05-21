@@ -64,4 +64,4 @@ type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(event: E, 
 
 type MiddlewareFile = (socket: Socket, next: SocketNextHandler) => Promise<void>;
 
-export type { Event, EventFile, TypedSocketEmitter, MiddlewareFile };
+export type { Socket, Event, EventFile, TypedSocketEmitter, MiddlewareFile };

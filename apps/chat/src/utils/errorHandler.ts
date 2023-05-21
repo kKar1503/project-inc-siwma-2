@@ -1,21 +1,25 @@
-import { EventFile } from '@inc/types';
+import { Socket } from '@inc/types';
 
-const handleError = (err: any) => {
-  console.error('please handle me', err);
+const handleError = (socket: Socket, error: Error) => {
+  if (socket.connected) {
+    socket.emit('error', { message: error.message }); // Emitting an error event to the socket
+  }
 };
 
 /**
  * Socket IO error handler wrapper
  */
-const errorHandler = <T extends ReturnType<EventFile>['callback']>(event: T) => {
-  return (param: any) => {
+const errorHandler = <T extends (...args: any[]) => any>(socket: Socket, event: T) => {
+  return function (this: undefined, ...params: Parameters<T>): void {
     try {
-      console.log('run');
-      event(param);
+      const ret = event.apply(this, params);
+      if (ret instanceof Promise) {
+        // async handler
+        ret.catch((error: Error) => handleError(socket, error));
+      }
     } catch (error) {
-      console.log('sync error caught');
-      console.log({ error });
-      handleError(error);
+      // sync handler
+      handleError(socket, error as Error);
     }
   };
 };
