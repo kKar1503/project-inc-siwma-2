@@ -7,7 +7,7 @@ const deleteMessageEvent: EventFile = (io) => ({
     type: 'on',
     callback: async ({ room, message }) => {
         logger.info(`${message}  ${room}`);
-        io.emit(EVENTS.CLIENT.DELETE_MESSAGE, { data: { status: 'ok' } });
+        io.to(room).emit(EVENTS.SERVER.DELETE_MESSAGE, message);
     },
 });
 
