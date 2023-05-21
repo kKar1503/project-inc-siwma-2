@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { UserContacts } from '@inc/db';
 
-const id = z.string();
+const id= z.string();
 const name = z.string();
 const email = z.string();
 const company = z.string();
