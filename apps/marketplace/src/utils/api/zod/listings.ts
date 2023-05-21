@@ -2,13 +2,13 @@ import { ListingType } from '@prisma/client';
 import { z } from 'zod';
 
 // -- Define properties -- //
-const id = z.number();
+const id = z.string();
 const name = z.string();
 const description = z.string();
 const price = z.number();
 const unitPrice = z.boolean().optional();
 const negotiable = z.boolean().optional();
-const categoryId = z.number();
+const categoryId = z.string();
 const type = z.nativeEnum(ListingType);
 const rating = z.number();
 const reviewCount = z.number();
@@ -76,7 +76,7 @@ const listing = z.object({
 // -- Define review schema -- //
 const review = z.object({
   id: z.string(),
-  review: z.string(),
+  review: z.string(), 
   rating: z.number(),
   userId: z.string(),
   listingId: z.string(),
