@@ -17,6 +17,16 @@ const reviewRequestBody = z.object({
     review: z.string(),
     rating: z.number().min(0).max(5),
 });
+const reviewResponseSchema = z.object({
+    id: z.number(),
+    review: z.string(),
+    rating: z.number(),
+    user: z.string(),
+    listing: z.number(),
+    createdAt: z.date(), // Use z.date() if the date is returned as a Date object
+});
+
+
 
 const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
     const id = parseListingId(req.query.id as string);
@@ -52,7 +62,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
         orderBy: orderBy,
     });
 
-    res.status(200).json(reviews);
+    res.status(200).json(formatAPIResponse(reviews.map((review) => reviewResponseSchema.parse(review))));
 };
 
 /**
@@ -66,22 +76,26 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.role;
-
-    const listing = await checkListingExists(id);
     const { review, rating } = reviewRequestBody.parse(req.body);
-
-    // check if offer has been accepted
     const offers = await PrismaClient.offers.findMany({
         where: {
             listing: id,
+            accepted: true,
         },
     });
-    const isAnyOfferAccepted = offers.some((offer) => offer.accepted === true);
+    const messageNumber = offers.map((offer) => offer.message);
 
-    if (!isAnyOfferAccepted) {
+    const messages = await PrismaClient.messages.findMany({
+        where: {
+            id: {
+                in: messageNumber,
+            },
+        },
+    });
+    const author = messages.map((message) => message.author)
+    if (!author.includes(userId)) {
         throw new ForbiddenError();
     }
-
     const createdReview = await PrismaClient.reviews.create({
         data: {
             review: review,
@@ -90,7 +104,7 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
             listing: id,
         },
     });
-    res.status(201).json(formatAPIResponse({ createdReview }));
+    res.status(201).json(formatAPIResponse(reviewResponseSchema.parse(createdReview)));
 };
 
 export default apiHandler().get(getListingReviews).post(createListingReview);
