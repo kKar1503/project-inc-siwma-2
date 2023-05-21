@@ -86,13 +86,35 @@ export default apiHandler()
 
     // Retrieve the listing from the database
     const id = parseListingId(req.query.id as string);
+    const { _avg, _count } = await PrismaClient.reviews.aggregate({
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        rating: true,
+      },
+      where: {
+        listing: id,
+      },
+    });
+
+    const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+    const reviewCount = _count && _count.rating;
+
     const listing = await checkListingExists(id);
 
+    const completeListing = {
+      ...listing,
+      rating,
+      reviewCount,
+    };
     // Return the result
     res
       .status(200)
       .json(
-        formatAPIResponse(await formatSingleListingResponse(listing, queryParams.includeParameters))
+        formatAPIResponse(
+          await formatSingleListingResponse(completeListing, queryParams.includeParameters)
+        )
       );
   })
   .put(async (req, res) => {
@@ -182,6 +204,7 @@ export default apiHandler()
         },
         listingsParametersValues: true,
         offersOffersListingTolistings: true,
+        reviewsReviewsListingTolistings: true,
       },
     });
 
@@ -189,11 +212,32 @@ export default apiHandler()
       throw new NotFoundError(`Listing with id '${id}'`);
     }
 
+    const { _avg, _count } = await PrismaClient.reviews.aggregate({
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        rating: true,
+      },
+      where: {
+        listing: id,
+      },
+    });
+
+    const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+    const reviewCount = _count && _count.rating;
+
+    const listingWithRatingAndReviewCount = {
+      ...completeListing,
+      rating,
+      reviewCount,
+    };
+
     res
       .status(200)
       .json(
         formatAPIResponse(
-          await formatSingleListingResponse(completeListing, queryParams.includeParameters)
+          await formatSingleListingResponse(listingWithRatingAndReviewCount, queryParams.includeParameters)
         )
       );
   })
