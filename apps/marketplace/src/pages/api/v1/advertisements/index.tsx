@@ -19,8 +19,8 @@ const companyInputValidation = z.object({
 });
 
 const getInputValidation = z.object({
-  lastIdPointer: z.string().optional(),
-  limit: z.string().optional(),
+  lastIdPointer: z.string().optional().transform((val) => val === undefined ? undefined : parseToNumber(val, 'lastIdPointer')),
+  limit: z.string().optional().transform((val) => val === undefined ? undefined : parseToNumber(val, 'limit'))
 });
 
 export const select = (isAdmin: boolean) => ({
@@ -85,13 +85,6 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const isAdmin = (req.token?.user.permissions === true);
   const { limit, lastIdPointer } = getInputValidation.parse(req.query);
 
-  let limitInt: number | undefined;
-
-  if (limit) {
-    limitInt = parseToNumber(limit, 'limit');
-  }
-
-
   // Get advertisements
   const advertisementsNoLink = await PrismaClient.advertisements.findMany({
     select: select(isAdmin),
@@ -100,7 +93,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
         gt: lastIdPointer,
       },
     }),
-    take: limitInt,
+    take: limit,
   });
 
   const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
