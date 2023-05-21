@@ -10,7 +10,7 @@ export type FilterProps = {
   sort: string;
   setSort: (val: string) => void;
 };
-
+ 
 const ProfilePageFilter = ({ filter, setFilter, sort, setSort }: FilterProps) => {
   const handleChange = (event: SelectChangeEvent) => {
     setFilter(event.target.value as string);
