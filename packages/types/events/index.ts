@@ -24,7 +24,7 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
-  deleteMessage: { room: string; message: string };
+  deleteMessage: { room: string; message: number };
 
   // Server Events
   rooms: Record<string, Room>;
