@@ -1,8 +1,30 @@
+import { AuthError, BaseError } from '@inc/errors';
 import { Socket } from '@inc/types';
 
-const handleError = (socket: Socket, error: Error) => {
+/**
+ * Handles errors
+ * @param socket The socket instance
+ * @param error The error to handle
+ */
+export const handleError = (socket: Socket, error: Error) => {
+  // Initialise error response
+  const response: any = { message: 'An unknown error occurred' };
+
+  // Check if it was a custom error
+  if (error instanceof BaseError) {
+    // Check if the error is a auth error
+    if (error instanceof AuthError) {
+      // Disconnect the client
+      socket.disconnect(true);
+    }
+
+    // Set the error message
+    response.message = error.toJSON();
+  }
+
+  // Return the response
   if (socket.connected) {
-    socket.emit('error', { message: error.message }); // Emitting an error event to the socket
+    socket.emit('error', response);
   }
 };
 
