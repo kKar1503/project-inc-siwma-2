@@ -12,8 +12,11 @@ import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
 import { GetServerSidePropsContext } from 'next';
-import { useState, SyntheticEvent } from 'react';
+import { useState, SyntheticEvent, useEffect, use } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
+import { useSession } from 'next-auth/react';
+import fetchUser from '@/middlewares/fetchUser';
+
 // eslint-disable-next-line no-unused-vars
 
 // test data for profile component
@@ -428,6 +431,9 @@ export type ProfilePageProps = {
 };
 
 const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePageProps) => {
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
+
   const theme = useTheme();
   const [value, setValue] = useState(0);
   // when filter/sorts are called use set states to set the new listings/reviews again
@@ -440,21 +446,25 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
 
   const handleFilterListings = (filter: string) => {
     setFilterListings(filter);
+    fetchUser(loggedUserUuid);
     // make endpoint call to carry out filter
   };
 
   const handleSortByListings = (filter: string) => {
     setSortByListings(filter);
+    fetchUser(loggedUserUuid);
     // make endpoint call to carry out filter
   };
 
   const handleFilterReviews = (filter: string) => {
     setFilterReviews(filter);
+    fetchUser(loggedUserUuid);
     // make endpoint call to carry out filter
   };
 
   const handleSortByReviews = (filter: string) => {
     setSortByReviews(filter);
+    fetchUser(loggedUserUuid);
     // make endpoint call to carry out filter
   };
 
