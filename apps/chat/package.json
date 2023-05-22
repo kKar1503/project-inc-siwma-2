@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@inc/auth": "workspace:^",
+    "@inc/configs": "workspace:*",
     "@inc/db": "workspace:*",
     "@inc/errors": "workspace:*",
     "@inc/events": "workspace:*",
@@ -13,6 +14,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "formidable": "2.1.1",
+    "next-auth": "^4.20.1",
     "pino": "^8.12.1",
     "pino-pretty": "^10.0.0",
     "sharp": "^0.32.0",

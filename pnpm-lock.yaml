@@ -55,6 +55,9 @@ importers:
       '@inc/auth':
         specifier: workspace:^
         version: link:../../packages/auth
+      '@inc/configs':
+        specifier: workspace:*
+        version: link:../../packages/configs
       '@inc/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -76,6 +79,9 @@ importers:
       formidable:
         specifier: 2.1.1
         version: 2.1.1
+      next-auth:
+        specifier: ^4.20.1
+        version: 4.20.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0)
       pino:
         specifier: ^8.12.1
         version: 8.12.1
@@ -298,6 +304,8 @@ importers:
         specifier: 5.0.2
         version: 5.0.2
 
+  packages/@types/sib: {}
+
   packages/auth:
     dependencies:
       '@inc/db':
@@ -319,8 +327,6 @@ importers:
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
-        
-  packages/@types/sib: {}
 
   packages/configs: {}
 
