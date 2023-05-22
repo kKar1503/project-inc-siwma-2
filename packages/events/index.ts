@@ -11,7 +11,6 @@ export const EVENTS = {
   CLIENT: {
     CREATE_ROOM: 'createRoom',
     SEND_MESSAGE: 'sendMessage',
-    AUTHENTICATE: 'authenticate',
     PING: 'clientPing',
     START_TYPE: 'clientStartType',
     READ: 'clientRead',
