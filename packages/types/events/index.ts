@@ -34,12 +34,9 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
-<<<<<<< HEAD
   deleteMessage: { room: string; message: number };
-=======
   clientStartType: StartType;
   clientRead: Read;
->>>>>>> dev
 
   // Server Events
   rooms: Record<string, Room>;
