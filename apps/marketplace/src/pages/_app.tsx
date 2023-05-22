@@ -6,6 +6,9 @@ import React, { useEffect } from 'react';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
 import { ThemeComponent } from '@inc/ui';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 // -- Type declarations --//
 // Page type
@@ -51,14 +54,16 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   return (
     <ThemeComponent>
       <SessionProvider session={session}>
-        <AuthenticationGuard
-          disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
-          disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
-          allowAuthenticated={allowAuthenticated}
-          allowNonAuthenticated={allowNonAuthenticated}
-        >
-          {getLayout(<Component {...pageProps} />)}
-        </AuthenticationGuard>
+        <QueryClientProvider client={queryClient}>
+          <AuthenticationGuard
+            disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
+            disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
+            allowAuthenticated={allowAuthenticated}
+            allowNonAuthenticated={allowNonAuthenticated}
+          >
+            {getLayout(<Component {...pageProps} />)}
+          </AuthenticationGuard>
+        </QueryClientProvider>
       </SessionProvider>
     </ThemeComponent>
   );
