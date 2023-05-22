@@ -311,15 +311,9 @@ export default apiHandler()
       }
     }
 
-    // Apply pagination manually
-    const paginatedListings = listingsWithRatingsAndReviewCount.slice(
-      queryParams.lastIdPointer,
-      queryParams.limit
-    );
-
     // Format the listings
     const formattedListings = await Promise.all(
-      paginatedListings.map((listing) =>
+      listingsWithRatingsAndReviewCount.map((listing) =>
         formatSingleListingResponse(listing, queryParams.includeParameters)
       )
     );
