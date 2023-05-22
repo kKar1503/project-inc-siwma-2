@@ -5,7 +5,6 @@ import PrismaClient, { Prisma } from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
-import { z } from 'zod';
 
 /**
  * Fetches all reviews for a listing
@@ -13,19 +12,6 @@ import { z } from 'zod';
  * @returns An array of reviews for the listing
  */
 // Define the Zod validation schema
-const reviewRequestBody = z.object({
-    review: z.string(),
-    rating: z.number().min(0).max(5),
-});
-const reviewResponseSchema = z.object({
-    id: z.number(),
-    review: z.string(),
-    rating: z.number(),
-    user: z.string(),
-    listing: z.number(),
-    createdAt: z.date(), // Use z.date() if the date is returned as a Date object
-});
-
 
 
 const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
@@ -33,7 +19,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
     const listing = await checkListingExists(id);
 
     if (!listing) {
-        throw new NotFoundError(`Listing with id '${id}' not found.`);
+        throw new NotFoundError(`Listing with id '${id}`);
     }
 
     let orderBy: Prisma.ReviewsOrderByWithRelationInput = {};
@@ -62,7 +48,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
         orderBy: orderBy,
     });
 
-    res.status(200).json(formatAPIResponse(reviews.map((review) => reviewResponseSchema.parse(review))));
+    res.status(200).json(formatAPIResponse(reviews));
 };
 
 /**
@@ -76,7 +62,7 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.role;
-    const { review, rating } = reviewRequestBody.parse(req.body);
+    const { review, rating } = req.body;
     const offers = await PrismaClient.offers.findMany({
         where: {
             listing: id,
@@ -104,7 +90,8 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
             listing: id,
         },
     });
-    res.status(201).json(formatAPIResponse(reviewResponseSchema.parse(createdReview)));
+    res.status(200).json(formatAPIResponse(createdReview));
+
 };
 
 export default apiHandler().get(getListingReviews).post(createListingReview);
