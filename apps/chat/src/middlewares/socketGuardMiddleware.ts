@@ -4,7 +4,6 @@ import { MiddlewareFile, Socket } from '@inc/types';
 import { AuthError } from '@inc/errors';
 import { decode } from 'next-auth/jwt';
 import { User } from 'next-auth';
-import { handleError } from '../utils/errorHandler';
 
 // Typescript is mentally ill and doesn't understand that the JWT interface is extended by the JWT interface in next-auth/jwt
 // So we have to redeclare it here
@@ -72,26 +71,10 @@ const authenticateUser = async (socket: Socket) => {
  * Socket IO auth guard middleware
  */
 const middleware: MiddlewareFile = async (socket, next) => {
-  // Check if the user is authenticated
-  if (!socket.authenticated || !socket.userId || !socket.token) {
-    // No they are not, perform first time authentication
-    await authenticateUser(socket).catch((err) => {
-      handleError(socket, err);
-    });
+  // Authenticate the user
+  await authenticateUser(socket).catch(next);
 
-    // Exit middleware
-    next();
-    return;
-  }
-
-  console.log('guarding');
-
-  // User is authenticated, check if the token is valid
-  await validateAccessToken(socket.userId, socket.token).catch((err) => {
-    handleError(socket, err);
-  });
-
-  console.log('guard passed');
+  // Exit middleware
   next();
 };
 
