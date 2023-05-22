@@ -1,4 +1,3 @@
-/* eslint-disable arrow-body-style */
 import React, { useState } from 'react';
 import { Box, styled } from '@mui/material';
 import ProductListingItem, { ProductListingItemProps } from './ProductListingItem';

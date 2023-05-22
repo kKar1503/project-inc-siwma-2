@@ -67,8 +67,8 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
   return (
     <Card
       sx={{
-        maxWidth: 288,
-        maxHeight: '100%',
+        width: 288,
+        height: '100%',
         border: `1px solid ${theme.palette.grey[400]}`,
         transition: 'transform .2s',
         '&:hover': {
