@@ -1,16 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ChatHeader from '@/components/rtc/ChatHeader';
 import ChatSubHeader from '@/components/rtc/ChatSubHeader';
 import ChatBox, { ChatBoxProps } from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
+import { useSession } from 'next-auth/react';
+import fetchUser from '@/middlewares/fetchUser';
 
 const ChatRoom = () => {
   const [makeOffer, setMakeOffer] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState<string>('');
   const [onSend, setOnSend] = useState<boolean>(false);
+
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
+
+  useEffect(() => {
+    fetchUser(loggedUserUuid);
+  }, []);
+
   const messages: ChatBoxProps['roomData'] = [
     {
       id: '21',
