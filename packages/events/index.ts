@@ -13,6 +13,8 @@ export const EVENTS = {
     SEND_MESSAGE: 'sendMessage',
     AUTHENTICATE: 'authenticate',
     PING: 'clientPing',
+    START_TYPE: 'clientStartType',
+    READ: 'clientRead',
   },
 
   // Server Events
@@ -21,6 +23,8 @@ export const EVENTS = {
     JOINED_ROOM: 'joinedRoom',
     ROOM_MESSAGE: 'roomMessage',
     PING: 'serverPing',
+    START_TYPE: 'serverStartType',
+    READ: 'serverRead',
   },
 } as const;
 
