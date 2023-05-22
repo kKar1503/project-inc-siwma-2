@@ -15,7 +15,6 @@ import PrismaClient, {
   UserContacts,
 } from '@inc/db';
 import { z } from 'zod';
-import { Decimal } from '@prisma/client/runtime';
 import { NotFoundError, ParamError } from '@inc/errors';
 
 export function parseListingId($id: string) {
@@ -68,13 +67,15 @@ export type ListingResponse = {
   id: string;
   name: string;
   description: string;
-  price: Decimal;
+  price: number;
   unitPrice?: boolean;
   negotiable?: boolean;
   categoryId: string;
   type: ListingType;
   owner: OwnerResponse;
   open: boolean;
+  rating: number | null;
+  reviewCount: number;
   parameters?: Array<{
     paramId: string;
     value: string;
@@ -93,6 +94,8 @@ export type ListingWithParameters = Listing & {
   users: Users & {
     companies: Companies;
   };
+  rating: number | null;
+  reviewCount: number;
 };
 
 export const getQueryParameters = z.object({
@@ -109,15 +112,15 @@ export const getQueryParameters = z.object({
 });
 
 // -- Helper functions -- //
-export function formatSingleListingResponse(
-  listing: ListingWithParameters,
+export async function formatSingleListingResponse(
+  listing: ListingWithParameters & { rating: number | null; reviewCount: number },
   includeParameters: boolean
-): ListingResponse {
+): Promise<ListingResponse> {
   const formattedListing: ListingResponse = {
     id: listing.id.toString(),
     name: listing.name,
     description: listing.description,
-    price: listing.price,
+    price: Number(listing.price),
     unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
@@ -141,6 +144,8 @@ export function formatSingleListingResponse(
     },
     open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
     createdAt: listing.createdAt,
+    rating: listing.rating,
+    reviewCount: listing.reviewCount,
   };
 
   if (includeParameters && listing.listingsParametersValues) {
@@ -153,11 +158,13 @@ export function formatSingleListingResponse(
   return formattedListing;
 }
 
-export function formatListingResponse(
+export async function formatListingResponse(
   $listings: ListingWithParameters[],
   includeParameters: boolean
 ) {
-  return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
+  return Promise.all(
+    $listings.map((listing) => formatSingleListingResponse(listing, includeParameters))
+  );
 }
 
 export const listingsRequestBody = z.object({
@@ -260,19 +267,44 @@ export default apiHandler()
             companies: true,
           },
         },
+        reviewsReviewsListingTolistings: true,
       },
     });
 
-    res
-      .status(200)
-      .json(
-        formatAPIResponse(
-          formatListingResponse(
-            listings as unknown as ListingWithParameters[],
-            queryParams.includeParameters
-          )
-        )
-      );
+    // Calculate the average rating and count of reviews for each listing
+    const listingsWithRatingsAndReviewCount = await Promise.all(
+      listings.map(async (listing) => {
+        const { _avg, _count } = await PrismaClient.reviews.aggregate({
+          _avg: {
+            rating: true,
+          },
+          _count: {
+            rating: true,
+          },
+          where: {
+            listing: listing.id,
+          },
+        });
+
+        const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+        const reviewCount = _count && _count.rating;
+
+        return {
+          ...listing,
+          rating,
+          reviewCount,
+        };
+      })
+    );
+
+    // Format the listings
+    const formattedListings = await Promise.all(
+      listingsWithRatingsAndReviewCount.map((listing) =>
+        formatSingleListingResponse(listing, queryParams.includeParameters)
+      )
+    );
+
+    res.status(200).json(formatAPIResponse(formattedListings));
   })
   .post(async (req, res) => {
     const data = listingsRequestBody.parse(req.body);
