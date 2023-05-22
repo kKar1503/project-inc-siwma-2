@@ -2,10 +2,7 @@ import { NotFoundError, ParamError } from '@inc/errors';
 import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NextApiRequest, NextApiResponse } from 'next';
-
-type ResponseBody = {
-  visibility: boolean;
-};
+import { CompanyResponseBody } from '@/utils/api/client/zod';
 
 export default apiHandler({ allowAdminsOnly: true }).patch(
   async (req: NextApiRequest, res: NextApiResponse) => {
@@ -15,7 +12,7 @@ export default apiHandler({ allowAdminsOnly: true }).patch(
     }
     const companyid = parseToNumber(id as string, 'id');
 
-    const response: ResponseBody = await PrismaClient.$queryRaw`
+    const response: Pick<CompanyResponseBody, 'visible'> = await PrismaClient.$queryRaw`
         UPDATE "companies" SET "visibility" = NOT "visibility" WHERE "id" = ${companyid} RETURNING "visibility" AS "visible"
     `;
 
