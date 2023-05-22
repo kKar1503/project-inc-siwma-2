@@ -297,9 +297,29 @@ export default apiHandler()
       })
     );
 
+    // Sort listings by rating, if needed
+    if (queryParams.sortBy) {
+      switch (queryParams.sortBy.toLowerCase()) {
+        case 'highest_rating':
+          listingsWithRatingsAndReviewCount.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+          break;
+        case 'lowest_rating':
+          listingsWithRatingsAndReviewCount.sort((a, b) => (a.rating ?? 0) - (b.rating ?? 0));
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Apply pagination manually
+    const paginatedListings = listingsWithRatingsAndReviewCount.slice(
+      queryParams.lastIdPointer,
+      queryParams.limit
+    );
+
     // Format the listings
     const formattedListings = await Promise.all(
-      listingsWithRatingsAndReviewCount.map((listing) =>
+      paginatedListings.map((listing) =>
         formatSingleListingResponse(listing, queryParams.includeParameters)
       )
     );
