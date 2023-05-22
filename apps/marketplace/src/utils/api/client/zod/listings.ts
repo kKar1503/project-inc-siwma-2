@@ -10,7 +10,7 @@ const unitPrice = z.boolean().optional();
 const negotiable = z.boolean().optional();
 const categoryId = z.string();
 const type = z.nativeEnum(ListingType);
-const rating = z.number();
+const rating = z.number().nullable();
 const reviewCount = z.number();
 const images = z
   .array(
@@ -27,9 +27,9 @@ const createdAt = z.string();
 const company = z.object({
   id: z.string(),
   name: z.string(),
-  website: z.string().optional(),
-  bio: z.string().optional(),
-  image: z.string().optional(),
+  website: z.string().nullable(),
+  bio: z.string().nullable(),
+  image: z.string().nullable(),
   visible: z.boolean().optional(),
 });
 
@@ -38,10 +38,10 @@ const owner = z.object({
   name: z.string(),
   email: z.string(),
   company,
-  profilePic: z.string().optional(),
+  profilePic: z.string().nullable(),
   mobileNumber: z.string(),
   contactMethod: z.string(),
-  bio: z.string().optional(),
+  bio: z.string().nullable(),
 });
 
 const parameter = z
@@ -51,7 +51,7 @@ const parameter = z
   })
   .optional();
 
-const active = z.boolean();
+const open = z.boolean();
 
 // -- Define listing schema -- //
 const listing = z.object({
@@ -66,17 +66,17 @@ const listing = z.object({
   images,
   coverImage,
   owner,
-  active,
+  open,
+  parameters: z.array(parameter).optional(),
   rating,
   reviewCount,
-  parameters: z.array(parameter),
   createdAt,
 });
 
 // -- Define review schema -- //
 const review = z.object({
   id: z.string(),
-  review: z.string(), 
+  review: z.string(),
   rating: z.number(),
   userId: z.string(),
   listingId: z.string(),
@@ -84,56 +84,78 @@ const review = z.object({
 });
 
 // POST /listings
-export const createListing = z.object({ listingId: id });
+const createListing = z.object({ listingId: id });
 
 // POST /listings/:id/images
-export const createListingImage = z.object({ imageId: z.string() });
+const createListingImage = z.object({ imageId: z.string() });
 
 // POST /listings/:id/parameters
-export const createListingParameter = parameter;
+const createListingParameter = parameter;
 
 // POST /listings/:id/review
-export const createListingReview = review;
+const createListingReview = review;
 
 // GET /listings
-export const getListings = z.array(listing);
+const getListings = z.array(listing);
 
 // GET /listings/:id
-export const getListing = listing;
+const getListing = listing;
 
 // GET /listings/:id/images
-export const getListingImages = z.array(images);
+const getListingImages = z.array(images);
 
 // GET /listings/:id/images/:imageId
-export const getListingImage = z.object({
+const getListingImage = z.object({
   fileName: z.string(),
   url: z.string(),
 });
 
 // GET /listings/:id/parameters
-export const getListingParameters = z.array(parameter);
+const getListingParameters = z.array(parameter);
 
 // GET /listings/:id/reviews
-export const getListingReviews = z.array(review);
+const getListingReviews = z.array(review);
 
 // PUT /listings/:id
-export const updateListing = listing;
+const updateListing = listing;
 
 // PUT /listings/:id/images
-export const updateListingImages = z.array(images);
+const updateListingImages = z.array(images);
 
 // PUT /listings/:id/images/:imageId
-export const updateListingImage = z.object({
+const updateListingImage = z.object({
   id: z.string(),
   filename: z.string(),
   url: z.string(),
 });
 
 // PUT /listings/:id/parameters
-export const updateListingParameters = z.array(parameter);
+const updateListingParameters = z.array(parameter);
 
 // DELETE /listings/:id
-export const deleteListing = z.object({});
+const deleteListing = z.object({});
 
 // DELETE /listings/:id/images/:imageId
-export const deleteListingImage = z.object({});
+const deleteListingImage = z.object({});
+
+export type ListingParameter = z.infer<typeof parameter>;
+export type ListingResponseBody = z.infer<typeof listing>;
+
+export default {
+  create: createListing,
+  createImage: createListingImage,
+  createParameter: createListingParameter,
+  createReview: createListingReview,
+  getAll: getListings,
+  getById: getListing,
+  getImages: getListingImages,
+  getImage: getListingImage,
+  getParameters: getListingParameters,
+  getReviews: getListingReviews,
+  update: updateListing,
+  updateImages: updateListingImages,
+  updateImage: updateListingImage,
+  updateParameters: updateListingParameters,
+  delete: deleteListing,
+  deleteImage: deleteListingImage,
+};
