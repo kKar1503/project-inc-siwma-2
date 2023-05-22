@@ -17,7 +17,11 @@ export type ParamResponse = {
 };
 
 // -- Helper functions -- //
-export function formatParamResponse($parameters: Parameter | Parameter[]) {
+export function formatParamResponse(
+  $parameters:
+    | Omit<Parameter, 'createdAt' | 'updatedAt'>
+    | Omit<Parameter, 'createdAt' | 'updatedAt'>[]
+) {
   // Initialise the parameters array
   let parameters = $parameters;
 
@@ -39,6 +43,42 @@ export function formatParamResponse($parameters: Parameter | Parameter[]) {
   }));
 
   return formatAPIResponse(result);
+}
+
+/**
+ * Constructs the query options to be used in the Prisma query
+ */
+function buildQueryOptions({ ids, isAdmin }: { ids: number[] | undefined; isAdmin: boolean }) {
+  // Construct base query options
+  const queryOptions = {
+    where: {
+      active: true,
+      id: {
+        in: ids,
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      displayName: true,
+      type: true,
+      dataType: true,
+      options: true,
+      active: true,
+    },
+  };
+
+  // Add additional query options if the user is not an admin
+  if (!isAdmin) {
+    queryOptions.where = {
+      ...queryOptions.where,
+      active: true,
+    };
+
+    queryOptions.select.active = false;
+  }
+
+  return queryOptions;
 }
 
 /**
@@ -90,14 +130,11 @@ export default apiHandler()
       ids = parseArray($ids).map((e) => parseToNumber(e, 'id'));
     }
 
+    // Construct query options
+    const queryOptions = buildQueryOptions({ ids, isAdmin: req.token?.user.permissions === 1 });
+
     // Retrieve all parameters from the database
-    const parameters = await PrismaClient.parameter.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-    });
+    const parameters = await PrismaClient.parameter.findMany(queryOptions);
 
     // Return the result
     res.status(200).json(formatParamResponse(parameters));
