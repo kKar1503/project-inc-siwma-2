@@ -11,10 +11,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
-import { GetServerSidePropsContext, NextApiRequest } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import { useState, SyntheticEvent } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
-
 // eslint-disable-next-line no-unused-vars
 
 // test data for profile component
@@ -494,6 +493,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               height: 'full',
               bgcolor: theme.palette.common.white,
               borderRadius: theme.shape,
+              overflow: 'hidden',
             }}
           >
             <Tabs
