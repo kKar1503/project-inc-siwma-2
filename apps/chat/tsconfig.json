@@ -1,0 +1,12 @@
+{
+  "extends": "@inc/configs/tsconfig.app.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "typeRoots": ["node_modules/@types"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["**/*.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", "tests"]
+}
