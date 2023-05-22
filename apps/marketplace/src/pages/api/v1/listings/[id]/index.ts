@@ -1,12 +1,10 @@
-import { apiHandler, formatAPIResponse, zodParseToInteger, zodParseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
-import { ListingType } from '@prisma/client';
-import z from 'zod';
-import { formatSingleListingResponse, getQueryParameters, parseListingId } from '..';
+import { listingSchema } from '@/utils/api/server/zod';
+import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
-
 /**
  * Checks if a listing exists
  * @param id The listing id
@@ -39,32 +37,6 @@ export async function checkListingExists($id: string | number) {
   return listing;
 }
 
-interface Parameter {
-  paramId: number;
-  value: number;
-}
-
-// Define the schema for the request body
-const putListingRequestBody = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  price: z.number().gte(0).optional(),
-  unitPrice: z.boolean().optional(),
-  negotiable: z.boolean().optional(),
-  categoryId: z.number().optional(),
-  type: z.nativeEnum(ListingType).optional(),
-  rating: z.number().optional(),
-  reviewCount: z.number().optional(),
-  parameters: z
-    .array(
-      z.object({
-        paramId: z.string().transform(zodParseToInteger),
-        value: z.string().transform(zodParseToNumber),
-      })
-    )
-    .optional(),
-});
-
 async function getValidParametersForCategory(categoryId: number): Promise<string[]> {
   // Fetch valid parameters for the category
   const validParameters = await PrismaClient.category.findUnique({
@@ -82,7 +54,7 @@ async function getValidParametersForCategory(categoryId: number): Promise<string
 
 export default apiHandler()
   .get(async (req, res) => {
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
     const id = parseListingId(req.query.id as string);
@@ -118,7 +90,7 @@ export default apiHandler()
       );
   })
   .put(async (req, res) => {
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
@@ -134,7 +106,7 @@ export default apiHandler()
     }
 
     // Validate the request body
-    const data = putListingRequestBody.parse(req.body);
+    const data = listingSchema.put.body.parse(req.body);
 
     if (data.categoryId) {
       // Get valid parameters for the listing's category
@@ -151,7 +123,7 @@ export default apiHandler()
     }
 
     // Do not remove this, it is necessary to update the listing
-    const updatedListing = await PrismaClient.listing.update({
+    await PrismaClient.listing.update({
       where: { id },
       data: {
         name: data.name,
@@ -174,7 +146,7 @@ export default apiHandler()
     });
 
     if (data.parameters) {
-      const parameterUpdates = data.parameters.map((parameter: Parameter) =>
+      const parameterUpdates = data.parameters.map((parameter) =>
         PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {
@@ -237,7 +209,10 @@ export default apiHandler()
       .status(200)
       .json(
         formatAPIResponse(
-          await formatSingleListingResponse(listingWithRatingAndReviewCount, queryParams.includeParameters)
+          await formatSingleListingResponse(
+            listingWithRatingAndReviewCount,
+            queryParams.includeParameters
+          )
         )
       );
   })
