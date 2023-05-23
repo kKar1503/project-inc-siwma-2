@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ChatHeader from '@/components/rtc/ChatHeader';
@@ -11,7 +11,7 @@ import chat from '@/utils/api/client/zod/chat';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 
-function useChatListQuery(loggedUserUuid: string) {
+function useChatListQuery(loggedUserUuid: string, setChatList: SetStateAction<unknown>) {
   fetchUser(loggedUserUuid);
   const { data } = useQuery(
     'chatList',
@@ -20,8 +20,9 @@ function useChatListQuery(loggedUserUuid: string) {
         `http://localhost:3000/api/v1/users/${loggedUserUuid}/chats`
       );
       console.log(response.data.data);
-      const chatList = chat.getByUser.parse(response.data.data);
-      console.log(chatList);
+      // const chatList = chat.getByUser.parse(response.data.data);
+      // console.log(chatList);
+      setChatList(response.data.data);
       return response.data;
     },
     {
@@ -36,6 +37,7 @@ const ChatRoom = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState<string>('');
   const [onSend, setOnSend] = useState<boolean>(false);
+  const [chatList, setChatList] = useState<unknown>([]);
 
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
@@ -44,7 +46,8 @@ const ChatRoom = () => {
     // useSession();
   }, []);
 
-  useChatListQuery(loggedUserUuid);
+  useChatListQuery(loggedUserUuid, setChatList);
+  console.log(chatList);
 
   const messages: ChatBoxProps['roomData'] = [
     {
