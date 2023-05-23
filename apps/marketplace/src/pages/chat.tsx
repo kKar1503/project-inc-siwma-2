@@ -20,8 +20,8 @@ function useChatListQuery(loggedUserUuid: string) {
         `http://localhost:3000/api/v1/users/${loggedUserUuid}/chats`
       );
       console.log(response.data.data);
-      // const chatList = chat.getByUser.parse(response.data.data);
-      // console.log(chatList);
+      const chatList = chat.getByUser.parse(response.data.data);
+      console.log(chatList);
       return response.data;
     },
     {
