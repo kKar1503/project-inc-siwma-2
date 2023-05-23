@@ -1,10 +1,14 @@
 import apiClient from '@/utils/api/client/apiClient';
 
 const fetchUser = async (uuid: string) => {
-  const res = await apiClient.get(`/v1/users/${uuid}`);
-  return {
-    data: res.data,
-  };
+  if (uuid) {
+    const res = await apiClient.get(`/v1/users/${uuid}`);
+    return {
+      data: res?.data,
+    };
+  }
+
+  return null;
 };
 
 export default fetchUser;
