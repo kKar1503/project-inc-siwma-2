@@ -20,6 +20,7 @@ import { ListingsParametersValue } from './tables/listings_parameters_value';
 import { NotificationSettings } from './tables/notification_settings';
 import { UserBookmarks } from './tables/user_bookmarks';
 import { SibKeys } from './tables/sibkeys';
+import { PasswordReset } from './tables/password_reset';
 
 const main = async (): Promise<void> => {
   console.log('\nClearing database...');
@@ -47,6 +48,7 @@ const main = async (): Promise<void> => {
     prismaClient.refreshTokens.deleteMany({}),
     prismaClient.accessTokens.deleteMany({}),
     prismaClient.sibkeys.deleteMany({}),
+    prismaClient.passwordReset.deleteMany({}),
   ]);
 
   console.log('Database cleared');
@@ -70,6 +72,7 @@ const main = async (): Promise<void> => {
     prismaClient.$executeRaw`ALTER SEQUENCE public.parameter_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.refresh_tokens_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.user_bookmarks_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.password_reset_seq RESTART WITH 1;`,
   ]);
 
   console.log('Sequences reset');
@@ -222,6 +225,13 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${sibkeysCount} rows into public.sibkeys`);
+  console.log('Seeding public.password_reset...');
+
+  const { count: passwordResetCount } = await prismaClient.passwordReset.createMany({
+    data: PasswordReset,
+  });
+
+  console.log(`Seeded ${passwordResetCount} rows into public.password_reset`);
 };
 
 main()
