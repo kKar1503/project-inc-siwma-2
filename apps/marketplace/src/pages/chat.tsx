@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState, Dispatch } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ChatHeader from '@/components/rtc/ChatHeader';
@@ -11,7 +11,22 @@ import chat from '@/utils/api/client/zod/chat';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 
-function useChatListQuery(loggedUserUuid: string, setChatList: SetStateAction<unknown>) {
+export type chatListType = {
+  id: string;
+  buyer: string;
+  createdAt: string;
+  listing: string;
+  seller: string;
+};
+
+export type chatListDataType = {
+  data: chatListType[];
+};
+
+function useChatListQuery(
+  loggedUserUuid: string,
+  setChatList: Dispatch<SetStateAction<chatListDataType>>
+) {
   fetchUser(loggedUserUuid);
   const { data } = useQuery(
     'chatList',
@@ -19,11 +34,12 @@ function useChatListQuery(loggedUserUuid: string, setChatList: SetStateAction<un
       const response = await axios.get(
         `http://localhost:3000/api/v1/users/${loggedUserUuid}/chats`
       );
-      console.log(response.data.data);
-      // const chatList = chat.getByUser.parse(response.data.data);
-      // console.log(chatList);
-      setChatList(response.data.data);
-      return response.data;
+
+      // parse data through zod to ensure data is correct
+      const parsedChatList = chat.getByUser.parse(response.data.data);
+
+      setChatList({ data: parsedChatList });
+      return parsedChatList;
     },
     {
       enabled: loggedUserUuid !== undefined,
@@ -37,17 +53,12 @@ const ChatRoom = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState<string>('');
   const [onSend, setOnSend] = useState<boolean>(false);
-  const [chatList, setChatList] = useState<unknown>([]);
+  const [chatList, setChatList] = useState<chatListDataType>({ data: [] });
 
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
 
-  useEffect(() => {
-    // useSession();
-  }, []);
-
   useChatListQuery(loggedUserUuid, setChatList);
-  console.log(chatList);
 
   const messages: ChatBoxProps['roomData'] = [
     {
