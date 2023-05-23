@@ -4,7 +4,8 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "npx rimraf dist && tsc && node esbuild.config.js",
+    "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
+    "build:prod": "rm -rf dist && node esbuild.config.js",
     "dev": "pnpx rimraf dist && tsc -w"
   },
   "dependencies": {

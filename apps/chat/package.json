@@ -5,7 +5,8 @@
   "typings": "",
   "scripts": {
     "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/server.ts\"",
-    "build": "npx rimraf dist && tsc && node esbuild.config.js",
+    "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
+    "build:prod": "rm -rf dist && node esbuild.config.js",
     "start": "node dist/server.js"
   },
   "dependencies": {

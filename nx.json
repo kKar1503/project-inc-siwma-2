@@ -29,7 +29,7 @@
       "dependsOn": ["^build"]
     },
     "build:prod": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build:prod"],
       "inputs": ["default", "^default"]
     },
     "prisma:patchCasing": {

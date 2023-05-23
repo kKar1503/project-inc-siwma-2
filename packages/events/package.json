@@ -5,6 +5,7 @@
   "typings": "index.d.ts",
   "scripts": {
     "build": "tsc && node esbuild.config.js",
+    "build:prod": "node esbuild.config.js",
     "dev": "tsc -w"
   },
   "dependencies": {

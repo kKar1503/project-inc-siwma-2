@@ -13,14 +13,14 @@ COPY static ./static
 COPY .npmrc nx.json package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Installing Dependencies
-RUN npm install -g pnpm rimraf
+RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
 
 # Building SocketIO server
-RUN pnpx nx run @inc/chat:build
+RUN pnpx nx run @inc/chat:build:prod
 
 # Remove devDeps
-RUN rm -rf node_modules */**/node_modules */**/**/node_modules && pnpm install --prod
+RUN rm -rf node_modules */**/node_modules */**/**/node_modules && pnpm install --prod --offline
 
 # ===================================================================
 
