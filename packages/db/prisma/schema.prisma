@@ -26,18 +26,18 @@ model AccessTokens {
 }
 
 model Advertisements {
-  id          Int       @id(map: "advertisements_pk") @default(sequence(maxValue: 2147483647))
-  companyId   Int       @map("company_id")
-  image       String
-  description String
-  link        String    @default("")
-  active      Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  startDate   DateTime  @default(now()) @map("start_date") @db.Timestamptz(6)
-  endDate     DateTime  @default(now()) @map("end_date") @db.Timestamptz(6)
-  companies   Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "advertisements_fk")
-  clicks      Clicks[]
+  id           Int            @id(map: "advertisements_pk") @default(sequence(maxValue: 2147483647))
+  companyId    Int            @map("company_id")
+  image        String
+  description  String
+  link         String         @default("")
+  active       Boolean        @default(true)
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime       @default(now()) @map("updated_at") @db.Timestamptz(6)
+  startDate    DateTime       @default(now()) @map("start_date") @db.Timestamptz(6)
+  endDate      DateTime       @default(now()) @map("end_date") @db.Timestamptz(6)
+  advertClicks AdvertClicks[]
+  companies    Companies      @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "advertisements_fk")
 
   @@map("advertisements")
 }
@@ -68,18 +68,6 @@ model Category {
   listings             Listing[]
 
   @@map("category")
-}
-
-model Clicks {
-  id              Int            @id(map: "clicks_pk") @default(sequence(maxValue: 2147483647))
-  advertisementId Int            @map("advertisement_id")
-  userId          String         @map("user_id") @db.Uuid
-  link            Boolean        @default(false)
-  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  advertisements  Advertisements @relation(fields: [advertisementId], references: [id], onDelete: Cascade, map: "clicks_fk")
-  users           Users          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "clicks_fk_1")
-
-  @@map("clicks")
 }
 
 model Companies {
@@ -124,27 +112,29 @@ model Invite {
 }
 
 model Listing {
-  id                              Int                       @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
-  name                            String
-  description                     String
-  price                           Decimal                   @default(0) @db.Decimal
-  unitPrice                       Boolean                   @default(false) @map("unit_price")
-  negotiable                      Boolean                   @default(true)
-  categoryId                      Int                       @map("category_id")
-  type                            ListingType
-  owner                           String                    @db.Uuid
-  createdAt                       DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                       DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  archived                        Boolean                   @default(false)
-  deletedAt                       DateTime                  @default(now()) @map("deleted_at") @db.Timestamptz(6)
-  category                        Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
-  users                           Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
-  listingBookmarks                ListingBookmarks[]
-  listingImages                   ListingImages[]
-  listingsParametersValues        ListingsParametersValue[]
-  offersOffersListingTolistings   Offers[]                  @relation("offersListingTolisting")
-  reviewsReviewsListingTolistings Reviews[]                 @relation("reviewsListingTolisting")
-  roomsRoomsListingTolistings     Rooms[]                   @relation("roomsListingTolisting")
+  id                                          Int                       @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
+  name                                        String
+  description                                 String
+  price                                       Decimal                   @default(0) @db.Decimal
+  unitPrice                                   Boolean                   @default(false) @map("unit_price")
+  negotiable                                  Boolean                   @default(true)
+  categoryId                                  Int                       @map("category_id")
+  type                                        ListingType
+  owner                                       String                    @db.Uuid
+  createdAt                                   DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                                   DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  archived                                    Boolean                   @default(false)
+  deletedAt                                   DateTime                  @default(now()) @map("deleted_at") @db.Timestamptz(6)
+  multiple                                    Boolean                   @default(false)
+  category                                    Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
+  users                                       Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
+  listingBookmarks                            ListingBookmarks[]
+  listingClicksListingClicksListingTolistings ListingClicks[]           @relation("listingClicksListingTolisting")
+  listingImages                               ListingImages[]
+  listingsParametersValues                    ListingsParametersValue[]
+  offersOffersListingTolistings               Offers[]                  @relation("offersListingTolisting")
+  reviewsReviewsListingTolistings             Reviews[]                 @relation("reviewsListingTolisting")
+  roomsRoomsListingTolistings                 Rooms[]                   @relation("roomsListingTolisting")
 
   @@map("listing")
 }
@@ -185,18 +175,17 @@ model ListingsParametersValue {
 }
 
 model Messages {
-  id                            Int         @id(map: "messages_pk") @default(sequence())
-  author                        String      @db.Uuid
-  room                          String      @db.Uuid
-  read                          Boolean     @default(false)
-  createdAt                     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  contentType                   ContentType @map("content_type")
-  offer                         Int?
-  content                       String
-  offersMessagesOfferTooffers   Offers?     @relation("messagesOfferTooffers", fields: [offer], references: [id], onDelete: Cascade, map: "messages_fk")
-  rooms                         Rooms       @relation(fields: [room], references: [id], onDelete: Cascade, map: "messages_fk_1")
-  users                         Users       @relation(fields: [author], references: [id], onDelete: Cascade, map: "messages_fk_2")
-  offersOffersMessageTomessages Offers[]    @relation("offersMessageTomessages")
+  id                          Int         @id(map: "messages_pk") @default(sequence())
+  author                      String      @db.Uuid
+  room                        String      @db.Uuid
+  read                        Boolean     @default(false)
+  createdAt                   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  contentType                 ContentType @map("content_type")
+  offer                       Int?
+  content                     String
+  offersMessagesOfferTooffers Offers?     @relation("messagesOfferTooffers", fields: [offer], references: [id], onDelete: Cascade, map: "messages_fk")
+  rooms                       Rooms       @relation(fields: [room], references: [id], onDelete: Cascade, map: "messages_fk_1")
+  users                       Users       @relation(fields: [author], references: [id], onDelete: Cascade, map: "messages_fk_2")
 
   @@map("messages")
 }
@@ -211,15 +200,14 @@ model NotificationSettings {
 }
 
 model Offers {
-  id                              Int        @id(map: "offers_pk") @default(sequence())
-  listing                         Int
-  message                         Int
-  amount                          Float      @default(0.0)
-  accepted                        Boolean    @default(false)
-  messagesMessagesOfferTooffers   Messages[] @relation("messagesOfferTooffers")
-  listingOffersListingTolisting   Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
-  messagesOffersMessageTomessages Messages   @relation("offersMessageTomessages", fields: [message], references: [id], onDelete: Cascade, map: "offers_fk_1")
+  id                            Int        @id(map: "offers_pk") @default(sequence())
+  listing                       Int
+  amount                        Float      @default(0.0)
+  accepted                      Boolean    @default(false)
+  messagesMessagesOfferTooffers Messages[] @relation("messagesOfferTooffers")
+  listingOffersListingTolisting Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
 
+  @@unique([id, listing], map: "offers_un")
   @@map("offers")
 }
 
@@ -329,11 +317,13 @@ model Users {
   whatsappNumber          String?                @map("whatsapp_number")
   telegramUsername        String?                @map("telegram_username")
   accessTokens            AccessTokens[]
-  clicks                  Clicks[]
+  advertClicks            AdvertClicks[]
   listings                Listing[]
   listingBookmarks        ListingBookmarks[]
+  listingClicks           ListingClicks[]
   messages                Messages[]
   notificationSettings    NotificationSettings[]
+  passwordResets          PasswordReset[]
   refreshTokens           RefreshTokens[]
   reviews                 Reviews[]
   roomsRoomsSellerTousers Rooms[]                @relation("roomsSellerTousers")
@@ -342,6 +332,39 @@ model Users {
   companies               Companies              @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
 
   @@map("users")
+}
+
+model AdvertClicks {
+  id              Int            @id(map: "clicks_pk") @default(sequence(maxValue: 2147483647))
+  advertisementId Int            @map("advertisement_id")
+  userId          String         @map("user_id") @db.Uuid
+  link            Boolean        @default(false)
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  advertisements  Advertisements @relation(fields: [advertisementId], references: [id], onDelete: Cascade, map: "clicks_fk")
+  users           Users          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "clicks_fk_1")
+
+  @@map("advert_clicks")
+}
+
+model ListingClicks {
+  id                                   Int      @id(map: "listing_clicks_pk") @default(sequence(maxValue: 2147483647))
+  listing                              Int
+  user                                 String   @db.Uuid
+  createdAt                            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  listingListingClicksListingTolisting Listing  @relation("listingClicksListingTolisting", fields: [listing], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "listing_clicks_fk")
+  users                                Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listing_clicks_fk_1")
+
+  @@map("listing_clicks")
+}
+
+model PasswordReset {
+  id        Int      @default(sequence())
+  user      String   @db.Uuid
+  token     String   @unique(map: "password_reset_un")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  users     Users    @relation(fields: [user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "password_reset_fk")
+
+  @@map("password_reset")
 }
 
 enum ContentType {
