@@ -48,7 +48,7 @@ export default apiHandler().get(async (req, res) => {
     seller: chat.seller,
     buyer: chat.buyer,
     listing: chat.listing.toString(),
-    created_at: chat.createdAt.toISOString(),
+    createdAt: chat.createdAt.toISOString(),
   }));
 
   // Return the result
