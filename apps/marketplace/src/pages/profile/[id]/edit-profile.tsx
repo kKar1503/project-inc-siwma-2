@@ -1,5 +1,6 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import ProfileDetailCard, {
   ProfileDetailCardProps,
 } from '@/components/marketplace/profile/ProfileDetailCard';
@@ -19,6 +20,7 @@ import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
 import { GetServerSidePropsContext, NextApiRequest } from 'next';
+import NavBar from '@/components/marketplace/navbar/NavBar';
 
 const profileDetailData = [
   {
@@ -46,58 +48,6 @@ const profileDetailData = [
     bio: 'At Stone Exploration Co., we specialize in the exploration and development of new mineral resources. Our team of experts uses cutting-edge technology to identify promising mineral deposits and assess their potential for commercial mining. We are dedicated to responsible mining practices that prioritize the safety of our workers and the protection of the environment.',
     rating: 4.6,
     reviews: 97,
-  },
-  {
-    ownerId: 3,
-    username: 'ore_king',
-    name: 'David Hill',
-    email: 'david.hill@orekingdom.com',
-    company: 'Ore Kingdom Inc.',
-    profilePic: 'D',
-    mobileNumber: '9031 2150',
-    telegramUsername: '@ore_kingdom',
-    bio: 'Ore Kingdom Inc. is a leading provider of iron ore and other minerals to markets around the world. We have extensive experience in mining and processing high-quality ores and are committed to sustainable and responsible practices. Our team is dedicated to delivering the best possible products and services to our customers.',
-    rating: 4.8,
-    reviews: 215,
-  },
-  {
-    ownerId: 4,
-    username: 'gold_digger',
-    name: 'Sarah Jones',
-    email: 'sjones@golddigger.com',
-    company: 'Gold Digger Mining Corp.',
-    profilePic: 'S',
-    mobileNumber: '5678 1234',
-    telegramUsername: '@gold_digger',
-    bio: 'Gold Digger Mining Corp. is a trusted provider of gold and other precious metals. Our team of experts has decades of experience in mining and processing high-quality ores, and we are committed to responsible practices that prioritize safety, sustainability, and environmental protection. We strive to exceed the expectations of our customers and provide them with the best possible products and services.',
-    rating: 4.3,
-    reviews: 184,
-  },
-  {
-    ownerId: 5,
-    username: 'mining_pro',
-    name: 'Jackie Lee',
-    email: 'jackie.lee@miningpro.com',
-    company: 'Mining Pro Solutions',
-    profilePic: 'J',
-    mobileNumber: '7777 9999',
-    telegramUsername: '@mining_pro',
-    bio: 'Mining Pro Solutions provides cutting-edge solutions for the mining industry. Our team of experienced professionals specializes in the design, engineering, and implementation of advanced mining equipment and technologies that improve efficiency, safety, and productivity. We are committed to delivering the best possible solutions to our clients and helping them achieve their goals.',
-    rating: 4.9,
-    reviews: 102,
-  },
-  {
-    ownerId: 6,
-    username: 'ore_genius',
-    name: 'Karen Chen',
-    email: 'karen.chen@oregenius.com',
-    company: 'Ore Genius Inc.',
-    profilePic: 'K',
-    mobileNumber: '1234 5678',
-    telegramUsername: '@ore_genius',
-    bio: 'Ore Genius Inc. is a cutting-edge provider of mineral exploration and analysis services. Our team of experts uses the latest technology to identify and assess mineral deposits, helping our clients make informed decisions about their mining operations. We are committed to delivering high-quality services that exceed our clients expectations and contribute to sustainable and responsible mining practices.',
-    rating: 4.5,
-    reviews: 76,
   },
 ];
 
@@ -144,7 +94,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
   const [telegramUsername, setTelegramusername] = useState('');
   const [mobileNumber, setMobilenumber] = useState('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-
+  const { ownerId } = data;
   useEffect(() => {
     if (profilePic) {
       setImageUrl(URL.createObjectURL(profilePic));
@@ -178,8 +128,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        {/* navbar */}
-
+        <NavBar />
         <Container>
           <form onSubmit={handleSubmit}>
             <Box
@@ -215,6 +164,8 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                     <Button
                       variant="contained"
                       color="error"
+                      component={Link}
+                      href={`/profile/${ownerId}`}
                       sx={({ palette }) => ({ bgcolor: palette.error[400] })}
                     >
                       Cancel Edit
@@ -392,7 +343,8 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <WhatsAppIcon />+65
+                              <WhatsAppIcon />
+                              +65
                             </InputAdornment>
                           ),
                         }}
@@ -426,7 +378,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                 </CardActions>
               </Card>
 
-              <ProfileDetailCard data={data} />
+              <ProfileDetailCard data={data} isEditMode={false} />
             </Box>
           </form>
         </Container>

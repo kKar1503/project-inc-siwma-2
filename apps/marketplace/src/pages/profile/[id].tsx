@@ -487,7 +487,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
             justifyContent: 'space-between',
           })}
         >
-          <ProfileDetailCard data={data} />
+          <ProfileDetailCard data={data} isEditMode />
           <Box
             sx={{
               width: '73%',

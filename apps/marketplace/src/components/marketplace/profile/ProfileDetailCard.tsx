@@ -24,13 +24,14 @@ export type ProfileDetailCardProps = {
   rating: number;
   reviews: number;
   ownerId: number;
+  isEditMode?: boolean;
 };
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
 };
 
-const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
+const ProfileDetailCard = ({ data,  isEditMode = false }:{ data: ProfileDetailCardProps; isEditMode?: boolean }) => {
   // destructure data
 
   const {
@@ -134,7 +135,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               borderRadius: spacing(2),
               p: '1px',
               color: palette.common.white,
-              backgroundColor: palette.secondary.main
+              backgroundColor: palette.secondary.main,
             })}
           />
           <Typography
@@ -148,34 +149,38 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
       </CardContent>
       <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
         <Box sx={{ width: '98%' }}>
-          <Button
-            component={Link}
-            href={`/profile/${ownerId}/edit-profile`}
-            variant="contained"
-            type="submit"
-            sx={({ spacing }) => ({
-              width: '100%',
-              mb: spacing(2),
-              mt: spacing(2),
-              fontWeight: 'bold',
-            })}
-          >
-            Edit profile
-          </Button>
-          <Button
-            component={Link}
-            href="/logout"
-            variant="contained"
-            type="submit"
-            color="error"
-            sx={({ spacing }) => ({
-              width: '100%',
-              mb: spacing(1),
-              fontWeight: 'bold',
-            })}
-          >
-            Logout
-          </Button>
+          {isEditMode && (
+            <Button
+              component={Link}
+              href={`/profile/${ownerId}/edit-profile`}
+              variant="contained"
+              type="submit"
+              sx={({ spacing }) => ({
+                width: '100%',
+                mb: spacing(2),
+                mt: spacing(2),
+                fontWeight: 'bold',
+              })}
+            >
+              Edit profile
+            </Button>
+          )}
+          {isEditMode && (
+            <Button
+              component={Link}
+              href="/logout"
+              variant="contained"
+              type="submit"
+              color="error"
+              sx={({ spacing }) => ({
+                width: '100%',
+                mb: spacing(1),
+                fontWeight: 'bold',
+              })}
+            >
+              Logout
+            </Button>
+          )}
         </Box>
       </CardActions>
     </Card>
