@@ -61,27 +61,23 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
 const createListingReview = async (req: APIRequestType, res: NextApiResponse) => {
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
-    const userRole = req.token?.user?.role;
     const { review, rating } = req.body;
-    const offers = await PrismaClient.offers.findMany({
+    const offer = await PrismaClient.messages.findMany({
         where: {
-            listing: id,
-            accepted: true,
-        },
-    });
-    const messageNumber = offers.map((offer) => offer.message);
-
-    const messages = await PrismaClient.messages.findMany({
-        where: {
-            id: {
-                in: messageNumber,
+            offer: { not: null, },
+            offersMessagesOfferTooffers: {
+                listing: id,
+                accepted: true,
+            },
+            author: {
+                equals: userId,
             },
         },
-    });
-    const author = messages.map((message) => message.author)
-    if (!author.includes(userId)) {
+    })
+    if (!offer.length) {
         throw new ForbiddenError();
     }
+
     const createdReview = await PrismaClient.reviews.create({
         data: {
             review,
