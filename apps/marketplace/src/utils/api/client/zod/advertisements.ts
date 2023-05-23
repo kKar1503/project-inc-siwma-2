@@ -20,8 +20,16 @@ const advertisement = z.object({
   endDate,
 });
 
-export const createAdvertisement = z.object({ companyId });
-export const getAdvertisements = advertisement.array();
-export const getAdvertisement = advertisement;
-export const updateAdvertisement = advertisement;
-export const deleteAdvertisement = z.object({});
+const createAdvertisement = z.object({ companyId });
+const getAdvertisements = advertisement.array();
+const getAdvertisement = advertisement;
+const updateAdvertisement = advertisement;
+const deleteAdvertisement = z.object({});
+
+export default {
+  create: createAdvertisement,
+  getAll: getAdvertisements,
+  getById: getAdvertisement,
+  update: updateAdvertisement,
+  delete: deleteAdvertisement,
+};
