@@ -2,10 +2,10 @@ import { EventFile } from '@inc/types';
 import logger from '../utils/logger';
 import { EVENTS } from '@inc/events';
 
-const newMsgEvent: EventFile = (io) => ({
+const stopType: EventFile = (io) => ({
   eventName: EVENTS.CLIENT.STOP_TYPE,
   type: 'on',
-  callback: ({ roomId, sender}) => {
+  callback: ({ roomId, sender }) => {
     logger.info(`User ${sender} stopped typing`);
     io.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
       sender: sender,
@@ -14,4 +14,4 @@ const newMsgEvent: EventFile = (io) => ({
   },
 });
 
-export default newMsgEvent;
+export default stopType;
