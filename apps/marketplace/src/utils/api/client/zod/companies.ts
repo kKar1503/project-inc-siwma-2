@@ -12,7 +12,7 @@ const getCompany = z.object({
   image: z.string().nullable(),
   visible: z.boolean(),
   comments: z.string().nullable(),
-  createdAt: z.date(),
+  createdAt: z.string().datetime(),
 });
 
 const getCompanies = getCompany.array();
