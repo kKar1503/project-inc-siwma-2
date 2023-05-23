@@ -1,12 +1,6 @@
-interface IClicks {
-  id?: number;
-  advertisementId: number;
-  userId: string;
-  link?: boolean;
-  createdAt?: Date;
-}
+import { AdvertClicks } from '@prisma/client';
 
-const Clicks: IClicks[] = [
+const AdvertClicks: Omit<AdvertClicks, 'id' | 'link'>[] = [
   {
     advertisementId: 3,
     userId: '14f9a310-958c-4273-b4b3-4377804642a5',
@@ -399,5 +393,4 @@ const Clicks: IClicks[] = [
   },
 ];
 
-export type { IClicks };
-export { Clicks };
+export { AdvertClicks };

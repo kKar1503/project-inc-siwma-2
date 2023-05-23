@@ -10,7 +10,8 @@ import { Messages } from './tables/messages';
 import { Parameters } from './tables/parameter';
 import { Advertisements } from './tables/advertisements';
 import { CategoriesParameters } from './tables/categories_parameters';
-import { Clicks } from './tables/clicks';
+import { AdvertClicks } from './tables/advert_clicks';
+import { ListingClicks } from './tables/listing_clicks';
 import { CompaniesBookmarks } from './tables/companies_bookmarks';
 import { Invite } from './tables/invite';
 import { ListingBookmarks } from './tables/listing_bookmarks';
@@ -34,7 +35,8 @@ const main = async (): Promise<void> => {
     prismaClient.parameter.deleteMany({}),
     prismaClient.advertisements.deleteMany({}),
     prismaClient.categoriesParameters.deleteMany({}),
-    prismaClient.clicks.deleteMany({}),
+    prismaClient.advertClicks.deleteMany({}),
+    prismaClient.listingClicks.deleteMany({}),
     prismaClient.companiesBookmarks.deleteMany({}),
     prismaClient.invite.deleteMany({}),
     prismaClient.listingBookmarks.deleteMany({}),
@@ -54,7 +56,8 @@ const main = async (): Promise<void> => {
     prismaClient.$executeRaw`ALTER SEQUENCE public.access_tokens_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.advertisements_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.category_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.clicks_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.advert_clicks_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.listing_clicks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.companies_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.companies_bookmarks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.invite_seq RESTART WITH 1;`,
@@ -148,13 +151,20 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${categoriesParametersCount} rows into public.categories_parameters`);
-  console.log('Seeding public.clicks...');
+  console.log('Seeding public.advert_clicks...');
 
-  const { count: clicksCount } = await prismaClient.clicks.createMany({
-    data: Clicks,
+  const { count: advertClicksCount } = await prismaClient.advertClicks.createMany({
+    data: AdvertClicks,
   });
 
-  console.log(`Seeded ${clicksCount} rows into public.clicks`);
+  console.log(`Seeded ${advertClicksCount} rows into public.advert_clicks`);
+  console.log('Seeding public.listing_clicks...');
+
+  const { count: listingClicksCount } = await prismaClient.listingClicks.createMany({
+    data: ListingClicks,
+  });
+
+  console.log(`Seeded ${listingClicksCount} rows into public.listing_clicks`);
   console.log('Seeding public.companies_bookmarks...');
 
   const { count: companiesBookmarksCount } = await prismaClient.companiesBookmarks.createMany({
