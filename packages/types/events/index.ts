@@ -34,6 +34,7 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
+  deleteMessage: { room: string; message: number };
   clientStartType: StartType;
   clientRead: Read;
 
