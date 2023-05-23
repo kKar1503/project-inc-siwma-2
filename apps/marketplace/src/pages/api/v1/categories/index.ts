@@ -1,10 +1,11 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { z } from 'zod';
 import PrismaClient, { CategoriesParameters } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
+import { categorySchema } from '@/utils/api/server/zod';
+import { CategoryResponseBody, CatgeoryParameter } from '@/utils/api/client/zod';
 
-export type queryResult = {
+export type QueryResult = {
   id: number;
   name: string;
   description: string;
@@ -14,40 +15,10 @@ export type queryResult = {
   categoriesParameters?: CategoriesParameters[];
 };
 
-export type parameter = {
-  parameterId: string;
-  required: boolean;
-};
-
-export type getResponse = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  crossSectionImage: string;
-  active?: boolean;
-  parameters?: parameter[];
-};
-
-export const getCategoriesQueryParameter = z.object({
-  includeParameters: z.string().optional(),
-});
-
-export const categoryRequestBody = z.object({
-  name: z.string(),
-  description: z.string(),
-  image: z.string(),
-  crossSectionImage: z.string(),
-  parameters: z
-    .object({
-      parameterId: z.number(),
-      required: z.boolean(),
-    })
-    .array(),
-});
-
-export function formatParamters(parameters: CategoriesParameters[] | undefined): parameter[] {
-  const temp: parameter[] = [];
+export function formatParamters(
+  parameters: CategoriesParameters[] | undefined
+): CatgeoryParameter[] {
+  const temp: CatgeoryParameter[] = [];
   if (parameters) {
     parameters.forEach((p) => {
       temp.push({
@@ -59,8 +30,8 @@ export function formatParamters(parameters: CategoriesParameters[] | undefined):
   return temp;
 }
 
-function formatResponse(response: queryResult[]): getResponse[] {
-  const temp: getResponse[] = [];
+function formatResponse(response: QueryResult[]): CategoryResponseBody[] {
+  const temp: CategoryResponseBody[] = [];
   response.forEach((r) => {
     temp.push({
       id: r.id.toString(),
@@ -77,10 +48,10 @@ function formatResponse(response: queryResult[]): getResponse[] {
 
 export default apiHandler()
   .get(async (req, res) => {
-    const { includeParameters = 'false' } = getCategoriesQueryParameter.parse(req.query);
+    const { includeParameters = 'false' } = categorySchema.get.query.parse(req.query);
     const include = includeParameters === 'true';
 
-    const response: queryResult[] = await PrismaClient.category.findMany({
+    const response: QueryResult[] = await PrismaClient.category.findMany({
       select: {
         id: true,
         name: true,
@@ -97,9 +68,8 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, description, image, crossSectionImage, parameters } = categoryRequestBody.parse(
-      req.body
-    );
+    const { name, description, image, crossSectionImage, parameters } =
+      categorySchema.post.body.parse(req.body);
 
     if (name != null && name.trim().length === 0) {
       throw new ParamError('name');

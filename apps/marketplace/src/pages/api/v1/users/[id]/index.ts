@@ -1,35 +1,16 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import { z } from 'zod';
-import client, { UserContacts } from '@inc/db';
+import client from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
-
-const userIdSchema = z.object({
-  id: z.string(),
-});
-
-const updateUserDetailsSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().email().optional(),
-  //   company is a number that represents the id of the company
-  company: z.string().optional(),
-  profilePicture: z.string().optional(),
-  mobileNumber: z.string().optional(),
-  whatsappNumber: z.string().optional(),
-  telegramUsername: z.string().optional(),
-  contactMethod: z.nativeEnum(UserContacts).optional(),
-  bio: z.string().optional(),
-  password: z.string().optional(),
-  userComments: z.string().optional(),
-});
+import { userSchema } from '@/utils/api/server/zod';
 
 export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { id } = userIdSchema.parse(req.query);
+    const { id } = userSchema.userId.parse(req.query);
 
     const user = await client.users.findUnique({
       where: {
@@ -77,10 +58,20 @@ export default apiHandler()
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { id } = userIdSchema.parse(req.query);
-    const parsedBody = updateUserDetailsSchema.parse(req.body);
-    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio, userComments,whatsappNumber,telegramUsername } =
-      parsedBody;
+    const { id } = userSchema.userId.parse(req.query);
+    const parsedBody = userSchema.put.body.parse(req.body);
+    const {
+      name,
+      email,
+      company,
+      profilePicture,
+      mobileNumber,
+      contactMethod,
+      bio,
+      userComments,
+      whatsappNumber,
+      telegramUsername,
+    } = parsedBody;
     let { password } = parsedBody;
 
     if (name) {
@@ -102,7 +93,6 @@ export default apiHandler()
     if (whatsappNumber) {
       validatePhone(whatsappNumber);
     }
-
 
     // Users can edit their own details, and admins can edit anyone's details
     // Therefore, we cannot simply block the entire endpoint for non-admin users
@@ -183,7 +173,7 @@ export default apiHandler()
       allowAdminsOnly: true,
     }),
     async (req, res) => {
-      const { id } = userIdSchema.parse(req.query);
+      const { id } = userSchema.userId.parse(req.query);
 
       // Verify that the user exists
       const userExists = await client.users.findUnique({

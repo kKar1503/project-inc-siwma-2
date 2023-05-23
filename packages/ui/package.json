@@ -4,11 +4,13 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "pnpx rimraf dist && tsc"
+    "build": "pnpx rimraf dist && tsc",
+    "dev": "pnpx rimraf dist && tsc -w"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@inc/utils": "workspace:*",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.14",
     "@mui/utils": "^5.12.3",
