@@ -7,7 +7,7 @@ const stopType: EventFile = (io) => ({
   type: 'on',
   callback: ({ roomId, sender }) => {
     logger.info(`User ${sender} stopped typing`);
-    io.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
+    io.to(roomId).emit(EVENTS.SERVER.STOP_TYPE, {
       sender: sender,
       room: roomId,
     });
