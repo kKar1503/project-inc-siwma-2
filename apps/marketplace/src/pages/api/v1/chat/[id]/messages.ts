@@ -71,7 +71,7 @@ export default apiHandler().get(async (req, res) => {
     read: message.read,
     offer: message.offer,
     author: message.author,
-    created_at: message.createdAt.toISOString(),
+    createdAt: message.createdAt.toISOString(),
   }));
 
   // Return the result
