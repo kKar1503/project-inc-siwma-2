@@ -6,8 +6,8 @@ const description = z.string();
 const link = z.string().url();
 // Admin Fields
 const active = z.boolean().optional();
-const startDate = z.date().optional();
-const endDate = z.date().optional();
+const startDate = z.string().datetime().optional();
+const endDate = z.string().datetime().optional();
 
 const advertisement = z.object({
   companyId,
