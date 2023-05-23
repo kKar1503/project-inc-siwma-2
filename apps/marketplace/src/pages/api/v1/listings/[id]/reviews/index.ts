@@ -45,7 +45,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
         where: {
             listing: id,
         },
-        orderBy: orderBy,
+        orderBy,
     });
 
     res.status(200).json(formatAPIResponse(reviews));
@@ -84,8 +84,8 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
     }
     const createdReview = await PrismaClient.reviews.create({
         data: {
-            review: review,
-            rating: rating,
+            review,
+            rating,
             user: userId,
             listing: id,
         },
