@@ -12,7 +12,7 @@ import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
 import { GetServerSidePropsContext } from 'next';
-import { useState, SyntheticEvent, useEffect, use } from 'react';
+import { useState, SyntheticEvent } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import fetchUser from '@/middlewares/fetchUser';
