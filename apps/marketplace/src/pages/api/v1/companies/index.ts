@@ -16,7 +16,7 @@ function formatResponse(response: Companies[]): CompanyResponseBody[] {
       image: r.logo,
       visible: r.visibility,
       comments: r.comments,
-      createdAt: r.createdAt,
+      createdAt: r.createdAt.toISOString(),
     });
   });
   return temp;

@@ -14,6 +14,7 @@ export const EVENTS = {
     SEND_MESSAGE: 'sendMessage',
     PING: 'clientPing',
     START_TYPE: 'clientStartType',
+    STOP_TYPE: 'clientStopType',
     READ: 'clientRead',
   },
 
@@ -24,6 +25,7 @@ export const EVENTS = {
     ROOM_MESSAGE: 'roomMessage',
     PING: 'serverPing',
     START_TYPE: 'serverStartType',
+    STOP_TYPE: 'serverStopType',
     READ: 'serverRead',
   },
 } as const;
