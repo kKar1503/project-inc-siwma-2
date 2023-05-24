@@ -10,6 +10,7 @@ import fetchUser from '@/middlewares/fetchUser';
 import chat from '@/utils/api/client/zod/chat';
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import  apiClient from '@/utils/api/client/apiClient';
 
 export type chatListType = {
   id: string;
@@ -31,8 +32,8 @@ function useChatListQuery(
   const { data } = useQuery(
     'chatList',
     async () => {
-      const response = await axios.get(
-        `http://localhost:3000/api/v1/users/${loggedUserUuid}/chats`
+      const response = await apiClient.get(
+        `v1/users/${loggedUserUuid}/chats`
       );
 
       // parse data through zod to ensure data is correct
@@ -45,7 +46,6 @@ function useChatListQuery(
       enabled: loggedUserUuid !== undefined,
     }
   );
-  console.log(data);
 }
 
 const ChatRoom = () => {
