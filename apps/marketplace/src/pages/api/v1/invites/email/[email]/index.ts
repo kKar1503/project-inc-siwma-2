@@ -1,16 +1,12 @@
 import { apiHandler } from '@/utils/api';
-import { z } from 'zod';
+import { inviteSchema } from '@/utils/api/server/zod';
 import client from '@inc/db';
 import { NotFoundError } from '@inc/errors';
-
-const emailSchema = z.object({
-  email: z.string(),
-});
 
 export default apiHandler({
   allowAdminsOnly: true,
 }).delete(async (req, res) => {
-  const { email } = emailSchema.parse(req.query);
+  const { email } = inviteSchema.email.delete.query.parse(req.query);
 
   // Find the invite
   const invite = await client.invite.findFirst({
