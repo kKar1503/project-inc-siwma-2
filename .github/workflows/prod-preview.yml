@@ -73,8 +73,8 @@ jobs:
       - name: Build and save docker images
         id: save-docker-image
         run: |
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:latest -f apps/chat/Dockerfile .
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }} -f apps/chat/Dockerfile .
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:latest -f apps/chat/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" .
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }} -f apps/chat/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" .
         # docker save ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }} > chat-${{ github.sha }}.tar
 
       # - uses: actions/upload-artifact@v3
