@@ -209,7 +209,7 @@ export default apiHandler()
 
         const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
         const reviewCount = _count && _count.rating;
-        const multiple = listing.multiple;
+        const { multiple } = listing;
 
         return {
           ...listing,
