@@ -5,9 +5,9 @@ import { EVENTS } from '@inc/events';
 const startType: EventFile = (io) => ({
   eventName: EVENTS.CLIENT.START_TYPE,
   type: 'on',
-  callback: ({ sender, room }) => {
+  callback: ({ sender, roomId }) => {
     logger.info(`User ${sender} starts typing`);
-    io.to(room).emit(EVENTS.SERVER.START_TYPE, { sender: sender, room: room})
+    io.to(roomId).emit(EVENTS.SERVER.START_TYPE, { sender: sender, room: roomId})
   },
 });
 
