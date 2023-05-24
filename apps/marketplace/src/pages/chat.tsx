@@ -24,10 +24,10 @@ export type chatListDataType = {
   data: chatListType[];
 };
 
-function useChatListQuery(
+const useChatListQuery = (
   loggedUserUuid: string,
   setChatList: Dispatch<SetStateAction<chatListDataType>>
-) {
+) => {
   fetchUser(loggedUserUuid);
   const { data } = useQuery(
     'chatList',
