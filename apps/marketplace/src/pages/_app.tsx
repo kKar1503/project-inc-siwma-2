@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import { useRouter } from 'next/router';
+import { QueryClientProvider, QueryClient } from 'react-query';
 import React, { useEffect } from 'react';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
@@ -46,6 +47,7 @@ const DisallowAuthenticatedFallback = () => {
 const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppProps) => {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
+  const queryClient = new QueryClient();
   const { allowAuthenticated, allowNonAuthenticated } = Component;
 
   return (
@@ -57,7 +59,9 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           allowAuthenticated={allowAuthenticated}
           allowNonAuthenticated={allowNonAuthenticated}
         >
-          {getLayout(<Component {...pageProps} />)}
+          <QueryClientProvider client={queryClient}>
+            {getLayout(<Component {...pageProps} />)}
+          </QueryClientProvider>
         </AuthenticationGuard>
       </SessionProvider>
     </ThemeComponent>

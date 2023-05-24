@@ -404,6 +404,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.10.6
         version: 11.10.6(@emotion/react@11.10.6)(@types/react@18.0.28)(react@18.2.0)
+      '@inc/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@mui/icons-material':
         specifier: ^5.11.16
         version: 5.11.16(@mui/material@5.11.14)(@types/react@18.0.28)(react@18.2.0)
@@ -427,14 +430,7 @@ importers:
         specifier: 5.0.2
         version: 5.0.2
 
-  packages/utils:
-    devDependencies:
-      '@types/node':
-        specifier: 18.15.3
-        version: 18.15.3
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
+  packages/utils: {}
 
 packages:
 
