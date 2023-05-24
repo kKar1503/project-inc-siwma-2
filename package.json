@@ -8,7 +8,7 @@
     "dev:chat": "nx run @inc/chat:dev",
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
-    "build:packages": "nx run-many -t build -p @inc/ui @inc/events @inc/s3-simplified @inc/errors @inc/send-in-blue @inc/utils @inc/node-store --parallel=4",
+    "build:packages": "nx run-many -t build -p @inc/ui @inc/events @inc/s3-simplified @inc/errors @inc/send-in-blue @inc/utils @inc/db @inc/node-store --parallel=4",
     "build:db": "nx run @inc/db:build",
     "build:ui": "nx run @inc/ui:build",
     "build:events": "nx run @inc/events:build",
