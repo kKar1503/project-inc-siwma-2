@@ -15,6 +15,7 @@ export type ListingWithParameters = Listing & {
   users: Users & {
     companies: Companies;
   };
+  multiple: boolean;
   rating: number | null;
   reviewCount: number;
 };
@@ -77,7 +78,10 @@ export async function formatSingleListingResponse(
       contactMethod: listing.users.contact,
       bio: listing.users.bio,
     },
-    open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    open: listing.multiple
+      ? true
+      : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    multiple: listing.multiple,
     createdAt: listing.createdAt.toISOString(),
     rating: listing.rating,
     reviewCount: listing.reviewCount,
@@ -205,11 +209,13 @@ export default apiHandler()
 
         const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
         const reviewCount = _count && _count.rating;
+        const multiple = listing.multiple;
 
         return {
           ...listing,
           rating,
           reviewCount,
+          multiple,
         };
       })
     );
@@ -271,6 +277,7 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
+        multiple: data.multiple,
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
