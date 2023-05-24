@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState, Dispatch } from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ChatHeader from '@/components/rtc/ChatHeader';
@@ -6,59 +6,76 @@ import ChatSubHeader from '@/components/rtc/ChatSubHeader';
 import ChatBox, { ChatBoxProps } from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
 import { useSession } from 'next-auth/react';
-import fetchUser from '@/middlewares/fetchUser';
-import chat from '@/utils/api/client/zod/chat';
 import { useQuery } from 'react-query';
-import axios from 'axios';
-import  apiClient from '@/utils/api/client/apiClient';
+import fetchChatList from '@/middlewares/fetchChatList';
+import fetchListing from '@/middlewares/fetchListing';
+import fetchListingImages from '@/middlewares/fetchListingImages';
+import fetchUser from '@/middlewares/fetchUser';
+import fetchRoomMessages from '@/middlewares/fetchRoomMessages';
 
-export type chatListType = {
-  id: string;
-  buyer: string;
-  createdAt: string;
-  listing: string;
-  seller: string;
+const useChatListQuery = (loggedUserUuid: string) => {
+  const { data } = useQuery('chatList', async () => fetchChatList(loggedUserUuid), {
+    enabled: loggedUserUuid !== undefined,
+  });
+  return data;
 };
 
-export type chatListDataType = {
-  data: chatListType[];
+const useGetListingQuery = (listingID: string) => {
+  const { data } = useQuery('listing', async () => fetchListing(listingID), {
+    enabled: listingID !== undefined,
+  });
+  return data;
 };
 
-const useChatListQuery = (
-  loggedUserUuid: string,
-  setChatList: Dispatch<SetStateAction<chatListDataType>>
-) => {
-  fetchUser(loggedUserUuid);
-  const { data } = useQuery(
-    'chatList',
-    async () => {
-      const response = await apiClient.get(
-        `v1/users/${loggedUserUuid}/chats`
-      );
+// not in dev yet
+const useGetListingImagesQuery = (listingID: string) => {
+  const { data } = useQuery('listingImage', async () => fetchListingImages(listingID), {
+    enabled: listingID !== undefined,
+  });
+  return data;
+};
 
-      // parse data through zod to ensure data is correct
-      const parsedChatList = chat.getByUser.parse(response.data.data);
+const useGetUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  return data;
+};
 
-      setChatList({ data: parsedChatList });
-      return parsedChatList;
-    },
-    {
-      enabled: loggedUserUuid !== undefined,
-    }
-  );
-}
+const useGetMessagesQuery = (roomUuid: string) => {
+  const { data } = useQuery('roomMessages', async () => fetchRoomMessages(roomUuid), {
+    enabled: roomUuid !== undefined,
+  });
+  return data;
+};
 
 const ChatRoom = () => {
   const [makeOffer, setMakeOffer] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState<string>('');
   const [onSend, setOnSend] = useState<boolean>(false);
-  const [chatList, setChatList] = useState<chatListDataType>({ data: [] });
 
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
 
-  useChatListQuery(loggedUserUuid, setChatList);
+  const userChatList = useChatListQuery(loggedUserUuid);
+  // console.log(userChatList);
+
+  // TODO: set listing data from retrieved listingID
+  const listingData = useGetListingQuery('3');
+  // console.log(listingData);
+
+  // TODO: set listing images data from retrieved listingID
+  const listingImagesData = useGetListingImagesQuery('3');
+  // console.log(listingImagesData);
+
+  // TODO: set buyer data from retrieved buyerID
+  const buyer = useGetUserQuery(loggedUserUuid);
+  // console.log(buyer);
+
+  // TODO: set messages data from retrieved roomID
+  const roomMessages = useGetMessagesQuery('dfc9bea3-b6f0-4b40-b59b-6cd5db0a0930');
+  // console.log(roomMessages);
 
   const messages: ChatBoxProps['roomData'] = [
     {
