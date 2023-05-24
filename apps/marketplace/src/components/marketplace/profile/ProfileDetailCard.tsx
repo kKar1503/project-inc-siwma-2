@@ -24,14 +24,19 @@ export type ProfileDetailCardProps = {
   rating: number;
   reviews: number;
   ownerId: number;
-  isEditMode?: boolean;
 };
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
 };
 
-const ProfileDetailCard = ({ data,  isEditMode = false }:{ data: ProfileDetailCardProps; isEditMode?: boolean }) => {
+const ProfileDetailCard = ({
+  data,
+  isEditMode = false,
+}: {
+  data: ProfileDetailCardProps;
+  isEditMode?: boolean;
+}) => {
   // destructure data
 
   const {
@@ -165,22 +170,21 @@ const ProfileDetailCard = ({ data,  isEditMode = false }:{ data: ProfileDetailCa
               Edit profile
             </Button>
           )}
-          {isEditMode && (
-            <Button
-              component={Link}
-              href="/logout"
-              variant="contained"
-              type="submit"
-              color="error"
-              sx={({ spacing }) => ({
-                width: '100%',
-                mb: spacing(1),
-                fontWeight: 'bold',
-              })}
-            >
-              Logout
-            </Button>
-          )}
+
+          <Button
+            component={Link}
+            href="/logout"
+            variant="contained"
+            type="submit"
+            color="error"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mb: spacing(1),
+              fontWeight: 'bold',
+            })}
+          >
+            Logout
+          </Button>
         </Box>
       </CardActions>
     </Card>

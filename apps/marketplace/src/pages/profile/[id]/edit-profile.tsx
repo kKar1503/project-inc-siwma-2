@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent, useMemo } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import ProfileDetailCard, {
@@ -19,8 +19,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
+import Grid from '@mui/material/Grid';
 import { GetServerSidePropsContext, NextApiRequest } from 'next';
 import NavBar from '@/components/marketplace/navbar/NavBar';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
 const profileDetailData = [
   {
@@ -85,6 +87,7 @@ export type ProfilePageProps = {
 };
 
 const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePic, setProfilepic] = useState<File | null>(null);
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -94,6 +97,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
   const [telegramUsername, setTelegramusername] = useState('');
   const [mobileNumber, setMobilenumber] = useState('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+
   const { ownerId } = data;
   useEffect(() => {
     if (profilePic) {
@@ -121,6 +125,20 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
     });
   };
 
+  const gridCols: 2 | 3 | 4 | 5 = useMemo(() => {
+    if (isLg) {
+      return 2;
+    }
+    if (isMd) {
+      return 3;
+    }
+    if (isSm) {
+      return 4;
+    }
+    return 5;
+  }, [isSm, isMd, isLg]);
+
+
   return (
     <>
       <Head>
@@ -130,257 +148,267 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
       <main>
         <NavBar />
         <Container>
-          <form onSubmit={handleSubmit}>
-            <Box
-              sx={({ spacing }) => ({
-                m: spacing(2),
-                display: 'flex',
-              })}
-            >
-              <Card
+          <Grid container gridColumn={gridCols}>
+            <form onSubmit={handleSubmit}>
+              <Box
                 sx={({ spacing }) => ({
-                  width: '100%',
-                  mr: spacing(1),
+                  m: spacing(2),
+                  display: 'flex',
                 })}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <CardHeader
-                    titleTypographyProps={{
-                      fontSize: 16,
-                    }}
-                    subheaderTypographyProps={{
-                      fontSize: 16,
-                    }}
-                    title="Edit Profile"
-                    subheader="Edit your profile details here"
-                  />
-                  <Box
-                    sx={({ spacing }) => ({
-                      justifyContent: 'flex-end',
-                      ml: 'auto',
-                      mr: spacing(2),
-                    })}
-                  >
-                    <Button
-                      variant="contained"
-                      color="error"
-                      component={Link}
-                      href={`/profile/${ownerId}`}
-                      sx={({ palette }) => ({ bgcolor: palette.error[400] })}
-                    >
-                      Cancel Edit
-                    </Button>
-                  </Box>
-                </Box>
-                <Divider
-                  variant="middle"
-                  sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
-                />
-                <CardContent>
-                  <Typography sx={{ fontWeight: 'bold' }}>Profile Photo</Typography>
-                  <Typography>
-                    Choose an image for other users to recognise you on the marketplace
-                  </Typography>
-                  <Box
-                    sx={({ spacing }) => ({
-                      mb: spacing(1),
-                      mt: spacing(1),
-                      display: 'flex',
-                      alignItems: 'center',
-                    })}
-                  >
-                    {imageUrl && profilePic && (
-                      <Box>
-                        <Avatar src={imageUrl} />
-                      </Box>
-                    )}
-                    <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
+                <Grid
+                  sm={6}
+                  md={10}
+                  lg={12}
+                  sx={({ spacing }) => ({
+                    mr: spacing(1),
+                  })}
+                >
+                  <Card>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <CardHeader
+                        titleTypographyProps={{
+                          fontSize: 16,
                         }}
+                        subheaderTypographyProps={{
+                          fontSize: 16,
+                        }}
+                        title="Edit Profile"
+                        subheader="Edit your profile details here"
+                      />
+                      <Box
+                        sx={({ spacing }) => ({
+                          justifyContent: 'flex-end',
+                          ml: 'auto',
+                          mr: spacing(2),
+                        })}
                       >
-                        <Typography>Maximum upload size: &nbsp;</Typography>
-                        <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
-                      </Box>
-                      <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
-                        <Button variant="contained" component="label">
-                          Upload A Profile Photo
-                          <input accept="image/*" type="file" hidden onChange={handleFileSelect} />
+                        <Button
+                          variant="contained"
+                          color="error"
+                          component={Link}
+                          href={`/profile/${ownerId}`}
+                          sx={({ palette }) => ({ bgcolor: palette.error[400] })}
+                        >
+                          Cancel Edit
                         </Button>
                       </Box>
                     </Box>
-                  </Box>
-                </CardContent>
-
-                <Divider
-                  variant="middle"
-                  sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
-                />
-                <CardContent>
-                  <Typography sx={{ fontWeight: 'bold' }}>Personal Details</Typography>
-                  <Typography>Change your personal details here</Typography>
-                  <Box
-                    sx={({ spacing }) => ({
-                      mt: spacing(2),
-                      display: 'flex',
-                      alignItems: 'center',
-                    })}
-                  >
-                    <FormControl
-                      fullWidth
-                      variant="outlined"
-                      sx={({ spacing }) => ({
-                        mr: spacing(2),
-                      })}
-                    >
-                      <TextField
-                        label="Full Name"
-                        placeholder="Your Full Name"
-                        InputLabelProps={{ shrink: true }}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    </FormControl>
-
-                    <FormControl
-                      fullWidth
-                      variant="outlined"
-                      sx={({ spacing }) => ({
-                        mr: spacing(2),
-                      })}
-                    >
-                      <TextField
-                        label="Username"
-                        placeholder="account_username"
-                        InputLabelProps={{ shrink: true }}
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                      />
-                    </FormControl>
-                  </Box>
-
-                  <FormControl fullWidth variant="outlined">
-                    <TextField
-                      label="Email"
-                      placeholder="user@gmail.com"
-                      InputLabelProps={{ shrink: true }}
-                      sx={({ spacing }) => ({
-                        mt: spacing(2),
-                      })}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                    <Divider
+                      variant="middle"
+                      sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
                     />
-                  </FormControl>
-
-                  <FormControl fullWidth variant="outlined">
-                    <TextField
-                      label="Company"
-                      placeholder="Company Name"
-                      InputLabelProps={{ shrink: true }}
-                      sx={({ spacing }) => ({
-                        mt: spacing(2),
-                      })}
-                      value={company}
-                      onChange={(e) => setCompany(e.target.value)}
-                    />
-                  </FormControl>
-
-                  <FormControl fullWidth variant="outlined">
-                    <TextField
-                      multiline
-                      rows={5}
-                      label="Bio"
-                      placeholder="Bio Description"
-                      InputLabelProps={{ shrink: true }}
-                      sx={({ spacing }) => ({
-                        mt: spacing(2),
-                        mb: spacing(1),
-                      })}
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                    />
-                  </FormControl>
-                </CardContent>
-                <Divider
-                  variant="middle"
-                  sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
-                />
-                <CardContent>
-                  <Typography sx={{ fontWeight: 'bold' }}>Connections</Typography>
-                  <Typography>Link your messaging accounts here</Typography>
-                  <Box
-                    sx={({ spacing }) => ({
-                      mt: spacing(2),
-                      display: 'flex',
-                      alignItems: 'center',
-                    })}
-                  >
-                    <FormControl fullWidth variant="outlined">
-                      <TextField
-                        label="Telegram Username"
-                        placeholder="account_username"
+                    <CardContent>
+                      <Typography sx={{ fontWeight: 'bold' }}>Profile Photo</Typography>
+                      <Typography>
+                        Choose an image for other users to recognise you on the marketplace
+                      </Typography>
+                      <Box
                         sx={({ spacing }) => ({
-                          mr: spacing(2),
+                          mb: spacing(1),
+                          mt: spacing(1),
+                          display: 'flex',
+                          alignItems: 'center',
                         })}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <TelegramIcon />@
-                            </InputAdornment>
-                          ),
-                        }}
-                        value={telegramUsername}
-                        onChange={(e) => setTelegramusername(e.target.value)}
-                      />
-                    </FormControl>
+                      >
+                        {imageUrl && profilePic && (
+                          <Box>
+                            <Avatar src={imageUrl} />
+                          </Box>
+                        )}
+                        <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Typography>Maximum upload size: &nbsp;</Typography>
+                            <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
+                          </Box>
+                          <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
+                            <Button variant="contained" component="label">
+                              Upload A Profile Photo
+                              <input
+                                accept="image/*"
+                                type="file"
+                                hidden
+                                onChange={handleFileSelect}
+                              />
+                            </Button>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </CardContent>
 
-                    <FormControl fullWidth variant="outlined">
-                      <TextField
-                        label="Whatsapp Number"
-                        placeholder="8123 4567"
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <WhatsAppIcon />
-                              +65
-                            </InputAdornment>
-                          ),
-                        }}
-                        value={mobileNumber}
-                        onChange={(e) => setMobilenumber(e.target.value)}
-                      />
-                    </FormControl>
-                  </Box>
-                </CardContent>
+                    <Divider
+                      variant="middle"
+                      sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
+                    />
+                    <CardContent>
+                      <Typography sx={{ fontWeight: 'bold' }}>Personal Details</Typography>
+                      <Typography>Change your personal details here</Typography>
+                      <Box
+                        sx={({ spacing }) => ({
+                          mt: spacing(2),
+                          display: 'flex',
+                          alignItems: 'center',
+                        })}
+                      >
+                        <FormControl
+                          fullWidth
+                          variant="outlined"
+                          sx={({ spacing }) => ({
+                            mr: spacing(2),
+                          })}
+                        >
+                          <TextField
+                            label="Full Name"
+                            placeholder="Your Full Name"
+                            InputLabelProps={{ shrink: true }}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </FormControl>
 
-                <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
-                  <Box
-                    sx={({ spacing }) => ({
-                      width: '98%',
-                      mt: spacing(3),
-                    })}
-                  >
-                    <Button
-                      onClick={handleSubmit}
-                      variant="contained"
-                      type="submit"
-                      sx={({ spacing }) => ({
-                        width: '100%',
-                        mt: 'auto',
-                        mb: spacing(1),
-                      })}
-                    >
-                      Save Changes
-                    </Button>
-                  </Box>
-                </CardActions>
-              </Card>
+                        <FormControl
+                          fullWidth
+                          variant="outlined"
+                          sx={({ spacing }) => ({
+                            mr: spacing(2),
+                          })}
+                        >
+                          <TextField
+                            label="Username"
+                            placeholder="account_username"
+                            InputLabelProps={{ shrink: true }}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                          />
+                        </FormControl>
+                      </Box>
 
-              <ProfileDetailCard data={data} isEditMode={false} />
-            </Box>
-          </form>
+                      <FormControl fullWidth variant="outlined">
+                        <TextField
+                          label="Email"
+                          placeholder="user@gmail.com"
+                          InputLabelProps={{ shrink: true }}
+                          sx={({ spacing }) => ({
+                            mt: spacing(2),
+                          })}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </FormControl>
+
+                      <FormControl fullWidth variant="outlined">
+                        <TextField
+                          label="Company"
+                          placeholder="Company Name"
+                          InputLabelProps={{ shrink: true }}
+                          sx={({ spacing }) => ({
+                            mt: spacing(2),
+                          })}
+                          value={company}
+                          onChange={(e) => setCompany(e.target.value)}
+                        />
+                      </FormControl>
+
+                      <FormControl fullWidth variant="outlined">
+                        <TextField
+                          multiline
+                          rows={5}
+                          label="Bio"
+                          placeholder="Bio Description"
+                          InputLabelProps={{ shrink: true }}
+                          sx={({ spacing }) => ({
+                            mt: spacing(2),
+                            mb: spacing(1),
+                          })}
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                        />
+                      </FormControl>
+                    </CardContent>
+                    <Divider
+                      variant="middle"
+                      sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
+                    />
+                    <CardContent>
+                      <Typography sx={{ fontWeight: 'bold' }}>Connections</Typography>
+                      <Typography>Link your messaging accounts here</Typography>
+                      <Box
+                        sx={({ spacing }) => ({
+                          mt: spacing(2),
+                          display: 'flex',
+                          alignItems: 'center',
+                        })}
+                      >
+                        <FormControl fullWidth variant="outlined">
+                          <TextField
+                            label="Telegram Username"
+                            placeholder="account_username"
+                            sx={({ spacing }) => ({
+                              mr: spacing(2),
+                            })}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <TelegramIcon />@
+                                </InputAdornment>
+                              ),
+                            }}
+                            value={telegramUsername}
+                            onChange={(e) => setTelegramusername(e.target.value)}
+                          />
+                        </FormControl>
+
+                        <FormControl fullWidth variant="outlined">
+                          <TextField
+                            label="Whatsapp Number"
+                            placeholder="8123 4567"
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <WhatsAppIcon />
+                                  +65
+                                </InputAdornment>
+                              ),
+                            }}
+                            value={mobileNumber}
+                            onChange={(e) => setMobilenumber(e.target.value)}
+                          />
+                        </FormControl>
+                      </Box>
+                    </CardContent>
+
+                    <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
+                      <Box
+                        sx={({ spacing }) => ({
+                          width: '98%',
+                          mt: spacing(3),
+                        })}
+                      >
+                        <Button
+                          onClick={handleSubmit}
+                          variant="contained"
+                          type="submit"
+                          sx={({ spacing }) => ({
+                            width: '100%',
+                            mt: 'auto',
+                            mb: spacing(1),
+                          })}
+                        >
+                          Save Changes
+                        </Button>
+                      </Box>
+                    </CardActions>
+                  </Card>
+                </Grid>
+                {isLg && <ProfileDetailCard data={data} />}
+              </Box>
+            </form>
+          </Grid>
         </Container>
       </main>
     </>
