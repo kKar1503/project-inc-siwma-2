@@ -28,7 +28,7 @@ async function getInvite(email: string) {
   return response;
 }
 
-export default apiHandler({ allowNonAuthenticated: true }).post(async (req, res) => {
+export default apiHandler({ allowAdminsOnly: true }).post(async (req, res) => {
   const { email } = inviteSchema.email.resend.body.parse(req.body);
   const invite = await getInvite(email);
 
