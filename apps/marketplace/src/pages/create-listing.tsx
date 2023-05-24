@@ -89,8 +89,8 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
         categoryParameters.push(parameter);
       });
 
-      // currently endpoint doesn't work and returns all parameters.
-      const { data } = await client.get(`/v1/parameters?ids=${parameterIds}`);
+      const parameterIdsString = parameterIds.toString();
+      const { data } = await client.get(`/v1/parameters?id=${parameterIdsString}`);
 
       setCategoryParameters(categoryParameters);
       setDetailedParameters(data.data);
