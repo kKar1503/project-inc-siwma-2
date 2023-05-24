@@ -1,11 +1,11 @@
 {
   "name": "@inc/events",
   "version": "0.0.0",
-  "main": "index.js",
-  "typings": "index.d.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc && node esbuild.config.js",
-    "build:prod": "node esbuild.config.js",
+    "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
+    "build:prod": "rm -rf dist && node esbuild.config.js",
     "dev": "tsc -w"
   },
   "dependencies": {
