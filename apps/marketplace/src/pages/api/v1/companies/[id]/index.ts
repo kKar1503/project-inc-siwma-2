@@ -1,9 +1,9 @@
-import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import PrismaClient from '@inc/db';
-import { z } from 'zod';
+import { NotFoundError, ParamError, ForbiddenError } from '@inc/errors';
+import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
+import PrismaClient, { Companies } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import { z } from 'zod';
 import s3Connection from '@/utils/s3Connection';
 import { CompanyBucketName, getResponseBody, queryResult } from '..';
 
@@ -13,6 +13,8 @@ const editCompanyRequestBody = z.object({
   bio: z.string().optional(),
   comments: z.string().optional(),
 });
+import { companySchema } from '@/utils/api/server/zod';
+import { CompanyResponseBody } from '@/utils/api/client/zod';
 
 function parseCompanyId(id: string | undefined): number {
   if (!id) {
@@ -30,7 +32,7 @@ async function checkCompany(companyid: number) {
   return company;
 }
 
-function formatResponse(r: queryResult): getResponseBody {
+function formatResponse(r: Companies): CompanyResponseBody {
   return {
     id: r.id.toString(),
     name: r.name,
@@ -39,7 +41,7 @@ function formatResponse(r: queryResult): getResponseBody {
     image: r.logo,
     visible: r.visibility,
     comments: r.comments,
-    createdAt: r.createdAt,
+    createdAt: r.createdAt.toISOString(),
   };
 }
 
@@ -77,7 +79,7 @@ export default apiHandler()
   })
   .put(async (req, res) => {
     const { id } = req.query;
-    const { name, website, bio, comments } = editCompanyRequestBody.parse(req.body);
+    const { name, website, bio, comments, image } = companySchema.put.body.parse(req.body);
 
     const companyid = parseCompanyId(id as string);
     const isAdmin = req.token?.user.permissions === 1;
@@ -177,7 +179,7 @@ export default apiHandler()
     }
 
 
-    const response = await PrismaClient.companies.delete({
+   await PrismaClient.companies.delete({
       where: {
         id: companyid,
       },

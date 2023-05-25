@@ -5,6 +5,9 @@ import { ListingType } from '@prisma/client';
 import z from 'zod';
 import s3Connection from '@/utils/s3Connection';
 import { formatSingleListingResponse, getQueryParameters, ListingBucketName, parseListingId } from '..';
+import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
+import { listingSchema } from '@/utils/api/server/zod';
+import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
 
@@ -29,6 +32,7 @@ export async function checkListingExists($id: string | number) {
       listingsParametersValues: true,
       listingImages: true,
       offersOffersListingTolistings: true,
+      reviewsReviewsListingTolistings: true,
     },
   });
 
@@ -81,12 +85,32 @@ async function getValidParametersForCategory(categoryId: number): Promise<string
 
 export default apiHandler()
   .get(async (req, res) => {
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
     const id = parseListingId(req.query.id as string);
+    const { _avg, _count } = await PrismaClient.reviews.aggregate({
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        rating: true,
+      },
+      where: {
+        listing: id,
+      },
+    });
+
+    const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+    const reviewCount = _count && _count.rating;
+
     const listing = await checkListingExists(id);
 
+    const completeListing = {
+      ...listing,
+      rating,
+      reviewCount,
+    };
     // Return the result
 
     const response = formatSingleListingResponse(listing, queryParams.includeParameters);
@@ -100,10 +124,14 @@ export default apiHandler()
 
     res
       .status(200)
-      .json(formatAPIResponse(response));
+      .json(
+        formatAPIResponse(
+          await formatSingleListingResponse(completeListing, queryParams.includeParameters)
+        )
+      );
   })
   .put(async (req, res) => {
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
@@ -119,7 +147,7 @@ export default apiHandler()
     }
 
     // Validate the request body
-    const data = putListingRequestBody.parse(req.body);
+    const data = listingSchema.put.body.parse(req.body);
 
     if (data.categoryId) {
       // Get valid parameters for the listing's category
@@ -136,7 +164,7 @@ export default apiHandler()
     }
 
     // Do not remove this, it is necessary to update the listing
-    const updatedListing = await PrismaClient.listing.update({
+    await PrismaClient.listing.update({
       where: { id },
       data: {
         name: data.name,
@@ -159,7 +187,7 @@ export default apiHandler()
     });
 
     if (data.parameters) {
-      const parameterUpdates = data.parameters.map((parameter: Parameter) =>
+      const parameterUpdates = data.parameters.map((parameter) =>
         PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {
@@ -190,12 +218,34 @@ export default apiHandler()
         listingsParametersValues: true,
         listingImages: queryParams.includeImages,
         offersOffersListingTolistings: true,
+        reviewsReviewsListingTolistings: true,
       },
     });
 
     if (!completeListing) {
       throw new NotFoundError(`Listing with id '${id}'`);
     }
+
+    const { _avg, _count } = await PrismaClient.reviews.aggregate({
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        rating: true,
+      },
+      where: {
+        listing: id,
+      },
+    });
+
+    const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+    const reviewCount = _count && _count.rating;
+
+    const listingWithRatingAndReviewCount = {
+      ...completeListing,
+      rating,
+      reviewCount,
+    };
 
     res
       .status(200)

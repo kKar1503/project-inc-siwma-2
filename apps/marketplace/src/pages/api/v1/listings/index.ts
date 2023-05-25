@@ -1,22 +1,23 @@
-import {
-  apiHandler,
-  formatAPIResponse,
-  parseToNumber,
-  zodParseToBoolean,
-  zodParseToInteger,
-  zodParseToNumber,
-} from '@/utils/api';
-import PrismaClient, {
-  Listing,
-  ListingType,
-  Prisma,
-  Users,
-  Companies,
-  UserContacts,
-} from '@inc/db';
-import { z } from 'zod';
-import { Decimal } from '@prisma/client/runtime';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import PrismaClient, { Listing, Prisma, Users, Companies } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
+import { listingSchema } from '@/utils/api/server/zod';
+import { ListingResponseBody } from '@/utils/api/client/zod';
+
+export type ListingWithParameters = Listing & {
+  listingsParametersValues: Array<{
+    parameterId: number;
+    value: string;
+  }>;
+  offersOffersListingTolistings: Array<{
+    accepted: boolean;
+  }>;
+  users: Users & {
+    companies: Companies;
+  };
+  rating: number | null;
+  reviewCount: number;
+};
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import process from 'process';
 import s3Connection from '@/utils/s3Connection';
@@ -121,15 +122,15 @@ export const getQueryParameters = z.object({
 });
 
 // -- Helper functions -- //
-export function formatSingleListingResponse(
+export async function formatSingleListingResponse(
   listing: ListingWithParameters,
-  includeParameters: boolean,
-): ListingResponse {
-  const formattedListing: ListingResponse = {
+  includeParameters: boolean
+): Promise<ListingResponseBody> {
+  const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
     name: listing.name,
     description: listing.description,
-    price: listing.price,
+    price: listing.price.toNumber(),
     unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
@@ -152,7 +153,9 @@ export function formatSingleListingResponse(
       bio: listing.users.bio,
     },
     open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
-    createdAt: listing.createdAt,
+    createdAt: listing.createdAt.toISOString(),
+    rating: listing.rating,
+    reviewCount: listing.reviewCount,
   };
 
   if (includeParameters && listing.listingsParametersValues) {
@@ -172,11 +175,13 @@ export function formatSingleListingResponse(
   return formattedListing;
 }
 
-export function formatListingResponse(
+export async function formatListingResponse(
   $listings: ListingWithParameters[],
-  includeParameters: boolean,
+  includeParameters: boolean
 ) {
-  return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
+  return Promise.all(
+    $listings.map((listing) => formatSingleListingResponse(listing, includeParameters))
+  );
 }
 
 export const listingsRequestBody = z.object({
@@ -200,7 +205,7 @@ export const listingsRequestBody = z.object({
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
     // Decode params if it exists
     let decodedParams = null;
@@ -301,9 +306,42 @@ export default apiHandler()
           listingResponse,
         ),
       );
+        const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+        const reviewCount = _count && _count.rating;
+
+        return {
+          ...listing,
+          rating,
+          reviewCount,
+        };
+      })
+    );
+
+    // Sort listings by rating, if needed
+    if (queryParams.sortBy) {
+      switch (queryParams.sortBy.toLowerCase()) {
+        case 'highest_rating':
+          listingsWithRatingsAndReviewCount.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+          break;
+        case 'lowest_rating':
+          listingsWithRatingsAndReviewCount.sort((a, b) => (a.rating ?? 0) - (b.rating ?? 0));
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Format the listings
+    const formattedListings = await Promise.all(
+      listingsWithRatingsAndReviewCount.map((listing) =>
+        formatSingleListingResponse(listing, queryParams.includeParameters)
+      )
+    );
+
+    res.status(200).json(formatAPIResponse(formattedListings));
   })
   .post(async (req, res) => {
-    const data = listingsRequestBody.parse(req.body);
+    const data = listingSchema.post.body.parse(req.body);
 
     // Use the user ID from the request object
     const userId = req.token?.user?.id;

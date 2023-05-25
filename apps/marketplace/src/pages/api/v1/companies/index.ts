@@ -3,6 +3,9 @@ import PrismaClient from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
+import { companySchema } from '@/utils/api/server/zod';
+import { CompanyResponseBody } from '@/utils/api/client/zod';
+
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import * as process from 'process';
@@ -31,20 +34,11 @@ export type queryResult = {
   comments: string | null;
   createdAt?: Date;
 };
+import { companySchema } from '@/utils/api/server/zod';
+import { CompanyResponseBody } from '@/utils/api/client/zod';
 
-export type getResponseBody = {
-  id: string;
-  name: string;
-  website: string | null;
-  bio: string | null;
-  image: string | null;
-  visible: boolean;
-  comments?: string | null;
-  createdAt?: Date;
-};
-
-function formatResponse(response: queryResult[]): getResponseBody[] {
-  const temp: getResponseBody[] = [];
+function formatResponse(response: Companies[]): CompanyResponseBody[] {
+  const temp: CompanyResponseBody[] = [];
   response.forEach((r) => {
     temp.push({
       id: r.id.toString(),
@@ -54,7 +48,7 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
       image: r.logo,
       visible: r.visibility,
       comments: r.comments,
-      createdAt: r.createdAt,
+      createdAt: r.createdAt.toISOString(),
     });
   });
   return temp;
@@ -62,7 +56,7 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
 
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, website, comments } = createCompanyRequestBody.parse(req.body);
+    const { name, website, comments, image } = companySchema.post.body.parse(req.body);
 
     if (!name || name.trim().length === 0) {
       throw new ParamError('name');
@@ -98,7 +92,7 @@ export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { lastIdPointer = '0', limit = '10', name } = getCompaniesRequestBody.parse(req.query);
+    const { lastIdPointer = 0, limit = 10, name } = companySchema.get.query.parse(req.query);
 
     const responseNoLogo = await PrismaClient.companies.findMany({
       select: {
@@ -113,13 +107,13 @@ export default apiHandler()
       },
       where: {
         id: {
-          gt: parseToNumber(lastIdPointer, 'lastIdPointer'),
+          gt: lastIdPointer,
         },
         name: {
           contains: name,
         },
       },
-      take: parseToNumber(limit, 'limit'),
+      take: limit,
     });
 
     const bucket = await s3Connection.getBucket(CompanyBucketName);
