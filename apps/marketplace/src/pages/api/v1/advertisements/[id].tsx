@@ -6,20 +6,13 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import s3Connection from '@/utils/s3Connection';
 import { AdvertisementBucketName, select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
-import { z } from 'zod';
 import { fileToS3Object, getFilesFromRequest, loadImage } from '@/utils/imageUtils';
+import { advertisementSchema } from '@/utils/api/server/zod';
 
-
-const putValidation = z.object({
-  companyId: z.string().optional().transform((val) => val ? parseToNumber(val, 'companyId') : undefined),
-  endDate: z.string().datetime().optional(),
-  startDate: z.string().datetime().optional(),
-  active: z.boolean().optional(),
-  description: z.string().optional(),
-  link: z.string().optional(),
-});
-
-const updateImage = async (OldImage: string, req: NextApiRequest & APIRequestType): Promise<string> => {
+const updateImage = async (
+  OldImage: string,
+  req: NextApiRequest & APIRequestType
+): Promise<string> => {
   const files = await getFilesFromRequest(req);
   if (files.length > 0) {
     const s3ObjectBuilder = fileToS3Object(files[0]);
@@ -28,11 +21,10 @@ const updateImage = async (OldImage: string, req: NextApiRequest & APIRequestTyp
 
     // create new image and delete old image as aws doesn't support update
     // also do these in parallel for faster response
-    const awaitedPromise = await Promise.all(
-      [
-        bucket.createObject(s3ObjectBuilder),
-        bucket.deleteObject(OldImage),
-      ]);
+    const awaitedPromise = await Promise.all([
+      bucket.createObject(s3ObjectBuilder),
+      bucket.deleteObject(OldImage),
+    ]);
     const [newS3Object] = awaitedPromise;
     return newS3Object.Id;
   }
@@ -44,7 +36,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const id = parseToNumber(req.query.id as string, 'id');
 
   // Check if user is admin
-  const isAdmin = (req.token?.user.permissions === true);
+  const isAdmin = req.token?.user.permissions === true;
 
   // Get advertisement
   const advertisement = await PrismaClient.advertisements.findUnique({
@@ -60,13 +52,15 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
 
   // Return advertisement
-  res.status(200).json(formatAPIResponse(await loadImage(advertisement,AdvertisementBucket, 'image')));
+  res
+    .status(200)
+    .json(formatAPIResponse(await loadImage(advertisement, AdvertisementBucket, 'image')));
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const id = parseToNumber(req.query.id as string, 'id');
-  const validatedPayload = putValidation.parse(req.body);
+  const validatedPayload = advertisementSchema.put.body.parse(req.body);
 
   // Check if user is admin
   const isAdmin = true; // this endpoint is admin only
@@ -83,7 +77,8 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // get new values or use old values if not provided
   const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || undefined;
-  const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || undefined;
+  const startDate =
+    (validatedPayload.startDate && new Date(validatedPayload.startDate)) || undefined;
 
   // update advertisement
   const updated = await PrismaClient.advertisements.update({
@@ -98,7 +93,6 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
       id,
     },
   });
-
 
   // Return advertisement
   res.status(201).json(formatAPIResponse(updated));
@@ -145,4 +139,3 @@ export default apiHandler()
   .get(GET)
   .put(apiGuardMiddleware({ allowAdminsOnly: true }), PUT)
   .delete(apiGuardMiddleware({ allowAdminsOnly: true }), DELETE);
-

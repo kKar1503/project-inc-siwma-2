@@ -1,27 +1,13 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import s3Connection from '@/utils/s3Connection';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
-import { z } from 'zod';
 import { fileToS3Object, getFilesFromRequest, loadImageBuilder } from '@/utils/imageUtils';
 import { ParamError } from '@inc/errors/src';
-
-const postValidation = z.object({
-  companyId: z.string().transform((val) => parseToNumber(val, 'companyId')),
-  endDate: z.string().datetime(),
-  startDate: z.string().datetime(),
-  active: z.boolean(),
-  description: z.string(),
-  link: z.string(),
-});
-
-const getValidation = z.object({
-  lastIdPointer: z.string().optional().transform((val) => val ? parseToNumber(val, 'lastIdPointer') : undefined),
-  limit: z.string().optional().transform((val) => val ? parseToNumber(val, 'limit') : undefined),
-});
+import { advertisementSchema } from '@/utils/api/server/zod';
 
 export const select = (isAdmin: boolean) => ({
   companyId: true,
@@ -33,23 +19,25 @@ export const select = (isAdmin: boolean) => ({
   link: true,
 });
 
-export const where = (isAdmin: boolean, other = {}) => isAdmin ? other : {
-  endDate: {
-    gte: new Date(),
-  },
-  startDate: {
-    lte: new Date(),
-  },
-  active: true,
-  ...other,
-};
+export const where = (isAdmin: boolean, other = {}) =>
+  isAdmin
+    ? other
+    : {
+        endDate: {
+          gte: new Date(),
+        },
+        startDate: {
+          lte: new Date(),
+        },
+        active: true,
+        ...other,
+      };
 
 export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
-
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
-  const payload = postValidation.parse(req.body);
+  const payload = advertisementSchema.post.body.parse(req.body);
 
   const files = await getFilesFromRequest(req);
   if (files.length === 0) {
@@ -60,20 +48,22 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   const s3Object = await AdvertisementBucket.createObject(fileToS3Object(files[0]));
 
   // Create advertisement
-  const advertisementId = (await PrismaClient.advertisements.create({
-    select: {
-      id: true,
-    },
-    data: {
-      companyId: payload.companyId,
-      image: s3Object.Id,
-      endDate: new Date(payload.endDate),
-      startDate: new Date(payload.startDate),
-      active: payload.active,
-      description: payload.description,
-      link: payload.link,
-    },
-  })).id;
+  const advertisementId = (
+    await PrismaClient.advertisements.create({
+      select: {
+        id: true,
+      },
+      data: {
+        companyId: payload.companyId,
+        image: s3Object.Id,
+        endDate: new Date(payload.endDate),
+        startDate: new Date(payload.startDate),
+        active: payload.active,
+        description: payload.description,
+        link: payload.link,
+      },
+    })
+  ).id;
 
   // Return advertisement id
   res.status(201).json(formatAPIResponse({ advertisementId }));
@@ -81,8 +71,8 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate admin
-  const isAdmin = (req.token?.user.permissions === true);
-  const { limit, lastIdPointer } = getValidation.parse(req.query);
+  const isAdmin = req.token?.user.permissions === true;
+  const { limit, lastIdPointer } = advertisementSchema.get.query.parse(req.query);
 
   // Get advertisements
   const advertisementsNoLink = await PrismaClient.advertisements.findMany({
