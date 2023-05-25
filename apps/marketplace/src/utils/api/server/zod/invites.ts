@@ -49,6 +49,9 @@ export default {
     delete: {
       query: emailSchema,
     },
+    resend: {
+      body: emailSchema,
+    },
   },
   post: {
     body: inviteCreationRequestBody,
