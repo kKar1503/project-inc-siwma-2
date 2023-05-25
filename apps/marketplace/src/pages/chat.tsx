@@ -72,7 +72,7 @@ const ChatRoom = () => {
 
   // TODO: set buyer data from retrieved buyerID
   const buyer = useGetUserQuery(loggedUserUuid);
-  // console.log(buyer);
+  console.log(buyer);
 
   // TODO: set messages data from retrieved roomID
   const roomMessages = useGetMessagesQuery('dfc9bea3-b6f0-4b40-b59b-6cd5db0a0930');

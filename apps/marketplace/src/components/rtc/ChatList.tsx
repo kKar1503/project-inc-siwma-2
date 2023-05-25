@@ -55,8 +55,8 @@ const ChatList = ({
 
   return (
     <Box>
-      <Box sx={{ p: 2}}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+      <Box sx={{ p: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0 }}>
           <Typography
             variant="h6"
             sx={({ palette }) => ({
