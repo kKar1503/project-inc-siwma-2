@@ -1,7 +1,5 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
-import client, { UserContacts } from '@inc/db';
-import { ForbiddenError, NotFoundError, ParamRequiredError } from '@inc/errors';
 import client from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
@@ -86,20 +84,7 @@ export default apiHandler()
     const parsedBody = updateUserDetailsSchema.parse(req.body);
     const { name, email, company, mobileNumber, contactMethod, bio, userComments,whatsappNumber,telegramUsername  } =
       parsedBody;
-    const { id } = userSchema.userId.parse(req.query);
-    const parsedBody = userSchema.put.body.parse(req.body);
-    const {
-      name,
-      email,
-      company,
-      profilePicture,
-      mobileNumber,
-      contactMethod,
-      bio,
-      userComments,
-      whatsappNumber,
-      telegramUsername,
-    } = parsedBody;
+
     let { password } = parsedBody;
 
     if (name) {
