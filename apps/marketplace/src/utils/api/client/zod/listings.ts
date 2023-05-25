@@ -6,8 +6,8 @@ const id = z.string();
 const name = z.string();
 const description = z.string();
 const price = z.number();
-const unitPrice = z.boolean().optional();
-const negotiable = z.boolean().optional();
+const unitPrice = z.boolean();
+const negotiable = z.boolean();
 const categoryId = z.string();
 const type = z.nativeEnum(ListingType);
 const rating = z.number().nullable();
@@ -30,7 +30,7 @@ const company = z.object({
   website: z.string().nullable(),
   bio: z.string().nullable(),
   image: z.string().nullable(),
-  visible: z.boolean().optional(),
+  visible: z.boolean(),
 });
 
 const owner = z.object({
