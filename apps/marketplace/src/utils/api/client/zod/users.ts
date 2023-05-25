@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserContacts } from '@inc/db';
+import { UserContacts } from '@prisma/client';
 
 const id = z.string();
 const name = z.string();
