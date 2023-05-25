@@ -37,6 +37,15 @@ export default apiHandler()
       throw new NotFoundError('User');
     }
 
+    const userBookmarks = await client.userBookmarks.findMany({
+      where: { userId: user.id },
+      select: {
+        id: true,
+        userId: true,
+        targetUser: true,
+      },
+    });
+
     const mappedUser = {
       id: user.id,
       name: user.name,
@@ -51,6 +60,7 @@ export default apiHandler()
       telegramUsername: user.telegramUsername,
       bio: user.bio,
       ...(isAdmin && { comments: user.comments }),
+      ...(req.token?.user.id === user.id && { bookmarkedUsers: userBookmarks }),
     };
 
     return res.status(200).json(formatAPIResponse(mappedUser));
