@@ -19,6 +19,26 @@ const putValidation = z.object({
   link: z.string().optional(),
 });
 
+const updateImage = async (OldImage: string, req: NextApiRequest & APIRequestType): Promise<string> => {
+  const files = await getFilesFromRequest(req);
+  if (files.length > 0) {
+    const s3ObjectBuilder = fileToS3Object(files[0]);
+
+    const bucket = await s3Connection.getBucket(AdvertisementBucketName);
+
+    // create new image and delete old image as aws doesn't support update
+    // also do these in parallel for faster response
+    const awaitedPromise = await Promise.all(
+      [
+        bucket.createObject(s3ObjectBuilder),
+        bucket.deleteObject(OldImage),
+      ]);
+    const [newS3Object] = awaitedPromise;
+    return newS3Object.Id;
+  }
+  return OldImage;
+};
+
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
   const id = parseToNumber(req.query.id as string, 'id');
@@ -69,32 +89,12 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || undefined;
   const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || undefined;
 
-  // if image has changed
-  let objectID = advertisement.image;
-  const files = await getFilesFromRequest(req);
-  if (files.length > 0) {
-    const s3ObjectBuilder = fileToS3Object(files[0]);
-
-    const bucket = await s3Connection.getBucket(AdvertisementBucketName);
-
-    // create new image and delete old image as aws doesn't support update
-    // also do these in parallel for faster response
-    const awaitedPromise = await Promise.all(
-      [
-        bucket.createObject(s3ObjectBuilder),
-        bucket.deleteObject(advertisement.image),
-      ]);
-    const [newS3Object] = awaitedPromise;
-    objectID = await newS3Object.Id;
-  }
-
-
   // update advertisement
   const updated = await PrismaClient.advertisements.update({
     select: select(isAdmin),
     data: {
       ...validatedPayload,
-      image: objectID,
+      image: await updateImage(advertisement.image, req),
       endDate,
       startDate,
     },
