@@ -3,9 +3,9 @@ import PrismaClient from '@inc/db';
 import { ListingType } from '@prisma/client';
 import z from 'zod';
 import s3Connection from '@/utils/s3Connection';
-import { formatSingleListingResponse, ListingBucketName, parseListingId } from '..';
 import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
+import { formatSingleListingResponse, ListingBucketName, parseListingId } from '..';
 
 // -- Functions --//
 

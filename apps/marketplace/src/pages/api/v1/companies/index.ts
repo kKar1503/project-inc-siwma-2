@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import PrismaClient from '@inc/db';
+import PrismaClient,{ Companies }  from '@inc/db';
 import { z } from 'zod';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
@@ -8,7 +8,6 @@ import { CompanyResponseBody } from '@/utils/api/client/zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import * as process from 'process';
-import { Companies } from '@inc/db';
 
 export const CompanyBucketName = process.env.AWS_COMPANY_BUCKET_NAME as string;
 

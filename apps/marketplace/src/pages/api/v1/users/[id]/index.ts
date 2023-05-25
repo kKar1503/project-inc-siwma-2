@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { z } from 'zod';
-import client from '@inc/db';
+import client,{ UserContacts } from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
@@ -8,7 +8,6 @@ import bcrypt from 'bcrypt';
 import s3Connection from '@/utils/s3Connection';
 import { UserBucketName } from '@api/v1/users';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
-import { UserContacts } from '@inc/db';
 import { userSchema } from '@/utils/api/server/zod';
 
 const userIdSchema = z.object({

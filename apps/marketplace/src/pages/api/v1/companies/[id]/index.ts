@@ -5,6 +5,8 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { z } from 'zod';
 import s3Connection from '@/utils/s3Connection';
+import { companySchema } from '@/utils/api/server/zod';
+import { CompanyResponseBody } from '@/utils/api/client/zod';
 import { CompanyBucketName } from '..';
 
 const editCompanyRequestBody = z.object({
@@ -13,8 +15,6 @@ const editCompanyRequestBody = z.object({
   bio: z.string().optional(),
   comments: z.string().optional(),
 });
-import { companySchema } from '@/utils/api/server/zod';
-import { CompanyResponseBody } from '@/utils/api/client/zod';
 
 function parseCompanyId(id: string | undefined): number {
   if (!id) {

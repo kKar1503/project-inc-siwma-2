@@ -8,6 +8,7 @@ import { DuplicateError, InvalidRangeError, ParamInvalidError } from '@inc/error
 import { validatePassword, validatePhone } from '@/utils/api/validate';
 import process from 'process';
 import s3Connection from '@/utils/s3Connection';
+import { userSchema } from '@/utils/api/server/zod';
 
 export const UserBucketName = process.env.AWS_USER_BUCKET_NAME as string;
 
@@ -21,7 +22,6 @@ const userCreationRequestBody = z.object({
   mobileNumber: z.string(),
   password: z.string(),
 });
-import { userSchema } from '@/utils/api/server/zod';
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
