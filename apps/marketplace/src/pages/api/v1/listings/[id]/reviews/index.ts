@@ -75,9 +75,22 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
             },
         },
     })
-    // if (!offer.length) {
-    //     throw new ForbiddenError();
-    // }
+    // user must have made an offer on the listing
+    if (!offer.length) {
+        throw new ForbiddenError();
+    }
+
+    // user can only make one review per listing
+    const existingReview = await PrismaClient.reviews.findFirst({
+        where: {
+            user: userId,
+            listing: id,
+        },
+    });
+    if (existingReview) {
+        throw new ForbiddenError();
+    }
+
 
     const createdReview = await PrismaClient.reviews.create({
         data: {
