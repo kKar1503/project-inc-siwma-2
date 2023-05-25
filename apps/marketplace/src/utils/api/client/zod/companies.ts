@@ -23,6 +23,10 @@ const toggleCompany = z.object({
   visible: z.boolean(),
 });
 
+const bookmarkCompany = z.object({
+  bookmarked: z.boolean(),
+});
+
 const deleteCompany = z.object({});
 
 export type CompanyResponseBody = z.infer<typeof getCompany>;
@@ -33,5 +37,6 @@ export default {
   getAll: getCompanies,
   update: editCompany,
   toggle: toggleCompany,
+  bookmark: bookmarkCompany,
   delete: deleteCompany,
 };
