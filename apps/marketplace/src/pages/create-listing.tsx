@@ -28,6 +28,7 @@ import OnCreateModal from '@/components/modal/OnCreateModal';
 import Categories from '@/utils/api/client/zod/categories';
 import Parameters from '@/utils/api/client/zod/parameters';
 import Listings from '@/utils/api/client/zod/listings';
+import { useQuery } from 'react-query';
 
 export interface CreateListingProps {
   name: string;
@@ -58,6 +59,26 @@ export const getServerSideProps = async () => {
       data: data.data,
     },
   };
+};
+
+const useGetCategoriesQuery = () => {
+  const { data } = useQuery('categories', () =>
+    client.get(`/v1/categories?includeParameters=${true}`)
+  );
+
+  return data;
+};
+
+const useGetParametersQuery = (ids: string) => {
+  const { data } = useQuery('parameters', () => client.get(`/v1/parameters?ids=${ids}`));
+
+  return data;
+};
+
+const usePostListingQuery = (listing: CreateListingProps) => {
+  const { data } = useQuery('postListing', () => client.post(`/v1/listings`, listing));
+
+  return data;
 };
 
 const CreateListingPage = ({ data }: CreateListingDataProps) => {
