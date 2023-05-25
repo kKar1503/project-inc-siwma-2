@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 
 
-const companyOptionalInputValidation = z.object({
+const putValidation = z.object({
   companyId: z.string().optional().transform((val) => val ? parseToNumber(val, 'companyId') : undefined),
   endDate: z.string().datetime().optional(),
   startDate: z.string().datetime().optional(),
@@ -50,7 +50,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const id = parseToNumber(req.query.id as string, 'id');
-  const validatedPayload = companyOptionalInputValidation.parse(req.body);
+  const validatedPayload = putValidation.parse(req.body);
 
   // Check if user is admin
   const isAdmin = true; // this endpoint is admin only

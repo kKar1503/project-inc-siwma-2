@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { ParamError } from '@inc/errors/src';
 
-const companyInputValidation = z.object({
+const postValidation = z.object({
   companyId: z.string().transform((val) => parseToNumber(val, 'companyId')),
   endDate: z.string().datetime(),
   startDate: z.string().datetime(),
@@ -18,7 +18,7 @@ const companyInputValidation = z.object({
   link: z.string(),
 });
 
-const getInputValidation = z.object({
+const getValidation = z.object({
   lastIdPointer: z.string().optional().transform((val) => val ? parseToNumber(val, 'lastIdPointer') : undefined),
   limit: z.string().optional().transform((val) => val ? parseToNumber(val, 'limit') : undefined),
 });
@@ -49,7 +49,7 @@ export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
-  const payload = companyInputValidation.parse(req.body);
+  const payload = postValidation.parse(req.body);
 
   const files = await getFilesFromRequest(req);
   if (files.length === 0) {
@@ -82,7 +82,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate admin
   const isAdmin = (req.token?.user.permissions === true);
-  const { limit, lastIdPointer } = getInputValidation.parse(req.query);
+  const { limit, lastIdPointer } = getValidation.parse(req.query);
 
   // Get advertisements
   const advertisementsNoLink = await PrismaClient.advertisements.findMany({
