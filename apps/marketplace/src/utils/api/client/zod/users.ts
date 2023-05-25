@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { UserContacts } from '@inc/db';
+import { UserContacts } from '@prisma/client';
+import listingSchemas from './listings';
 
 const id = z.string();
 const name = z.string();
@@ -54,4 +55,5 @@ export default {
   update: updateUser,
   delete: deleteUser,
   toggle: toggleUser,
+  getListings: listingSchemas.getAll,
 };
