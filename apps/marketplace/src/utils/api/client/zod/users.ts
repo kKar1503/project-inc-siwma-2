@@ -7,13 +7,13 @@ const email = z.string();
 const company = z.string();
 const createdAt = z.string().datetime();
 const enabled = z.boolean();
-const profilePic = z.string().url();
-const comments = z.string().optional(); // Only returned for admins
+const profilePic = z.string().url().nullable();
+const comments = z.string().nullable().optional(); // Only returned for admins
 const mobileNumber = z.string();
-const whatsappNumber = z.string();
-const telegramUsername = z.string();
+const whatsappNumber = z.string().nullable();
+const telegramUsername = z.string().nullable();
 const contactMethod = z.nativeEnum(UserContacts);
-const bio = z.string();
+const bio = z.string().nullable();
 
 const user = z.object({
   id,
