@@ -2,7 +2,6 @@ import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import { useRouter } from 'next/router';
-import { QueryClientProvider, QueryClient } from 'react-query';
 import React, { useEffect } from 'react';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';

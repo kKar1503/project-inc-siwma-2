@@ -24,6 +24,11 @@ import CategoryForm, { CategoryProps } from '@/components/marketplace/createList
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import OnCreateModal from '@/components/modal/OnCreateModal';
 
+// validation
+import Categories from '@/utils/api/client/zod/categories';
+import Parameters from '@/utils/api/client/zod/parameters';
+import Listings from '@/utils/api/client/zod/listings';
+
 export interface CreateListingProps {
   name: string;
   description: string;
@@ -43,6 +48,10 @@ export interface CreateListingDataProps {
 
 export const getServerSideProps = async () => {
   const { data } = await client.get(`/v1/categories?includeParameters=${true}`);
+
+  // const parsedCategories = categories.getAll.parse(data.data);
+  // console.log(parsedCategories);
+  // console.log(data.data);
 
   return {
     props: {
@@ -92,8 +101,10 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
       const parameterIdsString = parameterIds.toString();
       const { data } = await client.get(`/v1/parameters?id=${parameterIdsString}`);
 
+      const parametersData = Parameters.getAll.parse(data.data);
+
       setCategoryParameters(categoryParameters);
-      setDetailedParameters(data.data);
+      setDetailedParameters(parametersData);
     }
   };
 
