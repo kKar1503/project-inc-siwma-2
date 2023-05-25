@@ -21,7 +21,7 @@ const resetPassword = async (req: APIRequestType, res: NextApiResponse) => {
     const { newPassword, token } = resetPasswordSchema.resetPassword.post.body.parse(req.body);
     // check if token is valid
     const resetToken = await PrismaClient.passwordReset.findUnique({
-        where: { token: token },
+        where: { token },
     });
     if (!resetToken) {
         throw new ForbiddenError();
@@ -39,13 +39,13 @@ const resetPassword = async (req: APIRequestType, res: NextApiResponse) => {
     // update user password and delete token
     await PrismaClient.$transaction([
         PrismaClient.users.update({
-            where: { id: id },
+            where: { id },
             data: {
                 password: hashedPassword,
             },
         }),
         PrismaClient.passwordReset.delete({
-            where: { token: token },
+            where: { token },
         }),
     ]);
     res.status(200).json(formatAPIResponse({ message: 'Password reset successful.' }));
