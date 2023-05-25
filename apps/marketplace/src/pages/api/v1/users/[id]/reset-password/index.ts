@@ -3,6 +3,7 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
 import { APIRequestType } from '@/types/api-types';
+import { validatePassword } from '@/utils/api/validate';
 import { userSchema } from '@/utils/api/server/zod';
 import bcrypt from 'bcrypt';
 import resetPasswordSchema from '@/utils/api/server/zod/users';
@@ -19,6 +20,7 @@ const resetPassword = async (req: APIRequestType, res: NextApiResponse) => {
     const userId = req.token?.user?.id;
     // Validate the request body
     const { newPassword, token } = resetPasswordSchema.resetPassword.post.body.parse(req.body);
+
     // check if token is valid
     const resetToken = await PrismaClient.passwordReset.findUnique({
         where: { token },
@@ -34,8 +36,13 @@ const resetPassword = async (req: APIRequestType, res: NextApiResponse) => {
     if (diffInDays > 1) {
         throw new ForbiddenError();
     }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    let hashedPassword = '';
+    if (newPassword) {
+        validatePassword(newPassword);
+        // Hash password with bcrrypt and genSalt(10)
+        const salt = await bcrypt.genSalt(10);
+        hashedPassword = await bcrypt.hash(newPassword, salt);
+    }
     // update user password and delete token
     await PrismaClient.$transaction([
         PrismaClient.users.update({
@@ -48,7 +55,8 @@ const resetPassword = async (req: APIRequestType, res: NextApiResponse) => {
             where: { token },
         }),
     ]);
-    res.status(200).json(formatAPIResponse({ message: 'Password reset successful.' }));
+    res.status(204).end();
+
 };
 
 export default apiHandler().post(resetPassword);
