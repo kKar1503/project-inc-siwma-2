@@ -3,14 +3,9 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
 import { APIRequestType } from '@/types/api-types';
-import { z } from 'zod';
 import { userSchema } from '@/utils/api/server/zod';
-
-// Define the schema for the request body
-// const resetPasswordSchema = z.object({
-//     newPassword: z.string(),
-//     token: z.string(),
-// });
+import bcrypt from 'bcrypt';
+import resetPasswordSchema from '@/utils/api/server/zod/users';
 
 // -- Functions --//
 /**
@@ -21,31 +16,39 @@ import { userSchema } from '@/utils/api/server/zod';
  */
 const resetPassword = async (req: APIRequestType, res: NextApiResponse) => {
     const { id } = userSchema.userId.parse(req.query);
-    console.log(id + "ok")
     const userId = req.token?.user?.id;
     // Validate the request body
-    const { newPassword, token } = req.body;
-    console.log(token)
-
+    const { newPassword, token } = resetPasswordSchema.resetPassword.post.body.parse(req.body);
     // check if token is valid
-    // const userToken = await PrismaClient.userTokens.findUnique({ where: { token } });
-
-
-    // Check if the user exists
-    // const user = await PrismaClient.users.findUnique({ where: { id: uuid } });
-    // if (!user) {
-    //     throw new NotFoundError(`User with uuid '${uuid}'`);
-    // }
-    // Reset the password and the reset token
-    console.log(newPassword + "adeeb ")
-    await PrismaClient.users.update({
-        where: { id: id },
-        data: {
-            password: newPassword,
-        },
+    const resetToken = await PrismaClient.passwordReset.findUnique({
+        where: { token: token },
     });
-
-    res.status(200).json(formatAPIResponse({ message: "Password reset successful." }));
+    if (!resetToken) {
+        throw new ForbiddenError();
+    }
+    // check if token is expired (token expires after 1 day)
+    const tokenDate = new Date(resetToken.createdAt);
+    const currentDate = new Date();
+    const diff = currentDate.getTime() - tokenDate.getTime();
+    const diffInDays = diff / (1000 * 3600 * 24);
+    if (diffInDays > 1) {
+        throw new ForbiddenError();
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    // update user password and delete token
+    await PrismaClient.$transaction([
+        PrismaClient.users.update({
+            where: { id: id },
+            data: {
+                password: hashedPassword,
+            },
+        }),
+        PrismaClient.passwordReset.delete({
+            where: { token: token },
+        }),
+    ]);
+    res.status(200).json(formatAPIResponse({ message: 'Password reset successful.' }));
 };
 
 export default apiHandler().post(resetPassword);
