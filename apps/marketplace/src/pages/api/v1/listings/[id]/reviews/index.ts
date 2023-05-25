@@ -63,7 +63,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
 const createListingReview = async (req: APIRequestType, res: NextApiResponse) => {
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
-    const { review, rating } = listingSchema.post.review.parse(req.body);
+    const { review, rating } = listingSchema.reviews.post.body.parse(req.body);
     const offer = await PrismaClient.messages.findMany({
         where: {
             offer: { not: null, },

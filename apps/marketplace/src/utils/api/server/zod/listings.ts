@@ -78,7 +78,6 @@ export default {
   },
   post: {
     body: listingsRequestBody,
-    review: reviewRequestBody,
   },
   put: {
     body: putListingRequestBody,
@@ -91,4 +90,10 @@ export default {
       body: updateParameters,
     },
   },
+  reviews: {
+    post: {
+      body: reviewRequestBody,
+    },
+  },
+
 };
