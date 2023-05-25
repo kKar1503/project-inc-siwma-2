@@ -67,7 +67,7 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
     const offer = await PrismaClient.messages.findMany({
         where: {
             offer: { not: null, },
-            offersMessagesOfferTooffers: {
+            offers: {
                 listing: id,
                 accepted: true,
             },
