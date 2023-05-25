@@ -5,7 +5,6 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { ParamError } from '@inc/errors';
 import { companySchema } from '@/utils/api/server/zod';
 import { CompanyResponseBody } from '@/utils/api/client/zod';
-
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import * as process from 'process';
@@ -34,8 +33,6 @@ export type queryResult = {
   comments: string | null;
   createdAt?: Date;
 };
-import { companySchema } from '@/utils/api/server/zod';
-import { CompanyResponseBody } from '@/utils/api/client/zod';
 
 function formatResponse(response: Companies[]): CompanyResponseBody[] {
   const temp: CompanyResponseBody[] = [];
