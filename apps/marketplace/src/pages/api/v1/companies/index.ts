@@ -8,6 +8,7 @@ import { CompanyResponseBody } from '@/utils/api/client/zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import * as process from 'process';
+import { Companies } from '@inc/db';
 
 export const CompanyBucketName = process.env.AWS_COMPANY_BUCKET_NAME as string;
 

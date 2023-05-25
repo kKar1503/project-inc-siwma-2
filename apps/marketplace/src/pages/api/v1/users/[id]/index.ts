@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import s3Connection from '@/utils/s3Connection';
 import { UserBucketName } from '@api/v1/users';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import { UserContacts } from '@inc/db';
 
 const userIdSchema = z.object({
   id: z.string(),
