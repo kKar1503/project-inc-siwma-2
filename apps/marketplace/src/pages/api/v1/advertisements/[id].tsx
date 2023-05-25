@@ -66,12 +66,8 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!advertisement) throw new NotFoundError(`advertisement`);
 
   // get new values or use old values if not provided
-  const companyId = validatedPayload.companyId ? validatedPayload.companyId : advertisement.companyId;
-  const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || advertisement.endDate;
-  const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || advertisement.startDate;
-  const active = validatedPayload.active === undefined ? advertisement.active : validatedPayload.active;
-  const description = validatedPayload.description || advertisement.description;
-  const link = validatedPayload.link || advertisement.link;
+  const endDate = (validatedPayload.endDate && new Date(validatedPayload.endDate)) || undefined;
+  const startDate = (validatedPayload.startDate && new Date(validatedPayload.startDate)) || undefined;
 
   // if image has changed
   let objectID = advertisement.image;
@@ -97,13 +93,10 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   const updated = await PrismaClient.advertisements.update({
     select: select(isAdmin),
     data: {
-      companyId,
+      ...validatedPayload,
       image: objectID,
       endDate,
       startDate,
-      active,
-      description,
-      link,
     },
     where: {
       id,
