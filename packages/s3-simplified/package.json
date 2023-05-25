@@ -4,7 +4,8 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "pnpx rimraf dist && tsc"
+    "build": "pnpx rimraf dist && tsc",
+    "dev": "pnpx rimraf dist && tsc -w"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.315.0",

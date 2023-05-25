@@ -1,16 +1,12 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { z } from 'zod';
+import { inviteSchema } from '@/utils/api/server/zod';
 import client from '@inc/db';
 import { NotFoundError } from '@inc/errors';
-
-const tokenSchema = z.object({
-  token: z.string(),
-});
 
 export default apiHandler({
   allowNonAuthenticated: true,
 }).get(async (req, res) => {
-  const { token } = tokenSchema.parse(req.query);
+  const { token } = inviteSchema.token.get.query.parse(req.query);
 
   const invite = await client.invite.findFirst({
     where: {
