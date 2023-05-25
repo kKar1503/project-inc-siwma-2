@@ -10,7 +10,7 @@ import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { ParamError } from '@inc/errors/src';
 
 const companyInputValidation = z.object({
-  companyId: z.string(),
+  companyId: z.string().transform((val) => parseToNumber(val, 'companyId')),
   endDate: z.string().datetime(),
   startDate: z.string().datetime(),
   active: z.boolean(),
@@ -19,8 +19,8 @@ const companyInputValidation = z.object({
 });
 
 const getInputValidation = z.object({
-  lastIdPointer: z.string().optional().transform((val) => val === undefined ? undefined : parseToNumber(val, 'lastIdPointer')),
-  limit: z.string().optional().transform((val) => val === undefined ? undefined : parseToNumber(val, 'limit'))
+  lastIdPointer: z.string().optional().transform((val) => val ? parseToNumber(val, 'lastIdPointer') : undefined),
+  limit: z.string().optional().transform((val) => val ? parseToNumber(val, 'limit') : undefined),
 });
 
 export const select = (isAdmin: boolean) => ({
@@ -50,7 +50,6 @@ export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const payload = companyInputValidation.parse(req.body);
-  const companyId = parseToNumber(payload.companyId,'id');
 
   const files = await getFilesFromRequest(req);
   if (files.length === 0) {
@@ -66,7 +65,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       id: true,
     },
     data: {
-      companyId,
+      companyId: payload.companyId,
       image: s3Object.Id,
       endDate: new Date(payload.endDate),
       startDate: new Date(payload.startDate),
