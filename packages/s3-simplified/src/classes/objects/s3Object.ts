@@ -2,6 +2,7 @@ import {Readable} from "stream";
 import {IMetadata, IS3Object, IS3ObjectJSON} from "../../interfaces";
 import {S3BucketInternal} from "../buckets/s3BucketInternal";
 import {Config} from "../../interfaces/config";
+import {MissingUUID} from "../misc/errors";
 
 export class S3Object implements IS3Object {
 
@@ -49,7 +50,7 @@ export class S3Object implements IS3Object {
     public get UUID(): string {
         const uuid = this.metadata.get("content-disposition");
         if (uuid) return uuid;
-        throw new Error("UUID not found");
+        throw new MissingUUID(this.key, this.bucketSource.bucketName)
     }
 
     public get Id(): string {

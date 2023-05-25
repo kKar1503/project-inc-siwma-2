@@ -1,4 +1,5 @@
 import {Readable} from "stream";
+import {InvalidDatatype} from "../classes";
 
 type AcceptedDataTypes = Readable | ReadableStream | Blob | string | Uint8Array | Buffer
 
@@ -54,5 +55,5 @@ export async function ConvertToBuffer(data: AcceptedDataTypes): Promise<Buffer> 
     if (data instanceof Blob) return await blobToBuffer(data);
     if (data instanceof Readable) return await readableToBuffer(data);
     if (data instanceof ReadableStream) return await readableStreamToBuffer(data);
-    throw new Error("Invalid data type");
+    throw new InvalidDatatype("Invalid datatype")
 }

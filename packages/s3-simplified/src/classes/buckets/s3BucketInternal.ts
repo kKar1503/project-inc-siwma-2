@@ -21,6 +21,7 @@ import {S3ObjectBuilder} from "../objects/s3ObjectBuilder";
 import {Readable} from "stream";
 import {Config, ObjectCreationConfig, SignedUrlConfig} from "../../interfaces/config";
 import {Regions} from "../../types";
+import {MultipartUploadError} from "../misc/errors";
 
 /**
  * An unsafe version of S3 bucket with no validation.
@@ -140,7 +141,7 @@ export class S3BucketInternal {
         });
         const createMultipartUploadResponse = await this.s3.send(createMultipartUploadCommand);
         const uploadId = createMultipartUploadResponse.UploadId;
-        if (!uploadId) throw new Error("Failed to initialize multipart upload");
+        if (!uploadId) throw new MultipartUploadError("UploadId was not returned from AWS");
 
         const partsCount = Math.ceil(await s3ObjectBuilder.DataSize / partSize);
 
