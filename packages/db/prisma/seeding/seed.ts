@@ -17,7 +17,6 @@ import { Invite } from './tables/invite';
 import { ListingBookmarks } from './tables/listing_bookmarks';
 import { ListingImages } from './tables/listing_images';
 import { ListingsParametersValue } from './tables/listings_parameters_value';
-import { NotificationSettings } from './tables/notification_settings';
 import { UserBookmarks } from './tables/user_bookmarks';
 import { SibKeys } from './tables/sibkeys';
 import { PasswordReset } from './tables/password_reset';
@@ -204,13 +203,6 @@ const main = async (): Promise<void> => {
     });
 
   console.log(`Seeded ${listingsParametersValueCount} rows into public.listings_parameters_value`);
-  console.log('Seeding public.notification_settings...');
-
-  const { count: notificationSettingsCount } = await prismaClient.notificationSettings.createMany({
-    data: NotificationSettings,
-  });
-
-  console.log(`Seeded ${notificationSettingsCount} rows into public.notification_settings`);
   console.log('Seeding public.user_bookmarks...');
 
   const { count: userBookmarksCount } = await prismaClient.userBookmarks.createMany({
