@@ -142,7 +142,7 @@ const ChatList = ({
       />
       <List sx={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
         {filteredChats(category, chats).map((chat, index) => (
-          <>
+          <Box key={chat.id}>
             <ListItem
               key={chat.id}
               onClick={() => {
@@ -211,7 +211,7 @@ const ChatList = ({
                 })}
               />
             )}
-          </>
+          </Box>
         ))}
       </List>
     </Box>
