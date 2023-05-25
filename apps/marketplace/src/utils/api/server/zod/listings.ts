@@ -7,6 +7,7 @@ const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
+  includeImages: z.string().transform(zodParseToBoolean).optional().default('true'),
   params: z.string().optional(),
   category: z.string().transform(zodParseToInteger).optional(),
   negotiable: z.string().transform(zodParseToBoolean).optional(),

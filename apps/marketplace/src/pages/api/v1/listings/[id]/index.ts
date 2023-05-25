@@ -1,13 +1,11 @@
 import { apiHandler, formatAPIResponse, zodParseToInteger, zodParseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import { ListingType } from '@prisma/client';
 import z from 'zod';
 import s3Connection from '@/utils/s3Connection';
-import { formatSingleListingResponse, getQueryParameters, ListingBucketName, parseListingId } from '..';
+import { formatSingleListingResponse, ListingBucketName, parseListingId } from '..';
 import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
-import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
 
@@ -113,12 +111,13 @@ export default apiHandler()
     };
     // Return the result
 
-    const response = formatSingleListingResponse(listing, queryParams.includeParameters);
+    const response = await formatSingleListingResponse(listing, queryParams.includeParameters);
 
     if (queryParams.includeImages) {
       const bucket = await s3Connection.getBucket(ListingBucketName);
       response.images = await Promise.all(listing.listingImages.map(async (image) => ({
-        image: await bucket.getObjectUrl(image.image),
+       ...image,
+        url: await bucket.getObjectUrl(image.image)
       })));
     }
 
@@ -126,7 +125,7 @@ export default apiHandler()
       .status(200)
       .json(
         formatAPIResponse(
-          await formatSingleListingResponse(completeListing, queryParams.includeParameters)
+          response
         )
       );
   })
@@ -251,7 +250,7 @@ export default apiHandler()
       .status(200)
       .json(
         formatAPIResponse(
-          formatSingleListingResponse(completeListing, queryParams.includeParameters),
+          await formatSingleListingResponse(completeListing, queryParams.includeParameters),
         ),
       );
   })
