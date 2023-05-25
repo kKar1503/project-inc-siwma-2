@@ -21,7 +21,7 @@ type StartStopType = {
 
 type Read = {
   room: string;
-  message: string;
+  messageId: number;
 };
 
 
@@ -35,7 +35,7 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
-  deleteMessage: { room: string; message: number };
+  deleteMessage: { room: string; messageId: number };
   clientStartType: StartStopType;
   clientStopType: StartStopType;
   clientRead: Read;
