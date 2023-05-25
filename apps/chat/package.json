@@ -8,6 +8,7 @@
     "@inc/db": "workspace:*",
     "@inc/errors": "workspace:*",
     "@inc/events": "workspace:*",
+    "@inc/node-store": "workspace:*",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
