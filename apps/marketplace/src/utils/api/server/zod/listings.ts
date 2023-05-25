@@ -23,6 +23,7 @@ const listingsRequestBody = z.object({
   negotiable: z.boolean().optional(),
   categoryId: z.number(),
   type: z.nativeEnum(ListingType),
+  multiple: z.boolean().optional(),
   parameters: z
     .array(
       z.object({
@@ -41,6 +42,7 @@ const putListingRequestBody = z.object({
   negotiable: z.boolean().optional(),
   categoryId: z.number().optional(),
   type: z.nativeEnum(ListingType).optional(),
+  multiple: z.boolean().optional(),
   parameters: z
     .array(
       z.object({
