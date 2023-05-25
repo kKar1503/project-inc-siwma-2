@@ -5,7 +5,7 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { z } from 'zod';
 import s3Connection from '@/utils/s3Connection';
-import { CompanyBucketName, getResponseBody, queryResult } from '..';
+import { CompanyBucketName } from '..';
 
 const editCompanyRequestBody = z.object({
   name: z.string().optional(),
