@@ -1,22 +1,21 @@
 /* eslint-disable arrow-body-style */
 import React, { useEffect } from 'react';
+import { Box, Grid, Link, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Carousel, { Image } from '@/components/marketplace/carousel/AdvertisementCarousel';
 import ListingStream from '@/components/marketplace/listing/ListingStream';
-
-import ProductListingItem, {
-  ProductListingItemProps,
-} from '@/components/marketplace/listing/ProductListingItem';
-import { Box, Grid, Link, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { ProductListingItemProps } from '@/components/marketplace/listing/ProductListingItem';
 import CategoryCard from '@/components/marketplace/listing/Categories';
-import NavBar from '@/components/marketplace/navbar/NavBar';
 import { TCategory } from '@/types/category';
 import { TListing } from '@/types/listing';
+import apiClient from '@/utils/api/client/apiClient';
+import { useSession, getSession } from 'next-auth/react';
 
 const mockAdvertisements: Array<Image> = [
   {
     id: '1',
     companyId: '2',
-    image: 'https://i.seadn.io/gcs/files/b7e46c1c3a103a759dcdf56f1b27d7b7.png?auto=format&dpr=1&w=1000',
+    image:
+      'https://i.seadn.io/gcs/files/b7e46c1c3a103a759dcdf56f1b27d7b7.png?auto=format&dpr=1&w=1000',
     active: true,
     startDate: '2023-01-18 13:25:45',
     endDate: '2023-03-18 13:25:45',
@@ -42,8 +41,12 @@ const Marketplace = () => {
   const [categories, setCategories] = React.useState<Array<TCategory>>([]);
   const theme = useTheme();
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const { data: session, status } = useSession();
 
   useEffect(() => {
+    // if (status !== 'authenticated' && typeof window !== undefined) {
+    //   window.location.href = '/login';
+    // }
     // const fetchAdvertisements = async () => {
     //   try {
     //     const response = await fetch('/api/v1/advertisement');
@@ -59,10 +62,10 @@ const Marketplace = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch('/api/v1/categories');
-        const data = await response.json();
+        const response = await apiClient.get('/v1/categories');
+        const categories = response.data.data;
 
-        setCategories(data.data);
+        setCategories(categories);
       } catch (error) {
         console.error('Error fetching categories: ', error);
       }
@@ -70,12 +73,10 @@ const Marketplace = () => {
 
     const fetchListings = async () => {
       try {
-        const response = await fetch('/api/v1/listings');
-        const data = await response.json();
+        const response = await apiClient.get('/v1/listings');
         const listingsData: Array<ProductListingItemProps> = [];
-
         // Change later
-        const listings = data.data;
+        const listings = response.data.data;
 
         // Mutate Data to fit ProductListingItemProps
         listings.forEach((listing: TListing) => {
@@ -113,7 +114,6 @@ const Marketplace = () => {
 
   return (
     <>
-      <NavBar />
       <Carousel data={mockAdvertisements} />
       <Box display="flex" justifyContent="center" paddingTop="2em">
         <Box
@@ -162,13 +162,13 @@ const Marketplace = () => {
       </Box>
       <Box display="flex" justifyContent="center" paddingTop="2em">
         <Grid container spacing={2} width="80%">
-          {listings.map((item) => {
+          {/* {listings.map((item) => {
             return (
               <Grid item xl={2} lg={3} md={4} sm={6} xs={12} key={item.productId}>
                 <ProductListingItem data={item} />
               </Grid>
             );
-          })}
+          })} */}
         </Grid>
       </Box>
     </>
