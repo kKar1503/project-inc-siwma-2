@@ -10,6 +10,7 @@ const unitPrice = z.boolean();
 const negotiable = z.boolean();
 const categoryId = z.string();
 const type = z.nativeEnum(ListingType);
+const multiple = z.boolean();
 const rating = z.number().nullable();
 const reviewCount = z.number();
 const images = z
@@ -63,6 +64,7 @@ const listing = z.object({
   negotiable,
   categoryId,
   type,
+  multiple,
   images,
   coverImage,
   owner,
