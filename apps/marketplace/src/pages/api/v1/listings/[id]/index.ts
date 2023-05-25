@@ -113,11 +113,11 @@ export default apiHandler()
 
     const response = await formatSingleListingResponse(listing, queryParams.includeParameters);
 
-    if (queryParams.includeImages) {
+    if (queryParams.includeImages && response.images) {
       const bucket = await s3Connection.getBucket(ListingBucketName);
-      response.images = await Promise.all(listing.listingImages.map(async (image) => ({
+      response.images = await Promise.all(response.images.map(async (image) => ({
        ...image,
-        url: await bucket.getObjectUrl(image.image)
+        url: await bucket.getObjectUrl(image.url)
       })));
     }
 
