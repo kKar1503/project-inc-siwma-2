@@ -3,9 +3,10 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NotFoundError, ForbiddenError } from '@inc/errors';
 import PrismaClient, { Prisma } from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
+import { listingSchema } from '@/utils/api/server/zod';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
-import { listingSchema } from '@/utils/api/server/zod';
+
 
 /**
  * Fetches all reviews for a listing
