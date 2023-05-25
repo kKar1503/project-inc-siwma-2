@@ -20,8 +20,8 @@ export type ChatBoxProps = {
 };
 
 const ChatBox: React.FC<ChatBoxProps> = ({ loginId, roomData }: ChatBoxProps) => (
-  <Box sx={{ height: '650px', overflowY: 'auto' }}>
-    <Paper elevation={3} sx={{ p: 2 }}>
+  <Box sx={{ overflowY: 'auto', height: '70vh'}}>
+    <Paper sx={{ p: 2 }}>
       <List>
         {roomData.map((message) => (
           <ListItem

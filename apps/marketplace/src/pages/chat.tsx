@@ -5,6 +5,7 @@ import ChatHeader from '@/components/rtc/ChatHeader';
 import ChatSubHeader from '@/components/rtc/ChatSubHeader';
 import ChatBox, { ChatBoxProps } from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
+import ChatList, { ChatListProps } from '@/components/rtc/ChatList';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 import fetchChatList from '@/middlewares/fetchChatList';
@@ -146,19 +147,165 @@ const ChatRoom = () => {
       author: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
     },
   ];
+  const messagesOfChatRoomId1 = [
+    {
+      id: '365',
+      content_type: 'message',
+      read: false,
+      content: 'hello',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      created_at: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '366',
+      content_type: 'image',
+      read: false,
+      content: 'https://s3.amazonaws.com/mybucket/myimage-20230322T120000Z.jpg',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      created_at: '2023-01-12T06:11:52.43002+00:00',
+    },
+    {
+      id: '367',
+      content_type: 'offer',
+      read: true,
+      offer: 4500,
+      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
+      created_at: '2023-01-12T06:11:49.43002+00:00',
+    },
+  ];
+
+  const messagesOfChatRoomId2 = [
+    {
+      id: '365',
+      content_type: 'message',
+      read: false,
+      content: 'hello',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      created_at: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '366',
+      content_type: 'image',
+      read: true,
+      content: 'https://s3.amazonaws.com/mybucket/myimage-20230322T120000Z.jpg',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      created_at: '2023-01-12T06:11:52.43002+00:00',
+    },
+    {
+      id: '367',
+      content_type: 'offer',
+      read: true,
+      offer: 4500,
+      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
+      created_at: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '369',
+      content_type: 'offer',
+      read: true,
+      offer: 4500,
+      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
+      created_at: '2023-01-12T06:11:49.43002+00:00',
+    },
+  ];
+
+  const messagesOfChatRoomId3 = [
+    {
+      id: '365',
+      content_type: 'message',
+      read: true,
+      content: 'hello',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      created_at: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '366',
+      content_type: 'image',
+      read: true,
+      content: 'https://s3.amazonaws.com/mybucket/myimage-20230322T120000Z.jpg',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      created_at: '2023-01-12T06:11:52.43002+00:00',
+    },
+    {
+      id: '367',
+      content_type: 'offer',
+      read: true,
+      offer: 4500,
+      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
+      created_at: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '369',
+      content_type: 'offer',
+      read: true,
+      offer: 4500,
+      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
+      created_at: '2023-01-12T06:11:49.43002+00:00',
+    },
+  ];
+
+  const allChats: ChatListProps[] = [
+    {
+      id: '1',
+      company: 'ABC Corp',
+      category: 'Buying',
+      itemName: 'Mild Steel Channel',
+      latestMessage: 'Hey, are you still interested in buying?',
+      price: 100,
+      inProgress: true,
+      badgeContent: messagesOfChatRoomId1.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '2',
+      company: 'XYZ Corp',
+      category: 'Buying',
+      latestMessage: 'Sure, what is the price?',
+      price: 50,
+      inProgress: true,
+      itemName: 'Product Name 2',
+      badgeContent: messagesOfChatRoomId2.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '3',
+      company: 'LMN Corp',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+  ];
 
   return (
-    <Box display="flex">
+    <Box
+      display="flex"
+      sx={({ shadows, spacing }) => ({
+        mx: spacing(5),
+        mt: spacing(3),
+        height: '100vh',
+        overflowY: 'hidden',
+      })}
+    >
       <Box
-        sx={({ shadows, palette }) => ({
+        sx={({ shadows }) => ({
           boxShadow: shadows[3],
-          bgcolor: palette.grey[400],
           width: 1 / 3,
-          height: 1000,
-          justifyContent: 'flex-end',
         })}
       >
-        <Typography>hi</Typography>
+        <ChatList
+          chats={allChats}
+          onChange={(e) => {
+            const element = e.currentTarget as HTMLInputElement;
+            const { value } = element;
+          }}
+        />
       </Box>
       <Box sx={{ width: 2 / 3 }}>
         <ChatHeader profilePic="" companyName="Hi Metals PTE LTD" available />
@@ -170,15 +317,17 @@ const ChatRoom = () => {
           makeOffer={makeOffer}
           setMakeOffer={setMakeOffer}
         />
-        <ChatBox roomData={messages} loginId="d44b8403-aa90-4d92-a4c6-d0a1e2fad0af" />
-        <ChatTextBox
-          selectedFile={selectedFile}
-          setSelectedFile={setSelectedFile}
-          inputText={inputText}
-          setInputText={setInputText}
-          onSend={onSend}
-          setOnSend={setOnSend}
-        />
+        <Box sx={{ margin: 0 }}>
+          <ChatBox roomData={messages} loginId="d44b8403-aa90-4d92-a4c6-d0a1e2fad0af" />
+          <ChatTextBox
+            selectedFile={selectedFile}
+            setSelectedFile={setSelectedFile}
+            inputText={inputText}
+            setInputText={setInputText}
+            onSend={onSend}
+            setOnSend={setOnSend}
+          />
+        </Box>
       </Box>
     </Box>
   );
