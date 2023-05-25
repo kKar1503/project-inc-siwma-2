@@ -3,24 +3,13 @@ import PrismaClient, { Listing, Prisma, Users, Companies } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
-
-export type ListingWithParameters = Listing & {
-  listingsParametersValues: Array<{
-    parameterId: number;
-    value: string;
-  }>;
-  offersOffersListingTolistings: Array<{
-    accepted: boolean;
-  }>;
-  users: Users & {
-    companies: Companies;
-  };
-  rating: number | null;
-  reviewCount: number;
-};
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import process from 'process';
 import s3Connection from '@/utils/s3Connection';
+import { UserContacts,ListingType } from  '@inc/db'
+import {Decimal} from "@prisma/client/runtime";
+import { z } from 'zod';
+import {zodParseToInteger,zodParseToBoolean,zodParseToNumber} from "@/utils/api/apiHelper";
 
 export const ListingBucketName = process.env.AWS_LISTING_BUCKET_NAME as string;
 
@@ -166,8 +155,10 @@ export async function formatSingleListingResponse(
   }
 
   if (listing.listingImages) {
+    const bucket = await s3Connection.getBucket(ListingBucketName);
     formattedListing.images = listing.listingImages.map((image) => ({
-      image: image.image,
+      ...image,
+      url: await bucket.getObjectUrl(image.image),
     }));
   }
 
