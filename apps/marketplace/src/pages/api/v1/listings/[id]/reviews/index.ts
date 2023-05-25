@@ -5,6 +5,7 @@ import PrismaClient, { Prisma } from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
+import { listingSchema } from '@/utils/api/server/zod';
 
 /**
  * Fetches all reviews for a listing
@@ -61,7 +62,7 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
 const createListingReview = async (req: APIRequestType, res: NextApiResponse) => {
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
-    const { review, rating } = req.body;
+    const { review, rating } = listingSchema.post.review.parse(req.body);
     const offer = await PrismaClient.messages.findMany({
         where: {
             offer: { not: null, },
@@ -74,9 +75,9 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
             },
         },
     })
-    if (!offer.length) {
-        throw new ForbiddenError();
-    }
+    // if (!offer.length) {
+    //     throw new ForbiddenError();
+    // }
 
     const createdReview = await PrismaClient.reviews.create({
         data: {

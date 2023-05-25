@@ -58,11 +58,19 @@ const createParameter = z.object({
 
 const updateParameters = z.array(createParameter);
 
+// Add zod validation schema for review
+const reviewRequestBody = z.object({
+  review: z.string(),
+  rating: z.number().int().gte(0).lte(5),
+});
+
+
 export type GetListingsQueryParameter = z.infer<typeof getQueryParameters>;
 export type PostListingsRequestBody = z.infer<typeof listingsRequestBody>;
 export type PutListingsRequestBody = z.infer<typeof putListingRequestBody>;
 export type PostListingParameterRequestBody = z.infer<typeof createParameter>;
 export type PutListingParameterRequestBody = z.infer<typeof updateParameters>;
+export type ReviewRequestBody = z.infer<typeof reviewRequestBody>;
 
 export default {
   get: {
@@ -70,6 +78,7 @@ export default {
   },
   post: {
     body: listingsRequestBody,
+    review: reviewRequestBody,
   },
   put: {
     body: putListingRequestBody,
