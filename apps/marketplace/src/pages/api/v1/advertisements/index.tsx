@@ -6,7 +6,7 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
 import { z } from 'zod';
-import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import { fileToS3Object, getFilesFromRequest, loadImageBuilder } from '@/utils/imageUtils';
 import { ParamError } from '@inc/errors/src';
 
 const postValidation = z.object({
@@ -96,13 +96,8 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   });
 
   const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-  const advertisements = await Promise.all(advertisementsNoLink.map(async (advertisement) => {
-    const image = await AdvertisementBucket.getObject(advertisement.image);
-    return {
-      ...advertisement,
-      image: await image.generateLink(),
-    };
-  }));
+  const loadImage = loadImageBuilder(AdvertisementBucket, 'image');
+  const advertisements = await Promise.all(advertisementsNoLink.map(loadImage));
 
   // Return advertisements
   res.status(200).json(formatAPIResponse(advertisements));

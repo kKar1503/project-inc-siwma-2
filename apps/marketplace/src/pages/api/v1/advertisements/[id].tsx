@@ -7,7 +7,7 @@ import s3Connection from '@/utils/s3Connection';
 import { AdvertisementBucketName, select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
-import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import { fileToS3Object, getFilesFromRequest, loadImage } from '@/utils/imageUtils';
 
 
 const putValidation = z.object({
@@ -57,14 +57,10 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   // Throw error if advertisement not found
   if (!advertisement) throw new NotFoundError(`advertisement`);
 
-
   const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-  const image = await AdvertisementBucket.getObject(advertisement.image);
-
-  advertisement.image = await image.generateLink();
 
   // Return advertisement
-  res.status(200).json(formatAPIResponse(advertisement));
+  res.status(200).json(formatAPIResponse(await loadImage(advertisement,AdvertisementBucket, 'image')));
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {

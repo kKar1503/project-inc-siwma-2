@@ -1,7 +1,7 @@
 import { NextApiRequest } from 'next';
 import { Fields, File, Files, IncomingForm } from 'formidable';
 import fs from 'fs';
-import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
+import { Metadata, S3BucketService, S3ObjectBuilder } from '@inc/s3-simplified';
 
 export const imageUtils = (req: NextApiRequest): Promise<{ fields?: Fields, files?: Files }> =>
   new Promise((resolve, reject) => {
@@ -40,3 +40,14 @@ export const fileToS3Object = (file: File): S3ObjectBuilder => {
   });
   return new S3ObjectBuilder(buffer, metadata);
 };
+
+export const loadImage = async <T extends Record<string,unknown>>(source: T, bucket: S3BucketService, imageKey: string): Promise<T> => {
+  if (typeof source[imageKey] !== 'string') return source;
+  const image = await bucket.getObject(source[imageKey] as string);
+  return {
+    ...source,
+    [imageKey]: await image.generateLink(),
+  };
+};
+
+export const loadImageBuilder = <T extends Record<string,unknown>>( bucket: S3BucketService, imageKey: string):(source:T) => Promise<T> => async (source) => loadImage(source, bucket, imageKey)
