@@ -100,7 +100,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     const image = await AdvertisementBucket.getObject(advertisement.image);
     return {
       ...advertisement,
-      link: await image.generateLink(),
+      image: await image.generateLink(),
     };
   }));
 
