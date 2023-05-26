@@ -16,9 +16,9 @@ const getChatMessages = z
     contentType: z.string(),
     read: z.boolean(),
     content: z.string().optional(),
-    offer: z.number().optional(),
+    offer: z.number().nullable().optional(),
     author: z.string().uuid(),
-    createdAt: z.date(),
+    createdAt: z.string().datetime(),
   })
   .array();
 
@@ -28,7 +28,7 @@ const getUserChats = z
     seller: z.string().uuid(),
     buyer: z.string().uuid(),
     listing: z.string(),
-    createdAt: z.date(),
+    createdAt: z.string().datetime(),
   })
   .array();
 

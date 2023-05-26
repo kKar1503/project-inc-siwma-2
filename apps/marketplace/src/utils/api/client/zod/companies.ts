@@ -11,8 +11,8 @@ const getCompany = z.object({
   website: z.string().nullable(),
   image: z.string().nullable(),
   visible: z.boolean(),
-  comments: z.string().nullable(),
-  createdAt: z.date(),
+  comments: z.string().nullable().optional(),
+  createdAt: z.string().datetime().optional(),
 });
 
 const getCompanies = getCompany.array();
