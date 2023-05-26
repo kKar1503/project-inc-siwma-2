@@ -1,22 +1,24 @@
-import {
-  apiHandler,
-  formatAPIResponse,
-  parseToNumber,
-  zodParseToBoolean,
-  zodParseToInteger,
-  zodParseToNumber,
-} from '@/utils/api';
-import PrismaClient, {
-  Listing,
-  ListingType,
-  Prisma,
-  Users,
-  Companies,
-  UserContacts,
-} from '@inc/db';
-import { z } from 'zod';
-import { Decimal } from '@prisma/client/runtime';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import PrismaClient, { Listing, Prisma, Users, Companies } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
+import { listingSchema } from '@/utils/api/server/zod';
+import { ListingResponseBody } from '@/utils/api/client/zod';
+
+export type ListingWithParameters = Listing & {
+  listingsParametersValues: Array<{
+    parameterId: number;
+    value: string;
+  }>;
+  offersOffersListingTolistings: Array<{
+    accepted: boolean;
+  }>;
+  users: Users & {
+    companies: Companies;
+  };
+  multiple: boolean;
+  rating: number | null;
+  reviewCount: number;
+};
 
 export function parseListingId($id: string) {
   // Parse and validate listing id provided
@@ -45,79 +47,16 @@ async function getRequiredParametersForCategory(categoryId: number): Promise<num
   return categoryParameters.map((param) => param.parameterId);
 }
 
-// -- Type definitions -- //
-export type OwnerResponse = {
-  id: string;
-  name: string;
-  email: string;
-  company: {
-    id: string;
-    name: string;
-    website: string | null;
-    bio: string | null;
-    image: string | null;
-    visible: boolean;
-  };
-  profilePic: string | null;
-  mobileNumber: string;
-  contactMethod: UserContacts;
-  bio: string | null;
-};
-
-export type ListingResponse = {
-  id: string;
-  name: string;
-  description: string;
-  price: Decimal;
-  unitPrice?: boolean;
-  negotiable?: boolean;
-  categoryId: string;
-  type: ListingType;
-  owner: OwnerResponse;
-  open: boolean;
-  parameters?: Array<{
-    paramId: string;
-    value: string;
-  }>;
-  createdAt: Date;
-};
-
-export type ListingWithParameters = Listing & {
-  listingsParametersValues: Array<{
-    parameterId: number;
-    value: string;
-  }>;
-  offersOffersListingTolistings: Array<{
-    accepted: boolean;
-  }>;
-  users: Users & {
-    companies: Companies;
-  };
-};
-
-export const getQueryParameters = z.object({
-  lastIdPointer: z.string().transform(zodParseToInteger).optional(),
-  limit: z.string().transform(zodParseToInteger).optional(),
-  matching: z.string().optional(),
-  includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z.string().optional(),
-  category: z.string().transform(zodParseToInteger).optional(),
-  negotiable: z.string().transform(zodParseToBoolean).optional(),
-  minPrice: z.string().transform(zodParseToNumber).optional(),
-  maxPrice: z.string().transform(zodParseToNumber).optional(),
-  sortBy: z.string().optional(),
-});
-
 // -- Helper functions -- //
-export function formatSingleListingResponse(
+export async function formatSingleListingResponse(
   listing: ListingWithParameters,
   includeParameters: boolean
-): ListingResponse {
-  const formattedListing: ListingResponse = {
+): Promise<ListingResponseBody> {
+  const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
     name: listing.name,
     description: listing.description,
-    price: listing.price,
+    price: listing.price.toNumber(),
     unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
@@ -139,8 +78,13 @@ export function formatSingleListingResponse(
       contactMethod: listing.users.contact,
       bio: listing.users.bio,
     },
-    open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
-    createdAt: listing.createdAt,
+    open: listing.multiple
+      ? true
+      : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    multiple: listing.multiple,
+    createdAt: listing.createdAt.toISOString(),
+    rating: listing.rating,
+    reviewCount: listing.reviewCount,
   };
 
   if (includeParameters && listing.listingsParametersValues) {
@@ -153,35 +97,19 @@ export function formatSingleListingResponse(
   return formattedListing;
 }
 
-export function formatListingResponse(
+export async function formatListingResponse(
   $listings: ListingWithParameters[],
   includeParameters: boolean
 ) {
-  return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
+  return Promise.all(
+    $listings.map((listing) => formatSingleListingResponse(listing, includeParameters))
+  );
 }
-
-export const listingsRequestBody = z.object({
-  name: z.string(),
-  description: z.string(),
-  price: z.number().gte(0),
-  unitPrice: z.boolean().optional(),
-  negotiable: z.boolean().optional(),
-  categoryId: z.number(),
-  type: z.nativeEnum(ListingType),
-  parameters: z
-    .array(
-      z.object({
-        paramId: z.string().transform(zodParseToInteger),
-        value: z.string().transform(zodParseToNumber),
-      })
-    )
-    .optional(),
-});
 
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
     // Decode params if it exists
     let decodedParams = null;
@@ -260,22 +188,63 @@ export default apiHandler()
             companies: true,
           },
         },
+        reviewsReviewsListingTolistings: true,
       },
     });
 
-    res
-      .status(200)
-      .json(
-        formatAPIResponse(
-          formatListingResponse(
-            listings as unknown as ListingWithParameters[],
-            queryParams.includeParameters
-          )
-        )
-      );
+    // Calculate the average rating and count of reviews for each listing
+    const listingsWithRatingsAndReviewCount = await Promise.all(
+      listings.map(async (listing) => {
+        const { _avg, _count } = await PrismaClient.reviews.aggregate({
+          _avg: {
+            rating: true,
+          },
+          _count: {
+            rating: true,
+          },
+          where: {
+            listing: listing.id,
+          },
+        });
+
+        const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+        const reviewCount = _count && _count.rating;
+        const { multiple } = listing;
+
+        return {
+          ...listing,
+          rating,
+          reviewCount,
+          multiple,
+        };
+      })
+    );
+
+    // Sort listings by rating, if needed
+    if (queryParams.sortBy) {
+      switch (queryParams.sortBy.toLowerCase()) {
+        case 'highest_rating':
+          listingsWithRatingsAndReviewCount.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+          break;
+        case 'lowest_rating':
+          listingsWithRatingsAndReviewCount.sort((a, b) => (a.rating ?? 0) - (b.rating ?? 0));
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Format the listings
+    const formattedListings = await Promise.all(
+      listingsWithRatingsAndReviewCount.map((listing) =>
+        formatSingleListingResponse(listing, queryParams.includeParameters)
+      )
+    );
+
+    res.status(200).json(formatAPIResponse(formattedListings));
   })
   .post(async (req, res) => {
-    const data = listingsRequestBody.parse(req.body);
+    const data = listingSchema.post.body.parse(req.body);
 
     // Use the user ID from the request object
     const userId = req.token?.user?.id;
@@ -308,6 +277,7 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
+        multiple: data.multiple,
         owner: userId,
         listingsParametersValues: data.parameters
           ? {

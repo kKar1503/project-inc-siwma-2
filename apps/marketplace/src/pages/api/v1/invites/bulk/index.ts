@@ -1,5 +1,4 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import client from '@inc/db';
 import { validateEmail, validateName } from '@/utils/api/validate';
@@ -16,15 +15,7 @@ import {
   EmailTemplate,
 } from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
-
-const bulkInviteSchema = z.array(
-  z.object({
-    mobileNumber: z.string().optional(),
-    name: z.string(),
-    email: z.string(),
-    company: z.string(),
-  })
-);
+import { inviteSchema } from '@/utils/api/server/zod';
 
 export default apiHandler({
   allowAdminsOnly: true,
@@ -38,7 +29,7 @@ export default apiHandler({
    * On the frontend, you may assume that all invites that aren't returned in the failed array were created successfully.
    */
 
-  const parsedInvites = bulkInviteSchema.parse(req.body);
+  const parsedInvites = inviteSchema.bulk.post.body.parse(req.body);
 
   const errors: Error[] = [];
 
@@ -120,7 +111,12 @@ export default apiHandler({
       )
   );
 
-  const successfullyCreatedInvites: { name: string; email: string; company: string, tokenHash: string }[] = [];
+  const successfullyCreatedInvites: {
+    name: string;
+    email: string;
+    company: string;
+    tokenHash: string;
+  }[] = [];
 
   const createInvites = async (invite: {
     email: string;
@@ -129,7 +125,7 @@ export default apiHandler({
     mobileNumber?: string;
   }) => {
     const { email, name, company, mobileNumber } = invite;
-    
+
     try {
       await client.$transaction(async (prisma) => {
         const companyObj = await prisma.companies.findFirst({
@@ -137,15 +133,15 @@ export default apiHandler({
             name: company,
           },
         });
-    
+
         if (!companyObj) {
           throw new NotFoundError(`Company named ${company} not found`);
         }
-    
+
         const tokenString = `${name}${email}${new Date().toISOString()}${Math.random()}`;
         const salt = await bcrypt.genSalt(10);
         const tokenHash = await bcrypt.hash(tokenString, salt);
-    
+
         await prisma.invite.create({
           data: {
             email,
@@ -156,12 +152,12 @@ export default apiHandler({
             expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
           },
         });
-    
+
         successfullyCreatedInvites.push({
           name,
           email,
           company,
-          tokenHash
+          tokenHash,
         });
       });
     } catch (e) {
@@ -172,10 +168,9 @@ export default apiHandler({
       }
     }
   };
-  
+
   const invitePromises = newUsers.map((invite) => createInvites(invite));
   await Promise.all(invitePromises);
-  
 
   // Send emails to new users, if any
   if (successfullyCreatedInvites.length > 0) {

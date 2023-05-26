@@ -9,6 +9,9 @@ import { ThemeComponent } from '@inc/ui';
 import { SnackbarProvider, MaterialDesignContent } from 'notistack';
 import { styled } from '@mui/material';
 import CloseButton from '@/components/marketplace/notification/CloseButton';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 // -- Type declarations --//
 // Page type
@@ -57,6 +60,7 @@ const DisallowAuthenticatedFallback = () => {
 const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppProps) => {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
+  const queryClient = new QueryClient();
   const { allowAuthenticated, allowNonAuthenticated } = Component;
   const CloseAlert =useCallback((key: any) => <CloseButton id={key} />, [])
 
@@ -77,8 +81,10 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
             allowAuthenticated={allowAuthenticated}
             allowNonAuthenticated={allowNonAuthenticated}
           >
+            <QueryClientProvider client={queryClient}>
             {getLayout(<Component {...pageProps} />)}
-          </AuthenticationGuard>
+            </QueryClientProvider>
+        </AuthenticationGuard>
         </SessionProvider>
       </SnackbarProvider>
     </ThemeComponent>
