@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import { config } from 'dotenv';
 import logger from './utils/logger';
 import typedSocket from './utils/typedSocket';
+import Papa, { spawnPapa } from './store';
 
 import socket from './socket';
 
@@ -34,6 +35,8 @@ setInterval(() => {
 
 httpServer.listen(port, host, () => {
   logger.info('Server has started.');
+
+  spawnPapa();
 
   socket(io);
 });

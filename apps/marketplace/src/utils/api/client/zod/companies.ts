@@ -11,8 +11,8 @@ const getCompany = z.object({
   website: z.string().nullable(),
   image: z.string().nullable(),
   visible: z.boolean(),
-  comments: z.string().nullable(),
-  createdAt: z.string().datetime(),
+  comments: z.string().nullable().optional(),
+  createdAt: z.string().datetime().optional(),
 });
 
 const getCompanies = getCompany.array();
@@ -21,6 +21,10 @@ const editCompany = getCompany;
 
 const toggleCompany = z.object({
   visible: z.boolean(),
+});
+
+const bookmarkCompany = z.object({
+  bookmarked: z.boolean(),
 });
 
 const deleteCompany = z.object({});
@@ -33,5 +37,6 @@ export default {
   getAll: getCompanies,
   update: editCompany,
   toggle: toggleCompany,
+  bookmark: bookmarkCompany,
   delete: deleteCompany,
 };
