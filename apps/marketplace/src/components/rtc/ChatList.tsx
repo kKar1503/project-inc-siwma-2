@@ -56,7 +56,7 @@ const ChatList = ({
   };
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette } = useTheme();
+  const { spacing, shape, shadows, palette, typography } = useTheme();
 
   const chatStyles = useMemo(() => {
     if (isSm) {
@@ -71,6 +71,14 @@ const ChatList = ({
         },
         activeChat: {
           color: palette.common.black,
+        },
+        listImage: {
+          width: 30,
+          height: 30,
+        },
+        companyText: {},
+        dateTime: {
+          fontSize: '0.6rem',
         },
       };
     }
@@ -98,6 +106,25 @@ const ChatList = ({
         searchBar: {
           fontSize: '11px',
         },
+        listImage: {
+          width: 37.5,
+          height: 37.5,
+        },
+        companyText: {
+          fontSize: '0.9rem',
+        },
+        dateTime: {
+          fontSize: '0.55rem',
+        },
+        productText: {
+          fontSize: '0.8rem',
+        },
+        latestMessage: {
+          fontSize: '0.7rem',
+        },
+        progressText: {
+          fontSize: '0.7rem',
+        },
       };
     }
     if (isLg) {
@@ -117,9 +144,70 @@ const ChatList = ({
           color: alpha(palette.common.black, 0.3),
           fontSize: '1rem',
         },
+        listImage: {
+          width: 50,
+          height: 50,
+        },
+        companyText: {
+          fontSize: typography.h6,
+        },
+        dateTime: {
+          fontSize: typography.body2,
+        },
+        productText: {
+          fontSize: typography.body1,
+        },
+        latestMessage: {
+          fontSize: typography.body1,
+        },
+        progressText: {
+          fontSize: typography.body2,
+        },
       };
     }
-    return undefined;
+    return {
+      listHeader: {
+        pb: spacing(1),
+        pt: spacing(2),
+        px: spacing(2),
+      },
+      listTitle: {
+        color: palette.common.black,
+        fontSize: '1.2rem',
+      },
+      activeChat: {
+        display: 'flex',
+        alignItems: 'center',
+        // Apply alpha transparency to black color
+        color: alpha(palette.common.black, 0.3),
+        fontSize: '0.7rem',
+      },
+      selectComponent: {
+        fontSize: '0.8rem',
+      },
+      searchBar: {
+        fontSize: '11px',
+      },
+      listImage: {
+        width: 37.5,
+        height: 37.5,
+      },
+      companyText: {
+        fontSize: '0.9rem',
+      },
+      dateTime: {
+        fontSize: '0.55rem',
+      },
+      productText: {
+        fontSize: '0.8rem',
+      },
+      latestMessage: {
+        fontSize: '0.7rem',
+      },
+      progressText: {
+        fontSize: '0.7rem',
+      },
+    };
   }, [isSm, isMd, isLg]);
 
   return (
@@ -217,7 +305,7 @@ const ChatList = ({
           })}
         />
       </Box>
-      <List sx={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
+      <List sx={{ overflowY: 'auto', maxHeight: '100%' }}>
         {filteredChats(category, chats).map((chat, index) => (
           <Box key={chat.id}>
             <ListItem
@@ -227,6 +315,7 @@ const ChatList = ({
               }}
               sx={({ palette }) => ({
                 background: activeItem === index ? palette.grey[300] : 'none',
+                height: '100%',
               })}
             >
               <ListItemAvatar>
@@ -234,8 +323,8 @@ const ChatList = ({
                   <Image
                     style={{ borderRadius: '100%' }}
                     src={chat.imageUrl}
-                    width={50}
-                    height={50}
+                    width={chatStyles?.listImage?.width}
+                    height={chatStyles?.listImage?.height}
                     alt="pic"
                   />
                 </Badge>
@@ -243,45 +332,44 @@ const ChatList = ({
               <ListItemText sx={({ spacing }) => ({ pl: spacing(1) })}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography
-                    sx={({ typography }) => ({
-                      fontSize: typography.h6,
+                    variant="h6"
+                    sx={{
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                       maxWidth: '55%',
-                    })}
+                      ...chatStyles?.companyText,
+                    }}
                   >
                     {chat.company}
                   </Typography>
-                  <Typography
-                    sx={({ typography }) => ({
-                      fontSize: typography.body2,
-                    })}
-                  >
+                  <Typography variant="body2" sx={chatStyles?.dateTime}>
                     {DateTime.fromISO(chat.date).setLocale('en').toFormat('f')}
                   </Typography>
                 </Box>
                 <Typography
-                  sx={({ typography }) => ({
-                    fontSize: typography.body1,
+                  variant="body1"
+                  sx={{
                     fontWeight: 500,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '95%',
-                  })}
+                    ...chatStyles?.productText,
+                  }}
                 >
                   {' '}
                   {chat.itemName}
                 </Typography>
                 <Typography
-                  sx={({ typography }) => ({
-                    fontSize: typography.body1,
+                  variant="body1"
+                  sx={{
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '95%',
-                  })}
+                    ...chatStyles?.latestMessage,
+                  }}
                 >
                   {chat.latestMessage}
                 </Typography>
@@ -290,6 +378,7 @@ const ChatList = ({
                   sx={{
                     fontSize: '0.8rem',
                     fontWeight: 500,
+                    ...chatStyles?.progressText,
                   }}
                 >
                   {chat.inProgress ? 'In progress' : `Offered price: $${chat.price}`}

@@ -282,6 +282,54 @@ const ChatRoom = () => {
       imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
       date: '2023-01-12T06:11:49.43002+00:00',
     },
+    {
+      id: '3',
+      company: 'LMN Corp',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '4',
+      company: 'LMN Corp',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '5',
+      company: 'LMN Corp',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '6',
+      company: 'LMN Corp',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
   ];
 
   return (
@@ -298,6 +346,8 @@ const ChatRoom = () => {
         sx={({ shadows }) => ({
           boxShadow: shadows[3],
           width: 1 / 3,
+          height: '100vh',
+          overflow: 'hidden',
         })}
       >
         <ChatList
