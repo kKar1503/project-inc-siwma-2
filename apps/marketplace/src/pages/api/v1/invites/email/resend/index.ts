@@ -1,6 +1,11 @@
 import { apiHandler } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError, EmailTemplateNotFoundError, EmailSendError } from '@inc/errors';
+import {
+  NotFoundError,
+  EmailTemplateNotFoundError,
+  EmailSendError,
+  ExpiredError,
+} from '@inc/errors';
 import {
   getContentFor,
   EmailTemplate,
@@ -8,6 +13,19 @@ import {
 } from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
 import { inviteSchema } from '@/utils/api/server/zod';
+import bcrypt from 'bcrypt';
+
+type Invite = {
+  name: string;
+  email: string;
+  companies: {
+    name: string;
+  };
+  id: number;
+  companyId: number;
+  expiry: Date;
+  phone: string | null;
+};
 
 async function getInvite(email: string) {
   const response = await PrismaClient.invite.findFirst({
@@ -18,19 +36,55 @@ async function getInvite(email: string) {
       id: true,
       name: true,
       email: true,
-      companies: true,
-      token: true,
+      phone: true,
+      companyId: true,
+      expiry: true,
+      companies: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
   if (!response) {
-    throw new NotFoundError('invite');
+    throw new NotFoundError('Invite');
   }
   return response;
+}
+
+async function regenerateInvite(invite: Invite, tokenHash: string) {
+  // delete the old invite
+  const deleteInvite = await PrismaClient.invite.delete({
+    where: {
+      id: invite.id,
+    },
+  });
+  // regenerate the invite with a new expiry date
+  const createInvite = await PrismaClient.invite.create({
+    data: {
+      name: invite.name,
+      email: invite.email,
+      phone: invite.phone,
+      companyId: invite.companyId,
+      token: tokenHash,
+      expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+    },
+  });
 }
 
 export default apiHandler({ allowAdminsOnly: true }).post(async (req, res) => {
   const { email } = inviteSchema.email.resend.body.parse(req.body);
   const invite = await getInvite(email);
+
+  if (invite.expiry < new Date()) {
+    throw new ExpiredError('Invite');
+  }
+
+  const tokenString = `${invite.name}${invite.email}${new Date().toISOString()}${Math.random()}`;
+  const salt = await bcrypt.genSalt(10);
+  const tokenHash = await bcrypt.hash(tokenString, salt);
+
+  regenerateInvite(invite, tokenHash);
 
   let content: string;
   try {
@@ -53,7 +107,7 @@ export default apiHandler({ allowAdminsOnly: true }).post(async (req, res) => {
         params: {
           name: invite.name,
           companyName: invite.companies.name,
-          registrationUrl: `${process.env.FRONTEND_URL}/register?token=${invite.token}`,
+          registrationUrl: `${process.env.FRONTEND_URL}/register?token=${tokenHash}`,
         },
       },
     ],
