@@ -14,7 +14,6 @@ import ListingForm, {
   ListingValidationProps,
 } from '@/components/marketplace/createListing/ListingForm';
 import ParameterForm, {
-  ParameterProps,
   ParameterFormProps,
   CategoryParametersProps,
   ParameterValidationProps,
@@ -30,8 +29,8 @@ import { useQuery } from 'react-query';
 // validation
 import fetchCategories from '@/middlewares/fetchCategories';
 import fetchParameters from '@/middlewares/fetchParameters';
-import Parameters from '@/utils/api/client/zod/parameters';
-import Listings from '@/utils/api/client/zod/listings';
+import createListing from '@/middlewares/createListing';
+import { parseToNumber } from '@/utils/api';
 
 export interface CreateListingProps {
   name: string;
@@ -39,15 +38,11 @@ export interface CreateListingProps {
   price: number;
   unitPrice?: boolean;
   negotiable?: boolean;
-  categoryId: string;
-  listingType: ListingTypeProps;
+  categoryId: number;
+  type: ListingTypeProps;
   images?: ImageProps[];
   coverImage?: null;
   parameters?: ParameterFormProps[];
-}
-
-export interface CreateListingDataProps {
-  data: CategoryProps[];
 }
 
 const useGetCategoriesQuery = () => {
@@ -65,9 +60,10 @@ const useGetParametersQuery = (ids: string, category: CategoryProps | null) => {
   return data;
 };
 
-const usePostListingQuery = (listing: CreateListingProps) => {
-  const { data } = useQuery('postListing', () => client.post(`/v1/listings`, listing));
-
+const usePostListingQuery = (listing: CreateListingProps | undefined) => {
+  const { data } = useQuery('postListing', () => createListing(listing), {
+    enabled: listing !== undefined,
+  });
   return data;
 };
 
@@ -78,13 +74,13 @@ const CreateListingPage = () => {
   const [images, setImages] = useState<ImageProps[]>([]);
   const [parameters, setParameters] = useState<ParameterFormProps[]>([]);
   const [parameterIDs, setParameterIDs] = useState<string>('');
-  const [detailedParameters, setDetailedParameters] = useState<ParameterProps[]>([]);
   const [categoryParameters, setCategoryParameters] = useState<CategoryParametersProps[]>([]);
   const [price, setPrice] = useState<number>(0);
   const [negotiable, setNegotiable] = useState<boolean>(false);
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [formData, setFormData] = useState<CreateListingProps>();
 
   // modals
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
@@ -101,6 +97,11 @@ const CreateListingPage = () => {
 
   const categoriesData = useGetCategoriesQuery();
   const parametersData = useGetParametersQuery(parameterIDs, category);
+  const postListingData = usePostListingQuery(formData);
+
+  if (postListingData) {
+    setOpenCreateModal(true);
+  }
 
   const sortCategoryParameters = async () => {
     const parameterIds: string[] = [];
@@ -159,44 +160,45 @@ const CreateListingPage = () => {
     categoryParameters.forEach((categoryParameter) => {
       const { parameterId, required } = categoryParameter;
       const parameter = parameters.find((parameter) => parameter.paramId === parameterId);
-      const detailedParameter = detailedParameters.find(
-        (parameter) => parameter.id === parameterId
-      );
 
-      if (!detailedParameter) {
-        return;
-      }
+      if (parametersData) {
+        const detailedParameter = parametersData.find((parameter) => parameter.id === parameterId);
 
-      if (!parameter && required) {
-        newParameterErrors.push({
-          parameterId,
-          error: `${detailedParameter.displayName} is required`,
-        });
-      }
+        if (!detailedParameter) {
+          return;
+        }
 
-      if (!parameter) {
-        return;
-      }
+        if (!parameter && required) {
+          newParameterErrors.push({
+            parameterId,
+            error: `${detailedParameter.displayName} is required`,
+          });
+        }
 
-      switch (detailedParameter.dataType) {
-        case 'number':
-          if (!Number.isNaN(parameter.value)) {
-            newParameterErrors.push({
-              parameterId,
-              error: `${detailedParameter.displayName} must be a number`,
-            });
-          }
-          break;
-        case 'boolean':
-          if (typeof parameter.value !== 'boolean') {
-            newParameterErrors.push({
-              parameterId,
-              error: `${detailedParameter.displayName} must be a boolean`,
-            });
-          }
-          break;
-        default:
-          break;
+        if (!parameter) {
+          return;
+        }
+
+        switch (detailedParameter.dataType) {
+          case 'number':
+            if (!Number.isNaN(parameter.value)) {
+              newParameterErrors.push({
+                parameterId,
+                error: `${detailedParameter.displayName} must be a number`,
+              });
+            }
+            break;
+          case 'boolean':
+            if (typeof parameter.value !== 'boolean') {
+              newParameterErrors.push({
+                parameterId,
+                error: `${detailedParameter.displayName} must be a boolean`,
+              });
+            }
+            break;
+          default:
+            break;
+        }
       }
     });
 
@@ -237,15 +239,14 @@ const CreateListingPage = () => {
       price,
       unitPrice,
       negotiable,
-      categoryId: category.id,
-      listingType,
+      categoryId: Number(category.id),
+      type: listingType,
       images,
       coverImage: null,
       parameters,
     };
 
-    await client.post(`v1/listings/`, formData);
-    setOpenCreateModal(true);
+    setFormData(formData);
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -255,7 +256,7 @@ const CreateListingPage = () => {
 
   useEffect(() => {
     sortCategoryParameters();
-  }, [category, parameterIDs]);
+  }, [category, parameterIDs, formData]);
 
   return (
     <Container maxWidth="lg" sx={{ boxShadow: 4, padding: 2, marginTop: 2, marginBottom: 2 }}>
