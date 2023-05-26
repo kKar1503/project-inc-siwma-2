@@ -330,6 +330,42 @@ const ChatRoom = () => {
       imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
       date: '2023-01-12T06:11:49.43002+00:00',
     },
+    {
+      id: '7',
+      company: 'LMN Corp',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '8',
+      company: 'LMN Corp',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '9',
+      company: 'LMN Corp',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
   ];
 
   return (
@@ -338,7 +374,7 @@ const ChatRoom = () => {
       sx={({ shadows, spacing }) => ({
         mx: spacing(5),
         mt: spacing(3),
-        height: '100%',
+        height: '100vh',
         overflowY: 'hidden',
       })}
     >
@@ -346,7 +382,7 @@ const ChatRoom = () => {
         sx={({ shadows }) => ({
           boxShadow: shadows[3],
           width: 1 / 3,
-          height: '100vh',
+          height: '90%',
           overflow: 'hidden',
         })}
       >
@@ -358,7 +394,7 @@ const ChatRoom = () => {
           }}
         />
       </Box>
-      <Box sx={{ width: 2 / 3 }}>
+      <Box sx={{ width: 2 / 3, height: '90%' }}>
         <ChatHeader profilePic="" companyName="Hi Metals PTE LTD" available />
         <ChatSubHeader
           itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
