@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import { TextField, alpha } from '@mui/material';
 import Typography from '@mui/material/Typography';
@@ -13,6 +13,8 @@ import Divider from '@mui/material/Divider';
 import Badge from '@mui/material/Badge';
 import Image from 'next/image';
 import { DateTime } from 'luxon';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
 
 export interface ChatListProps {
   id: string;
@@ -53,6 +55,111 @@ const ChatList = ({
     return filteredItems;
   };
 
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, shape, shadows, palette } = useTheme();
+
+  const chatListHeaderStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        pb: spacing(2),
+        pt: spacing(2),
+        px: spacing(3),
+      };
+    }
+    if (isMd) {
+      return {
+        pb: spacing(1),
+        pt: spacing(2),
+        px: spacing(2),
+      };
+    }
+    if (isLg) {
+      return {
+        pb: spacing(2),
+        pt: spacing(2),
+        px: spacing(3),
+      };
+    }
+    return undefined;
+  }, [isSm, isMd, isLg]);
+
+  const chatListTitleStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        color: palette.common.black,
+      };
+    }
+    if (isMd) {
+      return {
+        color: palette.common.black,
+        fontSize: '1.2rem',
+      };
+    }
+    if (isLg) {
+      return {
+        color: palette.common.black,
+      };
+    }
+    return undefined;
+  }, [isSm, isMd, isLg]);
+
+  const activeChatsStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        color: palette.common.black,
+      };
+    }
+    if (isMd) {
+      return {
+        display: 'flex',
+        alignItems: 'center',
+        // Apply alpha transparency to black color
+        color: alpha(palette.common.black, 0.3),
+        fontSize: '0.7rem',
+      };
+    }
+    if (isLg) {
+      return {
+        display: 'flex',
+        alignItems: 'center',
+        // Apply alpha transparency to black color
+        color: alpha(palette.common.black, 0.3),
+        fontSize: '1rem',
+      };
+    }
+    return undefined;
+  }, [isSm, isMd, isLg]);
+
+  const selectComponentStyles = useMemo(() => {
+    if (isSm) {
+      return {};
+    }
+    if (isMd) {
+      return {
+        fontSize: '0.8rem',
+      };
+    }
+    if (isLg) {
+      return {};
+    }
+    return undefined;
+  }, [isSm, isMd, isLg]);
+
+  const searchBarComponentStyles = useMemo(() => {
+    if (isSm) {
+      return {};
+    }
+    if (isMd) {
+      return {
+        fontSize: '11px',
+      };
+    }
+    if (isLg) {
+      return {};
+    }
+    return undefined;
+  }, [isSm, isMd, isLg]);
+
   return (
     <Box
       sx={({ palette }) => ({
@@ -60,13 +167,7 @@ const ChatList = ({
         height: '100%',
       })}
     >
-      <Box
-        sx={({ spacing }) => ({
-          pb: spacing(2),
-          pt: spacing(2),
-          px: spacing(3),
-        })}
-      >
+      <Box sx={chatListHeaderStyles}>
         <Box
           sx={({ spacing }) => ({
             display: 'flex',
@@ -75,24 +176,10 @@ const ChatList = ({
             pl: spacing(1),
           })}
         >
-          <Typography
-            variant="h5"
-            sx={({ palette }) => ({
-              color: palette.common.black,
-            })}
-          >
+          <Typography variant="h5" sx={chatListTitleStyles}>
             Conversations
           </Typography>
-          <Typography
-            variant="subtitle2"
-            sx={({ palette }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              // Apply alpha transparency to black color
-              color: alpha(palette.common.black, 0.3),
-              fontSize: '1rem',
-            })}
-          >
+          <Typography variant="subtitle2" sx={activeChatsStyles}>
             {filteredChats(category, chats).length} ACTIVE{' '}
             {filteredChats(category, chats).length !== 1 ? 'CHATS' : 'CHAT'}
           </Typography>
@@ -126,6 +213,7 @@ const ChatList = ({
                 border: spacing(0),
               },
               fontWeight: 500,
+              ...selectComponentStyles,
             })}
           >
             <MenuItem value="all">ALL CHATS</MenuItem>
@@ -135,7 +223,10 @@ const ChatList = ({
         </FormControl>
 
         <TextField
-          InputProps={{ disableUnderline: true }}
+          InputProps={{
+            disableUnderline: true,
+            style: searchBarComponentStyles,
+          }}
           placeholder="Search messages, listings, usernames"
           variant="filled"
           fullWidth
