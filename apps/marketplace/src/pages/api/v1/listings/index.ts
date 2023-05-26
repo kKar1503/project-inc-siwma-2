@@ -81,7 +81,7 @@ function postSortOptions(
   }
 }
 
-function sortOptions(sortByStr: string | undefined) {
+export function sortOptions(sortByStr: string | undefined) {
   const sortBy = sortByStr ? sortByStr.toLowerCase() : undefined;
   return {
     orderBy: orderByOptions(sortBy),
