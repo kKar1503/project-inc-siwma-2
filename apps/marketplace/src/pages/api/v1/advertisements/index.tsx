@@ -71,7 +71,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate admin
-  const isAdmin = req.token?.user.permissions === true;
+  const isAdmin = req.token?.user.permissions === 1;
   const { limit, lastIdPointer } = advertisementSchema.get.query.parse(req.query);
 
   // Get advertisements

@@ -36,7 +36,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const id = parseToNumber(req.query.id as string, 'id');
 
   // Check if user is admin
-  const isAdmin = req.token?.user.permissions === true;
+  const isAdmin = req.token?.user.permissions === 1;
 
   // Get advertisement
   const advertisement = await PrismaClient.advertisements.findUnique({
