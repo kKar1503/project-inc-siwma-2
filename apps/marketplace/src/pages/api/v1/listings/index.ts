@@ -1,32 +1,8 @@
-import {
-  apiHandler,
-  formatAPIResponse,
-  parseToNumber,
-  zodParseToBoolean,
-  zodParseToInteger,
-  zodParseToNumber,
-} from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
-import { z } from 'zod';
-
-const getQueryParameters = z.object({
-  lastIdPointer: z.string().transform(zodParseToInteger).optional(),
-  limit: z.string().transform(zodParseToInteger).optional(),
-  matching: z.string().optional(),
-  includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z.preprocess((value) => typeof value === 'string' ? JSON.parse(decodeURI(value)) : undefined, z.object({
-    paramId: z.string().transform(zodParseToInteger),
-    value: z.string(),
-  }).optional()),
-  category: z.string().transform(zodParseToInteger).optional(),
-  negotiable: z.string().transform(zodParseToBoolean).optional(),
-  minPrice: z.string().transform(zodParseToNumber).optional(),
-  maxPrice: z.string().transform(zodParseToNumber).optional(),
-  sortBy: z.string().optional(),
-});
 
 export type ListingWithParameters = Listing & {
   listingsParametersValues: Array<{
@@ -92,8 +68,9 @@ function ratingSortFn(a: ListingWithParameters, b: ListingWithParameters): numbe
   return b.rating - a.rating;
 }
 
-function postSortOptions(sortBy: string | undefined): (arr: ListingWithParameters[]) => ListingWithParameters[] {
-
+function postSortOptions(
+  sortBy: string | undefined
+): (arr: ListingWithParameters[]) => ListingWithParameters[] {
   switch (sortBy) {
     case 'rating_desc':
       return (arr) => arr.sort(ratingSortFn);
@@ -105,7 +82,6 @@ function postSortOptions(sortBy: string | undefined): (arr: ListingWithParameter
 }
 
 function sortOptions(sortByStr: string | undefined) {
-
   const sortBy = sortByStr ? sortByStr.toLowerCase() : undefined;
   return {
     orderBy: orderByOptions(sortBy),
@@ -116,7 +92,7 @@ function sortOptions(sortByStr: string | undefined) {
 // -- Helper functions -- //
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
-  includeParameters: boolean,
+  includeParameters: boolean
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
@@ -163,11 +139,10 @@ export async function formatSingleListingResponse(
   return formattedListing;
 }
 
-
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
     const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
@@ -182,17 +157,17 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-            some: {
-              parameterId: queryParams.params.paramId,
-              value: queryParams.params.value,
-            },
-          }
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
           : undefined,
       },
       orderBy,
@@ -235,7 +210,7 @@ export default apiHandler()
           reviewCount,
           multiple,
         };
-      }),
+      })
     );
 
     const sortedListings = postSort(listingsWithRatingsAndReviewCount);
@@ -243,8 +218,8 @@ export default apiHandler()
     // Format the listings
     const formattedListings = await Promise.all(
       sortedListings.map((listing) =>
-        formatSingleListingResponse(listing, queryParams.includeParameters),
-      ),
+        formatSingleListingResponse(listing, queryParams.includeParameters)
+      )
     );
 
     res.status(200).json(formatAPIResponse(formattedListings));
@@ -287,15 +262,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
