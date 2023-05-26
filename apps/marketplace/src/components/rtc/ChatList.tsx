@@ -58,104 +58,66 @@ const ChatList = ({
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette } = useTheme();
 
-  const chatListHeaderStyles = useMemo(() => {
+  const chatStyles = useMemo(() => {
     if (isSm) {
       return {
-        pb: spacing(2),
-        pt: spacing(2),
-        px: spacing(3),
+        listHeader: {
+          pb: spacing(2),
+          pt: spacing(2),
+          px: spacing(3),
+        },
+        listTitle: {
+          color: palette.common.black,
+        },
+        activeChat: {
+          color: palette.common.black,
+        },
       };
     }
     if (isMd) {
       return {
-        pb: spacing(1),
-        pt: spacing(2),
-        px: spacing(2),
+        listHeader: {
+          pb: spacing(1),
+          pt: spacing(2),
+          px: spacing(2),
+        },
+        listTitle: {
+          color: palette.common.black,
+          fontSize: '1.2rem',
+        },
+        activeChat: {
+          display: 'flex',
+          alignItems: 'center',
+          // Apply alpha transparency to black color
+          color: alpha(palette.common.black, 0.3),
+          fontSize: '0.7rem',
+        },
+        selectComponent: {
+          fontSize: '0.8rem',
+        },
+        searchBar: {
+          fontSize: '11px',
+        },
       };
     }
     if (isLg) {
       return {
-        pb: spacing(2),
-        pt: spacing(2),
-        px: spacing(3),
+        listHeader: {
+          pb: spacing(2),
+          pt: spacing(2),
+          px: spacing(3),
+        },
+        listTitle: {
+          color: palette.common.black,
+        },
+        activeChat: {
+          display: 'flex',
+          alignItems: 'center',
+          // Apply alpha transparency to black color
+          color: alpha(palette.common.black, 0.3),
+          fontSize: '1rem',
+        },
       };
-    }
-    return undefined;
-  }, [isSm, isMd, isLg]);
-
-  const chatListTitleStyles = useMemo(() => {
-    if (isSm) {
-      return {
-        color: palette.common.black,
-      };
-    }
-    if (isMd) {
-      return {
-        color: palette.common.black,
-        fontSize: '1.2rem',
-      };
-    }
-    if (isLg) {
-      return {
-        color: palette.common.black,
-      };
-    }
-    return undefined;
-  }, [isSm, isMd, isLg]);
-
-  const activeChatsStyles = useMemo(() => {
-    if (isSm) {
-      return {
-        color: palette.common.black,
-      };
-    }
-    if (isMd) {
-      return {
-        display: 'flex',
-        alignItems: 'center',
-        // Apply alpha transparency to black color
-        color: alpha(palette.common.black, 0.3),
-        fontSize: '0.7rem',
-      };
-    }
-    if (isLg) {
-      return {
-        display: 'flex',
-        alignItems: 'center',
-        // Apply alpha transparency to black color
-        color: alpha(palette.common.black, 0.3),
-        fontSize: '1rem',
-      };
-    }
-    return undefined;
-  }, [isSm, isMd, isLg]);
-
-  const selectComponentStyles = useMemo(() => {
-    if (isSm) {
-      return {};
-    }
-    if (isMd) {
-      return {
-        fontSize: '0.8rem',
-      };
-    }
-    if (isLg) {
-      return {};
-    }
-    return undefined;
-  }, [isSm, isMd, isLg]);
-
-  const searchBarComponentStyles = useMemo(() => {
-    if (isSm) {
-      return {};
-    }
-    if (isMd) {
-      return {
-        fontSize: '11px',
-      };
-    }
-    if (isLg) {
-      return {};
     }
     return undefined;
   }, [isSm, isMd, isLg]);
@@ -167,7 +129,7 @@ const ChatList = ({
         height: '100%',
       })}
     >
-      <Box sx={chatListHeaderStyles}>
+      <Box sx={chatStyles?.listHeader}>
         <Box
           sx={({ spacing }) => ({
             display: 'flex',
@@ -176,10 +138,10 @@ const ChatList = ({
             pl: spacing(1),
           })}
         >
-          <Typography variant="h5" sx={chatListTitleStyles}>
+          <Typography variant="h5" sx={chatStyles?.listTitle}>
             Conversations
           </Typography>
-          <Typography variant="subtitle2" sx={activeChatsStyles}>
+          <Typography variant="subtitle2" sx={chatStyles?.activeChat}>
             {filteredChats(category, chats).length} ACTIVE{' '}
             {filteredChats(category, chats).length !== 1 ? 'CHATS' : 'CHAT'}
           </Typography>
@@ -213,7 +175,7 @@ const ChatList = ({
                 border: spacing(0),
               },
               fontWeight: 500,
-              ...selectComponentStyles,
+              ...chatStyles?.searchBar,
             })}
           >
             <MenuItem value="all">ALL CHATS</MenuItem>
@@ -225,7 +187,7 @@ const ChatList = ({
         <TextField
           InputProps={{
             disableUnderline: true,
-            style: searchBarComponentStyles,
+            style: chatStyles?.searchBar,
           }}
           placeholder="Search messages, listings, usernames"
           variant="filled"
@@ -255,12 +217,6 @@ const ChatList = ({
           })}
         />
       </Box>
-      {/* 
-      <Divider
-        sx={({ palette }) => ({
-          borderColor: palette.grey[600],
-        })}
-      /> */}
       <List sx={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
         {filteredChats(category, chats).map((chat, index) => (
           <Box key={chat.id}>
