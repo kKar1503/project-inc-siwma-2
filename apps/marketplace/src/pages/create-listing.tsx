@@ -56,9 +56,10 @@ const useGetCategoriesQuery = () => {
   return data;
 };
 
-const useGetParametersQuery = (ids: string) => {
-  const { data } = useQuery('parameters', () => fetchParameters(ids), {
-    enabled: ids !== '',
+// run this query when category is selected
+const useGetParametersQuery = (ids: string, category: CategoryProps | null) => {
+  const { data } = useQuery(['parameters', ids, category], () => fetchParameters(ids), {
+    enabled: ids !== '' || category !== null,
   });
 
   return data;
@@ -99,7 +100,7 @@ const CreateListingPage = () => {
   });
 
   const categoriesData = useGetCategoriesQuery();
-  const parametersData = useGetParametersQuery(parameterIDs);
+  const parametersData = useGetParametersQuery(parameterIDs, category);
 
   const sortCategoryParameters = async () => {
     const parameterIds: string[] = [];
