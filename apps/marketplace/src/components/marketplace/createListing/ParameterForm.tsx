@@ -11,8 +11,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import MenuItem from '@mui/material/MenuItem';
+import fetchParameters from '@/middlewares/fetchParameters';
 import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { useQuery } from 'react-query';
 
 export type dataTypeProps = 'string' | 'number' | 'boolean';
 

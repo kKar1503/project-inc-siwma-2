@@ -5,6 +5,8 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+
+// components
 import ListingTypeForm, {
   ListingTypeProps,
 } from '@/components/marketplace/createListing/ListingTypeForm';
@@ -23,12 +25,13 @@ import ImageUploadForm, {
 import CategoryForm, { CategoryProps } from '@/components/marketplace/createListing/CategoryForm';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import OnCreateModal from '@/components/modal/OnCreateModal';
+import { useQuery } from 'react-query';
 
 // validation
-import Categories from '@/utils/api/client/zod/categories';
+import fetchCategories from '@/middlewares/fetchCategories';
+import fetchParameters from '@/middlewares/fetchParameters';
 import Parameters from '@/utils/api/client/zod/parameters';
 import Listings from '@/utils/api/client/zod/listings';
-import { useQuery } from 'react-query';
 
 export interface CreateListingProps {
   name: string;
@@ -47,30 +50,16 @@ export interface CreateListingDataProps {
   data: CategoryProps[];
 }
 
-export const getServerSideProps = async () => {
-  const { data } = await client.get(`/v1/categories?includeParameters=${true}`);
-
-  // const parsedCategories = categories.getAll.parse(data.data);
-  // console.log(parsedCategories);
-  // console.log(data.data);
-
-  return {
-    props: {
-      data: data.data,
-    },
-  };
-};
-
 const useGetCategoriesQuery = () => {
-  const { data } = useQuery('categories', () =>
-    client.get(`/v1/categories?includeParameters=${true}`)
-  );
+  const { data } = useQuery('categories', () => fetchCategories());
 
   return data;
 };
 
 const useGetParametersQuery = (ids: string) => {
-  const { data } = useQuery('parameters', () => client.get(`/v1/parameters?ids=${ids}`));
+  const { data } = useQuery('parameters', () => fetchParameters(ids), {
+    enabled: ids !== '',
+  });
 
   return data;
 };
@@ -81,12 +70,13 @@ const usePostListingQuery = (listing: CreateListingProps) => {
   return data;
 };
 
-const CreateListingPage = ({ data }: CreateListingDataProps) => {
+const CreateListingPage = () => {
   // form data
   const [listingType, setListingType] = useState<ListingTypeProps>('BUY');
   const [category, setCategory] = useState<CategoryProps | null>(null);
   const [images, setImages] = useState<ImageProps[]>([]);
   const [parameters, setParameters] = useState<ParameterFormProps[]>([]);
+  const [parameterIDs, setParameterIDs] = useState<string>('');
   const [detailedParameters, setDetailedParameters] = useState<ParameterProps[]>([]);
   const [categoryParameters, setCategoryParameters] = useState<CategoryParametersProps[]>([]);
   const [price, setPrice] = useState<number>(0);
@@ -108,6 +98,9 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
     priceError: '',
   });
 
+  const categoriesData = useGetCategoriesQuery();
+  const parametersData = useGetParametersQuery(parameterIDs);
+
   const sortCategoryParameters = async () => {
     const parameterIds: string[] = [];
     const categoryParameters: CategoryParametersProps[] = [];
@@ -120,12 +113,9 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
       });
 
       const parameterIdsString = parameterIds.toString();
-      const { data } = await client.get(`/v1/parameters?id=${parameterIdsString}`);
-
-      const parametersData = Parameters.getAll.parse(data.data);
 
       setCategoryParameters(categoryParameters);
-      setDetailedParameters(parametersData);
+      setParameterIDs(parameterIdsString);
     }
   };
 
@@ -264,7 +254,7 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
 
   useEffect(() => {
     sortCategoryParameters();
-  }, [category]);
+  }, [category, parameterIDs]);
 
   return (
     <Container maxWidth="lg" sx={{ boxShadow: 4, padding: 2, marginTop: 2, marginBottom: 2 }}>
@@ -283,12 +273,14 @@ const CreateListingPage = ({ data }: CreateListingDataProps) => {
           </Grid>
 
           <ListingTypeForm setListingType={setListingType} />
-          {data && <CategoryForm setCategory={setCategory} data={data} error={categoryError} />}
+          {categoriesData && (
+            <CategoryForm setCategory={setCategory} data={categoriesData} error={categoryError} />
+          )}
           <ImageUploadForm setImages={setImages} />
-          {category && (
+          {category && parametersData && (
             <ParameterForm
               setParameters={setParameters}
-              data={detailedParameters}
+              data={parametersData}
               errors={parameterErrors}
             />
           )}
