@@ -54,30 +54,59 @@ const ChatList = ({
   };
 
   return (
-    <Box>
-      <Box sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0 }}>
+    <Box
+      sx={({ palette }) => ({
+        backgroundColor: palette.common.white,
+        height: '100%',
+      })}
+    >
+      <Box
+        sx={({ spacing }) => ({
+          pb: spacing(2),
+          pt: spacing(2),
+          px: spacing(3),
+        })}
+      >
+        <Box
+          sx={({ spacing }) => ({
+            display: 'flex',
+            justifyContent: 'space-between',
+            mb: 0,
+            pl: spacing(1),
+          })}
+        >
           <Typography
-            variant="h6"
+            variant="h5"
             sx={({ palette }) => ({
               color: palette.common.black,
             })}
           >
             Conversations
           </Typography>
-          <Typography variant="subtitle1" sx={{ display: 'flex', alignItems: 'center' }}>
-            {filteredChats(category, chats).length} Active Chats
+          <Typography
+            variant="subtitle2"
+            sx={({ palette }) => ({
+              display: 'flex',
+              alignItems: 'center',
+              // Apply alpha transparency to black color
+              color: alpha(palette.common.black, 0.3),
+              fontSize: '1rem',
+            })}
+          >
+            {filteredChats(category, chats).length} ACTIVE{' '}
+            {filteredChats(category, chats).length !== 1 ? 'CHATS' : 'CHAT'}
           </Typography>
         </Box>
         <FormControl
           variant="outlined"
           size="small"
-          sx={{
-            width: '120px',
+          sx={({ spacing }) => ({
+            width: 'fit-content',
             background: 'none',
             border: 'none',
             mb: 1,
-          }}
+            pl: spacing(1),
+          })}
         >
           <Select
             value={category}
@@ -96,17 +125,18 @@ const ChatList = ({
               '&::after': {
                 border: spacing(0),
               },
+              fontWeight: 500,
             })}
           >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="Buying">Buying</MenuItem>
-            <MenuItem value="Selling">Selling</MenuItem>
+            <MenuItem value="all">ALL CHATS</MenuItem>
+            <MenuItem value="Buying">BUYING</MenuItem>
+            <MenuItem value="Selling">SELLING</MenuItem>
           </Select>
         </FormControl>
 
         <TextField
           InputProps={{ disableUnderline: true }}
-          placeholder="Search Message,Listings,username"
+          placeholder="Search messages, listings, usernames"
           variant="filled"
           fullWidth
           sx={({ spacing }) => ({
@@ -134,12 +164,12 @@ const ChatList = ({
           })}
         />
       </Box>
-
+      {/* 
       <Divider
         sx={({ palette }) => ({
           borderColor: palette.grey[600],
         })}
-      />
+      /> */}
       <List sx={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
         {filteredChats(category, chats).map((chat, index) => (
           <Box key={chat.id}>
@@ -163,11 +193,15 @@ const ChatList = ({
                   />
                 </Badge>
               </ListItemAvatar>
-              <ListItemText>
+              <ListItemText sx={({ spacing }) => ({ pl: spacing(1) })}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography
                     sx={({ typography }) => ({
                       fontSize: typography.h6,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      maxWidth: '55%',
                     })}
                   >
                     {chat.company}
@@ -183,6 +217,11 @@ const ChatList = ({
                 <Typography
                   sx={({ typography }) => ({
                     fontSize: typography.body1,
+                    fontWeight: 500,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '95%',
                   })}
                 >
                   {' '}
@@ -191,23 +230,31 @@ const ChatList = ({
                 <Typography
                   sx={({ typography }) => ({
                     fontSize: typography.body1,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '95%',
                   })}
                 >
                   {chat.latestMessage}
                 </Typography>
                 <Typography
-                  sx={({ typography }) => ({
-                    fontSize: typography.body2,
-                  })}
+                  variant="body2"
+                  sx={{
+                    fontSize: '0.8rem',
+                    fontWeight: 500,
+                  }}
                 >
                   {chat.inProgress ? 'In progress' : `Offered price: $${chat.price}`}
                 </Typography>
               </ListItemText>
             </ListItem>
-            {filteredChats(category, chats).length - 1 !== index && (
+            {filteredChats(category, chats).length !== index && (
               <Divider
                 sx={({ palette }) => ({
-                  borderColor: palette.grey[600],
+                  borderColor: palette.grey[400],
+                  width: '95%',
+                  m: 'auto',
                 })}
               />
             )}

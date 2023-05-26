@@ -250,7 +250,8 @@ const ChatRoom = () => {
       company: 'ABC Corp',
       category: 'Buying',
       itemName: 'Mild Steel Channel',
-      latestMessage: 'Hey, are you still interested in buying?',
+      latestMessage:
+        'Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?',
       price: 100,
       inProgress: true,
       badgeContent: messagesOfChatRoomId1.filter((message) => !message.read).length,
@@ -261,7 +262,7 @@ const ChatRoom = () => {
       id: '2',
       company: 'XYZ Corp',
       category: 'Buying',
-      latestMessage: 'Sure, what is the price?',
+      latestMessage: 'Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem IpsumvLorem Ipsum ',
       price: 50,
       inProgress: true,
       itemName: 'Product Name 2',
@@ -289,7 +290,7 @@ const ChatRoom = () => {
       sx={({ shadows, spacing }) => ({
         mx: spacing(5),
         mt: spacing(3),
-        height: '100vh',
+        height: '100%',
         overflowY: 'hidden',
       })}
     >
