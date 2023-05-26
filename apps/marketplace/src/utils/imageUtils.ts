@@ -17,7 +17,7 @@ const toArrayIfNot = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value :
 
 export const getFilesFromRequest = async (
   req: NextApiRequest,
-  fileName = 'file',
+  fileName = 'file'
 ): Promise<File[]> => {
   const { files } = await imageUtils(req);
   if (files === undefined) return [];
@@ -45,7 +45,10 @@ export const fileToS3Object = (file: File): S3ObjectBuilder => {
   return new S3ObjectBuilder(buffer, metadata);
 };
 
-export const loadImage = async <T extends Record<string, unknown>>(source: T, bucket: S3BucketService, imageKey: string,
+export const loadImage = async <T extends Record<string, unknown>>(
+  source: T,
+  bucket: S3BucketService,
+  imageKey: string
 ): Promise<T> => {
   if (typeof source[imageKey] !== 'string') return source;
   try {
@@ -57,7 +60,7 @@ export const loadImage = async <T extends Record<string, unknown>>(source: T, bu
   } catch (e) {
     return {
       ...source,
-      [imageKey]: 'https://th.bing.com/th/id/OIP.M6YL-v5sJZMqYvUlxtdvrwHaEK?w=284&h=180&c=7&r=0&o=5&pid=1.7',
+      [imageKey]: null,
     };
   }
 };
@@ -65,5 +68,7 @@ export const loadImage = async <T extends Record<string, unknown>>(source: T, bu
 export const loadImageBuilder =
   <T extends Record<string, unknown>>(
     bucket: S3BucketService,
-    imageKey: string,
-  ): ((source: T) => Promise<T>) => async (source) => loadImage(source, bucket, imageKey);
+    imageKey: string
+  ): ((source: T) => Promise<T>) =>
+  async (source) =>
+    loadImage(source, bucket, imageKey);
