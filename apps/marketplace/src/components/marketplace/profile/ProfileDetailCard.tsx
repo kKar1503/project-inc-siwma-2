@@ -10,7 +10,10 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { StarsRating } from '@inc/ui';
+import { useTheme } from '@mui/material/styles';
+import { useMemo } from 'react';
 
 export type ProfileDetailCardProps = {
   username: string;
@@ -47,8 +50,33 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
     ownerId,
   } = data;
 
+  const { spacing } = useTheme();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const styleProfileCard = useMemo(() => {
+    if (isSm || isMd) {
+      return {
+        width: '100%',
+        height: '100%',
+        mb: spacing(3),
+      };
+    }
+    if (isLg) {
+      return {
+        width: '25%',
+        height: '100%',
+        mb: spacing(0),
+      };
+    }
+    return {
+      width: '100%',
+      height: '100%',
+      mb: spacing(3),
+    };
+  }, [isSm, isMd, isLg]);
+
   return (
-    <Card sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={styleProfileCard}>
       <CardHeader
         titleTypographyProps={{
           fontSize: 16,
@@ -134,7 +162,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               borderRadius: spacing(2),
               p: '1px',
               color: palette.common.white,
-              backgroundColor: palette.secondary.main
+              backgroundColor: palette.secondary.main,
             })}
           />
           <Typography

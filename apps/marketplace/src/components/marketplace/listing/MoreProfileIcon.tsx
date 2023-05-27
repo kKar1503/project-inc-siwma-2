@@ -48,7 +48,7 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
 
   return (
     <Box>
-      <IconButton onClick={handleClick} size="small" sx={{ ml: 'auto' }}>
+      <IconButton onClick={handleClick} size="small">
         <MoreVertIcon sx={({ palette }) => ({ color: palette.common.black })} />
       </IconButton>
 

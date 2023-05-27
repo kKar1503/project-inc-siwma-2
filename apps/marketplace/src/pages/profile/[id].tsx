@@ -12,10 +12,11 @@ import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
 import { GetServerSidePropsContext } from 'next';
-import { useState, SyntheticEvent } from 'react';
+import { useState, SyntheticEvent, useMemo } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import fetchUser from '@/middlewares/fetchUser';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
 // eslint-disable-next-line no-unused-vars
 
@@ -435,6 +436,8 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const loggedUserUuid = user.data?.user.id as string;
 
   const theme = useTheme();
+  const { spacing } = theme;
+
   const [value, setValue] = useState(0);
   // when filter/sorts are called use set states to set the new listings/reviews again
   const [listings, setListings] = useState(serverSideListings);
@@ -443,6 +446,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const [sortByListings, setSortByListings] = useState('');
   const [filterReviews, setFilterReviews] = useState('');
   const [sortByReviews, setSortByReviews] = useState('');
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const handleFilterListings = (filter: string) => {
     setFilterListings(filter);
@@ -475,6 +479,41 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
     setValue(index);
   };
 
+  const spaceStyle = useMemo(() => {
+    if (isSm) {
+      return {
+        py: spacing(3),
+        px: '20px',
+        height: '100%;',
+        width: '100%',
+      };
+    }
+    if (isMd) {
+      return {
+        py: spacing(3),
+        px: '40px',
+        height: '100%;',
+        width: '100%',
+      };
+    }
+    if (isLg) {
+      return {
+        py: spacing(3),
+        px: '60px',
+        height: '100%;',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+      };
+    }
+    return {
+      py: spacing(3),
+      px: '20px',
+      height: '100%;',
+      width: '100%',
+    };
+  }, [isSm, isMd, isLg]);
+
   return (
     <>
       <Head>
@@ -484,22 +523,11 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Box
-          sx={({ spacing }) => ({
-            pt: spacing(3),
-            pl: '160px',
-            pr: '160px',
-            pb: spacing(3),
-            height: '100vh;',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-          })}
-        >
+        <Box sx={spaceStyle}>
           <ProfileDetailCard data={data} />
           <Box
             sx={{
-              width: '73%',
+              width: isLg ? '73%' : '100%',
               height: 'full',
               bgcolor: theme.palette.common.white,
               borderRadius: theme.shape,
@@ -549,14 +577,14 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               />
             </Tabs>
             <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
-              <TabPanel value={value} index={0} dir={theme.direction} height="90.5vh">
+              <TabPanel value={value} index={0} dir={theme.direction} height="100vh">
                 <ListingsTab
                   allListings={listings}
                   filterListings={handleFilterListings}
                   sortByListings={handleSortByListings}
                 />
               </TabPanel>
-              <TabPanel value={value} index={1} dir={theme.direction} height="90.5vh">
+              <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
                 <ReviewsTab
                   allReviews={reviews}
                   userRating={data.rating}

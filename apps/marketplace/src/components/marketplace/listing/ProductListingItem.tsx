@@ -10,7 +10,9 @@ import { red } from '@mui/material/colors';
 import { StarsRating } from '@inc/ui';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
@@ -63,11 +65,12 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
   );
 
   const theme = useTheme();
+  const [isSm] = useResponsiveness(['sm']);
 
   return (
     <Card
       sx={{
-        maxWidth: 288,
+        maxWidth: 500,
         maxHeight: '100%',
         border: `1px solid ${theme.palette.grey[400]}`,
         transition: 'transform .2s',
@@ -78,6 +81,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
     >
       <Link style={{ textDecoration: 'none' }} href={`/profile/${ownerId}`}>
         <CardHeader
+          style={{ marginLeft: '-10px' }}
           avatar={
             <Avatar sx={{ bgcolor: red[500] }} src={profileImg}>
               {ownerFullName.charAt(0)}
@@ -85,38 +89,60 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
           }
           title={ownerFullName}
           titleTypographyProps={{
-            fontSize: 16,
+            fontSize: isSm ? 14 : 16,
             fontWeight: 'bold',
           }}
           subheader={companyName}
+          subheaderTypographyProps={{
+            fontSize: isSm ? 12 : 14,
+          }}
         />
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}>
-        <CardMedia component="img" height="288" image={img} />
+        <CardMedia component="img" height="200" image={img} />
       </Link>
       <CardContent
         sx={({ spacing }) => ({
-          pl: spacing(2),
+          pl: isSm ? spacing(1) : spacing(2),
         })}
       >
         <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}>
           <Box
-            sx={({ spacing }) => ({
+            sx={{
               display: 'flex',
-              pb: spacing(2),
-            })}
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              pb: 1,
+            }}
           >
-            {type === 'Buy' && <BuyBadge />}
-            {type === 'Sell' && <SellBadge />}
-            {negotiable && <NegotiableBadge />}
+            <Grid container alignItems={isSm ? 'flex-start' : 'center'} spacing={1}>
+              {type === 'Buy' && (
+                <Grid item>
+                  <BuyBadge />
+                </Grid>
+              )}
+              {type === 'Sell' && (
+                <Grid item>
+                  <SellBadge />
+                </Grid>
+              )}
+              {negotiable && (
+                <Grid item>
+                  <NegotiableBadge />
+                </Grid>
+              )}
+            </Grid>
 
-            <Box sx={{ ml: 'auto' }}>
-              {isOwnProfile && <MoreProfileIcon productId={productId} />}
-            </Box>
+            {isOwnProfile && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <MoreProfileIcon productId={productId} />
+              </Box>
+            )}
           </Box>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
             <Typography
@@ -124,21 +150,21 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
               variant="body2"
               color={theme.palette.text.primary}
               fontWeight={400}
-              fontSize={20}
+              fontSize={isSm ? 18 : 20}
             >
               {name}
             </Typography>
           </Box>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
             <Typography
               variant="subtitle2"
               color={theme.palette.text.primary}
               fontWeight="bold"
-              fontSize={24}
+              fontSize={isSm ? 20 : 24}
             >
               {new Intl.NumberFormat('en-SG', {
                 style: 'currency',
@@ -149,7 +175,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
           </Box>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
             <StarsRating rating={rating} />
@@ -157,7 +183,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
         </Link>
         <Box
           sx={({ spacing }) => ({
-            pb: spacing(2),
+            pb: spacing(1),
           })}
         >
           <Typography variant="subtitle1" color={theme.palette.text.secondary} fontSize={16}>
