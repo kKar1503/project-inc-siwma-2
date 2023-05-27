@@ -50,19 +50,14 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
         orderBy,
     });
     // format the response
-    const formattedReviews = [];
-    for (const review of reviews) {
-        const formattedReview = {
-            id: review.id.toString(),
-            review: review.review,
-            rating: review.rating,
-            userId: review.user,
-            listingId: review.listing.toString(),
-            createdAt: review.createdAt,
-        };
-        formattedReviews.push(formattedReview);
-    }
-
+    const formattedReviews = reviews.map(review => ({
+        id: review.id.toString(),
+        review: review.review,
+        rating: review.rating,
+        userId: review.user,
+        listingId: review.listing.toString(),
+        createdAt: review.createdAt,
+    }));
     res.status(200).json(formatAPIResponse(formattedReviews));
 };
 
