@@ -97,7 +97,12 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         nextButton={
           <Button
             size="small"
-            sx={{ borderRadius: 12, position: 'relative', bottom: 190, right: 250 }}
+            sx={{
+              borderRadius: 12,
+              position: 'relative',
+              bottom: { sm: 190, md: 190, lg: 190 },
+              right: { sm: 12, md: 50, lg: 250 },
+            }}
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
           >
@@ -107,7 +112,12 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         backButton={
           <Button
             size="small"
-            sx={{ borderRadius: 12, position: 'relative', bottom: 190, left: 250 }}
+            sx={{
+              borderRadius: 12,
+              position: 'relative',
+              bottom: { sm: 190, md: 190, lg: 190 },
+              left: { sm: 20, md: 50, lg: 250 },
+            }}
             onClick={handleBack}
             disabled={activeStep === 0}
           >
