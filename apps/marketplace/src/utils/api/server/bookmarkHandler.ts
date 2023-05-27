@@ -49,66 +49,69 @@ function getNotificationString(
  * This main function automatically handles all the cases depending on the update type.
  */
 export default async function handleBookmarks(updateType: UpdateType, listing: Listing) {
-  async function handleCreation() {
-    /* Get bookmarks from ListingBookmarks, CompaniesBookmarks, and UsersBookmarks
-     * Create notifications for each user who bookmarked this listing, the user that created this listing, and the company that user belongs to
-     */
+  // 1. Get bookmarks from ListingBookmarks, CompaniesBookmarks, and UsersBookmarks
 
-    // Get bookmarks from ListingBookmarks
-    const listingBookmarksPromise = PrismaClient.listingBookmarks.findMany({
-      where: { listingId: listing.id },
-      include: {
-        users: true,
-      },
-    });
+  // Get bookmarks from ListingBookmarks
+  const listingBookmarksPromise = PrismaClient.listingBookmarks.findMany({
+    where: { listingId: listing.id },
+    include: {
+      users: true,
+    },
+  });
 
-    // Get bookmarks from CompaniesBookmarks
-    const userBookmarksPromise = PrismaClient.userBookmarks.findMany({
-      where: { targetUser: listing.owner },
-      include: {
-        usersUserBookmarksUserIdTousers: true,
-      },
-    });
+  // Get bookmarks from CompaniesBookmarks
+  const userBookmarksPromise = PrismaClient.userBookmarks.findMany({
+    where: { targetUser: listing.owner },
+    include: {
+      usersUserBookmarksUserIdTousers: true,
+    },
+  });
 
-    // companyId is not stored in the listing, so we get companiesBookmarks by querying companies with the owner id
-    const companiesBookmarksPromise = PrismaClient.companies.findFirst({
-      where: { users: { some: { id: listing.owner } } },
-      select: {
-        companiesBookmarks: true,
-      },
-    });
+  // companyId is not stored in the listing, so we get companiesBookmarks by querying companies with the owner id
+  const companiesBookmarksPromise = PrismaClient.companies.findFirst({
+    where: { users: { some: { id: listing.owner } } },
+    select: {
+      companiesBookmarks: true,
+    },
+  });
 
-    // Wait for all promises to resolve concurrently
-    const promiseResults = await Promise.all([
-      listingBookmarksPromise,
-      userBookmarksPromise,
-      companiesBookmarksPromise,
-    ]);
+  // Wait for all promises to resolve concurrently
+  const promiseResults = await Promise.all([
+    listingBookmarksPromise,
+    userBookmarksPromise,
+    companiesBookmarksPromise,
+  ]);
 
-    const listingBookmarks = promiseResults[0];
-    let userBookmarks = promiseResults[1];
-    let companiesBookmarks = promiseResults[2]?.companiesBookmarks;
+  // 2. Sort bookmarks into respective arrays, check if notifications are duplicated across listingNotifications, userNotifications, and companiesNotifications
 
-    // Check if notifications are duplicated across listingNotifications, userNotifications, and companiesNotifications
-    if (listingBookmarks.length === 0 && userBookmarks.length === 0 && !companiesBookmarks) {
-      return;
-    }
+  const listingBookmarks = promiseResults[0];
+  let userBookmarks = promiseResults[1];
+  let companiesBookmarks = promiseResults[2]?.companiesBookmarks;
 
-    // Remove duplicated userBookmarks
-    userBookmarks = userBookmarks.filter(
-      (userBookmark) =>
-        !listingBookmarks.some((listingBookmark) => listingBookmark.userId === userBookmark.userId)
+  if (listingBookmarks.length === 0 && userBookmarks.length === 0 && !companiesBookmarks) {
+    return;
+  }
+
+  // 2.1. Remove duplicated userBookmarks
+  userBookmarks = userBookmarks.filter(
+    (userBookmark) =>
+      !listingBookmarks.some((listingBookmark) => listingBookmark.userId === userBookmark.userId)
+  );
+
+  // 2.2. Remove duplicated companyBookmarks
+  if (companiesBookmarks) {
+    companiesBookmarks = companiesBookmarks.filter(
+      (companyBookmark) =>
+        !listingBookmarks.some(
+          (listingBookmark) => listingBookmark.userId === companyBookmark.userId
+        ) && !userBookmarks.some((userBookmark) => userBookmark.userId === companyBookmark.userId)
     );
+  }
 
-    if (companiesBookmarks) {
-      // Remove duplicated companyBookmarks
-      companiesBookmarks = companiesBookmarks.filter(
-        (companyBookmark) =>
-          !listingBookmarks.some(
-            (listingBookmark) => listingBookmark.userId === companyBookmark.userId
-          ) && !userBookmarks.some((userBookmark) => userBookmark.userId === companyBookmark.userId)
-      );
-    }
+  // MARK: - Handler Subfunctions
+
+  async function createNotifications() {
+    // Create notifications for each user who bookmarked this listing, the user that created this listing, and the company that user belongs to
 
     // Create notifications for each user who bookmarked this listing
     const listingNotificationsPromises = listingBookmarks.map((bookmark) =>
@@ -166,17 +169,36 @@ export default async function handleBookmarks(updateType: UpdateType, listing: L
     ]);
   }
 
+  async function handleListingCreation() {
+    // Creation does not require any special checks yet
+    createNotifications();
+  }
+
+  async function handleListingUpdate() {
+    // Updating does not require any special checks yet
+    createNotifications();
+  }
+
+  async function handleListingDeletion() {
+    // Deletion does not require any special checks yet
+    createNotifications();
+  }
+
+  // End of handler subfunctions
+
+  // 3. Call the appropriate function depending on the update type
+
   switch (updateType) {
     case 'CREATE':
-      handleCreation();
+      handleListingCreation();
       break;
     case 'UPDATE':
-      // Update existing bookmarks
+      handleListingUpdate();
       break;
     case 'DELETE':
-      // Delete existing bookmarks
+      handleListingDeletion();
       break;
     default:
-      throw new Error('Invalid update type');
+      break;
   }
 }
