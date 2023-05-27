@@ -21,8 +21,12 @@ import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import { GetServerSidePropsContext, NextApiRequest } from 'next';
-import NavBar from '@/components/marketplace/navbar/NavBar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import fetchUser from '@/middlewares/fetchUser';
+import updateUser from '@/middlewares/updateUser';
+import apiClient from '@/utils/api/client/apiClient';
+import { useSession, getSession } from 'next-auth/react';
+import { useQuery } from 'react-query';
 
 const profileDetailData = [
   {
@@ -31,59 +35,32 @@ const profileDetailData = [
     name: 'John Tan',
     email: 'digs@gmail.com',
     company: 'Prof. Digging Ltd.',
-    profilePic: 'J',
+    profilePic:
+      'https://i.seadn.io/gcs/files/b7e46c1c3a103a759dcdf56f1b27d7b7.png?auto=format&dpr=1&w=1000',
     mobileNumber: '2314 5324',
     telegramUsername: '@digpeople',
     bio: 'Introducing Professional Digging Limited, a leading mining company with a proven track record of excellence in the industry. With decades of experience in the mining business, we have established ourselves as a trusted and reliable provider of high-quality minerals and metals.',
     rating: 3.3,
     reviews: 336,
   },
-  {
-    ownerId: 2,
-    username: 'rock_hound',
-    name: 'Emily Stone',
-    email: 'emily.stone@gmail.com',
-    company: 'Stone Exploration Co.',
-    profilePic: 'E',
-    mobileNumber: '4590 2379',
-    telegramUsername: '@stone_explorer',
-    bio: 'At Stone Exploration Co., we specialize in the exploration and development of new mineral resources. Our team of experts uses cutting-edge technology to identify promising mineral deposits and assess their potential for commercial mining. We are dedicated to responsible mining practices that prioritize the safety of our workers and the protection of the environment.',
-    rating: 4.6,
-    reviews: 97,
-  },
 ];
-
-export const getServerSideProps = async ({
-  query,
-}: GetServerSidePropsContext<{ id?: string | string[] }>) => {
-  // api call to get user details go here
-  // if user does not exist, return error code and redirect to wherever appropriate
-
-  const id = Array.isArray(query.id) ? query.id[0] : query.id;
-  const intCheck = !id || !Number.isInteger(parseFloat(id));
-
-  if (intCheck) {
-    // Redirect to the index page
-    return {
-      redirect: {
-        destination: '/',
-      },
-    };
-  }
-
-  const numericId = parseInt(id, 10);
-
-  const data = profileDetailData[numericId - 1];
-
-  return {
-    props: {
-      data,
-    },
-  };
-};
 
 export type ProfilePageProps = {
   data: ProfileDetailCardProps;
+};
+
+const useGetUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  return data;
+};
+
+const useUpdateUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => updateUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  return data;
 };
 
 const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
@@ -96,9 +73,13 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
   const [bio, setBio] = useState('');
   const [telegramUsername, setTelegramusername] = useState('');
   const [mobileNumber, setMobilenumber] = useState('');
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);  
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
 
+  const userDetails = useUpdateUserQuery(loggedUserUuid);
   const { ownerId } = data;
+
   useEffect(() => {
     if (profilePic) {
       setImageUrl(URL.createObjectURL(profilePic));
@@ -138,7 +119,6 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
     return 5;
   }, [isSm, isMd, isLg]);
 
-
   return (
     <>
       <Head>
@@ -146,7 +126,6 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <NavBar />
         <Container>
           <Grid container gridColumn={gridCols}>
             <form onSubmit={handleSubmit}>
