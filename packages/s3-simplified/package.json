@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.315.0",
-    "@aws-sdk/s3-request-presigner": "^3.315.0"
+    "@aws-sdk/s3-request-presigner": "^3.315.0",
+    "@aws-sdk/signature-v4-crt": "3.310.0"
   },
   "devDependencies": {
     "@types/node": "^18.15.11",
