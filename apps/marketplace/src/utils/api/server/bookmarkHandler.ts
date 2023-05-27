@@ -1,11 +1,5 @@
 import PrismaClient, { Listing } from '@inc/db';
 
-/* Should handle bookmarks when:
- * A listing is created
- * A listing is updated
- * A listing is deleted
- */
-
 enum UpdateType {
   CREATE = 'CREATE',
   UPDATE = 'UPDATE',
@@ -171,17 +165,17 @@ export default async function handleBookmarks(updateType: UpdateType, listing: L
 
   async function handleListingCreation() {
     // Creation does not require any special checks yet
-    createNotifications();
+    await createNotifications();
   }
 
   async function handleListingUpdate() {
     // Updating does not require any special checks yet
-    createNotifications();
+    await createNotifications();
   }
 
   async function handleListingDeletion() {
     // Deletion does not require any special checks yet
-    createNotifications();
+    await createNotifications();
   }
 
   // End of handler subfunctions
@@ -190,13 +184,13 @@ export default async function handleBookmarks(updateType: UpdateType, listing: L
 
   switch (updateType) {
     case 'CREATE':
-      handleListingCreation();
+      await handleListingCreation();
       break;
     case 'UPDATE':
-      handleListingUpdate();
+      await handleListingUpdate();
       break;
     case 'DELETE':
-      handleListingDeletion();
+      await handleListingDeletion();
       break;
     default:
       break;
