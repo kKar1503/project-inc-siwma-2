@@ -112,12 +112,13 @@ model CompaniesBookmarks {
 }
 
 model CompaniesNotifications {
-  id            Int       @id(map: "companies_notifications_pk") @default(sequence(maxValue: 2147483647))
-  userId        String    @map("user_id") @db.Uuid
-  targetCompany Int       @map("target_company")
-  updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  users         Users     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "companies_notifications_fk")
-  companies     Companies @relation(fields: [targetCompany], references: [id], onDelete: Cascade, map: "companies_notifications_fk_1")
+  id                 Int       @id(map: "companies_notifications_pk") @default(sequence(maxValue: 2147483647))
+  userId             String    @map("user_id") @db.Uuid
+  targetCompany      Int       @map("target_company")
+  updatedAt          DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  notificationString String    @map("notification_string")
+  users              Users     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "companies_notifications_fk")
+  companies          Companies @relation(fields: [targetCompany], references: [id], onDelete: Cascade, map: "companies_notifications_fk_1")
 
   @@map("companies_notifications")
 }
@@ -199,12 +200,13 @@ model ListingImages {
 }
 
 model ListingNotifications {
-  id            Int      @id(map: "listing_notifications_pk") @default(sequence(maxValue: 2147483647))
-  userId        String   @map("user_id") @db.Uuid
-  targetListing Int      @map("target_listing")
-  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-  users         Users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "listing_notifications_fk")
-  listing       Listing  @relation(fields: [targetListing], references: [id], onDelete: Cascade, map: "listing_notifications_fk_1")
+  id                 Int      @id(map: "listing_notifications_pk") @default(sequence(maxValue: 2147483647))
+  userId             String   @map("user_id") @db.Uuid
+  targetListing      Int      @map("target_listing")
+  updatedAt          DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  notificationString String   @map("notification_string")
+  users              Users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "listing_notifications_fk")
+  listing            Listing  @relation(fields: [targetListing], references: [id], onDelete: Cascade, map: "listing_notifications_fk_1")
 
   @@map("listing_notifications")
 }
@@ -345,6 +347,7 @@ model UserNotifications {
   userId                                  String   @map("user_id") @db.Uuid
   targetUser                              String   @map("target_user") @db.Uuid
   updatedAt                               DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  notificationString                      String   @map("notification_string")
   usersUserNotificationsUserIdTousers     Users    @relation("userNotificationsUserIdTousers", fields: [userId], references: [id], onDelete: Cascade, map: "user_notifications_fk")
   usersUserNotificationsTargetUserTousers Users    @relation("userNotificationsTargetUserTousers", fields: [targetUser], references: [id], onDelete: Cascade, map: "user_notifications_fk_1")
 
