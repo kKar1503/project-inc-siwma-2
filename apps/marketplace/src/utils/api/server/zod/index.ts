@@ -5,6 +5,7 @@ export { default as inviteSchema } from './invites';
 export { default as listingSchema } from './listings';
 export { default as paramSchema } from './parameters';
 export { default as userSchema } from './users';
+export { default as advertisementSchema } from './advertisements';
 
 export * from './categories';
 export * from './chat';
@@ -13,3 +14,4 @@ export * from './invites';
 export * from './listings';
 export * from './parameters';
 export * from './users';
+export * from './advertisements';
