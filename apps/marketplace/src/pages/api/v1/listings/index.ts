@@ -262,15 +262,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value.toString(),
-                parameter: {
-                  connect: {
-                    id: parameter.paramId,
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value.toString(),
+              parameter: {
+                connect: {
+                  id: parameter.paramId,
                 },
-              })),
-            }
+              },
+            })),
+          }
           : undefined,
       },
       include: {
