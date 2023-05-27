@@ -2,7 +2,7 @@ import { ReactNode, Children, useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { generateString } from '@inc/utils';
-import { SxProps, Theme } from '@mui/material';
+import { Grid, SxProps, Theme } from '@mui/material';
 
 interface InfiniteScrollProps {
   children: ReactNode[];
@@ -52,30 +52,34 @@ const InfiniteScroll = ({
 
   return (
     <>
-      <Box sx={sx}>
-        {loading && <CircularProgress />}
-
+      {loading && <CircularProgress />}
+      <Grid container spacing={2} width="80%" sx={sx}>
         {children !== null &&
           children !== undefined &&
           Children.map(children, (child, index) => {
             if (index === children.length - 1) {
               return (
-                <Box key={generateString(4)} sx={wrapperSx} ref={lastItemRef}>
+                <Grid
+                  item
+                  xl={2}
+                  lg={3}
+                  md={4}
+                  sm={6}
+                  xs={12}
+                  key={generateString(4)}
+                  sx={wrapperSx}
+                >
                   {child}
-                </Box>
+                </Grid>
               );
             }
             return (
-              <Box key={generateString(4)} sx={wrapperSx}>
+              <Grid key={generateString(4)} sx={wrapperSx}>
                 {child}
-              </Box>
+              </Grid>
             );
           })}
-      </Box>
-
-      {reachedMaxItems && (
-        <Box className="text-center my-5">You&apos;ve reached the end of the universe!</Box>
-      )}
+      </Grid>
     </>
   );
 };

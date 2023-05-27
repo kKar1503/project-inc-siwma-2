@@ -2,8 +2,8 @@ import { ProductListingItemProps } from '@/components/marketplace/listing/Produc
 import apiClient from '@/utils/api/client/apiClient';
 import listings from '@/utils/api/client/zod/listings';
 
-const fetchListings = async () => {
-  const response = await apiClient.get(`/v1/listings`);
+const fetchListings = async (lastListingId: number) => {
+  const response = await apiClient.get(`/v1/listings?limit=10&lastIdPointer=${lastListingId}`);
   let listingsArr: Array<ProductListingItemProps> = [];
 
   // parse data through zod to ensure that data is correct

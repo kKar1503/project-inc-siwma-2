@@ -80,7 +80,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
         <CardHeader
           avatar={
             <Avatar sx={{ bgcolor: red[500] }} src={profileImg}>
-              {ownerFullName.charAt(0)}
+              {ownerFullName?.charAt(0)}
             </Avatar>
           }
           title={ownerFullName}
@@ -152,7 +152,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
               pb: spacing(2),
             })}
           >
-            <StarsRating rating={rating} />
+            <StarsRating rating={rating!} />
           </Box>
         </Link>
         <Box

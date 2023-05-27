@@ -1,17 +1,19 @@
 /* eslint-disable arrow-body-style */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Box, Grid, Link, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useSession, getSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 
 import Carousel, { Image } from '@/components/marketplace/carousel/AdvertisementCarousel';
 import ListingStream from '@/components/marketplace/listing/ListingStream';
-import ProductListingItem, { ProductListingItemProps } from '@/components/marketplace/listing/ProductListingItem';
-
+import ProductListingItem, {
+  ProductListingItemProps,
+} from '@/components/marketplace/listing/ProductListingItem';
 
 import fetchCategories from '@/middlewares/fetchCategories';
 import fetchListings from '@/middlewares/fetchListings';
 import fetchAdvertisements from '@/middlewares/fetchAdvertisements';
+import { InfiniteScroll } from '@inc/ui';
 
 const mockAdvertisements: Array<Image> = [
   {
@@ -43,30 +45,49 @@ const useGetCategoriesQuery = () => {
   return data;
 };
 
-const useGetListingsQuery = () => {
-  const { data } = useQuery('listings', async () => fetchListings());
+const useGetAdvertisementsQuery = () => {
+  const { data } = useQuery('advertisements', async () => fetchAdvertisements());
 
   return data;
 };
-
-const useGetAdvertisementsQuery = () => {
-    const { data } = useQuery('advertisements', async () => fetchAdvertisements());
-
-    return data;
-}
 
 const Marketplace = () => {
   const theme = useTheme();
   const { data: session, status } = useSession();
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const scrollRef = useRef<Element>(null);
 
   const [popularListings, setPopularListings] = React.useState<Array<ProductListingItemProps>>([]);
+  const [listings, setListings] = React.useState<Array<ProductListingItemProps>>([]);
+  const [lastListingId, setLastListingId] = React.useState<number>(9);
+  const [maxItems, setMaxItems] = React.useState<boolean>(false);
 
-//   const categories = useGetCategoriesQuery();
+  const { isLoading, refetch } = useQuery(
+    ['listings', lastListingId],
+    async () => fetchListings(lastListingId),
+    {
+      onSuccess: (data) => {
+        const lastItem = data[data.length - 1];
+        if (lastItem) {
+          setLastListingId(lastItem.productId);
+        }
 
-  const listings = useGetListingsQuery();
+        if (data.length === 0) {
+          setMaxItems(true);
+        } else {
+          setListings((prev) => [...prev, ...data]);
+        }
 
-//   const advertisementsData = useGetAdvertisementsQuery();
+        if (scrollRef.current && scrollRef.current.scrollHeight > window.screen.height) {
+          scrollRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+        }
+      },
+    }
+  );
+
+  //   const categories = useGetCategoriesQuery();
+  //   const advertisementsData = useGetAdvertisementsQuery();
+  //   const listings = useGetListingsQuery();
 
   return (
     <>
@@ -106,7 +127,7 @@ const Marketplace = () => {
           <Typography variant="h4">Popular</Typography>
         </Box>
       </Box>
-      <ListingStream listingItemsData={listings} />
+      {/* <ListingStream listingItemsData={listings} /> */}
       <Box display="flex" justifyContent="center" paddingTop="4em">
         <Box
           sx={{
@@ -117,15 +138,11 @@ const Marketplace = () => {
         </Box>
       </Box>
       <Box display="flex" justifyContent="center" paddingTop="2em">
-        <Grid container spacing={2} width="80%">
+        <InfiniteScroll onLoadMore={refetch} loading={isLoading} reachedMaxItems={maxItems}>
           {listings?.map((item) => {
-            return (
-              <Grid item xl={2} lg={3} md={4} sm={6} xs={12} key={item.productId}>
-                <ProductListingItem data={item} />
-              </Grid>
-            );
+            return <ProductListingItem data={item} />;
           })}
-        </Grid>
+        </InfiniteScroll>
       </Box>
     </>
   );
