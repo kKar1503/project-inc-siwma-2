@@ -8,12 +8,26 @@ const deleteMessageEvent: EventFile = (io) => ({
   type: 'on',
   callback: async ({ room, messageId }) => {
     logger.info(`${messageId}  ${room}`);
-    io.to(room).emit(EVENTS.SERVER.DELETE_MESSAGE, messageId);
+    const args = {
+      room,
+      messageId,
+    };
 
     prisma.messages.delete({
       where: {
         id: messageId,
       },
+    }).then(() => {
+      io.to(room).emit(EVENTS.SERVER.DELETE_MESSAGE, {
+        ...args,
+        success: true,
+      });
+    }).catch((err) => {
+      logger.error(err);
+      io.to(room).emit(EVENTS.SERVER.DELETE_MESSAGE, {
+        ...args,
+        success: false,
+      });
     });
   },
 });

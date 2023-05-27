@@ -1,5 +1,9 @@
 import { Socket, Server } from 'socket.io';
 
+type DatabaseEvent = {
+  success: boolean;
+}
+
 type Room = {
   id: string;
   name: string;
@@ -12,7 +16,7 @@ type RoomMessage = {
   username: string;
   contentType: string;
   time: Date;
-};
+} & DatabaseEvent;
 
 type StartStopType = {
   sender: string;
@@ -22,8 +26,12 @@ type StartStopType = {
 type Read = {
   room: string;
   messageId: number;
-};
+} & DatabaseEvent;
 
+type DeleteMessage = {
+  room: string;
+  messageId: number;
+} & DatabaseEvent;
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
@@ -35,7 +43,7 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
-  deleteMessage: { room: string; messageId: number };
+  deleteMessage: DeleteMessage;
   clientStartType: StartStopType;
   clientStopType: StartStopType;
   clientRead: Read;
