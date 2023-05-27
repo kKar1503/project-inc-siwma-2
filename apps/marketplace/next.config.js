@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
-const path = require('path')
+const path = require('node:path')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
