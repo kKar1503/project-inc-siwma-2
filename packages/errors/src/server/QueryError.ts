@@ -212,3 +212,19 @@ export class ParamSizeError extends ParamError {
     this.code = InvalidRangeError.code;
   }
 }
+
+/**
+ * Expired parameter
+ * @param parameter The parameter name
+ */
+export class ExpiredError extends ParamError {
+  public static readonly status = 422;
+  public static readonly code = 2009;
+
+  constructor(parameter: string) {
+    super();
+    this.status = ExpiredError.status;
+    this.code = ExpiredError.code;
+    this.message = `${parameter} has expired`;
+  }
+}
