@@ -15,18 +15,6 @@ import sendEmails from '@inc/send-in-blue/sendEmails';
 import { inviteSchema } from '@/utils/api/server/zod';
 import bcrypt from 'bcrypt';
 
-type Invite = {
-  name: string;
-  email: string;
-  companies: {
-    name: string;
-  };
-  id: number;
-  companyId: number;
-  expiry: Date;
-  phone: string | null;
-};
-
 async function getInvite(email: string) {
   const response = await PrismaClient.invite.findFirst({
     where: {
@@ -52,15 +40,16 @@ async function getInvite(email: string) {
   return response;
 }
 
-async function regenerateInvite(invite: Invite, tokenHash: string) {
+async function regenerateInvite(invite: Awaited<ReturnType<typeof getInvite>>, tokenHash: string) {
   // delete the old invite
-  const deleteInvite = await PrismaClient.invite.delete({
+  await PrismaClient.invite.delete({
     where: {
       id: invite.id,
     },
   });
+
   // regenerate the invite with a new expiry date
-  const createInvite = await PrismaClient.invite.create({
+  await PrismaClient.invite.create({
     data: {
       name: invite.name,
       email: invite.email,
