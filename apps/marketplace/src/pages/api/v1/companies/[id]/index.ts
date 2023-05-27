@@ -1,23 +1,15 @@
 import { NotFoundError, ParamError, ForbiddenError } from '@inc/errors';
 import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@inc/db';
-import { z } from 'zod';
+import PrismaClient, { Companies } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { getResponseBody, queryResult } from '..';
-
-const editCompanyRequestBody = z.object({
-  name: z.string().optional(),
-  website: z.string().optional(),
-  bio: z.string().optional(),
-  comments: z.string().optional(),
-  image: z.string().optional(),
-});
+import { companySchema } from '@/utils/api/server/zod';
+import { CompanyResponseBody } from '@/utils/api/client/zod';
 
 function parseCompanyId(id: string | undefined): number {
   if (!id) {
     throw new ParamError('id');
   }
-  return parseToNumber(id);
+  return parseToNumber(id, 'id');
 }
 
 async function checkCompany(companyid: number) {
@@ -29,7 +21,7 @@ async function checkCompany(companyid: number) {
   return company;
 }
 
-function formatResponse(r: queryResult): getResponseBody {
+function formatResponse(r: Companies): CompanyResponseBody {
   return {
     id: r.id.toString(),
     name: r.name,
@@ -38,7 +30,7 @@ function formatResponse(r: queryResult): getResponseBody {
     image: r.logo,
     visible: r.visibility,
     comments: r.comments,
-    createdAt: r.createdAt,
+    createdAt: r.createdAt.toISOString(),
   };
 }
 
@@ -72,7 +64,7 @@ export default apiHandler()
   })
   .put(async (req, res) => {
     const { id } = req.query;
-    const { name, website, bio, comments, image } = editCompanyRequestBody.parse(req.body);
+    const { name, website, bio, comments, image } = companySchema.put.body.parse(req.body);
 
     const companyid = parseCompanyId(id as string);
     const isAdmin = req.token?.user.permissions === 1;
@@ -143,7 +135,7 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
-    const response = await PrismaClient.companies.delete({
+    await PrismaClient.companies.delete({
       where: {
         id: companyid,
       },

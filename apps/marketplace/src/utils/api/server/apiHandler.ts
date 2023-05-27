@@ -1,11 +1,17 @@
 import {
-  BaseError, BucketConnectionFailure,
-  ErrorJSON, InvalidBucketName, ObjectCollision, ObjectNotFound,
+  BaseError,
+  BucketConnectionFailure,
+  ErrorJSON,
+  InvalidBucketName,
+  ObjectCollision,
+  ObjectNotFound,
   ParamError,
   ParamInvalidError,
   ParamRequiredError,
   ParamTypeError,
-  UnknownError, UnknownS3Error,
+  UnknownError,
+  UnknownS3Error,
+  ParamTooShortError,
 } from '@inc/errors';
 
 import { NextApiResponse } from 'next';
@@ -42,6 +48,12 @@ function handleZodError(error: ZodError) {
       return new ParamInvalidError(err.path[0].toString(), err.received, err.options).toJSON();
     }
 
+    // Check if it was because the string was too short
+    if (err.code === 'too_small') {
+      // Yes it was, return a param error
+      return new ParamTooShortError(err.path[0].toString(), Number(err.minimum)).toJSON();
+    }
+
     // Unrecognised zod error
     return new ParamError().toJSON();
   });
@@ -75,11 +87,10 @@ function handleS3Error(error: S3Error) {
       return new ObjectNotFound();
     case 'ObjectConflict':
       return new ObjectCollision();
-      default:
-        return new UnknownS3Error();
+    default:
+      return new UnknownS3Error();
   }
 }
-
 
 /**
  * Error handler
@@ -89,6 +100,7 @@ function handleS3Error(error: S3Error) {
 function handleError($error: Error): ErrorJSON[] {
   // An error occurred
   let error = $error;
+  console.log({ error });
 
   // Check if it was a zod error
   if (error instanceof ZodError) {

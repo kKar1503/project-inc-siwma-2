@@ -28,10 +28,10 @@ const KNEX_INTERNAL_MODELS = [
 const SUPPORTED_ENUMS = [
   'DataType',
   'ListingType',
-  'NotificationType',
   'ParameterType',
   'UserContacts',
   'ContentType',
+  'ReasonType',
 ];
 
 function isKnexInternalModel(typeName: string) {

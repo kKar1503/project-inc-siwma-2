@@ -1,7 +1,8 @@
 import { apiHandler } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
-import { formatParamResponse, paramsRequestBody } from '..';
+import { paramSchema } from '@/utils/api/server/zod';
+import { formatParamResponse, validateOptions } from '..';
 
 // -- Functions --//
 function parseParamid($id: string) {
@@ -52,7 +53,12 @@ export default apiHandler({
     await checkParamExists(id);
 
     // Parse and validate the request body
-    const data = paramsRequestBody.parse(req.body);
+    const data = paramSchema.post.body.partial().parse(req.body);
+
+    // Validate parameter options
+    if (data.type != null) {
+      validateOptions({ type: data.type, options: data.options });
+    }
 
     // Update the parameter in the database
     const updatedParams = await PrismaClient.parameter.update({
@@ -60,10 +66,8 @@ export default apiHandler({
         id,
       },
       data: {
-        name: data.name,
-        displayName: data.displayName,
-        type: data.type,
-        datatype: data.dataType,
+        ...data,
+        options: data.type !== 'MANY_CHOICES' && data.type !== 'TWO_CHOICES' ? [] : data.options,
       },
     });
 

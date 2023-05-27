@@ -1,22 +1,11 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import { z } from 'zod';
 import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import bcrypt from 'bcrypt';
-import { ParamInvalidError, DuplicateError, InvalidRangeError } from '@inc/errors';
+import { DuplicateError, InvalidRangeError, ParamInvalidError } from '@inc/errors';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
-
-const getUsersRequestBody = z.object({
-  lastIdPointer: z.string().optional(),
-  limit: z.string().optional(),
-});
-
-const userCreationRequestBody = z.object({
-  token: z.string(),
-  mobileNumber: z.string(),
-  password: z.string(),
-});
+import { userSchema } from '@/utils/api/server/zod';
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
@@ -24,7 +13,7 @@ export default apiHandler({ allowNonAuthenticated: true })
       allowAdminsOnly: true,
     }),
     async (req: NextApiRequest, res: NextApiResponse) => {
-      const { limit, lastIdPointer } = getUsersRequestBody.parse(req.query);
+      const { limit, lastIdPointer } = userSchema.get.query.parse(req.query);
 
       let limitInt: number | undefined;
 
@@ -47,9 +36,11 @@ export default apiHandler({ allowNonAuthenticated: true })
           createdAt: true,
           enabled: true,
           profilePicture: true,
-          comments: true, // Only admins can access this endpoint so we can return comments
+          comments: true, // Only admins can access this endpoint, so we can return comments
           phone: true,
           contact: true,
+          whatsappNumber: true,
+          telegramUsername: true,
           bio: true,
         },
       });
@@ -63,6 +54,8 @@ export default apiHandler({ allowNonAuthenticated: true })
         enabled: user.enabled,
         profilePic: user.profilePicture,
         comments: user.comments,
+        whatsappNumber: user.whatsappNumber,
+        telegramUsername: user.telegramUsername,
         mobileNumber: user.phone,
         contactMethod: user.contact,
         bio: user.bio,
@@ -76,7 +69,7 @@ export default apiHandler({ allowNonAuthenticated: true })
     // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.5t8qrsbif9ei
 
     // Parse the request body with zod
-    const { token, mobileNumber, password } = userCreationRequestBody.parse(req.body);
+    const { token, mobileNumber, password } = userSchema.post.body.parse(req.body);
 
     validatePhone(mobileNumber);
     validatePassword(password);

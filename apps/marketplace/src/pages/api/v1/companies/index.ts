@@ -1,46 +1,12 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import PrismaClient from '@inc/db';
-import { z } from 'zod';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
+import PrismaClient, { Companies } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
+import { companySchema } from '@/utils/api/server/zod';
+import { CompanyResponseBody } from '@/utils/api/client/zod';
 
-const createCompanyRequestBody = z.object({
-  name: z.string(),
-  website: z.string(),
-  comments: z.string(),
-  image: z.string().optional(),
-});
-
-const getCompaniesRequestBody = z.object({
-  lastIdPointer: z.string().optional(),
-  limit: z.string().optional(),
-  name: z.string().optional(),
-});
-
-export type queryResult = {
-  id: number;
-  name: string;
-  website: string | null;
-  bio: string | null;
-  logo: string | null;
-  visibility: boolean;
-  comments: string | null;
-  createdAt?: Date;
-};
-
-export type getResponseBody = {
-  id: string;
-  name: string;
-  website: string | null;
-  bio: string | null;
-  image: string | null;
-  visible: boolean;
-  comments?: string | null;
-  createdAt?: Date;
-};
-
-function formatResponse(response: queryResult[]): getResponseBody[] {
-  const temp: getResponseBody[] = [];
+function formatResponse(response: Companies[]): CompanyResponseBody[] {
+  const temp: CompanyResponseBody[] = [];
   response.forEach((r) => {
     temp.push({
       id: r.id.toString(),
@@ -50,7 +16,7 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
       image: r.logo,
       visible: r.visibility,
       comments: r.comments,
-      createdAt: r.createdAt,
+      createdAt: r.createdAt.toISOString(),
     });
   });
   return temp;
@@ -58,7 +24,7 @@ function formatResponse(response: queryResult[]): getResponseBody[] {
 
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, website, comments, image } = createCompanyRequestBody.parse(req.body);
+    const { name, website, comments, image } = companySchema.post.body.parse(req.body);
 
     if (!name || name.trim().length === 0) {
       throw new ParamError('name');
@@ -85,7 +51,7 @@ export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { lastIdPointer = '0', limit = '10', name } = getCompaniesRequestBody.parse(req.query);
+    const { lastIdPointer = 0, limit = 10, name } = companySchema.get.query.parse(req.query);
 
     const response = await PrismaClient.companies.findMany({
       select: {
@@ -100,13 +66,13 @@ export default apiHandler()
       },
       where: {
         id: {
-          gt: parseToNumber(lastIdPointer),
+          gt: lastIdPointer,
         },
         name: {
           contains: name,
         },
       },
-      take: parseToNumber(limit),
+      take: limit,
     });
 
     res.status(200).json(formatAPIResponse(formatResponse(response)));
