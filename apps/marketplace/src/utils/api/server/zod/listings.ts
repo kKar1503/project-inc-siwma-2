@@ -12,6 +12,7 @@ const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
+  includeImages: z.string().transform(zodParseToBoolean).optional().default('false'),
   params: z.preprocess(
     zodDecodeToJson,
     z
@@ -79,7 +80,6 @@ const reviewRequestBody = z.object({
   rating: z.number().int().gte(0).lte(5),
 });
 
-
 export type GetListingsQueryParameter = z.infer<typeof getQueryParameters>;
 export type PostListingsRequestBody = z.infer<typeof listingsRequestBody>;
 export type PutListingsRequestBody = z.infer<typeof putListingRequestBody>;
@@ -110,5 +110,4 @@ export default {
       body: reviewRequestBody,
     },
   },
-
 };
