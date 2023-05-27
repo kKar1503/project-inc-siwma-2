@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 import MUIAlert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import useResponsiveness from '../hook/useResponsiveness';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
 export type AlertProps = {
   open: boolean;
@@ -18,7 +18,10 @@ const Alert = ({ open, setOpen, severity, alertContent, alertTitle }: AlertProps
     if (isSm) {
       return { vertical: 'top', horizontal: 'center' };
     }
-    if (isMd || isLg) {
+    if (isMd) {
+      return { vertical: 'bottom', horizontal: 'right' };
+    }
+    if (isLg) {
       return { vertical: 'bottom', horizontal: 'right' };
     }
     return undefined;
@@ -29,12 +32,7 @@ const Alert = ({ open, setOpen, severity, alertContent, alertTitle }: AlertProps
   };
 
   return (
-    <Snackbar
-      open={open}
-      autoHideDuration={6000}
-      onClose={handleClose}
-      anchorOrigin={alertStyle}
-    >
+    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={alertStyle}>
       <MUIAlert
         variant="outlined"
         severity={severity}

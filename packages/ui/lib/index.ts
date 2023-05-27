@@ -9,5 +9,4 @@ export { default as Modal } from './components/Modal';
 export { default as ModalSelect } from './components/ModalSelect';
 export { default as ModalImage } from './components/ModalImage';
 export { default as ModalInput } from './components/ModalInput';
-export { default as Alert } from './components/Alert';
 export { default as InfiniteScroll } from './components/InfiniteScroll';

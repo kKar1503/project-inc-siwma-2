@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
-import { ThemeComponent } from '@inc/ui';
+import { ThemeComponent } from '@inc/ui'
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { SnackbarProvider, MaterialDesignContent, SnackbarOrigin } from 'notistack';
 import { styled } from '@mui/material';
@@ -65,16 +65,19 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   // Snackbar close button
   const CloseAlert = useCallback((key: unknown) => <CloseButton id={key} />, []);
   // Stying snackbar responsiveness
-  // const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  // const alertStyle: SnackbarOrigin | undefined = useMemo(() => {
-  //   if (isSm) {
-  //     return { vertical: 'top', horizontal: 'center' };
-  //   }
-  //   if (isMd || isLg) {
-  //     return { vertical: 'bottom', horizontal: 'right' };
-  //   }
-  //   return undefined;
-  // }, [isSm, isMd, isLg]);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const alertStyle: SnackbarOrigin | undefined = useMemo(() => {
+    if (isSm) {
+      return { vertical: 'top', horizontal: 'center' };
+    }
+    if (isMd) {
+      return { vertical: 'bottom', horizontal: 'right' };
+    }
+    if (isLg) {
+      return { vertical: 'bottom', horizontal: 'right' };
+    }
+    return undefined;
+  }, [isSm, isMd, isLg]);
 
   return (
     <ThemeComponent>
@@ -89,7 +92,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
             <SnackbarProvider
               maxSnack={3}
               action={CloseAlert}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              anchorOrigin={alertStyle}
               Components={{
                 default: StyledMaterialDesignContent,
               }}

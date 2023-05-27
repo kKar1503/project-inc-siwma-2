@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Button from '@mui/material/Button';
-import { Alert } from '@inc/ui';
+import Alert from '@/components/marketplace/notification/Alert';
 import ChatAlert, { ChatData } from '@/components/marketplace/notification/ChatAlert';
 import { useSnackbar } from 'notistack';
 
