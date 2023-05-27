@@ -231,8 +231,8 @@ importers:
         specifier: ^36.6.8
         version: 36.6.8(react@18.2.0)
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: 3.22.0-canary.20230522T011705
+        version: 3.22.0-canary.20230522T011705
     devDependencies:
       '@inc/configs':
         specifier: workspace:*
@@ -2562,7 +2562,6 @@ packages:
 
   /@types/node@20.1.4:
     resolution: {integrity: sha512-At4pvmIOki8yuwLtd7BNHl3CiWNbtclUbNtScGx4OHfBd4/oWoJC8KRCIxXwkdndzhxOsPXihrsOoydxBjlE9Q==}
-    dev: true
 
   /@types/node@20.2.1:
     resolution: {integrity: sha512-DqJociPbZP1lbZ5SQPk4oag6W7AyaGMO6gSfRwq3PWl4PXTwJpRQJhDq4W0kzrg3w6tJ1SwlvGZ5uKFHY13LIg==}
@@ -8528,4 +8527,8 @@ packages:
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false
+
+  /zod@3.22.0-canary.20230522T011705:
+    resolution: {integrity: sha512-gEl7btSMLlfuPxtQK/Ak1vK8Ik5lrHQR1ZLEf3upsMJFn46oh074YOt2yGn8nhTlrRK9xW4v1ut126xRMj+JRw==}
     dev: false

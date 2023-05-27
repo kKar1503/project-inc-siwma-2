@@ -1,13 +1,26 @@
 import { z } from 'zod';
 import { ListingType } from '@prisma/client';
-import { zodParseToBoolean, zodParseToInteger, zodParseToNumber } from '../../apiHelper';
+import {
+  zodDecodeToJson,
+  zodParseToBoolean,
+  zodParseToInteger,
+  zodParseToNumber,
+} from '../../apiHelper';
 
 const getQueryParameters = z.object({
   lastIdPointer: z.string().transform(zodParseToInteger).optional(),
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z.string().optional(),
+  params: z.preprocess(
+    zodDecodeToJson,
+    z
+      .object({
+        paramId: z.string().transform(zodParseToInteger),
+        value: z.string(),
+      })
+      .optional()
+  ),
   category: z.string().transform(zodParseToInteger).optional(),
   negotiable: z.string().transform(zodParseToBoolean).optional(),
   minPrice: z.string().transform(zodParseToNumber).optional(),
@@ -21,7 +34,7 @@ const listingsRequestBody = z.object({
   price: z.number().gte(0),
   unitPrice: z.boolean().optional(),
   negotiable: z.boolean().optional(),
-  categoryId: z.number(),
+  categoryId: z.string().transform(zodParseToInteger),
   type: z.nativeEnum(ListingType),
   multiple: z.boolean().optional(),
   parameters: z
@@ -40,7 +53,7 @@ const putListingRequestBody = z.object({
   price: z.number().gte(0).optional(),
   unitPrice: z.boolean().optional(),
   negotiable: z.boolean().optional(),
-  categoryId: z.number().optional(),
+  categoryId: z.string().transform(zodParseToInteger).optional(),
   type: z.nativeEnum(ListingType).optional(),
   multiple: z.boolean().optional(),
   parameters: z
@@ -60,11 +73,19 @@ const createParameter = z.object({
 
 const updateParameters = z.array(createParameter);
 
+// Add zod validation schema for review
+const reviewRequestBody = z.object({
+  review: z.string(),
+  rating: z.number().int().gte(0).lte(5),
+});
+
+
 export type GetListingsQueryParameter = z.infer<typeof getQueryParameters>;
 export type PostListingsRequestBody = z.infer<typeof listingsRequestBody>;
 export type PutListingsRequestBody = z.infer<typeof putListingRequestBody>;
 export type PostListingParameterRequestBody = z.infer<typeof createParameter>;
 export type PutListingParameterRequestBody = z.infer<typeof updateParameters>;
+export type ReviewRequestBody = z.infer<typeof reviewRequestBody>;
 
 export default {
   get: {
@@ -84,4 +105,10 @@ export default {
       body: updateParameters,
     },
   },
+  reviews: {
+    post: {
+      body: reviewRequestBody,
+    },
+  },
+
 };
