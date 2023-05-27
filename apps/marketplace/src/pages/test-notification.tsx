@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import { Alert } from '@inc/ui';
 import ChatAlert, { ChatData } from '@/components/marketplace/notification/ChatAlert';
-import { useSession } from 'next-auth/react';
 import { useSnackbar } from 'notistack';
 
 const response: ChatData = {
@@ -17,10 +16,8 @@ const response: ChatData = {
 
 const TestNotifi = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [open2, setOpen2] = useState<boolean>(false);
   const [reply, setReply] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
-  const user = useSession();
 
   const handleClick = () => {
     setOpen(true);
@@ -33,8 +30,6 @@ const TestNotifi = () => {
   const handleSnackbarClick = () => {
     const message = (
       <ChatAlert
-        open={open2}
-        setOpen={setOpen2}
         reply={reply}
         setReply={setReply}
         chatData={response}
