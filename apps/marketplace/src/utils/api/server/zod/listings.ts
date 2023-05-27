@@ -1,13 +1,26 @@
 import { z } from 'zod';
 import { ListingType } from '@prisma/client';
-import { zodParseToBoolean, zodParseToInteger, zodParseToNumber } from '../../apiHelper';
+import {
+  zodDecodeToJson,
+  zodParseToBoolean,
+  zodParseToInteger,
+  zodParseToNumber,
+} from '../../apiHelper';
 
 const getQueryParameters = z.object({
   lastIdPointer: z.string().transform(zodParseToInteger).optional(),
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z.string().optional(),
+  params: z.preprocess(
+    zodDecodeToJson,
+    z
+      .object({
+        paramId: z.string().transform(zodParseToInteger),
+        value: z.string(),
+      })
+      .optional()
+  ),
   category: z.string().transform(zodParseToInteger).optional(),
   negotiable: z.string().transform(zodParseToBoolean).optional(),
   minPrice: z.string().transform(zodParseToNumber).optional(),
