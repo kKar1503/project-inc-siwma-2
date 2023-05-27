@@ -1,6 +1,6 @@
 import PrismaClient, { Listing } from '@inc/db';
 
-enum UpdateType {
+export enum UpdateType {
   CREATE = 'CREATE',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',
@@ -42,7 +42,7 @@ function getNotificationString(
  * It will update the Notification tables based on Bookmarks.
  * This main function automatically handles all the cases depending on the update type.
  */
-export default async function handleBookmarks(updateType: UpdateType, listing: Listing) {
+export async function handleBookmarks(updateType: UpdateType, listing: Listing) {
   // 1. Get bookmarks from ListingBookmarks, CompaniesBookmarks, and UsersBookmarks
 
   // Get bookmarks from ListingBookmarks
