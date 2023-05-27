@@ -49,8 +49,21 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
         },
         orderBy,
     });
+    // format the response
+    const formattedReviews = [];
+    for (const review of reviews) {
+        const formattedReview = {
+            id: review.id.toString(),
+            review: review.review,
+            rating: review.rating,
+            userId: review.user,
+            listingId: review.listing.toString(),
+            createdAt: review.createdAt,
+        };
+        formattedReviews.push(formattedReview);
+    }
 
-    res.status(200).json(formatAPIResponse(reviews));
+    res.status(200).json(formatAPIResponse(formattedReviews));
 };
 
 /**
@@ -101,7 +114,16 @@ const createListingReview = async (req: APIRequestType, res: NextApiResponse) =>
             listing: id,
         },
     });
-    res.status(200).json(formatAPIResponse(createdReview));
+    // format the response
+    const formattedReview = {
+        id: createdReview.id.toString(),
+        review: createdReview.review,
+        rating: createdReview.rating,
+        userId: createdReview.user,
+        listingId: createdReview.listing.toString(),
+    };
+
+    res.status(200).json(formatAPIResponse(formattedReview));
 
 };
 
