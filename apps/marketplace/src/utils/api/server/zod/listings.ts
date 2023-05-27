@@ -23,6 +23,7 @@ const listingsRequestBody = z.object({
   negotiable: z.boolean().optional(),
   categoryId: z.number(),
   type: z.nativeEnum(ListingType),
+  multiple: z.boolean().optional(),
   parameters: z
     .array(
       z.object({
@@ -41,6 +42,7 @@ const putListingRequestBody = z.object({
   negotiable: z.boolean().optional(),
   categoryId: z.number().optional(),
   type: z.nativeEnum(ListingType).optional(),
+  multiple: z.boolean().optional(),
   parameters: z
     .array(
       z.object({
@@ -58,11 +60,19 @@ const createParameter = z.object({
 
 const updateParameters = z.array(createParameter);
 
+// Add zod validation schema for review
+const reviewRequestBody = z.object({
+  review: z.string(),
+  rating: z.number().int().gte(0).lte(5),
+});
+
+
 export type GetListingsQueryParameter = z.infer<typeof getQueryParameters>;
 export type PostListingsRequestBody = z.infer<typeof listingsRequestBody>;
 export type PutListingsRequestBody = z.infer<typeof putListingRequestBody>;
 export type PostListingParameterRequestBody = z.infer<typeof createParameter>;
 export type PutListingParameterRequestBody = z.infer<typeof updateParameters>;
+export type ReviewRequestBody = z.infer<typeof reviewRequestBody>;
 
 export default {
   get: {
@@ -82,4 +92,10 @@ export default {
       body: updateParameters,
     },
   },
+  reviews: {
+    post: {
+      body: reviewRequestBody,
+    },
+  },
+
 };
