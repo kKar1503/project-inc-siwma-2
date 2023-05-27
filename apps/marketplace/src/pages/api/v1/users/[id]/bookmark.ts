@@ -27,8 +27,8 @@ export default apiHandler().patch(async (req, res) => {
   // Get bookmark status
   const getUserBookmarkStatus = await client.userBookmarks.findFirst({
     where: {
-      userId: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
-      targetUser: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
+      userId,
+      targetUser,
     },
     select: {
       id: true,
@@ -47,7 +47,7 @@ export default apiHandler().patch(async (req, res) => {
 
     isBookmarked = true;
   } else if (userId === targetUser) {
-    throw new ParamError('Cannot bookmark self');
+    throw new ParamError();
   } else {
     const response = await client.userBookmarks.delete({
       where: {
