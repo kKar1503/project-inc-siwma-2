@@ -93,7 +93,7 @@ const DisplayResults = ({ children }: DisplayResultsProps) => {
             <Grid container display="flex">
               {items.map((item: ProductListingItemProps) => (
                 <Grid item xs={4} md={3} sx={{ mb: 2 }}>
-                  <ProductListingItem {...item} />
+                  <ProductListingItem data={item} />
                 </Grid>
               ))}
             </Grid>

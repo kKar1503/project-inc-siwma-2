@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["index.ts"],
+  "sourcesContent": ["import { Event } from '@inc/types';\r\n\r\nexport const EVENTS = {\r\n  // Connections\r\n  CONNECTION: {\r\n    CONNECT: 'connect',\r\n    DISCONNECT: 'disconnect',\r\n  },\r\n\r\n  // Client Events\r\n  CLIENT: {\r\n    CREATE_ROOM: 'createRoom',\r\n    SEND_MESSAGE: 'sendMessage',\r\n    PING: 'clientPing',\r\n  },\r\n\r\n  // Server Events\r\n  SERVER: {\r\n    ROOMS: 'rooms',\r\n    JOINED_ROOM: 'joinedRoom',\r\n    ROOM_MESSAGE: 'roomMessage',\r\n    PING: 'serverPing',\r\n  },\r\n} as const;\r\n\r\ntype DeepValueOf<\r\n  T extends Record<string, unknown>,\r\n  Key = keyof T\r\n> = Key extends string\r\n  ? T[Key] extends Record<string, unknown>\r\n    ? DeepValueOf<T[Key]>\r\n    : T[keyof T]\r\n  : never;\r\n// eslint-disable-next-line @typescript-eslint/no-unused-vars\r\ntype DeclaredEventsObj = Extract<DeepValueOf<typeof EVENTS>, string>;\r\ntype Check = Expect<Equal<Event, DeclaredEventsObj>>;\r\n// This serves as a type check to ensure your events matches the declared types\r\n\r\ntype Expect<T extends true> = T;\r\ntype Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false;"],
+  "mappings": "4ZAAA,IAAAA,EAAA,GAAAC,EAAAD,EAAA,YAAAE,IAAA,eAAAC,EAAAH,GAEO,IAAME,EAAS,CAEpB,WAAY,CACV,QAAS,UACT,WAAY,YACd,EAGA,OAAQ,CACN,YAAa,aACb,aAAc,cACd,KAAM,YACR,EAGA,OAAQ,CACN,MAAO,QACP,YAAa,aACb,aAAc,cACd,KAAM,YACR,CACF",
+  "names": ["events_exports", "__export", "EVENTS", "__toCommonJS"]
+}

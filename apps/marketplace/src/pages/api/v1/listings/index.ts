@@ -1,20 +1,30 @@
-import {
-  apiHandler,
-  formatAPIResponse,
-  parseToNumber,
-  zodParseToBoolean,
-  zodParseToInteger,
-  zodParseToNumber,
-} from '@/utils/api';
-import PrismaClient, { Listing, ListingType, Prisma } from '@inc/db';
-import { z } from 'zod';
-import { Decimal } from '@prisma/client/runtime';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import PrismaClient, { Companies, Listing, ListingImages, Prisma, Users } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import process from 'process';
 import s3Connection from '@/utils/s3Connection';
+import { listingSchema } from '@/utils/api/server/zod';
+import { ListingResponseBody } from '@/utils/api/client/zod';
 
 export const ListingBucketName = process.env.AWS_LISTING_BUCKET_NAME as string;
+
+export type ListingWithParameters = Listing & {
+  listingsParametersValues: Array<{
+    parameterId: number;
+    value: string;
+  }>;
+  listingImages: ListingImages[];
+  offersOffersListingTolistings: Array<{
+    accepted: boolean;
+  }>;
+  users: Users & {
+    companies: Companies;
+  };
+  rating: number | null;
+  reviewCount: number;
+  multiple: boolean;
+};
 
 export function parseListingId($id: string) {
   // Parse and validate listing id provided
@@ -43,69 +53,86 @@ async function getRequiredParametersForCategory(categoryId: number): Promise<num
   return categoryParameters.map((param) => param.parameterId);
 }
 
-// -- Type definitions -- //
-export type ListingResponse = {
-  id: string;
-  name: string;
-  description: string;
-  price: Decimal;
-  unitPrice?: boolean;
-  negotiable?: boolean;
-  categoryId: string;
-  type: ListingType;
-  owner: string;
-  open: boolean;
-  parameters?: Array<{
-    paramId: string;
-    value: string;
-  }>;
-  images?: Array<{
-    image: string;
-  }>;
-};
+function orderByOptions(sortBy: string | undefined): Prisma.ListingOrderByWithRelationInput {
+  switch (sortBy) {
+    case 'price_desc':
+      return { price: 'desc' };
+    case 'price_asc':
+      return { price: 'asc' };
+    case 'recent_newest':
+      return { createdAt: 'desc' };
+    case 'recent_oldest':
+      return { createdAt: 'asc' };
+    default:
+      return { id: 'asc' };
+  }
+}
 
-export type ListingWithParameters = Listing & {
-  listingsParametersValues: Array<{
-    parameterId: number;
-    value: string;
-  }>;
-  listingImages: Array<{
-    image: string;
-  }>;
-  offersOffersListingTolistings: Array<{
-    accepted: boolean;
-  }>;
-};
+function ratingSortFn(a: ListingWithParameters, b: ListingWithParameters): number {
+  if (a.rating === null) return b.rating === null ? 0 : b.rating;
+  if (b.rating === null) return -a.rating;
+  return b.rating - a.rating;
+}
 
-export const getQueryParameters = z.object({
-  lastIdPointer: z.string().transform(zodParseToInteger).optional(),
-  limit: z.string().transform(zodParseToInteger).optional(),
-  matching: z.string().optional(),
-  includeParameters: z.string().transform(zodParseToBoolean).optional().default('false'),
-  includeImages: z.string().transform(zodParseToBoolean).optional().default('false'),
-  category: z.string().transform(zodParseToInteger).optional(),
-  negotiable: z.string().transform(zodParseToBoolean).optional(),
-  minPrice: z.string().transform(zodParseToNumber).optional(),
-  maxPrice: z.string().transform(zodParseToNumber).optional(),
-  sortBy: z.string().optional(),
-});
+function postSortOptions(
+  sortBy: string | undefined
+): (arr: ListingWithParameters[]) => ListingWithParameters[] {
+  switch (sortBy) {
+    case 'rating_desc':
+      return (arr) => arr.sort(ratingSortFn);
+    case 'rating_asc':
+      return (arr) => arr.sort(ratingSortFn).reverse();
+    default:
+      return (arr) => arr;
+  }
+}
+
+export function sortOptions(sortByStr: string | undefined) {
+  const sortBy = sortByStr ? sortByStr.toLowerCase() : undefined;
+  return {
+    orderBy: orderByOptions(sortBy),
+    postSort: postSortOptions(sortBy),
+  };
+}
 
 // -- Helper functions -- //
-export function formatSingleListingResponse(
+export async function formatSingleListingResponse(
   listing: ListingWithParameters,
-  includeParameters: boolean,
-): ListingResponse {
-  const formattedListing: ListingResponse = {
+  includeParameters: boolean
+): Promise<ListingResponseBody> {
+  const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
     name: listing.name,
     description: listing.description,
-    price: listing.price,
+    price: listing.price.toNumber(),
     unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
     type: listing.type,
-    owner: listing.owner,
-    open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    owner: {
+      id: listing.users.id,
+      name: listing.users.name,
+      email: listing.users.email,
+      company: {
+        id: listing.users.companyId.toString(),
+        name: listing.users.companies.name,
+        website: listing.users.companies.website,
+        bio: listing.users.companies.bio,
+        image: listing.users.companies.logo,
+        visible: listing.users.companies.visibility,
+      },
+      profilePic: listing.users.profilePicture,
+      mobileNumber: listing.users.phone,
+      contactMethod: listing.users.contact,
+      bio: listing.users.bio,
+    },
+    open: listing.multiple
+      ? true
+      : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    multiple: listing.multiple,
+    createdAt: listing.createdAt.toISOString(),
+    rating: listing.rating,
+    reviewCount: listing.reviewCount,
   };
 
   if (includeParameters && listing.listingsParametersValues) {
@@ -116,110 +143,107 @@ export function formatSingleListingResponse(
   }
 
   if (listing.listingImages) {
-    formattedListing.images = listing.listingImages.map((image) => ({
-      image: image.image,
-    }));
+    const bucket = await s3Connection.getBucket(ListingBucketName);
+    formattedListing.images = await Promise.all(
+      listing.listingImages.map(async (image) => ({
+        id: image.id.toString(),
+        filename: image.image,
+        url: await bucket.getObjectUrl(image.image),
+      }))
+    );
   }
-
 
   return formattedListing;
 }
 
-export function formatListingResponse(
-  $listings: ListingWithParameters[],
-  includeParameters: boolean,
-) {
-  return $listings.map((listing) => formatSingleListingResponse(listing, includeParameters));
-}
-
-export const listingsRequestBody = z.object({
-  name: z.string(),
-  description: z.string(),
-  price: z.number().gte(0),
-  unitPrice: z.boolean().optional(),
-  negotiable: z.boolean().optional(),
-  categoryId: z.number(),
-  type: z.nativeEnum(ListingType),
-  parameters: z
-    .array(
-      z.object({
-        paramId: z.string().transform(zodParseToInteger),
-        value: z.string().transform(zodParseToNumber),
-      }),
-    )
-    .optional(),
-});
-
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
-    // Filter options
-    const whereOptions: Prisma.ListingWhereInput = {
-      categoryId: queryParams.category ? queryParams.category : undefined,
-      negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
-      price: {
-        gte: queryParams.minPrice ? queryParams.minPrice : undefined,
-        lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
-      },
-      name: queryParams.matching
-        ? {
-          contains: queryParams.matching,
-          mode: 'insensitive',
-        }
-        : undefined,
-    };
-
-    // Sorting options
-    let sortByOptions: Prisma.ListingOrderByWithAggregationInput = {
-      id: 'asc',
-    };
-
-    if (queryParams.sortBy) {
-      switch (queryParams.sortBy.toLowerCase()) {
-        case 'price':
-          sortByOptions = { price: 'asc' };
-          break;
-        default:
-          break;
-      }
-    }
+    const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
     // Retrieve filtered and sorted listings from the database
     const listings = await PrismaClient.listing.findMany({
-      where: whereOptions,
-      orderBy: sortByOptions,
+      where: {
+        categoryId: queryParams.category ? queryParams.category : undefined,
+        negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+        price: {
+          gte: queryParams.minPrice ? queryParams.minPrice : undefined,
+          lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
+        },
+        name: queryParams.matching
+          ? {
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
+          : undefined,
+        listingsParametersValues: queryParams.params
+          ? {
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
+          : undefined,
+      },
+      orderBy,
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
         listingsParametersValues: queryParams.includeParameters,
         listingImages: queryParams.includeImages,
         offersOffersListingTolistings: true,
+        users: {
+          include: {
+            companies: true,
+          },
+        },
+        reviewsReviewsListingTolistings: true,
       },
     });
 
-    const bucket = await s3Connection.getBucket(ListingBucketName);
-    const listingResponse = Promise.all(formatListingResponse(
-      listings as unknown as ListingWithParameters[],
-      queryParams.includeParameters,
-    ).map(async (listing): Promise<ListingResponse> => ({
-      ...listing,
-      images: listing.images ? await Promise.all(listing.images.map(async (image) => ({
-        image: await bucket.getObjectUrl(image.image),
-      }))) : undefined,
-    })));
+    // Calculate the average rating and count of reviews for each listing
+    const listingsWithRatingsAndReviewCount = await Promise.all(
+      listings.map(async (listing) => {
+        const { _avg, _count } = await PrismaClient.reviews.aggregate({
+          _avg: {
+            rating: true,
+          },
+          _count: {
+            rating: true,
+          },
+          where: {
+            listing: listing.id,
+          },
+        });
 
-    res
-      .status(200)
-      .json(
-        formatAPIResponse(
-          listingResponse,
-        ),
-      );
+        const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+        const reviewCount = _count && _count.rating;
+        const { multiple } = listing;
+
+        return {
+          ...listing,
+          rating,
+          reviewCount,
+          multiple,
+        };
+      })
+    );
+
+    const sortedListings = postSort(listingsWithRatingsAndReviewCount);
+
+    // Format the listings
+    const formattedListings = await Promise.all(
+      sortedListings.map((listing) =>
+        formatSingleListingResponse(listing, queryParams.includeParameters)
+      )
+    );
+
+    res.status(200).json(formatAPIResponse(formattedListings));
   })
   .post(async (req, res) => {
-    const data = listingsRequestBody.parse(req.body);
+    const data = listingSchema.post.body.parse(req.body);
 
     // Use the user ID from the request object
     const userId = req.token?.user?.id;
@@ -243,11 +267,11 @@ export default apiHandler()
       }
     });
 
-
     const files = await getFilesFromRequest(req);
     const bucket = await s3Connection.getBucket(ListingBucketName);
-    const objects = await Promise.all(files.map((file) => bucket.createObject(fileToS3Object(file))));
-
+    const objects = await Promise.all(
+      files.map((file) => bucket.createObject(fileToS3Object(file)))
+    );
 
     const listing = await PrismaClient.listing.create({
       data: {
@@ -258,23 +282,26 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
+        multiple: data.multiple,
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
         listingImages: {
-          create: await Promise.all(objects.map(async (object) => ({
-            image: await object.generateLink(),
-          }))),
+          create: await Promise.all(
+            objects.map(async (object) => ({
+              image: await object.generateLink(),
+            }))
+          ),
         },
       },
       include: {

@@ -51,11 +51,12 @@
     "sib-api-v3-sdk": "^8.5.0",
     "styled-components": "^5.3.9",
     "victory": "^36.6.8",
-    "zod": "^3.21.4"
+    "zod": "3.22.0-canary.20230522T011705"
   },
   "devDependencies": {
     "@inc/configs": "workspace:*",
     "@inc/types": "workspace:*",
+    "@types/formidable": "2.0.6",
     "@types/luxon": "^3.3.0",
     "@types/node": "18.15.3",
     "@types/react": "18.0.28",

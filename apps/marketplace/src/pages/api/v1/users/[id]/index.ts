@@ -1,35 +1,19 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import { z } from 'zod';
-import client, { UserContacts } from '@inc/db';
-import { ForbiddenError, NotFoundError, ParamRequiredError } from '@inc/errors';
+import client from '@inc/db';
+import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
+import { userSchema } from '@/utils/api/server/zod';
 import s3Connection from '@/utils/s3Connection';
 import { UserBucketName } from '@api/v1/users';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
-
-const userIdSchema = z.object({
-  id: z.string(),
-});
-
-const updateUserDetailsSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().email().optional(),
-  //   company is a number that represents the id of the company
-  company: z.string().optional(),
-  mobileNumber: z.string().optional(),
-  contactMethod: z.nativeEnum(UserContacts).optional(),
-  bio: z.string().optional(),
-  password: z.string().optional(),
-  userComments: z.string().optional(),
-});
 
 export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { id } = userIdSchema.parse(req.query);
+    const { id } = userSchema.userId.parse(req.query);
 
     const user = await client.users.findUnique({
       where: {
@@ -46,6 +30,8 @@ export default apiHandler()
         comments: isAdmin, // Only admins can see comments
         phone: true,
         contact: true,
+        whatsappNumber: true,
+        telegramUsername: true,
         bio: true,
       },
     });
@@ -64,6 +50,8 @@ export default apiHandler()
       profilePic: user.profilePicture,
       mobileNumber: user.phone,
       contactMethod: user.contact,
+      whatsappNumber: user.whatsappNumber,
+      telegramUsername: user.telegramUsername,
       bio: user.bio,
       ...(isAdmin && { comments: user.comments }),
     };
@@ -73,10 +61,19 @@ export default apiHandler()
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { id } = userIdSchema.parse(req.query);
-    const parsedBody = updateUserDetailsSchema.parse(req.body);
-    const { name, email, company, mobileNumber, contactMethod, bio, userComments } =
-      parsedBody;
+    const { id } = userSchema.userId.parse(req.query);
+    const parsedBody = userSchema.put.body.parse(req.body);
+    const {
+      name,
+      email,
+      company,
+      mobileNumber,
+      contactMethod,
+      bio,
+      userComments,
+      whatsappNumber,
+      telegramUsername,
+    } = parsedBody;
     let { password } = parsedBody;
 
     if (name) {
@@ -93,6 +90,10 @@ export default apiHandler()
       // Hash password with bcrrypt and genSalt(10)
       const salt = await bcrypt.genSalt(10);
       password = await bcrypt.hash(password, salt);
+    }
+
+    if (whatsappNumber) {
+      validatePhone(whatsappNumber);
     }
 
     // Users can edit their own details, and admins can edit anyone's details
@@ -132,7 +133,6 @@ export default apiHandler()
       throw new NotFoundError('User');
     }
 
-
     const files = await getFilesFromRequest(req);
     let { profilePicture } = userExists;
     if (files.length > 0) {
@@ -146,14 +146,10 @@ export default apiHandler()
         await bucket.deleteObject(userExists.profilePicture);
       };
 
-      const [profilePictureObject] = await Promise.all([
-        createObject(),
-        deleteObject(),
-      ]);
+      const [profilePictureObject] = await Promise.all([createObject(), deleteObject()]);
 
       profilePicture = profilePictureObject.Id;
     }
-
 
     const user = await client.users.update({
       where: {
@@ -167,6 +163,8 @@ export default apiHandler()
         profilePicture,
         phone: mobileNumber,
         contact: contactMethod,
+        whatsappNumber,
+        telegramUsername,
         bio,
         comments: userComments,
       },
@@ -181,6 +179,8 @@ export default apiHandler()
       enabled: user.enabled,
       profilePic: user.profilePicture,
       mobileNumber: user.phone,
+      whatsappNumber: user.whatsappNumber,
+      telegramUsername: user.telegramUsername,
       contactMethod: user.contact,
       bio: user.bio,
       ...(isAdmin && { comments: user.comments }),
@@ -193,7 +193,7 @@ export default apiHandler()
       allowAdminsOnly: true,
     }),
     async (req, res) => {
-      const { id } = userIdSchema.parse(req.query);
+      const { id } = userSchema.userId.parse(req.query);
 
       // Verify that the user exists
       const userExists = await client.users.findUnique({
@@ -218,5 +218,5 @@ export default apiHandler()
       });
 
       return res.status(204).end();
-    },
+    }
   );

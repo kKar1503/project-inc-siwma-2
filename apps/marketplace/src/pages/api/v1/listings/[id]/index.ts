@@ -1,13 +1,13 @@
-import { apiHandler, formatAPIResponse, zodParseToInteger, zodParseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import { ListingType } from '@prisma/client';
 import z from 'zod';
 import s3Connection from '@/utils/s3Connection';
-import { formatSingleListingResponse, getQueryParameters, ListingBucketName, parseListingId } from '..';
+import { listingSchema } from '@/utils/api/server/zod';
+import { formatSingleListingResponse, ListingBucketName, parseListingId } from '..';
 
 // -- Functions --//
-
 /**
  * Checks if a listing exists
  * @param id The listing id
@@ -22,13 +22,14 @@ export async function checkListingExists($id: string | number) {
     where: { id },
     include: {
       users: {
-        select: {
-          companyId: true,
+        include: {
+          companies: true,
         },
       },
       listingsParametersValues: true,
       listingImages: true,
       offersOffersListingTolistings: true,
+      reviewsReviewsListingTolistings: true,
     },
   });
 
@@ -39,30 +40,6 @@ export async function checkListingExists($id: string | number) {
 
   return listing;
 }
-
-interface Parameter {
-  paramId: number;
-  value: number;
-}
-
-// Define the schema for the request body
-const putListingRequestBody = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  price: z.number().gte(0).optional(),
-  unitPrice: z.boolean().optional(),
-  negotiable: z.boolean().optional(),
-  categoryId: z.number().optional(),
-  type: z.nativeEnum(ListingType).optional(),
-  parameters: z
-    .array(
-      z.object({
-        paramId: z.string().transform(zodParseToInteger),
-        value: z.string().transform(zodParseToNumber),
-      }),
-    )
-    .optional(),
-});
 
 async function getValidParametersForCategory(categoryId: number): Promise<string[]> {
   // Fetch valid parameters for the category
@@ -81,29 +58,44 @@ async function getValidParametersForCategory(categoryId: number): Promise<string
 
 export default apiHandler()
   .get(async (req, res) => {
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
     const id = parseListingId(req.query.id as string);
+    const { _avg, _count } = await PrismaClient.reviews.aggregate({
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        rating: true,
+      },
+      where: {
+        listing: id,
+      },
+    });
+
+    const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+    const reviewCount = _count && _count.rating;
+
     const listing = await checkListingExists(id);
 
+    const completeListing = {
+      ...listing,
+      rating,
+      reviewCount,
+      multiple: listing.multiple,
+    };
     // Return the result
 
-    const response = formatSingleListingResponse(listing, queryParams.includeParameters);
+    const response = await formatSingleListingResponse(
+      completeListing,
+      queryParams.includeParameters
+    );
 
-    if (queryParams.includeImages) {
-      const bucket = await s3Connection.getBucket(ListingBucketName);
-      response.images = await Promise.all(listing.listingImages.map(async (image) => ({
-        image: await bucket.getObjectUrl(image.image),
-      })));
-    }
-
-    res
-      .status(200)
-      .json(formatAPIResponse(response));
+    res.status(200).json(formatAPIResponse(response));
   })
   .put(async (req, res) => {
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
@@ -119,7 +111,7 @@ export default apiHandler()
     }
 
     // Validate the request body
-    const data = putListingRequestBody.parse(req.body);
+    const data = listingSchema.put.body.parse(req.body);
 
     if (data.categoryId) {
       // Get valid parameters for the listing's category
@@ -136,7 +128,7 @@ export default apiHandler()
     }
 
     // Do not remove this, it is necessary to update the listing
-    const updatedListing = await PrismaClient.listing.update({
+    await PrismaClient.listing.update({
       where: { id },
       data: {
         name: data.name,
@@ -146,19 +138,21 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
+        multiple: data.multiple,
       },
       include: {
         users: {
-          select: {
-            companyId: true,
+          include: {
+            companies: true,
           },
         },
         listingsParametersValues: true,
+        offersOffersListingTolistings: true,
       },
     });
 
     if (data.parameters) {
-      const parameterUpdates = data.parameters.map((parameter: Parameter) =>
+      const parameterUpdates = data.parameters.map((parameter) =>
         PrismaClient.listingsParametersValue.upsert({
           where: {
             listingId_parameterId: {
@@ -172,7 +166,7 @@ export default apiHandler()
             parameterId: parameter.paramId,
             listingId: id,
           },
-        }),
+        })
       );
 
       await PrismaClient.$transaction(parameterUpdates);
@@ -182,13 +176,14 @@ export default apiHandler()
       where: { id },
       include: {
         users: {
-          select: {
-            companyId: true,
+          include: {
+            companies: true,
           },
         },
         listingsParametersValues: true,
         listingImages: queryParams.includeImages,
         offersOffersListingTolistings: true,
+        reviewsReviewsListingTolistings: true,
       },
     });
 
@@ -196,12 +191,37 @@ export default apiHandler()
       throw new NotFoundError(`Listing with id '${id}'`);
     }
 
+    const { _avg, _count } = await PrismaClient.reviews.aggregate({
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        rating: true,
+      },
+      where: {
+        listing: id,
+      },
+    });
+
+    const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
+    const reviewCount = _count && _count.rating;
+
+    const listingWithRatingAndReviewCount = {
+      ...completeListing,
+      rating,
+      reviewCount,
+      multiOffer: completeListing.multiple,
+    };
+
     res
       .status(200)
       .json(
         formatAPIResponse(
-          formatSingleListingResponse(completeListing, queryParams.includeParameters),
-        ),
+          await formatSingleListingResponse(
+            listingWithRatingAndReviewCount,
+            queryParams.includeParameters
+          )
+        )
       );
   })
   .delete(async (req, res) => {
