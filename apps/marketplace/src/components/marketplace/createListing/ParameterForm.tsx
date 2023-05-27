@@ -11,16 +11,14 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import MenuItem from '@mui/material/MenuItem';
-import fetchParameters from '@/middlewares/fetchParameters';
 import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { useQuery } from 'react-query';
 
 export type dataTypeProps = 'string' | 'number' | 'boolean';
 
 export interface ParameterFormProps {
-  paramId: string;
-  value: string;
+  paramId: number;
+  value: number;
 }
 
 export interface CategoryParametersProps {
@@ -52,19 +50,19 @@ const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
 
   const handleFormValueChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<number>,
     parameterId: string
   ) => {
     // Update the form values state
     setFormValues((prevFormValues) => ({
       ...prevFormValues,
-      [parameterId]: { paramId: parameterId, value: event.target.value as string },
+      [parameterId]: { paramId: Number(parameterId), value: Number(event.target.value) },
     }));
 
     // Convert the form values object to an array and update the form values array state
     const updatedFormValues = {
       ...formValues,
-      [parameterId]: { paramId: parameterId, value: event.target.value as string },
+      [parameterId]: { paramId: Number(parameterId), value: Number(event.target.value) },
     };
 
     const formValuesArray = Object.values(updatedFormValues);

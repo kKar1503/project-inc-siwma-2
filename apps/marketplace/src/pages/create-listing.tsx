@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import client from '@/utils/api/client/apiClient';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
@@ -22,6 +21,7 @@ import ImageUploadForm, {
   ImageProps,
 } from '@/components/marketplace/createListing/ImageUploadForm';
 import CategoryForm, { CategoryProps } from '@/components/marketplace/createListing/CategoryForm';
+import { PostListingsRequestBody } from '@/utils/api/server/zod/listings';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import OnCreateModal from '@/components/modal/OnCreateModal';
 import { useQuery } from 'react-query';
@@ -30,20 +30,6 @@ import { useQuery } from 'react-query';
 import fetchCategories from '@/middlewares/fetchCategories';
 import fetchParameters from '@/middlewares/fetchParameters';
 import createListing from '@/middlewares/createListing';
-import { parseToNumber } from '@/utils/api';
-
-export interface CreateListingProps {
-  name: string;
-  description: string;
-  price: number;
-  unitPrice?: boolean;
-  negotiable?: boolean;
-  categoryId: number;
-  type: ListingTypeProps;
-  images?: ImageProps[];
-  coverImage?: null;
-  parameters?: ParameterFormProps[];
-}
 
 const useGetCategoriesQuery = () => {
   const { data } = useQuery('categories', () => fetchCategories());
@@ -60,8 +46,8 @@ const useGetParametersQuery = (ids: string, category: CategoryProps | null) => {
   return data;
 };
 
-const usePostListingQuery = (listing: CreateListingProps | undefined) => {
-  const { data } = useQuery('postListing', () => createListing(listing), {
+const usePostListingQuery = (listing: PostListingsRequestBody | undefined) => {
+  const { data } = useQuery(['postListing', listing], () => createListing(listing), {
     enabled: listing !== undefined,
   });
   return data;
@@ -80,7 +66,7 @@ const CreateListingPage = () => {
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [formData, setFormData] = useState<CreateListingProps>();
+  const [formData, setFormData] = useState<PostListingsRequestBody>();
 
   // modals
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
@@ -153,13 +139,13 @@ const CreateListingPage = () => {
   };
 
   // validation for parameters
-  const ParameterValidation = () => {
+  const parameterValidation = () => {
     let formIsValid = true;
     const newParameterErrors: ParameterValidationProps[] = [];
 
     categoryParameters.forEach((categoryParameter) => {
       const { parameterId, required } = categoryParameter;
-      const parameter = parameters.find((parameter) => parameter.paramId === parameterId);
+      const parameter = parameters.find((parameter) => parameter.paramId === Number(parameterId));
 
       if (parametersData) {
         const detailedParameter = parametersData.find((parameter) => parameter.id === parameterId);
@@ -228,12 +214,12 @@ const CreateListingPage = () => {
       return;
     }
 
-    if (!listingValidation() && !ParameterValidation()) {
+    if (!listingValidation() && !parameterValidation()) {
       return;
     }
 
     // backend api currently have conflicts
-    const formData: CreateListingProps = {
+    const sendingData: PostListingsRequestBody = {
       name: title,
       description,
       price,
@@ -241,12 +227,13 @@ const CreateListingPage = () => {
       negotiable,
       categoryId: Number(category.id),
       type: listingType,
-      images,
-      coverImage: null,
+      multiple: false,
       parameters,
     };
 
-    setFormData(formData);
+    if (sendingData !== undefined) {
+      setFormData(sendingData);
+    }
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -256,7 +243,7 @@ const CreateListingPage = () => {
 
   useEffect(() => {
     sortCategoryParameters();
-  }, [category, parameterIDs, formData]);
+  }, [category, parameterIDs]);
 
   return (
     <Container maxWidth="lg" sx={{ boxShadow: 4, padding: 2, marginTop: 2, marginBottom: 2 }}>
