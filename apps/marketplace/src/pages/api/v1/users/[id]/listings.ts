@@ -35,17 +35,17 @@ export default apiHandler().get(async (req, res) => {
       },
       name: queryParams.matching
         ? {
-          contains: queryParams.matching,
-          mode: 'insensitive',
-        }
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
         : undefined,
       listingsParametersValues: queryParams.params
         ? {
-          some: {
-            parameterId: Number(queryParams.params.paramId),
-            value: queryParams.params.value,
-          },
-        }
+            some: {
+              parameterId: Number(queryParams.params.paramId),
+              value: queryParams.params.value,
+            },
+          }
         : undefined,
     },
     orderBy,
@@ -53,6 +53,7 @@ export default apiHandler().get(async (req, res) => {
     take: queryParams.limit,
     include: {
       listingsParametersValues: queryParams.includeParameters,
+      listingImages: queryParams.includeImages,
       offersOffersListingTolistings: true,
       users: {
         include: {
@@ -88,7 +89,7 @@ export default apiHandler().get(async (req, res) => {
         reviewCount,
         multiple,
       };
-    }),
+    })
   );
 
   const sortedListings = postSort(listingsWithRatingsAndReviewCount);
@@ -96,10 +97,9 @@ export default apiHandler().get(async (req, res) => {
   // Format the listings
   const formattedListings = await Promise.all(
     sortedListings.map((listing) =>
-      formatSingleListingResponse(listing, queryParams.includeParameters),
-    ),
+      formatSingleListingResponse(listing, queryParams.includeParameters)
+    )
   );
 
   res.status(200).json(formatAPIResponse(formattedListings));
 });
-
