@@ -73,17 +73,42 @@ export default async function handleBookmarks(updateType: UpdateType, listing: L
     // companyId is not stored in the listing, so we get companiesBookmarks by querying companies with the owner id
     const companiesBookmarksPromise = PrismaClient.companies.findFirst({
       where: { users: { some: { id: listing.owner } } },
-      include: {
+      select: {
         companiesBookmarks: true,
       },
     });
 
     // Wait for all promises to resolve concurrently
-    const [listingBookmarks, userBookmarks, companiesBookmarks] = await Promise.all([
+    const promiseResults = await Promise.all([
       listingBookmarksPromise,
       userBookmarksPromise,
       companiesBookmarksPromise,
     ]);
+
+    const listingBookmarks = promiseResults[0];
+    let userBookmarks = promiseResults[1];
+    let companiesBookmarks = promiseResults[2]?.companiesBookmarks;
+
+    // Check if notifications are duplicated across listingNotifications, userNotifications, and companiesNotifications
+    if (listingBookmarks.length === 0 && userBookmarks.length === 0 && !companiesBookmarks) {
+      return;
+    }
+
+    // Remove duplicated userBookmarks
+    userBookmarks = userBookmarks.filter(
+      (userBookmark) =>
+        !listingBookmarks.some((listingBookmark) => listingBookmark.userId === userBookmark.userId)
+    );
+
+    if (companiesBookmarks) {
+      // Remove duplicated companyBookmarks
+      companiesBookmarks = companiesBookmarks.filter(
+        (companyBookmark) =>
+          !listingBookmarks.some(
+            (listingBookmark) => listingBookmark.userId === companyBookmark.userId
+          ) && !userBookmarks.some((userBookmark) => userBookmark.userId === companyBookmark.userId)
+      );
+    }
 
     // Create notifications for each user who bookmarked this listing
     const listingNotificationsPromises = listingBookmarks.map((bookmark) =>
@@ -118,7 +143,7 @@ export default async function handleBookmarks(updateType: UpdateType, listing: L
     );
 
     // Create notifications for each user who bookmarked the company of the owner of this listing
-    const companiesNotificationsPromises = companiesBookmarks?.companiesBookmarks.map((bookmark) =>
+    const companiesNotificationsPromises = companiesBookmarks?.map((bookmark) =>
       PrismaClient.companiesNotifications.create({
         data: {
           userId: bookmark.userId,
