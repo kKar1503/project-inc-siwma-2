@@ -63,7 +63,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   const queryClient = new QueryClient();
   const { allowAuthenticated, allowNonAuthenticated } = Component;
   // Snackbar close button
-  const CloseAlert = useCallback((key: any) => <CloseButton id={key} />, []);
+  const CloseAlert = useCallback((key: unknown) => <CloseButton id={key} />, []);
   // Stying snackbar responsiveness
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const alertStyle: SnackbarOrigin | undefined = useMemo(() => {
