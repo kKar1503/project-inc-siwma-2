@@ -21,7 +21,7 @@ const listingsRequestBody = z.object({
   price: z.number().gte(0),
   unitPrice: z.boolean().optional(),
   negotiable: z.boolean().optional(),
-  categoryId: z.number(),
+  categoryId: z.string().transform(zodParseToInteger),
   type: z.nativeEnum(ListingType),
   multiple: z.boolean().optional(),
   parameters: z
@@ -40,7 +40,7 @@ const putListingRequestBody = z.object({
   price: z.number().gte(0).optional(),
   unitPrice: z.boolean().optional(),
   negotiable: z.boolean().optional(),
-  categoryId: z.number().optional(),
+  categoryId: z.string().transform(zodParseToInteger).optional(),
   type: z.nativeEnum(ListingType).optional(),
   multiple: z.boolean().optional(),
   parameters: z
