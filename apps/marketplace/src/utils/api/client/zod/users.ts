@@ -46,6 +46,9 @@ const getUser = user;
 const updateUser = user;
 const deleteUser = z.object({});
 const getUsers = user.array();
+const bookmarkUser = z.object({
+  bookmarked: z.boolean(),
+});
 
 export default {
   create: createUser,
@@ -54,4 +57,5 @@ export default {
   update: updateUser,
   delete: deleteUser,
   toggle: toggleUser,
+  bookmark: bookmarkUser,
 };
