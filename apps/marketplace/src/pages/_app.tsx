@@ -66,7 +66,6 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   const CloseAlert = useCallback((key: any) => <CloseButton id={key} />, []);
   // Stying snackbar responsiveness
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
   const alertStyle: SnackbarOrigin | undefined = useMemo(() => {
     if (isSm) {
       return { vertical: 'top', horizontal: 'center' };

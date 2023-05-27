@@ -39,6 +39,7 @@ export type Response = {
     return data;
   };
 
+  
 const ChatAlert = ({ chatData, reply, setReply }: Response) => {
   const userDetail = useGetUserQuery(chatData.author);
 
@@ -74,7 +75,5 @@ const ChatAlert = ({ chatData, reply, setReply }: Response) => {
     </MUIAlert>
   );
 };
-
-// Message Notification design
 
 export default ChatAlert;
