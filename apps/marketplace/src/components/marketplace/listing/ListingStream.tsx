@@ -3,7 +3,7 @@ import { Box, styled } from '@mui/material';
 import ProductListingItem, { ProductListingItemProps } from './ProductListingItem';
 
 type Props = {
-  listingItemsData: Array<ProductListingItemProps>;
+  listingItemsData: Array<ProductListingItemProps> | undefined;
 };
 
 const Scroll = styled('div')({
@@ -27,7 +27,7 @@ const ListingStream: React.FC<Props> = ({ listingItemsData }) => (
           width: 'calc(288px * 14 + (48px * 14))',
         }}
       >
-        {listingItemsData.map((item) => (
+        {listingItemsData?.map((item) => (
           <Box sx={{ width: '288px', margin: '0 24px' }} key={item.productId}>
             <ProductListingItem data={item} />
           </Box>
