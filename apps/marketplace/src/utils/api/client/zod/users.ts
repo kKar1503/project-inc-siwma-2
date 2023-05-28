@@ -15,6 +15,21 @@ const whatsappNumber = z.string().nullable();
 const telegramUsername = z.string().nullable();
 const contactMethod = z.nativeEnum(UserContacts);
 const bio = z.string().nullable();
+const userBookmarks = z.object({
+  id: z.number(),
+  userId: z.string(),
+  targetUser: z.string(),
+});
+const listingBookmarks = z.object({
+  id: z.number(),
+  userId: z.string(),
+  listingId: z.string(),
+});
+const companyBookmarks = z.object({
+  id: z.number(),
+  userId: z.string(),
+  companyId: z.number(),
+});
 const bookmarkUser = z.object({
   bookmarked: z.boolean(),
 });
@@ -33,6 +48,9 @@ const user = z.object({
   telegramUsername,
   contactMethod,
   bio,
+  userBookmarks,
+  listingBookmarks,
+  companyBookmarks
 });
 
 // Request Schemas (Not Implemented)
