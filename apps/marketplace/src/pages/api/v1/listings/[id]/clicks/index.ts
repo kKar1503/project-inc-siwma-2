@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse, parseToNumber, zodParseToInteger } from '@/utils/api';
+import { apiHandler, zodParseToInteger } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
@@ -17,7 +17,7 @@ const BodySchema = z.object({
 const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
   const listing = ParamSchema.parse(req.query).id;
-  const  user = BodySchema.parse(req.token).user.id;
+  const user = BodySchema.parse(req.token).user.id;
 
   PrismaClient.listingClicks.create({
     data: {
@@ -26,9 +26,7 @@ const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) 
     },
   });
 
-  res
-    .status(204)
-    .json(formatAPIResponse({}));
+  res.status(204).end();
 };
 
 
