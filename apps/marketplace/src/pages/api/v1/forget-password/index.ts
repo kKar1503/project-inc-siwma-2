@@ -13,6 +13,8 @@ import {
     BulkInviteEmailRequestBody,
 } from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
+import { ForgetPasswordQueryParameter } from '@/utils/api/server/zod/forget-password';
+import { use } from 'react';
 
 const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => {
     // Get email from request body
@@ -24,8 +26,8 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
     });
 
     if (!user) {
-        // Return 404 error response if email is not found
-        return res.status(404).json(formatAPIResponse({ status: "404" }));
+        // If there is no user, return a 404 error
+        return res.status(404).end();
     }
 
     // Create token: user's name, email, the current date, and a random string
@@ -44,25 +46,25 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
     });
     let content: string;
     try {
-        content = getContentFor(EmailTemplate.INVITE);
+        content = getContentFor(EmailTemplate.FORGETPASSWORD);
     } catch (e) {
         throw new EmailTemplateNotFoundError();
     }
 
     const emailBody: BulkInviteEmailRequestBody = {
         htmlContent: content,
-        subject: 'Join the SIWMA Marketplace',
+        subject: 'Reset your password',
         messageVersions: [
             {
                 to: [
                     {
                         email,
-                        name: 'adeeb',
+                        name: user.name,
                     },
                 ],
                 params: {
-                    name: 'adeeb',
-                    companyName: 'adeeb',
+                    name: user.name,
+                    companyName: 'Inc.',
                     registrationUrl: `${process.env.FRONTEND_URL}/register?token=${tokenHash}`,
                 },
             },

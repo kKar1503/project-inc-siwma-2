@@ -21,8 +21,12 @@ export default async function sendEmails<T extends Record<string, string>>(
 
   if (process.env.NODE_ENV === 'development' && data.messageVersions) {
     // If in development, get the API key from the database.
+    console.log(data.messageVersions.length)
     const retrieved = await getAPIKey(data.messageVersions.length);
+    console.log(retrieved)
+
     apiKey = retrieved.key?.key;
+
     senderEmail = retrieved.key?.senderEmail;
   } else {
     apiKey = process.env.SIB_API_KEY;

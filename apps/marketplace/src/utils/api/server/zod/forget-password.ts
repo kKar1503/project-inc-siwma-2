@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
 
-const emailSchema = z.object({
+const forgetPassword = z.object({
     email: z.string(),
 });
 
 
-export type ForgetPasswordQueryParameter = z.infer<typeof emailSchema>;
+export type ForgetPasswordQueryParameter = z.infer<typeof forgetPassword>;
 
 export default {
     post: {
-        query: emailSchema,
+        query: forgetPassword,
     },
 };
