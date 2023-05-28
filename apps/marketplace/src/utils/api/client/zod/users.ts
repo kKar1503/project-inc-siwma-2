@@ -51,6 +51,8 @@ const bookmarkUser = z.object({
   bookmarked: z.boolean(),
 });
 
+export type User = z.infer<typeof user>;
+
 export default {
   create: createUser,
   getAll: getUsers,
