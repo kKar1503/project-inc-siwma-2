@@ -55,7 +55,7 @@ const InfiniteScroll = ({
           children !== undefined &&
           Children.map(children, (child, index) => {
             if (index === children.length - 1) {
-              return <Child>{child}</Child>;
+              return <Child ref={lastItemRef}>{child}</Child>;
             }
             return <Child>{child}</Child>;
           })}
