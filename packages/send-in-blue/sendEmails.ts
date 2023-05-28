@@ -5,6 +5,7 @@ import { BulkEmailResponseBody } from './types/BulkEmailResponseBody';
 import { InvalidApiKeyError, InvalidSenderEmailError, EmailSendError } from '@inc/errors';
 import { SendSmtpEmail } from 'sib-api-v3-sdk';
 
+
 /* This function sends emails to multiple recipients.
  * It uses SendInBlue's Transactional Email API.
  * You should use this function to send emails to multiple users at once instead of using a single email function multiple times.
