@@ -27,7 +27,7 @@ type Read = {
 type DeleteMessage = {
   room: string;
   messageId: number;
-}
+};
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {

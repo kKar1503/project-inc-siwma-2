@@ -8,14 +8,13 @@ const newMsgEvent: EventFile = (io) => ({
   type: 'on',
   callback: ({ roomId, message, username, contentType, time }) => {
     logger.info(`New message: ${message}`);
-    const args = {
+    io.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
       sender: username,
       message: message,
       messageType: contentType,
       room: roomId,
       timestamp: time,
-    };
-
+    });
     prisma.messages.create({
       data: {
         content: message,
@@ -23,17 +22,6 @@ const newMsgEvent: EventFile = (io) => ({
         room: roomId,
         author: username,
       },
-    }).then(() => {
-      io.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
-        ...args,
-        success: true,
-      });
-    }).catch((err) => {
-      logger.error(err);
-      io.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
-        ...args,
-        success: false,
-      });
     });
   },
 });

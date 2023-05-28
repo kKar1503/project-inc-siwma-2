@@ -9,7 +9,7 @@ const readEvent: EventFile = (io) => ({
   type: 'on',
   callback: ({ room, messageId }) => {
     logger.info(`Message ${messageId} read`);
-    const args = { room: room, message: messageId };
+    io.to(room).emit(EVENTS.SERVER.READ, { room: room, message: messageId });
     prisma.messages.update({
       where: {
         id: messageId,
@@ -17,17 +17,6 @@ const readEvent: EventFile = (io) => ({
       data: {
         read: true,
       },
-    }).then(() => {
-      io.to(room).emit(EVENTS.SERVER.READ, {
-        ...args,
-        success: true,
-      });
-    }).catch((err) => {
-      logger.error(err);
-      io.to(room).emit(EVENTS.SERVER.READ, {
-        ...args,
-        success: false,
-      });
     });
   },
 });
