@@ -22,7 +22,7 @@ export type ProfileDetailCardProps =
       name: string;
       enabled: boolean;
       createdAt: string;
-      profilePic: string | null;
+      profilePicture: string | null;
       company: string;
       mobileNumber: string;
       whatsappNumber: string | null;
@@ -35,24 +35,22 @@ export type ProfileDetailCardProps =
   | undefined;
 
 export type ProfileDetailCardData = {
-  profilePic: ReactNode;
+  profilePicture: ReactNode;
   name: ReactNode;
   company: ReactNode;
   email: ReactNode;
   bio: ReactNode;
   telegramUsername: ReactNode;
   mobileNumber: ReactNode;
-  id: string;
+  id: any;
   data: ProfileDetailCardProps;
 };
 
-const ProfileDetailCard = ({ data, isEditMode = false, }: {
-  data: ProfileDetailCardData;
-  isEditMode?: boolean;
-}) => {
-
+const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode?: boolean }) => {
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  console.log(data); // Check the value of data
+
 
   const styleProfileCard = useMemo(() => {
     if (isSm || isMd) {
@@ -89,12 +87,14 @@ const ProfileDetailCard = ({ data, isEditMode = false, }: {
         subheader="View your profile details here"
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
+      
+
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
-        <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography variant="body2">{data?.company}</Typography>
-        {/* <Typography>@{username}</Typography> */}
-        <Typography>{data?.email}</Typography>
+        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data.data.data[0].profilePicture}</Avatar>
+        <Typography sx={{ fontWeight: 'bold' }}>{data.data.data[0].name}</Typography>
+        <Typography variant="body2">{data.data.data[0].company}</Typography>
+        <Typography>@{data.data.data[0].username}</Typography>
+        <Typography>{data.data.data[0].email}</Typography>
 
         <Box
           sx={({ spacing }) => ({
@@ -125,6 +125,7 @@ const ProfileDetailCard = ({ data, isEditMode = false, }: {
         <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
         <Typography>{data?.bio}</Typography>
       </CardContent>
+
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
@@ -148,7 +149,7 @@ const ProfileDetailCard = ({ data, isEditMode = false, }: {
               ml: spacing(1),
             })}
           >
-            {data?.telegramUsername}
+            {data.data.data[0].telegramUsername}
           </Typography>
         </Box>
         <Box
@@ -171,27 +172,27 @@ const ProfileDetailCard = ({ data, isEditMode = false, }: {
               ml: spacing(1),
             })}
           >
-            +65 {data?.mobileNumber}
+            +65 {data.data.data[0].mobileNumber}
           </Typography>
         </Box>
       </CardContent>
       <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
         <Box sx={{ width: '98%' }}>
-        {isEditMode && (
-          <Button
-            component={Link}
-            href={`/profile/${data?.id}/edit-profile`}
-            variant="contained"
-            type="submit"
-            sx={({ spacing }) => ({
-              width: '100%',
-              mb: spacing(2),
-              mt: spacing(2),
-              fontWeight: 'bold',
-            })}
-          >
-            Edit profile
-          </Button>
+          {isEditMode && (
+            <Button
+              component={Link}
+              href={`/profile/${data.data[0].id}/edit-profile`}
+              variant="contained"
+              type="submit"
+              sx={({ spacing }) => ({
+                width: '100%',
+                mb: spacing(2),
+                mt: spacing(2),
+                fontWeight: 'bold',
+              })}
+            >
+              Edit profile
+            </Button>
           )}
           <Button
             component={Link}

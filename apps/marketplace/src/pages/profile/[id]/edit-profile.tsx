@@ -29,23 +29,6 @@ import { useQuery, useMutation } from 'react-query';
 import users from '@/pages/api/v1/users';
 import { useRouter } from 'next/router';
 
-// const profileDetailData = [
-//   {
-//     id: 1,
-//     username: 'diggers',
-//     name: 'John Tan',
-//     email: 'digs@gmail.com',
-//     company: 'Prof. Digging Ltd.',
-//     profilePic:
-//       'https://i.seadn.io/gcs/files/b7e46c1c3a103a759dcdf56f1b27d7b7.png?auto=format&dpr=1&w=1000',
-//     mobileNumber: '2314 5324',
-//     telegramUsername: '@digpeople',
-//     bio: 'Introducing Professional Digging Limited, a leading mining company with a proven track record of excellence in the industry. With decades of experience in the mining business, we have established ourselves as a trusted and reliable provider of high-quality minerals and metals.',
-//     rating: 3.3,
-//     reviews: 336,
-//   },
-// ];
-
 const useGetUserQuery = (userUuid: string) => {
   const { data } = useQuery('user', async () => fetchUser(userUuid), {
     enabled: userUuid !== undefined,
@@ -431,7 +414,7 @@ const EditProfile = () => {
                     </CardActions>
                   </Card>
                 </Grid>
-                {isLg && <ProfileDetailCard data={userDetails} />}
+               {userDetails && isLg && (<ProfileDetailCard data={userDetails} />)}
               </Box>
             </form>
           </Grid>
