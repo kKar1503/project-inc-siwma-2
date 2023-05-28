@@ -8,10 +8,9 @@ import { formatSingleListingResponse, parseListingId } from '..';
 /**
  * Checks if a listing exists
  * @param id The listing id
- * @param name The name of the listing
  * @returns The listing if it exists
  */
-export async function checkListingExists($id: string | number, name?: string) {
+export async function checkListingExists($id: string | number) {
   // Parse and validate listing id provided
   const id = typeof $id === 'number' ? $id : parseListingId($id);
 
@@ -19,12 +18,6 @@ export async function checkListingExists($id: string | number, name?: string) {
   const listing = await PrismaClient.listing.findFirst({
     where: {
       id,
-      AND: {
-        name: {
-          contains: name,
-          mode: 'insensitive',
-        },
-      },
     },
     include: {
       users: {
@@ -40,7 +33,7 @@ export async function checkListingExists($id: string | number, name?: string) {
 
   // Check if the listing exists
   if (!listing) {
-    throw new NotFoundError(`Listing with id '${id}'${name ? ` and name '${name}'` : ''}`);
+    throw new NotFoundError(`Listing with id '${id}'`);
   }
 
   return listing;
