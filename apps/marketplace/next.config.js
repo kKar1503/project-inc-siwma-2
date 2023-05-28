@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
+const path = require('path')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -47,6 +48,11 @@ const nextConfig = {
           ]
         : [],
   },
+  resolve:{
+    alias: {
+        'aws-crt': path.resolve(__dirname, '../../node_modules/.pnpm/aws-crt'),
+    },
+  }
 };
 
 module.exports = nextConfig;
