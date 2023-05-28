@@ -1,4 +1,3 @@
-/* eslint-disable arrow-body-style */
 import React, { useEffect, useRef } from 'react';
 import { Box, Grid, Link, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useSession, getSession } from 'next-auth/react';
@@ -13,7 +12,8 @@ import ProductListingItem, {
 import fetchCategories from '@/middlewares/fetchCategories';
 import fetchListings from '@/middlewares/fetchListings';
 import fetchAdvertisements from '@/middlewares/fetchAdvertisements';
-import { InfiniteScroll } from '@inc/ui';
+
+import InfiniteScroll from '@inc/ui/lib/components/InfiniteScroll';
 
 const mockAdvertisements: Array<Image> = [
   {
@@ -138,10 +138,16 @@ const Marketplace = () => {
         </Box>
       </Box>
       <Box display="flex" justifyContent="center" paddingTop="2em">
-        <InfiniteScroll onLoadMore={refetch} loading={isLoading} reachedMaxItems={maxItems}>
-          {listings?.map((item) => {
-            return <ProductListingItem data={item} />;
-          })}
+        <InfiniteScroll
+          onLoadMore={refetch}
+          loading={isLoading}
+          reachedMaxItems={maxItems}
+          parent={<Grid container spacing={2} width="80%" />}
+          child={<Grid item xl={2} lg={3} md={4} sm={6} xs={12} />}
+        >
+          {listings?.map((item) => (
+            <ProductListingItem data={item} />
+          ))}
         </InfiniteScroll>
       </Box>
     </>

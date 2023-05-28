@@ -1,16 +1,13 @@
-import { ReactNode, Children, useEffect, useRef } from 'react';
-import Box from '@mui/material/Box';
+import { ReactNode, Children, useEffect, useRef, Component } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import { generateString } from '@inc/utils';
-import { Grid, SxProps, Theme } from '@mui/material';
 
 interface InfiniteScrollProps {
   children: ReactNode[];
   onLoadMore: () => void;
   loading: boolean;
   reachedMaxItems: boolean;
-  sx?: SxProps<Theme>;
-  wrapperSx?: SxProps<Theme>;
+  parent: Component;
+  child: Component;
 }
 
 const InfiniteScroll = ({
@@ -18,8 +15,8 @@ const InfiniteScroll = ({
   onLoadMore,
   loading,
   reachedMaxItems,
-  sx = {},
-  wrapperSx = {},
+  parent: Parent,
+  child: Child,
 }: InfiniteScrollProps) => {
   const lastItemRef = useRef<Element>(null);
   const observerRef = useRef<IntersectionObserver>(null);
@@ -53,33 +50,16 @@ const InfiniteScroll = ({
   return (
     <>
       {loading && <CircularProgress />}
-      <Grid container spacing={2} width="80%" sx={sx}>
+      <Parent>
         {children !== null &&
           children !== undefined &&
           Children.map(children, (child, index) => {
             if (index === children.length - 1) {
-              return (
-                <Grid
-                  item
-                  xl={2}
-                  lg={3}
-                  md={4}
-                  sm={6}
-                  xs={12}
-                  key={generateString(4)}
-                  sx={wrapperSx}
-                >
-                  {child}
-                </Grid>
-              );
+              return <Child>{child}</Child>;
             }
-            return (
-              <Grid key={generateString(4)} sx={wrapperSx}>
-                {child}
-              </Grid>
-            );
+            return <Child>{child}</Child>;
           })}
-      </Grid>
+      </Parent>
     </>
   );
 };
