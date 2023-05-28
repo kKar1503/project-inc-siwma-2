@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import ChatHeader from '@/components/rtc/ChatHeader';
 import ChatSubHeader from '@/components/rtc/ChatSubHeader';
@@ -12,6 +12,8 @@ import fetchListing from '@/middlewares/fetchListing';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import fetchUser from '@/middlewares/fetchUser';
 import fetchRoomMessages from '@/middlewares/fetchRoomMessages';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
 
 const useChatListQuery = (loggedUserUuid: string) => {
   const { data } = useQuery('chatList', async () => fetchChatList(loggedUserUuid), {
@@ -50,6 +52,8 @@ const useGetMessagesQuery = (roomUuid: string) => {
 };
 
 const ChatRoom = () => {
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, shape, shadows, palette, typography } = useTheme();
   const [makeOffer, setMakeOffer] = useState<boolean>(false);
   const [selectChat, setSelectChat] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -62,6 +66,13 @@ const ChatRoom = () => {
   if (selectChat !== '') {
     console.log(selectChat);
   }
+
+  // write a useMemo to set selectChat to empty string if isSm
+  useMemo(() => {
+    if (isSm) {
+      setSelectChat('');
+    }
+  }, [isSm]);
 
   const userChatList = useChatListQuery(loggedUserUuid);
   // console.log(userChatList);
@@ -158,7 +169,7 @@ const ChatRoom = () => {
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '25',
+      id: '25434',
       content_type: 'text',
       read: false,
       content: 'Hi, how are you?',
@@ -298,7 +309,7 @@ const ChatRoom = () => {
       date: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '',
+      id: '42268d5f-a094-493c-a75f-7ed4e3db9c69',
       company: '42268d5f-a094-493c-a75f-7ed4e3db9c69',
       category: 'Selling',
       latestMessage: 'I can offer 80, what do you think?',
