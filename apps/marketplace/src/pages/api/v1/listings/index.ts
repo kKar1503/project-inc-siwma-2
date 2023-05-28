@@ -25,8 +25,6 @@ export type ListingWithParameters = Listing & {
  * @example // Listing url: /api/v1/listings/1; Returns { name: '', id: 1 }
  * @example // Listing url: /api/v1/listings/some-listing-name-1; Returns { name: 'some listing name', id: 1 }
  */
-export function parseListingId($id: string): number;
-export function parseListingId($id: string, strict: false): { name: string; id: number };
 export function parseListingId($id: string, strict = true) {
   // Check if strict mode is set
   if (strict) {
@@ -36,16 +34,13 @@ export function parseListingId($id: string, strict = true) {
     return id;
   }
 
-  // Attempt to retrieve the listing name from the url
-  const listingName = $id.split('-');
-  const id = listingName.pop() || '';
+  // Attempt to retrieve the listing id and name from the url
+  const id = $id.split('-').pop() || '';
 
   // Parse and validate listing id provided
   const listingId = parseToNumber(id, 'id');
 
-  console.log({ listingId });
-
-  return { name: listingName.join(' '), id: listingId };
+  return listingId;
 }
 
 /**

@@ -66,7 +66,7 @@ export default apiHandler()
     const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
-    const { id, name } = parseListingId(req.query.id as string, false);
+    const id = parseListingId(req.query.id as string, false);
     const { _avg, _count } = await PrismaClient.reviews.aggregate({
       _avg: {
         rating: true,
@@ -76,21 +76,13 @@ export default apiHandler()
       },
       where: {
         listing: id,
-        AND: {
-          listingReviewsListingTolisting: {
-            name: {
-              contains: name,
-              mode: 'insensitive',
-            },
-          },
-        },
       },
     });
 
     const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
     const reviewCount = _count && _count.rating;
 
-    const listing = await checkListingExists(id, name);
+    const listing = await checkListingExists(id);
 
     const completeListing = {
       ...listing,
