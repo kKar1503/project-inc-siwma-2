@@ -25,7 +25,7 @@ const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) 
   });
 
   res
-    .status(200)
+    .status(204)
     .json(formatAPIResponse({}));
 };
 
