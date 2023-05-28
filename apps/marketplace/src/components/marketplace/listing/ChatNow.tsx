@@ -4,55 +4,17 @@ import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-
-export interface userDetails {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  unitPrice: boolean;
-  negotiable: boolean;
-  categoryId: string;
-  type: string;
-  owner: {
-    id: string;
-    name: string;
-    email: string;
-    company: {
-      id: string;
-      name: string;
-      website: string;
-      bio: string;
-      image: '';
-      visible: boolean;
-    };
-    profilePic: null;
-    mobileNumber: string;
-    contactMethod: string;
-    bio: null;
-  };
-  active: boolean;
-  parameter: [
-    {
-      paramId: string;
-      value: number;
-    },
-    {
-      paramId: string;
-      value: number;
-    }
-  ];
-}
+import { ListingResponseBody } from '@/utils/api/client/zod';
 
 export type ChatNowProps = {
-  data: userDetails;
+  data: ListingResponseBody;
 };
 
 const ChatNow = ({ data }: ChatNowProps) => (
   <Card
     sx={({ palette }) => ({
-      maxWidth: 300,
-      maxHeight: 400,
+      width: { md: 250, lg: 300 },
+      maxHeight: { md: 300, lg: 400 },
       border: palette.grey[300],
       backgroundColor: palette.grey[100],
     })}
@@ -63,18 +25,28 @@ const ChatNow = ({ data }: ChatNowProps) => (
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          paddingLeft: 3,
+          paddingLeft: { sx: 0, md: 0, lg: 3 },
           paddingTop: 1,
           paddingBottom: 2,
         }}
       >
-        <Avatar sx={({ spacing }) => ({ mb: spacing(2) })}>{data.owner.profilePic}</Avatar>
-        <Box sx={{ pb: 2, marginLeft: 2 }}>
+        <Avatar
+          sx={({ spacing }) => ({
+            mb: spacing(2),
+            height: { sx: 21, md: 35, lg: 42 },
+            width: { sx: 21, md: 35, lg: 42 },
+          })}
+        >
+          {data.owner.profilePic}
+        </Avatar>
+        <Box sx={{ pb: { md: 1, lg: 2 }, marginLeft: 2 }}>
           <Typography
             variant="body2"
             fontWeight={500}
-            fontSize={16}
-            sx={({ palette }) => ({ color: palette.common.black })}
+            sx={({ palette }) => ({
+              color: palette.common.black,
+              fontSize: { sx: 8, md: 12, lg: 16 },
+            })}
           >
             {data.owner.company.name}
           </Typography>
