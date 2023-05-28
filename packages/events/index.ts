@@ -9,7 +9,7 @@ export const EVENTS = {
 
   // Client Events
   CLIENT: {
-    DELETE_MESSAGE: 'deleteMessage',
+    DELETE_MESSAGE: 'clientDeleteMessage',
     CREATE_ROOM: 'createRoom',
     SEND_MESSAGE: 'sendMessage',
     PING: 'clientPing',
@@ -22,6 +22,7 @@ export const EVENTS = {
   SERVER: {
     DELETE_MESSAGE: 'deleteMessage',
     ROOMS: 'rooms',
+    DELETE_MESSAGE: 'serverDeleteMessage',
     JOINED_ROOM: 'joinedRoom',
     ROOM_MESSAGE: 'roomMessage',
     PING: 'serverPing',
@@ -33,8 +34,8 @@ export const EVENTS = {
 
 type DeepValueOf<T extends Record<string, unknown>, Key = keyof T> = Key extends string
   ? T[Key] extends Record<string, unknown>
-  ? DeepValueOf<T[Key]>
-  : T[keyof T]
+    ? DeepValueOf<T[Key]>
+    : T[keyof T]
   : never;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type DeclaredEventsObj = Extract<DeepValueOf<typeof EVENTS>, string>;
