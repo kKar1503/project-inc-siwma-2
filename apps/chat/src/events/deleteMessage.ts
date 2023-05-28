@@ -6,7 +6,7 @@ import prisma from '@inc/db';
 const deleteMessageEvent: EventFile = (io) => ({
   eventName: EVENTS.CLIENT.DELETE_MESSAGE,
   type: 'on',
-  callback: async ({ room, messageId }) => {
+  callback: async ({ room, messageId }, callback) => {
     logger.info(`${messageId}  ${room}`);
     io.to(room).emit(EVENTS.SERVER.DELETE_MESSAGE, messageId);
 
@@ -14,6 +14,10 @@ const deleteMessageEvent: EventFile = (io) => ({
       where: {
         id: messageId,
       },
+    }).then(() => {
+      callback({ success: true });
+    }).catch(() => {
+      callback({ success: false });
     });
   },
 });

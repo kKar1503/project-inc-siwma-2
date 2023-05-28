@@ -6,7 +6,7 @@ import prisma, { ContentType } from '@inc/db';
 const newMsgEvent: EventFile = (io) => ({
   eventName: EVENTS.CLIENT.SEND_MESSAGE,
   type: 'on',
-  callback: ({ roomId, message, username, contentType, time }) => {
+  callback: ({ roomId, message, username, contentType, time },callback) => {
     logger.info(`New message: ${message}`);
     io.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
       sender: username,
@@ -15,6 +15,7 @@ const newMsgEvent: EventFile = (io) => ({
       room: roomId,
       timestamp: time,
     });
+
     prisma.messages.create({
       data: {
         content: message,
@@ -22,6 +23,10 @@ const newMsgEvent: EventFile = (io) => ({
         room: roomId,
         author: username,
       },
+    }).then(() => {
+      callback({ success: true });
+    }).catch(() => {
+      callback({ success: false });
     });
   },
 });

@@ -7,9 +7,10 @@ import prisma from '@inc/db';
 const readEvent: EventFile = (io) => ({
   eventName: EVENTS.CLIENT.READ,
   type: 'on',
-  callback: ({ room, messageId }) => {
+  callback: ({ room, messageId },callback) => {
     logger.info(`Message ${messageId} read`);
     io.to(room).emit(EVENTS.SERVER.READ, { room: room, message: messageId });
+
     prisma.messages.update({
       where: {
         id: messageId,
@@ -17,6 +18,10 @@ const readEvent: EventFile = (io) => ({
       data: {
         read: true,
       },
+    }).then(() => {
+      callback({ success: true });
+    }).catch(() => {
+      callback({ success: false });
     });
   },
 });
