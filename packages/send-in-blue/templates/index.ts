@@ -3,10 +3,12 @@
 import { SendSmtpEmailTo, SendSmtpEmail } from 'sib-api-v3-sdk';
 import invite from './InviteTemplate.html';
 import notification from './NotificationTemplate.html';
+import forgetPassword from './ForgetPasswordTemplate.html';
 
 export enum EmailTemplate {
   INVITE,
   NOTIFICATION,
+  FORGETPASSWORD
 }
 
 export function getContentFor(template: EmailTemplate): string {
@@ -20,6 +22,8 @@ export function getContentFor(template: EmailTemplate): string {
       return invite;
     case EmailTemplate.NOTIFICATION:
       return notification;
+    case EmailTemplate.FORGETPASSWORD:
+      return forgetPassword;
   }
 }
 
