@@ -1,11 +1,11 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber, zodParseToInteger } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
 
 const ParamSchema = z.object({
-  id: z.string().transform((val) => parseToNumber(val, 'id')),
+  id: z.string().transform(zodParseToInteger),
 });
 
 const BodySchema = z.object({
