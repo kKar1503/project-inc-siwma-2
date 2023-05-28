@@ -20,7 +20,6 @@ export const EVENTS = {
 
   // Server Events
   SERVER: {
-    DELETE_MESSAGE: 'deleteMessage',
     ROOMS: 'rooms',
     DELETE_MESSAGE: 'serverDeleteMessage',
     JOINED_ROOM: 'joinedRoom',
