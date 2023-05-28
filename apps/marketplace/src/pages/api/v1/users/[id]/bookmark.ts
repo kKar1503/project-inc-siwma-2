@@ -1,7 +1,7 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { userSchema } from '@/utils/api/server/zod';
 import client from '@inc/db';
-import { NotFoundError, ParamError } from '@inc/errors';
+import { NotFoundError, ParamError, BookmarkSelfError } from '@inc/errors';
 
 export default apiHandler().patch(async (req, res) => {
   const { id } = userSchema.userId.parse(req.query);
@@ -47,7 +47,7 @@ export default apiHandler().patch(async (req, res) => {
 
     isBookmarked = true;
   } else if (userId === targetUser) {
-    throw new ParamError();
+    throw new BookmarkSelfError();
   } else {
     const response = await client.userBookmarks.delete({
       where: {

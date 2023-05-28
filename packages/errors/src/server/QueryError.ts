@@ -228,3 +228,17 @@ export class ExpiredError extends ParamError {
     this.message = `${parameter} has expired`;
   }
 }
+/**
+ * Error when bookmarking self
+ */
+export class BookmarkSelfError extends ParamError {
+  public static readonly status = 422;
+  public static readonly code = 2010;
+
+  constructor() {
+    super();
+    this.status = BookmarkSelfError.status;
+    this.code = BookmarkSelfError.code;
+    this.message = `Cannot bookmark self`;
+  }
+}
