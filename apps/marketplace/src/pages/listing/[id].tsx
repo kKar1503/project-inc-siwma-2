@@ -1,16 +1,28 @@
 import Box from '@mui/material/Box';
-import { ReactNode, useState, SyntheticEvent } from 'react';
+import { ReactNode, useState, Dispatch, SetStateAction } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import DetailedListingCarousel, {
+  DetailedListingCarouselProps,
   Image,
 } from '@/components/marketplace/carousel/DetailedListingCarousel';
-import { Divider, Grid, Typography } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
 import ChatNow from '@/components/marketplace/listing/ChatNow';
 import SellBadge from '@/components/marketplace/listing/SellBadge';
 import BuyBadge from '@/components/marketplace/listing/BuyBadge';
-import { UmbrellaRounded } from '@mui/icons-material';
+import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
+import fetchListing from '@/middlewares/fetchListing';
+import { useQuery } from 'react-query';
+import apiClient from '@/utils/api/client/apiClient';
+import listings, { ListingResponseBody,  } from '@/utils/api/client/zod/listings';
+import StarRating from '@/components/marketplace/profilePage/StarRatings';
 
 // Test Data for listing details
 const detailedListingData = [
@@ -177,6 +189,7 @@ const detailedListingData = [
 ];
 
 // test data for carousel component
+// const carouselData: DetailedListingCarouselProps = [
 const carouselData = [
   {
     id: '4f18716b-ba33-4a98-9f9c-88df0ce50f51',
@@ -265,7 +278,50 @@ const categoryData = [
   },
 ];
 
-export interface CategoryData {
+const listingReviewsData = [
+  {
+    id: '1',
+    review: 'sample review',
+    rating: 5,
+    userId: '1',
+    listingId: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+  },
+  {
+    id: '2',
+    review: 'sample review',
+    rating: 5,
+    userId: '2',
+    listingId: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+  },
+  {
+    id: '3',
+    review: 'sample review',
+    rating: 5,
+    userId: '3',
+    listingId: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+  },
+  {
+    id: '4',
+    review: 'sample review',
+    rating: 5,
+    userId: '4',
+    listingId: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+  },
+  {
+    id: '5',
+    review: 'sample review',
+    rating: 5,
+    userId: '5',
+    listingId: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+  },
+];
+
+export interface catDataType {
   id: string;
   name: string;
   description: string;
@@ -288,7 +344,7 @@ export interface CategoryData {
   ];
 }
 
-export interface ListingData {
+export interface listingDataType {
   id: number;
   name: string;
   description: string;
@@ -328,6 +384,46 @@ export interface ListingData {
   createdAt: string;
 }
 
+export interface reviewsDataType {
+  id: string;
+  review: string;
+  rating: number;
+  userId: string;
+  listingId: string;
+  createdAt: string;
+}
+
+// export type catDataType = {
+//   data: CategoryResponseBody
+// }
+
+// export type listingDataType = {
+//   data: ListingResponseBody
+// }
+
+// const useDetailedListingQuery = (
+//   listingId: string,
+//   setListingData: Dispatch<SetStateAction<listingDataType>>
+// ) => {
+//   fetchListing(listingId);
+//   const { data } = useQuery(
+//     'detailedListing',
+//     async() => {
+//       const response = await apiClient.get(
+//         `v1/listing/${listingId}`
+//       );
+
+//       const parsedDetailedListing = listings.getById.parse(response.data.data)
+
+//       setListingData({ data: parsedDetailedListing });
+//       return parsedDetailedListing;
+//     },
+//     {
+//       enabled: listingId !== undefined,
+//     }
+//   )
+// }
+
 export const getServerSideProps = async ({ query }: { query: any }) => {
   // api call to get listing details go here
 
@@ -353,6 +449,34 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
   const data = detailedListingData[id - 1];
   const serverSideListingCarousel = carouselData;
 
+  return {
+    props: {
+      data,
+      serverSideListingCarousel,
+      listingReviewsData,
+      categoryData,
+    },
+  };
+};
+
+const DetailedListingPage = ({
+  data,
+  serverSideListingCarousel,
+  listingReviewsData,
+  categoryData,
+}: {
+  data: listingDataType;
+  serverSideListingCarousel: Image[];
+  categoryData: catDataType[];
+  listingReviewsData: reviewsDataType[];
+}) => {
+  // const DetailedListingPage = () => {
+  //   const [listingData, setListingData] = useState<listingDataType>({ data: [] });
+
+  // useDetailedListingQuery(setListingData);
+
+  const theme = useTheme();
+
   data.parameter.sort((a, b) => {
     if (a.paramId < b.paramId) {
       return -1;
@@ -363,43 +487,23 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
     return 0;
   });
 
-  return {
-    props: {
-      data,
-      serverSideListingCarousel,
-      categoryData,
-    },
-  };
-};
-
-const DetailedListingPage = ({
-  data,
-  serverSideListingCarousel,
-  categoryData,
-}: {
-  data: ListingData;
-  serverSideListingCarousel: Image[];
-  categoryData: CategoryData[];
-}) => {
-  const theme = useTheme();
-
-  const parseISOstring = (s: string) =>  {
+  const parseISOstring = (s: string) => {
     const b = s.split(/\D+/);
-    const newDate = `${b[2]} ${b[1]} ${b[0]}` 
-    return newDate
-}
+    const newDate = `${b[2]} ${b[1]} ${b[0]}`;
+    return newDate;
+  };
 
   return (
     <main>
       <Box
         sx={({ spacing }) => ({
           pt: spacing(4),
-          height: 2000,
+          height: '100%',
           width: '100%',
           bgcolor: theme.palette.common.white,
         })}
       >
-        <DetailedListingCarousel data={serverSideListingCarousel} />
+        <DetailedListingCarousel data={carouselData} />
         <Box
           sx={{
             width: '70%',
@@ -613,9 +717,41 @@ const DetailedListingPage = ({
                 pl: spacing(5),
               })}
             >
-              <ChatNow data={data} />
+              {/* <ChatNow data={data} /> */}
             </Grid>
           </Grid>
+          <Box>
+          {listingReviewsData.map(({ userId, review, rating }) => (
+            <Grid>
+              <Card
+              sx={{
+                width: 600
+              }}
+              >
+                <CardActionArea>
+                  {/* <CardMedia component="img" width="140" image={image} /> */}
+                  <CardContent>
+                    <Typography
+                      gutterBottom
+                      variant="body1"
+                      sx={{
+                        fontWeight: 500,
+                      }}
+                    >
+                      {userId}
+                    </Typography>
+                  </CardContent>
+                  <CardContent>
+                    {review}
+                  </CardContent>
+                  <CardContent>
+                    <StarRating rating={rating}/>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))}
+          </Box>
         </Box>
       </Box>
     </main>
