@@ -15,24 +15,24 @@ import { StarsRating } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useMemo } from 'react';
 
-export type ProfileDetailCardProps = {
-  // username: string;
-  name: string;
-  email: string;
-  company: string;
-  profilePic: string | null;
-  mobileNumber: number;
-  telegramUsername: string | null;
-  bio: string | null;
-  // rating: number;
-  // reviews: number;
-  enabled: boolean;
-  createdAt: string;
-  WhatsappNumber: number | null;
-  contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone';
-  comments?: string | null | undefined;
-  ownerId: number;
-};
+export type ProfileDetailCardProps =
+  | {
+      email: string;
+      id: string;
+      name: string;
+      enabled: boolean;
+      createdAt: string;
+      profilePic: string | null;
+      company: string;
+      mobileNumber: string;
+      whatsappNumber: string | null;
+      telegramUsername: string | null;
+      contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone';
+      bio: string | null;
+      comments?: string | null | undefined;
+    }
+  | null
+  | undefined;
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
@@ -188,7 +188,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
         <Box sx={{ width: '98%' }}>
           <Button
             component={Link}
-            href={`/profile/${data?.ownerId}/edit-profile`}
+            href={`/profile/${data?.id}/edit-profile`}
             variant="contained"
             type="submit"
             sx={({ spacing }) => ({

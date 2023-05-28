@@ -451,15 +451,15 @@ const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userdata', async () => fetchUser(userUuid), {
     enabled: userUuid !== undefined,
   });
-  console.log(data)
+  console.log(data);
   return data;
 };
 
 const fetchListing = async (uuid: string) => {
   const response = await apiClient.get(`v1/users/${uuid}/listings`);
   // parse data through zod to ensure data is correct
-  console.log(response)
-  const listingData = listing.getById.parse(response.data.data[0]);
+  console.log(response);
+  const listingData = listing.getAll.parse(response.data.data);
   return listingData;
 };
 
@@ -467,20 +467,18 @@ const useGetListing = (userUuid: string) => {
   const { data } = useQuery('listingdata', async () => fetchListing(userUuid), {
     enabled: userUuid !== undefined,
   });
-  console.log(data)
+  console.log(data);
   return data;
 };
-
-
 
 const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePageProps) => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
-  const userListings = useGetListing(id)
+  const userListings = useGetListing(id);
   console.log(userDetails);
-  console.log(userListings)
+  console.log(userListings);
 
   const theme = useTheme();
   const { spacing } = theme;
