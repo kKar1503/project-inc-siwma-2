@@ -108,6 +108,7 @@ export default apiHandler()
       ...listing,
       rating,
       reviewCount,
+      multiple: listing.multiple,
     };
     // Return the result
 
@@ -173,6 +174,7 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
+        multiple: data.multiple,
       },
       include: {
         users: {
@@ -244,6 +246,7 @@ export default apiHandler()
       ...completeListing,
       rating,
       reviewCount,
+      multiOffer: completeListing.multiple,
     };
 
     res

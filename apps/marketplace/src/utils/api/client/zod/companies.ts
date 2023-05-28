@@ -11,8 +11,8 @@ const getCompany = z.object({
   website: z.string().nullable(),
   image: z.string().nullable(),
   visible: z.boolean(),
-  comments: z.string().nullable(),
-  createdAt: z.string().datetime(),
+  comments: z.string().nullable().optional(),
+  createdAt: z.string().datetime().optional(),
 });
 
 const getCompanies = getCompany.array();
@@ -23,9 +23,14 @@ const toggleCompany = z.object({
   visible: z.boolean(),
 });
 
+const bookmarkCompany = z.object({
+  bookmarked: z.boolean(),
+});
+
 const deleteCompany = z.object({});
 
 export type CompanyResponseBody = z.infer<typeof getCompany>;
+export type Company = z.infer<typeof getCompany>;
 
 export default {
   create: createCompany,
@@ -33,5 +38,6 @@ export default {
   getAll: getCompanies,
   update: editCompany,
   toggle: toggleCompany,
+  bookmark: bookmarkCompany,
   delete: deleteCompany,
 };

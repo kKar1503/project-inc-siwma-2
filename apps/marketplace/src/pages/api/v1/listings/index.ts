@@ -1,5 +1,6 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { Companies, Listing, ListingType, Prisma, UserContacts, Users } from '@inc/db';
+import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
@@ -10,7 +11,25 @@ import { Decimal } from '@prisma/client/runtime';
 import { z } from 'zod';
 import { zodParseToBoolean, zodParseToInteger, zodParseToNumber } from '@/utils/api/apiHelper';
 
+
 export const ListingBucketName = process.env.AWS_LISTING_BUCKET_NAME as string;
+
+export type ListingWithParameters = Listing & {
+  listingsParametersValues: Array<{
+    parameterId: number;
+    value: string;
+  }>;
+  offersOffersListingTolistings: Array<{
+    accepted: boolean;
+  }>;
+  users: Users & {
+    companies: Companies;
+  };
+  multiple: boolean;
+  rating: number | null;
+  reviewCount: number;
+};
+
 
 export function parseListingId($id: string) {
   // Parse and validate listing id provided
@@ -113,6 +132,49 @@ export const getQueryParameters = z.object({
   sortBy: z.string().optional(),
 });
 
+function orderByOptions(sortBy: string | undefined): Prisma.ListingOrderByWithRelationInput {
+  switch (sortBy) {
+    case 'price_desc':
+      return { price: 'desc' };
+    case 'price_asc':
+      return { price: 'asc' };
+    case 'recent_newest':
+      return { createdAt: 'desc' };
+    case 'recent_oldest':
+      return { createdAt: 'asc' };
+    default:
+      return { id: 'asc' };
+  }
+}
+
+function ratingSortFn(a: ListingWithParameters, b: ListingWithParameters): number {
+  if (a.rating === null) return b.rating === null ? 0 : b.rating;
+  if (b.rating === null) return -a.rating;
+  return b.rating - a.rating;
+}
+
+function postSortOptions(
+  sortBy: string | undefined
+): (arr: ListingWithParameters[]) => ListingWithParameters[] {
+  switch (sortBy) {
+    case 'rating_desc':
+      return (arr) => arr.sort(ratingSortFn);
+    case 'rating_asc':
+      return (arr) => arr.sort(ratingSortFn).reverse();
+    default:
+      return (arr) => arr;
+  }
+}
+
+export function sortOptions(sortByStr: string | undefined) {
+  const sortBy = sortByStr ? sortByStr.toLowerCase() : undefined;
+  return {
+    orderBy: orderByOptions(sortBy),
+    postSort: postSortOptions(sortBy),
+  };
+}
+
+
 // -- Helper functions -- //
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
@@ -144,7 +206,10 @@ export async function formatSingleListingResponse(
       contactMethod: listing.users.contact,
       bio: listing.users.bio,
     },
-    open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    open: listing.multiple
+      ? true
+      : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    multiple: listing.multiple,
     createdAt: listing.createdAt.toISOString(),
     rating: listing.rating,
     reviewCount: listing.reviewCount,
@@ -197,78 +262,39 @@ export const listingsRequestBody = z.object({
     .optional(),
 });
 
+
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
     const queryParams = listingSchema.get.query.parse(req.query);
 
-    // Decode params if it exists
-    let decodedParams = null;
-    if (queryParams.params) {
-      decodedParams = JSON.parse(decodeURI(queryParams.params));
-      if (typeof decodedParams.paramId !== 'string' && typeof decodedParams.value !== 'string') {
-        throw new ParamError('paramId and value');
-      }
-      if (typeof decodedParams.paramId !== 'string') {
-        throw new ParamError('paramId');
-      }
-      if (typeof decodedParams.value !== 'string') {
-        throw new ParamError('value');
-      }
-    }
-
-    // Filter options
-    const whereOptions: Prisma.ListingWhereInput = {
-      categoryId: queryParams.category ? queryParams.category : undefined,
-      negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
-      price: {
-        gte: queryParams.minPrice ? queryParams.minPrice : undefined,
-        lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
-      },
-      name: queryParams.matching
-        ? {
-          contains: queryParams.matching,
-          mode: 'insensitive',
-        }
-        : undefined,
-      listingsParametersValues: decodedParams
-        ? {
-          some: {
-            parameterId: Number(decodedParams.paramId),
-            value: decodedParams.value,
-          },
-        }
-        : undefined,
-    };
-
-    // Sorting options
-    let sortByOptions: Prisma.ListingOrderByWithAggregationInput = {
-      id: 'asc',
-    };
-
-    if (queryParams.sortBy) {
-      switch (queryParams.sortBy.toLowerCase()) {
-        case 'price_desc':
-          sortByOptions = { price: 'desc' };
-          break;
-        case 'price_asc':
-          sortByOptions = { price: 'asc' };
-          break;
-        case 'recent_newest':
-          sortByOptions = { createdAt: 'desc' };
-          break;
-        case 'recent_oldest':
-          sortByOptions = { createdAt: 'asc' };
-          break;
-        default:
-          break;
-      }
-    }
+    const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
     // Retrieve filtered and sorted listings from the database
     const listings = await PrismaClient.listing.findMany({
-      where: whereOptions,
-      orderBy: sortByOptions,
+      where: {
+        categoryId: queryParams.category ? queryParams.category : undefined,
+        negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+        price: {
+          gte: queryParams.minPrice ? queryParams.minPrice : undefined,
+          lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
+        },
+        name: queryParams.matching
+          ? {
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
+          : undefined,
+        listingsParametersValues: queryParams.params
+          ? {
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
+          : undefined,
+      },
+      orderBy,
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
@@ -299,28 +325,18 @@ export default apiHandler()
         });
         const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
         const reviewCount = _count && _count.rating;
+        const { multiple } = listing;
 
         return {
           ...listing,
           rating,
           reviewCount,
+          multiple,
         };
       }),
     );
 
-    // Sort listings by rating, if needed
-    if (queryParams.sortBy) {
-      switch (queryParams.sortBy.toLowerCase()) {
-        case 'highest_rating':
-          listingsWithRatingsAndReviewCount.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
-          break;
-        case 'lowest_rating':
-          listingsWithRatingsAndReviewCount.sort((a, b) => (a.rating ?? 0) - (b.rating ?? 0));
-          break;
-        default:
-          break;
-      }
-    }
+    const sortedListings = postSort(listingsWithRatingsAndReviewCount);
 
     const bucket = await s3Connection.getBucket(ListingBucketName);
 
@@ -335,9 +351,9 @@ export default apiHandler()
 
     // Format the listings
     const formattedListings = await Promise.all(
-      listingsWithRatingsAndReviewCount.map((listing) =>
-        formatSingleListingResponse(listing, queryParams.includeParameters),
-      ),
+      sortedListings.map((listing) =>
+        formatSingleListingResponse(listing, queryParams.includeParameters)
+      )
     );
 
     res.status(200).json(formatAPIResponse(formattedListings));
@@ -382,6 +398,7 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
+        multiple: data.multiple,
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
