@@ -10,51 +10,74 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { StarsRating } from '@inc/ui';
+import { useTheme } from '@mui/material/styles';
+import { ReactNode, useMemo } from 'react';
 
-export type ProfileDetailCardProps = {
-  username: string;
-  name: string;
-  email: string;
-  company: string;
-  profilePic: string;
-  mobileNumber: number;
-  telegramUsername: string;
-  bio: string;
-  rating: number;
-  reviews: number;
-  ownerId: number;
-};
+export type ProfileDetailCardProps =
+  | {
+      email: string;
+      id: string;
+      name: string;
+      enabled: boolean;
+      createdAt: string;
+      profilePic: string | null;
+      company: string;
+      mobileNumber: string;
+      whatsappNumber: string | null;
+      telegramUsername: string | null;
+      contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone';
+      bio: string | null;
+      comments?: string | null | undefined;
+    }
+  | null
+  | undefined;
 
 export type ProfileDetailCardData = {
+  profilePic: ReactNode;
+  name: ReactNode;
+  company: ReactNode;
+  email: ReactNode;
+  bio: ReactNode;
+  telegramUsername: ReactNode;
+  mobileNumber: ReactNode;
+  id: string;
   data: ProfileDetailCardProps;
 };
 
-const ProfileDetailCard = ({
-  data,
-  isEditMode = false,
-}: {
-  data: ProfileDetailCardProps;
+const ProfileDetailCard = ({ data, isEditMode = false, }: {
+  data: ProfileDetailCardData;
   isEditMode?: boolean;
 }) => {
-  // destructure data
 
-  const {
-    username,
-    name,
-    email,
-    company,
-    profilePic,
-    mobileNumber,
-    telegramUsername,
-    bio,
-    rating,
-    reviews,
-    ownerId,
-  } = data;
+  const { spacing } = useTheme();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const styleProfileCard = useMemo(() => {
+    if (isSm || isMd) {
+      return {
+        width: '100%',
+        height: '100%',
+        mb: spacing(3),
+      };
+    }
+    if (isLg) {
+      return {
+        width: '25%',
+        height: '100%',
+        mb: spacing(0),
+      };
+    }
+    return {
+      width: '100%',
+      height: '100%',
+      mb: spacing(3),
+    };
+  }, [isSm, isMd, isLg]);
 
   return (
-    <Card sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={styleProfileCard}>
       <CardHeader
         titleTypographyProps={{
           fontSize: 16,
@@ -67,11 +90,11 @@ const ProfileDetailCard = ({
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{profilePic}</Avatar>
-        <Typography sx={{ fontWeight: 'bold' }}>{name}</Typography>
-        <Typography variant="body2">{company}</Typography>
-        <Typography>@{username}</Typography>
-        <Typography>{email}</Typography>
+        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
+        <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
+        <Typography variant="body2">{data?.company}</Typography>
+        {/* <Typography>@{username}</Typography> */}
+        <Typography>{data?.email}</Typography>
 
         <Box
           sx={({ spacing }) => ({
@@ -85,22 +108,22 @@ const ProfileDetailCard = ({
               mr: spacing(1),
             })}
           >
-            {rating.toFixed(1)}
+            {/* {rating.toFixed(1)} */}
           </Typography>
-          <StarsRating rating={rating} />
+          {/* <StarsRating rating={rating} /> */}
           <Typography
             sx={({ spacing }) => ({
               ml: spacing(1),
             })}
           >
-            ({reviews} {reviews === 1 ? ' Review' : ' Reviews'})
+            {/* ({reviews} {reviews === 1 ? ' Review' : ' Reviews'}) */}
           </Typography>
         </Box>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
-        <Typography>{bio}</Typography>
+        <Typography>{data?.bio}</Typography>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
@@ -125,7 +148,7 @@ const ProfileDetailCard = ({
               ml: spacing(1),
             })}
           >
-            {telegramUsername}
+            {data?.telegramUsername}
           </Typography>
         </Box>
         <Box
@@ -148,29 +171,28 @@ const ProfileDetailCard = ({
               ml: spacing(1),
             })}
           >
-            +65 {mobileNumber}
+            +65 {data?.mobileNumber}
           </Typography>
         </Box>
       </CardContent>
       <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
         <Box sx={{ width: '98%' }}>
-          {isEditMode && (
-            <Button
-              component={Link}
-              href={`/profile/${ownerId}/edit-profile`}
-              variant="contained"
-              type="submit"
-              sx={({ spacing }) => ({
-                width: '100%',
-                mb: spacing(2),
-                mt: spacing(2),
-                fontWeight: 'bold',
-              })}
-            >
-              Edit profile
-            </Button>
+        {isEditMode && (
+          <Button
+            component={Link}
+            href={`/profile/${data?.id}/edit-profile`}
+            variant="contained"
+            type="submit"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mb: spacing(2),
+              mt: spacing(2),
+              fontWeight: 'bold',
+            })}
+          >
+            Edit profile
+          </Button>
           )}
-
           <Button
             component={Link}
             href="/logout"

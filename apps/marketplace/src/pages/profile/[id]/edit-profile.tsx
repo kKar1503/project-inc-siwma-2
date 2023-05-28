@@ -20,34 +20,31 @@ import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
-import { GetServerSidePropsContext, NextApiRequest } from 'next';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import fetchUser from '@/middlewares/fetchUser';
 import updateUser from '@/middlewares/updateUser';
 import apiClient from '@/utils/api/client/apiClient';
-import { useSession, getSession } from 'next-auth/react';
-import { useQuery } from 'react-query';
+import { useSession } from 'next-auth/react';
+import { useQuery, useMutation } from 'react-query';
+import users from '@/pages/api/v1/users';
+import { useRouter } from 'next/router';
 
-const profileDetailData = [
-  {
-    ownerId: 1,
-    username: 'diggers',
-    name: 'John Tan',
-    email: 'digs@gmail.com',
-    company: 'Prof. Digging Ltd.',
-    profilePic:
-      'https://i.seadn.io/gcs/files/b7e46c1c3a103a759dcdf56f1b27d7b7.png?auto=format&dpr=1&w=1000',
-    mobileNumber: '2314 5324',
-    telegramUsername: '@digpeople',
-    bio: 'Introducing Professional Digging Limited, a leading mining company with a proven track record of excellence in the industry. With decades of experience in the mining business, we have established ourselves as a trusted and reliable provider of high-quality minerals and metals.',
-    rating: 3.3,
-    reviews: 336,
-  },
-];
-
-export type ProfilePageProps = {
-  data: ProfileDetailCardProps;
-};
+// const profileDetailData = [
+//   {
+//     id: 1,
+//     username: 'diggers',
+//     name: 'John Tan',
+//     email: 'digs@gmail.com',
+//     company: 'Prof. Digging Ltd.',
+//     profilePic:
+//       'https://i.seadn.io/gcs/files/b7e46c1c3a103a759dcdf56f1b27d7b7.png?auto=format&dpr=1&w=1000',
+//     mobileNumber: '2314 5324',
+//     telegramUsername: '@digpeople',
+//     bio: 'Introducing Professional Digging Limited, a leading mining company with a proven track record of excellence in the industry. With decades of experience in the mining business, we have established ourselves as a trusted and reliable provider of high-quality minerals and metals.',
+//     rating: 3.3,
+//     reviews: 336,
+//   },
+// ];
 
 const useGetUserQuery = (userUuid: string) => {
   const { data } = useQuery('user', async () => fetchUser(userUuid), {
@@ -57,45 +54,49 @@ const useGetUserQuery = (userUuid: string) => {
 };
 
 const useUpdateUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => updateUser(userUuid), {
+  const { data } = useQuery('user', async () => updateUser(userUuid, 'Elon Musk'), {
     enabled: userUuid !== undefined,
   });
   return data;
 };
 
-const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
+const EditProfile = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [profilePic, setProfilepic] = useState<File | null>(null);
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [company, setCompany] = useState('');
-  const [bio, setBio] = useState('');
-  const [telegramUsername, setTelegramusername] = useState('');
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [name, setName] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [company, setCompany] = useState<string>('');
+  const [bio, setBio] = useState<string>('');
+  const [telegramUsername, setTelegramusername] = useState<string>('');
   const [mobileNumber, setMobilenumber] = useState('');
-  const [imageUrl, setImageUrl] = useState<string | null>(null);  
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [result, setResult] = useState('');
+
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
-
-  const userDetails = useUpdateUserQuery(loggedUserUuid);
-  const { ownerId } = data;
+  const id = useRouter().query.id as string;
+  const userDetails = useGetUserQuery(id);
+  const updateUser = useUpdateUserQuery(loggedUserUuid);
+  console.log(userDetails);
+  console.log(updateUser);
 
   useEffect(() => {
-    if (profilePic) {
-      setImageUrl(URL.createObjectURL(profilePic));
+    if (profilePicture) {
+      setImageUrl(URL.createObjectURL(profilePicture));
     }
-  }, [profilePic]);
+  }, [profilePicture]);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setProfilepic(e.target.files[0]);
+      setProfilePicture(e.target.files[0]);
     }
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log({
-      profilePic,
+      profilePicture,
       name,
       username,
       email,
@@ -105,6 +106,52 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
       mobileNumber,
     });
   };
+
+  const formatResponse = (res: unknown) => JSON.stringify(res, null, 2);
+
+  // const { isLoading: isUpdatingTutorial, mutate: updateTutorial } = useMutation(
+  //   async () => apiClient.put(`/profile/${id}/edit-profile`, {
+  //       name,
+  //       email,
+  //       company,
+  //       profilePicture,
+  //       mobileNumber,
+  //       bio,
+  //       telegramUsername,
+  //     }),
+  //   {
+  //     onSuccess: (res) => {
+  //       const result = {
+  //         status: `${res.status  }-${  res.statusText}`,
+  //         headers: res.headers,
+  //         data: res.data,
+  //       };
+
+  //       setResult(formatResponse(result));
+  //     },
+  //     onError: (err) => {
+  //       setResult(formatResponse(err.response?.data || err));
+  //     },
+  //   }
+  // );
+
+  // useEffect(() => {
+  //   if (isUpdatingTutorial) setResult('updating...');
+  // }, [isUpdatingTutorial]);
+
+  // function putData() {
+  //   if (putId) {
+  //     try {
+  //       updateTutorial();
+  //     } catch (err) {
+  //       setResult(formatResponse(err));
+  //     }
+  //   }
+  // }
+
+  // const clearPutOutput = () => {
+  //   setResult(null);
+  // };
 
   const gridCols: 2 | 3 | 4 | 5 = useMemo(() => {
     if (isLg) {
@@ -135,8 +182,8 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                   display: 'flex',
                 })}
               >
-                <Grid
-                  sm={6}
+                <Grid item
+                  sm={12}
                   md={10}
                   lg={12}
                   sx={({ spacing }) => ({
@@ -166,7 +213,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                           variant="contained"
                           color="error"
                           component={Link}
-                          href={`/profile/${ownerId}`}
+                          href={`/profile/${id}`}
                           sx={({ palette }) => ({ bgcolor: palette.error[400] })}
                         >
                           Cancel Edit
@@ -190,7 +237,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                           alignItems: 'center',
                         })}
                       >
-                        {imageUrl && profilePic && (
+                        {imageUrl && profilePicture && (
                           <Box>
                             <Avatar src={imageUrl} />
                           </Box>
@@ -207,7 +254,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                           </Box>
                           <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
                             <Button variant="contained" component="label">
-                              Upload A Profile Photo
+                              Upload Profile Photo
                               <input
                                 accept="image/*"
                                 type="file"
@@ -384,7 +431,7 @@ const EditProfile = ({ data }: { data: ProfileDetailCardProps }) => {
                     </CardActions>
                   </Card>
                 </Grid>
-                {isLg && <ProfileDetailCard data={data} />}
+                {isLg && <ProfileDetailCard data={userDetails} />}
               </Box>
             </form>
           </Grid>
