@@ -8,15 +8,24 @@ import { formatSingleListingResponse, parseListingId } from '..';
 /**
  * Checks if a listing exists
  * @param id The listing id
+ * @param name The name of the listing
  * @returns The listing if it exists
  */
-export async function checkListingExists($id: string | number) {
+export async function checkListingExists($id: string | number, name?: string) {
   // Parse and validate listing id provided
   const id = typeof $id === 'number' ? $id : parseListingId($id);
 
   // Check if the listing exists
-  const listing = await PrismaClient.listing.findUnique({
-    where: { id },
+  const listing = await PrismaClient.listing.findFirst({
+    where: {
+      id,
+      AND: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+    },
     include: {
       users: {
         include: {
@@ -31,7 +40,7 @@ export async function checkListingExists($id: string | number) {
 
   // Check if the listing exists
   if (!listing) {
-    throw new NotFoundError(`Listing with id '${id}'`);
+    throw new NotFoundError(`Listing with id '${id}'${name ? ` and name '${name}'` : ''}`);
   }
 
   return listing;
@@ -57,7 +66,7 @@ export default apiHandler()
     const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
-    const id = parseListingId(req.query.id as string);
+    const { id, name } = parseListingId(req.query.id as string, false);
     const { _avg, _count } = await PrismaClient.reviews.aggregate({
       _avg: {
         rating: true,
@@ -67,13 +76,21 @@ export default apiHandler()
       },
       where: {
         listing: id,
+        AND: {
+          listingReviewsListingTolisting: {
+            name: {
+              contains: name,
+              mode: 'insensitive',
+            },
+          },
+        },
       },
     });
 
     const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
     const reviewCount = _count && _count.rating;
 
-    const listing = await checkListingExists(id);
+    const listing = await checkListingExists(id, name);
 
     const completeListing = {
       ...listing,
