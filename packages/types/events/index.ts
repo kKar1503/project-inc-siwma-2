@@ -14,6 +14,11 @@ type RoomMessage = {
   time: Date;
 };
 
+type DeleteMessage = {
+  room: string;
+  message: number;
+};
+
 type StartStopType = {
   sender: string;
   roomId: string;
@@ -23,7 +28,6 @@ type Read = {
   room: string;
   message: string;
 };
-
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
@@ -35,7 +39,7 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
-  deleteMessage: { room: string; message: number };
+  clientDeleteMessage: DeleteMessage;
   clientStartType: StartStopType;
   clientStopType: StartStopType;
   clientRead: Read;
@@ -44,6 +48,7 @@ type EventParams = {
   rooms: Record<string, Room>;
   joinedRoom: Room;
   roomMessage: RoomMessage;
+  serverDeleteMessage: DeleteMessage;
   serverPing: string;
   serverStartType: StartStopType;
   serverStopType: StartStopType;
@@ -52,10 +57,13 @@ type EventParams = {
 
 type Event = keyof EventParams;
 
-type EventFile = (io: Server) => {
+type EventFile = (
+  io: Server,
+  socket?: Socket
+) => {
   [K in keyof EventParams]: {
     eventName: K;
-    callback: (param: EventParams[K]) => void;
+    callback: (param: EventParams[K], callback?: (...args: any[]) => void) => void;
     type: 'on' | 'once';
   };
 }[keyof EventParams];
