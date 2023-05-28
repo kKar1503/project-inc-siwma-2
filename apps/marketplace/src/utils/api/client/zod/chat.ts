@@ -33,7 +33,7 @@ const getUserChat = z.object({
 const getUserChats = getUserChat.array();
 
 export type ChatRoom = z.infer<typeof getChatRoom>;
-export type ChatMessage = z.infer<typeof getChatMessages>;
+export type ChatMessage = z.infer<typeof getChatMessage>;
 export type Chat = z.infer<typeof getUserChat>;
 
 export default {
