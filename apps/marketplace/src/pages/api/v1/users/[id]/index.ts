@@ -46,6 +46,24 @@ export default apiHandler()
       },
     });
 
+    const listingBookmarks = await client.listingBookmarks.findMany({
+      where: { userId: user.id },
+      select: {
+        id: true,
+        userId: true,
+        listingId: true,
+      },
+    });
+
+    const companyBookmarks = await client.companiesBookmarks.findMany({
+      where: { userId: user.id },
+      select: {
+        id: true,
+        userId: true,
+        companyId: true,
+      },
+    });
+
     const mappedUser = {
       id: user.id,
       name: user.name,
@@ -60,7 +78,11 @@ export default apiHandler()
       telegramUsername: user.telegramUsername,
       bio: user.bio,
       ...(isAdmin && { comments: user.comments }),
-      ...(req.token?.user.id === user.id && { bookmarkedUsers: userBookmarks }),
+      ...(req.token?.user.id === user.id && {
+        bookmarkedUsers: userBookmarks,
+        bookmarkedListings: listingBookmarks,
+        bookmarkedCompanies: companyBookmarks,
+      }),
     };
 
     return res.status(200).json(formatAPIResponse(mappedUser));

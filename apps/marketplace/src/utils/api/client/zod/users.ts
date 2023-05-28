@@ -15,6 +15,9 @@ const whatsappNumber = z.string().nullable();
 const telegramUsername = z.string().nullable();
 const contactMethod = z.nativeEnum(UserContacts);
 const bio = z.string().nullable();
+const bookmarkUser = z.object({
+  bookmarked: z.boolean(),
+});
 
 const user = z.object({
   id,
@@ -47,9 +50,6 @@ const getUser = user;
 const updateUser = user;
 const deleteUser = z.object({});
 const getUsers = user.array();
-const bookmarkUser = z.object({
-  bookmarked: z.boolean(),
-});
 
 export type User = z.infer<typeof user>;
 
