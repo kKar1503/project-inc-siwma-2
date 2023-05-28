@@ -9,13 +9,15 @@ const ParamSchema = z.object({
 });
 
 const BodySchema = z.object({
-  user: z.string(),
+  user: z.object({
+    id: z.string(),
+  }),
 });
 
 const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
   const listing = ParamSchema.parse(req.query).id;
-  const { user } = BodySchema.parse(req.body);
+  const  user = BodySchema.parse(req.token).user.id;
 
   PrismaClient.listingClicks.create({
     data: {
