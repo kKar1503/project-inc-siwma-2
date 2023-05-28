@@ -3,12 +3,12 @@ import logger from '../utils/logger';
 import { EVENTS } from '@inc/events';
 import prisma, { ContentType } from '@inc/db';
 
-const newMsgEvent: EventFile = (io) => ({
+const newMsgEvent: EventFile = (io,socket) => ({
   eventName: EVENTS.CLIENT.SEND_MESSAGE,
   type: 'on',
   callback: ({ roomId, message, username, contentType, time },callback) => {
     logger.info(`New message: ${message}`);
-    io.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
+    socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
       sender: username,
       message: message,
       messageType: contentType,

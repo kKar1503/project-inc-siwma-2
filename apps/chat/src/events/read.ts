@@ -4,12 +4,12 @@ import { EVENTS } from '@inc/events';
 import prisma from '@inc/db';
 
 
-const readEvent: EventFile = (io) => ({
+const readEvent: EventFile = (io, socket) => ({
   eventName: EVENTS.CLIENT.READ,
   type: 'on',
-  callback: ({ room, messageId },callback) => {
+  callback: ({ room, messageId }, callback) => {
     logger.info(`Message ${messageId} read`);
-    io.to(room).emit(EVENTS.SERVER.READ, { room: room, message: messageId });
+    socket.to(room).emit(EVENTS.SERVER.READ, { room: room, message: messageId });
 
     prisma.messages.update({
       where: {
