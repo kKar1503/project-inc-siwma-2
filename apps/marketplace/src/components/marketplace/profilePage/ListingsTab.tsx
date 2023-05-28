@@ -89,7 +89,7 @@ const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTa
       </Box>
       {/* lower portion showing marketplace cards */}
       <Box sx={stylesListing}>
-        {allListings.map((listing) => (
+        {allListings?.map((listing) => (
           <ProductListingItem data={listing} />
         ))}
       </Box>

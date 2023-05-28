@@ -16,16 +16,21 @@ import { useTheme } from '@mui/material/styles';
 import { useMemo } from 'react';
 
 export type ProfileDetailCardProps = {
-  username: string;
+  // username: string;
   name: string;
   email: string;
   company: string;
-  profilePic: string;
+  profilePic: string | null;
   mobileNumber: number;
-  telegramUsername: string;
-  bio: string;
-  rating: number;
-  reviews: number;
+  telegramUsername: string | null;
+  bio: string | null;
+  // rating: number;
+  // reviews: number;
+  enabled: boolean;
+  createdAt: string;
+  WhatsappNumber: number | null;
+  contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone';
+  comments?: string | null | undefined;
   ownerId: number;
 };
 
@@ -36,19 +41,24 @@ export type ProfileDetailCardData = {
 const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
   // destructure data
 
-  const {
-    username,
-    name,
-    email,
-    company,
-    profilePic,
-    mobileNumber,
-    telegramUsername,
-    bio,
-    rating,
-    reviews,
-    ownerId,
-  } = data;
+  // const {
+  //   // username,
+  //   name,
+  //   email,
+  //   company,
+  //   profilePic,
+  //   mobileNumber,
+  //   telegramUsername,
+  //   bio,
+  //   // rating,
+  //   // reviews,
+  //   ownerId,
+  //   enabled,
+  //   createdAt,
+  //   WhatsappNumber,
+  //   contactMethod,
+  //   comments,
+  // } = data;
 
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -89,11 +99,11 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{profilePic}</Avatar>
-        <Typography sx={{ fontWeight: 'bold' }}>{name}</Typography>
-        <Typography variant="body2">{company}</Typography>
-        <Typography>@{username}</Typography>
-        <Typography>{email}</Typography>
+        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
+        <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
+        <Typography variant="body2">{data?.company}</Typography>
+        {/* <Typography>@{username}</Typography> */}
+        <Typography>{data?.email}</Typography>
 
         <Box
           sx={({ spacing }) => ({
@@ -107,22 +117,22 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               mr: spacing(1),
             })}
           >
-            {rating.toFixed(1)}
+            {/* {rating.toFixed(1)} */}
           </Typography>
-          <StarsRating rating={rating} />
+          {/* <StarsRating rating={rating} /> */}
           <Typography
             sx={({ spacing }) => ({
               ml: spacing(1),
             })}
           >
-            ({reviews} {reviews === 1 ? ' Review' : ' Reviews'})
+            {/* ({reviews} {reviews === 1 ? ' Review' : ' Reviews'}) */}
           </Typography>
         </Box>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
-        <Typography>{bio}</Typography>
+        <Typography>{data?.bio}</Typography>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
@@ -147,7 +157,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               ml: spacing(1),
             })}
           >
-            {telegramUsername}
+            {data?.telegramUsername}
           </Typography>
         </Box>
         <Box
@@ -170,7 +180,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               ml: spacing(1),
             })}
           >
-            +65 {mobileNumber}
+            +65 {data?.mobileNumber}
           </Typography>
         </Box>
       </CardContent>
@@ -178,7 +188,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
         <Box sx={{ width: '98%' }}>
           <Button
             component={Link}
-            href={`/profile/${ownerId}/edit-profile`}
+            href={`/profile/${data?.ownerId}/edit-profile`}
             variant="contained"
             type="submit"
             sx={({ spacing }) => ({
