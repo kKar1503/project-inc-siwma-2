@@ -9,9 +9,11 @@ import type { TContentType } from '@inc/db';
 
 type ChatData = {
   id: string;
-  content: string;
   content_type: TContentType;
+  read: boolean;
+  content: string;
   author: string;
+  createdAt: string;
 };
 
 export type ChatBoxProps = {

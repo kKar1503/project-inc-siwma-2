@@ -33,9 +33,13 @@ type CategoryType = 'all' | 'Buying' | 'Selling';
 const ChatList = ({
   chats,
   onChange,
+  selectChat, 
+  setSelectChat,
 }: {
   chats: ChatListProps[];
   onChange: (e: React.FormEvent<HTMLInputElement>) => void;
+  selectChat: string; 
+  setSelectChat: (val: string) => void;
 }) => {
   const [category, setCategory] = useState<CategoryType>('all');
   const [activeItem, setActiveItem] = useState<number | null>(null);
@@ -54,6 +58,8 @@ const ChatList = ({
     );
     return filteredItems;
   };
+
+
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
@@ -307,11 +313,12 @@ const ChatList = ({
       </Box>
       <List sx={{ overflowY: 'auto', maxHeight: '100%' }}>
         {filteredChats(category, chats).map((chat, index) => (
-          <Box key={chat.id}>
+          <Box>
             <ListItem
               key={chat.id}
               onClick={() => {
                 setActiveItem(index);
+                setSelectChat(chat.id)
               }}
               sx={({ palette }) => ({
                 background: activeItem === index ? palette.grey[300] : 'none',

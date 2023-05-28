@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import ChatHeader from '@/components/rtc/ChatHeader';
 import ChatSubHeader from '@/components/rtc/ChatSubHeader';
 import ChatBox, { ChatBoxProps } from '@/components/rtc/ChatBox';
@@ -52,12 +51,17 @@ const useGetMessagesQuery = (roomUuid: string) => {
 
 const ChatRoom = () => {
   const [makeOffer, setMakeOffer] = useState<boolean>(false);
+  const [selectChat, setSelectChat] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState<string>('');
   const [onSend, setOnSend] = useState<boolean>(false);
 
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
+
+  if (selectChat !== '') {
+    console.log(selectChat);
+  }
 
   const userChatList = useChatListQuery(loggedUserUuid);
   // console.log(userChatList);
@@ -67,7 +71,7 @@ const ChatRoom = () => {
   // console.log(listingData);
 
   // TODO: set listing images data from retrieved listingID
-  const listingImagesData = useGetListingImagesQuery('3');
+  // const listingImagesData = useGetListingImagesQuery('3');
   // console.log(listingImagesData);
 
   // TODO: set buyer data from retrieved buyerID
@@ -75,76 +79,99 @@ const ChatRoom = () => {
   // console.log(buyer);
 
   // TODO: set messages data from retrieved roomID
-  const roomMessages = useGetMessagesQuery('dfc9bea3-b6f0-4b40-b59b-6cd5db0a0930');
+  const roomMessages = useGetMessagesQuery(selectChat);
   // console.log(roomMessages);
 
   const messages: ChatBoxProps['roomData'] = [
     {
-      id: '21',
-      content: 'Hi, how are you?',
+      id: '2451',
       content_type: 'text',
-      author: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      read: false,
+      content: 'hello',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '22',
-      content: 'Hi, I am interested in the item. Could we negotiate on the cost of the items?',
+      id: '2163',
       content_type: 'text',
-      author: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      read: false,
+      content: 'Not much, just working on some projects. How about you?',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '23',
+      id: '2461',
+      content_type: 'text',
+      read: false,
+      content: 'Not much, just working on some projects. How about you?',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '2351',
+      content_type: 'image',
+      read: false,
       content:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU',
-      content_type: 'image',
-      author: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '24',
-      content: 'Not much, just working on some projects. How about you?',
+      id: '2175',
+      content_type: 'image',
+      read: false,
+      content:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '2123',
       content_type: 'text',
-      author: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      read: false,
+      content: 'Not much, just working on some projects. How about you?',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '2124',
+      content_type: 'text',
+      read: false,
+      content: 'Not much, just working on some projects. How about you?',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '2435',
+      content_type: 'text',
+      read: false,
+      content: 'Hi, how are you?',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
       id: '25',
-      content: 'Same here, just trying to stay busy.',
       content_type: 'text',
-      author: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    },
-    {
-      id: '26',
+      read: false,
       content: 'Not much, just working on some projects. How about you?',
-      content_type: 'text',
-      author: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '27',
-      content: 'Same here, just trying to stay busy.',
+      id: '25',
       content_type: 'text',
-      author: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    },
-    {
-      id: '28',
+      read: false,
       content: 'Hi, how are you?',
-      content_type: 'text',
-      author: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '29',
-      content: 'Hi, how are you?',
+      id: '23',
       content_type: 'text',
-      author: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
-    },
-    {
-      id: '30',
+      read: false,
       content: 'Hi, how are you?',
-      content_type: 'text',
-      author: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-    },
-    {
-      id: '31',
-      content: 'Hi, how are you?',
-      content_type: 'text',
-      author: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
   ];
   const messagesOfChatRoomId1 = [
@@ -246,7 +273,7 @@ const ChatRoom = () => {
 
   const allChats: ChatListProps[] = [
     {
-      id: '1',
+      id: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
       company: 'ABC Corp',
       category: 'Buying',
       itemName: 'Mild Steel Channel',
@@ -259,7 +286,7 @@ const ChatRoom = () => {
       date: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '2',
+      id: '7bc2b79e-8eb9-4a44-9656-58327d75a0cb',
       company: 'XYZ Corp',
       category: 'Buying',
       latestMessage: 'Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem IpsumvLorem Ipsum ',
@@ -271,8 +298,8 @@ const ChatRoom = () => {
       date: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '3',
-      company: 'LMN Corp',
+      id: '',
+      company: '42268d5f-a094-493c-a75f-7ed4e3db9c69',
       category: 'Selling',
       latestMessage: 'I can offer 80, what do you think?',
       price: 80,
@@ -371,7 +398,7 @@ const ChatRoom = () => {
   return (
     <Box
       display="flex"
-      sx={({ shadows, spacing }) => ({
+      sx={({ spacing }) => ({
         mx: spacing(5),
         mt: spacing(3),
         height: '100vh',
@@ -388,34 +415,38 @@ const ChatRoom = () => {
       >
         <ChatList
           chats={allChats}
+          selectChat={selectChat}
+          setSelectChat={setSelectChat}
           onChange={(e) => {
             const element = e.currentTarget as HTMLInputElement;
             const { value } = element;
           }}
         />
       </Box>
-      <Box sx={{ width: 2 / 3, height: '90%' }}>
-        <ChatHeader profilePic="" companyName="Hi Metals PTE LTD" available />
-        <ChatSubHeader
-          itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
-          itemName="Hi Metals PTE LTD"
-          available
-          itemPrice={200.8}
-          makeOffer={makeOffer}
-          setMakeOffer={setMakeOffer}
-        />
-        <Box sx={{ margin: 0 }}>
-          <ChatBox roomData={messages} loginId="d44b8403-aa90-4d92-a4c6-d0a1e2fad0af" />
-          <ChatTextBox
-            selectedFile={selectedFile}
-            setSelectedFile={setSelectedFile}
-            inputText={inputText}
-            setInputText={setInputText}
-            onSend={onSend}
-            setOnSend={setOnSend}
+      {selectChat !== '' && (
+        <Box sx={{ width: 2 / 3, height: '90%' }}>
+          <ChatHeader profilePic="" companyName="Hi Metals PTE LTD" available />
+          <ChatSubHeader
+            itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
+            itemName="Hi Metals PTE LTD"
+            available
+            itemPrice={200.8}
+            makeOffer={makeOffer}
+            setMakeOffer={setMakeOffer}
           />
+          <Box sx={{ margin: 0 }}>
+            <ChatBox roomData={messages} loginId="d44b8403-aa90-4d92-a4c6-d0a1e2fad0af" />
+            <ChatTextBox
+              selectedFile={selectedFile}
+              setSelectedFile={setSelectedFile}
+              inputText={inputText}
+              setInputText={setInputText}
+              onSend={onSend}
+              setOnSend={setOnSend}
+            />
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 };
