@@ -24,6 +24,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import fetchUser from '@/middlewares/fetchUser';
 import updateUser from '@/middlewares/updateUser';
 import apiClient from '@/utils/api/client/apiClient';
+import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useQuery, useMutation } from 'react-query';
 import users from '@/pages/api/v1/users';
@@ -44,6 +45,17 @@ const useUpdateUserQuery = (userUuid: string) => {
 };
 
 const EditProfile = () => {
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
+  const id = useRouter().query.id as string;
+  const userDetails = useGetUserQuery(id);
+  const updateUser = useUpdateUserQuery(loggedUserUuid);
+  console.log(userDetails);
+  console.log(updateUser);
+
+  const theme = useTheme();
+  const { spacing } = theme;
+
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [name, setName] = useState<string>('');
@@ -55,15 +67,6 @@ const EditProfile = () => {
   const [mobileNumber, setMobilenumber] = useState('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [result, setResult] = useState('');
-
-  const user = useSession();
-  const loggedUserUuid = user.data?.user.id as string;
-  const id = useRouter().query.id as string;
-  const userDetails = useGetUserQuery(id);
-  const updateUser = useUpdateUserQuery(loggedUserUuid);
-  console.log(userDetails);
-  console.log(updateUser);
-
   useEffect(() => {
     if (profilePicture) {
       setImageUrl(URL.createObjectURL(profilePicture));
@@ -136,290 +139,301 @@ const EditProfile = () => {
   //   setResult(null);
   // };
 
-  const gridCols: 2 | 3 | 4 | 5 = useMemo(() => {
-    if (isLg) {
-      return 2;
+  const gridCols = useMemo(() => {
+    if (isSm) {
+      return {
+        py: spacing(3),
+        px: '20px',
+        height: '100%;',
+        width: '100%',
+        justifyContent: 'center',
+      };
     }
     if (isMd) {
-      return 3;
+      return {
+        py: spacing(3),
+        px: '40px',
+        height: '100%;',
+        width: '100%',
+        justifyContent: 'center',
+      };
     }
-    if (isSm) {
-      return 4;
+    if (isLg) {
+      return {
+        py: spacing(3),
+        px: '60px',
+        height: '100%;',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+      };
     }
-    return 5;
+    return {
+      py: spacing(3),
+      px: '20px',
+      height: '100%;',
+      width: '100%',
+    };
   }, [isSm, isMd, isLg]);
 
   return (
     <>
       <Head>
         <title>Edit Profile</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <main>
-        <Container>
-          <Grid container gridColumn={gridCols}>
-            <form onSubmit={handleSubmit}>
-              <Box
-                sx={({ spacing }) => ({
-                  m: spacing(2),
-                  display: 'flex',
-                })}
-              >
-                <Grid item
-                  sm={12}
-                  md={10}
-                  lg={12}
+
+      <Grid sx={gridCols} onSubmit={handleSubmit}>
+        <Box
+          sx={({ spacing }) => ({
+            display: 'flex',
+          })}
+        >
+          <Grid
+            item
+            sx={({ spacing }) => ({
+              mr: spacing(1),
+              width: '100%',
+            })}
+          >
+            <Card>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <CardHeader
+                  titleTypographyProps={{
+                    fontSize: 16,
+                  }}
+                  subheaderTypographyProps={{
+                    fontSize: 16,
+                  }}
+                  title="Edit Profile"
+                  subheader="Edit your profile details here"
+                />
+                <Box
                   sx={({ spacing }) => ({
-                    mr: spacing(1),
+                    justifyContent: 'flex-end',
+                    ml: 'auto',
+                    mr: spacing(2),
                   })}
                 >
-                  <Card>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <CardHeader
-                        titleTypographyProps={{
-                          fontSize: 16,
-                        }}
-                        subheaderTypographyProps={{
-                          fontSize: 16,
-                        }}
-                        title="Edit Profile"
-                        subheader="Edit your profile details here"
-                      />
-                      <Box
-                        sx={({ spacing }) => ({
-                          justifyContent: 'flex-end',
-                          ml: 'auto',
-                          mr: spacing(2),
-                        })}
-                      >
-                        <Button
-                          variant="contained"
-                          color="error"
-                          component={Link}
-                          href={`/profile/${id}`}
-                          sx={({ palette }) => ({ bgcolor: palette.error[400] })}
-                        >
-                          Cancel Edit
-                        </Button>
-                      </Box>
-                    </Box>
-                    <Divider
-                      variant="middle"
-                      sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
-                    />
-                    <CardContent>
-                      <Typography sx={{ fontWeight: 'bold' }}>Profile Photo</Typography>
-                      <Typography>
-                        Choose an image for other users to recognise you on the marketplace
-                      </Typography>
-                      <Box
-                        sx={({ spacing }) => ({
-                          mb: spacing(1),
-                          mt: spacing(1),
-                          display: 'flex',
-                          alignItems: 'center',
-                        })}
-                      >
-                        {imageUrl && profilePicture && (
-                          <Box>
-                            <Avatar src={imageUrl} />
-                          </Box>
-                        )}
-                        <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <Typography>Maximum upload size: &nbsp;</Typography>
-                            <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
-                          </Box>
-                          <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
-                            <Button variant="contained" component="label">
-                              Upload Profile Photo
-                              <input
-                                accept="image/*"
-                                type="file"
-                                hidden
-                                onChange={handleFileSelect}
-                              />
-                            </Button>
-                          </Box>
-                        </Box>
-                      </Box>
-                    </CardContent>
-
-                    <Divider
-                      variant="middle"
-                      sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
-                    />
-                    <CardContent>
-                      <Typography sx={{ fontWeight: 'bold' }}>Personal Details</Typography>
-                      <Typography>Change your personal details here</Typography>
-                      <Box
-                        sx={({ spacing }) => ({
-                          mt: spacing(2),
-                          display: 'flex',
-                          alignItems: 'center',
-                        })}
-                      >
-                        <FormControl
-                          fullWidth
-                          variant="outlined"
-                          sx={({ spacing }) => ({
-                            mr: spacing(2),
-                          })}
-                        >
-                          <TextField
-                            label="Full Name"
-                            placeholder="Your Full Name"
-                            InputLabelProps={{ shrink: true }}
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                          />
-                        </FormControl>
-
-                        <FormControl
-                          fullWidth
-                          variant="outlined"
-                          sx={({ spacing }) => ({
-                            mr: spacing(2),
-                          })}
-                        >
-                          <TextField
-                            label="Username"
-                            placeholder="account_username"
-                            InputLabelProps={{ shrink: true }}
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                          />
-                        </FormControl>
-                      </Box>
-
-                      <FormControl fullWidth variant="outlined">
-                        <TextField
-                          label="Email"
-                          placeholder="user@gmail.com"
-                          InputLabelProps={{ shrink: true }}
-                          sx={({ spacing }) => ({
-                            mt: spacing(2),
-                          })}
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                      </FormControl>
-
-                      <FormControl fullWidth variant="outlined">
-                        <TextField
-                          label="Company"
-                          placeholder="Company Name"
-                          InputLabelProps={{ shrink: true }}
-                          sx={({ spacing }) => ({
-                            mt: spacing(2),
-                          })}
-                          value={company}
-                          onChange={(e) => setCompany(e.target.value)}
-                        />
-                      </FormControl>
-
-                      <FormControl fullWidth variant="outlined">
-                        <TextField
-                          multiline
-                          rows={5}
-                          label="Bio"
-                          placeholder="Bio Description"
-                          InputLabelProps={{ shrink: true }}
-                          sx={({ spacing }) => ({
-                            mt: spacing(2),
-                            mb: spacing(1),
-                          })}
-                          value={bio}
-                          onChange={(e) => setBio(e.target.value)}
-                        />
-                      </FormControl>
-                    </CardContent>
-                    <Divider
-                      variant="middle"
-                      sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
-                    />
-                    <CardContent>
-                      <Typography sx={{ fontWeight: 'bold' }}>Connections</Typography>
-                      <Typography>Link your messaging accounts here</Typography>
-                      <Box
-                        sx={({ spacing }) => ({
-                          mt: spacing(2),
-                          display: 'flex',
-                          alignItems: 'center',
-                        })}
-                      >
-                        <FormControl fullWidth variant="outlined">
-                          <TextField
-                            label="Telegram Username"
-                            placeholder="account_username"
-                            sx={({ spacing }) => ({
-                              mr: spacing(2),
-                            })}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <TelegramIcon />@
-                                </InputAdornment>
-                              ),
-                            }}
-                            value={telegramUsername}
-                            onChange={(e) => setTelegramusername(e.target.value)}
-                          />
-                        </FormControl>
-
-                        <FormControl fullWidth variant="outlined">
-                          <TextField
-                            label="Whatsapp Number"
-                            placeholder="8123 4567"
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <WhatsAppIcon />
-                                  +65
-                                </InputAdornment>
-                              ),
-                            }}
-                            value={mobileNumber}
-                            onChange={(e) => setMobilenumber(e.target.value)}
-                          />
-                        </FormControl>
-                      </Box>
-                    </CardContent>
-
-                    <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
-                      <Box
-                        sx={({ spacing }) => ({
-                          width: '98%',
-                          mt: spacing(3),
-                        })}
-                      >
-                        <Button
-                          onClick={handleSubmit}
-                          variant="contained"
-                          type="submit"
-                          sx={({ spacing }) => ({
-                            width: '100%',
-                            mt: 'auto',
-                            mb: spacing(1),
-                          })}
-                        >
-                          Save Changes
-                        </Button>
-                      </Box>
-                    </CardActions>
-                  </Card>
-                </Grid>
-               {userDetails && isLg && (<ProfileDetailCard data={userDetails} />)}
+                  <Button
+                    variant="contained"
+                    color="error"
+                    component={Link}
+                    href={`/profile/${id}`}
+                    sx={({ palette }) => ({ bgcolor: palette.error[400] })}
+                  >
+                    Cancel Edit
+                  </Button>
+                </Box>
               </Box>
-            </form>
+              <Divider
+                variant="middle"
+                sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
+              />
+              <CardContent>
+                <Typography sx={{ fontWeight: 'bold' }}>Profile Photo</Typography>
+                <Typography>
+                  Choose an image for other users to recognise you on the marketplace
+                </Typography>
+                <Box
+                  sx={({ spacing }) => ({
+                    mb: spacing(1),
+                    mt: spacing(1),
+                    display: 'flex',
+                    alignItems: 'center',
+                  })}
+                >
+                  {imageUrl && profilePicture && (
+                    <Box>
+                      <Avatar src={imageUrl} />
+                    </Box>
+                  )}
+                  <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Typography>Maximum upload size: &nbsp;</Typography>
+                      <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
+                    </Box>
+                    <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
+                      <Button variant="contained" component="label">
+                        Upload Profile Photo
+                        <input accept="image/*" type="file" hidden onChange={handleFileSelect} />
+                      </Button>
+                    </Box>
+                  </Box>
+                </Box>
+              </CardContent>
+
+              <Divider
+                variant="middle"
+                sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
+              />
+              <CardContent>
+                <Typography sx={{ fontWeight: 'bold' }}>Personal Details</Typography>
+                <Typography>Change your personal details here</Typography>
+                <Box
+                  sx={({ spacing }) => ({
+                    mt: spacing(2),
+                    display: 'flex',
+                    alignItems: 'center',
+                  })}
+                >
+                  <FormControl
+                    fullWidth
+                    variant="outlined"
+                    sx={({ spacing }) => ({
+                      mr: spacing(2),
+                    })}
+                  >
+                    <TextField
+                      label="Full Name"
+                      placeholder="Your Full Name"
+                      InputLabelProps={{ shrink: true }}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </FormControl>
+
+                  <FormControl
+                    fullWidth
+                    variant="outlined"
+                    sx={({ spacing }) => ({
+                      mr: spacing(2),
+                    })}
+                  >
+                    <TextField
+                      label="Username"
+                      placeholder="account_username"
+                      InputLabelProps={{ shrink: true }}
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </FormControl>
+                </Box>
+
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="Email"
+                    placeholder="user@gmail.com"
+                    InputLabelProps={{ shrink: true }}
+                    sx={({ spacing }) => ({
+                      mt: spacing(2),
+                    })}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </FormControl>
+
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="Company"
+                    placeholder="Company Name"
+                    InputLabelProps={{ shrink: true }}
+                    sx={({ spacing }) => ({
+                      mt: spacing(2),
+                    })}
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                  />
+                </FormControl>
+
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    multiline
+                    rows={5}
+                    label="Bio"
+                    placeholder="Bio Description"
+                    InputLabelProps={{ shrink: true }}
+                    sx={({ spacing }) => ({
+                      mt: spacing(2),
+                      mb: spacing(1),
+                    })}
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                  />
+                </FormControl>
+              </CardContent>
+              <Divider
+                variant="middle"
+                sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
+              />
+              <CardContent>
+                <Typography sx={{ fontWeight: 'bold' }}>Connections</Typography>
+                <Typography>Link your messaging accounts here</Typography>
+                <Box
+                  sx={({ spacing }) => ({
+                    mt: spacing(2),
+                    display: 'flex',
+                    alignItems: 'center',
+                  })}
+                >
+                  <FormControl fullWidth variant="outlined">
+                    <TextField
+                      label="Telegram Username"
+                      placeholder="account_username"
+                      sx={({ spacing }) => ({
+                        mr: spacing(2),
+                      })}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <TelegramIcon />@
+                          </InputAdornment>
+                        ),
+                      }}
+                      value={telegramUsername}
+                      onChange={(e) => setTelegramusername(e.target.value)}
+                    />
+                  </FormControl>
+
+                  <FormControl fullWidth variant="outlined">
+                    <TextField
+                      label="Whatsapp Number"
+                      placeholder="8123 4567"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <WhatsAppIcon />
+                            +65
+                          </InputAdornment>
+                        ),
+                      }}
+                      value={mobileNumber}
+                      onChange={(e) => setMobilenumber(e.target.value)}
+                    />
+                  </FormControl>
+                </Box>
+              </CardContent>
+
+              <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
+                <Box
+                  sx={({ spacing }) => ({
+                    width: '98%',
+                    mt: spacing(3),
+                  })}
+                >
+                  <Button
+                    onClick={handleSubmit}
+                    variant="contained"
+                    type="submit"
+                    sx={({ spacing }) => ({
+                      width: '100%',
+                      mt: 'auto',
+                      mb: spacing(1),
+                    })}
+                  >
+                    Save Changes
+                  </Button>
+                </Box>
+              </CardActions>
+            </Card>
           </Grid>
-        </Container>
-      </main>
+          {userDetails && isLg && <ProfileDetailCard data={userDetails} />}
+        </Box>
+      </Grid>
     </>
   );
 };

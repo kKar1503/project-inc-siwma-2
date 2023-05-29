@@ -13,7 +13,7 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { StarsRating } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
 export type ProfileDetailCardProps =
   | {
@@ -34,23 +34,25 @@ export type ProfileDetailCardProps =
   | null
   | undefined;
 
+// export type ProfileDetailCardData = {
+//   profilePicture: ReactNode;
+//   name: ReactNode;
+//   company: ReactNode;
+//   email: ReactNode;
+//   bio: ReactNode;
+//   telegramUsername: ReactNode;
+//   mobileNumber: ReactNode;
+//   id: any;
+//   data: ProfileDetailCardProps;
+// };
+
 export type ProfileDetailCardData = {
-  profilePicture: ReactNode;
-  name: ReactNode;
-  company: ReactNode;
-  email: ReactNode;
-  bio: ReactNode;
-  telegramUsername: ReactNode;
-  mobileNumber: ReactNode;
-  id: any;
   data: ProfileDetailCardProps;
 };
 
 const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode?: boolean }) => {
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  console.log(data); // Check the value of data
-
 
   const styleProfileCard = useMemo(() => {
     if (isSm || isMd) {
@@ -87,14 +89,20 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
         subheader="View your profile details here"
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
-      
 
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data.data.data[0].profilePicture}</Avatar>
+        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>
+          {data.data.data[0].profilePicture}
+        </Avatar>
         <Typography sx={{ fontWeight: 'bold' }}>{data.data.data[0].name}</Typography>
-        <Typography variant="body2">{data.data.data[0].company}</Typography>
-        <Typography>@{data.data.data[0].username}</Typography>
-        <Typography>{data.data.data[0].email}</Typography>
+        <Typography>{data.data.data[0].company}</Typography>
+        <Typography
+          sx={{
+            wordWrap: 'break-word',
+          }}
+        >
+          {data.data.data[0].email}
+        </Typography>
 
         <Box
           sx={({ spacing }) => ({
@@ -176,12 +184,12 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
           </Typography>
         </Box>
       </CardContent>
-      <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
+      <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: '100%' }}>
         <Box sx={{ width: '98%' }}>
           {isEditMode && (
             <Button
               component={Link}
-              href={`/profile/${data.data[0].id}/edit-profile`}
+              href={`/profile/${data.data.data[0].id}/edit-profile`}
               variant="contained"
               type="submit"
               sx={({ spacing }) => ({
@@ -202,7 +210,6 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
             color="error"
             sx={({ spacing }) => ({
               width: '100%',
-              mb: spacing(1),
               fontWeight: 'bold',
             })}
           >
