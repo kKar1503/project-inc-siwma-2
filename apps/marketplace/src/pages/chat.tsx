@@ -94,7 +94,10 @@ const ChatRoom = () => {
       };
     }
     return {
-      boxShadow: shadows[3],
+      pagePadding: {
+        mx: spacing(5),
+        mt: spacing(3),
+      },
     };
   }, [isSm, isMd, isLg]);
 
@@ -439,27 +442,36 @@ const ChatRoom = () => {
         ...chatStyles?.pagePadding,
       }}
     >
-      <Box
-        sx={({ shadows }) => ({
-          boxShadow: shadows[3],
-          width: isSm ? 1 / 1 : 1 / 3,
-          height: isSm ? '100%' : '90%',
-          overflow: 'hidden',
-        })}
-      >
-        <ChatList
-          chats={allChats}
-          selectChat={selectChat}
-          setSelectChat={setSelectChat}
-          onChange={(e) => {
-            const element = e.currentTarget as HTMLInputElement;
-            const { value } = element;
-          }}
-        />
-      </Box>
+      {/* render if isMd and isLg, if isSm check if there's a selected chat */}
+      {/* if there is selectedChat, display chat only, else display chat list only */}
+      {(isMd || isLg || (isSm && selectChat === '')) && (
+        <Box
+          sx={({ shadows }) => ({
+            boxShadow: shadows[3],
+            width: isSm ? 1 / 1 : 1 / 3,
+            height: isSm ? '100%' : '90%',
+            overflow: 'hidden',
+          })}
+        >
+          <ChatList
+            chats={allChats}
+            selectChat={selectChat}
+            setSelectChat={setSelectChat}
+            onChange={(e) => {
+              const element = e.currentTarget as HTMLInputElement;
+              const { value } = element;
+            }}
+          />
+        </Box>
+      )}
       {selectChat !== '' && (
-        <Box sx={{ width: 2 / 3, height: '90%' }}>
-          <ChatHeader profilePic="" companyName="Hi Metals PTE LTD" available />
+        <Box sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100$' : '90%' }}>
+          <ChatHeader
+            profilePic=""
+            companyName="Hi Metals PTE LTD"
+            available
+            setSelectChat={setSelectChat}
+          />
           <ChatSubHeader
             itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
             itemName="Hi Metals PTE LTD"
