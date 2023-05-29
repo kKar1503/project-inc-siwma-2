@@ -23,15 +23,15 @@ export const where = (isAdmin: boolean, other = {}) =>
   isAdmin
     ? other
     : {
-        endDate: {
-          gte: new Date(),
-        },
-        startDate: {
-          lte: new Date(),
-        },
-        active: true,
-        ...other,
-      };
+      endDate: {
+        gte: new Date(),
+      },
+      startDate: {
+        lte: new Date(),
+      },
+      active: true,
+      ...other,
+    };
 
 export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
@@ -87,7 +87,15 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
   const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
   const loadImage = loadImageBuilder(AdvertisementBucket, 'image');
-  const advertisements = await Promise.all(advertisementsNoLink.map(loadImage));
+  const advertisements = await Promise.all(advertisementsNoLink.map(advertisement => {
+    const { companyId, ...advertisementContent } = advertisement;
+
+    return loadImage({
+      ...advertisementContent,
+      companyId: companyId.toString(),
+    });
+  }));
+
 
   // Return advertisements
   res.status(200).json(formatAPIResponse(advertisements));

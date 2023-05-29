@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import PrismaClient, { Listing, Prisma, Users, Companies } from '@inc/db';
+import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
@@ -20,16 +20,27 @@ export type ListingWithParameters = Listing & {
   reviewCount: number;
 };
 
-export function parseListingId($id: string) {
-  // Parse and validate listing id provided
-  const id = parseToNumber($id, 'id');
+/**
+ * Obtains the listing id from the url
+ * @example // Listing url: /api/v1/listings/1; Returns { name: '', id: 1 }
+ * @example // Listing url: /api/v1/listings/some-listing-name-1; Returns { name: 'some listing name', id: 1 }
+ */
+export function parseListingId($id: string, strict = true) {
+  // Check if strict mode is set
+  if (strict) {
+    // Attempt to parse the listing id
+    const id = parseToNumber($id, 'id');
 
-  // Check if the listing id is valid
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`Listing with id '${id}'`);
+    return id;
   }
 
-  return id;
+  // Attempt to retrieve the listing id and name from the url
+  const id = $id.split('-').pop() || '';
+
+  // Parse and validate listing id provided
+  const listingId = parseToNumber(id, 'id');
+
+  return listingId;
 }
 
 /**
@@ -47,10 +58,56 @@ async function getRequiredParametersForCategory(categoryId: number): Promise<num
   return categoryParameters.map((param) => param.parameterId);
 }
 
+function orderByOptions(sortBy: string | undefined): Prisma.ListingOrderByWithRelationInput {
+  switch (sortBy) {
+    case 'price_desc':
+      return { price: 'desc' };
+    case 'price_asc':
+      return { price: 'asc' };
+    case 'recent_newest':
+      return { createdAt: 'desc' };
+    case 'recent_oldest':
+      return { createdAt: 'asc' };
+    case 'popularity_desc':
+      return { listingClicksListingClicksListingTolistings: { _count: 'desc' } };
+    case 'popularity_asc':
+      return { listingClicksListingClicksListingTolistings: { _count: 'asc' } };
+    default:
+      return { id: 'asc' };
+  }
+}
+
+function ratingSortFn(a: ListingWithParameters, b: ListingWithParameters): number {
+  if (a.rating === null) return b.rating === null ? 0 : b.rating;
+  if (b.rating === null) return -a.rating;
+  return b.rating - a.rating;
+}
+
+function postSortOptions(
+  sortBy: string | undefined,
+): (arr: ListingWithParameters[]) => ListingWithParameters[] {
+  switch (sortBy) {
+    case 'rating_desc':
+      return (arr) => arr.sort(ratingSortFn);
+    case 'rating_asc':
+      return (arr) => arr.sort(ratingSortFn).reverse();
+    default:
+      return (arr) => arr;
+  }
+}
+
+export function sortOptions(sortByStr: string | undefined) {
+  const sortBy = sortByStr ? sortByStr.toLowerCase() : undefined;
+  return {
+    orderBy: orderByOptions(sortBy),
+    postSort: postSortOptions(sortBy),
+  };
+}
+
 // -- Helper functions -- //
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
-  includeParameters: boolean
+  includeParameters: boolean,
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
@@ -97,87 +154,38 @@ export async function formatSingleListingResponse(
   return formattedListing;
 }
 
-export async function formatListingResponse(
-  $listings: ListingWithParameters[],
-  includeParameters: boolean
-) {
-  return Promise.all(
-    $listings.map((listing) => formatSingleListingResponse(listing, includeParameters))
-  );
-}
-
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
     const queryParams = listingSchema.get.query.parse(req.query);
 
-    // Decode params if it exists
-    let decodedParams = null;
-    if (queryParams.params) {
-      decodedParams = JSON.parse(decodeURI(queryParams.params));
-      if (typeof decodedParams.paramId !== 'string' && typeof decodedParams.value !== 'string') {
-        throw new ParamError('paramId and value');
-      }
-      if (typeof decodedParams.paramId !== 'string') {
-        throw new ParamError('paramId');
-      }
-      if (typeof decodedParams.value !== 'string') {
-        throw new ParamError('value');
-      }
-    }
-
-    // Filter options
-    const whereOptions: Prisma.ListingWhereInput = {
-      categoryId: queryParams.category ? queryParams.category : undefined,
-      negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
-      price: {
-        gte: queryParams.minPrice ? queryParams.minPrice : undefined,
-        lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
-      },
-      name: queryParams.matching
-        ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
-        : undefined,
-      listingsParametersValues: decodedParams
-        ? {
-            some: {
-              parameterId: Number(decodedParams.paramId),
-              value: decodedParams.value,
-            },
-          }
-        : undefined,
-    };
-
-    // Sorting options
-    let sortByOptions: Prisma.ListingOrderByWithAggregationInput = {
-      id: 'asc',
-    };
-
-    if (queryParams.sortBy) {
-      switch (queryParams.sortBy.toLowerCase()) {
-        case 'price_desc':
-          sortByOptions = { price: 'desc' };
-          break;
-        case 'price_asc':
-          sortByOptions = { price: 'asc' };
-          break;
-        case 'recent_newest':
-          sortByOptions = { createdAt: 'desc' };
-          break;
-        case 'recent_oldest':
-          sortByOptions = { createdAt: 'asc' };
-          break;
-        default:
-          break;
-      }
-    }
+    const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
     // Retrieve filtered and sorted listings from the database
     const listings = await PrismaClient.listing.findMany({
-      where: whereOptions,
-      orderBy: sortByOptions,
+      where: {
+        categoryId: queryParams.category ? queryParams.category : undefined,
+        negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+        price: {
+          gte: queryParams.minPrice ? queryParams.minPrice : undefined,
+          lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
+        },
+        name: queryParams.matching
+          ? {
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
+          : undefined,
+        listingsParametersValues: queryParams.params
+          ? {
+            some: {
+              parameterId: queryParams.params.paramId,
+              value: queryParams.params.value,
+            },
+          }
+          : undefined,
+      },
+      orderBy,
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
@@ -217,28 +225,16 @@ export default apiHandler()
           reviewCount,
           multiple,
         };
-      })
+      }),
     );
 
-    // Sort listings by rating, if needed
-    if (queryParams.sortBy) {
-      switch (queryParams.sortBy.toLowerCase()) {
-        case 'highest_rating':
-          listingsWithRatingsAndReviewCount.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
-          break;
-        case 'lowest_rating':
-          listingsWithRatingsAndReviewCount.sort((a, b) => (a.rating ?? 0) - (b.rating ?? 0));
-          break;
-        default:
-          break;
-      }
-    }
+    const sortedListings = postSort(listingsWithRatingsAndReviewCount);
 
     // Format the listings
     const formattedListings = await Promise.all(
-      listingsWithRatingsAndReviewCount.map((listing) =>
-        formatSingleListingResponse(listing, queryParams.includeParameters)
-      )
+      sortedListings.map((listing) =>
+        formatSingleListingResponse(listing, queryParams.includeParameters),
+      ),
     );
 
     res.status(200).json(formatAPIResponse(formattedListings));
