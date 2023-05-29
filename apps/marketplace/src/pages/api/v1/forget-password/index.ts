@@ -14,7 +14,6 @@ import {
 } from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
 import { ForgetPasswordQueryParameter } from '@/utils/api/server/zod/forget-password';
-import { use } from 'react';
 
 const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => {
     // Get email from request body
@@ -79,7 +78,7 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
     }
 
     // Send the newly created password_reset object in the response
-    return res.status(201).json(formatAPIResponse({ status: "201", data: passwordReset }));
+    return res.status(201).json(formatAPIResponse({ passwordReset }));
 
 };
 
