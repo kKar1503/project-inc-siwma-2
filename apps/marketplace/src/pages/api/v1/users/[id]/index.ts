@@ -40,33 +40,6 @@ export default apiHandler()
       throw new NotFoundError('User');
     }
 
-    const userBookmarks = await client.userBookmarks.findMany({
-      where: { userId: user.id },
-      select: {
-        id: true,
-        userId: true,
-        targetUser: true,
-      },
-    });
-
-    const listingBookmarks = await client.listingBookmarks.findMany({
-      where: { userId: user.id },
-      select: {
-        id: true,
-        userId: true,
-        listingId: true,
-      },
-    });
-
-    const companyBookmarks = await client.companiesBookmarks.findMany({
-      where: { userId: user.id },
-      select: {
-        id: true,
-        userId: true,
-        companyId: true,
-      },
-    });
-
     const mappedUser = {
       id: user.id,
       name: user.name,
