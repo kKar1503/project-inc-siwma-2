@@ -12,15 +12,15 @@ const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z.preprocess(
-    zodDecodeToJson,
-    z
-      .object({
+  params: z
+    .preprocess(
+      zodDecodeToJson,
+      z.object({
         paramId: z.string().transform(zodParseToInteger),
         value: z.string(),
       })
-      .optional()
-  ),
+    )
+    .optional(),
   category: z.string().transform(zodParseToInteger).optional(),
   negotiable: z.string().transform(zodParseToBoolean).optional(),
   minPrice: z.string().transform(zodParseToNumber).optional(),
@@ -79,7 +79,6 @@ const reviewRequestBody = z.object({
   rating: z.number().int().gte(0).lte(5),
 });
 
-
 export type GetListingsQueryParameter = z.infer<typeof getQueryParameters>;
 export type PostListingsRequestBody = z.infer<typeof listingsRequestBody>;
 export type PutListingsRequestBody = z.infer<typeof putListingRequestBody>;
@@ -110,5 +109,4 @@ export default {
       body: reviewRequestBody,
     },
   },
-
 };
