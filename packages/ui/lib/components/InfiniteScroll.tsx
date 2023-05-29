@@ -1,4 +1,4 @@
-import { ReactNode, Children, useEffect, useRef, Component } from 'react';
+import { ReactNode, Children, useEffect, useRef, ComponentType } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 
 interface InfiniteScrollProps {
@@ -6,8 +6,10 @@ interface InfiniteScrollProps {
   onLoadMore: () => void;
   loading: boolean;
   reachedMaxItems: boolean;
-  parent: Component;
-  child: Component;
+  parent: ComponentType<any>;
+  parentProps: any;
+  child: ComponentType<any>;
+  childProps: any;
 }
 
 const InfiniteScroll = ({
@@ -16,7 +18,9 @@ const InfiniteScroll = ({
   loading,
   reachedMaxItems,
   parent: Parent,
+  parentProps,
   child: Child,
+  childProps,
 }: InfiniteScrollProps) => {
   const lastItemRef = useRef<Element>(null);
   const observerRef = useRef<IntersectionObserver>(null);
@@ -50,14 +54,19 @@ const InfiniteScroll = ({
   return (
     <>
       {loading && <CircularProgress />}
-      <Parent>
+
+      <Parent {...parentProps}>
         {children !== null &&
           children !== undefined &&
           Children.map(children, (child, index) => {
             if (index === children.length - 1) {
-              return <Child ref={lastItemRef}>{child}</Child>;
+              return (
+                <Child {...childProps} ref={lastItemRef} key={index}>
+                  {child}
+                </Child>
+              );
             }
-            return <Child>{child}</Child>;
+            return <Child key={index}>{child}</Child>;
           })}
       </Parent>
     </>

@@ -142,8 +142,21 @@ const Marketplace = () => {
           onLoadMore={refetch}
           loading={isLoading}
           reachedMaxItems={maxItems}
-          parent={<Grid container spacing={2} width="80%" />}
-          child={<Grid item xl={2} lg={3} md={4} sm={6} xs={12} />}
+          parent={Grid}
+          parentProps={{
+            container: true,
+            spacing: 2,
+            width: '80%',
+          }}
+          child={Grid}
+          childProps={{
+            item: true,
+            xl: 2,
+            lg: 3,
+            md: 4,
+            sm: 6,
+            xs: 12,
+          }}
         >
           {listings?.map((item) => (
             <ProductListingItem data={item} />
