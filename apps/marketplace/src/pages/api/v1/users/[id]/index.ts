@@ -30,6 +30,9 @@ export default apiHandler()
         whatsappNumber: true,
         telegramUsername: true,
         bio: true,
+        userBookmarksUserBookmarksUserIdTousers: req.token?.user.id === id,
+        companiesBookmarks: req.token?.user.id === id,
+        listingBookmarks: req.token?.user.id === id,
       },
     });
 
@@ -79,9 +82,11 @@ export default apiHandler()
       bio: user.bio,
       ...(isAdmin && { comments: user.comments }),
       ...(req.token?.user.id === user.id && {
-        bookmarkedUsers: userBookmarks,
-        bookmarkedListings: listingBookmarks,
-        bookmarkedCompanies: companyBookmarks,
+        bookmarks: {
+          users: user.userBookmarksUserBookmarksUserIdTousers.map((user) => user.targetUser),
+          companies: user.companiesBookmarks.map((company) => company.companyId.toString()),
+          listings: user.listingBookmarks.map((listing) => listing.listingId.toString()),
+        },
       }),
     };
 
