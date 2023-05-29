@@ -27,41 +27,93 @@ import {apiGuardMiddleware} from './middlewares/apiGuardMiddleware';
 import jwtMiddleware from './middlewares/jwtMiddleware';
 
 /**
+ * Zod path to string
+ */
+function zodPathToString(path: (string | number)[]) {
+  // Initialise result
+  let result = '';
+
+  // Iterate through each path
+  for (let i = 0; i < path.length; i++) {
+    // Check if it is a number
+    if (typeof path[i] === 'number') {
+      // It is a number, add it to the result
+      result += `[${path[i]}]`;
+    } else {
+      // It is a string, add it to the result
+      result += `${i > 0 ? '.' : ''}${path[i]}`;
+    }
+  }
+
+  return result;
+}
+
+/**
  * Zod error handler
  */
 function handleZodError(error: ZodError) {
-    // Iterate through each Zod Issue
-    const result = error.issues.map((err) => {
-        // Check if it was a type error
-        if (err.code === 'invalid_type') {
-            // Yes it was
-            // Check if it is due to a missing param
-            if (err.received === 'undefined') {
-                // Yes it was, return a param error
-                return new ParamRequiredError(err.path[0].toString()).toJSON();
-            }
+  // Iterate through each Zod Issue
+  const result = error.issues.map((err) => {
+    // Check if it was a type error
+    if (err.code === 'invalid_type') {
+      // Yes it was
+      // Check if it is due to a missing param
+      if (err.received === 'undefined') {
+        // Yes it was, return a param error
+        return new ParamRequiredError(zodPathToString(err.path)).toJSON();
+      }
 
-            // Return a param type error
-            return new ParamTypeError(err.path[0].toString(), err.expected, err.received).toJSON();
-        }
+      // Check if it was due to a invalid request body
+      if (err.path.length === 0) {
+        // Yes it was, return a query error
+        return new QueryError().toJSON();
+      }
 
-        // Check if it was a invalid_enum_value error
-        if (err.code === 'invalid_enum_value') {
-            // Yes it was, return a param error
-            return new ParamInvalidError(err.path[0].toString(), err.received, err.options).toJSON();
-        }
+      // Return a param type error
+      return new ParamTypeError(zodPathToString(err.path), err.expected, err.received).toJSON();
+    }
 
-        // Check if it was because the string was too short
-        if (err.code === 'too_small') {
-            // Yes it was, return a param error
-            return new ParamTooShortError(err.path[0].toString(), Number(err.minimum)).toJSON();
-        }
+    // Check if it was a invalid_enum_value error
+    if (err.code === 'invalid_enum_value') {
+      // Yes it was, return a param error
+      return new ParamInvalidError(zodPathToString(err.path), err.received, err.options).toJSON();
+    }
 
-        // Unrecognised zod error
-        return new ParamError().toJSON();
-    });
+    // Check if it was because the string was too short
+    if (err.code === 'too_small') {
+      // Yes it was, return a param error
+      return new ParamTooShortError(zodPathToString(err.path), Number(err.minimum)).toJSON();
+    }
 
-    return result;
+    // Check if it was a invalid_union error
+    if (err.code === 'invalid_union') {
+      // Yes it was, iterate through each union error to get an array of accepted types
+      const acceptedTypes = err.unionErrors
+        .map((unionError) => {
+          // Check if the type is a native zod type
+          if (unionError.errors[0].code === 'invalid_type') {
+            // Return the expected type
+            return unionError.errors[0].expected;
+          }
+
+          // It is a custom type, return the type
+          const split = unionError.errors[0].message.split(' ').at(-1);
+          return split;
+        })
+        .filter((type): type is string => type !== undefined);
+
+      // Return a param error
+      return new ParamTypeError(
+        zodPathToString(err.path),
+        acceptedTypes.length > 0 ? acceptedTypes : 'unknown'
+      ).toJSON();
+    }
+
+    // Unrecognised zod error
+    return new ParamError().toJSON();
+  });
+
+  return result;
 }
 
 /**
