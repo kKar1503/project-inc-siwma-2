@@ -11,7 +11,7 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import { useRouter } from 'next/router';
 
 export type MoreProfileIconProps = {
-  productId: number;
+  productId: string;
 };
 
 const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {

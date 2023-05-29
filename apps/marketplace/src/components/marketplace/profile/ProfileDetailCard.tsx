@@ -103,6 +103,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography variant="body2">{data?.company}</Typography>
         {/* <Typography>@{username}</Typography> */}
+        <Typography>@{data?.name}</Typography>
         <Typography>{data?.email}</Typography>
 
         <Box

@@ -1,19 +1,18 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import ProductListingItem, {
-  ProductListingItemProps,
-} from '@/components/marketplace/listing/ProductListingItem';
+import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
 import { SelectComponent } from '@inc/ui';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useMemo } from 'react';
+import { Listing } from '@/utils/api/client/zod';
 
 // pass filter values to select component
 const filterValues = ['All Listings', 'Buy Listings', 'Sell Listings'];
 const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
 
 export type ListingsTabProps = {
-  allListings: ProductListingItemProps[];
+  allListings: Listing[] | null | undefined;
   filterListings: (newData: (typeof filterValues)[number]) => void;
   sortByListings: (newData: (typeof sortValues)[number]) => void;
 };
