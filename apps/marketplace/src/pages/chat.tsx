@@ -67,6 +67,8 @@ const ChatRoom = () => {
     console.log(selectChat);
   }
 
+
+
   // converts to UI design if screen goes to mobile
   const chatStyles = useMemo(() => {
     if (isSm) {
@@ -438,7 +440,7 @@ const ChatRoom = () => {
       display="flex"
       sx={{
         height: '100vh',
-        overflowY: 'hidden',
+        // overflowY: 'hidden',
         ...chatStyles?.pagePadding,
       }}
     >
@@ -465,7 +467,9 @@ const ChatRoom = () => {
         </Box>
       )}
       {selectChat !== '' && (
-        <Box sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100$' : '90%' }}>
+        <Box
+          sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100$' : '90%', overflow: 'hidden' }}
+        >
           <ChatHeader
             profilePic=""
             companyName="Hi Metals PTE LTD"
@@ -481,14 +485,19 @@ const ChatRoom = () => {
             setMakeOffer={setMakeOffer}
           />
           <Box sx={{ margin: 0 }}>
-            <ChatBox roomData={messages} loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26" />
-            <ChatTextBox
-              selectedFile={selectedFile}
-              setSelectedFile={setSelectedFile}
-              inputText={inputText}
-              setInputText={setInputText}
-              onSend={onSend}
-              setOnSend={setOnSend}
+            <ChatBox
+              roomData={messages}
+              loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
+              ChatText={
+                <ChatTextBox
+                  selectedFile={selectedFile}
+                  setSelectedFile={setSelectedFile}
+                  inputText={inputText}
+                  setInputText={setInputText}
+                  onSend={onSend}
+                  setOnSend={setOnSend}
+                />
+              }
             />
           </Box>
         </Box>
