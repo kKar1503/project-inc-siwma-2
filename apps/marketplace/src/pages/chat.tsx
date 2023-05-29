@@ -67,12 +67,36 @@ const ChatRoom = () => {
     console.log(selectChat);
   }
 
-  // write a useMemo to set selectChat to empty string if isSm
-  useMemo(() => {
+  // converts to UI design if screen goes to mobile
+  const chatStyles = useMemo(() => {
     if (isSm) {
-      setSelectChat('');
+      return {
+        pagePadding: {
+          mx: spacing(0),
+          mt: spacing(0),
+        },
+      };
     }
-  }, [isSm]);
+    if (isMd) {
+      return {
+        pagePadding: {
+          mx: spacing(5),
+          mt: spacing(3),
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        pagePadding: {
+          mx: spacing(5),
+          mt: spacing(3),
+        },
+      };
+    }
+    return {
+      boxShadow: shadows[3],
+    };
+  }, [isSm, isMd, isLg]);
 
   const userChatList = useChatListQuery(loggedUserUuid);
   // console.log(userChatList);
@@ -409,18 +433,17 @@ const ChatRoom = () => {
   return (
     <Box
       display="flex"
-      sx={({ spacing }) => ({
-        mx: spacing(5),
-        mt: spacing(3),
+      sx={{
         height: '100vh',
         overflowY: 'hidden',
-      })}
+        ...chatStyles?.pagePadding,
+      }}
     >
       <Box
         sx={({ shadows }) => ({
           boxShadow: shadows[3],
-          width: 1 / 3,
-          height: '90%',
+          width: isSm ? 1 / 1 : 1 / 3,
+          height: isSm ? '100%' : '90%',
           overflow: 'hidden',
         })}
       >

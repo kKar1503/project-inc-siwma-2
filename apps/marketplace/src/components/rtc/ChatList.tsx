@@ -62,27 +62,46 @@ const ChatList = ({
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
 
-  const chatStyles = useMemo(() => {
+  const chatListStyles = useMemo(() => {
     if (isSm) {
       return {
         listHeader: {
-          pb: spacing(2),
+          pb: spacing(1),
           pt: spacing(2),
-          px: spacing(3),
+          px: spacing(2),
         },
         listTitle: {
           color: palette.common.black,
+          fontSize: '1.2rem',
         },
         activeChat: {
-          color: palette.common.black,
+          display: 'flex',
+          alignItems: 'center',
+          // Apply alpha transparency to black color
+          color: alpha(palette.common.black, 0.3),
+          fontSize: '0.8rem',
+        },
+        searchBar: {
+          fontSize: '0.8rem',
         },
         listImage: {
-          width: 30,
-          height: 30,
+          width: 50,
+          height: 50,
         },
-        companyText: {},
+        companyText: {
+          fontSize: '1rem',
+        },
         dateTime: {
-          fontSize: '0.6rem',
+          fontSize: '0.7rem',
+        },
+        productText: {
+          fontSize: '0.9rem',
+        },
+        latestMessage: {
+          fontSize: typography.body1,
+        },
+        progressText: {
+          fontSize: '0.8rem',
         },
       };
     }
@@ -221,7 +240,7 @@ const ChatList = ({
         height: '100%',
       })}
     >
-      <Box sx={chatStyles?.listHeader}>
+      <Box sx={chatListStyles?.listHeader}>
         <Box
           sx={({ spacing }) => ({
             display: 'flex',
@@ -230,10 +249,10 @@ const ChatList = ({
             pl: spacing(1),
           })}
         >
-          <Typography variant="h5" sx={chatStyles?.listTitle}>
+          <Typography variant="h5" sx={chatListStyles?.listTitle}>
             Conversations
           </Typography>
-          <Typography variant="subtitle2" sx={chatStyles?.activeChat}>
+          <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
             {filteredChats(category, chats).length} ACTIVE{' '}
             {filteredChats(category, chats).length !== 1 ? 'CHATS' : 'CHAT'}
           </Typography>
@@ -267,7 +286,7 @@ const ChatList = ({
                 border: spacing(0),
               },
               fontWeight: 500,
-              ...chatStyles?.searchBar,
+              ...chatListStyles?.searchBar,
             })}
           >
             <MenuItem value="all">ALL CHATS</MenuItem>
@@ -279,7 +298,7 @@ const ChatList = ({
         <TextField
           InputProps={{
             disableUnderline: true,
-            style: chatStyles?.searchBar,
+            style: chatListStyles?.searchBar,
           }}
           placeholder="Search messages, listings, usernames"
           variant="filled"
@@ -328,8 +347,8 @@ const ChatList = ({
                   <Image
                     style={{ borderRadius: '100%' }}
                     src={chat.imageUrl}
-                    width={chatStyles?.listImage?.width}
-                    height={chatStyles?.listImage?.height}
+                    width={chatListStyles?.listImage?.width}
+                    height={chatListStyles?.listImage?.height}
                     alt="pic"
                   />
                 </Badge>
@@ -343,12 +362,12 @@ const ChatList = ({
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                       maxWidth: '55%',
-                      ...chatStyles?.companyText,
+                      ...chatListStyles?.companyText,
                     }}
                   >
                     {chat.company}
                   </Typography>
-                  <Typography variant="body2" sx={chatStyles?.dateTime}>
+                  <Typography variant="body2" sx={chatListStyles?.dateTime}>
                     {DateTime.fromISO(chat.date).setLocale('en').toFormat('f')}
                   </Typography>
                 </Box>
@@ -360,7 +379,7 @@ const ChatList = ({
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '95%',
-                    ...chatStyles?.productText,
+                    ...chatListStyles?.productText,
                   }}
                 >
                   {' '}
@@ -373,7 +392,7 @@ const ChatList = ({
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '95%',
-                    ...chatStyles?.latestMessage,
+                    ...chatListStyles?.latestMessage,
                   }}
                 >
                   {chat.latestMessage}
@@ -381,9 +400,8 @@ const ChatList = ({
                 <Typography
                   variant="body2"
                   sx={{
-                    fontSize: '0.8rem',
                     fontWeight: 500,
-                    ...chatStyles?.progressText,
+                    ...chatListStyles?.progressText,
                   }}
                 >
                   {chat.inProgress ? 'In progress' : `Offered price: $${chat.price}`}
