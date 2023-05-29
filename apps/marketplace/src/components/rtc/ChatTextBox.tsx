@@ -22,16 +22,9 @@ const ChatTextBox = ({
   onSend,
   setOnSend,
 }: ChatTextBoxProps) => {
-  const imageMimeType = /image\/(png|jpg|jpeg)/i;
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      const imageFile = event.target.files[0];
-      if (!imageFile.type.match(imageMimeType)) {
-        // will change to notification when notification component is added
-        alert('Only Image file is allowed');
-        return;
-      }
       setSelectedFile(event.target.files[0]);
     }
   };
@@ -41,25 +34,31 @@ const ChatTextBox = ({
       sx={({ spacing, palette }) => ({
         display: 'flex',
         alignItems: 'center',
-        height: 80,
         bgcolor: palette.grey[300],
-        borderRadius: '0 0 20px 20px',
         px: spacing(2),
       })}
     >
       <IconButton component="label">
-        <AttachFileIcon sx={{ fontSize: 45 }} />
-        <input hidden accept="image/*" multiple type="file" onChange={handleFileSelect} />
+        <AttachFileIcon sx={{ fontSize: 40 }} />
+        <input hidden type="file" onChange={handleFileSelect} />
       </IconButton>
 
       <InputBase
         placeholder="Type your message here"
         fullWidth
-        sx={{ fontSize: 'h6' }}
+        sx={({ spacing, typography }) => ({
+          fontSize: typography.body1,
+          py: spacing(1),
+          maxHeight: '150px',
+          overflow: 'auto',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'transparent transparent',
+        })}
         onChange={(e) => setInputText(e.target.value)}
+        multiline
       />
       <IconButton onClick={() => setOnSend(true)}>
-        <SendIcon sx={{ fontSize: 45 }} />
+        <SendIcon sx={{ fontSize: 40 }} />
       </IconButton>
     </Box>
   );

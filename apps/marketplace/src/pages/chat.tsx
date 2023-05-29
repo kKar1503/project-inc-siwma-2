@@ -134,7 +134,7 @@ const ChatRoom = () => {
       content_type: 'text',
       read: false,
       content: 'Not much, just working on some projects. How about you?',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
@@ -160,7 +160,7 @@ const ChatRoom = () => {
       read: false,
       content:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
@@ -181,34 +181,34 @@ const ChatRoom = () => {
     },
     {
       id: '2435',
-      content_type: 'text',
+      content_type: 'offer',
       read: false,
-      content: 'Hi, how are you?',
+      offer: 188.8,
       author: '8fc4060d-5046-458f-b521-9e845b405cf1',
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
       id: '25',
-      content_type: 'text',
+      content_type: 'offer',
       read: false,
-      content: 'Not much, just working on some projects. How about you?',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      offer: 188.8,
+      author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
       id: '25434',
       content_type: 'text',
       read: false,
-      content: 'Hi, how are you?',
+      content: 'https://test.zip',
       author: '8fc4060d-5046-458f-b521-9e845b405cf1',
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
       id: '23',
-      content_type: 'text',
+      content_type: 'file',
       read: false,
-      content: 'Hi, how are you?',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      content: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+      author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
   ];
@@ -481,7 +481,7 @@ const ChatRoom = () => {
             setMakeOffer={setMakeOffer}
           />
           <Box sx={{ margin: 0 }}>
-            <ChatBox roomData={messages} loginId="d44b8403-aa90-4d92-a4c6-d0a1e2fad0af" />
+            <ChatBox roomData={messages} loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26" />
             <ChatTextBox
               selectedFile={selectedFile}
               setSelectedFile={setSelectedFile}
