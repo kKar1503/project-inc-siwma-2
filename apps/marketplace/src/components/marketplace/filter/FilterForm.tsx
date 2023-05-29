@@ -13,7 +13,17 @@ import Button from '@mui/material/Button';
 
 export type SortProps = 'Recent' | 'Price - High to Low' | 'Price - Low to High';
 
+export interface CategoryProps {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  crossSectionImage: string;
+  active: boolean;
+}
+
 export type FilterFormProps = {
+  categoryData:  CategoryProps[];
   setSort: (sort: SortProps) => void;
   setCategory: (category: string) => void;
   setNegotiation: (negotiation: string) => void;
@@ -22,12 +32,14 @@ export type FilterFormProps = {
 };
 
 const FilterForm = ({
+  categoryData,
   setSort,
   setCategory,
   setNegotiation,
   setMinPrice,
   setMaxPrice,
 }: FilterFormProps) => {
+  console.log(categoryData);
   const sortOptions = ['Recent', 'Price - High to Low', 'Price - Low to High'];
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<SortProps>('Recent');
@@ -82,9 +94,9 @@ const FilterForm = ({
         onChange={(e) => setCategoryOption(e.target.value as string)}
         value={categoryOption as string}
       >
-        {categoryOptions.map((option) => (
-          <MenuItem key={option} value={option}>
-            {option}
+        {categoryData.map((category) => (
+          <MenuItem key={category.id} value={category.name}>
+            {category.name}
           </MenuItem>
         ))}
       </Select>
