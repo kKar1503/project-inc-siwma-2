@@ -5,7 +5,6 @@ import { BulkEmailResponseBody } from './types/BulkEmailResponseBody';
 import { InvalidApiKeyError, InvalidSenderEmailError, EmailSendError } from '@inc/errors';
 import { SendSmtpEmail } from 'sib-api-v3-sdk';
 
-
 /* This function sends emails to multiple recipients.
  * It uses SendInBlue's Transactional Email API.
  * You should use this function to send emails to multiple users at once instead of using a single email function multiple times.
@@ -21,12 +20,8 @@ export default async function sendEmails<T extends Record<string, string>>(
 
   if (process.env.NODE_ENV === 'development' && data.messageVersions) {
     // If in development, get the API key from the database.
-    console.log(data.messageVersions.length)
     const retrieved = await getAPIKey(data.messageVersions.length);
-    console.log(retrieved)
-
     apiKey = retrieved.key?.key;
-
     senderEmail = retrieved.key?.senderEmail;
   } else {
     apiKey = process.env.SIB_API_KEY;
