@@ -20,16 +20,27 @@ export type ListingWithParameters = Listing & {
   reviewCount: number;
 };
 
-export function parseListingId($id: string) {
-  // Parse and validate listing id provided
-  const id = parseToNumber($id, 'id');
+/**
+ * Obtains the listing id from the url
+ * @example // Listing url: /api/v1/listings/1; Returns { name: '', id: 1 }
+ * @example // Listing url: /api/v1/listings/some-listing-name-1; Returns { name: 'some listing name', id: 1 }
+ */
+export function parseListingId($id: string, strict = true) {
+  // Check if strict mode is set
+  if (strict) {
+    // Attempt to parse the listing id
+    const id = parseToNumber($id, 'id');
 
-  // Check if the listing id is valid
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`Listing with id '${id}'`);
+    return id;
   }
 
-  return id;
+  // Attempt to retrieve the listing id and name from the url
+  const id = $id.split('-').pop() || '';
+
+  // Parse and validate listing id provided
+  const listingId = parseToNumber(id, 'id');
+
+  return listingId;
 }
 
 /**
@@ -57,6 +68,10 @@ function orderByOptions(sortBy: string | undefined): Prisma.ListingOrderByWithRe
       return { createdAt: 'desc' };
     case 'recent_oldest':
       return { createdAt: 'asc' };
+    case 'popularity_desc':
+      return { listingClicksListingClicksListingTolistings: { _count: 'desc' } };
+    case 'popularity_asc':
+      return { listingClicksListingClicksListingTolistings: { _count: 'asc' } };
     default:
       return { id: 'asc' };
   }
@@ -69,7 +84,7 @@ function ratingSortFn(a: ListingWithParameters, b: ListingWithParameters): numbe
 }
 
 function postSortOptions(
-  sortBy: string | undefined
+  sortBy: string | undefined,
 ): (arr: ListingWithParameters[]) => ListingWithParameters[] {
   switch (sortBy) {
     case 'rating_desc':
@@ -92,7 +107,7 @@ export function sortOptions(sortByStr: string | undefined) {
 // -- Helper functions -- //
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
-  includeParameters: boolean
+  includeParameters: boolean,
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
@@ -157,17 +172,17 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-              contains: queryParams.matching,
-              mode: 'insensitive',
-            }
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-              some: {
-                parameterId: queryParams.params.paramId,
-                value: queryParams.params.value,
-              },
-            }
+            some: {
+              parameterId: queryParams.params.paramId,
+              value: queryParams.params.value,
+            },
+          }
           : undefined,
       },
       orderBy,
@@ -210,7 +225,7 @@ export default apiHandler()
           reviewCount,
           multiple,
         };
-      })
+      }),
     );
 
     const sortedListings = postSort(listingsWithRatingsAndReviewCount);
@@ -218,8 +233,8 @@ export default apiHandler()
     // Format the listings
     const formattedListings = await Promise.all(
       sortedListings.map((listing) =>
-        formatSingleListingResponse(listing, queryParams.includeParameters)
-      )
+        formatSingleListingResponse(listing, queryParams.includeParameters),
+      ),
     );
 
     res.status(200).json(formatAPIResponse(formattedListings));
@@ -262,15 +277,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
