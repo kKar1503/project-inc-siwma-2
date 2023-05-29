@@ -1,19 +1,10 @@
 import { z } from 'zod';
-import { zodParseToInteger, zodParseToNumber } from '../../apiHelper';
+import { zodParseToNumber } from '../../apiHelper';
 
-/**
- * We define a separate schema for the type of the request body
- * Because we want to perform a type transformation
- * But we when we perform z.infer<> we want to get the original type
- */
-const chatRequestBodyType = z.object({
+const chatRequestBody = z.object({
   sellerId: z.string().uuid(),
   buyerId: z.string().uuid(),
-  listingId: z.string(),
-});
-
-const chatRequestBody = chatRequestBodyType.extend({
-  listingId: z.string().transform(zodParseToInteger),
+  listingId: z.number(),
 });
 
 const chatMessageRequestQuery = z.object({
@@ -28,7 +19,7 @@ const chatRequestQuery = z.object({
   limit: z.string().transform(zodParseToNumber).optional(),
 });
 
-export type PostChatRequestBody = z.infer<typeof chatRequestBodyType>;
+export type PostChatRequestBody = z.infer<typeof chatRequestBody>;
 export type GetChatMessageQueryParameter = z.infer<typeof chatMessageRequestQuery>;
 export type GetChatRequestQueryParameter = z.infer<typeof chatRequestQuery>;
 

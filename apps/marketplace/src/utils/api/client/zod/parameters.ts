@@ -43,7 +43,6 @@ const toggleParameter = z.object({ active });
 const deleteParameter = z.object({});
 
 export type ParameterResponseBody = z.infer<typeof parameter>;
-export type Parameter = z.infer<typeof parameter>;
 
 export default {
   create: createParameter,

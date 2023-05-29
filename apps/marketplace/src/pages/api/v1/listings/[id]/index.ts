@@ -15,10 +15,8 @@ export async function checkListingExists($id: string | number) {
   const id = typeof $id === 'number' ? $id : parseListingId($id);
 
   // Check if the listing exists
-  const listing = await PrismaClient.listing.findFirst({
-    where: {
-      id,
-    },
+  const listing = await PrismaClient.listing.findUnique({
+    where: { id },
     include: {
       users: {
         include: {
@@ -59,7 +57,7 @@ export default apiHandler()
     const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
-    const id = parseListingId(req.query.id as string, false);
+    const id = parseListingId(req.query.id as string);
     const { _avg, _count } = await PrismaClient.reviews.aggregate({
       _avg: {
         rating: true,

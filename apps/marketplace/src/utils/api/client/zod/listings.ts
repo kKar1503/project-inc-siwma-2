@@ -142,8 +142,6 @@ const deleteListingImage = z.object({});
 
 export type ListingParameter = z.infer<typeof parameter>;
 export type ListingResponseBody = z.infer<typeof listing>;
-export type Listing = z.infer<typeof listing>;
-export type Review = z.infer<typeof review>;
 
 export default {
   create: createListing,

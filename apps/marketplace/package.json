@@ -51,7 +51,7 @@
     "sib-api-v3-sdk": "^8.5.0",
     "styled-components": "^5.3.9",
     "victory": "^36.6.8",
-    "zod": "3.22.0-canary.20230522T011705"
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@inc/configs": "workspace:*",

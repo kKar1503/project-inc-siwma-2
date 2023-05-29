@@ -1,4 +1,4 @@
-import { BaseError, ParamError, ParamInvalidError, ParamTypeError } from '@inc/errors';
+import { BaseError, ParamError, ParamInvalidError } from '@inc/errors';
 import { z } from 'zod';
 
 /**
@@ -92,34 +92,6 @@ const zodParseToBoolean = ($string: string, ctx: z.RefinementCtx) => {
 };
 
 /**
- * Decodes a string to JSON
- * @returns The decoded JSON
- */
-const zodDecodeToJson = ($string: unknown, ctx: z.RefinementCtx) => {
-  try {
-    // Check if the string is a string
-    const string = String($string);
-
-    // Decode the URI component
-    const value = decodeURIComponent(string);
-
-    // Parse the value to JSON
-    const result = JSON.parse(value);
-    return result;
-  } catch (error) {
-    // An error occurred, add to zod error
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      params: {
-        response: new ParamTypeError(String(ctx.path), 'object', typeof $string),
-      },
-    });
-
-    return z.NEVER;
-  }
-};
-
-/**
  * Splits a string up to an array
  * @param string The string to split
  * @returns The split string
@@ -169,5 +141,4 @@ export {
   zodParseToNumber,
   zodParseToInteger,
   zodParseToBoolean,
-  zodDecodeToJson,
 };

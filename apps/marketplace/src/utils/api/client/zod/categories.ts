@@ -31,7 +31,6 @@ const updateCategory = category;
 const deleteCategory = z.object({});
 
 export type CategoryResponseBody = z.infer<typeof getCategory>;
-export type Category = z.infer<typeof getCategory>;
 export type CatgeoryParameter = z.infer<typeof parameter>;
 
 export default {
