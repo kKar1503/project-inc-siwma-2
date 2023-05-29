@@ -14,7 +14,7 @@ export default function useResponsiveness(breakpoints: Breakpoint[]) {
     lg: isLg,
   };
 
-  const isBp: boolean[] = breakpoints.map((bp: Breakpoint) => bpMap[bp]) as boolean[];
+  const isBp: boolean[] = breakpoints.map((bp: Breakpoint) => bpMap[bp]);
 
   return isBp;
 }
