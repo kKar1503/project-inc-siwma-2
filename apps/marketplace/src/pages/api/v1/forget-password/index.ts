@@ -13,12 +13,11 @@ import {
     ForgetPasswordEmailRequestBody,
 } from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
-import { ForgetPasswordQueryParameter } from '@/utils/api/server/zod/forget-password';
+import forgetPasswordSchema from '@/utils/api/server/zod/users';
 
 const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => {
     // Get email from request body
-    const { email } = req.body;
-
+    const { email } = forgetPasswordSchema.forgetPassword.post.query.parse(req.body);
     // Check if there is a user associated with the email
     const user = await PrismaClient.users.findUnique({
         where: { email },
