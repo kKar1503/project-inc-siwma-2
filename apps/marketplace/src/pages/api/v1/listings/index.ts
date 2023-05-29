@@ -20,16 +20,27 @@ export type ListingWithParameters = Listing & {
   reviewCount: number;
 };
 
-export function parseListingId($id: string) {
-  // Parse and validate listing id provided
-  const id = parseToNumber($id, 'id');
+/**
+ * Obtains the listing id from the url
+ * @example // Listing url: /api/v1/listings/1; Returns { name: '', id: 1 }
+ * @example // Listing url: /api/v1/listings/some-listing-name-1; Returns { name: 'some listing name', id: 1 }
+ */
+export function parseListingId($id: string, strict = true) {
+  // Check if strict mode is set
+  if (strict) {
+    // Attempt to parse the listing id
+    const id = parseToNumber($id, 'id');
 
-  // Check if the listing id is valid
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`Listing with id '${id}'`);
+    return id;
   }
 
-  return id;
+  // Attempt to retrieve the listing id and name from the url
+  const id = $id.split('-').pop() || '';
+
+  // Parse and validate listing id provided
+  const listingId = parseToNumber(id, 'id');
+
+  return listingId;
 }
 
 /**
@@ -266,15 +277,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
