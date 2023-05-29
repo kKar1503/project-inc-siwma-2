@@ -26,6 +26,8 @@ const getAdvertisement = advertisement;
 const updateAdvertisement = advertisement;
 const deleteAdvertisement = z.object({});
 
+export type Advertisment = z.infer<typeof advertisement>;
+
 export default {
   create: createAdvertisement,
   getAll: getAdvertisements,

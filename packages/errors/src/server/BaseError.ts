@@ -3,6 +3,9 @@
  * 1000 - 1999: Auth errors
  * 2000 - 2999: Query errors
  * 3000 - 3999: S3 errors
+ * 4000 - 4999: Input errors
+ * 5000 - 5999: Chat errors
+ * 6000 - 6999: Email errors
  */
 
 // -- Type definitions -- //
