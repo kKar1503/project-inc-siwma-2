@@ -48,6 +48,8 @@ const updateUser = user;
 const deleteUser = z.object({});
 const getUsers = user.array();
 
+export type User = z.infer<typeof user>;
+
 export default {
   create: createUser,
   getAll: getUsers,
