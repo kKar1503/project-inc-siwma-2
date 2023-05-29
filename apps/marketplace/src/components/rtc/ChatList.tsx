@@ -33,16 +33,16 @@ type CategoryType = 'all' | 'Buying' | 'Selling';
 const ChatList = ({
   chats,
   onChange,
-  selectChat, 
+  selectChat,
   setSelectChat,
 }: {
   chats: ChatListProps[];
   onChange: (e: React.FormEvent<HTMLInputElement>) => void;
-  selectChat: string; 
+  selectChat: string;
   setSelectChat: (val: string) => void;
 }) => {
   const [category, setCategory] = useState<CategoryType>('all');
-  const [activeItem, setActiveItem] = useState<number | null>(null);
+  const [activeItem, setActiveItem] = useState<string | null>(null);
   const myColor = alpha('#000000', 0.04);
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
@@ -58,8 +58,6 @@ const ChatList = ({
     );
     return filteredItems;
   };
-
-
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
@@ -317,11 +315,11 @@ const ChatList = ({
             <ListItem
               key={chat.id}
               onClick={() => {
-                setActiveItem(index);
-                setSelectChat(chat.id)
+                setActiveItem(chat.id);
+                setSelectChat(chat.id);
               }}
               sx={({ palette }) => ({
-                background: activeItem === index ? palette.grey[300] : 'none',
+                background: activeItem === chat.id ? palette.grey[300] : 'none',
                 height: '100%',
               })}
             >
