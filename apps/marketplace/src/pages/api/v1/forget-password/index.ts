@@ -10,7 +10,7 @@ import bcrypt from 'bcrypt';
 import {
     getContentFor,
     EmailTemplate,
-    BulkInviteEmailRequestBody,
+    ForgetPasswordEmailRequestBody,
 } from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
 import { ForgetPasswordQueryParameter } from '@/utils/api/server/zod/forget-password';
@@ -51,7 +51,7 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
         throw new EmailTemplateNotFoundError();
     }
 
-    const emailBody: BulkInviteEmailRequestBody = {
+    const emailBody: ForgetPasswordEmailRequestBody = {
         htmlContent: content,
         subject: 'Reset your password',
         messageVersions: [
@@ -64,8 +64,9 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
                 ],
                 params: {
                     name: user.name,
-                    companyName: 'Inc.',
-                    registrationUrl: `${process.env.FRONTEND_URL}/register?token=${tokenHash}`,
+                    resetUrl: `${process.env.FRONTEND_URL}/reset/${user.id}',`,
+
+
                 },
             },
         ],

@@ -46,6 +46,18 @@ export class BulkInviteEmailRequestBody implements SendSmtpEmail<BulkInviteReque
   }[];
 }
 
+export class ForgetPasswordEmailRequestBody implements SendSmtpEmail<BulkInviteRequestParams> {
+  htmlContent!: string; // HTML content of the email
+  subject!: string; // Subject of the email
+  messageVersions: {
+    to: SendSmtpEmailTo[];
+    params?: {
+      name: string; // Name of the recipient (to be shown in the email's content)
+      resetUrl: string; // URL for the recipient to finish reseting his password
+    };
+  }[];
+}
+
 type BulkNotificationRequestParams = {
   name: string; // Name of the recipient (to be shown in the email's content)
   notifications: string; // User's notifications, combined into a single string
