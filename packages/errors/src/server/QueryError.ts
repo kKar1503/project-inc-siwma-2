@@ -71,9 +71,14 @@ export class ParamTypeError extends ParamError {
   public static readonly status = 422;
   public static readonly code = 2004;
 
-  constructor(parameter: string, expectedType: ZodParsedType, actualType: ZodParsedType) {
+  constructor(parameter: string, expectedType: string | string[], actualType?: string) {
     super();
-    this.message = `Expected '${parameter}' to be of type '${expectedType}, but got type '${actualType}'`;
+    const isMultiple = Array.isArray(expectedType) && expectedType.length > 1;
+
+    this.message =
+      `Expected '${parameter}' to be of type${isMultiple ? 's' : ''} '${
+        isMultiple ? arrayToString(expectedType, 'or') : expectedType
+      }'` + (actualType ? `, but got type '${actualType}'` : '');
     this.status = ParamTypeError.status;
     this.code = ParamTypeError.code;
   }
