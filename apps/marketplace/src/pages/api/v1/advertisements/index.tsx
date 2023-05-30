@@ -104,3 +104,9 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), POST)
   .get(GET);
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};

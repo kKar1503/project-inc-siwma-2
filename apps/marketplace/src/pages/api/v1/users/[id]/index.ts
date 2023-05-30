@@ -230,3 +230,9 @@ export default apiHandler()
       return res.status(204).end();
     }
   );
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
