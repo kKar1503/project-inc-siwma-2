@@ -67,8 +67,6 @@ const ChatRoom = () => {
     console.log(selectChat);
   }
 
-
-
   // converts to UI design if screen goes to mobile
   const chatStyles = useMemo(() => {
     if (isSm) {
@@ -211,6 +209,14 @@ const ChatRoom = () => {
       read: false,
       content: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
       author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '2543234',
+      content_type: 'text',
+      read: false,
+      content: 'LAST MESSAGE',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
   ];
@@ -468,7 +474,7 @@ const ChatRoom = () => {
       )}
       {selectChat !== '' && (
         <Box
-          sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100$' : '90%', overflow: 'hidden' }}
+          sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100vh' : '90%', overflow: 'hidden' }}
         >
           <ChatHeader
             profilePic=""

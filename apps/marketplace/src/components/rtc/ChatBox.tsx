@@ -1,4 +1,4 @@
-import React , { useRef } from 'react';
+import React, { useRef } from 'react';
 import type { TContentType } from '@inc/db';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
 
 type ChatData = {
   id: string;
@@ -26,6 +28,9 @@ export type ChatBoxProps = {
 };
 
 const ChatBox: React.FC<ChatBoxProps> = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, shape, shadows, palette, typography } = useTheme();
+
   const filterFileType = (fileURL: string) => {
     const extension = fileURL.split('.').pop()?.toLowerCase() || '';
 
@@ -75,7 +80,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loginId, roomData, ChatText }: ChatBo
 
   return (
     <Box>
-      <Box sx={{ overflowY: 'auto', height: '70vh' }}>
+      <Box sx={{ overflowY: 'auto', height: isSm ? 'calc(100vh - 200px)' : '70vh' }}>
         <Paper sx={{ p: 2 }}>
           <List>
             {roomData.map((message) => (
