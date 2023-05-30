@@ -37,6 +37,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
           borderBottom: 1,
           padding: spacing(2),
           borderColor: palette.grey[300],
+          backgroundColor: palette.common.white,
           display: 'flex',
           alignItems: 'center',
           mx: spacing(0),
@@ -69,17 +70,18 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
           borderBottom: 1,
           padding: spacing(2),
           borderColor: palette.grey[300],
+          backgroundColor: palette.common.white,
           display: 'flex',
           alignItems: 'center',
-          mx: spacing(2),
+          // mx: spacing(2),
         },
         companyName: {
-          fontSize: typography.h4,
-          marginLeft: spacing(4),
+          fontSize: typography.h6,
+          marginLeft: spacing(2),
           flexGrow: 1,
         },
         statusButton: {
-          fontSize: typography.subtitle1,
+          fontSize: typography.subtitle2,
           bgcolor: available ? palette.info.main : palette.success.main,
           color: palette.common.white,
           px: available ? spacing(3) : spacing(4),
@@ -100,17 +102,18 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
           borderBottom: 1,
           padding: spacing(2),
           borderColor: palette.grey[300],
+          backgroundColor: palette.common.white,
           display: 'flex',
           alignItems: 'center',
-          mx: spacing(2),
+          // mx: spacing(2),
         },
         companyName: {
-          fontSize: typography.h4,
-          marginLeft: spacing(4),
+          fontSize: typography.h6,
+          marginLeft: spacing(2),
           flexGrow: 1,
         },
         statusButton: {
-          fontSize: typography.subtitle1,
+          fontSize: typography.subtitle2,
           bgcolor: available ? palette.info.main : palette.success.main,
           color: palette.common.white,
           px: available ? spacing(3) : spacing(4),
@@ -130,6 +133,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
         borderBottom: 1,
         padding: spacing(2),
         borderColor: palette.grey[300],
+        backgroundColor: palette.common.white,
         display: 'flex',
         alignItems: 'center',
         mx: spacing(2),
@@ -140,7 +144,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
         flexGrow: 1,
       },
       statusButton: {
-        fontSize: typography.subtitle1,
+        fontSize: typography.subtitle2,
         bgcolor: available ? palette.info.main : palette.success.main,
         color: palette.common.white,
         px: available ? spacing(3) : spacing(4),
@@ -176,7 +180,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
         {!isSm && <Avatar alt="company profile picture" src={profilePic} />}
       </IconButton>
       <Typography sx={chatHeaderStyles?.companyName}>{companyName}</Typography>
-      <Button size="small" sx={chatHeaderStyles?.statusButton} disabled>
+      <Button sx={chatHeaderStyles?.statusButton} disabled>
         {available ? 'Available' : 'Sold'}
       </Button>
       <IconButton

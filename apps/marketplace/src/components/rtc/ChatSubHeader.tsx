@@ -126,11 +126,11 @@ const ChatSubHeader = ({
   return (
     <Box
       sx={({ spacing, palette }) => ({
-        borderBottom: 1,
+        border: 1,
         padding: spacing(2),
-        borderColor: palette.grey[300],
+        borderColor: palette.grey[200],
         display: 'flex',
-        marginLeft: spacing(1),
+        pr: spacing(1),
       })}
     >
       <IconButton
