@@ -31,6 +31,7 @@ import fetchCategories from '@/middlewares/fetchCategories';
 import fetchParameters from '@/middlewares/fetchParameters';
 import createListing from '@/middlewares/createListing';
 
+// Hooks
 const useGetCategoriesQuery = () => {
   const { data } = useQuery('categories', () => fetchCategories());
 
@@ -81,6 +82,7 @@ const CreateListingPage = () => {
     priceError: '',
   });
 
+  // Hooks
   const categoriesData = useGetCategoriesQuery();
   const parametersData = useGetParametersQuery(parameterIDs, category);
   const postListingData = usePostListingQuery(formData);
@@ -197,6 +199,8 @@ const CreateListingPage = () => {
     return formIsValid;
   };
 
+  // Handle Submit/Cancel
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -240,6 +244,8 @@ const CreateListingPage = () => {
     e.preventDefault();
     setOpenCancelModal(true);
   };
+
+  // Use Effects
 
   useEffect(() => {
     sortCategoryParameters();
