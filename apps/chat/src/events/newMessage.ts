@@ -6,15 +6,9 @@ import prisma, { ContentType } from '@inc/db';
 const newMsgEvent: EventFile = (io, socket) => ({
   eventName: EVENTS.CLIENT.SEND_MESSAGE,
   type: 'on',
-  callback: ({ roomId, message, username, contentType, file, time }, callback) => {
+  callback: ({ roomId, message, username, contentType, file, time }, successCallback) => {
     logger.info(`New message: ${message}`);
-    socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
-      sender: username,
-      message: message,
-      messageType: contentType,
-      room: roomId,
-      timestamp: time,
-    });
+
     let content: string = message;
     switch (contentType) {
       case ContentType.file:
@@ -27,6 +21,17 @@ const newMsgEvent: EventFile = (io, socket) => ({
         // ignore as message is already set
         break;
     }
+
+    const callback = (successObj: { success: boolean }) => {
+      socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
+        sender: username,
+        message: message,
+        messageType: contentType,
+        room: roomId,
+        timestamp: time,
+      });
+      successCallback(successObj);
+    };
 
     prisma.messages.create({
       data: {

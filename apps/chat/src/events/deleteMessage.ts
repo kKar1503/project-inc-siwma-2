@@ -3,12 +3,16 @@ import logger from '../utils/logger';
 import { EVENTS } from '@inc/events';
 import prisma from '@inc/db';
 
-const deleteMessageEvent: EventFile = (io,socket) => ({
+const deleteMessageEvent: EventFile = (io, socket) => ({
   eventName: EVENTS.CLIENT.DELETE_MESSAGE,
   type: 'on',
-  callback: async ({ room, messageId }, callback) => {
+  callback: async ({ room, messageId }, successCallback) => {
     logger.info(`${messageId}  ${room}`);
-    socket.to(room).emit(EVENTS.SERVER.DELETE_MESSAGE, messageId);
+
+    const callback = (successObj: { success: boolean }) => {
+      socket.to(room).emit(EVENTS.SERVER.DELETE_MESSAGE, messageId);
+      successCallback(successObj);
+    };
 
     prisma.messages.delete({
       where: {
