@@ -328,7 +328,7 @@ const ChatList = ({
           })}
         />
       </Box>
-      <List sx={{ overflowY: 'auto', maxHeight: '100%' }}>
+      <List sx={{ overflowY: 'auto', height: 'calc(100% - 100px)' }}>
         {filteredChats(category, chats).map((chat, index) => (
           <Box>
             <ListItem

@@ -453,7 +453,19 @@ const ChatRoom = () => {
     },
     {
       id: '9',
-      company: 'LMN Corp',
+      company: 'FINAL COMPANY',
+      category: 'Selling',
+      latestMessage: 'I can offer 80, what do you think?',
+      price: 80,
+      inProgress: true,
+      itemName: 'Product Name 3',
+      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
+      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
+      date: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '10',
+      company: 'SERIOUS FINAL COMPANY',
       category: 'Selling',
       latestMessage: 'I can offer 80, what do you think?',
       price: 80,
@@ -498,7 +510,7 @@ const ChatRoom = () => {
       )}
       {selectChat !== '' && (
         <Box
-          sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100%' : '90vh', overflow: 'hidden' }}
+          sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100%' : '90%', overflow: 'hidden' }}
         >
           <ChatHeader
             profilePic=""
