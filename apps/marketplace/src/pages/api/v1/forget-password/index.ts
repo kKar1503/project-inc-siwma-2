@@ -24,8 +24,7 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
     });
 
     if (!user) {
-        // If there is no user, return a 404 error
-        return res.status(404).end();
+        return res.status(204).end();
     }
 
     // Create token: user's name, email, the current date, and a random string
@@ -76,8 +75,8 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
         throw emailResponse.error ?? new EmailSendError();
     }
 
-    // Send the newly created password_reset object in the response
-    return res.status(201).json(formatAPIResponse({ passwordReset }));
+    return res.status(204).end();
+
 
 };
 
