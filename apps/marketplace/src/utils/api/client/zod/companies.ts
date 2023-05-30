@@ -30,6 +30,7 @@ const bookmarkCompany = z.object({
 const deleteCompany = z.object({});
 
 export type CompanyResponseBody = z.infer<typeof getCompany>;
+export type Company = z.infer<typeof getCompany>;
 
 export default {
   create: createCompany,
