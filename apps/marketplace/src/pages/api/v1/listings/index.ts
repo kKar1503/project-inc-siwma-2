@@ -153,7 +153,7 @@ export async function formatSingleListingResponse(
         id: image.id.toString(),
         filename: image.image,
         url: await bucket.getObjectUrl(image.image),
-      }))
+      })),
     );
   }
 
@@ -274,7 +274,7 @@ export default apiHandler()
     const files = await getFilesFromRequest(req);
     const bucket = await s3Connection.getBucket(ListingBucketName);
     const objects = await Promise.all(
-      files.map((file) => bucket.createObject(fileToS3Object(file)))
+      files.map((file) => bucket.createObject(fileToS3Object(file))),
     );
 
     const listing = await PrismaClient.listing.create({
@@ -290,21 +290,21 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value.toString(),
-                parameter: {
-                  connect: {
-                    id: parameter.paramId,
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value.toString(),
+              parameter: {
+                connect: {
+                  id: parameter.paramId,
                 },
-              })),
-            }
+              },
+            })),
+          }
           : undefined,
         listingImages: {
           create: await Promise.all(
             objects.map(async (object) => ({
               image: await object.generateLink(),
-            }))
+            })),
           ),
         },
       },
@@ -319,5 +319,5 @@ export default apiHandler()
 export const config = {
   api: {
     bodyParser: false,
-  }
-}
+  },
+};
