@@ -13,10 +13,15 @@ import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
 import SearchBar from '@inc/ui/lib/components/SearchBar';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
 import AddListing from './AddListing';
 import Profile from './Profile';
 
 const NavBar = () => {
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, shape, shadows, palette, typography } = useTheme();
+
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
 
   const isMobileMenuOpen = mobileMoreAnchorEl !== null;
@@ -34,39 +39,49 @@ const NavBar = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: 'white', boxShadow: 1 }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        backgroundColor: 'white',
+        boxShadow: 1,
+        position: 'sticky',
+        top: 0,
+        zIndex: 9999,
+      }}
+    >
       <Toolbar>
         <Image src="/images/favicons/SIWMA-icon.png" alt="logo" width={60} height={40} />
 
-        <Link href="/home" underline="none">
-          <Typography
-            noWrap
-            sx={({ spacing, typography }) => ({
-              fontSize: typography.subtitle2,
-              ml: spacing(3),
-            })}
-          >
-            Home
-          </Typography>
-        </Link>
-
-        <Link href="/allCategories" underline="none">
-          <Typography
-            noWrap
-            sx={({ spacing, typography }) => ({
-              fontSize: typography.subtitle2,
-              ml: spacing(3),
-              mr: spacing(3),
-            })}
-          >
-            All Categories
-          </Typography>
-        </Link>
-
+        {!isSm && (
+          <Link href="/" underline="none">
+            <Typography
+              noWrap
+              sx={({ spacing, typography }) => ({
+                fontSize: typography.subtitle2,
+                ml: spacing(3),
+              })}
+            >
+              Home
+            </Typography>
+          </Link>
+        )}
+        {!isSm && (
+          <Link href="/categories" underline="none">
+            <Typography
+              noWrap
+              sx={({ spacing, typography }) => ({
+                fontSize: typography.subtitle2,
+                ml: spacing(3),
+                mr: spacing(3),
+              })}
+            >
+              All Categories
+            </Typography>
+          </Link>
+        )}
         <SearchBar />
 
-        <AddListing />
-
+        {!isSm && <AddListing />}
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <IconButton size="medium">
@@ -78,21 +93,23 @@ const NavBar = () => {
             />
           </IconButton>
 
-          <IconButton
-            size="medium"
-            sx={({ spacing }) => ({
-              ml: spacing(2),
-            })}
-          >
-            <Badge>
-              <MessageIcon
-                sx={({ typography, palette }) => ({
-                  fontSize: typography.h5,
-                  color: palette.text.secondary,
-                })}
-              />
-            </Badge>
-          </IconButton>
+          <Link href="/chat" underline="none">
+            <IconButton
+              size="medium"
+              sx={({ spacing }) => ({
+                ml: spacing(2),
+              })}
+            >
+              <Badge>
+                <MessageIcon
+                  sx={({ typography, palette }) => ({
+                    fontSize: typography.h5,
+                    color: palette.text.secondary,
+                  })}
+                />
+              </Badge>
+            </IconButton>
+          </Link>
 
           <IconButton
             size="medium"

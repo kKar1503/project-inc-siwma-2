@@ -1,15 +1,18 @@
 import { Html, Head, Main, NextScript } from 'next/document';
-import NavBar from '@/components/marketplace/navbar/NavBar';
+import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
 
-const Document = () => (
-  <Html lang="en">
-    <Head />
-    <body>
-      {/* <NavBar /> */}
-      <Main />
-      <NextScript />
-    </body>
-  </Html>
-);
+const Document = () => {
+  const { spacing, shape, shadows, palette, typography } = useTheme();
+  return (
+    <Html lang="en">
+      <Head />
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
+};
 
 export default Document;

@@ -1,24 +1,57 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
 
-const AddListing = () => (
-  <Button
-    variant="contained"
-    sx={({ palette }) => ({
-      backgroundColor: palette.primary.main,
-      textTransform: 'capitalize',
-    })}
-  >
-    <Typography
-      noWrap
-      sx={({ typography }) => ({
-        fontSize: typography.subtitle2,
+const AddListing = () => {
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, shape, shadows, palette, typography } = useTheme();
+
+  console.log('isSm', isSm);
+  console.log('isMd', isMd);
+  console.log('isLg', isLg);
+
+  const addListingStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        textBtn: {
+          fontSize: '0.5rem',
+          color: palette.common.white,
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        textBtn: {
+          fontSize: '0.8rem',
+          color: palette.common.white,
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        textBtn: {
+          fontSize: '0.8rem',
+          color: palette.common.white,
+        },
+      };
+    }
+    return {};
+  }, [isSm, isMd, isLg]);
+
+  return (
+    <Button
+      variant="contained"
+      sx={({ palette }) => ({
+        backgroundColor: palette.primary.main,
+        textTransform: 'capitalize',
       })}
     >
-      Add Listings
-    </Typography>
-  </Button>
-);
-
+      <Typography noWrap sx={addListingStyles?.textBtn}>
+        ADD LISTINGS
+      </Typography>
+    </Button>
+  );
+};
 export default AddListing;
