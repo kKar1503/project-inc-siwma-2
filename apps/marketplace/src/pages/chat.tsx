@@ -219,6 +219,30 @@ const ChatRoom = () => {
       author: '8fc4060d-5046-458f-b521-9e845b405cf1',
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
+    {
+      id: '2543234',
+      content_type: 'text',
+      read: false,
+      content: 'CAN YOU SEE ME',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '2543234',
+      content_type: 'text',
+      read: false,
+      content: '2ND LAST MESSAGE',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
+    },
+    {
+      id: '2543234',
+      content_type: 'text',
+      read: false,
+      content: 'FINAL MESSAGE SRSLY',
+      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
+      createdAt: '2023-01-12T06:11:49.43002+00:00',
+    },
   ];
   const messagesOfChatRoomId1 = [
     {
@@ -474,7 +498,7 @@ const ChatRoom = () => {
       )}
       {selectChat !== '' && (
         <Box
-          sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100vh' : '90%', overflow: 'hidden' }}
+          sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100%' : '90vh', overflow: 'hidden' }}
         >
           <ChatHeader
             profilePic=""

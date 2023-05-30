@@ -80,7 +80,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loginId, roomData, ChatText }: ChatBo
 
   return (
     <Box>
-      <Box sx={{ overflowY: 'auto', height: isSm ? 'calc(100vh - 200px)' : '70vh' }}>
+      <Box sx={{ overflow: 'auto', height: isSm ? 'calc(100vh - 200px)' : '100vh' }}>
         <Paper sx={{ p: 2 }}>
           <List>
             {roomData.map((message) => (
