@@ -91,9 +91,9 @@ export default apiHandler()
       userComments,
       whatsappNumber,
       telegramUsername,
+      oldPassword,
     } = parsedBody;
     let { password } = parsedBody;
-    const { oldPassword } = req.body;
 
     if (name) {
       validateName(name);
@@ -104,12 +104,12 @@ export default apiHandler()
     if (mobileNumber) {
       validatePhone(mobileNumber);
     }
-    if (password && oldPassword) {
+    if (password) {
       validatePassword(password);
 
       // Compares password from database vs password from input
       const samePassword = bcrypt.compareSync(
-        oldPassword,
+        parsedBody.oldPassword as string,
         getUserHashedPassword?.password as string
       );
 
@@ -120,9 +120,6 @@ export default apiHandler()
       // Hash password with bcrrypt and genSalt(10)
       const salt = await bcrypt.genSalt(10);
       password = await bcrypt.hash(password, salt);
-    } else {
-      // If user doesn't provide current password, throw error
-      throw new WrongPasswordError();
     }
 
     if (whatsappNumber) {
