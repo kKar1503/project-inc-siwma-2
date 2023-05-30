@@ -1,4 +1,5 @@
 import { Socket, Server } from 'socket.io';
+import * as buffer from 'buffer';
 
 type Room = {
   id: string;
@@ -11,6 +12,7 @@ type RoomMessage = {
   message: string;
   username: string;
   contentType: string;
+  file:undefined| Buffer;
   time: Date;
 };
 
