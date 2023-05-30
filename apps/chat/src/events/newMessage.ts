@@ -28,6 +28,7 @@ const newMsgEvent: EventFile = (io, socket) => ({
         message: message,
         messageType: contentType,
         room: roomId,
+        file: file,
         timestamp: time,
       });
       successCallback(successObj);
