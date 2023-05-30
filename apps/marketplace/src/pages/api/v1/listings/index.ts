@@ -271,7 +271,7 @@ export default apiHandler()
       }
     });
 
-    const files = await getFilesFromRequest(req);
+    const files = await getFilesFromRequest(req, { multiples: true });
     const bucket = await s3Connection.getBucket(ListingBucketName);
     const objects = await Promise.all(
       files.map((file) => bucket.createObject(fileToS3Object(file))),
