@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const companyId = z.string();
-const image = z.string().url();
+const image = z.string().url().nullable();
 const description = z.string();
 const link = z.string().url();
 // Admin Fields
@@ -25,6 +25,8 @@ const getAdvertisements = advertisement.array();
 const getAdvertisement = advertisement;
 const updateAdvertisement = advertisement;
 const deleteAdvertisement = z.object({});
+
+export type Advertisment = z.infer<typeof advertisement>;
 
 export default {
   create: createAdvertisement,
