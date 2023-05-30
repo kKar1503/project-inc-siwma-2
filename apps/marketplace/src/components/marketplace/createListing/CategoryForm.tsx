@@ -13,7 +13,7 @@ export interface CategoryProps {
   image: string;
   crossSectionImage: string;
   active: boolean;
-  parameters: CategoryParametersProps[];
+  parameters?: CategoryParametersProps[];
 }
 
 export type SetCategoryProps = {

@@ -93,7 +93,7 @@ const CreateListingPage = () => {
     const parameterIds: string[] = [];
     const categoryParameters: CategoryParametersProps[] = [];
 
-    if (category != null) {
+    if (category && category.parameters) {
       category.parameters.forEach((parameter) => {
         const { parameterId } = parameter;
         parameterIds.push(parameterId);
@@ -145,7 +145,7 @@ const CreateListingPage = () => {
 
     categoryParameters.forEach((categoryParameter) => {
       const { parameterId, required } = categoryParameter;
-      const parameter = parameters.find((parameter) => parameter.paramId === Number(parameterId));
+      const parameter = parameters.find((parameter) => parameter.paramId === parameterId);
 
       if (parametersData) {
         const detailedParameter = parametersData.find((parameter) => parameter.id === parameterId);
@@ -225,7 +225,7 @@ const CreateListingPage = () => {
       price,
       unitPrice,
       negotiable,
-      categoryId: Number(category.id),
+      categoryId: category.id,
       type: listingType,
       multiple: false,
       parameters,
