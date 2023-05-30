@@ -80,8 +80,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loginId, roomData, ChatText }: ChatBo
 
   return (
     <Box>
-      <Box sx={{ overflow: 'auto', height: isSm ? 'calc(100vh - 200px)' : '100vh' }}>
-        <Paper sx={{ p: 2 }}>
+      <Box sx={{}}>
+        <Paper
+          sx={{
+            p: 2,
+            height: isSm ? 'calc(100vh - 200px)' : 'calc(100vh - 350px)',
+            overflow: 'auto',
+          }}
+        >
           <List>
             {roomData.map((message) => (
               <ListItem
@@ -188,6 +194,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ loginId, roomData, ChatText }: ChatBo
         sx={({ spacing }) => ({
           position: 'sticky',
           bottom: spacing(0),
+          // height: '0vh',
         })}
       >
         {/* The ChatTextBox component  */}

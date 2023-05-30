@@ -510,7 +510,11 @@ const ChatRoom = () => {
       )}
       {selectChat !== '' && (
         <Box
-          sx={{ width: isSm ? 1 / 1 : 2 / 3, height: isSm ? '100%' : '90%', overflow: 'hidden' }}
+          sx={{
+            width: isSm ? 1 / 1 : 2 / 3,
+            height: isSm ? '100%' : '90%',
+            overflow: 'hidden',
+          }}
         >
           <ChatHeader
             profilePic=""
@@ -526,7 +530,7 @@ const ChatRoom = () => {
             makeOffer={makeOffer}
             setMakeOffer={setMakeOffer}
           />
-          <Box sx={{ margin: 0 }}>
+          <Box sx={{ height: '100%' }}>
             <ChatBox
               roomData={messages}
               loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
