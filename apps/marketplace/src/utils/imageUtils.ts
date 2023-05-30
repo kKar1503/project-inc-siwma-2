@@ -17,11 +17,11 @@ const toArrayIfNot = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value :
 
 export const getFilesFromRequest = async (
   req: NextApiRequest,
-  fileName = 'file'
+  fieldName = 'file'
 ): Promise<File[]> => {
   const { files } = await imageUtils(req);
   if (files === undefined) return [];
-  const file = files[fileName];
+  const file = files[fieldName];
   if (file === undefined) return [];
   return toArrayIfNot(file);
 };
