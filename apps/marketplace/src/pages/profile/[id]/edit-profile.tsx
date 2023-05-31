@@ -17,9 +17,11 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
-import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import fetchUser from '@/middlewares/fetchUser';
 import updateUser from '@/middlewares/updateUser';
@@ -37,21 +39,36 @@ const useGetUserQuery = (userUuid: string) => {
   return data;
 };
 
-const useUpdateUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => updateUser(userUuid, 'Elon Musk'), {
-    enabled: userUuid !== undefined,
-  });
-  return data;
-};
+interface UserData {
+  name: string;
+  mobileNumber: string;
+  email: string;
+  // company: string;
+  bio: string;
+  telegramUsername: string;
+  whatsappNumber: string;
+}
+
+const useUpdateUserMutation = (userUuid: string) =>
+  useMutation((updatedUserData: UserData) =>
+    updateUser(
+      userUuid,
+      updatedUserData.name,
+      updatedUserData.email,
+      updatedUserData.mobileNumber,
+      updatedUserData.whatsappNumber,
+      updatedUserData.telegramUsername,
+      updatedUserData.bio
+    )
+  );
 
 const EditProfile = () => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
-  const updateUser = useUpdateUserQuery(loggedUserUuid);
-  console.log(userDetails);
-  console.log(updateUser);
+
+  const mutation = useUpdateUserMutation(loggedUserUuid);
 
   const theme = useTheme();
   const { spacing } = theme;
@@ -59,14 +76,34 @@ const EditProfile = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [name, setName] = useState<string>('');
-  const [username, setUsername] = useState<string>('');
+  const [whatsappNumber, setWhatsappNumber] = useState('');
   const [email, setEmail] = useState<string>('');
   const [company, setCompany] = useState<string>('');
   const [bio, setBio] = useState<string>('');
   const [telegramUsername, setTelegramusername] = useState<string>('');
-  const [mobileNumber, setMobilenumber] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [result, setResult] = useState('');
+  const [contact, setContact] = useState('');
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const updatedUserData: UserData = {
+      name:'Elon',
+      mobileNumber:'81234567',
+      email:'elonmusk@gmail.com',
+      bio:'elon bio',
+      telegramUsername:'elontel',
+      whatsappNumber:'91234567',
+    };
+
+    mutation.mutate(updatedUserData);
+  };
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setContact(event.target.value);
+  };
+
   useEffect(() => {
     if (profilePicture) {
       setImageUrl(URL.createObjectURL(profilePicture));
@@ -78,66 +115,6 @@ const EditProfile = () => {
       setProfilePicture(e.target.files[0]);
     }
   };
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log({
-      profilePicture,
-      name,
-      username,
-      email,
-      company,
-      bio,
-      telegramUsername,
-      mobileNumber,
-    });
-  };
-
-  const formatResponse = (res: unknown) => JSON.stringify(res, null, 2);
-
-  // const { isLoading: isUpdatingTutorial, mutate: updateTutorial } = useMutation(
-  //   async () => apiClient.put(`/profile/${id}/edit-profile`, {
-  //       name,
-  //       email,
-  //       company,
-  //       profilePicture,
-  //       mobileNumber,
-  //       bio,
-  //       telegramUsername,
-  //     }),
-  //   {
-  //     onSuccess: (res) => {
-  //       const result = {
-  //         status: `${res.status  }-${  res.statusText}`,
-  //         headers: res.headers,
-  //         data: res.data,
-  //       };
-
-  //       setResult(formatResponse(result));
-  //     },
-  //     onError: (err) => {
-  //       setResult(formatResponse(err.response?.data || err));
-  //     },
-  //   }
-  // );
-
-  // useEffect(() => {
-  //   if (isUpdatingTutorial) setResult('updating...');
-  // }, [isUpdatingTutorial]);
-
-  // function putData() {
-  //   if (putId) {
-  //     try {
-  //       updateTutorial();
-  //     } catch (err) {
-  //       setResult(formatResponse(err));
-  //     }
-  //   }
-  // }
-
-  // const clearPutOutput = () => {
-  //   setResult(null);
-  // };
 
   const gridCols = useMemo(() => {
     if (isSm) {
@@ -182,14 +159,15 @@ const EditProfile = () => {
         <title>Edit Profile</title>
       </Head>
 
-      <Grid sx={gridCols} onSubmit={handleSubmit}>
+      <Grid sx={gridCols}>
         <Box
-          sx={({ spacing }) => ({
+          sx={{
             display: 'flex',
-          })}
+          }}
         >
           <Grid
             item
+            onSubmit={handleSubmit}
             sx={({ spacing }) => ({
               mr: spacing(1),
               width: '100%',
@@ -305,11 +283,11 @@ const EditProfile = () => {
                     })}
                   >
                     <TextField
-                      label="Username"
-                      placeholder="account_username"
+                      label="Phone"
+                      placeholder="91234567"
                       InputLabelProps={{ shrink: true }}
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
+                      value={mobileNumber}
+                      onChange={(e) => setMobileNumber(e.target.value)}
                     />
                   </FormControl>
                 </Box>
@@ -327,7 +305,7 @@ const EditProfile = () => {
                   />
                 </FormControl>
 
-                <FormControl fullWidth variant="outlined">
+                {/* <FormControl fullWidth variant="outlined">
                   <TextField
                     label="Company"
                     placeholder="Company Name"
@@ -338,7 +316,7 @@ const EditProfile = () => {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                   />
-                </FormControl>
+                </FormControl> */}
 
                 <FormControl fullWidth variant="outlined">
                   <TextField
@@ -370,26 +348,19 @@ const EditProfile = () => {
                     alignItems: 'center',
                   })}
                 >
-                  <FormControl fullWidth variant="outlined">
-                    <TextField
-                      label="Telegram Username"
-                      placeholder="account_username"
-                      sx={({ spacing }) => ({
-                        mr: spacing(2),
-                      })}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <TelegramIcon />@
-                          </InputAdornment>
-                        ),
-                      }}
-                      value={telegramUsername}
-                      onChange={(e) => setTelegramusername(e.target.value)}
-                    />
+                  <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
+                    <InputLabel>Contact</InputLabel>
+                    <Select
+                      value={contact}
+                      label="Platform"
+                      onChange={(e) => setContact(e.target.value)}
+                    >
+                      <MenuItem value="telegram">Telegram</MenuItem>
+                      <MenuItem value="whatsapp">Whatsapp</MenuItem>
+                    </Select>
                   </FormControl>
 
-                  <FormControl fullWidth variant="outlined">
+                  {contact === 'whatsapp' && (
                     <TextField
                       label="Whatsapp Number"
                       placeholder="8123 4567"
@@ -401,10 +372,26 @@ const EditProfile = () => {
                           </InputAdornment>
                         ),
                       }}
-                      value={mobileNumber}
-                      onChange={(e) => setMobilenumber(e.target.value)}
+                      value={whatsappNumber}
+                      onChange={(e) => setWhatsappNumber(e.target.value)}
                     />
-                  </FormControl>
+                  )}
+
+                  {contact === 'telegram' && (
+                    <TextField
+                      label="Telegram Username"
+                      placeholder="account_username"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <TelegramIcon />@
+                          </InputAdornment>
+                        ),
+                      }}
+                      value={telegramUsername}
+                      onChange={(e) => setTelegramusername(e.target.value)}
+                    />
+                  )}
                 </Box>
               </CardContent>
 

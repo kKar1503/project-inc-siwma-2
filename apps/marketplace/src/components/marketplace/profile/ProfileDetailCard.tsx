@@ -34,17 +34,6 @@ export type ProfileDetailCardProps =
   | null
   | undefined;
 
-// export type ProfileDetailCardData = {
-//   profilePicture: ReactNode;
-//   name: ReactNode;
-//   company: ReactNode;
-//   email: ReactNode;
-//   bio: ReactNode;
-//   telegramUsername: ReactNode;
-//   mobileNumber: ReactNode;
-//   id: any;
-//   data: ProfileDetailCardProps;
-// };
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
