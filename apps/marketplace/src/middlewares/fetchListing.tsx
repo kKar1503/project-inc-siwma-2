@@ -1,14 +1,11 @@
 import apiClient from '@/utils/api/client/apiClient';
+import listings from '@/utils/api/client/zod/listings';
 
-const fetchListing = async (id: string) => {
-  if (id) {
-    const res = await apiClient.get(`/v1/listing/${id}`);
-    return {
-      data: res?.data,
-    };
-  }
+const fetchListings = async (listingID: string) => {
+  const response = await apiClient.get(`/v1/listing/${listingID}`);
 
-  return null;
+  const parsedListings = listings.getAll.parse(response.data.data);
+  return parsedListings;
 };
 
-export default fetchListing;
+export default fetchListings;
