@@ -3,7 +3,7 @@ import ImageUploadForm, { ImageProps } from '@/components/marketplace/createList
 
 
 const useImages = () => {
-  const [images, setImages] = useState<ImageProps[]>([]);
+  const [images, setImages] = useState<Blob[]>([]);
 
 
   const imagesForm = <ImageUploadForm setImages={setImages} />;

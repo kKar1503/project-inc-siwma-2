@@ -31,7 +31,7 @@ const useForms = () => {
     if (listingBody === undefined) return false;
     setFormData({
       listingBody,
-      images: imageData,
+      ...imageData,
     });
     return true;
   };

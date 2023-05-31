@@ -20,7 +20,7 @@ export type PreviewImageProps = {
 };
 
 export type SetImageProps = {
-  setImages: (parameters: ImageProps[]) => void;
+  setImages: (parameters: Blob[]) => void;
 };
 
 const ImageUploadForm = ({ setImages }: SetImageProps) => {
@@ -47,11 +47,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
     }));
     setPreivewImages((prevImages) => [...prevImages, ...previewImages].slice(0, 10));
 
-    const imageData = selectedImages.map((file) => ({
-      fileName: file.name,
-      url: URL.createObjectURL(file),
-    }));
-    setImages(imageData);
+    setImages(imageFiles);
 
     setError('');
   };
