@@ -90,7 +90,6 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
                   position: 'absolute',
                   top: -15,
                   right: -20,
-                  zIndex: 2000,
                   color: palette.primary.main,
                   bgcolor: palette.common.white,
                 })}
