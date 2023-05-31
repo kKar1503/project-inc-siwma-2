@@ -47,6 +47,8 @@ interface UserData {
   bio: string;
   telegramUsername: string;
   whatsappNumber: string;
+  // profilePicture: string | null;
+  // contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone',
 }
 
 const useUpdateUserMutation = (userUuid: string) =>
@@ -58,7 +60,9 @@ const useUpdateUserMutation = (userUuid: string) =>
       updatedUserData.mobileNumber,
       updatedUserData.whatsappNumber,
       updatedUserData.telegramUsername,
-      updatedUserData.bio
+      updatedUserData.bio,
+      // updatedUserData.profilePicture || '',
+      // updatedUserData.contactMethod,
     )
   );
 
@@ -89,12 +93,14 @@ const EditProfile = () => {
     e.preventDefault();
 
     const updatedUserData: UserData = {
-      name:'Elon',
-      mobileNumber:'81234567',
-      email:'elonmusk@gmail.com',
-      bio:'elon bio',
-      telegramUsername:'elontel',
-      whatsappNumber:'91234567',
+      name,
+      mobileNumber,
+      email,
+      bio,
+      telegramUsername,
+      whatsappNumber,
+      // profilePicture: imageUrl || '', 
+      // contactMethod
     };
 
     mutation.mutate(updatedUserData);
@@ -110,11 +116,30 @@ const EditProfile = () => {
     }
   }, [profilePicture]);
 
+  // const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setProfilePicture(e.target.files[0]);
+  //   }
+  // };
+
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setProfilePicture(e.target.files[0]);
+      const file = e.target.files[0];
+      setProfilePicture(file);
+  
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target) {
+          const arrayBuffer = event.target.result as ArrayBuffer;
+          const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          setImageUrl(`data:${file.type};base64,${base64String}`);
+        }
+      };
+      reader.readAsArrayBuffer(file);
     }
   };
+  
+  
 
   const gridCols = useMemo(() => {
     if (isSm) {
