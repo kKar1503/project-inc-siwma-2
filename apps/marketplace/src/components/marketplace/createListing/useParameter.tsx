@@ -20,12 +20,12 @@ const useGetParametersQuery = (ids: string, category: CategoryProps | null) => {
 
 const useParameter = (category: CategoryProps | null) => {
   const [parameters, setParameters] = useState<ParameterFormProps[]>([]);
-  const [parameterIDs, setParameterIDs] = useState<string>('');
   const [categoryParameters, setCategoryParameters] = useState<CategoryParametersProps[]>([]);
-
 
   const [parameterErrors, setParameterErrors] = useState<ParameterValidationProps[]>([]);
 
+
+  const parameterIDs = categoryParameters.reduce((previousValue, currentValue, currentIndex, array) => `${previousValue}${currentValue.parameterId}${currentIndex === array.length - 1 ? '' : ','}`, '');
   const parametersData = useGetParametersQuery(parameterIDs, category);
 
 
@@ -39,21 +39,8 @@ const useParameter = (category: CategoryProps | null) => {
   };
 
   const updateCategoryParameters = async () => {
-    const parameterIds: string[] = [];
-    const categoryParameters: CategoryParametersProps[] = [];
-
-    if (category != null) {
-      category.parameters.forEach((parameter) => {
-        const { parameterId } = parameter;
-        parameterIds.push(parameterId);
-        categoryParameters.push(parameter);
-      });
-
-      const parameterIdsString = parameterIds.toString();
-
-      setCategoryParameters(categoryParameters);
-      setParameterIDs(parameterIdsString);
-    }
+    if (category == null) return;
+    setCategoryParameters(category.parameters);
   };
 
   const parameterValidation = () => {
@@ -122,7 +109,7 @@ const useParameter = (category: CategoryProps | null) => {
 
   const parameterData = {
     parameters,
-  }
+  };
 
   return {
     parameterForm,
