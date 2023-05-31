@@ -15,12 +15,12 @@ const useForms = () => {
   const { listingForm, listingValidation, resetListingErrors, listingData } = useListing();
 
 
-  const [formData, setFormData] = useState<PostListingsRequestBody>();
+  const [formData, setFormData] = useState<{listingBody: PostListingsRequestBody ,images:Blob[]}>();
 
 
   const updateFormData = (): boolean => {
     // backend api currently have conflicts
-    const sendingData: PostListingsRequestBody = {
+    const listingBody: PostListingsRequestBody = {
       ...listingData,
       ...categoryData,
       ...parameterData,
@@ -28,8 +28,11 @@ const useForms = () => {
       multiple: false,
     };
 
-    if (sendingData === undefined) return false;
-    setFormData(sendingData);
+    if (listingBody === undefined) return false;
+    setFormData({
+      listingBody,
+      images: imageData,
+    });
     return true;
   };
 

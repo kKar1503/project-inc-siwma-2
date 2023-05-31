@@ -16,10 +16,11 @@ import createListing from '@/middlewares/createListing';
 import useModals from '@/components/marketplace/createListing/useModals';
 import useForms from '@/components/marketplace/createListing/useForms';
 
-const usePostListingQuery = (listing: PostListingsRequestBody | undefined) => {
+const usePostListingQuery = (listing: { listingBody: PostListingsRequestBody, images: Blob[] } | undefined) => {
   const { data } = useQuery(['postListing', listing], () => createListing(listing), {
-    enabled: listing !== undefined,
+    enabled: listing !== undefined && listing.listingBody !== undefined && listing.images !== undefined,
   });
+
   return data;
 };
 
