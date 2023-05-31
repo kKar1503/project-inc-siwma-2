@@ -21,8 +21,9 @@ import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchListing from '@/middlewares/fetchListing';
 import { useQuery } from 'react-query';
 import apiClient from '@/utils/api/client/apiClient';
-import listings, { ListingResponseBody,  } from '@/utils/api/client/zod/listings';
+import listings from '@/utils/api/server/zod/listings';
 import StarRating from '@/components/marketplace/profilePage/StarRatings';
+import { Button } from '@mui/material';
 
 // Test Data for listing details
 const detailedListingData = [
@@ -320,6 +321,73 @@ const listingReviewsData = [
     createdAt: '2022-08-17T00:29:56.437Z',
   },
 ];
+const userData = [
+  {
+    id: '1',
+    name: 'John Doe',
+    email: 'johndoe@gmail.com',
+    company: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+    enabled: true,
+    profilePic: '',
+    comments: 'hello',
+    mobileNumber: '91234567',
+    contactMethod: 'telegram',
+    bio: 'Hello, I am John Doe!',
+  },
+  {
+    id: '2',
+    name: 'Dohn Joe',
+    email: 'johndoe@gmail.com',
+    company: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+    enabled: true,
+    profilePic: '',
+    comments: 'hello',
+    mobileNumber: '91234567',
+    contactMethod: 'telegram',
+    bio: 'Hello, I am John Doe!',
+  },
+  {
+    id: '3',
+    name: 'potato',
+    email: 'johndoe@gmail.com',
+    company: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+    enabled: true,
+    profilePic: '',
+    comments: 'hello',
+    mobileNumber: '91234567',
+    contactMethod: 'telegram',
+    bio: 'Hello, I am John Doe!',
+  },
+  {
+    id: '4',
+    name: 'tomato',
+    email: 'johndoe@gmail.com',
+    company: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+    enabled: true,
+    profilePic: '',
+    comments: 'hello',
+    mobileNumber: '91234567',
+    contactMethod: 'telegram',
+    bio: 'Hello, I am John Doe!',
+  },
+  {
+    id: '5',
+    name: 'toe taker',
+    email: 'johndoe@gmail.com',
+    company: '1',
+    createdAt: '2022-08-17T00:29:56.437Z',
+    enabled: true,
+    profilePic: '',
+    comments: 'hello',
+    mobileNumber: '91234567',
+    contactMethod: 'telegram',
+    bio: 'Hello, I am John Doe!',
+  },
+];
 
 export interface catDataType {
   id: string;
@@ -462,8 +530,8 @@ export const getServerSideProps = async ({ query }: { query: any }) => {
 const DetailedListingPage = ({
   data,
   serverSideListingCarousel,
-  listingReviewsData,
   categoryData,
+  listingReviewsData,
 }: {
   data: listingDataType;
   serverSideListingCarousel: Image[];
@@ -651,16 +719,16 @@ const DetailedListingPage = ({
               >
                 <Grid
                   container
-                  sx={() => ({
+                  sx={{
                     direction: 'row',
-                  })}
+                  }}
                 >
                   <Box
                     sx={({ spacing }) => ({
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Negotiable?</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Negotiable</Typography>
                     <Typography>{data.negotiable ? 'Yes' : 'No'}</Typography>
                   </Box>
                   <Box
@@ -668,7 +736,7 @@ const DetailedListingPage = ({
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Unit Price?</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Unit Price</Typography>
                     <Typography>{data.unitPrice ? 'Yes' : 'No'}</Typography>
                   </Box>
                   <Box
@@ -676,7 +744,7 @@ const DetailedListingPage = ({
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Category?</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Category</Typography>
                     <Typography>
                       {categoryData.find((x) => x.id === data.categoryId)?.name}
                     </Typography>
@@ -686,7 +754,7 @@ const DetailedListingPage = ({
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted On?</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted On</Typography>
                     <Typography>{parseISOstring(data.createdAt)}</Typography>
                   </Box>
 
@@ -695,7 +763,7 @@ const DetailedListingPage = ({
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted By?</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted By</Typography>
                     <Typography>{data.owner.name}</Typography>
                   </Box>
                   <Box
@@ -703,7 +771,7 @@ const DetailedListingPage = ({
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Company?</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>Company</Typography>
                     <Typography>{data.owner.company.name}</Typography>
                   </Box>
                 </Grid>
@@ -719,39 +787,48 @@ const DetailedListingPage = ({
             >
               {/* <ChatNow data={data} /> */}
             </Grid>
+
+            <Box sx={({ spacing }) => ({ pt: spacing(3), pb: spacing(4), ml: spacing(5), width: '100%', })}>
+              <Grid container>
+                <Grid item xs={4}>
+                  <Typography sx={{fontWeight: 600}} variant="h5">Reviews</Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Button
+                    variant="contained"
+                    sx={({ palette }) => ({ width: 250, backgroundColor: palette.primary.main })}
+                  >
+                    ADD A REVIEW
+                  </Button>
+                </Grid>
+              </Grid>
+
+              {listingReviewsData.map(({ id, review, rating }) => (
+                <Box sx={({ spacing }) => ({ width: 300, pt: spacing(3) })}>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Typography
+                        
+                        sx={{
+                          fontWeight: 500,
+                        }}
+                      >
+                        {userData.find((x) => x.id === id)?.name}
+                      </Typography>
+                      {review}
+                    </Grid>
+                    <Grid item xs={6}>
+                      <StarRating rating={rating} />
+                    </Grid>
+                  </Grid>
+                  <Divider
+                    sx={({ spacing }) => ({ pt: spacing(2), width: 'full' })}
+                    variant="fullWidth"
+                  />
+                </Box>
+              ))}
+            </Box>
           </Grid>
-          <Box>
-          {listingReviewsData.map(({ userId, review, rating }) => (
-            <Grid>
-              <Card
-              sx={{
-                width: 600
-              }}
-              >
-                <CardActionArea>
-                  {/* <CardMedia component="img" width="140" image={image} /> */}
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="body1"
-                      sx={{
-                        fontWeight: 500,
-                      }}
-                    >
-                      {userId}
-                    </Typography>
-                  </CardContent>
-                  <CardContent>
-                    {review}
-                  </CardContent>
-                  <CardContent>
-                    <StarRating rating={rating}/>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-          </Box>
         </Box>
       </Box>
     </main>
