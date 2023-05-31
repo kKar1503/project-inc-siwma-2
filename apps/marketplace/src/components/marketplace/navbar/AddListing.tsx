@@ -8,10 +8,6 @@ const AddListing = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
 
-  console.log('isSm', isSm);
-  console.log('isMd', isMd);
-  console.log('isLg', isLg);
-
   const addListingStyles = useMemo(() => {
     if (isSm) {
       return {
