@@ -1,4 +1,6 @@
-import ListingForm, { ListingValidationProps } from '@/components/marketplace/createListing/ListingForm';
+import ListingForm, {
+  ListingValidationProps,
+} from '@/components/marketplace/createListing/ListingForm';
 import React, { useState } from 'react';
 
 const useListing = () => {
@@ -14,14 +16,16 @@ const useListing = () => {
     priceError: '',
   });
 
-  const listingForm = <ListingForm
-    setTitle={setTitle}
-    setPrice={setPrice}
-    setNegotiable={setNegotiable}
-    setUnitPrice={setUnitPrice}
-    setDescription={setDescription}
-    errors={listingErrors}
-  />;
+  const listingForm = (
+    <ListingForm
+      setTitle={setTitle}
+      setPrice={setPrice}
+      setNegotiable={setNegotiable}
+      setUnitPrice={setUnitPrice}
+      setDescription={setDescription}
+      errors={listingErrors}
+    />
+  );
 
   const resetListingErrors = () => {
     setListingErrors({
@@ -52,6 +56,9 @@ const useListing = () => {
     if (price <= 0) {
       newErrors.priceError = 'Price must be greater than 0';
       formIsValid = false;
+    } else if (Number.isNaN(price)) {
+      newErrors.priceError = 'Price must be a number';
+      formIsValid = false;
     }
 
     if (!formIsValid) {
@@ -76,7 +83,6 @@ const useListing = () => {
     listingData,
     resetListingErrors,
   };
-
 };
 
 export default useListing;

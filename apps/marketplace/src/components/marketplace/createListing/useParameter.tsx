@@ -8,7 +8,6 @@ import ParameterForm, {
 } from '@/components/marketplace/createListing/ParameterForm';
 import fetchParameters from '@/middlewares/fetchParameters';
 
-
 // run this query when category is selected
 const useGetParametersQuery = (ids: string, category: CategoryProps | null) => {
   const { data } = useQuery(['parameters', ids, category], () => fetchParameters(ids), {
@@ -24,15 +23,16 @@ const useParameter = (category: CategoryProps | null) => {
 
   const [parameterErrors, setParameterErrors] = useState<ParameterValidationProps[]>([]);
 
-
-  const parameterIDs = categoryParameters.reduce((previousValue, currentValue, currentIndex, array) => `${previousValue}${currentValue.parameterId}${currentIndex === array.length - 1 ? '' : ','}`, '');
+  const parameterIDs = categoryParameters.reduce(
+    (previousValue, currentValue, currentIndex, array) =>
+      `${previousValue}${currentValue.parameterId}${currentIndex === array.length - 1 ? '' : ','}`,
+    ''
+  );
   const parametersData = useGetParametersQuery(parameterIDs, category);
 
-
-  const parameterForm = category && parametersData && <ParameterForm
-    setParameters={setParameters}
-    data={parametersData}
-    errors={parameterErrors} />;
+  const parameterForm = category && parametersData && (
+    <ParameterForm setParameters={setParameters} data={parametersData} errors={parameterErrors} />
+  );
 
   const resetParameterErrors = () => {
     setParameterErrors([]);
@@ -71,7 +71,7 @@ const useParameter = (category: CategoryProps | null) => {
 
         switch (detailedParameter.dataType) {
           case 'number':
-            if (!Number.isNaN(parameter.value)) {
+            if (Number.isNaN(parameter.value)) {
               newParameterErrors.push({
                 parameterId,
                 error: `${detailedParameter.displayName} must be a number`,
@@ -117,7 +117,6 @@ const useParameter = (category: CategoryProps | null) => {
     parameterValidation,
     resetParameterErrors,
   };
-
 };
 
 export default useParameter;
