@@ -28,6 +28,9 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
   const [error, setError] = useState('');
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPreivewImages([]);
+    setError('');
+
     const selectedImages = Array.from(e.target.files || []);
 
     if (selectedImages.length + images.length > 10) {
@@ -58,11 +61,6 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
 
   const handleImageRemove = (index: number) => {
     setPreivewImages((prevImages) => prevImages.filter((_, i) => i !== index));
-  };
-
-  const handleUploadClick = () => {
-    setPreivewImages([]);
-    setError('');
   };
 
   const openFullImage = (url: string) => {
@@ -122,12 +120,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
         onChange={handleImageSelect}
       />
       <label htmlFor="upload-btn">
-        <Button
-          variant="contained"
-          component="span"
-          sx={{ mt: '1rem' }}
-          onClick={handleUploadClick}
-        >
+        <Button variant="contained" component="span" sx={{ mt: '1rem' }}>
           Upload a Photo
         </Button>
       </label>
