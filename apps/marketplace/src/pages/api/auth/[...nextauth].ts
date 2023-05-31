@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
 
       // Append user data to the session
       result.user.id = token.user.id;
+      result.user.companyId = token.user.company;
       result.user.permissions = token.user.permissions;
 
       return result;
@@ -108,6 +109,7 @@ export const authOptions: NextAuthOptions = {
         // Format the result to be returned
         const result = {
           id: user.id,
+          companyId: user.companyId.toString(),
           email: user.email,
           name: user.name,
           permissions: user.permissions,
