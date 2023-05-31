@@ -22,7 +22,6 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <NavBar />
         <Button onClick={() => console.log('clicked')}>Hello</Button>
         <p>Hello World</p>
         Not signed in <br />

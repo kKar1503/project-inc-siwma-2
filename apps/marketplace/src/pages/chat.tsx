@@ -10,7 +10,6 @@ import { useQuery } from 'react-query';
 import fetchChatList from '@/middlewares/fetchChatList';
 import fetchListing from '@/middlewares/fetchListing';
 import fetchListingImages from '@/middlewares/fetchListingImages';
-import NavBar from '@/components/marketplace/navbar/NavBar';
 import fetchUser from '@/middlewares/fetchUser';
 import fetchRoomMessages from '@/middlewares/fetchRoomMessages';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
@@ -479,79 +478,76 @@ const ChatRoom = () => {
   ];
 
   return (
-    <Box>
-      <NavBar />
-      <Box
-        display="flex"
-        sx={{
-          height: '100vh',
-          // overflowY: 'hidden',
-          ...chatStyles?.pagePadding,
-        }}
-      >
-        {/* render if isMd and isLg, if isSm check if there's a selected chat */}
-        {/* if there is selectedChat, display chat only, else display chat list only */}
-        {(isMd || isLg || (isSm && selectChat === '')) && (
-          <Box
-            sx={({ shadows }) => ({
-              boxShadow: shadows[3],
-              width: isSm ? 1 / 1 : 1 / 3,
-              height: isSm ? '100%' : '90%',
-              overflow: 'hidden',
-            })}
-          >
-            <ChatList
-              chats={allChats}
-              selectChat={selectChat}
-              setSelectChat={setSelectChat}
-              onChange={(e) => {
-                const element = e.currentTarget as HTMLInputElement;
-                const { value } = element;
-              }}
-            />
-          </Box>
-        )}
-        {selectChat !== '' && (
-          <Box
-            sx={{
-              width: isSm ? 1 / 1 : 2 / 3,
-              height: isSm ? '100%' : '90%',
-              overflow: 'hidden',
+    <Box
+      display="flex"
+      sx={{
+        height: '100vh',
+        // overflowY: 'hidden',
+        ...chatStyles?.pagePadding,
+      }}
+    >
+      {/* render if isMd and isLg, if isSm check if there's a selected chat */}
+      {/* if there is selectedChat, display chat only, else display chat list only */}
+      {(isMd || isLg || (isSm && selectChat === '')) && (
+        <Box
+          sx={({ shadows }) => ({
+            boxShadow: shadows[3],
+            width: isSm ? 1 / 1 : 1 / 3,
+            height: isSm ? '100%' : '90%',
+            overflow: 'hidden',
+          })}
+        >
+          <ChatList
+            chats={allChats}
+            selectChat={selectChat}
+            setSelectChat={setSelectChat}
+            onChange={(e) => {
+              const element = e.currentTarget as HTMLInputElement;
+              const { value } = element;
             }}
-          >
-            <ChatHeader
-              profilePic=""
-              companyName="Hi Metals PTE LTD"
-              available
-              setSelectChat={setSelectChat}
+          />
+        </Box>
+      )}
+      {selectChat !== '' && (
+        <Box
+          sx={{
+            width: isSm ? 1 / 1 : 2 / 3,
+            height: isSm ? '100%' : '90%',
+            overflow: 'hidden',
+          }}
+        >
+          <ChatHeader
+            profilePic=""
+            companyName="Hi Metals PTE LTD"
+            available
+            setSelectChat={setSelectChat}
+          />
+          <ChatSubHeader
+            itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
+            itemName="Hi Metals PTE LTD"
+            available
+            itemPrice={200.8}
+            makeOffer={makeOffer}
+            setMakeOffer={setMakeOffer}
+          />
+          <Box sx={{ height: '100%' }}>
+            <ChatBox
+              roomData={messages}
+              loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
+              ChatText={
+                <ChatTextBox
+                  selectedFile={selectedFile}
+                  setSelectedFile={setSelectedFile}
+                  inputText={inputText}
+                  setInputText={setInputText}
+                  onSend={onSend}
+                  setOnSend={setOnSend}
+                />
+              }
             />
-            <ChatSubHeader
-              itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
-              itemName="Hi Metals PTE LTD"
-              available
-              itemPrice={200.8}
-              makeOffer={makeOffer}
-              setMakeOffer={setMakeOffer}
-            />
-            <Box sx={{ height: '100%' }}>
-              <ChatBox
-                roomData={messages}
-                loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
-                ChatText={
-                  <ChatTextBox
-                    selectedFile={selectedFile}
-                    setSelectedFile={setSelectedFile}
-                    inputText={inputText}
-                    setInputText={setInputText}
-                    onSend={onSend}
-                    setOnSend={setOnSend}
-                  />
-                }
-              />
-            </Box>
           </Box>
-        )}
-      </Box>
+        </Box>
+      )}
     </Box>
   );
 };

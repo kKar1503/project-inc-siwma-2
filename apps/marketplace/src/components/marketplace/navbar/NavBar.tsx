@@ -15,10 +15,16 @@ import Image from 'next/image';
 import SearchBar from '@inc/ui/lib/components/SearchBar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
+import { useSession } from 'next-auth/react';
 import AddListing from './AddListing';
 import Profile from './Profile';
 
 const NavBar = () => {
+  const user = useSession();
+
+  const userName = user.data?.user.name;
+  const userId = user.data?.user.id;
+
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
 
@@ -127,7 +133,7 @@ const NavBar = () => {
             </Badge>
           </IconButton>
 
-          <Profile userName="Placeholder username" />
+          <Profile userName={userName} userId={userId} />
         </Box>
 
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -236,7 +242,7 @@ const NavBar = () => {
             </MenuItem>
 
             <MenuItem>
-              <Profile userName="Placeholder username" />
+              <Profile userName={userName} userId={userId} />
               <Typography
                 sx={({ spacing, typography, palette }) => ({
                   fontSize: typography.caption,

@@ -33,7 +33,12 @@ const AddListing = () => {
         },
       };
     }
-    return {};
+    return {
+      textBtn: {
+        fontSize: '0.8rem',
+        color: palette.common.white,
+      },
+    };
   }, [isSm, isMd, isLg]);
 
   return (
