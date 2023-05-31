@@ -30,4 +30,6 @@ const Home = () => {
   );
 };
 
+// Home.includeNavbar = false;
+
 export default Home;

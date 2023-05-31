@@ -5,7 +5,6 @@ const Document = () => (
   <Html lang="en">
     <Head />
     <body>
-      <NavBar />
       <Main />
       <NextScript />
     </body>
