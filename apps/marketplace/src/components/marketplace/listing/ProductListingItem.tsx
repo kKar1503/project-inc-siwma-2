@@ -47,7 +47,7 @@ export type ProductListingItemData = {
 const ProductListingItem = ({ data }: ProductListingItemData) => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
-
+  console.log(data)
   // destructure data
   // const {
   //   productId,
@@ -92,12 +92,10 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
           style={{ marginLeft: '-10px' }}
           avatar={
             <Avatar sx={{ bgcolor: red[500] }} src={profileImg}>
-              {/* {ownerFullName.charAt(0)} */}
-              ownerFullName
+              {data.owner.name.charAt(0)}
             </Avatar>
           }
-          // title={ownerFullName}
-          title="ownerFullName"
+          title={data.owner.name}
           titleTypographyProps={{
             fontSize: isSm ? 14 : 16,
             fontWeight: 'bold',
@@ -108,9 +106,9 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
           }}
         />
       </Link>
-      {/* <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}> */}
-      <Link style={{ textDecoration: 'none' }} href={`/product/${data.owner.id}`}>
+      <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
         {/* <CardMedia component="img" height="200" image={img} /> */}
+        {/* missing images */}
         <CardMedia component="img" height="200" image={img} />
       </Link>
       <CardContent
@@ -190,7 +188,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
               pb: spacing(1),
             })}
           >
-            {/* <StarsRating rating={data.rating} /> */}
+            <StarsRating rating={data.rating} />
           </Box>
         </Link>
         <Box
