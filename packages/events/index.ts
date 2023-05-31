@@ -32,8 +32,8 @@ export const EVENTS = {
 
 type DeepValueOf<T extends Record<string, unknown>, Key = keyof T> = Key extends string
   ? T[Key] extends Record<string, unknown>
-  ? DeepValueOf<T[Key]>
-  : T[keyof T]
+    ? DeepValueOf<T[Key]>
+    : T[keyof T]
   : never;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type DeclaredEventsObj = Extract<DeepValueOf<typeof EVENTS>, string>;

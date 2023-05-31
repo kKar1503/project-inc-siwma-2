@@ -21,6 +21,8 @@ const deleteInvite = z.object({});
 const getInvite = invite;
 const getInvites = invite.array();
 
+export type Invite = z.infer<typeof invite>;
+
 export default {
   create: createInvite,
   delete: deleteInvite,
