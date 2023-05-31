@@ -1,81 +1,109 @@
-import { ReactNode, Children, useEffect, useRef } from 'react';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import { generateString } from '@inc/utils';
-import { SxProps, Theme } from '@mui/material';
+import { ReactNode, Children, useEffect, ComponentType, useRef } from 'react';
 
-interface InfiniteScrollProps {
+// TODO: fix typing for props of parent and child
+interface InfiniteScrollProps<TParent, TChild> {
   children: ReactNode[];
-  onLoadMore: () => void;
+  onLoadMore: () => any;
   loading: boolean;
+  loadingComponent: ReactNode;
   reachedMaxItems: boolean;
-  sx?: SxProps<Theme>;
-  wrapperSx?: SxProps<Theme>;
+  endMessage: ReactNode;
+  dataLength: number;
+  parent: ComponentType<TParent>;
+  child: ComponentType<TChild>;
+  parentProps?: any;
+  childProps?: any;
+  fetching?: boolean;
+  scrollThreshold?: number;
+  inverse?: boolean;
 }
 
-const InfiniteScroll = ({
+/**
+ * @todo fix typing for props of parent and child
+ * @prop {children} ReactNode[] to render
+ * @prop {onLoadMore} function to call when scroll reaches bottom
+ * @prop {loading} boolean to indicate if loading
+ * @prop {loadingComponent} ReactNode to render when loading
+ * @prop {reachedMaxItems} boolean to indicate if all items have been loaded
+ * @prop {endMessage} ReactNode to render when all items have been loaded
+ * @prop {dataLength} number to indicate how many items have been loaded
+ * @prop {parent} component to wrap children in
+ * @prop {child} component to wrap each child in
+ * @prop {parentProps} props to pass to parent
+ * @prop {childProps} props to pass to child
+ * @prop {fetching} boolean to indicate if fetching
+ * @prop {scrollThreshold} number to indicate how far from bottom to trigger onLoadMore
+ * @prop {inverse} boolean to indicate if scroll should be inverted
+ */
+const InfiniteScroll = <TParent, TChild>({
   children,
   onLoadMore,
   loading,
+  loadingComponent,
   reachedMaxItems,
-  sx = {},
-  wrapperSx = {},
-}: InfiniteScrollProps) => {
-  const lastItemRef = useRef<Element>(null);
-  const observerRef = useRef<IntersectionObserver>(null);
+  endMessage,
+  dataLength,
+  parent: Parent,
+  child: Child,
+  parentProps = {},
+  childProps = {},
+  fetching = false,
+  scrollThreshold = 1,
+  inverse = false,
+}: InfiniteScrollProps<TParent, TChild>) => {
+  const parentRef = useRef<Element>(null);
+  const childRef = useRef<Element>(null);
+
+  const handleScroll = (e) => {
+    console.log('top', e.target.documentElement.scrollTop);
+    console.log('winheight', window.innerHeight);
+    console.log('height', e.target.documentElement.scrollHeight);
+    console.log('childheight', childRef.current.clientHeight);
+    console.log('loading', loading);
+    console.log('fetching', fetching);
+    console.log(
+      e.target.documentElement.scrollTop + window.innerHeight <=
+        e.target.documentElement.scrollHeight - childRef.current.clientHeight
+    );
+
+    if (
+      e.target.documentElement.scrollTop + window.innerHeight <=
+        e.target.documentElement.scrollHeight - childRef.current.clientHeight ||
+      (loading && fetching)
+    )
+      return;
+
+    onLoadMore();
+  };
 
   useEffect(() => {
-    let lastItem: Element;
-
-    if (lastItemRef.current) {
-      lastItem = lastItemRef.current;
-      observerRef.current = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting) {
-            if (reachedMaxItems || loading) return;
-            onLoadMore();
-          }
-        },
-        { threshold: 0.1 }
-      );
-
-      observerRef.current.observe(lastItemRef.current);
-    }
-
-    return () => {
-      if (lastItem) {
-        lastItem.scrollTo(0, lastItem.scrollHeight);
-        observerRef.current.unobserve(lastItem);
-      }
-    };
-  }, [children, lastItemRef, onLoadMore, reachedMaxItems]);
+    window.addEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
-      <Box sx={sx}>
-        {loading && <CircularProgress />}
+      {loading && loadingComponent}
 
+      <Parent {...parentProps} ref={parentRef}>
         {children !== null &&
           children !== undefined &&
           Children.map(children, (child, index) => {
             if (index === children.length - 1) {
               return (
-                <Box key={generateString(4)} sx={wrapperSx} ref={lastItemRef}>
+                <Child {...childProps} key={index}>
                   {child}
-                </Box>
+                </Child>
               );
             }
             return (
-              <Box key={generateString(4)} sx={wrapperSx}>
+              <Child {...childProps} key={index} ref={childRef}>
                 {child}
-              </Box>
+              </Child>
             );
           })}
-      </Box>
+      </Parent>
 
-      {reachedMaxItems && (
-        <Box className="text-center my-5">You&apos;ve reached the end of the universe!</Box>
-      )}
+      {reachedMaxItems && endMessage}
     </>
   );
 };

@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import ArrowDownward from '@mui/icons-material/ArrowDownward';
+import ArrowUpward from '@mui/icons-material/ArrowUpward';
 import { useQuery } from 'react-query';
 import { InfiniteScroll } from '@inc/ui';
 
@@ -29,7 +29,7 @@ const InfiniteScrollingPage = () => {
     {
       onSuccess: (data) => {
         setTodos((prev) => [...prev, data]);
-        
+
         if (scrollRef.current && scrollRef.current.scrollHeight > window.screen.height) {
           scrollRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
         }
@@ -51,10 +51,10 @@ const InfiniteScrollingPage = () => {
           bottom: '15px',
         }}
         onClick={() => {
-          scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }}
       >
-        <ArrowDownward sx={{ height: '30px', width: '30px' }} />
+        <ArrowUpward sx={{ height: '30px', width: '30px' }} />
       </Button>
       <Box sx={{ marginLeft: 'auto', marginRight: 'auto' }}>
         <Box
@@ -62,8 +62,8 @@ const InfiniteScrollingPage = () => {
           ref={scrollRef}
         >
           <InfiniteScroll
-            sx={{ display: 'flex', flexDirection: 'column-reverse' }}
-            wrapperSx={{ border: 'solid', borderColor: 'red' }}
+            parent={Box}
+            child={Box}
             onLoadMore={refetch}
             loading={isLoading}
             reachedMaxItems={false}
