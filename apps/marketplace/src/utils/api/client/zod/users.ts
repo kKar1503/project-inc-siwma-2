@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { UserContacts } from '@prisma/client';
+import listingSchemas from './listings';
 
 const id = z.string();
 const name = z.string();
@@ -14,6 +15,16 @@ const whatsappNumber = z.string().nullable();
 const telegramUsername = z.string().nullable();
 const contactMethod = z.nativeEnum(UserContacts);
 const bio = z.string().nullable();
+const bookmarks = z
+  .object({
+    users: z.array(z.string()),
+    companies: z.array(z.string()),
+    listings: z.array(z.string()),
+  })
+  .optional();
+const bookmarkUser = z.object({
+  bookmarked: z.boolean(),
+});
 
 const user = z.object({
   id,
@@ -29,6 +40,7 @@ const user = z.object({
   telegramUsername,
   contactMethod,
   bio,
+  bookmarks,
 });
 
 export type UserResponseBody = z.infer<typeof user>;
@@ -49,6 +61,8 @@ const updateUser = user;
 const deleteUser = z.object({});
 const getUsers = user.array();
 
+export type User = z.infer<typeof user>;
+
 export default {
   create: createUser,
   getAll: getUsers,
@@ -56,4 +70,6 @@ export default {
   update: updateUser,
   delete: deleteUser,
   toggle: toggleUser,
+  bookmark: bookmarkUser,
+  getListings: listingSchemas.getAll,
 };
