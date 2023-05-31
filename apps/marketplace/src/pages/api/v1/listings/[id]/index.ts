@@ -102,7 +102,7 @@ export default apiHandler()
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
-    const sameCompany = req.token?.user?.company === listing.users.companyId.toString();
+    const sameCompany = req.token?.user?.companyId === listing.users.companyId.toString();
 
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
@@ -230,7 +230,7 @@ export default apiHandler()
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
-    const sameCompany = req.token?.user?.company === listing.users.companyId.toString();
+    const sameCompany = req.token?.user?.companyId === listing.users.companyId.toString();
 
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
