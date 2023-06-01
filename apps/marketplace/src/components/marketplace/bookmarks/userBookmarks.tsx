@@ -84,7 +84,7 @@ export const getServerSideProps = async () => {
 const UserBookmarks = () => (
   <DisplayResults filter={false} data={bookmarkData}>
     {bookmarkData ? (
-      <Grid item xs={12} md={12} sx={{ marginTop: 3 }}>
+      <Grid item xs={12} md={12} sx={{ marginTop: 2 }}>
         <Typography variant="h5">{bookmarkData.length} Users</Typography>
       </Grid>
     ) : (
