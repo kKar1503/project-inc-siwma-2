@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
-import { NotFoundError, ParamError } from '@inc/errors';
+import { ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
 
@@ -12,6 +12,7 @@ export type ListingWithParameters = Listing & {
   offersOffersListingTolistings: Array<{
     accepted: boolean;
   }>;
+  images: Array<string>;
   users: Users & {
     companies: Companies;
   };
@@ -29,18 +30,14 @@ export function parseListingId($id: string, strict = true) {
   // Check if strict mode is set
   if (strict) {
     // Attempt to parse the listing id
-    const id = parseToNumber($id, 'id');
-
-    return id;
+    return parseToNumber($id, 'id');
   }
 
   // Attempt to retrieve the listing id and name from the url
   const id = $id.split('-').pop() || '';
 
   // Parse and validate listing id provided
-  const listingId = parseToNumber(id, 'id');
-
-  return listingId;
+  return parseToNumber(id, 'id');
 }
 
 /**
@@ -135,6 +132,8 @@ export async function formatSingleListingResponse(
       contactMethod: listing.users.contact,
       bio: listing.users.bio,
     },
+    images: listing.images,
+    coverImage: listing.images[0],
     open: listing.multiple
       ? true
       : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
@@ -189,6 +188,7 @@ export default apiHandler()
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
+        listingImages: true,
         listingsParametersValues: queryParams.includeParameters,
         offersOffersListingTolistings: true,
         users: {
@@ -218,9 +218,11 @@ export default apiHandler()
         const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
         const reviewCount = _count && _count.rating;
         const { multiple } = listing;
+        const images = listing.listingImages.map((image) => image.image);
 
         return {
           ...listing,
+          images,
           rating,
           reviewCount,
           multiple,
