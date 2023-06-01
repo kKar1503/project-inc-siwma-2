@@ -35,8 +35,11 @@ const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) 
     throw new ForbiddenError();
   }
 
+
   const files = await getFilesFromRequest(req, { multiples: true });
   const bucket = await s3Connection.getBucket(ListingBucketName);
+  const previousImages = listing.listingImages.map((image) => image.image);
+  await bucket.deleteObjects(previousImages);
   const objects = await Promise.all(
     files.map((file) => bucket.createObject(fileToS3Object(file))),
   );
