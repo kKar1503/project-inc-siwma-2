@@ -15,8 +15,10 @@ export async function checkListingExists($id: string | number) {
   const id = typeof $id === 'number' ? $id : parseListingId($id);
 
   // Check if the listing exists
-  const listing = await PrismaClient.listing.findUnique({
-    where: { id },
+  const listing = await PrismaClient.listing.findFirst({
+    where: {
+      id,
+    },
     include: {
       users: {
         include: {
@@ -57,7 +59,7 @@ export default apiHandler()
     const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
-    const id = parseListingId(req.query.id as string);
+    const id = parseListingId(req.query.id as string, false);
     const { _avg, _count } = await PrismaClient.reviews.aggregate({
       _avg: {
         rating: true,
@@ -79,6 +81,7 @@ export default apiHandler()
       ...listing,
       rating,
       reviewCount,
+      multiple: listing.multiple,
     };
     // Return the result
     res
@@ -133,6 +136,7 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
+        multiple: data.multiple,
       },
       include: {
         users: {
@@ -203,6 +207,7 @@ export default apiHandler()
       ...completeListing,
       rating,
       reviewCount,
+      multiOffer: completeListing.multiple,
     };
 
     res
