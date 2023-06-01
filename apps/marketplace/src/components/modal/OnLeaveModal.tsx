@@ -5,9 +5,10 @@ import { useRouter } from 'next/router';
 export type ReportModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
+  message: string;
 };
 
-const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
+const OnLeaveModal = ({ open, setOpen, message }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
@@ -30,7 +31,7 @@ const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
       buttonColor="#0288D1"
       icon="info"
       title="Confirmation"
-      content="Once you leave the page, your listing details will be removed and the listing will not be created."
+      content={message}
       leftButtonText="leave"
       rightButtonText="stay here"
       leftButtonState={leftButtonState}

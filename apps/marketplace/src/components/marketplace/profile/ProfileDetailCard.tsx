@@ -11,7 +11,7 @@ import Divider from '@mui/material/Divider';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import { StarsRating } from '@inc/ui';
+// import { StarsRating } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useMemo } from 'react';
 
@@ -33,7 +33,6 @@ export type ProfileDetailCardProps =
     }
   | null
   | undefined;
-
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
@@ -173,7 +172,14 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
           </Typography>
         </Box>
       </CardContent>
-      <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: '100%' }}>
+      <CardActions
+        sx={({ spacing }) => ({
+          display: 'flex',
+          flexDirection: 'column',
+          mt: 'auto',
+          mb: spacing(1),
+        })}
+      >
         <Box sx={{ width: '98%' }}>
           {isEditMode && (
             <Button
@@ -197,10 +203,10 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
             variant="contained"
             type="submit"
             color="error"
-            sx={({ spacing }) => ({
+            sx={{
               width: '100%',
               fontWeight: 'bold',
-            })}
+            }}
           >
             Logout
           </Button>

@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
@@ -22,6 +23,7 @@ import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import fetchUser from '@/middlewares/fetchUser';
 import updateUser from '@/middlewares/updateUser';
@@ -39,16 +41,19 @@ const useGetUserQuery = (userUuid: string) => {
   return data;
 };
 
+export type ProfilePageProps = {
+  data: ProfileDetailCardProps;
+};
+
 interface UserData {
   name: string;
   mobileNumber: string;
   email: string;
-  // company: string;
   bio: string;
   telegramUsername: string;
   whatsappNumber: string;
-  // profilePicture: string | null;
-  // contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone',
+  contact: string;
+  // profilePicture: string,
 }
 
 const useUpdateUserMutation = (userUuid: string) =>
@@ -58,11 +63,11 @@ const useUpdateUserMutation = (userUuid: string) =>
       updatedUserData.name,
       updatedUserData.email,
       updatedUserData.mobileNumber,
+      // 'whatsapp',
       updatedUserData.whatsappNumber,
       updatedUserData.telegramUsername,
-      updatedUserData.bio,
-      // updatedUserData.profilePicture || '',
-      // updatedUserData.contactMethod,
+      // updatedUserData.profilePicture,
+      updatedUserData.contact
     )
   );
 
@@ -79,19 +84,31 @@ const EditProfile = () => {
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [name, setName] = useState<string>('');
-  const [whatsappNumber, setWhatsappNumber] = useState('');
-  const [email, setEmail] = useState<string>('');
-  const [company, setCompany] = useState<string>('');
-  const [bio, setBio] = useState<string>('');
-  const [telegramUsername, setTelegramusername] = useState<string>('');
-  const [mobileNumber, setMobileNumber] = useState('');
+  // const [name, setName] = useState<string>(userDetails?.data?.name || '');
+  // const [whatsappNumber, setWhatsappNumber] = useState('');
+  // const [email, setEmail] = useState<string>(userDetails?.data?.email || '');
+  // const [bio, setBio] = useState<string>('');
+  // const [telegramUsername, setTelegramUsername] = useState<string>('');
+  const [facebookUsername, setFacebookUsername] = useState<string>('');
+  const [name, setName] = useState<string>(userDetails?.data?.name || '');
+  const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.data?.mobileNumber || '');
+  const [email, setEmail] = useState<string>(userDetails?.data?.email || '');
+  const [bio, setBio] = useState<string>(userDetails?.data?.bio || '');
+  const [telegramUsername, setTelegramUsername] = useState<string>(
+    userDetails?.data?.telegramUsername || ''
+  );
+  const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.data?.whatsappNumber || '');
+
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [contact, setContact] = useState('');
 
+  const [modalMessage, setModalMessage] = useState(
+    'Once you leave the page, your user details will be removed and your profile will not be updated'
+  );
+  const [openLeave, setOpenLeave] = useState<boolean>(false);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
     const updatedUserData: UserData = {
       name,
       mobileNumber,
@@ -99,15 +116,27 @@ const EditProfile = () => {
       bio,
       telegramUsername,
       whatsappNumber,
-      // profilePicture: imageUrl || '', 
-      // contactMethod
+      contact,
+      // profilePicture: imageUrl || '',
     };
 
     mutation.mutate(updatedUserData);
   };
+  
+  const handleContactChange = (e: SelectChangeEvent) => {
+    const selectedContact = e.target.value;
+    setContact(selectedContact);
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setContact(event.target.value);
+    if (selectedContact === 'whatsapp') {
+      setTelegramUsername('');
+      setFacebookUsername('');
+    } else if (selectedContact === 'telegram') {
+      setWhatsappNumber('');
+      setFacebookUsername('');
+    } else if (selectedContact === 'facebook') {
+      setWhatsappNumber('');
+      setTelegramUsername('');
+    }
   };
 
   useEffect(() => {
@@ -126,7 +155,7 @@ const EditProfile = () => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setProfilePicture(file);
-  
+
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target) {
@@ -138,8 +167,11 @@ const EditProfile = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-  
-  
+
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setOpenLeave(true);
+  };
 
   const gridCols = useMemo(() => {
     if (isSm) {
@@ -185,16 +217,18 @@ const EditProfile = () => {
       </Head>
 
       <Grid sx={gridCols}>
+        {userDetails && <ProfileDetailCard data={userDetails} />}
         <Box
           sx={{
             display: 'flex',
+            width: isLg ? '73%' : '100%',
           }}
         >
           <Grid
             item
             onSubmit={handleSubmit}
             sx={({ spacing }) => ({
-              mr: spacing(1),
+              ml: spacing(1),
               width: '100%',
             })}
           >
@@ -220,12 +254,12 @@ const EditProfile = () => {
                   <Button
                     variant="contained"
                     color="error"
-                    component={Link}
-                    href={`/profile/${id}`}
                     sx={({ palette }) => ({ bgcolor: palette.error[400] })}
+                    onClick={handleCancel}
                   >
                     Cancel Edit
                   </Button>
+                  <OnLeaveModal open={openLeave} setOpen={setOpenLeave} message={modalMessage} />
                 </Box>
               </Box>
               <Divider
@@ -330,19 +364,6 @@ const EditProfile = () => {
                   />
                 </FormControl>
 
-                {/* <FormControl fullWidth variant="outlined">
-                  <TextField
-                    label="Company"
-                    placeholder="Company Name"
-                    InputLabelProps={{ shrink: true }}
-                    sx={({ spacing }) => ({
-                      mt: spacing(2),
-                    })}
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                  />
-                </FormControl> */}
-
                 <FormControl fullWidth variant="outlined">
                   <TextField
                     multiline
@@ -378,10 +399,11 @@ const EditProfile = () => {
                     <Select
                       value={contact}
                       label="Platform"
-                      onChange={(e) => setContact(e.target.value)}
+                      onChange={(e) => handleContactChange(e)}
                     >
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="whatsapp">Whatsapp</MenuItem>
+                      <MenuItem value="facebook">Facebook</MenuItem>
                     </Select>
                   </FormControl>
 
@@ -414,7 +436,23 @@ const EditProfile = () => {
                         ),
                       }}
                       value={telegramUsername}
-                      onChange={(e) => setTelegramusername(e.target.value)}
+                      onChange={(e) => setTelegramUsername(e.target.value)}
+                    />
+                  )}
+
+                  {contact === 'facebook' && (
+                    <TextField
+                      label="Facebook Username"
+                      placeholder="account_username"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <FacebookOutlinedIcon />@
+                          </InputAdornment>
+                        ),
+                      }}
+                      value={facebookUsername}
+                      onChange={(e) => setFacebookUsername(e.target.value)}
                     />
                   )}
                 </Box>
@@ -443,7 +481,7 @@ const EditProfile = () => {
               </CardActions>
             </Card>
           </Grid>
-          {userDetails && isLg && <ProfileDetailCard data={userDetails} />}
+          {/* {userDetails && isLg && <ProfileDetailCard data={userDetails} />} */}
         </Box>
       </Grid>
     </>

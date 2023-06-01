@@ -25,6 +25,7 @@ const TestModal = () => {
   const [openOffer, setOpenOffer] = React.useState(false);
   const [openLeave, setOpenLeave] = React.useState(false);
   const [inputValue, setInputValue] = React.useState<number>(0);
+  const [modalMessage, setModalMessage] = React.useState('This is the default message'); 
 
   const router = useRouter();
 
@@ -103,6 +104,7 @@ const TestModal = () => {
       <OnLeaveModal
         open={openLeave}
         setOpen={setOpenLeave}
+        message={modalMessage}
       />
     </>
   );
