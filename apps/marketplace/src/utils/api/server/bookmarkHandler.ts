@@ -144,7 +144,7 @@ export async function handleBookmarks(updateType: UpdateType, listing: Listing) 
           targetListing: listing.id,
           notificationString: getNotificationString(
             NotificationType.LISTING,
-            UpdateType.CREATE,
+            updateType,
             listing.owner,
             listing
           ),
@@ -160,13 +160,23 @@ export async function handleBookmarks(updateType: UpdateType, listing: Listing) 
           targetUser: listing.owner,
           notificationString: getNotificationString(
             NotificationType.USER,
-            UpdateType.CREATE,
+            updateType,
             listing.owner,
             listing
           ),
         },
       })
     );
+
+    // Find the company that the user belongs to
+    const company = await PrismaClient.companies.findFirst({
+      where: {
+        users: { some: { id: listing.owner } },
+      },
+      select: {
+        name: true,
+      },
+    });
 
     // Create notifications for each user who bookmarked the company of the owner of this listing
     const companiesNotificationsPromises = companiesBookmarks?.map((bookmark) =>
@@ -176,8 +186,8 @@ export async function handleBookmarks(updateType: UpdateType, listing: Listing) 
           targetCompany: bookmark.companyId,
           notificationString: getNotificationString(
             NotificationType.COMPANY,
-            UpdateType.CREATE,
-            listing.owner,
+            updateType,
+            company?.name,
             listing
           ),
         },
