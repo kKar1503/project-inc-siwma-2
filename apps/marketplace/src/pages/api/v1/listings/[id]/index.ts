@@ -125,23 +125,8 @@ export default apiHandler()
       }
     }
 
-    // MARK: - Notifications
-
-    /* Notify when:
-     * Listing price is updated
-     * Listing is sold out
-     */
-    if (data.price) {
-      const formattedPrice = listing.price.toNumber();
-      if (formattedPrice > data.price) {
-        handleBookmarks(UpdateType.PRICE_INCREASE, listing);
-      } else if (formattedPrice < data.price) {
-        handleBookmarks(UpdateType.PRICE_DECREASE, listing);
-      }
-    }
-
     // Do not remove this, it is necessary to update the listing
-    await PrismaClient.listing.update({
+    const updatedListing = await PrismaClient.listing.update({
       where: { id },
       data: {
         name: data.name,
@@ -224,6 +209,35 @@ export default apiHandler()
       reviewCount,
       multiOffer: completeListing.multiple,
     };
+
+    // MARK: - Notifications
+
+    /* Notify when:
+     * Listing price is updated
+     * Listing is sold out
+     */
+    if (data.price) {
+      const formattedPrice = listing.price.toNumber();
+      if (formattedPrice > data.price) {
+        handleBookmarks(UpdateType.PRICE_INCREASE, listing);
+      } else if (formattedPrice < data.price) {
+        handleBookmarks(UpdateType.PRICE_DECREASE, listing);
+      }
+    }
+
+    const wasListingOpen = listing.multiple
+      ? true
+      : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted);
+
+    const isListingOpen = updatedListing.multiple
+      ? true
+      : !updatedListing.offersOffersListingTolistings?.some((offer) => offer.accepted);
+
+    if (wasListingOpen && !isListingOpen) {
+      handleBookmarks(UpdateType.SOLD_OUT, listing);
+    } else if (!wasListingOpen && isListingOpen) {
+      handleBookmarks(UpdateType.RESTOCKED, listing);
+    }
 
     res
       .status(200)

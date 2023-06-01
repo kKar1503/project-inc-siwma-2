@@ -4,6 +4,8 @@ export enum UpdateType {
   CREATE = 'CREATE',
   PRICE_INCREASE = 'PRICE_INCREASE',
   PRICE_DECREASE = 'PRICE_DECREASE',
+  SOLD_OUT = 'SOLD_OUT',
+  RESTOCKED = 'RESTOCKED',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',
 }
@@ -30,6 +32,12 @@ function getNotificationString(
       break;
     case UpdateType.PRICE_DECREASE:
       updateString = 'decreased in price.';
+      break;
+    case UpdateType.SOLD_OUT:
+      updateString = 'sold out.';
+      break;
+    case UpdateType.RESTOCKED:
+      updateString = 'been restocked.';
       break;
     case UpdateType.UPDATE:
       updateString = 'been changed.';
