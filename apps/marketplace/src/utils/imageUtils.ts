@@ -1,11 +1,20 @@
 import { NextApiRequest } from 'next';
-import { Fields, File, Files, IncomingForm } from 'formidable';
+import { Fields, File, Files, IncomingForm, Options } from 'formidable';
 import fs from 'fs';
 import { Metadata, S3BucketService, S3ObjectBuilder } from '@inc/s3-simplified';
 
-export const imageUtils = (req: NextApiRequest): Promise<{ fields?: Fields; files?: Files }> =>
+const DefaultOptions: Partial<Options> = {
+  multiples: false,
+  maxFiles: 10,
+  maxFileSize: 8 * 1024 * 1024, // 8MB
+};
+
+export const imageUtils = (req: NextApiRequest, formOptions?: Partial<Options>): Promise<{
+  fields?: Fields;
+  files?: Files
+}> =>
   new Promise((resolve, reject) => {
-    const form = new IncomingForm();
+    const form = new IncomingForm({ ...DefaultOptions, ...formOptions });
     form.parse(req, (err, fields, files) => (err ? reject(err) : resolve({ fields, files })));
   });
 
@@ -17,11 +26,12 @@ const toArrayIfNot = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value :
 
 export const getFilesFromRequest = async (
   req: NextApiRequest,
-  fileName = 'file'
+  config: { fieldName?: string } & Partial<Options> = {},
 ): Promise<File[]> => {
-  const { files } = await imageUtils(req);
+  const { fieldName = 'file', ...formOptions } = config;
+  const { files } = await imageUtils(req, formOptions);
   if (files === undefined) return [];
-  const file = files[fileName];
+  const file = files[fieldName];
   if (file === undefined) return [];
   return toArrayIfNot(file);
 };
@@ -48,7 +58,7 @@ export const fileToS3Object = (file: File): S3ObjectBuilder => {
 export const loadImage = async <T extends Record<string, unknown>>(
   source: T,
   bucket: S3BucketService,
-  imageKey: string
+  imageKey: string,
 ): Promise<T> => {
   if (typeof source[imageKey] !== 'string') return source;
   try {
@@ -68,7 +78,7 @@ export const loadImage = async <T extends Record<string, unknown>>(
 export const loadImageBuilder =
   <T extends Record<string, unknown>>(
     bucket: S3BucketService,
-    imageKey: string
+    imageKey: string,
   ): ((source: T) => Promise<T>) =>
-  async (source) =>
-    loadImage(source, bucket, imageKey);
+    async (source) =>
+      loadImage(source, bucket, imageKey);
