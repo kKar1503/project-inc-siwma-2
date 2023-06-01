@@ -2,6 +2,8 @@ import PrismaClient, { Listing } from '@inc/db';
 
 export enum UpdateType {
   CREATE = 'CREATE',
+  PRICE_INCREASE = 'PRICE_INCREASE',
+  PRICE_DECREASE = 'PRICE_DECREASE',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',
 }
@@ -18,23 +20,42 @@ function getNotificationString(
   creator?: string,
   listing?: Listing
 ) {
-  const formattedUpdateType = `${updateType.toLowerCase()}d`;
+  let updateString = '';
+  switch (updateType) {
+    case UpdateType.CREATE:
+      updateString = 'been created.';
+      break;
+    case UpdateType.PRICE_INCREASE:
+      updateString = 'increased in price.';
+      break;
+    case UpdateType.PRICE_DECREASE:
+      updateString = 'decreased in price.';
+      break;
+    case UpdateType.UPDATE:
+      updateString = 'been changed.';
+      break;
+    case UpdateType.DELETE:
+      updateString = 'been deleted.';
+      break;
+    default:
+      updateString = 'been changed.';
+  }
 
   switch (notificationType) {
     case 'LISTING':
-      return `${listing?.name || 'A listing you bookmarked'} has been ${formattedUpdateType}.`;
+      return `${listing?.name || 'A listing you bookmarked'} has ${updateString}.`;
     case 'COMPANY':
-      return `${creator || 'A company you bookmarked'} has ${formattedUpdateType} ${
-        listing?.name || 'a listing'
-      }.`;
+      return `${listing?.name || 'a listing'} from ${
+        creator || 'a company you bookmarked'
+      } has ${updateString}.`;
     case 'USER':
-      return `${creator || 'A user you bookmarked'} has ${formattedUpdateType} ${
-        listing?.name || 'a listing'
-      }.`;
+      return `${listing?.name || 'a listing'} from ${
+        creator || 'a user you bookmarked'
+      } has ${updateString}.`;
     default:
-      return `${creator || 'A user you bookmarked'} has ${formattedUpdateType} ${
-        listing?.name || 'a listing'
-      }.`;
+      return `${listing?.name || 'a listing'} from ${
+        creator || 'an entity you bookmarked'
+      } has ${updateString}.`;
   }
 }
 
