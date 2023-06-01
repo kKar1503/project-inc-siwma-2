@@ -2,7 +2,7 @@ import Head from 'next/head';
 import ProfileDetailCard, {
   ProfileDetailCardProps,
 } from '@/components/marketplace/profile/ProfileDetailCard';
-import { ReviewProps } from '@/components/marketplace/profilePage/ReviewMessage';
+// import { ReviewProps } from '@/components/marketplace/profilePage/ReviewMessage';
 import ListingsTab from '@/components/marketplace/profilePage/ListingsTab';
 import ReviewsTab from '@/components/marketplace/profilePage/ReviewsTab';
 import TabPanel from '@/components/marketplace/profilePage/TabPanel';
@@ -19,7 +19,7 @@ import { useQuery } from 'react-query';
 // import fetchUser from '@/middlewares/fetchUser';
 import users from '@/utils/api/client/zod/users';
 import { useRouter } from 'next/router';
-import { Listing } from '@/utils/api/client/zod';
+import { Listing, Review } from '@/utils/api/client/zod';
 import fetchListing from '@/middlewares/fetchListing';
 import fetchReview from '@/middlewares/fetchReview';
 
@@ -45,7 +45,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
 export type ProfilePageProps = {
   data: ProfileDetailCardProps;
   serverSideListings: Listing[];
-  serverSideReviews: ReviewProps[];
+  serverSideReviews: Review[];
 };
 
 // user profile page
