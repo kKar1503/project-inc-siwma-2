@@ -104,8 +104,8 @@ export default apiHandler()
     if (mobileNumber) {
       validatePhone(mobileNumber);
     }
-    if (password) {
-      validatePassword(password);
+    if (password || oldPassword) {
+      validatePassword(password as string);
 
       // Compares password from database vs password from input
       const samePassword = bcrypt.compareSync(
@@ -119,7 +119,7 @@ export default apiHandler()
 
       // Hash password with bcrrypt and genSalt(10)
       const salt = await bcrypt.genSalt(10);
-      password = await bcrypt.hash(password, salt);
+      password = await bcrypt.hash(password as string, salt);
     }
 
     if (whatsappNumber) {
