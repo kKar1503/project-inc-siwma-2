@@ -1,29 +1,23 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import PrismaClient, { Companies, Listing, ListingImages, Prisma, Users } from '@inc/db';
+import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
-import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
-import process from 'process';
-import s3Connection from '@/utils/s3Connection';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
-
-export const ListingBucketName = process.env.AWS_LISTING_BUCKET_NAME as string;
 
 export type ListingWithParameters = Listing & {
   listingsParametersValues: Array<{
     parameterId: number;
     value: string;
   }>;
-  listingImages: ListingImages[];
   offersOffersListingTolistings: Array<{
     accepted: boolean;
   }>;
   users: Users & {
     companies: Companies;
   };
+  multiple: boolean;
   rating: number | null;
   reviewCount: number;
-  multiple: boolean;
 };
 
 /**
@@ -157,17 +151,6 @@ export async function formatSingleListingResponse(
     }));
   }
 
-  if (listing.listingImages) {
-    const bucket = await s3Connection.getBucket(ListingBucketName);
-    formattedListing.images = await Promise.all(
-      listing.listingImages.map(async (image) => ({
-        id: image.id.toString(),
-        filename: image.image,
-        url: await bucket.getObjectUrl(image.image),
-      })),
-    );
-  }
-
   return formattedListing;
 }
 
@@ -207,7 +190,6 @@ export default apiHandler()
       take: queryParams.limit,
       include: {
         listingsParametersValues: queryParams.includeParameters,
-        listingImages: queryParams.includeImages,
         offersOffersListingTolistings: true,
         users: {
           include: {
@@ -282,12 +264,6 @@ export default apiHandler()
       }
     });
 
-    const files = await getFilesFromRequest(req, { multiples: true });
-    const bucket = await s3Connection.getBucket(ListingBucketName);
-    const objects = await Promise.all(
-      files.map((file) => bucket.createObject(fileToS3Object(file))),
-    );
-
     const listing = await PrismaClient.listing.create({
       data: {
         name: data.name,
@@ -301,23 +277,16 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value.toString(),
-                parameter: {
-                  connect: {
-                    id: parameter.paramId,
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value.toString(),
+              parameter: {
+                connect: {
+                  id: parameter.paramId,
                 },
-              })),
-            }
-          : undefined,
-        listingImages: {
-          create: await Promise.all(
-            objects.map(async (object) => ({
-              image: await object.generateLink(),
+              },
             })),
-          ),
-        },
+          }
+          : undefined,
       },
       include: {
         listingsParametersValues: true,
@@ -326,9 +295,3 @@ export default apiHandler()
 
     res.status(201).json(formatAPIResponse({ listingId: listing.id }));
   });
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
