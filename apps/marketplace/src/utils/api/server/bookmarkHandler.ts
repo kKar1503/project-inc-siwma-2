@@ -202,36 +202,10 @@ export async function handleBookmarks(updateType: UpdateType, listing: Listing) 
     ]);
   }
 
-  async function handleListingCreation() {
-    // Creation does not require any special checks yet
-    await createNotifications();
-  }
+  /* If extra checks are needed, refer to the lines of code at the bottom of this file in this commit:
+  https://github.com/kKar1503/project-inc-siwma-2/blob/71ed1e132a74f392d189ccf7a056dc5f0cff41bb/apps/marketplace/src/utils/api/server/bookmarkHandler.ts
+   * These lines were removed as they are currently redundant 
+  */
 
-  async function handleListingUpdate() {
-    // Updating does not require any special checks yet
-    await createNotifications();
-  }
-
-  async function handleListingDeletion() {
-    // Deletion does not require any special checks yet
-    await createNotifications();
-  }
-
-  // End of handler subfunctions
-
-  // 3. Call the appropriate function depending on the update type
-
-  switch (updateType) {
-    case 'CREATE':
-      await handleListingCreation();
-      break;
-    case 'UPDATE':
-      await handleListingUpdate();
-      break;
-    case 'DELETE':
-      await handleListingDeletion();
-      break;
-    default:
-      break;
-  }
+  await createNotifications();
 }
