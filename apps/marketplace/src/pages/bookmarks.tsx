@@ -1,95 +1,62 @@
-import { ProductListingItemProps } from '@/components/marketplace/listing/ProductListingItem';
-import DisplayResults from '@/layouts/DisplayResults';
+import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 
-// test data
-const bookmarkData: ProductListingItemProps[] = [
-  {
-    productId: 1,
-    img: '',
-    profileImg: '',
-    type: 'Buy',
-    name: 'Metal 1',
-    rating: 4.5,
-    price: 1000,
-    negotiable: true,
-    ownerId: '1',
-    ownerFullName: 'John Doe',
-    createdAt: '2021-10-01T00:00:00.000Z',
-    companyName: 'Apple',
-    isUnitPrice: false,
-    isOwnProfile: false,
-  },
-  {
-    productId: 2,
-    img: '',
-    profileImg: '',
-    type: 'Buy',
-    name: 'Metal 2',
-    rating: 4.5,
-    price: 1000,
-    negotiable: true,
-    ownerId: '1',
-    ownerFullName: 'John Doe',
-    createdAt: '2021-10-01T00:00:00.000Z',
-    companyName: 'Apple',
-    isUnitPrice: false,
-    isOwnProfile: false,
-  },
-  {
-    productId: 3,
-    img: '',
-    profileImg: '',
-    type: 'Buy',
-    name: 'Metal 3',
-    rating: 4.5,
-    price: 1000,
-    negotiable: true,
-    ownerId: '1',
-    ownerFullName: 'John Doe',
-    createdAt: '2021-10-01T00:00:00.000Z',
-    companyName: 'Apple',
-    isUnitPrice: false,
-    isOwnProfile: false,
-  },
-];
+import ListingBookmarks from '@/components/marketplace/bookmarks/listingBookmarks';
+import UserBookmarks from '@/components/marketplace/bookmarks/userBookmarks';
+import CompanyBookmarks from '@/components/marketplace/bookmarks/companyBookmarks';
 
-const title = 'Bookmarks';
+export type BookmarkTypeProps = 'LISTINGS' | 'USERS' | 'COMPANIES';
 
-export const getServerSideProps = async () => {
-  const data: ProductListingItemProps[] = bookmarkData;
+const Bookmarks = () => {
+  const [selectedButton, setSelectedButton] = useState('LISTINGS');
 
-  return {
-    props: {
-      data,
-    },
+  const handleButtonClick = (type: BookmarkTypeProps) => {
+    setSelectedButton(type);
   };
-};
 
-const Bookmarks = ({ data }: { data: ProductListingItemProps[] }) => (
-  <DisplayResults filter={false} data={data}>
-    {data ? (
-      <>
-        <Grid item xs={12} md={12}>
-          <Typography
-            variant="h4"
-            sx={({ typography, spacing }) => ({
-              fontWeight: typography.fontWeightBold,
-              mb: spacing(2),
-            })}
-          >
-            {title || 'Search Results'}2
-          </Typography>
+  return (
+    <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={12} display="flex" justifyContent="center">
+          <Grid item xs={4} md={4}>
+            <Button
+              size="large"
+              variant={selectedButton === 'LISTINGS' ? 'contained' : 'outlined'}
+              onClick={() => handleButtonClick('LISTINGS')}
+              fullWidth
+            >
+              LISTINGS
+            </Button>
+          </Grid>
+          <Grid item xs={4} md={4}>
+            <Button
+              size="large"
+              variant={selectedButton === 'USERS' ? 'contained' : 'outlined'}
+              onClick={() => handleButtonClick('USERS')}
+              fullWidth
+            >
+              USERS
+            </Button>
+          </Grid>
+          <Grid item xs={4} md={4}>
+            <Button
+              size="large"
+              variant={selectedButton === 'COMPANIES' ? 'contained' : 'outlined'}
+              onClick={() => handleButtonClick('COMPANIES')}
+              fullWidth
+            >
+              COMPANIES
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={12}>
-          <Typography variant="h5">{data.length} Listings</Typography>
-        </Grid>
-      </>
-    ) : (
-      <Typography variant="h5">Displaying 0 search results for: </Typography>
-    )}
-  </DisplayResults>
-);
+        {selectedButton === 'LISTINGS' && <ListingBookmarks />}
+        {selectedButton === 'USERS' && <UserBookmarks />}
+        {selectedButton === 'COMPANIES' && <CompanyBookmarks />}
+      </Grid>
+    </Container>
+  );
+};
 
 export default Bookmarks;
