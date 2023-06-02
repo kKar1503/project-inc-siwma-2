@@ -3,8 +3,10 @@ import Grid from '@mui/material/Grid';
 import UserItem from '@/components/marketplace/user/UserItem';
 import { User } from '@/utils/api/client/zod/users';
 
+const title = { single: 'User', plural: 'Users' };
+
 const UserBookmarks = ({ data }: { data: User[] }) => (
-  <DisplayResults filter={false} data={{ title: 'User', noOfItems: data.length }}>
+  <DisplayResults filter={false} data={{ title, noOfItems: data.length }}>
     {data && data.length > 0 && (
       <Grid container display="flex" spacing={1}>
         {data.map((item: User) => (

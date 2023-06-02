@@ -8,8 +8,13 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
+export interface titleProps {
+  single: string;
+  plural: string;
+}
+
 export interface UserBookmarksProps {
-  title: string;
+  title: titleProps;
   noOfItems: number;
 }
 
@@ -58,14 +63,14 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
       <Grid item sm={12} md={10} sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex' }}>
           <Grid item xs={10} md={8} container justifyContent="flex-start">
-            <Grid item xs={12} md={12} sx={{ marginTop: 2 }}>
-              <Typography variant="h3" fontSize={isSm ? '2rem' : '3rem'}>
-                {data.title} Bookmarks
+            <Grid item xs={12} md={12} sx={{ marginTop: 2, marginBottom: 3 }}>
+              <Typography variant="h3" fontSize={isSm ? '2rem' : '3rem'} fontWeight="700">
+                {data.title.single} Bookmarks
               </Typography>
               <Typography variant="h5" fontSize={isSm ? '1rem' : '1.5rem'}>
                 {data?.noOfItems > 1 && data?.noOfItems !== 0
-                  ? `${data?.noOfItems} ${data.title}s`
-                  : `${data?.noOfItems} ${data.title}`}
+                  ? `${data?.noOfItems} ${data.title.plural}`
+                  : `${data?.noOfItems} ${data.title.single}`}
               </Typography>
             </Grid>
           </Grid>

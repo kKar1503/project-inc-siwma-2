@@ -3,8 +3,10 @@ import DisplayResults from '@/layouts/DisplayResults';
 import CompanyItem from '@/components/marketplace/company/CompanyItem';
 import { Company } from '@/utils/api/client/zod/companies';
 
+const title = { single: 'Company', plural: 'Companies' };
+
 const CompanyBookmarks = ({ data }: { data: Company[] }) => (
-  <DisplayResults filter={false} data={{ title: 'Company', noOfItems: data.length }}>
+  <DisplayResults filter={false} data={{ title, noOfItems: data.length }}>
     {data && data.length > 0 && (
       <Grid container display="flex" spacing={1}>
         {data.map((item: Company) => (
