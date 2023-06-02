@@ -1,6 +1,12 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import {
+  UpdateType,
+  apiHandler,
+  formatAPIResponse,
+  handleBookmarks,
+  parseToNumber,
+} from '@/utils/api';
 import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
-import { NotFoundError, ParamError } from '@inc/errors';
+import { ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
 
@@ -84,7 +90,7 @@ function ratingSortFn(a: ListingWithParameters, b: ListingWithParameters): numbe
 }
 
 function postSortOptions(
-  sortBy: string | undefined,
+  sortBy: string | undefined
 ): (arr: ListingWithParameters[]) => ListingWithParameters[] {
   switch (sortBy) {
     case 'rating_desc':
@@ -107,7 +113,7 @@ export function sortOptions(sortByStr: string | undefined) {
 // -- Helper functions -- //
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
-  includeParameters: boolean,
+  includeParameters: boolean
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
@@ -172,17 +178,17 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-            some: {
-              parameterId: queryParams.params.paramId,
-              value: queryParams.params.value,
-            },
-          }
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
           : undefined,
       },
       orderBy,
@@ -225,7 +231,7 @@ export default apiHandler()
           reviewCount,
           multiple,
         };
-      }),
+      })
     );
 
     const sortedListings = postSort(listingsWithRatingsAndReviewCount);
@@ -233,8 +239,8 @@ export default apiHandler()
     // Format the listings
     const formattedListings = await Promise.all(
       sortedListings.map((listing) =>
-        formatSingleListingResponse(listing, queryParams.includeParameters),
-      ),
+        formatSingleListingResponse(listing, queryParams.includeParameters)
+      )
     );
 
     res.status(200).json(formatAPIResponse(formattedListings));
@@ -292,6 +298,8 @@ export default apiHandler()
         listingsParametersValues: true,
       },
     });
+
+    handleBookmarks(UpdateType.CREATE, listing);
 
     res.status(201).json(formatAPIResponse({ listingId: listing.id }));
   });
