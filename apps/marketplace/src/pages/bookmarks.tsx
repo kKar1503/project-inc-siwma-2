@@ -19,6 +19,10 @@ import { useQuery } from 'react-query';
 
 export type BookmarkTypeProps = 'LISTINGS' | 'USERS' | 'COMPANIES';
 
+export type RawUserProps = {
+  data: User[];
+};
+
 const useGetUserQuery = (userUuid: string) => {
   const { data } = useQuery('user', async () => fetchUser(userUuid), {
     enabled: userUuid !== undefined,
@@ -28,13 +32,22 @@ const useGetUserQuery = (userUuid: string) => {
 };
 
 const Bookmarks = () => {
-  const [selectedButton, setSelectedButton] = useState('LISTINGS');
+  const [selectedButton, setSelectedButton] = useState('COMPANIES');
   const [listings, setListings] = useState<Listing[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
 
   const handleButtonClick = (type: BookmarkTypeProps) => {
     setSelectedButton(type);
+  };
+
+  const transformUserData = (data: RawUserProps[]) => {
+    const users: User[] = [];
+    data.forEach((item: RawUserProps) => {
+      users.push(item.data[0]);
+    });
+
+    return users;
   };
 
   const findListings = async (listingIDs: string[]) => {
@@ -45,9 +58,7 @@ const Bookmarks = () => {
       return data;
     });
 
-    const listingData = await Promise.all(listingPromises);
-
-    const listings = listingData.filter((data) => data !== null) as Listing[];
+    const listings = await Promise.all(listingPromises);
 
     setListings(listings);
   };
@@ -61,8 +72,7 @@ const Bookmarks = () => {
     });
 
     const userData = await Promise.all(userPromises);
-
-    const users = userData.filter((data) => data !== null) as User[];
+    const users = transformUserData(userData);
 
     setUsers(users);
   };
@@ -75,9 +85,7 @@ const Bookmarks = () => {
       return data;
     });
 
-    const companyData = await Promise.all(companyPromises);
-
-    const companies = companyData.filter((data) => data !== null) as Company[];
+    const companies = await Promise.all(companyPromises);
 
     setCompanies(companies);
   };

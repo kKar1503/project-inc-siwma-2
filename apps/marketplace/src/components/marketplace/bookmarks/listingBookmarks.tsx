@@ -81,18 +81,17 @@ export const getServerSideProps = async () => {
     },
   };
 };
-// data: Listing[] | undefined
+
 const ListingBookmarks = ({ data }: { data: Listing[] }) => (
   <DisplayResults filter={false} data={bookmarkData}>
-    {bookmarkData ? (
-      <Grid item xs={12} md={12} sx={{ marginTop: 2 }}>
-        <Typography sx={{ fontWeight: 500 }} variant="h3">
-          Listing Bookmarks
-        </Typography>
-        <Typography variant="h5">{bookmarkData.length} Listings</Typography>
+    {data && data.length > 0 && (
+      <Grid container display="flex" spacing={1}>
+        {data.map((item: Listing) => (
+          <Grid item sm={3} md={4} key={item.id}>
+            <Typography>{item.name}</Typography>
+          </Grid>
+        ))}
       </Grid>
-    ) : (
-      <Typography variant="h5">Displaying 0 search results for: </Typography>
     )}
   </DisplayResults>
 );

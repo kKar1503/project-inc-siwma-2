@@ -13,10 +13,15 @@ import ProductListingItem, {
   ProductListingItemProps,
 } from '@/components/marketplace/listing/ProductListingItem';
 
+export interface UserBookmarksProps {
+  title: string;
+  noOfItems: number;
+}
+
 export type DisplayResultsProps = {
   children?: React.ReactNode;
   filter: boolean;
-  data?: ProductListingItemProps[] | undefined;
+  data: UserBookmarksProps;
 };
 
 const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
@@ -56,10 +61,17 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
         </Grid>
       )}
 
-      <Grid item sm={12} md={isMediumScreen ? 10 : 12} sx={{ width: '100%' }}>
+      <Grid item sm={12} md={10} sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex' }}>
-          <Grid item xs={10} md={isMediumScreen ? 8 : 10} container justifyContent="flex-start">
-            {children}
+          <Grid item xs={10} md={8} container justifyContent="flex-start">
+            <Grid item xs={12} md={12} sx={{ marginTop: 2 }}>
+              <Typography sx={{ fontWeight: 500 }} variant="h3">
+                {data.title} Bookmarks
+              </Typography>
+              <Typography variant="h5">
+                {data?.noOfItems} {data.title}
+              </Typography>
+            </Grid>
           </Grid>
           {isMediumScreen && filter && (
             <Grid item xs={2} container justifyContent="flex-end" alignContent="center">
@@ -91,22 +103,8 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
           )}
         </Box>
 
-        {data && data.length > 0 && (
-          <Grid container display="flex" spacing={1}>
-            {data.map((item: ProductListingItemProps) => (
-              <Grid
-                item
-                sm={isMediumScreen ? 4 : 3}
-                md={isMediumScreen ? 4 : 3}
-                key={item.productId}
-              >
-                <ProductListingItem data={item} />
-              </Grid>
-            ))}
-          </Grid>
-        )}
-
-        {data && data.length === 0 && (
+        {children}
+        {data && data.noOfItems === 0 && (
           <Grid container justifyContent="center">
             <Typography>No items found.</Typography>
           </Grid>
