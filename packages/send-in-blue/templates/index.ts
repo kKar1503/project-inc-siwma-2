@@ -3,10 +3,12 @@
 import { SendSmtpEmailTo, SendSmtpEmail } from 'sib-api-v3-sdk';
 import invite from './InviteTemplate.html';
 import notification from './NotificationTemplate.html';
+import forgetPassword from './ForgetPasswordTemplate.html';
 
 export enum EmailTemplate {
   INVITE,
   NOTIFICATION,
+  FORGETPASSWORD
 }
 
 export function getContentFor(template: EmailTemplate): string {
@@ -20,6 +22,8 @@ export function getContentFor(template: EmailTemplate): string {
       return invite;
     case EmailTemplate.NOTIFICATION:
       return notification;
+    case EmailTemplate.FORGETPASSWORD:
+      return forgetPassword;
   }
 }
 
@@ -38,6 +42,18 @@ export class BulkInviteEmailRequestBody implements SendSmtpEmail<BulkInviteReque
       name: string; // Name of the recipient (to be shown in the email's content)
       companyName: string; // Name of the user's company
       registrationUrl: string; // URL for the recipient to finish registration
+    };
+  }[];
+}
+
+export class ForgetPasswordEmailRequestBody implements SendSmtpEmail<BulkInviteRequestParams> {
+  htmlContent!: string; // HTML content of the email
+  subject!: string; // Subject of the email
+  messageVersions: {
+    to: SendSmtpEmailTo[];
+    params?: {
+      name: string; // Name of the recipient (to be shown in the email's content)
+      resetUrl: string; // URL for the recipient to finish reseting his password
     };
   }[];
 }
