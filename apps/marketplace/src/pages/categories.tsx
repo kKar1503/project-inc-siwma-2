@@ -7,25 +7,16 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { CardActionArea } from '@mui/material';
 import { useQuery } from 'react-query';
-import  categories, { CategoryResponseBody } from '@/utils/api/client/zod/categories';
-import axios from 'axios';
+import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCat from '@/middlewares/fetchCat';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
 };
 
-const useCategoryPageQuery = (setCategoryData: Dispatch<SetStateAction<CategoryPageType>>) => {
-  const { data } = useQuery('catData', async () => {
-    const response = await axios.get(`http://localhost:3000/api/user/v1/categories`);
-
-    const parsedCategoryList = categories.getAll.parse(response.data.data);
-
-    setCategoryData({ data: parsedCategoryList });
-    return parsedCategoryList;
-    
-  });
-  console.log(data)
+const useCategoryPageQuery = () => {
+  const { data } = useQuery('catData', async () => fetchCat);
+  return data;
 };
 
 // const catData: CategoryResponseBody[] = [
@@ -122,9 +113,8 @@ const useCategoryPageQuery = (setCategoryData: Dispatch<SetStateAction<CategoryP
 // ];
 
 const CategoriesPage = () => {
-  const [categoryData, setCategoryData] = useState<CategoryPageType>({ data: [] });
-
-  useCategoryPageQuery(setCategoryData);
+  const catData = useCategoryPageQuery
+  console.log(catData)
 
   return (
     <Box
@@ -161,7 +151,7 @@ const CategoriesPage = () => {
             justifyContent: 'center',
           }}
         >
-          {categoryData.data.map(({ id, name, image }) => (
+          {/* {catData?.map(({ id, name, image }) => (
             <Grid key={id} item>
               <Card>
                 <CardActionArea>
@@ -180,7 +170,7 @@ const CategoriesPage = () => {
                 </CardActionArea>
               </Card>
             </Grid>
-          ))}
+          ))} */}
         </Grid>
       </Grid>
     </Box>
