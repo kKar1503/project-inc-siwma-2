@@ -18,9 +18,11 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import AddListing from './AddListing';
 import Profile from './Profile';
+import MobileDrawer from './MobileDrawer';
 
 const NavBar = () => {
   const user = useSession();
+  const theme = useTheme();
 
   const userName = user.data?.user.name;
   const userId = user.data?.user.id;
@@ -52,7 +54,7 @@ const NavBar = () => {
         boxShadow: 1,
         position: 'sticky',
         top: 0,
-        zIndex: 9999,
+        zIndex: theme.zIndex.appBar,
       }}
     >
       <Toolbar>
@@ -136,126 +138,11 @@ const NavBar = () => {
           <Profile userName={userName} userId={userId} />
         </Box>
 
+        {/* mobile drawer icon here */}
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-          <IconButton
-            size="medium"
-            aria-label="show more"
-            aria-controls="primary-search-account-menu-mobile"
-            aria-haspopup="true"
-            onClick={handleMobileMenuOpen}
-            color="inherit"
-            sx={({ spacing }) => ({
-              ml: spacing(2),
-            })}
-          >
-            <MenuIcon />
-          </IconButton>
-
-          <Menu
-            anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={isMobileMenuOpen}
-            onClose={handleMobileMenuClose}
-          >
-            <MenuItem onClick={handleMenuClose}>
-              <IconButton
-                sx={({ spacing }) => ({
-                  ml: spacing(2),
-                })}
-              >
-                <TranslateIcon
-                  sx={({ typography, palette }) => ({
-                    fontSize: typography.h5,
-                    color: palette.text.secondary,
-                  })}
-                />
-              </IconButton>
-              <Typography
-                sx={({ spacing, typography, palette }) => ({
-                  fontSize: typography.caption,
-                  color: palette.text.secondary,
-                  ml: spacing(1),
-                  mr: spacing(2),
-                })}
-              >
-                Translate
-              </Typography>
-            </MenuItem>
-
-            <MenuItem onClick={handleMenuClose}>
-              <IconButton
-                sx={({ spacing }) => ({
-                  ml: spacing(2),
-                })}
-              >
-                <MessageIcon
-                  sx={({ typography, palette }) => ({
-                    fontSize: typography.h5,
-                    color: palette.text.secondary,
-                  })}
-                />
-              </IconButton>
-              <Typography
-                sx={({ spacing, typography, palette }) => ({
-                  fontSize: typography.caption,
-                  color: palette.text.secondary,
-                  ml: spacing(1),
-                  mr: spacing(2),
-                })}
-              >
-                Message
-              </Typography>
-            </MenuItem>
-
-            <MenuItem onClick={handleMenuClose}>
-              <IconButton
-                sx={({ spacing }) => ({
-                  ml: spacing(2),
-                })}
-              >
-                <NotificationsIcon
-                  sx={({ typography, palette }) => ({
-                    fontSize: typography.h5,
-                    color: palette.text.secondary,
-                  })}
-                />
-              </IconButton>
-
-              <Typography
-                sx={({ spacing, typography, palette }) => ({
-                  fontSize: typography.caption,
-                  color: palette.text.secondary,
-                  ml: spacing(1),
-                  mr: spacing(2),
-                })}
-              >
-                Notification
-              </Typography>
-            </MenuItem>
-
-            <MenuItem>
-              <Profile userName={userName} userId={userId} />
-              <Typography
-                sx={({ spacing, typography, palette }) => ({
-                  fontSize: typography.caption,
-                  color: palette.text.secondary,
-                  ml: spacing(1),
-                  mr: spacing(2),
-                })}
-              >
-                Profile
-              </Typography>
-            </MenuItem>
-          </Menu>
+          <MobileDrawer />
         </Box>
+        {/* end of mobile drawer icon */}
       </Toolbar>
     </Box>
   );
