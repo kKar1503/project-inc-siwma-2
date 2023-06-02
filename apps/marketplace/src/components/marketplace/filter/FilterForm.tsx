@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -10,38 +10,36 @@ import FormLabel from '@mui/material/FormLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
+import { useQuery } from 'react-query';
+
+// middleware
+import fetchCategories from '@/middlewares/fetchCategories';
+import { Category } from '../../../utils/api/client/zod/categories';
 
 export type SortProps = 'Recent' | 'Price - High to Low' | 'Price - Low to High';
 
-export interface CategoryProps {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  crossSectionImage: string;
-  active: boolean;
-}
-
 export type FilterFormProps = {
-  categoryData:  CategoryProps[];
   setSort: (sort: SortProps) => void;
-  setCategory: (category: string) => void;
-  setNegotiation: (negotiation: string) => void;
+  setCategory: (category: number) => void;
+  setNegotiation: (negotiation: boolean) => void;
   setMinPrice: (minPrice: string) => void;
   setMaxPrice: (maxPrice: string) => void;
 };
 
+const useGetCategoriesQuery = () => {
+  const { data } = useQuery('categories', () => fetchCategories());
+
+  return data;
+};
+
 const FilterForm = ({
-  categoryData,
   setSort,
   setCategory,
   setNegotiation,
   setMinPrice,
   setMaxPrice,
 }: FilterFormProps) => {
-  console.log(categoryData);
   const sortOptions = ['Recent', 'Price - High to Low', 'Price - Low to High'];
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<SortProps>('Recent');
   const [categoryOption, setCategoryOption] = useState<string>('');
   const [negotiationOption, setNegotiationOption] = useState<string>('');
@@ -51,22 +49,13 @@ const FilterForm = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSort(sortOption);
-    setCategory(categoryOption);
-    setNegotiation(negotiationOption);
+    setCategory(parseInt(categoryOption, 10));
+    setNegotiation(negotiationOption === 'negotiable');
     setMinPrice(minPriceOption);
     setMaxPrice(maxPriceOption);
-
-    console.log(`Sort: ${sortOption}`);
-    console.log(`Category: ${categoryOption}`);
-    console.log(`Negotiation: ${negotiationOption}`);
-    console.log(`Min Price: ${minPriceOption}`);
-    console.log(`Max Price: ${maxPriceOption}`);
   };
 
-  useEffect(() => {
-    // Get categories from backend
-    setCategoryOptions([]);
-  }, []);
+  const categoriesData: Category[] = useGetCategoriesQuery();
 
   return (
     <form style={{ padding: 1, marginTop: 2, width: '100%' }} onSubmit={handleSubmit}>
@@ -91,14 +80,18 @@ const FilterForm = ({
       <FormLabel sx={{ fontWeight: 600 }}>Category</FormLabel>
       <Select
         sx={{ height: '45px', width: '100%' }}
-        onChange={(e) => setCategoryOption(e.target.value as string)}
-        value={categoryOption as string}
+        onChange={(e) => setCategoryOption(e.target.value)}
+        value={categoryOption}
       >
-        {categoryData.map((category) => (
-          <MenuItem key={category.id} value={category.name}>
-            {category.name}
-          </MenuItem>
-        ))}
+        <MenuItem key={0} value="">
+          No Category
+        </MenuItem>
+        {categoriesData &&
+          categoriesData.map((category) => (
+            <MenuItem key={category.id} value={category.id}>
+              {category.name}
+            </MenuItem>
+          ))}
       </Select>
 
       <Divider sx={{ my: 2 }} />
