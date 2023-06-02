@@ -132,8 +132,8 @@ const Bookmarks = () => {
           </Grid>
         </Grid>
         {selectedButton === 'LISTINGS' && <ListingBookmarks data={listings} />}
-        {selectedButton === 'USERS' && <UserBookmarks />}
-        {selectedButton === 'COMPANIES' && <CompanyBookmarks />}
+        {selectedButton === 'USERS' && <UserBookmarks data={users} />}
+        {selectedButton === 'COMPANIES' && <CompanyBookmarks data={companies} />}
       </Grid>
     </Container>
   );
