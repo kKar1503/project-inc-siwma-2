@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
-import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
+import { NotFoundError, ForbiddenError, ParamRequiredError, WrongPasswordError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
@@ -69,6 +69,16 @@ export default apiHandler()
     const isAdmin = req.token?.user.permissions === 1;
 
     const { id } = userSchema.userId.parse(req.query);
+
+    const getUserHashedPassword = await client.users.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        password: true,
+      },
+    });
+
     const parsedBody = userSchema.put.body.parse(req.body);
     const {
       name,
@@ -81,6 +91,7 @@ export default apiHandler()
       userComments,
       whatsappNumber,
       telegramUsername,
+      oldPassword,
     } = parsedBody;
     let { password } = parsedBody;
 
@@ -93,11 +104,22 @@ export default apiHandler()
     if (mobileNumber) {
       validatePhone(mobileNumber);
     }
-    if (password) {
-      validatePassword(password);
+    if (password || oldPassword) {
+      validatePassword(password as string);
+
+      // Compares password from database vs password from input
+      const samePassword = bcrypt.compareSync(
+        parsedBody.oldPassword as string,
+        getUserHashedPassword?.password as string
+      );
+
+      if (!samePassword) {
+        throw new WrongPasswordError();
+      }
+
       // Hash password with bcrrypt and genSalt(10)
       const salt = await bcrypt.genSalt(10);
-      password = await bcrypt.hash(password, salt);
+      password = await bcrypt.hash(password as string, salt);
     }
 
     if (whatsappNumber) {
