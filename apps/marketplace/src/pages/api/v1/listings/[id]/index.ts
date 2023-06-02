@@ -54,7 +54,7 @@ async function getValidParametersForCategory(categoryId: number): Promise<string
   return validParameters.categoriesParameters.map((param) => param.parameterId.toString());
 }
 
-export default apiHandler({allowNonAuthenticated: true})
+export default apiHandler()
   .get(async (req, res) => {
     const queryParams = listingSchema.get.query.parse(req.query);
 
