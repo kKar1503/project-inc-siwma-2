@@ -2,74 +2,62 @@ import { ProductListingItemProps } from '@/components/marketplace/listing/Produc
 import DisplayResults from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { useQuery } from 'react-query';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+// middleware
+import fetchListings, { FilterOptions } from '@/middlewares/fetchListings';
+import { Listing } from '../utils/api/client/zod/listings';
 
-// test data
-const bookmarkData: ProductListingItemProps[] = [
-  {
-    productId: 1,
-    img: '',
-    profileImg: '',
-    type: 'Sell',
-    name: 'Metal 1',
-    rating: 1,
-    price: 1000,
-    negotiable: true,
-    ownerId: '1',
-    ownerFullName: 'metal3',
-    createdAt: '2021-10-01T00:00:00.000Z',
-    companyName: 'metals',
-    isUnitPrice: false,
-    isOwnProfile: false,
-  },
-  {
-    productId: 2,
-    img: '',
-    profileImg: '',
-    type: 'Buy',
-    name: 'Metal 2',
-    rating: 3,
-    price: 1200,
-    negotiable: true,
-    ownerId: '1',
-    ownerFullName: 'metal2',
-    createdAt: '2021-10-01T00:00:00.000Z',
-    companyName: 'metals',
-    isUnitPrice: false,
-    isOwnProfile: false,
-  },
-  {
-    productId: 3,
-    img: '',
-    profileImg: '',
-    type: 'Buy',
-    name: 'Metal 3',
-    rating: 4.5,
-    price: 1369,
-    negotiable: false,
-    ownerId: '1',
-    ownerFullName: 'metal1',
-    createdAt: '2021-10-01T00:00:00.000Z',
-    companyName: 'metals',
-    isUnitPrice: false,
-    isOwnProfile: false,
-  },
-];
+const useSearchListings = (matching: string, filter?: FilterOptions) => {
+  const { data } = useQuery(['listings', filter], async () => fetchListings(matching, filter), {
+    enabled: matching !== undefined,
+  });
 
-const title = '';
-
-export const getServerSideProps = async () => {
-  const data: ProductListingItemProps[] = bookmarkData;
-
-  return {
-    props: {
-      data,
-    },
-  };
+  return data;
 };
 
-const Searchresult = ({ data }: { data: ProductListingItemProps[] }) => (
-  <DisplayResults filter data={data}>
-    {data ? (
+const change = (listing: Listing) => ({
+  productId: Number(listing.id),
+  img: listing.coverImage ? listing.coverImage : '',
+  profileImg: listing.owner.profilePic ? listing.owner.profilePic : '',
+  type: listing.type,
+  name: listing.name,
+  rating: listing.rating ? listing.rating : 0,
+  price: listing.price,
+  negotiable: listing.negotiable,
+  ownerId: listing.owner.id,
+  ownerFullName: listing.owner.name,
+  createdAt: listing.createdAt,
+  companyName: listing.owner.company.name,
+  isUnitPrice: listing.unitPrice,
+  isOwnProfile: false,
+});
+
+const changeProductItems = (listings: Listing[] | undefined) => {
+  const temp: ProductListingItemProps[] = [];
+  if (listings) {
+    listings.forEach((listing) => {
+      temp.push(change(listing));
+    });
+  }
+
+  return temp;
+};
+
+const Searchresult = () => {
+  const router = useRouter();
+  const { search } = router.query;
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
+
+  const listingData = useSearchListings(search as string, filterOptions);
+
+  return (
+    <DisplayResults
+      filter
+      data={changeProductItems(listingData)}
+      setFilterOptions={setFilterOptions}
+    >
       <>
         <Grid item xs={12} md={12}>
           <Typography
@@ -79,17 +67,17 @@ const Searchresult = ({ data }: { data: ProductListingItemProps[] }) => (
               mb: spacing(2),
             })}
           >
-            {title || 'Search Results'}
+            Search Results
           </Typography>
         </Grid>
         <Grid item xs={12} md={12}>
-          <Typography variant="h5">Displaying {data.length} search results for:</Typography> 
+          <Typography variant="h5">
+            Displaying {listingData ? listingData.length : 0} search results for:
+          </Typography>
         </Grid>
       </>
-    ) : (
-      <Typography variant="h5">Displaying 0 search results for: </Typography>
-    )}
-  </DisplayResults>
-);
+    </DisplayResults>
+  );
+};
 
 export default Searchresult;
