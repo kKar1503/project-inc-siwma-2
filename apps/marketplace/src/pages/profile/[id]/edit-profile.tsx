@@ -63,10 +63,10 @@ const useUpdateUserMutation = (userUuid: string) =>
       updatedUserData.name,
       updatedUserData.email,
       updatedUserData.mobileNumber,
+      updatedUserData.contact,
       updatedUserData.whatsappNumber,
       updatedUserData.telegramUsername,
       // updatedUserData.profilePicture,
-      updatedUserData.contact,
       updatedUserData.bio
     )
   );
@@ -88,24 +88,23 @@ const EditProfile = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [name, setName] = useState<string>(userDetails?.data?.data?.name || 'No name found');
+  const [name, setName] = useState<string>(userDetails?.data?.data[0].name || '');
   const [mobileNumber, setMobileNumber] = useState<string>(
-    userDetails?.data?.data?.mobileNumber || 'No mobile number'
+    userDetails?.data?.data[0].mobileNumber || undefined
   );
-  const [email, setEmail] = useState<string>(userDetails?.data?.data?.email || 'No email');
-  const [bio, setBio] = useState<string>(userDetails?.data?.data?.bio || 'No bio');
+  const [email, setEmail] = useState<string>(userDetails?.data?.data[0].email || '' );
+  const [bio, setBio] = useState<string>(userDetails?.data?.data[0].bio || undefined);
 
   const [telegramUsername, setTelegramUsername] = useState<string>(
-    userDetails?.data?.data?.telegramUsername || ''
+    userDetails?.data?.data[0].telegramUsername || undefined
   );
   const [whatsappNumber, setWhatsappNumber] = useState<string>(
-    userDetails?.data?.data?.whatsappNumber || ''
+    userDetails?.data?.data[0].whatsappNumber || undefined
   );
   const [facebookUsername, setFacebookUsername] = useState<string>(
-    userDetails?.data?.facebookUsername || 'No facebook username'
+    userDetails?.data?.data[0].facebookUsername || undefined
   );
-  const [contact, setContact] = useState<string>(userDetails?.data?.data?.contact || 'No contact');
-  const [textValue, setTextValue] = useState('');
+  const [contact, setContact] = useState<string>(userDetails?.data?.data?.contact || undefined);
 
   // console.log(contact);
 
@@ -225,7 +224,7 @@ const EditProfile = () => {
       </Head>
 
       <Grid sx={gridCols}>
-        {userDetails && <ProfileDetailCard data={userDetails} />}
+        {userDetails && <ProfileDetailCard data={userDetails} /> }
         <Box
           sx={{
             display: 'flex',
@@ -337,7 +336,7 @@ const EditProfile = () => {
                       label="Full Name"
                       placeholder="Your Full Name"
                       InputLabelProps={{ shrink: true }}
-                      value={userDetails?.data?.data?.name}
+                      value={userDetails?.data?.data[0].name}
                       onChange={(e) => setName(e.target.value)}
                     />
                   </FormControl>
@@ -353,7 +352,7 @@ const EditProfile = () => {
                       label="Phone"
                       placeholder="91234567"
                       InputLabelProps={{ shrink: true }}
-                      value={mobileNumber}
+                      value={userDetails?.data?.data[0].mobileNumber}
                       onChange={(e) => setMobileNumber(e.target.value)}
                     />
                   </FormControl>
@@ -367,7 +366,7 @@ const EditProfile = () => {
                     sx={({ spacing }) => ({
                       mt: spacing(2),
                     })}
-                    value={email}
+                    value={userDetails?.data?.data[0].email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </FormControl>
@@ -383,7 +382,7 @@ const EditProfile = () => {
                       mt: spacing(2),
                       mb: spacing(1),
                     })}
-                    value={bio}
+                    value={userDetails?.data?.data[0].bio}
                     onChange={(e) => setBio(e.target.value)}
                   />
                 </FormControl>
@@ -406,18 +405,18 @@ const EditProfile = () => {
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
                     <InputLabel>Contact</InputLabel>
                     <Select
-                      value={contact}
+                      value={userDetails?.data?.data[0].contact}
                       label="Platform"
                       onChange={(e) => handleContactChange(e)}
                     >
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="whatsapp">Whatsapp</MenuItem>
                       <MenuItem value="facebook">Facebook</MenuItem>
-                      {/* {userDetails?.data?.data?.map(({contact }) => (
+                      {/* {userDetails?.data?.data[0].map(({contact }) => (
                         <MenuItem  value={contact}>
-                          {contact}
+                          {userDetails?.data?.data[0].contact}
                         </MenuItem>
-                      ))} */}
+                      ))}  */}
                     </Select>
                   </FormControl>
 
@@ -433,7 +432,7 @@ const EditProfile = () => {
                           </InputAdornment>
                         ),
                       }}
-                      value={whatsappNumber}
+                      value={userDetails?.data?.data[0].whatsappNumber}
                       onChange={(e) => setWhatsappNumber(e.target.value)}
                     />
                   )}
@@ -449,7 +448,7 @@ const EditProfile = () => {
                           </InputAdornment>
                         ),
                       }}
-                      value={telegramUsername}
+                      value={userDetails?.data?.data[0].telegramUsername}
                       onChange={(e) => setTelegramUsername(e.target.value)}
                     />
                   )}
@@ -465,7 +464,7 @@ const EditProfile = () => {
                           </InputAdornment>
                         ),
                       }}
-                      value={facebookUsername}
+                      value={userDetails?.data?.data[0].facebookUsername}
                       onChange={(e) => setFacebookUsername(e.target.value)}
                     />
                   )}
