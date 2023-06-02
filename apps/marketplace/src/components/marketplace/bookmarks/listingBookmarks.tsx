@@ -1,7 +1,8 @@
-import { ProductListingItemProps } from '@/components/marketplace/listing/ProductListingItem';
-import DisplayResults from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import DisplayResults from '@/layouts/DisplayResults';
+import { ProductListingItemProps } from '@/components/marketplace/listing/ProductListingItem';
+import listings, { ListingResponseBody } from '@/utils/api/client/zod/listings';
 
 // test data
 const bookmarkData: ProductListingItemProps[] = [
@@ -85,12 +86,7 @@ const ListingBookmarks = () => (
   <DisplayResults filter={false} data={bookmarkData}>
     {bookmarkData ? (
       <Grid item xs={12} md={12} sx={{ marginTop: 2 }}>
-        <Typography
-          sx={({ spacing }) => ({
-            fontWeight: 500,
-          })}
-          variant="h3"
-        >
+        <Typography sx={{ fontWeight: 500 }} variant="h3">
           Listing Bookmarks
         </Typography>
         <Typography variant="h5">{bookmarkData.length} Listings</Typography>
