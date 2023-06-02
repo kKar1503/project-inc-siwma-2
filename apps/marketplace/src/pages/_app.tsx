@@ -52,8 +52,6 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     backgroundColor: 'white',
     padding: '0px',
     alignItems: 'center',
-    // border: '1px solid',
-    // borderColor: '#2196f3',
   },
 }));
 

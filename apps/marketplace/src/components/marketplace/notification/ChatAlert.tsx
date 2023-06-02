@@ -56,7 +56,6 @@ const ChatAlert = ({ chatData, reply, setReply }: Response) => {
         backgroundColor: palette.common.white,
         border: 1,
         borderColor: 'primary.main',
-        // padding: 0,
         margin: 0,
       })}
     >
@@ -71,6 +70,7 @@ const ChatAlert = ({ chatData, reply, setReply }: Response) => {
         noWrap
         sx={({ typography }) => ({
           fontSize: typography.body1,
+          width: '280px'
         })}
       >
         {chatData.content}
