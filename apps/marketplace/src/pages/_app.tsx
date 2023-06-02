@@ -11,7 +11,6 @@ import { SnackbarProvider, MaterialDesignContent, SnackbarOrigin } from 'notista
 import { styled } from '@mui/material';
 import CloseButton from '@/components/marketplace/notification/CloseButton';
 
-
 // -- Type declarations --//
 // Page type
 interface PageType extends React.FunctionComponent<any> {
@@ -51,9 +50,10 @@ const DisallowAuthenticatedFallback = () => {
 // Change default notistack background color
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   '&.notistack-MuiContent-default': {
-    backgroundColor: '#FFF',
-    paddingRight: '30px',
+    backgroundColor: 'white',
+    padding: '0px',
     alignItems: 'center',
+    border: '1px solid blue',
   },
 }));
 
