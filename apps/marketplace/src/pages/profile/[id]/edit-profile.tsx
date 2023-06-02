@@ -63,11 +63,11 @@ const useUpdateUserMutation = (userUuid: string) =>
       updatedUserData.name,
       updatedUserData.email,
       updatedUserData.mobileNumber,
-      // 'whatsapp',
       updatedUserData.whatsappNumber,
       updatedUserData.telegramUsername,
       // updatedUserData.profilePicture,
-      updatedUserData.contact
+      updatedUserData.contact,
+      updatedUserData.bio
     )
   );
 
@@ -77,30 +77,37 @@ const EditProfile = () => {
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
 
+  // console.log(userDetails);
+
   const mutation = useUpdateUserMutation(loggedUserUuid);
+  // console.log(mutation);
 
   const theme = useTheme();
   const { spacing } = theme;
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  // const [name, setName] = useState<string>(userDetails?.data?.name || '');
-  // const [whatsappNumber, setWhatsappNumber] = useState('');
-  // const [email, setEmail] = useState<string>(userDetails?.data?.email || '');
-  // const [bio, setBio] = useState<string>('');
-  // const [telegramUsername, setTelegramUsername] = useState<string>('');
-  const [facebookUsername, setFacebookUsername] = useState<string>('');
-  const [name, setName] = useState<string>(userDetails?.data?.name || '');
-  const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.data?.mobileNumber || '');
-  const [email, setEmail] = useState<string>(userDetails?.data?.email || '');
-  const [bio, setBio] = useState<string>(userDetails?.data?.bio || '');
-  const [telegramUsername, setTelegramUsername] = useState<string>(
-    userDetails?.data?.telegramUsername || ''
-  );
-  const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.data?.whatsappNumber || '');
-
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [contact, setContact] = useState('');
+  const [name, setName] = useState<string>(userDetails?.data?.data?.name || 'No name found');
+  const [mobileNumber, setMobileNumber] = useState<string>(
+    userDetails?.data?.data?.mobileNumber || 'No mobile number'
+  );
+  const [email, setEmail] = useState<string>(userDetails?.data?.data?.email || 'No email');
+  const [bio, setBio] = useState<string>(userDetails?.data?.data?.bio || 'No bio');
+
+  const [telegramUsername, setTelegramUsername] = useState<string>(
+    userDetails?.data?.data?.telegramUsername || ''
+  );
+  const [whatsappNumber, setWhatsappNumber] = useState<string>(
+    userDetails?.data?.data?.whatsappNumber || ''
+  );
+  const [facebookUsername, setFacebookUsername] = useState<string>(
+    userDetails?.data?.facebookUsername || 'No facebook username'
+  );
+  const [contact, setContact] = useState<string>(userDetails?.data?.data?.contact || 'No contact');
+  const [textValue, setTextValue] = useState('');
+
+  // console.log(contact);
 
   const [modalMessage, setModalMessage] = useState(
     'Once you leave the page, your user details will be removed and your profile will not be updated'
@@ -122,13 +129,14 @@ const EditProfile = () => {
 
     mutation.mutate(updatedUserData);
   };
-  
+
   const handleContactChange = (e: SelectChangeEvent) => {
     const selectedContact = e.target.value;
     setContact(selectedContact);
 
     if (selectedContact === 'whatsapp') {
-      setTelegramUsername('');
+      setWhatsappNumber(''); // Update the Whatsapp Number state
+      setTelegramUsername(''); // Reset the Telegram Username state
       setFacebookUsername('');
     } else if (selectedContact === 'telegram') {
       setWhatsappNumber('');
@@ -145,28 +153,28 @@ const EditProfile = () => {
     }
   }, [profilePicture]);
 
-  // const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     setProfilePicture(e.target.files[0]);
-  //   }
-  // };
-
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setProfilePicture(file);
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target) {
-          const arrayBuffer = event.target.result as ArrayBuffer;
-          const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-          setImageUrl(`data:${file.type};base64,${base64String}`);
-        }
-      };
-      reader.readAsArrayBuffer(file);
+      setProfilePicture(e.target.files[0]);
     }
   };
+
+  // const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     const file = e.target.files[0];
+  //     setProfilePicture(file);
+
+  //     const reader = new FileReader();
+  //     reader.onload = (event) => {
+  //       if (event.target) {
+  //         const arrayBuffer = event.target.result as ArrayBuffer;
+  //         const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+  //         setImageUrl(`data:${file.type};base64,${base64String}`);
+  //       }
+  //     };
+  //     reader.readAsArrayBuffer(file);
+  //   }
+  // };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -329,7 +337,7 @@ const EditProfile = () => {
                       label="Full Name"
                       placeholder="Your Full Name"
                       InputLabelProps={{ shrink: true }}
-                      value={name}
+                      value={userDetails?.data?.data?.name}
                       onChange={(e) => setName(e.target.value)}
                     />
                   </FormControl>
@@ -387,6 +395,7 @@ const EditProfile = () => {
               <CardContent>
                 <Typography sx={{ fontWeight: 'bold' }}>Connections</Typography>
                 <Typography>Link your messaging accounts here</Typography>
+                <Typography>{contact}</Typography>
                 <Box
                   sx={({ spacing }) => ({
                     mt: spacing(2),
@@ -404,6 +413,11 @@ const EditProfile = () => {
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="whatsapp">Whatsapp</MenuItem>
                       <MenuItem value="facebook">Facebook</MenuItem>
+                      {/* {userDetails?.data?.data?.map(({contact }) => (
+                        <MenuItem  value={contact}>
+                          {contact}
+                        </MenuItem>
+                      ))} */}
                     </Select>
                   </FormControl>
 
@@ -481,7 +495,6 @@ const EditProfile = () => {
               </CardActions>
             </Card>
           </Grid>
-          {/* {userDetails && isLg && <ProfileDetailCard data={userDetails} />} */}
         </Box>
       </Grid>
     </>
