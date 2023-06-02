@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -6,9 +6,14 @@ import Container from '@mui/material/Container';
 import ListingBookmarks from '@/components/marketplace/bookmarks/listingBookmarks';
 import UserBookmarks from '@/components/marketplace/bookmarks/userBookmarks';
 import CompanyBookmarks from '@/components/marketplace/bookmarks/companyBookmarks';
+
 import fetchUser from '@/middlewares/fetchUser';
 import fetchListing from '@/middlewares/fetchListing';
 import fetchCompany from '@/middlewares/fetchCompany';
+import { Listing } from '@/utils/api/client/zod/listings';
+import { Company } from '@/utils/api/client/zod/companies';
+import { User } from '@/utils/api/client/zod/users';
+
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 
@@ -24,67 +29,72 @@ const useGetUserQuery = (userUuid: string) => {
 
 const Bookmarks = () => {
   const [selectedButton, setSelectedButton] = useState('LISTINGS');
-  const [listings, setListings] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [companies, setCompanies] = useState([]);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
 
   const handleButtonClick = (type: BookmarkTypeProps) => {
     setSelectedButton(type);
   };
 
-  const findListings = (listingIDs: string[]) => {
-    const listings = [];
-
+  const findListings = async (listingIDs: string[]) => {
     if (listingIDs.length === 0) return;
 
-    listingIDs.forEach(async (id) => {
+    const listingPromises = listingIDs.map(async (id) => {
       const data = await fetchListing(id);
-
-      if (data) {
-        console.log(data);
-        listings.push(data);
-      }
+      return data;
     });
+
+    const listingData = await Promise.all(listingPromises);
+
+    const listings = listingData.filter((data) => data !== null) as Listing[];
+
+    setListings(listings);
   };
 
-  const findUsers = (userIDs: string[]) => {
-    const users = [];
-
+  const findUsers = async (userIDs: string[]) => {
     if (userIDs.length === 0) return;
 
-    userIDs.forEach(async (id) => {
+    const userPromises = userIDs.map(async (id) => {
       const data = await fetchUser(id);
-
-      if (data) {
-        users.push(data.data);
-      }
+      return data ? data.data : null;
     });
+
+    const userData = await Promise.all(userPromises);
+
+    const users = userData.filter((data) => data !== null) as User[];
+
+    setUsers(users);
   };
 
-  const findCompanies = (companyIDs: string[]) => {
-    const companies = [];
-
+  const findCompanies = async (companyIDs: string[]) => {
     if (companyIDs.length === 0) return;
 
-    companyIDs.forEach(async (id) => {
+    const companyPromises = companyIDs.map(async (id) => {
       const data = await fetchCompany(id);
-
-      if (data) {
-        companies.push(data);
-      }
+      return data;
     });
+
+    const companyData = await Promise.all(companyPromises);
+
+    const companies = companyData.filter((data) => data !== null) as Company[];
+
+    setCompanies(companies);
   };
 
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const userDetails = useGetUserQuery(loggedUserUuid);
-  if (userDetails) {
-    const { bookmarks } = userDetails.data.data[0];
 
-    findListings(bookmarks.listings);
-    findUsers(bookmarks.users);
-    findCompanies(bookmarks.companies);
-  }
+  useEffect(() => {
+    if (userDetails) {
+      const { bookmarks } = userDetails.data.data[0];
+
+      findListings(bookmarks.listings);
+      findUsers(bookmarks.users);
+      findCompanies(bookmarks.companies);
+    }
+  }, [userDetails]);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -121,7 +131,7 @@ const Bookmarks = () => {
             </Button>
           </Grid>
         </Grid>
-        {selectedButton === 'LISTINGS' && <ListingBookmarks />}
+        {selectedButton === 'LISTINGS' && <ListingBookmarks data={listings} />}
         {selectedButton === 'USERS' && <UserBookmarks />}
         {selectedButton === 'COMPANIES' && <CompanyBookmarks />}
       </Grid>

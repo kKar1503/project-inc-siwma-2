@@ -2,6 +2,7 @@ import { ProductListingItemProps } from '@/components/marketplace/listing/Produc
 import DisplayResults from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { Company } from '@/utils/api/client/zod/companies';
 
 // test data
 const bookmarkData: ProductListingItemProps[] = [
@@ -81,7 +82,7 @@ export const getServerSideProps = async () => {
   };
 };
 
-const CompanyBookmarks = () => (
+const CompanyBookmarks = ({ data }: { data: Company[] }) => (
   <DisplayResults filter={false} data={bookmarkData}>
     {bookmarkData ? (
       <Grid item xs={12} md={12} sx={{ marginTop: 2 }}>
