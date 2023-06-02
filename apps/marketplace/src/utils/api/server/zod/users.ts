@@ -30,6 +30,7 @@ const updateUserDetailsSchema = z
     contactMethod: z.nativeEnum(UserContacts),
     bio: z.string(),
     password: z.string(),
+    oldPassword: z.string(),
     userComments: z.string(),
   })
   .partial();
