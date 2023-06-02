@@ -28,13 +28,7 @@ const TestNotifi = () => {
 
   // onClick handle for chat notification
   const handleSnackbarClick = () => {
-    const message = (
-      <ChatAlert
-        reply={reply}
-        setReply={setReply}
-        chatData={response}
-      />
-    );
+    const message = <ChatAlert reply={reply} setReply={setReply} chatData={response} />;
     enqueueSnackbar(message, { variant: 'default' });
   };
 

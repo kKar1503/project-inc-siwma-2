@@ -14,7 +14,8 @@ const CloseButton = ({ id }: any) => {
       sx={({ spacing, zIndex }) => ({
         position: 'fixed',
         top: spacing(2),
-        right: spacing(2),
+        right: spacing(3),
+        width: '0px',
         zIndex: zIndex.snackbar,
       })}
     >
