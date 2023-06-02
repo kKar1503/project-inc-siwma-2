@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -12,49 +12,57 @@ import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterFor
 import ProductListingItem, {
   ProductListingItemProps,
 } from '@/components/marketplace/listing/ProductListingItem';
-import { useQuery } from 'react-query';
-
-// middleware
-import fetchCategories from '@/middlewares/fetchCategories';
+import { FilterOptions, SortingOptions } from '@/middlewares/fetchListings';
 
 export type DisplayResultsProps = {
   children?: React.ReactNode;
   filter: boolean;
   data?: ProductListingItemProps[] | undefined;
+  setFilterOptions?: (filter: FilterOptions) => void;
 };
 
-const useGetCategoriesQuery = () => {
-  const { data } = useQuery('categories', () => fetchCategories());
-
-  return data;
-};
-
-const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
+const DisplayResults = ({ children, filter, data, setFilterOptions }: DisplayResultsProps) => {
   const Theme = useTheme();
   const isMediumScreen = useMediaQuery(Theme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [sort, setSort] = useState<SortProps>('Recent');
-  const [category, setCategory] = useState<string>('');
+  const [category, setCategory] = useState<number>();
   const [negotiation, setNegotiation] = useState<boolean>();
-  const [minPrice, setMinPrice] = useState<number>();
-  const [maxPrice, setMaxPrice] = useState<number>();
+  const [minPrice, setMinPrice] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  const filteredData = data?.filter((item) => {
-    const isMatchCategory = !category || item.type === category;
-    const isMatchNegotiation = !negotiation || item.negotiable === negotiation;
-    const isMatchPriceRange =
-      (!minPrice || parseInt(item.price) >= parseInt(minPrice)) &&
-      (!maxPrice || parseInt(item.price) <= parseInt(maxPrice));
+  useEffect(() => {
+    let sortBy: SortingOptions = 'recent_newest';
+    switch (sort) {
+      case 'Recent':
+        sortBy = 'recent_newest';
+        break;
+      case 'Price - High to Low':
+        sortBy = 'price_desc';
+        break;
+      case 'Price - Low to High':
+        sortBy = 'price_asc';
+        break;
+      default:
+        break;
+    }
 
-    return isMatchCategory && isMatchNegotiation && isMatchPriceRange;
-  });
+    const filterOptions: FilterOptions = {
+      sortBy,
+      category,
+      negotiable: negotiation,
+      minPrice: parseInt(minPrice, 10),
+      maxPrice: parseInt(maxPrice, 10),
+    };
 
-  const categoriesData = useGetCategoriesQuery();
-  console.log(categoriesData);
+    if (setFilterOptions) {
+      setFilterOptions(filterOptions);
+    }
+  }, [sort, category, negotiation, minPrice, maxPrice, setFilterOptions]);
 
   return (
     <Container maxWidth="xl">
@@ -69,16 +77,13 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
               mt: spacing(2),
             })}
           >
-            {categoriesData && (
-              <FilterForm
-                categoryData={categoriesData}
-                setSort={setSort}
-                setCategory={setCategory}
-                setNegotiation={setNegotiation}
-                setMinPrice={setMinPrice}
-                setMaxPrice={setMaxPrice}
-              />
-            )}
+            <FilterForm
+              setSort={setSort}
+              setCategory={setCategory}
+              setNegotiation={setNegotiation}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+            />
           </Grid>
         ) : (
           <Grid
@@ -113,33 +118,30 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
                       m: spacing(2),
                     })}
                   >
-                    {categoriesData && (
-                      <FilterForm
-                        categoryData={categoriesData}
-                        setSort={setSort}
-                        setCategory={setCategory}
-                        setNegotiation={setNegotiation}
-                        setMinPrice={setMinPrice}
-                        setMaxPrice={setMaxPrice}
-                      />
-                    )}
+                    <FilterForm
+                      setSort={setSort}
+                      setCategory={setCategory}
+                      setNegotiation={setNegotiation}
+                      setMinPrice={setMinPrice}
+                      setMaxPrice={setMaxPrice}
+                    />
                   </Box>
                 </Drawer>
               </Grid>
             )}
           </Box>
 
-          {filteredData && filteredData.length > 0 && (
+          {data && data.length > 0 && (
             <Grid container display="flex" spacing={2}>
-              {filteredData.map((item: ProductListingItemProps) => (
-                <Grid item xs={4} md={3} key={item.productId}>
+              {data.map((item: ProductListingItemProps) => (
+                <Grid item xs={6} md={4} xl={3} key={item.productId}>
                   <ProductListingItem data={item} />
                 </Grid>
               ))}
             </Grid>
           )}
 
-          {filteredData && filteredData.length === 0 && (
+          {data && data.length === 0 && (
             <Grid container justifyContent="center">
               <Typography>No items found.</Typography>
             </Grid>
