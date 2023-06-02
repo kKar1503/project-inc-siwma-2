@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import { useRouter } from 'next/router';
-import React, {useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
 import { ThemeComponent, useResponsiveness } from '@inc/ui';
@@ -52,8 +52,8 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     backgroundColor: 'white',
     padding: '0px',
     alignItems: 'center',
-    border: '1px solid',
-    borderColor: '#2196f3',
+    // border: '1px solid',
+    // borderColor: '#2196f3',
   },
 }));
 
@@ -88,6 +88,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
         >
           <QueryClientProvider client={queryClient}>
             <SnackbarProvider
+              style={{ width: '100%', height: '0%' }}
               maxSnack={3}
               anchorOrigin={alertStyle}
               Components={{

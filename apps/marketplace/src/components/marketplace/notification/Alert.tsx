@@ -32,18 +32,18 @@ const Alert = ({ open, setOpen, severity, alertContent, alertTitle }: AlertProps
   };
 
   return (
-      <MUIAlert
-        // variant="outlined"
-        severity={severity}
-        // onClose={handleClose}
-        sx={({ palette, typography }) => ({
-          bgcolor: palette.common.white,
-          fontSize: typography.subtitle1,
-        })}
-      >
-        <AlertTitle>{alertTitle}</AlertTitle>
-        {alertContent}
-      </MUIAlert>
+    <MUIAlert
+      variant="outlined"
+      severity={severity}
+      // onClose={handleClose}
+      sx={({ palette, typography }) => ({
+        bgcolor: palette.common.white,
+        fontSize: typography.subtitle1,
+      })}
+    >
+      <AlertTitle>{alertTitle}</AlertTitle>
+      {alertContent}
+    </MUIAlert>
   );
 };
 

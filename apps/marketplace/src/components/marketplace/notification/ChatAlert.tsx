@@ -53,8 +53,9 @@ const ChatAlert = ({ chatData, reply, setReply }: Response) => {
         ),
       }}
       sx={({ palette }) => ({
-        border: 0,
-        // borderColor: 'primary.main',
+        backgroundColor: palette.common.white,
+        border: 1,
+        borderColor: 'primary.main',
         // padding: 0,
         margin: 0,
       })}
