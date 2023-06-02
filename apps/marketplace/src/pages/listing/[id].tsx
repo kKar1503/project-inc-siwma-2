@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box';
-import { ReactNode, useState, Dispatch, SetStateAction } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import DetailedListingCarousel, {
   DetailedListingCarouselProps,
@@ -8,186 +7,187 @@ import DetailedListingCarousel, {
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Card from '@mui/material/Card';
-import CardActionArea from '@mui/material/CardActionArea';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
 import ChatNow from '@/components/marketplace/listing/ChatNow';
 import SellBadge from '@/components/marketplace/listing/SellBadge';
 import BuyBadge from '@/components/marketplace/listing/BuyBadge';
-import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchListing from '@/middlewares/fetchListing';
 import { useQuery } from 'react-query';
-import apiClient from '@/utils/api/client/apiClient';
-import listings from '@/utils/api/server/zod/listings';
 import StarRating from '@/components/marketplace/profilePage/StarRatings';
 import { Button } from '@mui/material';
+import { useResponsiveness } from '@inc/ui';
+import { CategoryResponseBody, ListingResponseBody } from '@/utils/api/client/zod';
+import fetchListingImages from '@/middlewares/fetchListingImages';
+import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import fetchCat from '@/middlewares/fetchCatNames';
+import fetchUser from '@/middlewares/fetchUser';
+import fetchReviews from '@/middlewares/fetchReviews';
+import fetchParams from '@/middlewares/fetchParamNames';
 
 // Test Data for listing details
-const detailedListingData = [
-  {
-    id: 1,
-    name: 'Item A',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed bibendum erat. Etiam malesuada, massa non blandit mattis, lacus mi dignissim nisl, non lacinia lectus sapien non mi. Vivamus nisi leo, auctor a urna vitae, aliquet consequat nisi. In quis dolor urna. Maecenas id mauris ultrices, bibendum neque lacinia, euismod felis. ',
-    price: 300,
-    unitPrice: false,
-    negotiable: true,
-    categoryId: '1',
-    type: 'SELL',
-    owner: {
-      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-      name: 'Elon Musk',
-      email: 'elon.musk@example.com',
-      company: {
-        id: '1',
-        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
-        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
-        bio: 'Owner bio',
-        image: '',
-        visible: true,
-      },
-      profilePic: null,
-      mobileNumber: '69694202',
-      contactMethod: 'email',
-      bio: null,
-    },
-    active: true,
-    parameter: [
-      {
-        paramId: '3',
-        value: 200,
-      },
-      {
-        paramId: '2',
-        value: 300,
-      },
-    ],
-    createdAt: '2023-05-15T18:03:01.036Z',
-  },
+// const detailedListingData = [
+//   {
+//     id: 1,
+//     name: 'Item A',
+//     description:
+//       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed bibendum erat. Etiam malesuada, massa non blandit mattis, lacus mi dignissim nisl, non lacinia lectus sapien non mi. Vivamus nisi leo, auctor a urna vitae, aliquet consequat nisi. In quis dolor urna. Maecenas id mauris ultrices, bibendum neque lacinia, euismod felis. ',
+//     price: 300,
+//     unitPrice: false,
+//     negotiable: true,
+//     categoryId: '1',
+//     type: 'SELL',
+//     owner: {
+//       id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+//       name: 'Elon Musk',
+//       email: 'elon.musk@example.com',
+//       company: {
+//         id: '1',
+//         name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+//         website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+//         bio: 'Owner bio',
+//         image: '',
+//         visible: true,
+//       },
+//       profilePic: null,
+//       mobileNumber: '69694202',
+//       contactMethod: 'email',
+//       bio: null,
+//     },
+//     active: true,
+//     parameter: [
+//       {
+//         paramId: '3',
+//         value: 200,
+//       },
+//       {
+//         paramId: '2',
+//         value: 300,
+//       },
+//     ],
+//     createdAt: '2023-05-15T18:03:01.036Z',
+//   },
 
-  {
-    id: 2,
-    name: 'Item B',
-    description: 'Listing description',
-    price: 300,
-    unitPrice: false,
-    negotiable: true,
-    categoryId: '1',
-    type: 'SELL',
-    owner: {
-      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-      name: 'Elon Musk',
-      email: 'elon.musk@example.com',
-      company: {
-        id: '1',
-        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
-        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
-        bio: 'Owner bio',
-        image: '',
-        visible: true,
-      },
-      profilePic: null,
-      mobileNumber: '69694202',
-      contactMethod: 'email',
-      bio: null,
-    },
-    active: true,
-    parameter: [
-      {
-        paramId: '3',
-        value: 200,
-      },
-      {
-        paramId: '2',
-        value: 300,
-      },
-    ],
-    createdAt: '2023-05-15T18:03:01.036Z',
-  },
+//   {
+//     id: 2,
+//     name: 'Item B',
+//     description: 'Listing description',
+//     price: 300,
+//     unitPrice: false,
+//     negotiable: true,
+//     categoryId: '1',
+//     type: 'SELL',
+//     owner: {
+//       id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+//       name: 'Elon Musk',
+//       email: 'elon.musk@example.com',
+//       company: {
+//         id: '1',
+//         name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+//         website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+//         bio: 'Owner bio',
+//         image: '',
+//         visible: true,
+//       },
+//       profilePic: null,
+//       mobileNumber: '69694202',
+//       contactMethod: 'email',
+//       bio: null,
+//     },
+//     active: true,
+//     parameter: [
+//       {
+//         paramId: '3',
+//         value: 200,
+//       },
+//       {
+//         paramId: '2',
+//         value: 300,
+//       },
+//     ],
+//     createdAt: '2023-05-15T18:03:01.036Z',
+//   },
 
-  {
-    id: 3,
-    name: 'Item C',
-    description: 'Listing description',
-    price: 300,
-    unitPrice: false,
-    negotiable: true,
-    categoryId: '1',
-    type: 'SELL',
-    owner: {
-      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-      name: 'Elon Musk',
-      email: 'elon.musk@example.com',
-      company: {
-        id: '1',
-        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
-        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
-        bio: 'Owner bio',
-        image: '',
-        visible: true,
-      },
-      profilePic: null,
-      mobileNumber: '69694202',
-      contactMethod: 'email',
-      bio: null,
-    },
-    active: true,
-    parameter: [
-      {
-        paramId: '3',
-        value: 200,
-      },
-      {
-        paramId: '2',
-        value: 300,
-      },
-    ],
-    createdAt: '2023-05-15T18:03:01.036Z',
-  },
+//   {
+//     id: 3,
+//     name: 'Item C',
+//     description: 'Listing description',
+//     price: 300,
+//     unitPrice: false,
+//     negotiable: true,
+//     categoryId: '1',
+//     type: 'SELL',
+//     owner: {
+//       id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+//       name: 'Elon Musk',
+//       email: 'elon.musk@example.com',
+//       company: {
+//         id: '1',
+//         name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+//         website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+//         bio: 'Owner bio',
+//         image: '',
+//         visible: true,
+//       },
+//       profilePic: null,
+//       mobileNumber: '69694202',
+//       contactMethod: 'email',
+//       bio: null,
+//     },
+//     active: true,
+//     parameter: [
+//       {
+//         paramId: '3',
+//         value: 200,
+//       },
+//       {
+//         paramId: '2',
+//         value: 300,
+//       },
+//     ],
+//     createdAt: '2023-05-15T18:03:01.036Z',
+//   },
 
-  {
-    id: 4,
-    name: 'Item D',
-    description: 'Listing description',
-    price: 300,
-    unitPrice: false,
-    negotiable: true,
-    categoryId: '1',
-    type: 'SELL',
-    owner: {
-      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-      name: 'Elon Musk',
-      email: 'elon.musk@example.com',
-      company: {
-        id: '1',
-        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
-        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
-        bio: 'Owner bio',
-        image: '',
-        visible: true,
-      },
-      profilePic: null,
-      mobileNumber: '69694202',
-      contactMethod: 'email',
-      bio: null,
-    },
-    active: true,
-    parameter: [
-      {
-        paramId: '3',
-        value: 200,
-      },
-      {
-        paramId: '2',
-        value: 300,
-      },
-    ],
-    createdAt: '2023-05-15T18:03:01.036Z',
-  },
-];
+//   {
+//     id: 4,
+//     name: 'Item D',
+//     description: 'Listing description',
+//     price: 300,
+//     unitPrice: false,
+//     negotiable: true,
+//     categoryId: '1',
+//     type: 'SELL',
+//     owner: {
+//       id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+//       name: 'Elon Musk',
+//       email: 'elon.musk@example.com',
+//       company: {
+//         id: '1',
+//         name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+//         website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+//         bio: 'Owner bio',
+//         image: '',
+//         visible: true,
+//       },
+//       profilePic: null,
+//       mobileNumber: '69694202',
+//       contactMethod: 'email',
+//       bio: null,
+//     },
+//     active: true,
+//     parameter: [
+//       {
+//         paramId: '3',
+//         value: 200,
+//       },
+//       {
+//         paramId: '2',
+//         value: 300,
+//       },
+//     ],
+//     createdAt: '2023-05-15T18:03:01.036Z',
+//   },
+// ];
 
 // test data for carousel component
 // const carouselData: DetailedListingCarouselProps = [
@@ -210,247 +210,248 @@ const carouselData = [
 ];
 
 // test data for categories
-const categoryData = [
-  {
-    id: '1',
-    name: 'Cat 1',
-    description: 'Description2',
-    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
-    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
-    active: true,
-    parameters: [
-      {
-        parameterId: '1',
-        required: true,
-      },
-      {
-        parameterId: '2',
-        required: true,
-      },
-      {
-        parameterId: '3',
-        required: false,
-      },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Cat 2',
-    description: 'Description2',
-    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
-    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
-    active: true,
-    parameters: [
-      {
-        parameterId: '1',
-        required: true,
-      },
-      {
-        parameterId: '2',
-        required: true,
-      },
-      {
-        parameterId: '3',
-        required: false,
-      },
-    ],
-  },
-  {
-    id: '3',
-    name: 'Cat 3',
-    description: 'Description2',
-    image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
-    crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
-    active: true,
-    parameters: [
-      {
-        parameterId: '1',
-        required: true,
-      },
-      {
-        parameterId: '2',
-        required: true,
-      },
-      {
-        parameterId: '3',
-        required: false,
-      },
-    ],
-  },
-];
+// const categoryData = [
+//   {
+//     id: '1',
+//     name: 'Cat 1',
+//     description: 'Description2',
+//     image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+//     crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+//     active: true,
+//     parameters: [
+//       {
+//         parameterId: '1',
+//         required: true,
+//       },
+//       {
+//         parameterId: '2',
+//         required: true,
+//       },
+//       {
+//         parameterId: '3',
+//         required: false,
+//       },
+//     ],
+//   },
+//   {
+//     id: '2',
+//     name: 'Cat 2',
+//     description: 'Description2',
+//     image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+//     crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+//     active: true,
+//     parameters: [
+//       {
+//         parameterId: '1',
+//         required: true,
+//       },
+//       {
+//         parameterId: '2',
+//         required: true,
+//       },
+//       {
+//         parameterId: '3',
+//         required: false,
+//       },
+//     ],
+//   },
+//   {
+//     id: '3',
+//     name: 'Cat 3',
+//     description: 'Description2',
+//     image: '5b41acd4-4c77-4f32-ab78-2192b451b1f8',
+//     crossSectionImage: '57b6ddfe-6f21-463f-ba0c-16f6b88c3162',
+//     active: true,
+//     parameters: [
+//       {
+//         parameterId: '1',
+//         required: true,
+//       },
+//       {
+//         parameterId: '2',
+//         required: true,
+//       },
+//       {
+//         parameterId: '3',
+//         required: false,
+//       },
+//     ],
+//   },
+// ];
 
-const listingReviewsData = [
-  {
-    id: '1',
-    review: 'sample review',
-    rating: 5,
-    userId: '1',
-    listingId: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-  },
-  {
-    id: '2',
-    review: 'sample review',
-    rating: 5,
-    userId: '2',
-    listingId: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-  },
-  {
-    id: '3',
-    review: 'sample review',
-    rating: 5,
-    userId: '3',
-    listingId: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-  },
-  {
-    id: '4',
-    review: 'sample review',
-    rating: 5,
-    userId: '4',
-    listingId: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-  },
-  {
-    id: '5',
-    review: 'sample review',
-    rating: 5,
-    userId: '5',
-    listingId: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-  },
-];
-const userData = [
-  {
-    id: '1',
-    name: 'John Doe',
-    email: 'johndoe@gmail.com',
-    company: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-    enabled: true,
-    profilePic: '',
-    comments: 'hello',
-    mobileNumber: '91234567',
-    contactMethod: 'telegram',
-    bio: 'Hello, I am John Doe!',
-  },
-  {
-    id: '2',
-    name: 'Dohn Joe',
-    email: 'johndoe@gmail.com',
-    company: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-    enabled: true,
-    profilePic: '',
-    comments: 'hello',
-    mobileNumber: '91234567',
-    contactMethod: 'telegram',
-    bio: 'Hello, I am John Doe!',
-  },
-  {
-    id: '3',
-    name: 'potato',
-    email: 'johndoe@gmail.com',
-    company: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-    enabled: true,
-    profilePic: '',
-    comments: 'hello',
-    mobileNumber: '91234567',
-    contactMethod: 'telegram',
-    bio: 'Hello, I am John Doe!',
-  },
-  {
-    id: '4',
-    name: 'tomato',
-    email: 'johndoe@gmail.com',
-    company: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-    enabled: true,
-    profilePic: '',
-    comments: 'hello',
-    mobileNumber: '91234567',
-    contactMethod: 'telegram',
-    bio: 'Hello, I am John Doe!',
-  },
-  {
-    id: '5',
-    name: 'toe taker',
-    email: 'johndoe@gmail.com',
-    company: '1',
-    createdAt: '2022-08-17T00:29:56.437Z',
-    enabled: true,
-    profilePic: '',
-    comments: 'hello',
-    mobileNumber: '91234567',
-    contactMethod: 'telegram',
-    bio: 'Hello, I am John Doe!',
-  },
-];
+// const listingReviewsData = [
+//   {
+//     id: '1',
+//     review: 'sample review',
+//     rating: 5,
+//     userId: '1',
+//     listingId: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//   },
+//   {
+//     id: '2',
+//     review: 'sample review',
+//     rating: 5,
+//     userId: '2',
+//     listingId: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//   },
+//   {
+//     id: '3',
+//     review: 'sample review',
+//     rating: 5,
+//     userId: '3',
+//     listingId: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//   },
+//   {
+//     id: '4',
+//     review: 'sample review',
+//     rating: 5,
+//     userId: '4',
+//     listingId: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//   },
+//   {
+//     id: '5',
+//     review: 'sample review',
+//     rating: 5,
+//     userId: '5',
+//     listingId: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//   },
+// ];
 
-export interface catDataType {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  crossSectionImage: string;
-  active: boolean;
-  parameters: [
-    {
-      parameterId: string;
-      required: boolean;
-    },
-    {
-      parameterId: string;
-      required: boolean;
-    },
-    {
-      parameterId: string;
-      required: boolean;
-    }
-  ];
-}
+// const userData = [
+//   {
+//     id: '1',
+//     name: 'John Doe',
+//     email: 'johndoe@gmail.com',
+//     company: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//     enabled: true,
+//     profilePic: '',
+//     comments: 'hello',
+//     mobileNumber: '91234567',
+//     contactMethod: 'telegram',
+//     bio: 'Hello, I am John Doe!',
+//   },
+//   {
+//     id: '2',
+//     name: 'Dohn Joe',
+//     email: 'johndoe@gmail.com',
+//     company: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//     enabled: true,
+//     profilePic: '',
+//     comments: 'hello',
+//     mobileNumber: '91234567',
+//     contactMethod: 'telegram',
+//     bio: 'Hello, I am John Doe!',
+//   },
+//   {
+//     id: '3',
+//     name: 'potato',
+//     email: 'johndoe@gmail.com',
+//     company: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//     enabled: true,
+//     profilePic: '',
+//     comments: 'hello',
+//     mobileNumber: '91234567',
+//     contactMethod: 'telegram',
+//     bio: 'Hello, I am John Doe!',
+//   },
+//   {
+//     id: '4',
+//     name: 'tomato',
+//     email: 'johndoe@gmail.com',
+//     company: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//     enabled: true,
+//     profilePic: '',
+//     comments: 'hello',
+//     mobileNumber: '91234567',
+//     contactMethod: 'telegram',
+//     bio: 'Hello, I am John Doe!',
+//   },
+//   {
+//     id: '5',
+//     name: 'toe taker',
+//     email: 'johndoe@gmail.com',
+//     company: '1',
+//     createdAt: '2022-08-17T00:29:56.437Z',
+//     enabled: true,
+//     profilePic: '',
+//     comments: 'hello',
+//     mobileNumber: '91234567',
+//     contactMethod: 'telegram',
+//     bio: 'Hello, I am John Doe!',
+//   },
+// ];
 
-export interface listingDataType {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  unitPrice: boolean;
-  negotiable: boolean;
-  categoryId: string;
-  type: string;
-  owner: {
-    id: string;
-    name: string;
-    email: string;
-    company: {
-      id: string;
-      name: string;
-      website: string;
-      bio: string;
-      image: '';
-      visible: boolean;
-    };
-    profilePic: null;
-    mobileNumber: string;
-    contactMethod: string;
-    bio: null;
-  };
-  active: boolean;
-  parameter: [
-    {
-      paramId: string;
-      value: number;
-    },
-    {
-      paramId: string;
-      value: number;
-    }
-  ];
-  createdAt: string;
-}
+// export interface catDataType {
+//   id: string;
+//   name: string;
+//   description: string;
+//   image: string;
+//   crossSectionImage: string;
+//   active: boolean;
+//   parameters: [
+//     {
+//       parameterId: string;
+//       required: boolean;
+//     },
+//     {
+//       parameterId: string;
+//       required: boolean;
+//     },
+//     {
+//       parameterId: string;
+//       required: boolean;
+//     }
+//   ];
+// }
+
+// export interface listingDataType {
+//   id: number;
+//   name: string;
+//   description: string;
+//   price: number;
+//   unitPrice: boolean;
+//   negotiable: boolean;
+//   categoryId: string;
+//   type: string;
+//   owner: {
+//     id: string;
+//     name: string;
+//     email: string;
+//     company: {
+//       id: string;
+//       name: string;
+//       website: string;
+//       bio: string;
+//       image: '';
+//       visible: boolean;
+//     };
+//     profilePic: null;
+//     mobileNumber: string;
+//     contactMethod: string;
+//     bio: null;
+//   };
+//   active: boolean;
+//   parameter: [
+//     {
+//       paramId: string;
+//       value: number;
+//     },
+//     {
+//       paramId: string;
+//       value: number;
+//     }
+//   ];
+//   createdAt: string;
+// }
 
 export interface reviewsDataType {
   id: string;
@@ -461,23 +462,23 @@ export interface reviewsDataType {
   createdAt: string;
 }
 
-// export type catDataType = {
-//   data: CategoryResponseBody
-// }
+export type catDataType = {
+  data: CategoryResponseBody[];
+};
 
-// export type listingDataType = {
-//   data: ListingResponseBody
-// }
+export type listingDataType = {
+  data: ListingResponseBody[];
+};
 
 // const useDetailedListingQuery = (
 //   listingId: string,
 //   setListingData: Dispatch<SetStateAction<listingDataType>>
 // ) => {
-//   fetchListing(listingId);
+//   // fetchListing(listingId);
 //   const { data } = useQuery(
 //     'detailedListing',
 //     async() => {
-//       const response = await apiClient.get(
+//       const response = await axios.get(
 //         `v1/listing/${listingId}`
 //       );
 
@@ -490,62 +491,150 @@ export interface reviewsDataType {
 //       enabled: listingId !== undefined,
 //     }
 //   )
+//   console.log(data)
 // }
 
-export const getServerSideProps = async ({ query }: { query: any }) => {
-  // api call to get listing details go here
+// export const getServerSideProps = async ({
+//   query,
+// }: GetServerSidePropsContext<{ id?: string | string[] }>) => {
+//   // api call to get user details go here
+//   // if user does not exist, return error code and redirect to wherever appropriate
 
-  const { id } = query;
-  if (!Number.isInteger(parseFloat(id))) {
-    // Redirect to the index page
-    return {
-      redirect: {
-        destination: '/',
-      },
-    };
-  }
+//   const id = Array.isArray(query.id) ? query.id[0] : query.id;
+//   const intCheck = !id || !Number.isInteger(parseFloat(id));
 
-  // just for testing purposes
-  if (id > detailedListingData.length) {
-    return {
-      redirect: {
-        destination: '/',
-      },
-    };
-  }
+//   if (intCheck) {
+//     // Redirect to the index page
+//     return {
+//       redirect: {
+//         destination: '/',
+//       },
+//     };
+//   }
 
-  const data = detailedListingData[id - 1];
-  const serverSideListingCarousel = carouselData;
+//   const numericId = parseInt(id, 10);
 
-  return {
-    props: {
-      data,
-      serverSideListingCarousel,
-      listingReviewsData,
-      categoryData,
-    },
-  };
+//   const data = profileDetailData[numericId - 1];
+//   const serverSideListings = marketplaceListingsData;
+//   const serverSideReviews = reviewsTestData;
+
+//   return {
+//     props: {
+//       data,
+//       serverSideListings,
+//       serverSideReviews,
+//     },
+//   };
+// };
+
+const useGetListingQuery = (listingID: string) => {
+  const { data } = useQuery('listing', async () => fetchListing(listingID), {
+    enabled: listingID !== undefined,
+  });
+  return data;
 };
 
-const DetailedListingPage = ({
-  data,
-  serverSideListingCarousel,
-  categoryData,
-  listingReviewsData,
-}: {
+const useGetUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  return data;
+};
+
+const useGetCategoryNameQuery = (catID: string) => {
+  const { data } = useQuery('catName', async () => fetchCat(catID));
+  return data;
+};
+
+const useGetReviewsQuery = (listingID: string) => {
+  const { data } = useQuery('reviews', async () => fetchReviews(listingID), {
+    enabled: listingID !== undefined,
+  });
+  return data;
+};
+
+const useGetListingImagesQuery = (listingID: string) => {
+  const { data } = useQuery('listingImage', async () => fetchListingImages(listingID), {
+    enabled: listingID !== undefined,
+  });
+  return data;
+};
+
+const useGetParamQuery = () => {
+  const { data } = useQuery('params', async () => fetchParams());
+  return data;
+};
+
+// export const getServerSideProps = async ({ query }: { query: any }) => {
+//   // api call to get listing details go here
+
+//   const { id } = query;
+//   if (!Number.isInteger(parseFloat(id))) {
+//     // Redirect to the index page
+//     return {
+//       redirect: {
+//         destination: '/',
+//       },
+//     };
+//   }
+
+//   // just for testing purposes
+//   if (id > detailedListingData.length) {
+//     return {
+//       redirect: {
+//         destination: '/',
+//       },
+//     };
+//   }
+
+//   const data = detailedListingData[id - 1];
+//   const serverSideListingCarousel = carouselData;
+
+//   return {
+//     props: {
+//       data,
+//       serverSideListingCarousel,
+//       listingReviewsData,
+//       categoryData,
+//     },
+//   };
+// };
+
+export type DetailedListingPageProps = {
   data: listingDataType;
-  serverSideListingCarousel: Image[];
-  categoryData: catDataType[];
-  listingReviewsData: reviewsDataType[];
-}) => {
-  // const DetailedListingPage = () => {
+  serverSideCat: catDataType;
+  serverSideReviews: reviewsDataType;
+  serverSideListingCarousel: DetailedListingCarouselProps;
+};
+
+// const DetailedListingPage = ({
+//   data,
+//   serverSideListingCarousel,
+//   serverSideCat,
+//   serverSideReviews,
+// }: DetailedListingPageProps) => {
+const DetailedListingPage = () => {
   //   const [listingData, setListingData] = useState<listingDataType>({ data: [] });
 
   // useDetailedListingQuery(setListingData);
 
   const theme = useTheme();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  // const [listings, setListings] = useState(data);
+  // const [reviews, setReviews] = useState(serverSideReviews);
+  // const [cat, setCat] = useState(serverSideCat);
+  const { spacing, shape, shadows, palette, typography } = useTheme();
 
-  data.parameter.sort((a, b) => {
+  const listings = useGetListingQuery('2');
+  const reviews = useGetReviewsQuery('2');
+  const catID = listings?.categoryId as string
+  const cat = useGetCategoryNameQuery('8');
+  // const user = useGetUserQuery(uuid)
+  
+  const param = useGetParamQuery();
+  // const listingImg = useGetListingImagesQuery('3');
+
+  listings?.parameters?.sort((a, b) => {
     if (a.paramId < b.paramId) {
       return -1;
     }
@@ -554,6 +643,40 @@ const DetailedListingPage = ({
     }
     return 0;
   });
+
+  // converts to UI design if screen goes to mobile
+  const listingStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        pagePadding: {
+          mx: spacing(0),
+          mt: spacing(0),
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        pagePadding: {
+          mx: spacing(5),
+          mt: spacing(3),
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        pagePadding: {
+          mx: spacing(5),
+          mt: spacing(3),
+        },
+      };
+    }
+    return {
+      pagePadding: {
+        mx: spacing(5),
+        mt: spacing(3),
+      },
+    };
+  }, [isSm, isMd, isLg]);
 
   const parseISOstring = (s: string) => {
     const b = s.split(/\D+/);
@@ -600,8 +723,8 @@ const DetailedListingPage = ({
                     })}
                   >
                     <Box>
-                      {data.type === 'BUY' && <BuyBadge />}
-                      {data.type === 'SELL' && <SellBadge />}
+                      {listings?.type === 'BUY' && <BuyBadge />}
+                      {listings?.type === 'SELL' && <SellBadge />}
                     </Box>
                     <Typography
                       sx={({ spacing }) => ({
@@ -610,7 +733,7 @@ const DetailedListingPage = ({
                       })}
                       variant="h6"
                     >
-                      {data.name}
+                      {listings?.name}
                     </Typography>
                   </Grid>
 
@@ -622,7 +745,7 @@ const DetailedListingPage = ({
                     })}
                     variant="h5"
                   >
-                    S${data.price}
+                    S${listings?.price}
                   </Typography>
                 </Grid>
                 <Grid
@@ -664,7 +787,7 @@ const DetailedListingPage = ({
                   alignItems: 'center',
                 })}
               >
-                <Typography variant="body1">{data.description}</Typography>
+                <Typography variant="body1">{listings?.description}</Typography>
               </Box>
               <Typography
                 sx={({ spacing }) => ({
@@ -683,7 +806,7 @@ const DetailedListingPage = ({
                 })}
               >
                 <Grid container columns={4}>
-                  {data.parameter.map(({ paramId, value }) => (
+                  {listings?.parameters?.map(({ paramId, value }) => (
                     // <Grid key={paramId}>
                     <Box
                       sx={({ spacing }) => ({
@@ -729,7 +852,7 @@ const DetailedListingPage = ({
                     })}
                   >
                     <Typography sx={{ color: theme.palette.grey[500] }}>Negotiable</Typography>
-                    <Typography>{data.negotiable ? 'Yes' : 'No'}</Typography>
+                    <Typography>{listings?.negotiable ? 'Yes' : 'No'}</Typography>
                   </Box>
                   <Box
                     sx={({ spacing }) => ({
@@ -737,7 +860,7 @@ const DetailedListingPage = ({
                     })}
                   >
                     <Typography sx={{ color: theme.palette.grey[500] }}>Unit Price</Typography>
-                    <Typography>{data.unitPrice ? 'Yes' : 'No'}</Typography>
+                    <Typography>{listings?.unitPrice ? 'Yes' : 'No'}</Typography>
                   </Box>
                   <Box
                     sx={({ spacing }) => ({
@@ -745,9 +868,9 @@ const DetailedListingPage = ({
                     })}
                   >
                     <Typography sx={{ color: theme.palette.grey[500] }}>Category</Typography>
-                    <Typography>
-                      {categoryData.find((x) => x.id === data.categoryId)?.name}
-                    </Typography>
+                    {/* <Typography>{cat?.((x) => x.id === listings?.categoryId)?.name}</Typography> */}
+                    <Typography>{cat?.name}</Typography>
+                    {/* <Typography>{listings?.categoryId}</Typography> */}
                   </Box>
                   <Box
                     sx={({ spacing }) => ({
@@ -755,7 +878,7 @@ const DetailedListingPage = ({
                     })}
                   >
                     <Typography sx={{ color: theme.palette.grey[500] }}>Posted On</Typography>
-                    <Typography>{parseISOstring(data.createdAt)}</Typography>
+                    {/* <Typography>{parseISOstring(listings?.createdAt)}</Typography> */}
                   </Box>
 
                   <Box
@@ -764,7 +887,7 @@ const DetailedListingPage = ({
                     })}
                   >
                     <Typography sx={{ color: theme.palette.grey[500] }}>Posted By</Typography>
-                    <Typography>{data.owner.name}</Typography>
+                    <Typography>{listings?.owner.name}</Typography>
                   </Box>
                   <Box
                     sx={({ spacing }) => ({
@@ -772,7 +895,7 @@ const DetailedListingPage = ({
                     })}
                   >
                     <Typography sx={{ color: theme.palette.grey[500] }}>Company</Typography>
-                    <Typography>{data.owner.company.name}</Typography>
+                    <Typography>{listings?.owner.company.name}</Typography>
                   </Box>
                 </Grid>
               </Box>
@@ -788,10 +911,19 @@ const DetailedListingPage = ({
               {/* <ChatNow data={data} /> */}
             </Grid>
 
-            <Box sx={({ spacing }) => ({ pt: spacing(3), pb: spacing(4), ml: spacing(5), width: '100%', })}>
+            <Box
+              sx={({ spacing }) => ({
+                pt: spacing(3),
+                pb: spacing(4),
+                ml: spacing(5),
+                width: '100%',
+              })}
+            >
               <Grid container>
                 <Grid item xs={4}>
-                  <Typography sx={{fontWeight: 600}} variant="h5">Reviews</Typography>
+                  <Typography sx={{ fontWeight: 600 }} variant="h5">
+                    Reviews
+                  </Typography>
                 </Grid>
                 <Grid item xs={8}>
                   <Button
@@ -803,18 +935,17 @@ const DetailedListingPage = ({
                 </Grid>
               </Grid>
 
-              {listingReviewsData.map(({ id, review, rating }) => (
+              {reviews?.map(({ id, review, rating }) => (
                 <Box sx={({ spacing }) => ({ width: 300, pt: spacing(3) })}>
                   <Grid container>
                     <Grid item xs={6}>
-                      <Typography
-                        
+                      {/* <Typography
                         sx={{
                           fontWeight: 500,
                         }}
                       >
                         {userData.find((x) => x.id === id)?.name}
-                      </Typography>
+                      </Typography> */}
                       {review}
                     </Grid>
                     <Grid item xs={6}>
