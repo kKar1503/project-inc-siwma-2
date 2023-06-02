@@ -1,17 +1,12 @@
-import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
-import ProductListingItem, {
-  ProductListingItemProps,
-} from '@/components/marketplace/listing/ProductListingItem';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
 export interface UserBookmarksProps {
   title: string;
@@ -25,8 +20,7 @@ export type DisplayResultsProps = {
 };
 
 const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
-  const Theme = useTheme();
-  const isMediumScreen = useMediaQuery(Theme.breakpoints.down('md'));
+  const [isMd, isSm] = useResponsiveness(['md', 'sm']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [sort, setSort] = useState<SortProps>('Recent');
   const [category, setCategory] = useState<string>('');
@@ -39,8 +33,8 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
   };
 
   return (
-    <Grid item sm={12} md={12} display="flex" justifyContent="center">
-      {filter && (
+    <Grid item sm={12} md={12} display="flex">
+      {filter && !isMd && !isSm && (
         <Grid
           item
           xs={12}
@@ -65,15 +59,17 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
         <Box sx={{ display: 'flex' }}>
           <Grid item xs={10} md={8} container justifyContent="flex-start">
             <Grid item xs={12} md={12} sx={{ marginTop: 2 }}>
-              <Typography sx={{ fontWeight: 500 }} variant="h3">
+              <Typography variant="h3" fontSize={isSm ? '2rem' : '3rem'}>
                 {data.title} Bookmarks
               </Typography>
-              <Typography variant="h5">
-                {data?.noOfItems} {data.title}
+              <Typography variant="h5" fontSize={isSm ? '1rem' : '1.5rem'}>
+                {data?.noOfItems > 1 && data?.noOfItems !== 0
+                  ? `${data?.noOfItems} ${data.title}s`
+                  : `${data?.noOfItems} ${data.title}`}
               </Typography>
             </Grid>
           </Grid>
-          {isMediumScreen && filter && (
+          {(isMd || isSm) && filter && (
             <Grid item xs={2} container justifyContent="flex-end" alignContent="center">
               <Button
                 size="large"
@@ -104,6 +100,7 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
         </Box>
 
         {children}
+
         {data && data.noOfItems === 0 && (
           <Grid container justifyContent="center">
             <Typography>No items found.</Typography>

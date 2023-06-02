@@ -10,64 +10,38 @@ import { red } from '@mui/material/colors';
 import { StarsRating } from '@inc/ui';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { Listing } from '@/utils/api/client/zod';
+import { useSession } from 'next-auth/react';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
 
-export type ProductListingItemProps = {
-  productId: number;
-  img: string;
-  profileImg: string;
-  type: string;
-  name: string;
-  rating: number;
-  price: number;
-  negotiable: boolean;
-  ownerId: string;
-  ownerFullName: string;
-  createdAt: string;
-  companyName: string;
-  isUnitPrice: boolean;
-  isOwnProfile: boolean;
-};
-
 export type ProductListingItemData = {
-  data: ProductListingItemProps;
+  data: Listing;
 };
 
 const ProductListingItem = ({ data }: ProductListingItemData) => {
-  // destructure data
-  const {
-    productId,
-    img,
-    profileImg,
-    type,
-    name,
-    rating,
-    price,
-    negotiable,
-    ownerId,
-    ownerFullName,
-    createdAt,
-    companyName,
-    isUnitPrice,
-    isOwnProfile,
-  } = data;
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
+  const placeholder = '/images/Placeholder.png';
 
   // save computation power to avoid multiple calculations on each render
   const datetime = useMemo(
-    () => DateTime.fromISO(createdAt).toRelative({ locale: 'en-SG' }),
-    [createdAt]
+    () => DateTime.fromISO(data.createdAt).toRelative({ locale: 'en-SG' }),
+    [data.createdAt]
   );
 
   const theme = useTheme();
+  const [isSm] = useResponsiveness(['sm']);
 
   return (
     <Card
       sx={{
-        maxWidth: 288,
+        maxWidth: 500,
         maxHeight: '100%',
         border: `1px solid ${theme.palette.grey[400]}`,
         transition: 'transform .2s',
@@ -76,47 +50,70 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
         },
       }}
     >
-      <Link style={{ textDecoration: 'none' }} href={`/profile/${ownerId}`}>
+      <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
         <CardHeader
+          style={{ marginLeft: '-10px' }}
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }} src={profileImg}>
-              {ownerFullName.charAt(0)}
+            <Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
+              {data.owner.name.charAt(0)}
             </Avatar>
           }
-          title={ownerFullName}
+          title={data.owner.name}
           titleTypographyProps={{
-            fontSize: 16,
+            fontSize: isSm ? 14 : 16,
             fontWeight: 'bold',
           }}
-          subheader={companyName}
+          subheader={data.owner.company.name}
+          subheaderTypographyProps={{
+            fontSize: isSm ? 12 : 14,
+          }}
         />
       </Link>
-      <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}>
-        <CardMedia component="img" height="288" image={img} />
+      <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
+        <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
       </Link>
       <CardContent
         sx={({ spacing }) => ({
-          pl: spacing(2),
+          pl: isSm ? spacing(1) : spacing(2),
         })}
       >
-        <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}>
+        <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
           <Box
-            sx={({ spacing }) => ({
+            sx={{
               display: 'flex',
-              pb: spacing(2),
-            })}
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              pb: 1,
+            }}
           >
-            {type === 'Buy' && <BuyBadge />}
-            {type === 'Sell' && <SellBadge />}
-            {negotiable && <NegotiableBadge />}
+            <Grid container alignItems={isSm ? 'flex-start' : 'center'} spacing={1}>
+              {data.type === 'BUY' && (
+                <Grid item>
+                  <BuyBadge />
+                </Grid>
+              )}
+              {data.type === 'SELL' && (
+                <Grid item>
+                  <SellBadge />
+                </Grid>
+              )}
+              {data.negotiable && (
+                <Grid item>
+                  <NegotiableBadge />
+                </Grid>
+              )}
+            </Grid>
 
-            <Box sx={{ ml: 'auto' }}>
-              {isOwnProfile && <MoreProfileIcon productId={productId} />}
-            </Box>
+            {data.owner.id === loggedUserUuid && (
+              <Box>
+                <MoreProfileIcon productId={data.id} />
+              </Box>
+            )}
           </Box>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
             <Typography
@@ -124,40 +121,40 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
               variant="body2"
               color={theme.palette.text.primary}
               fontWeight={400}
-              fontSize={20}
+              fontSize={isSm ? 18 : 20}
             >
-              {name}
+              {data.name}
             </Typography>
           </Box>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
             <Typography
               variant="subtitle2"
               color={theme.palette.text.primary}
               fontWeight="bold"
-              fontSize={24}
+              fontSize={isSm ? 20 : 24}
             >
               {new Intl.NumberFormat('en-SG', {
                 style: 'currency',
                 currency: 'SGD',
-              }).format(price)}
-              {isUnitPrice && '/unit'}
+              }).format(data.price)}
+              {data.unitPrice && '/unit'}
             </Typography>
           </Box>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
-            <StarsRating rating={rating} />
+            <StarsRating rating={data.rating} />
           </Box>
         </Link>
         <Box
           sx={({ spacing }) => ({
-            pb: spacing(2),
+            pb: spacing(1),
           })}
         >
           <Typography variant="subtitle1" color={theme.palette.text.secondary} fontSize={16}>
