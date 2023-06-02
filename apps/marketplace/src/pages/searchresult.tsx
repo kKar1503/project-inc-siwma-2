@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 // middleware
 import fetchListings, { FilterOptions } from '@/middlewares/fetchListings';
 import { Listing } from '../utils/api/client/zod/listings';
@@ -17,7 +18,7 @@ const useSearchListings = (matching: string, filter?: FilterOptions) => {
   return data;
 };
 
-const change = (listing: Listing) => ({
+const convertListing = (listing: Listing, uuid: string) => ({
   productId: Number(listing.id),
   img: listing.coverImage ? listing.coverImage : '',
   profileImg: listing.owner.profilePic ? listing.owner.profilePic : '',
@@ -31,14 +32,17 @@ const change = (listing: Listing) => ({
   createdAt: listing.createdAt,
   companyName: listing.owner.company.name,
   isUnitPrice: listing.unitPrice,
-  isOwnProfile: false,
+  isOwnProfile: listing.owner.id === uuid,
 });
 
-const changeProductItems = (listings: Listing[] | undefined) => {
+const convertToProductListingItems = (
+  listings: Listing[] | undefined,
+  uuid: string | undefined
+) => {
   const temp: ProductListingItemProps[] = [];
-  if (listings) {
+  if (listings && uuid) {
     listings.forEach((listing) => {
-      temp.push(change(listing));
+      temp.push(convertListing(listing, uuid));
     });
   }
 
@@ -48,6 +52,7 @@ const changeProductItems = (listings: Listing[] | undefined) => {
 const Searchresult = () => {
   const router = useRouter();
   const { search } = router.query;
+  const { data: session } = useSession();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
 
   const listingData = useSearchListings(search as string, filterOptions);
@@ -55,7 +60,7 @@ const Searchresult = () => {
   return (
     <DisplayResults
       filter
-      data={changeProductItems(listingData)}
+      data={convertToProductListingItems(listingData, session?.user.id)}
       setFilterOptions={setFilterOptions}
     >
       <>
