@@ -8,7 +8,6 @@ interface InfiniteScrollProps<TParent, TChild> {
   loadingComponent: ReactNode;
   reachedMaxItems: boolean;
   endMessage: ReactNode;
-  dataLength: number;
   parent: ComponentType<TParent>;
   child: ComponentType<TChild>;
   parentProps?: any;
@@ -26,7 +25,6 @@ interface InfiniteScrollProps<TParent, TChild> {
  * @prop {loadingComponent} ReactNode to render when loading
  * @prop {reachedMaxItems} boolean to indicate if all items have been loaded
  * @prop {endMessage} ReactNode to render when all items have been loaded
- * @prop {dataLength} number to indicate how many items have been loaded
  * @prop {parent} component to wrap children in
  * @prop {child} component to wrap each child in
  * @prop {parentProps} props to pass to parent
@@ -42,7 +40,6 @@ const InfiniteScroll = <TParent, TChild>({
   loadingComponent,
   reachedMaxItems,
   endMessage,
-  dataLength,
   parent: Parent,
   child: Child,
   parentProps = {},
@@ -63,12 +60,12 @@ const InfiniteScroll = <TParent, TChild>({
     console.log('fetching', fetching);
     console.log(
       e.target.documentElement.scrollTop + window.innerHeight <=
-        e.target.documentElement.scrollHeight - childRef.current.clientHeight
+        e.target.documentElement.scrollHeight - childRef.current.clientHeight * 2
     );
 
     if (
       e.target.documentElement.scrollTop + window.innerHeight <=
-        e.target.documentElement.scrollHeight - childRef.current.clientHeight ||
+        e.target.documentElement.scrollHeight - childRef.current.clientHeight * 2 ||
       (loading && fetching)
     )
       return;
@@ -78,7 +75,8 @@ const InfiniteScroll = <TParent, TChild>({
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
-  }, []);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading, fetching]);
 
   return (
     <>

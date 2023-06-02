@@ -59,7 +59,6 @@ const InfiniteScrollingPage = () => {
           fetching={isFetching}
           loadingComponent={<Typography>Loading...</Typography>}
           endMessage={<Typography>End of List</Typography>}
-          dataLength={stuff.length}
           reachedMaxItems={false}
         >
           {stuff.map((aStuff, index) => (
