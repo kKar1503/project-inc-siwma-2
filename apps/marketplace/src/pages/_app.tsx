@@ -2,14 +2,13 @@ import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, {useEffect, useMemo } from 'react';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
 import { ThemeComponent, useResponsiveness } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { SnackbarProvider, MaterialDesignContent, SnackbarOrigin } from 'notistack';
 import { styled } from '@mui/material';
-import CloseButton from '@/components/marketplace/notification/CloseButton';
 
 // -- Type declarations --//
 // Page type
@@ -53,7 +52,8 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     backgroundColor: 'white',
     padding: '0px',
     alignItems: 'center',
-    border: '1px solid blue',
+    border: '1px solid',
+    borderColor: '#2196f3',
   },
 }));
 
@@ -62,8 +62,6 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
   const { allowAuthenticated, allowNonAuthenticated } = Component;
-  // Snackbar close button
-  const CloseAlert = useCallback((key: unknown) => <CloseButton id={key} />, []);
   // Stying snackbar responsiveness
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const alertStyle: SnackbarOrigin | undefined = useMemo(() => {
@@ -91,7 +89,6 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           <QueryClientProvider client={queryClient}>
             <SnackbarProvider
               maxSnack={3}
-              action={CloseAlert}
               anchorOrigin={alertStyle}
               Components={{
                 default: StyledMaterialDesignContent,

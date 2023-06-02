@@ -32,11 +32,10 @@ const Alert = ({ open, setOpen, severity, alertContent, alertTitle }: AlertProps
   };
 
   return (
-    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={alertStyle}>
       <MUIAlert
-        variant="outlined"
+        // variant="outlined"
         severity={severity}
-        onClose={handleClose}
+        // onClose={handleClose}
         sx={({ palette, typography }) => ({
           bgcolor: palette.common.white,
           fontSize: typography.subtitle1,
@@ -45,7 +44,6 @@ const Alert = ({ open, setOpen, severity, alertContent, alertTitle }: AlertProps
         <AlertTitle>{alertTitle}</AlertTitle>
         {alertContent}
       </MUIAlert>
-    </Snackbar>
   );
 };
 

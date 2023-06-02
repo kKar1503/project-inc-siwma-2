@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Button from '@mui/material/Button';
 import Alert from '@/components/marketplace/notification/Alert';
 import ChatAlert, { ChatData } from '@/components/marketplace/notification/ChatAlert';
+import CloseButton from '@/components/marketplace/notification/CloseButton';
 import { useSnackbar } from 'notistack';
 
 const response: ChatData = {
@@ -18,25 +19,16 @@ const TestNotifi = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [reply, setReply] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
-
-  const handleClick = () => {
-    setOpen(true);
-    setTimeout(() => {
-      setOpen(false);
-    }, 5000);
-  };
+  const action = useCallback((key: unknown) => <CloseButton id={key} />, []);
 
   // onClick handle for chat notification
   const handleSnackbarClick = () => {
     const message = <ChatAlert reply={reply} setReply={setReply} chatData={response} />;
-    enqueueSnackbar(message, { variant: 'default' });
+    enqueueSnackbar(message, { variant: 'default', action });
   };
 
-  return (
-    <>
-      <Button variant="contained" size="medium" sx={{ mx: 3, mb: 2 }} onClick={handleClick}>
-        basic alert
-      </Button>
+  const handleAlertClick = () => {
+    const alert = (
       <Alert
         open={open}
         setOpen={setOpen}
@@ -44,6 +36,15 @@ const TestNotifi = () => {
         alertContent="New listing has been successfully created."
         severity="warning"
       />
+    );
+    enqueueSnackbar(alert, { variant: 'default', action });
+  };
+
+  return (
+    <>
+      <Button variant="contained" size="medium" sx={{ mx: 3, mb: 2 }} onClick={handleAlertClick}>
+        basic alert
+      </Button>
       <Button variant="contained" size="medium" sx={{ mx: 3, mb: 2 }} onClick={handleSnackbarClick}>
         Chat Alert
       </Button>
