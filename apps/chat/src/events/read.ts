@@ -7,13 +7,8 @@ import prisma from '@inc/db';
 const readEvent: EventFile = (io, socket) => ({
   eventName: EVENTS.CLIENT.READ,
   type: 'on',
-  callback: ({ room, messageId }, successCallback) => {
+  callback: ({ room, messageId }, callback) => {
     logger.info(`Message ${messageId} read`);
-
-    const callback = (successObj: { success: boolean }) => {
-      socket.to(room).emit(EVENTS.SERVER.READ, { room: room, message: messageId });
-      successCallback(successObj);
-    };
 
     prisma.messages.update({
       where: {
@@ -23,6 +18,7 @@ const readEvent: EventFile = (io, socket) => ({
         read: true,
       },
     }).then(() => {
+      socket.to(room).emit(EVENTS.SERVER.READ, { room: room, message: messageId });
       callback({ success: true });
     }).catch(() => {
       callback({ success: false });
