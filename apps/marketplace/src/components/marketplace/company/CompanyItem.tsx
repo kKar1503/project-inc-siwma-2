@@ -7,15 +7,33 @@ import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { Company } from '@/utils/api/client/zod/companies';
-import axios from 'axios';
+
+// Middleware
+import bookmarkCompany from '@/middlewares/bookmarks/bookmarkCompany';
 
 export type CompanyItemData = {
   data: Company;
 };
 
+const useBookmarkCompany = (companyID: string) => {
+  const [isBookmarked, setIsBookmarked] = useState(true);
+
+  const handleBookmarkCompany = async () => {
+    if (isBookmarked) {
+      await bookmarkCompany(companyID);
+      setIsBookmarked(false);
+    }
+  };
+
+  return {
+    isBookmarked,
+    handleBookmarkCompany,
+  };
+};
+
 const CompanyItem = ({ data }: CompanyItemData) => {
   const [isSm] = useResponsiveness(['sm']);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { isBookmarked, handleBookmarkCompany } = useBookmarkCompany(data.id);
 
   return (
     <Card sx={{ height: isSm ? 240 : 280 }}>
@@ -35,9 +53,9 @@ const CompanyItem = ({ data }: CompanyItemData) => {
         )}
         <IconButton
           aria-label="bookmark"
-          disabled={isBookmarked}
           color={isBookmarked ? 'primary' : 'default'}
           style={{ position: 'absolute', top: 8, right: 8 }}
+          onClick={handleBookmarkCompany}
         >
           <BookmarkIcon />
         </IconButton>

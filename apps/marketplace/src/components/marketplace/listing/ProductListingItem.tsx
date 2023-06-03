@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { useTheme } from '@mui/material/styles';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { Listing } from '@/utils/api/client/zod';
 import { useSession } from 'next-auth/react';
 import MoreProfileIcon from './MoreProfileIcon';
@@ -24,6 +25,22 @@ import NegotiableBadge from './NegotiableBadge';
 
 export type ProductListingItemData = {
   data: Listing;
+};
+
+const useBookmarkListing = (listingID: string) => {
+  const [isBookmarked, setIsBookmarked] = useState(true);
+
+  const handleBookmarkListing = async () => {
+    if (isBookmarked) {
+      await bookmarkListing(listingID);
+      setIsBookmarked(false);
+    }
+  };
+
+  return {
+    isBookmarked,
+    handleBookmarkListing,
+  };
 };
 
 const ProductListingItem = ({ data }: ProductListingItemData) => {
@@ -39,8 +56,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
 
   const theme = useTheme();
   const [isSm] = useResponsiveness(['sm']);
-
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id);
 
   return (
     <Card
@@ -108,12 +124,12 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
                 </Grid>
               )}
             </Grid>
-            {/* Bookmark button/icon */}
+
             <Box>
               <IconButton
                 aria-label="bookmark"
-                disabled={isBookmarked}
                 color={isBookmarked ? 'primary' : 'default'}
+                onClick={handleBookmarkListing}
               >
                 <BookmarkIcon />
               </IconButton>

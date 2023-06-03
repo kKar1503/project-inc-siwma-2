@@ -10,45 +10,62 @@ import Link from 'next/link';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { User } from '@/utils/api/client/zod/users';
 import { red } from '@mui/material/colors';
+
+// Middleware
 import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
-import { useQuery } from 'react-query';
 
 export type UserItemData = {
   data: User;
 };
 
+const useBookmarkUser = (userUuid: string) => {
+  const [isBookmarked, setIsBookmarked] = useState(true);
+
+  const handleBookmarkUser = async () => {
+    if (isBookmarked) {
+      await bookmarkUser(userUuid);
+      setIsBookmarked(false);
+    }
+  };
+
+  return {
+    isBookmarked,
+    handleBookmarkUser,
+  };
+};
+
 const UserItem = ({ data }: UserItemData) => {
   const [isSm] = useResponsiveness(['sm']);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { isBookmarked, handleBookmarkUser } = useBookmarkUser(data.id);
 
   return (
-    <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
-      <Card>
-        <CardHeader
-          avatar={
-            <Avatar sx={{ bgcolor: red[500] }} src={data.profilePic || '/images/Placeholder.png'}>
-              {data.name.charAt(0)}
-            </Avatar>
-          }
-          title={data.name}
-          titleTypographyProps={{
-            fontSize: isSm ? 14 : 16,
-            fontWeight: 'bold',
-          }}
-          subheader={data.bio}
-          subheaderTypographyProps={{
-            fontSize: isSm ? 12 : 14,
-          }}
-          action={
-            <IconButton
-              aria-label="bookmark"
-              disabled={isBookmarked}
-              color={isBookmarked ? 'primary' : 'default'}
-            >
-              <BookmarkIcon />
-            </IconButton>
-          }
-        />
+    <Card>
+      <CardHeader
+        avatar={
+          <Avatar sx={{ bgcolor: red[500] }} src={data.profilePic || '/images/Placeholder.png'}>
+            {data.name.charAt(0)}
+          </Avatar>
+        }
+        title={data.name}
+        titleTypographyProps={{
+          fontSize: isSm ? 14 : 16,
+          fontWeight: 'bold',
+        }}
+        subheader={data.bio}
+        subheaderTypographyProps={{
+          fontSize: isSm ? 12 : 14,
+        }}
+        action={
+          <IconButton
+            aria-label="bookmark"
+            color={isBookmarked ? 'primary' : 'default'}
+            onClick={handleBookmarkUser}
+          >
+            <BookmarkIcon />
+          </IconButton>
+        }
+      />
+      <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
         <CardContent>
           <Typography variant="body1" align="center" sx={{ fontWeight: 500 }}>
             Email: {data.email}
@@ -57,8 +74,8 @@ const UserItem = ({ data }: UserItemData) => {
             Phone Number: {data.mobileNumber}
           </Typography>
         </CardContent>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 };
 

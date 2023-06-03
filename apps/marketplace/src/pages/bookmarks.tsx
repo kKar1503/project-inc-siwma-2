@@ -36,6 +36,7 @@ const Bookmarks = () => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [bookmarkData, setBookmarkData] = useState(null); // New state for bookmark data
 
   const handleButtonClick = (type: BookmarkTypeProps) => {
     setSelectedButton(type);
@@ -101,8 +102,10 @@ const Bookmarks = () => {
       findListings(bookmarks.listings);
       findUsers(bookmarks.users);
       findCompanies(bookmarks.companies);
+
+      setBookmarkData(bookmarks); // Update the bookmark data state
     }
-  }, [userDetails]);
+  }, [userDetails, bookmarkData]); // Add bookmarkData as a dependency
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
