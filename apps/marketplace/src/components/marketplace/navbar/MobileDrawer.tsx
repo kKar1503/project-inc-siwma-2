@@ -46,38 +46,38 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
   const list = () => (
     <Box onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
       <List sx={{ width: 250, bgcolor: 'background.paper' }}>
-        <ListItem disablePadding>
-          <Link href="/" underline="none">
+        <Link href="/" underline="none">
+          <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 <HomeIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="Home" />
             </ListItemButton>
-          </Link>
-        </ListItem>
+          </ListItem>
+        </Link>
 
-        <ListItem disablePadding>
-          <Link href="/categories" underline="none">
+        <Link href="/categories" underline="none">
+          <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 <CategoryIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="All Categories" />
             </ListItemButton>
-          </Link>
-        </ListItem>
+          </ListItem>
+        </Link>
 
-        <ListItem disablePadding>
-          <Link href="/create-listing" underline="none">
+        <Link href="/create-listing" underline="none">
+          <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 <AddCircleIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="Add Listing" />
             </ListItemButton>
-          </Link>
-        </ListItem>
+          </ListItem>
+        </Link>
 
         <Divider />
 
@@ -122,16 +122,16 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           </List>
         </Collapse>
 
-        <ListItem disablePadding>
-          <Link href="/chat" underline="none">
+        <Link href="/chat" underline="none">
+          <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 <ChatIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="Chat" />
             </ListItemButton>
-          </Link>
-        </ListItem>
+          </ListItem>
+        </Link>
 
         <ListItem disablePadding>
           {/* no link, dropdown to english and chinese options */}
@@ -157,16 +157,16 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
         </Collapse>
 
         {/* update with logic when ready */}
-        <ListItem disablePadding>
-          <Link href="/" underline="none">
+        <Link href="/" underline="none">
+          <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 <LogoutIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="Log Out" />
             </ListItemButton>
-          </Link>
-        </ListItem>
+          </ListItem>
+        </Link>
       </List>
     </Box>
   );
