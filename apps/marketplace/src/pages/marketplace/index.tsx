@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Box, Grid, Link, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Grid, Link, Typography, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 
@@ -15,7 +15,7 @@ import fetchListings from '@/middlewares/fetchListings';
 import fetchAdvertisements from '@/middlewares/fetchAdvertisements';
 import fetchPopularListings from '@/middlewares/fetchPopularListings';
 
-import InfiniteScroll from '@inc/ui/lib/components/InfiniteScroll';
+import {InfiniteScroll} from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 
 const useGetCategoriesQuery = () => {
@@ -124,6 +124,8 @@ const Marketplace = () => {
           onLoadMore={refetch}
           loading={isLoading}
           reachedMaxItems={maxItems}
+          loadingComponent={<CircularProgress />}
+          endMessage={<Typography variant="h6">No more listings</Typography>}
           parent={Grid}
           parentProps={{
             container: true,
