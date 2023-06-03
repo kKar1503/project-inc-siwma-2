@@ -1,10 +1,12 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Link from 'next/link';
 import { red } from '@mui/material/colors';
 import { StarsRating } from '@inc/ui';
@@ -37,6 +39,8 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
 
   const theme = useTheme();
   const [isSm] = useResponsiveness(['sm']);
+
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   return (
     <Card
@@ -104,6 +108,16 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
                 </Grid>
               )}
             </Grid>
+            {/* Bookmark button/icon */}
+            <Box>
+              <IconButton
+                aria-label="bookmark"
+                disabled={isBookmarked}
+                color={isBookmarked ? 'primary' : 'default'}
+              >
+                <BookmarkIcon />
+              </IconButton>
+            </Box>
 
             {data.owner.id === loggedUserUuid && (
               <Box>
