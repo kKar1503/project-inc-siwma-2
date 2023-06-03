@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { chatSchema } from '@/utils/api/server/zod';
-import PrismaClient, { Rooms } from '@inc/db';
+import PrismaClient from '@inc/db';
 import {
   ParamError,
   SameBuyerSellerError,
@@ -8,15 +8,6 @@ import {
   SellerNotOwnerError,
   ChatRoomExistsError,
 } from '@inc/errors';
-
-// -- Helper functions -- //
-export function formatChatResponse(chatData: Rooms) {
-  return {
-    id: chatData.id,
-    seller: chatData.seller,
-    buyer: chatData.buyer,
-  };
-}
 
 export default apiHandler().post(async (req, res) => {
   // Parse and validate the request body
