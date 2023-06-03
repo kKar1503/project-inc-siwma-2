@@ -5,8 +5,10 @@ import { ListingType } from '@prisma/client';
 import z from 'zod';
 import s3Connection from '@/utils/s3Connection';
 import { listingSchema } from '@/utils/api/server/zod';
-import { formatSingleListingResponse, ListingBucketName, parseListingId } from '..';
+import { formatSingleListingResponse, parseListingId } from '..';
 
+
+const ListingBucketName = process.env.LISTING_BUCKET_NAME as string;
 // -- Functions --//
 /**
  * Checks if a listing exists
@@ -73,7 +75,7 @@ export default apiHandler()
       },
       where: {
         listing: id,
-      },
+      }
     });
 
     const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
