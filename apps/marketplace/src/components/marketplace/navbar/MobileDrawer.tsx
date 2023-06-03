@@ -21,14 +21,10 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
-
-import { useTheme } from '@mui/material/styles';
 import { useState, Fragment, MouseEvent } from 'react';
 import { Link } from '@mui/material';
 
 const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
-  const theme = useTheme();
-
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openLanguage, setOpenLanguage] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
@@ -47,10 +43,6 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
     setOpenDrawer(openState);
   };
 
-  const addList = {
-    color: theme.palette.primary.main,
-  };
-
   const list = () => (
     <Box onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
       <List sx={{ width: 250, bgcolor: 'background.paper' }}>
@@ -58,7 +50,7 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           <Link href="/" underline="none">
             <ListItemButton>
               <ListItemIcon>
-                <HomeIcon sx={{ color: theme.palette.grey[600] }} />
+                <HomeIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="Home" />
             </ListItemButton>
@@ -69,7 +61,7 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           <Link href="/categories" underline="none">
             <ListItemButton>
               <ListItemIcon>
-                <CategoryIcon sx={{ color: theme.palette.grey[600] }} />
+                <CategoryIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="All Categories" />
             </ListItemButton>
@@ -80,9 +72,9 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           <Link href="/create-listing" underline="none">
             <ListItemButton>
               <ListItemIcon>
-                <AddCircleIcon sx={{ color: theme.palette.primary.main }} />
+                <AddCircleIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
-              <ListItemText primaryTypographyProps={{ style: addList }} primary="Add Listing" />
+              <ListItemText primary="Add Listing" />
             </ListItemButton>
           </Link>
         </ListItem>
@@ -92,7 +84,7 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
         <ListItem disablePadding>
           <ListItemButton onClick={handleProfileClick}>
             <ListItemIcon>
-              <AccountCircle sx={{ color: theme.palette.grey[600] }} />
+              <AccountCircle sx={({ palette }) => ({ color: palette.grey[600] })} />
             </ListItemIcon>
             <ListItemText primary="Profile" />
             {openProfile ? <ExpandLess /> : <ExpandMore />}
@@ -102,8 +94,8 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           <List component="div" disablePadding>
             <Link href={`/profile/${userId}`} underline="none">
               <ListItemButton>
-                <ListItemIcon sx={{ pl: theme.spacing(2) }}>
-                  <PersonOutlineIcon sx={{ color: theme.palette.grey[600] }} />
+                <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
+                  <PersonOutlineIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
                 </ListItemIcon>
                 <ListItemText primary="My Profile" />
               </ListItemButton>
@@ -111,8 +103,8 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
 
             <Link href={`/profile/${userId}/edit-profile`} underline="none">
               <ListItemButton>
-                <ListItemIcon sx={{ pl: theme.spacing(2) }}>
-                  <EditIcon sx={{ color: theme.palette.grey[600] }} />
+                <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
+                  <EditIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
                 </ListItemIcon>
                 <ListItemText primary="Edit Profile" />
               </ListItemButton>
@@ -121,8 +113,8 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
             {/* update link when page ready */}
             <Link href={`/profile/${userId}/change-password`} underline="none">
               <ListItemButton>
-                <ListItemIcon sx={{ pl: theme.spacing(2) }}>
-                  <LockIcon sx={{ color: theme.palette.grey[600] }} />
+                <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
+                  <LockIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
                 </ListItemIcon>
                 <ListItemText primary="Change Password" />
               </ListItemButton>
@@ -134,7 +126,7 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           <Link href="/chat" underline="none">
             <ListItemButton>
               <ListItemIcon>
-                <ChatIcon sx={{ color: theme.palette.grey[600] }} />
+                <ChatIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="Chat" />
             </ListItemButton>
@@ -145,7 +137,7 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           {/* no link, dropdown to english and chinese options */}
           <ListItemButton onClick={handleLanguageClick}>
             <ListItemIcon>
-              <TranslateIcon sx={{ color: theme.palette.grey[600] }} />
+              <TranslateIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
             </ListItemIcon>
             <ListItemText primary="Language" />
             {openLanguage ? <ExpandLess /> : <ExpandMore />}
@@ -155,11 +147,11 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           {/* add logic when translate function in */}
           <List component="div" disablePadding>
             <ListItemButton>
-              <ListItemText sx={{ pl: theme.spacing(2) }} primary="English" />
+              <ListItemText sx={({ spacing }) => ({ pl: spacing(2) })} primary="English" />
             </ListItemButton>
 
             <ListItemButton>
-              <ListItemText sx={{ pl: theme.spacing(2) }} primary="Chinese" />
+              <ListItemText sx={({ spacing }) => ({ pl: spacing(2) })} primary="Chinese" />
             </ListItemButton>
           </List>
         </Collapse>
@@ -169,7 +161,7 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           <Link href="/" underline="none">
             <ListItemButton>
               <ListItemIcon>
-                <LogoutIcon sx={{ color: theme.palette.grey[600] }} />
+                <LogoutIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
               </ListItemIcon>
               <ListItemText primary="Log Out" />
             </ListItemButton>
