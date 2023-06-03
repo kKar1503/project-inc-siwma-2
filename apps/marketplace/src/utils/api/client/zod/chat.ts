@@ -1,13 +1,33 @@
+import { ListingType } from '@prisma/client';
 import { z } from 'zod';
 
 const createChatRoom = z.object({
   room: z.string().uuid(),
 });
 
+const user = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  profilePicture: z.string().url(),
+  enabled: z.boolean(),
+});
+
+const listing = z.object({
+  id: z.string(),
+  name: z.string(),
+  price: z.number(),
+  unitPrice: z.boolean(),
+  type: z.nativeEnum(ListingType),
+  open: z.boolean(),
+  purchased: z.boolean(),
+});
+
 const getChatRoom = z.object({
   id: z.string().uuid(),
-  seller: z.string().uuid(),
-  buyer: z.string().uuid(),
+  seller: user,
+  buyer: user,
+  listing,
+  createdAt: z.string().datetime(),
 });
 
 const getChatMessage = z.object({
