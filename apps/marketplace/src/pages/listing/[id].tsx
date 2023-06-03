@@ -23,6 +23,7 @@ import fetchCat from '@/middlewares/fetchCatNames';
 import fetchUser from '@/middlewares/fetchUser';
 import fetchReviews from '@/middlewares/fetchReviews';
 import fetchParams from '@/middlewares/fetchParamNames';
+import { DateTime } from 'luxon';
 
 const carouselData = [
   {
@@ -39,6 +40,51 @@ const carouselData = [
     id: '8b63d6f4-6d58-4f2c-b2f3-33d156ee3c4e',
     fileName: 'myotherimage2-20230321T080000Z.jpg',
     url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
+  },
+];
+
+const listingData = [
+  {
+    id: '1',
+    name: 'Aluminium I-Beams',
+    description: 'Listing description',
+    price: 300,
+    unitPrice: false,
+    negotiable: true,
+    categoryId: '1',
+    type: 'SELL',
+    multiple: true,
+    owner: {
+      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+      name: 'Elon Musk',
+      email: 'elon.musk@example.com',
+      company: {
+        id: '1',
+        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+        bio: 'Owner bio',
+        image: '',
+        visible: true,
+      },
+      profilePic: null,
+      mobileNumber: '69694202',
+      contactMethod: 'email',
+      bio: null,
+    },
+    open: true,
+    rating: 4.5,
+    reviewCount: 12,
+    parameter: [
+      {
+        paramId: '3',
+        value: 200,
+      },
+      {
+        paramId: '2',
+        value: 300,
+      },
+    ],
+    createdAt: '2023-05-15T18:03:01.036Z',
   },
 ];
 
@@ -81,7 +127,6 @@ const useGetParamQuery = () => {
 };
 
 const DetailedListingPage = () => {
-
   const theme = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
@@ -90,10 +135,16 @@ const DetailedListingPage = () => {
   const reviews = useGetReviewsQuery('1');
   const catID = listings?.categoryId as unknown as number;
   const cats = useGetCategoryNameQuery(catID);
-  const uuid = reviews?.userId
-  const user = useGetUserQuery(uuid);
+  // const uuid = reviews?.userId
+  // const user = useGetUserQuery(uuid);
   const param = useGetParamQuery;
   // const listingImg = useGetListingImagesQuery('3');
+
+  const datetime = useMemo(
+    () =>
+      DateTime.fromISO(listings?.createdAt as unknown as string).toRelative({ locale: 'en-SG' }),
+    [listings?.createdAt]
+  );
 
   listings?.parameters?.sort((a, b) => {
     if (a.paramId < b.paramId) {
@@ -139,12 +190,6 @@ const DetailedListingPage = () => {
     };
   }, [isSm, isMd, isLg]);
 
-  // const parseISOstring = (s: string) => {
-  //   const b = s.split(/\D+/);
-  //   const newDate = `${b[2]} ${b[1]} ${b[0]}`;
-  //   return newDate;
-  // };
-
   return (
     <main>
       <Box
@@ -164,8 +209,8 @@ const DetailedListingPage = () => {
             ml: 'auto',
           }}
         >
-          <Grid container columns={12} sx={{ direction: 'row' }}>
-            <Grid item xs={8} sx={({ spacing }) => ({ pl: spacing(5) })}>
+          <Grid container columns={12} sx={({ spacing }) => ({ direction: 'row', pl: spacing(4) })}>
+            <Grid item xs={9} sx={({ spacing }) => ({ pl: spacing(5) })}>
               <Grid
                 container
                 columns={12}
@@ -339,7 +384,7 @@ const DetailedListingPage = () => {
                     })}
                   >
                     <Typography sx={{ color: theme.palette.grey[500] }}>Posted On</Typography>
-                    {/* <Typography>{parseISOstring(listings?.createdAt)}</Typography> */}
+                    <Typography>{datetime}</Typography>
                   </Box>
 
                   <Box
@@ -363,30 +408,30 @@ const DetailedListingPage = () => {
             </Grid>
             <Grid
               item
-              xs={4}
+              xs={3}
               sx={({ spacing }) => ({
                 pt: spacing(2),
                 pl: spacing(5),
               })}
             >
-              {/* <ChatNow data={data} /> */}
+              {/* <ChatNow data={listingData} /> */}
             </Grid>
 
             <Box
               sx={({ spacing }) => ({
                 pt: spacing(3),
                 pb: spacing(4),
-                ml: spacing(5),
-                width: '100%',
+                pl: '6%',
+                width: '70%',
               })}
             >
               <Grid container>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <Typography sx={{ fontWeight: 600 }} variant="h5">
                     Reviews
                   </Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={6}>
                   <Button
                     variant="contained"
                     sx={({ palette }) => ({ width: 250, backgroundColor: palette.primary.main })}
@@ -400,14 +445,14 @@ const DetailedListingPage = () => {
                 <Box sx={({ spacing }) => ({ width: 300, pt: spacing(3) })}>
                   <Grid container>
                     <Grid item xs={6}>
-                      <Typography
+                      {/* <Typography
                         sx={{
                           fontWeight: 500,
                         }}
-                      >
-                        {/* {user.find((x) => x.id === id)?.name} */}
-                        {user?.name}
-                      </Typography>
+                      > */}
+                      {/* {user.find((x) => x.id === id)?.name} */}
+                      {/* {user?.name} */}
+                      {/* </Typography> */}
                       {review}
                     </Grid>
                     <Grid item xs={6}>
