@@ -2,6 +2,7 @@ import { NextApiRequest } from 'next';
 import { Fields, File, Files, IncomingForm } from 'formidable';
 import fs from 'fs';
 import { Metadata, S3BucketService, S3ObjectBuilder } from '@inc/s3-simplified';
+import { APIRequestType } from '@/types/api-types';
 
 export const imageUtils = (req: NextApiRequest): Promise<{ fields?: Fields; files?: Files }> =>
   new Promise((resolve, reject) => {
@@ -72,3 +73,23 @@ export const loadImageBuilder =
   ): ((source: T) => Promise<T>) =>
   async (source) =>
     loadImage(source, bucket, imageKey);
+
+export const updateImage = async (
+  bucket: S3BucketService,
+  OldImage: string,
+  req: NextApiRequest & APIRequestType,
+): Promise<string> => {
+  const files = await getFilesFromRequest(req);
+  if (files.length > 0) {
+    const s3ObjectBuilder = fileToS3Object(files[0]);
+    // create new image and delete old image as aws doesn't support update
+    // also do these in parallel for faster response
+    const awaitedPromise = await Promise.all([
+      bucket.createObject(s3ObjectBuilder),
+      OldImage ? bucket.deleteObject(OldImage) : null,
+    ]);
+    const [newS3Object] = awaitedPromise;
+    return newS3Object.Id;
+  }
+  return OldImage;
+};

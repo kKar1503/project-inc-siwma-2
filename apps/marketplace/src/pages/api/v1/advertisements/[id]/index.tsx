@@ -4,32 +4,10 @@ import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
-import { AdvertisementBucketName, select, where } from '@api/v1/advertisements/index';
+import { AdvertisementBucketName, select, where } from '@api/v1/advertisements';
 import { APIRequestType } from '@/types/api-types';
-import { fileToS3Object, getFilesFromRequest, loadImage } from '@/utils/imageUtils';
+import { loadImage } from '@/utils/imageUtils';
 import { advertisementSchema } from '@/utils/api/server/zod';
-
-const updateImage = async (
-  OldImage: string,
-  req: NextApiRequest & APIRequestType,
-): Promise<string> => {
-  const files = await getFilesFromRequest(req);
-  if (files.length > 0) {
-    const s3ObjectBuilder = fileToS3Object(files[0]);
-
-    const bucket = await s3Connection.getBucket(AdvertisementBucketName);
-
-    // create new image and delete old image as aws doesn't support update
-    // also do these in parallel for faster response
-    const awaitedPromise = await Promise.all([
-      bucket.createObject(s3ObjectBuilder),
-      bucket.deleteObject(OldImage),
-    ]);
-    const [newS3Object] = awaitedPromise;
-    return newS3Object.Id;
-  }
-  return OldImage;
-};
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
@@ -89,7 +67,6 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     select: select(isAdmin),
     data: {
       ...validatedPayload,
-      image: await updateImage(advertisement.image, req),
       endDate,
       startDate,
     },
