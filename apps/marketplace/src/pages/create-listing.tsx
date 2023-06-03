@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
@@ -21,6 +21,8 @@ const usePostListingQuery = (listing: { listingBody: PostListingsRequestBody, im
     enabled: listing !== undefined && listing.listingBody !== undefined && listing.images !== undefined,
   });
 
+  if (data === undefined) return false;
+
   return data;
 };
 
@@ -41,12 +43,9 @@ const CreateListingPage = () => {
   // Hooks
   const postListingData = usePostListingQuery(formData);
 
-  if (postListingData) {
-    createModal.open(true);
-  }
+  useEffect(() => createModal.open(postListingData), [createModal, postListingData]);
 
-
-  // Handle Submit/Cancel
+// Handle Submit/Cancel
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
