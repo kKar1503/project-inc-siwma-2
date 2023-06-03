@@ -99,50 +99,53 @@ const ProductListingItem = ({ data, updateBookmarkData }: ProductListingItemData
           pl: isSm ? spacing(1) : spacing(2),
         })}
       >
-        <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              pb: 1,
-            }}
-          >
-            <Grid container alignItems={isSm ? 'flex-start' : 'center'} spacing={1}>
-              {data.type === 'BUY' && (
-                <Grid item>
-                  <BuyBadge />
-                </Grid>
-              )}
-              {data.type === 'SELL' && (
-                <Grid item>
-                  <SellBadge />
-                </Grid>
-              )}
-              {data.negotiable && (
-                <Grid item>
-                  <NegotiableBadge />
-                </Grid>
-              )}
-            </Grid>
-
-            <Box>
-              <IconButton
-                aria-label="bookmark"
-                color={isBookmarked ? 'primary' : 'default'}
-                onClick={handleBookmarkListing}
-              >
-                <BookmarkIcon />
-              </IconButton>
-            </Box>
-
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            pb: 1,
+          }}
+        >
+          <Grid container alignItems={isSm ? 'flex-start' : 'center'} spacing={1}>
+            {data.type === 'BUY' && (
+              <Grid item>
+                <BuyBadge />
+              </Grid>
+            )}
+            {data.type === 'SELL' && (
+              <Grid item>
+                <SellBadge />
+              </Grid>
+            )}
+            {data.negotiable && (
+              <Grid item>
+                <NegotiableBadge />
+              </Grid>
+            )}
+          </Grid>
+          <Box>
+            <IconButton
+              aria-label="bookmark"
+              onClick={handleBookmarkListing}
+              sx={({ spacing, palette }) => ({
+                p: spacing(0),
+                color: isBookmarked ? palette.warning[100] : palette.grey[500],
+              })}
+            >
+              <BookmarkIcon fontSize="large" />
+            </IconButton>
+          </Box>
+          <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
             {data.owner.id === loggedUserUuid && (
               <Box>
                 <MoreProfileIcon productId={data.id} />
               </Box>
             )}
-          </Box>
+          </Link>
+        </Box>
+        <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
           <Box
             sx={({ spacing }) => ({
               pb: spacing(1),

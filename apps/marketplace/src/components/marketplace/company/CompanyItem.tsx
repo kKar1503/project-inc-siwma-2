@@ -58,8 +58,12 @@ const CompanyItem = ({ data, updateBookmarkData }: CompanyItemData) => {
           color={isBookmarked ? 'primary' : 'default'}
           style={{ position: 'absolute', top: 8, right: 8 }}
           onClick={handleBookmarkCompany}
+          sx={({ spacing, palette }) => ({
+            p: spacing(0),
+            color: isBookmarked ? palette.warning[100] : palette.grey[500],
+          })}
         >
-          <BookmarkIcon />
+          <BookmarkIcon fontSize="large" />
         </IconButton>
       </div>
       <CardContent>

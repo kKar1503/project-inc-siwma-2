@@ -62,8 +62,11 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
             aria-label="bookmark"
             color={isBookmarked ? 'primary' : 'default'}
             onClick={handleBookmarkUser}
+            sx={({ palette }) => ({
+              color: isBookmarked ? palette.warning[100] : palette.grey[500],
+            })}
           >
-            <BookmarkIcon />
+            <BookmarkIcon fontSize="large" />
           </IconButton>
         }
       />
