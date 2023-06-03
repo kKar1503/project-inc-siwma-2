@@ -14,7 +14,7 @@ const ParamSchema = z.object({
 });
 
 
-const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
+const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
   const { id } = ParamSchema.parse(req.query);
   // find listing
@@ -65,4 +65,4 @@ const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) 
 
 
 export default apiHandler()
-  .post(POST);
+  .put(PUT);
