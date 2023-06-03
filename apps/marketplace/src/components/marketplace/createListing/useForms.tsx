@@ -18,7 +18,19 @@ const useForms = () => {
   const [formData, setFormData] = useState<{listingBody: PostListingsRequestBody ,images:Blob[]}>();
 
 
-  const updateFormData = (): boolean => {
+  const validateForm = () => {
+    resetListingErrors();
+    resetCategoryErrors();
+    resetParameterErrors();
+
+    const listingValid = listingValidation();
+    const categoryValid = categoryValidation();
+    const parameterValid = parameterValidation();
+
+    return listingValid && categoryValid && parameterValid;
+  };
+
+  const submitForm = (): boolean => {
     // backend api currently have conflicts
     const listingBody: PostListingsRequestBody = {
       ...listingData,
@@ -28,28 +40,13 @@ const useForms = () => {
       multiple: false,
     };
 
-    if (listingBody === undefined) return false;
+    if (!validateForm()) return false;
     setFormData({
       listingBody,
       ...imageData,
     });
     return true;
   };
-
-  const resetErrors = () => {
-    resetListingErrors();
-    resetCategoryErrors();
-    resetParameterErrors();
-  };
-
-  const validateForm = () => {
-    const listingValid = listingValidation();
-    const categoryValid = categoryValidation();
-    const parameterValid = parameterValidation();
-
-    return listingValid && categoryValid && parameterValid;
-  };
-
 
   const forms = <>
     {listingTypeForm}
@@ -62,10 +59,8 @@ const useForms = () => {
 
   return {
     forms,
-    resetErrors,
     formData,
-    validateForm,
-    updateFormData,
+    submitForm,
   };
 };
 

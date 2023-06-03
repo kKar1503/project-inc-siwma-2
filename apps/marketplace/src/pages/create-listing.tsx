@@ -35,9 +35,7 @@ const CreateListingPage = () => {
   const {
     forms,
     formData,
-    resetErrors,
-    validateForm,
-    updateFormData,
+    submitForm,
   } = useForms();
 
   // Hooks
@@ -49,10 +47,7 @@ const CreateListingPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // reset errors
-    resetErrors();
-    if (!validateForm()) return;
-    updateFormData();
+    submitForm();
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
