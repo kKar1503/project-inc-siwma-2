@@ -33,7 +33,7 @@ const useGetUserQuery = (userUuid: string) => {
 };
 
 const Bookmarks = () => {
-  const [selectedButton, setSelectedButton] = useState<BookmarkTypeProps>('COMPANIES');
+  const [selectedButton, setSelectedButton] = useState<BookmarkTypeProps>('LISTINGS');
   const [listings, setListings] = useState<Listing[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
