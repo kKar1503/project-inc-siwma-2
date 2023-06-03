@@ -9,15 +9,19 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { signIn } from 'next-auth/react';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
+  const { spacing, shape, shadows, palette } = useTheme();
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -35,6 +39,51 @@ const LoginForm = () => {
 
     return authResult;
   };
+
+  const stylesLogin = useMemo(() => {
+    if (isSm) {
+      return {
+        boxShadow: shadows[5],
+        px: '5rem',
+        pb: '10rem',
+        pt: spacing(3),
+        position: 'relative',
+        bgcolor: palette.common.white,
+        ...shape,
+      };
+    }
+    if (isMd) {
+      return {
+        boxShadow: shadows[5],
+        px: '10rem',
+        pb: '12rem',
+        pt: spacing(3),
+        position: 'relative',
+        bgcolor: palette.common.white,
+        ...shape,
+      };
+    }
+    if (isLg) {
+      return {
+        boxShadow: shadows[5],
+        px: '10rem',
+        pb: '15rem',
+        pt: spacing(3),
+        position: 'relative',
+        bgcolor: palette.common.white,
+        ...shape,
+      };
+    }
+    return {
+      boxShadow: shadows[5],
+      px: '10rem',
+      pb: '15rem',
+      pt: spacing(3),
+      position: 'relative',
+      bgcolor: palette.common.white,
+      ...shape,
+    };
+  }, [isSm, isMd, isLg]);
 
   return (
     <Box>
@@ -55,17 +104,7 @@ const LoginForm = () => {
             height: '100vh',
           }}
         >
-          <Box
-            sx={({ shape, shadows, spacing, palette }) => ({
-              boxShadow: shadows[5],
-              px: '10rem',
-              pb: '15rem',
-              pt: spacing(3),
-              position: 'relative',
-              bgcolor: palette.common.white,
-              ...shape,
-            })}
-          >
+          <Box sx={stylesLogin}>
             <Box
               sx={({ spacing }) => ({
                 position: 'relative',
@@ -77,7 +116,7 @@ const LoginForm = () => {
                 mb: spacing(2),
               })}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo" fill  />
+              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
             </Box>
             <Divider flexItem />
             <Box
@@ -102,6 +141,7 @@ const LoginForm = () => {
                 Please sign in to your account
               </Typography>
             </Box>
+
             <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 fullWidth

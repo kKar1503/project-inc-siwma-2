@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import { useMemo } from 'react';
 import Link from 'next/link';
 import { StarsRating } from '@inc/ui';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
 export type ReviewProps = {
   ownerId: number;
@@ -44,6 +45,8 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
     [createdAt]
   );
 
+  const [isSm] = useResponsiveness(['sm']);
+
   return (
     <List sx={{ m: 2 }}>
       <Box sx={{ m: 1 }}>
@@ -54,40 +57,46 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
           <Stack>
             <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Link
-                  href={`/profile/${ownerId}`}
-                  style={{ textDecoration: 'none', color: 'black' }}
+                <Stack
+                  direction={isSm ? 'column' : 'row'}
+                  sx={{
+                    ...(isSm ? { alignItems: 'flex-start' } : { alignItems: 'center' }),
+                  }}
                 >
-                  <Typography
-                    variant="h6"
-                    component="div"
-                    sx={{
-                      flexGrow: 1,
-                      fontWeight: 'bold',
-                      '&:hover': { textDecoration: 'underline' },
-                    }}
+                  <Link
+                    href={`/profile/${ownerId}`}
+                    style={{ textDecoration: 'none', color: 'black' }}
                   >
-                    {username}
+                    <Typography
+                      variant={isSm ? 'body1' : 'h6'}
+                      component="div"
+                      sx={{
+                        flexGrow: 1,
+                        fontWeight: 'bold',
+                        '&:hover': { textDecoration: 'underline' },
+                      }}
+                    >
+                      {username}
+                    </Typography>
+                  </Link>
+                  <Typography
+                    variant={isSm ? 'body2' : 'body1'}
+                    sx={{ flexGrow: 1, ml: isSm ? 0 : 1, alignItems: 'center' }}
+                  >
+                    review from {buyer ? 'buyer' : 'seller'}
                   </Typography>
-                </Link>
-                <Typography
-                  variant="subtitle1"
-                  sx={({ typography }) => ({
-                    fontSize: typography.subtitle1,
-                    flexGrow: 1,
-                  })}
-                >
-                  &nbsp;review from {buyer ? 'buyer' : 'seller'}
-                </Typography>
+                </Stack>
               </Box>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>&#183;</Typography>
-              <Typography variant="body1" sx={{ flexGrow: 1 }}>
+              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                &#183;
+              </Typography>
+              <Typography variant={isSm ? 'body2' : 'body1'} sx={{ flexGrow: 1 }}>
                 {datetime}
               </Typography>
             </Stack>
             <Link href="/#" style={{ textDecoration: 'none' }}>
               <Typography
-                variant="body2"
+                variant={isSm ? 'body2' : 'body1'}
                 component="div"
                 sx={{ flexGrow: 1, color: 'grey', '&:hover': { textDecoration: 'underline' } }}
               >
@@ -99,7 +108,9 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Stack direction="row" spacing={1}>
-          <Typography variant='body1' sx={{ ml: 2, fontWeight: 'bold' }}>{rating.toFixed(1)}</Typography>
+          <Typography variant="body1" sx={{ ml: 2, fontWeight: 'bold' }}>
+            {rating.toFixed(1)}
+          </Typography>
           <StarsRating rating={rating} />
         </Stack>
       </Box>

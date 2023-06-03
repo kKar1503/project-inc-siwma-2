@@ -34,7 +34,7 @@ const NavBar = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: 'white', boxShadow: 1 }}>
+    <Box sx={{ flexGrow: 1, backgroundColor: 'white', boxShadow: 1, width: '100%' }}>
       <Toolbar>
         <Image src="/images/favicons/SIWMA-icon.png" alt="logo" width={60} height={40} />
 
