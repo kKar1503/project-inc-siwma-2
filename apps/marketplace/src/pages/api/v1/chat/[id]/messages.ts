@@ -66,7 +66,8 @@ export default apiHandler().get(async (req, res) => {
   if (
     !req.token ||
     !req.token.user ||
-    (req.token.user.id !== chat.buyer && req.token.user.id !== chat.seller)
+    (req.token.user.id !== chat.usersRoomsBuyerTousers.id &&
+      req.token.user.id !== chat.usersRoomsSellerTousers.id)
   ) {
     throw new ForbiddenError();
   }
