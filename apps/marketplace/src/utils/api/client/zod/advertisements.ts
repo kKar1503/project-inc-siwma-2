@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 const companyId = z.string();
-const image = z.string().nullable();
+const image = z.string().url().nullable();
 const description = z.string();
-const link = z.string();
+const link = z.string().url();
 // Admin Fields
 const active = z.boolean().optional();
 const startDate = z.string().datetime().optional();
