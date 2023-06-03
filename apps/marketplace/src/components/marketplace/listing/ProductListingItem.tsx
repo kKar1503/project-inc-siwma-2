@@ -25,15 +25,17 @@ import NegotiableBadge from './NegotiableBadge';
 
 export type ProductListingItemData = {
   data: Listing;
+  updateBookmarkData: () => void;
 };
 
-const useBookmarkListing = (listingID: string) => {
+const useBookmarkListing = (listingID: string, updateBookmarkData: () => void) => {
   const [isBookmarked, setIsBookmarked] = useState(true);
 
   const handleBookmarkListing = async () => {
     if (isBookmarked) {
       await bookmarkListing(listingID);
       setIsBookmarked(false);
+      updateBookmarkData();
     }
   };
 
@@ -43,7 +45,7 @@ const useBookmarkListing = (listingID: string) => {
   };
 };
 
-const ProductListingItem = ({ data }: ProductListingItemData) => {
+const ProductListingItem = ({ data, updateBookmarkData }: ProductListingItemData) => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const placeholder = '/images/Placeholder.png';
@@ -56,7 +58,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
 
   const theme = useTheme();
   const [isSm] = useResponsiveness(['sm']);
-  const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id);
+  const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id, updateBookmarkData);
 
   return (
     <Card

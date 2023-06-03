@@ -16,15 +16,17 @@ import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
 
 export type UserItemData = {
   data: User;
+  updateBookmarkData: () => void;
 };
 
-const useBookmarkUser = (userUuid: string) => {
+const useBookmarkUser = (userUuid: string, updateBookmarkData: () => void) => {
   const [isBookmarked, setIsBookmarked] = useState(true);
 
   const handleBookmarkUser = async () => {
     if (isBookmarked) {
       await bookmarkUser(userUuid);
       setIsBookmarked(false);
+      updateBookmarkData();
     }
   };
 
@@ -34,9 +36,9 @@ const useBookmarkUser = (userUuid: string) => {
   };
 };
 
-const UserItem = ({ data }: UserItemData) => {
+const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
   const [isSm] = useResponsiveness(['sm']);
-  const { isBookmarked, handleBookmarkUser } = useBookmarkUser(data.id);
+  const { isBookmarked, handleBookmarkUser } = useBookmarkUser(data.id, updateBookmarkData);
 
   return (
     <Card>

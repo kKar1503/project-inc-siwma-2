@@ -13,15 +13,17 @@ import bookmarkCompany from '@/middlewares/bookmarks/bookmarkCompany';
 
 export type CompanyItemData = {
   data: Company;
+  updateBookmarkData: () => void;
 };
 
-const useBookmarkCompany = (companyID: string) => {
+const useBookmarkCompany = (companyID: string, updateBookmarkData: () => void) => {
   const [isBookmarked, setIsBookmarked] = useState(true);
 
   const handleBookmarkCompany = async () => {
     if (isBookmarked) {
       await bookmarkCompany(companyID);
       setIsBookmarked(false);
+      updateBookmarkData();
     }
   };
 
@@ -31,9 +33,9 @@ const useBookmarkCompany = (companyID: string) => {
   };
 };
 
-const CompanyItem = ({ data }: CompanyItemData) => {
+const CompanyItem = ({ data, updateBookmarkData }: CompanyItemData) => {
   const [isSm] = useResponsiveness(['sm']);
-  const { isBookmarked, handleBookmarkCompany } = useBookmarkCompany(data.id);
+  const { isBookmarked, handleBookmarkCompany } = useBookmarkCompany(data.id, updateBookmarkData);
 
   return (
     <Card sx={{ height: isSm ? 240 : 280 }}>

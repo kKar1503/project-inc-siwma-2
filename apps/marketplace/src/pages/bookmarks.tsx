@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -10,6 +10,7 @@ import CompanyBookmarks from '@/components/marketplace/bookmarks/companyBookmark
 import fetchUser from '@/middlewares/fetchUser';
 import fetchListing from '@/middlewares/fetchListing';
 import fetchCompany from '@/middlewares/fetchCompany';
+
 import { Listing } from '@/utils/api/client/zod/listings';
 import { Company } from '@/utils/api/client/zod/companies';
 import { User } from '@/utils/api/client/zod/users';
@@ -32,68 +33,50 @@ const useGetUserQuery = (userUuid: string) => {
 };
 
 const Bookmarks = () => {
-  const [selectedButton, setSelectedButton] = useState('COMPANIES');
+  const [selectedButton, setSelectedButton] = useState<BookmarkTypeProps>('COMPANIES');
   const [listings, setListings] = useState<Listing[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [bookmarkData, setBookmarkData] = useState(null); // New state for bookmark data
-
-  const handleButtonClick = (type: BookmarkTypeProps) => {
-    setSelectedButton(type);
-  };
-
-  const transformUserData = (data: RawUserProps[]) => {
-    const users: User[] = [];
-    data.forEach((item: RawUserProps) => {
-      users.push(item.data[0]);
-    });
-
-    return users;
-  };
-
-  const findListings = async (listingIDs: string[]) => {
-    if (listingIDs.length === 0) return;
-
-    const listingPromises = listingIDs.map(async (id) => {
-      const data = await fetchListing(id);
-      return data;
-    });
-
-    const listings = await Promise.all(listingPromises);
-
-    setListings(listings);
-  };
-
-  const findUsers = async (userIDs: string[]) => {
-    if (userIDs.length === 0) return;
-
-    const userPromises = userIDs.map(async (id) => {
-      const data = await fetchUser(id);
-      return data ? data.data : null;
-    });
-
-    const userData = await Promise.all(userPromises);
-    const users = transformUserData(userData);
-
-    setUsers(users);
-  };
-
-  const findCompanies = async (companyIDs: string[]) => {
-    if (companyIDs.length === 0) return;
-
-    const companyPromises = companyIDs.map(async (id) => {
-      const data = await fetchCompany(id);
-      return data;
-    });
-
-    const companies = await Promise.all(companyPromises);
-
-    setCompanies(companies);
-  };
 
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const userDetails = useGetUserQuery(loggedUserUuid);
+
+  const handleButtonClick = useCallback((type: BookmarkTypeProps) => {
+    setSelectedButton(type);
+  }, []);
+
+  const findListings = async (listingIDs: string[]) => {
+    if (listingIDs.length === 0) {
+      setListings([]);
+      return;
+    }
+
+    const listings = await Promise.all(listingIDs.map(fetchListing));
+    setListings(listings);
+  };
+
+  const findUsers = async (userIDs: string[]) => {
+    if (userIDs.length === 0) {
+      setUsers([]);
+      return;
+    }
+
+    const usersData = await Promise.all(userIDs.map(fetchUser));
+    const users = usersData[0]?.data.data;
+    setUsers(users);
+  };
+
+  const findCompanies = async (companyIDs: string[]) => {
+    if (companyIDs.length === 0) {
+      setCompanies([]);
+      return;
+    }
+
+    const companies = await Promise.all(companyIDs.map(fetchCompany));
+
+    setCompanies(companies);
+  };
 
   useEffect(() => {
     if (userDetails) {
@@ -102,49 +85,44 @@ const Bookmarks = () => {
       findListings(bookmarks.listings);
       findUsers(bookmarks.users);
       findCompanies(bookmarks.companies);
-
-      setBookmarkData(bookmarks); // Update the bookmark data state
     }
-  }, [userDetails, bookmarkData]); // Add bookmarkData as a dependency
+  }, [userDetails]);
+
+  const updateBookmarkData = async () => {
+    const updatedUserDetails = await fetchUser(loggedUserUuid);
+    const updatedBookmarkData = updatedUserDetails?.data.data[0]?.bookmarks;
+
+    findListings(updatedBookmarkData.listings);
+    findUsers(updatedBookmarkData.users);
+    findCompanies(updatedBookmarkData.companies);
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} display="flex" justifyContent="center">
-          <Grid item xs={4} md={4}>
-            <Button
-              size="large"
-              variant={selectedButton === 'LISTINGS' ? 'contained' : 'outlined'}
-              onClick={() => handleButtonClick('LISTINGS')}
-              fullWidth
-            >
-              LISTINGS
-            </Button>
-          </Grid>
-          <Grid item xs={4} md={4}>
-            <Button
-              size="large"
-              variant={selectedButton === 'USERS' ? 'contained' : 'outlined'}
-              onClick={() => handleButtonClick('USERS')}
-              fullWidth
-            >
-              USERS
-            </Button>
-          </Grid>
-          <Grid item xs={4} md={4}>
-            <Button
-              size="large"
-              variant={selectedButton === 'COMPANIES' ? 'contained' : 'outlined'}
-              onClick={() => handleButtonClick('COMPANIES')}
-              fullWidth
-            >
-              COMPANIES
-            </Button>
-          </Grid>
+          {['LISTINGS', 'USERS', 'COMPANIES'].map((type) => (
+            <Grid item xs={4} md={4} key={type}>
+              <Button
+                size="large"
+                variant={selectedButton === type ? 'contained' : 'outlined'}
+                onClick={() => handleButtonClick(type as BookmarkTypeProps)}
+                fullWidth
+              >
+                {type}
+              </Button>
+            </Grid>
+          ))}
         </Grid>
-        {selectedButton === 'LISTINGS' && <ListingBookmarks data={listings} />}
-        {selectedButton === 'USERS' && <UserBookmarks data={users} />}
-        {selectedButton === 'COMPANIES' && <CompanyBookmarks data={companies} />}
+        {selectedButton === 'LISTINGS' && (
+          <ListingBookmarks data={listings} updateBookmarkData={updateBookmarkData} />
+        )}
+        {selectedButton === 'USERS' && (
+          <UserBookmarks data={users} updateBookmarkData={updateBookmarkData} />
+        )}
+        {selectedButton === 'COMPANIES' && (
+          <CompanyBookmarks data={companies} updateBookmarkData={updateBookmarkData} />
+        )}
       </Grid>
     </Container>
   );
