@@ -243,7 +243,7 @@ const CreateListingPage = () => {
 
   useEffect(() => {
     sortCategoryParameters();
-  }, [category, parameterIDs]);
+  }, [category]);
 
   return (
     <Container maxWidth="lg" sx={{ boxShadow: 4, padding: 2, marginTop: 2, marginBottom: 2 }}>
