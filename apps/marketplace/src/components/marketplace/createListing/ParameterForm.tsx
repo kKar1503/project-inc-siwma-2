@@ -17,8 +17,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 export type dataTypeProps = 'string' | 'number' | 'boolean';
 
 export interface ParameterFormProps {
-  paramId: number;
-  value: number;
+  paramId: string;
+  value: string;
 }
 
 export interface CategoryParametersProps {
@@ -50,19 +50,19 @@ const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
 
   const handleFormValueChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<number>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>,
     parameterId: string
   ) => {
     // Update the form values state
     setFormValues((prevFormValues) => ({
       ...prevFormValues,
-      [parameterId]: { paramId: Number(parameterId), value: Number(event.target.value) },
+      [parameterId]: { paramId: parameterId, value: event.target.value as string },
     }));
 
     // Convert the form values object to an array and update the form values array state
     const updatedFormValues = {
       ...formValues,
-      [parameterId]: { paramId: Number(parameterId), value: Number(event.target.value) },
+      [parameterId]: { paramId: parameterId, value: event.target.value as string },
     };
 
     const formValuesArray = Object.values(updatedFormValues);

@@ -13,7 +13,7 @@ export interface CategoryProps {
   image: string;
   crossSectionImage: string;
   active: boolean;
-  parameters: CategoryParametersProps[];
+  parameters?: CategoryParametersProps[];
 }
 
 export type SetCategoryProps = {
@@ -47,6 +47,7 @@ const CategoryForm = ({ setCategory, data, error }: SetCategoryProps) => {
         {error ? <InputLabel>{error}</InputLabel> : <InputLabel>Select a category...</InputLabel>}
         <Select
           value={selectedCategory ? selectedCategory.name : ''}
+          label="Select a category..."
           onChange={handleCategoryChange}
           size="medium"
           fullWidth
