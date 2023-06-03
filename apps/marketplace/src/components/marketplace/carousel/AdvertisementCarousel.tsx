@@ -10,14 +10,13 @@ import { autoPlay } from 'react-swipeable-views-utils';
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 export interface Image {
-  id: string;
-  companyId: string;
-  image: string;
-  active: boolean;
-  startDate: string;
-  endDate: string;
-  description: string;
   link: string;
+  image: string | null;
+  companyId: string;
+  description: string;
+  active?: boolean | undefined;
+  startDate?: string | undefined;
+  endDate?: string | undefined;
 }
 
 export type AdvertisementCarouselProps = {
@@ -50,7 +49,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
         enableMouseEvents
       >
         {data.map((step, index) => (
-          <div key={step.id}>
+          <div key={step.description}>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
                 sx={{
@@ -67,7 +66,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                     width: '100%',
                     opacity: '30%',
                   }}
-                  src={step.image}
+                  src={step.image!}
                 />
                 <Box
                   component="img"
@@ -83,7 +82,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                     marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
-                  src={step.image}
+                  src={step.image!}
                 />
               </Box>
             ) : null}

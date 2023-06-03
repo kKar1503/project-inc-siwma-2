@@ -1,12 +1,9 @@
 export type TCategory = {
+  image: string;
+  description: string;
+  active: boolean;
   id: string;
   name: string;
-  description: string;
-  image: string;
   crossSectionImage: string;
-  active: boolean;
-  parameters: Array<{
-    parameterId: '1';
-    required: true;
-  }>;
+  parameters?: { parameterId: string; required: boolean }[] | undefined;
 };
