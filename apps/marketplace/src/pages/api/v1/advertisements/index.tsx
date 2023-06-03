@@ -5,9 +5,10 @@ import s3Connection from '@/utils/s3Connection';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
-import { fileToS3Object, getFilesFromRequest, loadImageBuilder } from '@/utils/imageUtils';
-import { ParamError } from '@inc/errors/src';
+import { loadImageBuilder } from '@/utils/imageUtils';
 import { advertisementSchema } from '@/utils/api/server/zod';
+
+const defaultImage = 'https://via.placeholder.com/150';
 
 export const select = (isAdmin: boolean) => ({
   companyId: true,
@@ -39,14 +40,6 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const payload = advertisementSchema.post.body.parse(req.body);
 
-  const files = await getFilesFromRequest(req);
-  if (files.length === 0) {
-    throw new ParamError(`advertisement image`);
-  }
-
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-  const s3Object = await AdvertisementBucket.createObject(fileToS3Object(files[0]));
-
   // Create advertisement
   const advertisementId = (
     await PrismaClient.advertisements.create({
@@ -55,7 +48,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         companyId: payload.companyId,
-        image: s3Object.Id,
+        image: defaultImage,
         endDate: new Date(payload.endDate),
         startDate: new Date(payload.startDate),
         active: payload.active,
