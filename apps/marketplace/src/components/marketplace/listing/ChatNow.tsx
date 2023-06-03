@@ -28,6 +28,7 @@ const ChatNow = ({ data }: ChatNowProps) => (
           paddingLeft: { sx: 0, md: 0, lg: 3 },
           paddingTop: 1,
           paddingBottom: 2,
+          width: { sx: 0 }
         }}
       >
         <Avatar
