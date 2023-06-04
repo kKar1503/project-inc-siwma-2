@@ -2,6 +2,10 @@ import PrismaClient, { Listing } from '@inc/db';
 
 export enum UpdateType {
   CREATE = 'CREATE',
+  PRICE_INCREASE = 'PRICE_INCREASE',
+  PRICE_DECREASE = 'PRICE_DECREASE',
+  SOLD_OUT = 'SOLD_OUT',
+  RESTOCKED = 'RESTOCKED',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',
 }
@@ -18,23 +22,48 @@ function getNotificationString(
   creator?: string,
   listing?: Listing
 ) {
-  const formattedUpdateType = `${updateType.toLowerCase()}d`;
+  let updateString = '';
+  switch (updateType) {
+    case UpdateType.CREATE:
+      updateString = 'been created.';
+      break;
+    case UpdateType.PRICE_INCREASE:
+      updateString = 'increased in price.';
+      break;
+    case UpdateType.PRICE_DECREASE:
+      updateString = 'decreased in price.';
+      break;
+    case UpdateType.SOLD_OUT:
+      updateString = 'sold out.';
+      break;
+    case UpdateType.RESTOCKED:
+      updateString = 'been restocked.';
+      break;
+    case UpdateType.UPDATE:
+      updateString = 'been changed.';
+      break;
+    case UpdateType.DELETE:
+      updateString = 'been deleted.';
+      break;
+    default:
+      updateString = 'been changed.';
+  }
 
   switch (notificationType) {
     case 'LISTING':
-      return `${listing?.name || 'A listing you bookmarked'} has been ${formattedUpdateType}.`;
+      return `${listing?.name || 'A listing you bookmarked'} has ${updateString}.`;
     case 'COMPANY':
-      return `${creator || 'A company you bookmarked'} has ${formattedUpdateType} ${
-        listing?.name || 'a listing'
-      }.`;
+      return `${listing?.name || 'a listing'} from ${
+        creator || 'a company you bookmarked'
+      } has ${updateString}.`;
     case 'USER':
-      return `${creator || 'A user you bookmarked'} has ${formattedUpdateType} ${
-        listing?.name || 'a listing'
-      }.`;
+      return `${listing?.name || 'a listing'} from ${
+        creator || 'a user you bookmarked'
+      } has ${updateString}.`;
     default:
-      return `${creator || 'A user you bookmarked'} has ${formattedUpdateType} ${
-        listing?.name || 'a listing'
-      }.`;
+      return `${listing?.name || 'a listing'} from ${
+        creator || 'an entity you bookmarked'
+      } has ${updateString}.`;
   }
 }
 
@@ -115,7 +144,7 @@ export async function handleBookmarks(updateType: UpdateType, listing: Listing) 
           targetListing: listing.id,
           notificationString: getNotificationString(
             NotificationType.LISTING,
-            UpdateType.CREATE,
+            updateType,
             listing.owner,
             listing
           ),
@@ -131,13 +160,23 @@ export async function handleBookmarks(updateType: UpdateType, listing: Listing) 
           targetUser: listing.owner,
           notificationString: getNotificationString(
             NotificationType.USER,
-            UpdateType.CREATE,
+            updateType,
             listing.owner,
             listing
           ),
         },
       })
     );
+
+    // Find the company that the user belongs to
+    const company = await PrismaClient.companies.findFirst({
+      where: {
+        users: { some: { id: listing.owner } },
+      },
+      select: {
+        name: true,
+      },
+    });
 
     // Create notifications for each user who bookmarked the company of the owner of this listing
     const companiesNotificationsPromises = companiesBookmarks?.map((bookmark) =>
@@ -147,8 +186,8 @@ export async function handleBookmarks(updateType: UpdateType, listing: Listing) 
           targetCompany: bookmark.companyId,
           notificationString: getNotificationString(
             NotificationType.COMPANY,
-            UpdateType.CREATE,
-            listing.owner,
+            updateType,
+            company?.name,
             listing
           ),
         },
@@ -163,36 +202,10 @@ export async function handleBookmarks(updateType: UpdateType, listing: Listing) 
     ]);
   }
 
-  async function handleListingCreation() {
-    // Creation does not require any special checks yet
-    await createNotifications();
-  }
+  /* If extra checks are needed, refer to the lines of code at the bottom of this file in this commit:
+  https://github.com/kKar1503/project-inc-siwma-2/blob/71ed1e132a74f392d189ccf7a056dc5f0cff41bb/apps/marketplace/src/utils/api/server/bookmarkHandler.ts
+   * These lines were removed as they are currently redundant 
+  */
 
-  async function handleListingUpdate() {
-    // Updating does not require any special checks yet
-    await createNotifications();
-  }
-
-  async function handleListingDeletion() {
-    // Deletion does not require any special checks yet
-    await createNotifications();
-  }
-
-  // End of handler subfunctions
-
-  // 3. Call the appropriate function depending on the update type
-
-  switch (updateType) {
-    case 'CREATE':
-      await handleListingCreation();
-      break;
-    case 'UPDATE':
-      await handleListingUpdate();
-      break;
-    case 'DELETE':
-      await handleListingDeletion();
-      break;
-    default:
-      break;
-  }
+  await createNotifications();
 }
