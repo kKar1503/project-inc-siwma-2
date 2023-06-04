@@ -7,8 +7,7 @@ import Typography from '@mui/material/Typography';
 import { DateTime } from 'luxon';
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { StarsRating } from '@inc/ui';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { StarsRating, useResponsiveness } from '@inc/ui';
 
 export type ReviewProps = {
   ownerId: number;

@@ -1,8 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { SelectComponent, StarsRating } from '@inc/ui';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { SelectComponent, StarsRating, useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material';
 import { useMemo } from 'react';
 import ReviewMessage, { ReviewProps } from './ReviewMessage';

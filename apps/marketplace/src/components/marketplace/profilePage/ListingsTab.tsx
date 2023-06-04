@@ -1,8 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
-import { SelectComponent } from '@inc/ui';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { SelectComponent, useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useMemo } from 'react';
 import { Listing } from '@/utils/api/client/zod';

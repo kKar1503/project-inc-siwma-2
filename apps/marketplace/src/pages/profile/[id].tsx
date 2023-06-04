@@ -13,7 +13,6 @@ import Box from '@mui/material/Box';
 import { useState, SyntheticEvent, useMemo } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import apiClient from '@/utils/api/client/apiClient';
 import { useQuery } from 'react-query';
 // import fetchUser from '@/middlewares/fetchUser';
@@ -22,6 +21,7 @@ import { useRouter } from 'next/router';
 import { Listing, Review } from '@/utils/api/client/zod';
 import fetchListing from '@/middlewares/fetchListing';
 import fetchReview from '@/middlewares/fetchReview';
+import { useResponsiveness } from '@inc/ui';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: 60,
@@ -246,7 +246,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
                 <ReviewsTab
-                  allReviews={reviews}
+                  allReviews={userReviews}
                   // rmb to add userDetails.rating and userDetails.reviews
                   userRating={2}
                   totalReviews={200}

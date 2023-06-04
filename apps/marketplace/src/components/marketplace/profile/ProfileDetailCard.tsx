@@ -10,8 +10,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import { StarsRating } from '@inc/ui';
+import { StarsRating, useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useMemo } from 'react';
 

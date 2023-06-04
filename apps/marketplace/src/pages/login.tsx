@@ -13,7 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { FormEvent, useMemo, useState } from 'react';
 import { signIn } from 'next-auth/react';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
