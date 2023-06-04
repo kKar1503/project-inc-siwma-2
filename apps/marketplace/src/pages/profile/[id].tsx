@@ -99,7 +99,6 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
 
   const [value, setValue] = useState(0);
   // when filter/sorts are called use set states to set the new listings/reviews again
-  const [listings, setListings] = useState(serverSideListings);
   const [reviews, setReviews] = useState(serverSideReviews);
   const [filterListings, setFilterListings] = useState('');
   const [sortByListings, setSortByListings] = useState('');
@@ -246,7 +245,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
                 <ReviewsTab
-                  allReviews={userReviews}
+                  allReviews={reviews}
                   // rmb to add userDetails.rating and userDetails.reviews
                   userRating={2}
                   totalReviews={200}
