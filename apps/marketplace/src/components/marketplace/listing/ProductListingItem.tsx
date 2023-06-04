@@ -25,7 +25,7 @@ import NegotiableBadge from './NegotiableBadge';
 
 export type ProductListingItemData = {
   data: Listing;
-  updateBookmarkData: () => void;
+  updateBookmarkData?: () => void;
 };
 
 const useBookmarkListing = (listingID: string, updateBookmarkData: () => void) => {
