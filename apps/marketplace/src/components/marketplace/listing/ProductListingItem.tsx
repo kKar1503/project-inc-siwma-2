@@ -28,11 +28,11 @@ export type ProductListingItemData = {
   updateBookmarkData?: () => void;
 };
 
-const useBookmarkListing = (listingID: string, updateBookmarkData: () => void) => {
+const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState(true);
 
   const handleBookmarkListing = async () => {
-    if (isBookmarked) {
+    if (isBookmarked && updateBookmarkData) {
       await bookmarkListing(listingID);
       setIsBookmarked(false);
       updateBookmarkData();
@@ -126,16 +126,18 @@ const ProductListingItem = ({ data, updateBookmarkData }: ProductListingItemData
             )}
           </Grid>
           <Box>
-            <IconButton
-              aria-label="bookmark"
-              onClick={handleBookmarkListing}
-              sx={({ spacing, palette }) => ({
-                p: spacing(0),
-                color: isBookmarked ? palette.warning[100] : palette.grey[500],
-              })}
-            >
-              <BookmarkIcon fontSize="large" />
-            </IconButton>
+            {updateBookmarkData && (
+              <IconButton
+                aria-label="bookmark"
+                onClick={handleBookmarkListing}
+                sx={({ spacing, palette }) => ({
+                  p: spacing(0),
+                  color: isBookmarked ? palette.warning[100] : palette.grey[500],
+                })}
+              >
+                <BookmarkIcon fontSize="large" />
+              </IconButton>
+            )}
           </Box>
           <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
             {data.owner.id === loggedUserUuid && (
