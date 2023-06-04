@@ -31,6 +31,7 @@ const updateUserDetailsSchema = z
     contactMethod: z.nativeEnum(UserContacts),
     bio: z.string(),
     password: z.string(),
+    oldPassword: z.string(),
     userComments: z.string(),
   })
   .partial();
@@ -45,12 +46,18 @@ const resetPasswordSchema = z.object({
   token: z.string(),
 });
 
+const forgetPasswordSchema = z.object({
+  email: z.string(),
+});
+
+
 
 export type GetUsersQueryParameter = z.infer<typeof getUsersQuery>;
 export type PostUserRequestBody = z.infer<typeof userCreationRequestBody>;
 export type PutUserRequestBody = z.infer<typeof updateUserDetailsSchema>;
 export type PostReportRequestBody = z.infer<typeof createReportSchema>;
 export type ResetPasswordRequestBody = z.infer<typeof resetPasswordSchema>;
+export type ForgetPasswordQueryParameter = z.infer<typeof forgetPasswordSchema>;
 
 export default {
   get: {
@@ -73,4 +80,9 @@ export default {
       body: resetPasswordSchema,
     },
   },
+  forgetPassword: {
+    post: {
+      query: forgetPasswordSchema,
+    },
+  }
 };

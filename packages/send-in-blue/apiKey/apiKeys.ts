@@ -5,10 +5,11 @@ export default async function getAPIKey(numEmails: number): Promise<GetAPIKeyRes
   const key = await client.sibkeys.findFirst({
     where: {
       remainingCount: {
-        gte: 300 - numEmails,
+        gte: numEmails,
       },
     },
   });
+
 
   if (!key) {
     return {
