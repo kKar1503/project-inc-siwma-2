@@ -9,15 +9,18 @@ const fetchAdvertisements = async (permissions: number) => {
   const advertisementsData = advertisements.getAll.parse(response.data.data);
 
   // If user is admin, then you have to check whether the current date is between start and end date and check if active key is true
-  if (permissions === 1) {
-    const filteredArr = advertisementsData.filter((item) => {
-      const startDate = new Date(item.startDate as string)
-      const endDate = new Date(item.endDate as string)
+  // if (permissions === 1) {
+  //   const filteredArr = advertisementsData.filter((item) => {
+  //     const startDate = new Date(item.startDate as string)
+  //     const endDate = new Date(item.endDate as string)
 
-      return currentDate >= startDate && currentDate <= endDate && item.active;
-    })
-    return filteredArr;
-  }
+  //     return currentDate >= startDate && currentDate <= endDate && item.active;
+  //   })
+  //   return filteredArr;
+  // }
+  advertisementsData.forEach((item) => {
+    item.image = "https://pbs.twimg.com/profile_images/1546442267149225984/gcEhSyAV_400x400.jpg"
+  })
 
   return advertisementsData;
 };
