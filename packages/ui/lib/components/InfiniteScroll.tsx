@@ -80,7 +80,7 @@ const InfiniteScroll = <TParent, TChild>({
 
   return (
     <>
-      {loading && loadingComponent}
+      {/* {loading && loadingComponent} */}
 
       <Parent {...parentProps} ref={parentRef}>
         {children !== null &&
@@ -101,7 +101,7 @@ const InfiniteScroll = <TParent, TChild>({
           })}
       </Parent>
 
-      {reachedMaxItems && endMessage}
+      {/* {reachedMaxItems && endMessage} */}
     </>
   );
 };

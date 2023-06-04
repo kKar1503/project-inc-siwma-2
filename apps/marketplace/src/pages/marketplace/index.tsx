@@ -125,13 +125,13 @@ const Marketplace = () => {
           loading={isLoading}
           reachedMaxItems={maxItems}
           loadingComponent={<CircularProgress />}
-          endMessage={<Typography variant="h6">No more listings</Typography>}
           parent={Grid}
           parentProps={{
             container: true,
             spacing: 2,
-            width: '80%',
             gap: 2,
+            justifyContent: 'center',
+            display: 'flex'
           }}
           child={Grid}
           childProps={{
