@@ -40,7 +40,7 @@ const useParameter = (category: CategoryProps | null) => {
 
   const updateCategoryParameters = async () => {
     if (category == null) return;
-    setCategoryParameters(category.parameters);
+    setCategoryParameters(category.parameters || []);
   };
 
   const parameterValidation = () => {
@@ -49,7 +49,7 @@ const useParameter = (category: CategoryProps | null) => {
 
     categoryParameters.forEach((categoryParameter) => {
       const { parameterId, required } = categoryParameter;
-      const parameter = parameters.find((parameter) => parameter.paramId === Number(parameterId));
+      const parameter = parameters.find((parameter) => parameter.paramId === parameterId);
 
       if (parametersData) {
         const detailedParameter = parametersData.find((parameter) => parameter.id === parameterId);
