@@ -105,7 +105,7 @@ const ChatRoom = () => {
   // console.log(userChatList);
 
   // TODO: set listing data from retrieved listingID
-  const listingData = useGetListingQuery('3');
+  // const listingData = useGetListingQuery('3');
   // console.log(listingData);
 
   // TODO: set listing images data from retrieved listingID
@@ -113,11 +113,11 @@ const ChatRoom = () => {
   // console.log(listingImagesData);
 
   // TODO: set buyer data from retrieved buyerID
-  const buyer = useGetUserQuery(loggedUserUuid);
+  // const buyer = useGetUserQuery(loggedUserUuid);
   // console.log(buyer);
 
   // TODO: set messages data from retrieved roomID
-  const roomMessages = useGetMessagesQuery(selectChat);
+  // const roomMessages = useGetMessagesQuery(selectChat);
   // console.log(roomMessages);
 
   const messages: ChatBoxProps['roomData'] = [
