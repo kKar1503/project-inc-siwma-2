@@ -7,53 +7,39 @@ import ChatBox, { ChatBoxProps } from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
 import { useSession } from 'next-auth/react';
 import fetchUser from '@/middlewares/fetchUser';
-import chat from '@/utils/api/client/zod/chat';
+import chat, { ChatRoom } from '@/utils/api/client/zod/chat';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import  apiClient from '@/utils/api/client/apiClient';
-
-export type chatListType = {
-  id: string;
-  buyer: string;
-  createdAt: string;
-  listing: string;
-  seller: string;
-};
-
-export type chatListDataType = {
-  data: chatListType[];
-};
+import apiClient from '@/utils/api/client/apiClient';
 
 const useChatListQuery = (
   loggedUserUuid: string,
-  setChatList: Dispatch<SetStateAction<chatListDataType>>
+  setChatList: Dispatch<SetStateAction<ChatRoom[] | undefined>>
 ) => {
   fetchUser(loggedUserUuid);
   const { data } = useQuery(
     'chatList',
     async () => {
-      const response = await apiClient.get(
-        `v1/users/${loggedUserUuid}/chats`
-      );
+      const response = await apiClient.get(`v1/users/${loggedUserUuid}/chats`);
 
       // parse data through zod to ensure data is correct
       const parsedChatList = chat.getByUser.parse(response.data.data);
 
-      setChatList({ data: parsedChatList });
+      setChatList(parsedChatList);
       return parsedChatList;
     },
     {
       enabled: loggedUserUuid !== undefined,
     }
   );
-}
+};
 
 const ChatRoom = () => {
   const [makeOffer, setMakeOffer] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState<string>('');
   const [onSend, setOnSend] = useState<boolean>(false);
-  const [chatList, setChatList] = useState<chatListDataType>({ data: [] });
+  const [chatList, setChatList] = useState<ChatRoom[]>();
 
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
