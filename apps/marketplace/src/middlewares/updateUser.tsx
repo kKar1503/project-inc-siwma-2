@@ -11,14 +11,6 @@ const updateUser = async (
   telegramUsername: string,
   bio: string
 ) => {
-  console.log('uuid:', uuid);
-  console.log('name:', name);
-  console.log('email:', email);
-  console.log('contact:', contact);
-  console.log('mobilenumber:', mobileNumber);
-  console.log('whatsappNumber:', whatsappNumber);
-  console.log('telegramUsername:', telegramUsername);
-  console.log('bio:', bio);
 
   if (uuid) {
     const res = await apiClient.put(`/v1/users/${uuid}`, {

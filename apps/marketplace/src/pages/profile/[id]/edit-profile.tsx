@@ -76,11 +76,11 @@ const EditProfile = () => {
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
-
   // console.log(userDetails);
 
   const mutation = useUpdateUserMutation(loggedUserUuid);
-  // console.log(mutation);
+
+  console.log(mutation);
 
   const theme = useTheme();
   const { spacing } = theme;
@@ -92,7 +92,7 @@ const EditProfile = () => {
   const [mobileNumber, setMobileNumber] = useState<string>(
     userDetails?.data?.data[0].mobileNumber || undefined
   );
-  const [email, setEmail] = useState<string>(userDetails?.data?.data[0].email || '' );
+  const [email, setEmail] = useState<string>(userDetails?.data?.data[0].email || undefined);
   const [bio, setBio] = useState<string>(userDetails?.data?.data[0].bio || undefined);
 
   const [telegramUsername, setTelegramUsername] = useState<string>(
@@ -104,11 +104,9 @@ const EditProfile = () => {
   const [facebookUsername, setFacebookUsername] = useState<string>(
     userDetails?.data?.data[0].facebookUsername || undefined
   );
-  const [contact, setContact] = useState<string>(userDetails?.data?.data?.contact || undefined);
+  const [contact, setContact] = useState<string>(userDetails?.data?.data[0].contact || undefined);
 
-  // console.log(contact);
-
-  const [modalMessage, setModalMessage] = useState(
+  const [modalMessage] = useState(
     'Once you leave the page, your user details will be removed and your profile will not be updated'
   );
   const [openLeave, setOpenLeave] = useState<boolean>(false);
@@ -128,14 +126,14 @@ const EditProfile = () => {
 
     mutation.mutate(updatedUserData);
   };
-
+  
   const handleContactChange = (e: SelectChangeEvent) => {
     const selectedContact = e.target.value;
     setContact(selectedContact);
 
     if (selectedContact === 'whatsapp') {
-      setWhatsappNumber(''); // Update the Whatsapp Number state
-      setTelegramUsername(''); // Reset the Telegram Username state
+      setWhatsappNumber('');
+      setTelegramUsername('');
       setFacebookUsername('');
     } else if (selectedContact === 'telegram') {
       setWhatsappNumber('');
@@ -147,6 +145,15 @@ const EditProfile = () => {
   };
 
   useEffect(() => {
+    if (userDetails) {
+      setName(userDetails?.data?.data[0].name);
+      setMobileNumber(userDetails?.data?.data[0].mobileNumber);
+      setEmail(userDetails?.data?.data[0].email);
+      setBio(userDetails?.data?.data[0].bio);
+      setContact(userDetails?.data?.data[0].contact);
+    }
+  }, [userDetails]);
+  useEffect(() => {
     if (profilePicture) {
       setImageUrl(URL.createObjectURL(profilePicture));
     }
@@ -157,23 +164,6 @@ const EditProfile = () => {
       setProfilePicture(e.target.files[0]);
     }
   };
-
-  // const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     const file = e.target.files[0];
-  //     setProfilePicture(file);
-
-  //     const reader = new FileReader();
-  //     reader.onload = (event) => {
-  //       if (event.target) {
-  //         const arrayBuffer = event.target.result as ArrayBuffer;
-  //         const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-  //         setImageUrl(`data:${file.type};base64,${base64String}`);
-  //       }
-  //     };
-  //     reader.readAsArrayBuffer(file);
-  //   }
-  // };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -224,7 +214,7 @@ const EditProfile = () => {
       </Head>
 
       <Grid sx={gridCols}>
-        {userDetails && <ProfileDetailCard data={userDetails} /> }
+        {userDetails && <ProfileDetailCard data={userDetails} />}
         <Box
           sx={{
             display: 'flex',
@@ -336,7 +326,7 @@ const EditProfile = () => {
                       label="Full Name"
                       placeholder="Your Full Name"
                       InputLabelProps={{ shrink: true }}
-                      value={userDetails?.data?.data[0].name}
+                      value={name}
                       onChange={(e) => setName(e.target.value)}
                     />
                   </FormControl>
@@ -352,7 +342,7 @@ const EditProfile = () => {
                       label="Phone"
                       placeholder="91234567"
                       InputLabelProps={{ shrink: true }}
-                      value={userDetails?.data?.data[0].mobileNumber}
+                      value={mobileNumber}
                       onChange={(e) => setMobileNumber(e.target.value)}
                     />
                   </FormControl>
@@ -366,7 +356,7 @@ const EditProfile = () => {
                     sx={({ spacing }) => ({
                       mt: spacing(2),
                     })}
-                    value={userDetails?.data?.data[0].email}
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </FormControl>
@@ -382,7 +372,7 @@ const EditProfile = () => {
                       mt: spacing(2),
                       mb: spacing(1),
                     })}
-                    value={userDetails?.data?.data[0].bio}
+                    value={bio}
                     onChange={(e) => setBio(e.target.value)}
                   />
                 </FormControl>
@@ -394,7 +384,6 @@ const EditProfile = () => {
               <CardContent>
                 <Typography sx={{ fontWeight: 'bold' }}>Connections</Typography>
                 <Typography>Link your messaging accounts here</Typography>
-                <Typography>{contact}</Typography>
                 <Box
                   sx={({ spacing }) => ({
                     mt: spacing(2),
@@ -405,22 +394,17 @@ const EditProfile = () => {
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
                     <InputLabel>Contact</InputLabel>
                     <Select
-                      value={userDetails?.data?.data[0].contact}
+                      value={contact}
                       label="Platform"
                       onChange={(e) => handleContactChange(e)}
                     >
                       <MenuItem value="telegram">Telegram</MenuItem>
-                      <MenuItem value="whatsapp">Whatsapp</MenuItem>
+                      <MenuItem value="Whatsapp">Whatsapp</MenuItem>
                       <MenuItem value="facebook">Facebook</MenuItem>
-                      {/* {userDetails?.data?.data[0].map(({contact }) => (
-                        <MenuItem  value={contact}>
-                          {userDetails?.data?.data[0].contact}
-                        </MenuItem>
-                      ))}  */}
                     </Select>
                   </FormControl>
 
-                  {contact === 'whatsapp' && (
+                  {contact === 'Whatsapp' && (
                     <TextField
                       label="Whatsapp Number"
                       placeholder="8123 4567"
@@ -432,7 +416,7 @@ const EditProfile = () => {
                           </InputAdornment>
                         ),
                       }}
-                      value={userDetails?.data?.data[0].whatsappNumber}
+                      value={whatsappNumber}
                       onChange={(e) => setWhatsappNumber(e.target.value)}
                     />
                   )}
@@ -448,7 +432,7 @@ const EditProfile = () => {
                           </InputAdornment>
                         ),
                       }}
-                      value={userDetails?.data?.data[0].telegramUsername}
+                      value={telegramUsername}
                       onChange={(e) => setTelegramUsername(e.target.value)}
                     />
                   )}
@@ -464,7 +448,7 @@ const EditProfile = () => {
                           </InputAdornment>
                         ),
                       }}
-                      value={userDetails?.data?.data[0].facebookUsername}
+                      value={facebookUsername}
                       onChange={(e) => setFacebookUsername(e.target.value)}
                     />
                   )}

@@ -80,16 +80,16 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
 
       <CardContent>
         <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>
-          {data.data.data[0].profilePicture}
+          {data?.data.data[0].profilePicture}
         </Avatar>
-        <Typography sx={{ fontWeight: 'bold' }}>{data.data.data[0].name}</Typography>
-        <Typography>{data.data.data[0].company}</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>{data?.data.data[0].name}</Typography>
+        <Typography>{data?.data.data[0].company}</Typography>
         <Typography
           sx={{
             wordWrap: 'break-word',
           }}
         >
-          {data.data.data[0].email}
+          {data?.data.data[0].email}
         </Typography>
 
         <Box
@@ -145,7 +145,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
               ml: spacing(1),
             })}
           >
-            {data.data.data[0].telegramUsername}
+            {data?.data.data[0].telegramUsername}
           </Typography>
         </Box>
         <Box
@@ -168,7 +168,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
               ml: spacing(1),
             })}
           >
-            +65 {data.data.data[0].mobileNumber}
+            +65 {data?.data.data[0].mobileNumber}
           </Typography>
         </Box>
       </CardContent>
