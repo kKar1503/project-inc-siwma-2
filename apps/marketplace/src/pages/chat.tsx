@@ -63,10 +63,6 @@ const ChatRoom = () => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
 
-  if (selectChat !== '') {
-    console.log(selectChat);
-  }
-
   // converts to UI design if screen goes to mobile
   const chatStyles = useMemo(() => {
     if (isSm) {
@@ -212,7 +208,7 @@ const ChatRoom = () => {
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '2543234',
+      id: '254324',
       content_type: 'text',
       read: false,
       content: 'LAST MESSAGE',
@@ -220,7 +216,7 @@ const ChatRoom = () => {
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '2543234',
+      id: '243234',
       content_type: 'text',
       read: false,
       content: 'CAN YOU SEE ME',
@@ -228,7 +224,7 @@ const ChatRoom = () => {
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '2543234',
+      id: '254234',
       content_type: 'text',
       read: false,
       content: '2ND LAST MESSAGE',
@@ -236,7 +232,7 @@ const ChatRoom = () => {
       createdAt: '2023-01-12T06:11:49.43002+00:00',
     },
     {
-      id: '2543234',
+      id: '2547234',
       content_type: 'text',
       read: false,
       content: 'FINAL MESSAGE SRSLY',
