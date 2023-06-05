@@ -7,14 +7,13 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
 import FormLabel from '@mui/material/FormLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import { useQuery } from 'react-query';
 
 // middleware
 import fetchCategories from '@/middlewares/fetchCategories';
-import { Category } from '../../../utils/api/client/zod/categories';
 
 export type SortProps = 'Recent' | 'Price - High to Low' | 'Price - Low to High';
 
@@ -55,7 +54,7 @@ const FilterForm = ({
     setMaxPrice(maxPriceOption);
   };
 
-  const categoriesData: Category[] = useGetCategoriesQuery();
+  const categoriesData = useGetCategoriesQuery();
 
   return (
     <form style={{ padding: 1, marginTop: 2, width: '100%' }} onSubmit={handleSubmit}>

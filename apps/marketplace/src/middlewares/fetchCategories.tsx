@@ -1,10 +1,12 @@
-import apiClient from '@/utils/api/client/apiClient'
-
+import apiClient from '@/utils/api/client/apiClient';
+import categories from '@/utils/api/client/zod/categories';
 
 const fetchCategories = async () => {
   const response = await apiClient.get(`/v1/categories`);
 
-  return response.data.data
-}
+  const parsedCategories = categories.getAll.parse(response.data.data);
 
-export default fetchCategories
+  return parsedCategories;
+};
+
+export default fetchCategories;

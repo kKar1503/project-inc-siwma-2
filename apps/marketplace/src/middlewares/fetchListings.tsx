@@ -1,4 +1,5 @@
 import apiClient from '@/utils/api/client/apiClient';
+import listings from '@/utils/api/client/zod/listings';
 
 export type SortingOptions =
   | 'recent_newest'
@@ -26,7 +27,9 @@ const fetchCategories = async (matching?: string, filter?: FilterOptions) => {
 
   const response = await apiClient.get(query);
 
-  return response.data.data;
+  const parsedListings = listings.getAll.parse(response.data.data);
+
+  return parsedListings;
 };
 
 export default fetchCategories;

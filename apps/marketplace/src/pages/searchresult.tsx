@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 // middleware
 import fetchListings, { FilterOptions } from '@/middlewares/fetchListings';
-import { Listing } from '../utils/api/client/zod/listings';
+import { Listing } from '@/utils/api/client/zod/listings';
 
 const useSearchListings = (matching: string, filter?: FilterOptions) => {
   const { data } = useQuery(['listings', filter], async () => fetchListings(matching, filter), {
