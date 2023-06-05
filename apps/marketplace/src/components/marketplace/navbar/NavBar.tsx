@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent } from 'react';
+import React, { useState, MouseEvent, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -16,6 +16,8 @@ import SearchBar from '@inc/ui/lib/components/SearchBar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
+import Grid from '@mui/material/Grid';
+import Switch from '@mui/material/Switch';
 import AddListing from './AddListing';
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
@@ -30,21 +32,44 @@ const NavBar = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
 
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const [language, setLanguage] = useState('English');
 
-  const isMobileMenuOpen = mobileMoreAnchorEl !== null;
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
+  const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // handle i18 change here
+    setLanguage(language === 'English' ? 'Chinese' : 'English');
   };
 
-  const handleMenuClose = () => {
-    handleMobileMenuClose();
-  };
+  const navBarStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        switchTxt: {
+          fontSize: typography.subtitle2,
+        },
+      };
+    }
 
-  const handleMobileMenuOpen = (event: MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
+    if (isMd) {
+      return {
+        switchTxt: {
+          fontSize: typography.subtitle2,
+        },
+      };
+    }
+
+    if (isLg) {
+      return {
+        switchTxt: {
+          fontSize: '9px',
+        },
+      };
+    }
+
+    return {
+      switchTxt: {
+        fontSize: '24px',
+      },
+    };
+  }, [isSm, isMd, isLg]);
 
   return (
     <Box
@@ -92,14 +117,21 @@ const NavBar = () => {
         {!isSm && <AddListing />}
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <IconButton size="medium">
-            <TranslateIcon
-              sx={({ typography, palette }) => ({
-                fontSize: typography.h5,
-                color: palette.text.secondary,
-              })}
-            />
-          </IconButton>
+          <Grid component="label" container alignItems="center">
+            <Grid sx={navBarStyles?.switchTxt} item>
+              EN
+            </Grid>
+            <Grid item>
+              <Switch
+                checked={language === 'Chinese'} // relevant state for your case
+                onChange={handleLanguageChange} // relevant method to handle your change
+                value="checked" // some value you need
+              />
+            </Grid>
+            <Grid sx={navBarStyles?.switchTxt} item>
+              CN
+            </Grid>
+          </Grid>
 
           <Link href="/chat" underline="none">
             <IconButton
