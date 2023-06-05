@@ -18,11 +18,11 @@ const fetchChatList = async (loggedUserUuid: string) => {
   for (let i = 0; i < parsedChatList.length; i++) {
     const data = parsedChatList[i];
 
-    if (data.buyer.id === loggedUserUuid) {
-      data.category = 'Buying';
-    } else if (data.seller.id === loggedUserUuid) {
-      data.category = 'Selling';
-    }
+    // if (data.buyer.id === loggedUserUuid) {
+    //   data.category = 'Buying';
+    // } else if (data.seller.id === loggedUserUuid) {
+    //   data.category = 'Selling';
+    // }
     console.log(data);
   }
 
