@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -8,113 +7,19 @@ import Box from '@mui/material/Box';
 import { CardActionArea } from '@mui/material';
 import { useQuery } from 'react-query';
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
-import fetchCat from '@/middlewares/fetchCat';
+import fetchCats from '@/middlewares/fetchCat';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
 };
 
 const useCategoryPageQuery = () => {
-  const { data } = useQuery('catData', async () => fetchCat);
+  const { data } = useQuery('cat', async () => fetchCats());
   return data;
 };
 
-// const catData: CategoryResponseBody[] = [
-//   {
-//     id: '1',
-//     name: 'Beams',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '2',
-//     name: 'Angles',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '3',
-//     name: 'Channels',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '4',
-//     name: 'Gratings',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '5',
-//     name: 'Hollo Sections',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '6',
-//     name: 'Plates',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '7',
-//     name: 'Purlins',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '8',
-//     name: 'Round Bar',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '9',
-//     name: 'Sheet Piles',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-//   {
-//     id: '10',
-//     name: 'Square Bar',
-//     description: 'Description1',
-//     image:
-//       'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-//     crossSectionImage: '359c99ed-221c-424b-b817-f4945ab79180',
-//     active: true,
-//   },
-// ];
-
 const CategoriesPage = () => {
-  const catData = useCategoryPageQuery
-  console.log(catData)
+  const catData = useCategoryPageQuery()
 
   return (
     <Box
@@ -151,11 +56,11 @@ const CategoriesPage = () => {
             justifyContent: 'center',
           }}
         >
-          {/* {catData?.map(({ id, name, image }) => (
+          {catData?.map(({ id, name, image }) => (
             <Grid key={id} item>
-              <Card>
+              <Card sx={{ }}>
                 <CardActionArea>
-                  <CardMedia component="img" height="140" image={image} />
+                  <CardMedia component="img" height="140" width="140" image={image} />
                   <CardContent>
                     <Typography
                       gutterBottom
@@ -170,7 +75,7 @@ const CategoriesPage = () => {
                 </CardActionArea>
               </Card>
             </Grid>
-          ))} */}
+          ))}
         </Grid>
       </Grid>
     </Box>
