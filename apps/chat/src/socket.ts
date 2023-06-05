@@ -13,14 +13,14 @@ export default (io: Server) => {
     logger.info(`${socket.id} is connected.`);
     let eventsAttached: string[] = [];
     for (const event of Object.values(events)) {
-      const { callback, eventName, type } = event(io);
+      const { callback, eventName, type } = event(io, socket);
       socket[type](eventName, callback);
       eventsAttached.push(eventName);
     }
 
     socket.once(EVENTS.CONNECTION.DISCONNECT, () => {
       logger.info(`Disconnected: ${socket.id}`);
-    })
+    });
 
     logger.info(`Attached ${eventsAttached.length} events to ${socket.id}`);
   });
