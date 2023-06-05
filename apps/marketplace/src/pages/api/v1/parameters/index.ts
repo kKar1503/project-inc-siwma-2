@@ -1,20 +1,10 @@
 import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { z } from 'zod';
-import { DataType, Parameter, ParameterType } from '@prisma/client';
+import { Parameter, ParameterType } from '@prisma/client';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamSizeError } from '@inc/errors';
-
-// -- Type definitions -- //
-// Define the type of the response object
-export type ParamResponse = {
-  id: string;
-  name: string;
-  displayName: string;
-  type: ParameterType;
-  dataType: DataType;
-  active: boolean;
-};
+import { paramSchema, ParamsRequestBody } from '@/utils/api/server/zod';
+import { ParameterResponseBody } from '@/utils/api/client/zod';
 
 // -- Helper functions -- //
 export function formatParamResponse(
@@ -32,7 +22,7 @@ export function formatParamResponse(
   }
 
   // Construct the result
-  const result: ParamResponse[] = parameters.map((parameter) => ({
+  const result: ParameterResponseBody[] = parameters.map((parameter) => ({
     id: parameter.id.toString(),
     name: parameter.name,
     displayName: parameter.displayName,
@@ -80,20 +70,6 @@ function buildQueryOptions({ ids, isAdmin }: { ids: number[] | undefined; isAdmi
 
   return queryOptions;
 }
-
-/**
- * Zod schema for the POST / PUT request body
- */
-export const paramsRequestBody = z.object({
-  // Define the request body schema
-  name: z.string().min(1),
-  displayName: z.string().min(1),
-  type: z.nativeEnum(ParameterType),
-  dataType: z.nativeEnum(DataType),
-  options: z.string().array().optional(),
-});
-
-export type ParamsRequestBody = z.infer<typeof paramsRequestBody>;
 
 /**
  * Validation functions
@@ -146,7 +122,7 @@ export default apiHandler()
     async (req, res) => {
       // Create a new parameter (admins only)
       // Parse and validate the request body
-      const data = paramsRequestBody.parse(req.body);
+      const data = paramSchema.post.body.parse(req.body);
 
       // Validate parameter options
       validateOptions(data);

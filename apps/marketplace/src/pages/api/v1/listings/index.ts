@@ -1,32 +1,52 @@
 import {
+  UpdateType,
   apiHandler,
   formatAPIResponse,
+  handleBookmarks,
   parseToNumber,
-  zodParseToBoolean,
-  zodParseToInteger,
-  zodParseToNumber,
 } from '@/utils/api';
-import PrismaClient, {
-  Listing,
-  ListingType,
-  Prisma,
-  Users,
-  Companies,
-  UserContacts,
-} from '@inc/db';
-import { z } from 'zod';
-import { NotFoundError, ParamError } from '@inc/errors';
+import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
+import { ParamError } from '@inc/errors';
+import { listingSchema } from '@/utils/api/server/zod';
+import { ListingResponseBody } from '@/utils/api/client/zod';
 
-export function parseListingId($id: string) {
-  // Parse and validate listing id provided
-  const id = parseToNumber($id, 'id');
+export type ListingWithParameters = Listing & {
+  listingsParametersValues: Array<{
+    parameterId: number;
+    value: string;
+  }>;
+  offersOffersListingTolistings: Array<{
+    accepted: boolean;
+  }>;
+  users: Users & {
+    companies: Companies;
+  };
+  multiple: boolean;
+  rating: number | null;
+  reviewCount: number;
+};
 
-  // Check if the listing id is valid
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`Listing with id '${id}'`);
+/**
+ * Obtains the listing id from the url
+ * @example // Listing url: /api/v1/listings/1; Returns { name: '', id: 1 }
+ * @example // Listing url: /api/v1/listings/some-listing-name-1; Returns { name: 'some listing name', id: 1 }
+ */
+export function parseListingId($id: string, strict = true) {
+  // Check if strict mode is set
+  if (strict) {
+    // Attempt to parse the listing id
+    const id = parseToNumber($id, 'id');
+
+    return id;
   }
 
-  return id;
+  // Attempt to retrieve the listing id and name from the url
+  const id = $id.split('-').pop() || '';
+
+  // Parse and validate listing id provided
+  const listingId = parseToNumber(id, 'id');
+
+  return listingId;
 }
 
 /**
@@ -44,83 +64,62 @@ async function getRequiredParametersForCategory(categoryId: number): Promise<num
   return categoryParameters.map((param) => param.parameterId);
 }
 
-// -- Type definitions -- //
-export type OwnerResponse = {
-  id: string;
-  name: string;
-  email: string;
-  company: {
-    id: string;
-    name: string;
-    website: string | null;
-    bio: string | null;
-    image: string | null;
-    visible: boolean;
+function orderByOptions(sortBy: string | undefined): Prisma.ListingOrderByWithRelationInput {
+  switch (sortBy) {
+    case 'price_desc':
+      return { price: 'desc' };
+    case 'price_asc':
+      return { price: 'asc' };
+    case 'recent_newest':
+      return { createdAt: 'desc' };
+    case 'recent_oldest':
+      return { createdAt: 'asc' };
+    case 'popularity_desc':
+      return { listingClicksListingClicksListingTolistings: { _count: 'desc' } };
+    case 'popularity_asc':
+      return { listingClicksListingClicksListingTolistings: { _count: 'asc' } };
+    default:
+      return { id: 'asc' };
+  }
+}
+
+function ratingSortFn(a: ListingWithParameters, b: ListingWithParameters): number {
+  if (a.rating === null) return b.rating === null ? 0 : b.rating;
+  if (b.rating === null) return -a.rating;
+  return b.rating - a.rating;
+}
+
+function postSortOptions(
+  sortBy: string | undefined
+): (arr: ListingWithParameters[]) => ListingWithParameters[] {
+  switch (sortBy) {
+    case 'rating_desc':
+      return (arr) => arr.sort(ratingSortFn);
+    case 'rating_asc':
+      return (arr) => arr.sort(ratingSortFn).reverse();
+    default:
+      return (arr) => arr;
+  }
+}
+
+export function sortOptions(sortByStr: string | undefined) {
+  const sortBy = sortByStr ? sortByStr.toLowerCase() : undefined;
+  return {
+    orderBy: orderByOptions(sortBy),
+    postSort: postSortOptions(sortBy),
   };
-  profilePic: string | null;
-  mobileNumber: string;
-  contactMethod: UserContacts;
-  bio: string | null;
-};
-
-export type ListingResponse = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  unitPrice?: boolean;
-  negotiable?: boolean;
-  categoryId: string;
-  type: ListingType;
-  owner: OwnerResponse;
-  open: boolean;
-  rating: number | null;
-  reviewCount: number;
-  parameters?: Array<{
-    paramId: string;
-    value: string;
-  }>;
-  createdAt: Date;
-};
-
-export type ListingWithParameters = Listing & {
-  listingsParametersValues: Array<{
-    parameterId: number;
-    value: string;
-  }>;
-  offersOffersListingTolistings: Array<{
-    accepted: boolean;
-  }>;
-  users: Users & {
-    companies: Companies;
-  };
-  rating: number | null;
-  reviewCount: number;
-};
-
-export const getQueryParameters = z.object({
-  lastIdPointer: z.string().transform(zodParseToInteger).optional(),
-  limit: z.string().transform(zodParseToInteger).optional(),
-  matching: z.string().optional(),
-  includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z.string().optional(),
-  category: z.string().transform(zodParseToInteger).optional(),
-  negotiable: z.string().transform(zodParseToBoolean).optional(),
-  minPrice: z.string().transform(zodParseToNumber).optional(),
-  maxPrice: z.string().transform(zodParseToNumber).optional(),
-  sortBy: z.string().optional(),
-});
+}
 
 // -- Helper functions -- //
 export async function formatSingleListingResponse(
-  listing: ListingWithParameters & { rating: number | null; reviewCount: number },
+  listing: ListingWithParameters,
   includeParameters: boolean
-): Promise<ListingResponse> {
-  const formattedListing: ListingResponse = {
+): Promise<ListingResponseBody> {
+  const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
     name: listing.name,
     description: listing.description,
-    price: Number(listing.price),
+    price: listing.price.toNumber(),
     unitPrice: listing.unitPrice,
     negotiable: listing.negotiable,
     categoryId: listing.categoryId.toString(),
@@ -142,8 +141,11 @@ export async function formatSingleListingResponse(
       contactMethod: listing.users.contact,
       bio: listing.users.bio,
     },
-    open: !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
-    createdAt: listing.createdAt,
+    open: listing.multiple
+      ? true
+      : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
+    multiple: listing.multiple,
+    createdAt: listing.createdAt.toISOString(),
     rating: listing.rating,
     reviewCount: listing.reviewCount,
   };
@@ -158,105 +160,38 @@ export async function formatSingleListingResponse(
   return formattedListing;
 }
 
-export async function formatListingResponse(
-  $listings: ListingWithParameters[],
-  includeParameters: boolean
-) {
-  return Promise.all(
-    $listings.map((listing) => formatSingleListingResponse(listing, includeParameters))
-  );
-}
-
-export const listingsRequestBody = z.object({
-  name: z.string(),
-  description: z.string(),
-  price: z.number().gte(0),
-  unitPrice: z.boolean().optional(),
-  negotiable: z.boolean().optional(),
-  categoryId: z.number(),
-  type: z.nativeEnum(ListingType),
-  parameters: z
-    .array(
-      z.object({
-        paramId: z.string().transform(zodParseToInteger),
-        value: z.string().transform(zodParseToNumber),
-      })
-    )
-    .optional(),
-});
-
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
-    const queryParams = getQueryParameters.parse(req.query);
+    const queryParams = listingSchema.get.query.parse(req.query);
 
-    // Decode params if it exists
-    let decodedParams = null;
-    if (queryParams.params) {
-      decodedParams = JSON.parse(decodeURI(queryParams.params));
-      if (typeof decodedParams.paramId !== 'string' && typeof decodedParams.value !== 'string') {
-        throw new ParamError('paramId and value');
-      }
-      if (typeof decodedParams.paramId !== 'string') {
-        throw new ParamError('paramId');
-      }
-      if (typeof decodedParams.value !== 'string') {
-        throw new ParamError('value');
-      }
-    }
-
-    // Filter options
-    const whereOptions: Prisma.ListingWhereInput = {
-      categoryId: queryParams.category ? queryParams.category : undefined,
-      negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
-      price: {
-        gte: queryParams.minPrice ? queryParams.minPrice : undefined,
-        lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
-      },
-      name: queryParams.matching
-        ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
-        : undefined,
-      listingsParametersValues: decodedParams
-        ? {
-            some: {
-              parameterId: Number(decodedParams.paramId),
-              value: decodedParams.value,
-            },
-          }
-        : undefined,
-    };
-
-    // Sorting options
-    let sortByOptions: Prisma.ListingOrderByWithAggregationInput = {
-      id: 'asc',
-    };
-
-    if (queryParams.sortBy) {
-      switch (queryParams.sortBy.toLowerCase()) {
-        case 'price_desc':
-          sortByOptions = { price: 'desc' };
-          break;
-        case 'price_asc':
-          sortByOptions = { price: 'asc' };
-          break;
-        case 'recent_newest':
-          sortByOptions = { createdAt: 'desc' };
-          break;
-        case 'recent_oldest':
-          sortByOptions = { createdAt: 'asc' };
-          break;
-        default:
-          break;
-      }
-    }
+    const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
     // Retrieve filtered and sorted listings from the database
     const listings = await PrismaClient.listing.findMany({
-      where: whereOptions,
-      orderBy: sortByOptions,
+      where: {
+        categoryId: queryParams.category ? queryParams.category : undefined,
+        negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+        price: {
+          gte: queryParams.minPrice ? queryParams.minPrice : undefined,
+          lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
+        },
+        name: queryParams.matching
+          ? {
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
+          : undefined,
+        listingsParametersValues: queryParams.params
+          ? {
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
+          : undefined,
+      },
+      orderBy,
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
@@ -288,18 +223,22 @@ export default apiHandler()
 
         const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
         const reviewCount = _count && _count.rating;
+        const { multiple } = listing;
 
         return {
           ...listing,
           rating,
           reviewCount,
+          multiple,
         };
       })
     );
 
+    const sortedListings = postSort(listingsWithRatingsAndReviewCount);
+
     // Format the listings
     const formattedListings = await Promise.all(
-      listingsWithRatingsAndReviewCount.map((listing) =>
+      sortedListings.map((listing) =>
         formatSingleListingResponse(listing, queryParams.includeParameters)
       )
     );
@@ -307,7 +246,7 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(formattedListings));
   })
   .post(async (req, res) => {
-    const data = listingsRequestBody.parse(req.body);
+    const data = listingSchema.post.body.parse(req.body);
 
     // Use the user ID from the request object
     const userId = req.token?.user?.id;
@@ -340,6 +279,7 @@ export default apiHandler()
         negotiable: data.negotiable,
         categoryId: data.categoryId,
         type: data.type,
+        multiple: data.multiple,
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
@@ -358,6 +298,8 @@ export default apiHandler()
         listingsParametersValues: true,
       },
     });
+
+    handleBookmarks(UpdateType.CREATE, listing);
 
     res.status(201).json(formatAPIResponse({ listingId: listing.id }));
   });

@@ -1,35 +1,16 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import { z } from 'zod';
-import client, { UserContacts } from '@inc/db';
-import { NotFoundError, ForbiddenError, ParamRequiredError } from '@inc/errors';
+import client from '@inc/db';
+import { NotFoundError, ForbiddenError, ParamRequiredError, WrongPasswordError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
-
-const userIdSchema = z.object({
-  id: z.string(),
-});
-
-const updateUserDetailsSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().email().optional(),
-  //   company is a number that represents the id of the company
-  company: z.string().optional(),
-  profilePicture: z.string().optional(),
-  mobileNumber: z.string().optional(),
-  whatsappNumber: z.string().optional(),
-  telegramUsername: z.string().optional(),
-  contactMethod: z.nativeEnum(UserContacts).optional(),
-  bio: z.string().optional(),
-  password: z.string().optional(),
-  userComments: z.string().optional(),
-});
+import { userSchema } from '@/utils/api/server/zod';
 
 export default apiHandler()
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { id } = userIdSchema.parse(req.query);
+    const { id } = userSchema.userId.parse(req.query);
 
     const user = await client.users.findUnique({
       where: {
@@ -49,6 +30,9 @@ export default apiHandler()
         whatsappNumber: true,
         telegramUsername: true,
         bio: true,
+        userBookmarksUserBookmarksUserIdTousers: req.token?.user.id === id,
+        companiesBookmarks: req.token?.user.id === id,
+        listingBookmarks: req.token?.user.id === id,
       },
     });
 
@@ -70,6 +54,13 @@ export default apiHandler()
       telegramUsername: user.telegramUsername,
       bio: user.bio,
       ...(isAdmin && { comments: user.comments }),
+      ...(req.token?.user.id === user.id && {
+        bookmarks: {
+          users: user.userBookmarksUserBookmarksUserIdTousers.map((user) => user.targetUser),
+          companies: user.companiesBookmarks.map((company) => company.companyId.toString()),
+          listings: user.listingBookmarks.map((listing) => listing.listingId.toString()),
+        },
+      }),
     };
 
     return res.status(200).json(formatAPIResponse(mappedUser));
@@ -77,10 +68,31 @@ export default apiHandler()
   .put(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { id } = userIdSchema.parse(req.query);
-    const parsedBody = updateUserDetailsSchema.parse(req.body);
-    const { name, email, company, profilePicture, mobileNumber, contactMethod, bio, userComments,whatsappNumber,telegramUsername } =
-      parsedBody;
+    const { id } = userSchema.userId.parse(req.query);
+
+    const getUserHashedPassword = await client.users.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        password: true,
+      },
+    });
+
+    const parsedBody = userSchema.put.body.parse(req.body);
+    const {
+      name,
+      email,
+      company,
+      profilePicture,
+      mobileNumber,
+      contactMethod,
+      bio,
+      userComments,
+      whatsappNumber,
+      telegramUsername,
+      oldPassword,
+    } = parsedBody;
     let { password } = parsedBody;
 
     if (name) {
@@ -92,17 +104,27 @@ export default apiHandler()
     if (mobileNumber) {
       validatePhone(mobileNumber);
     }
-    if (password) {
-      validatePassword(password);
+    if (password || oldPassword) {
+      validatePassword(password as string);
+
+      // Compares password from database vs password from input
+      const samePassword = bcrypt.compareSync(
+        parsedBody.oldPassword as string,
+        getUserHashedPassword?.password as string
+      );
+
+      if (!samePassword) {
+        throw new WrongPasswordError();
+      }
+
       // Hash password with bcrrypt and genSalt(10)
       const salt = await bcrypt.genSalt(10);
-      password = await bcrypt.hash(password, salt);
+      password = await bcrypt.hash(password as string, salt);
     }
 
     if (whatsappNumber) {
       validatePhone(whatsappNumber);
     }
-
 
     // Users can edit their own details, and admins can edit anyone's details
     // Therefore, we cannot simply block the entire endpoint for non-admin users
@@ -183,7 +205,7 @@ export default apiHandler()
       allowAdminsOnly: true,
     }),
     async (req, res) => {
-      const { id } = userIdSchema.parse(req.query);
+      const { id } = userSchema.userId.parse(req.query);
 
       // Verify that the user exists
       const userExists = await client.users.findUnique({
