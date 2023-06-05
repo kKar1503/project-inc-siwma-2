@@ -38,21 +38,20 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
   const files = await getFilesFromRequest(req, { multiples: true });
   const bucket = await s3Connection.getBucket(ListingBucketName);
-  const previousImages = listing.listingImages.map((image) => image.image);
-  await bucket.deleteObjects(previousImages);
+  const previousImages = listing.listingImages;
+
   const objects = await Promise.all(
     files.map((file) => bucket.createObject(fileToS3Object(file))),
   );
+  const images = objects.map((object) =>({image: object.Id }));
+
   await PrismaClient.listing.update({
     where: {
       id,
     },
     data: {
       listingImages: {
-        create: objects.map((object) => ({
-            image: object.Id,
-          }),
-        ),
+        create: [...previousImages, ...images],
       },
     },
     include: {
