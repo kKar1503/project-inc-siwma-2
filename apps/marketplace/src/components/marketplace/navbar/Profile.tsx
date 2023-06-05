@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import EditNotificationsIcon from '@mui/icons-material/EditNotifications';
 import Link from '@mui/material/Link';
+import { useResponsiveness } from '@inc/ui';
 
 export type UserNameProps = {
   userName: string | undefined;
@@ -18,6 +19,8 @@ export type UserNameProps = {
 
 const Profile = ({ userName, userId }: UserNameProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const isMenuOpen = anchorEl !== null;
 
@@ -35,7 +38,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
         size="medium"
         onClick={handleProfileMenuOpen}
         sx={({ spacing }) => ({
-          ml: spacing(2),
+          ml: isMd ? spacing(1) : spacing(2),
         })}
       >
         <AccountCircle

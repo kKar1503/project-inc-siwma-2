@@ -20,7 +20,7 @@ const AddListing = () => {
     if (isMd) {
       return {
         textBtn: {
-          fontSize: '0.8rem',
+          fontSize: '0.6rem',
           color: palette.common.white,
         },
       };

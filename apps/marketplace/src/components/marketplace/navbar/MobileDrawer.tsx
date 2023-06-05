@@ -21,22 +21,32 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
-import { useState, Fragment, MouseEvent } from 'react';
+import Grid from '@mui/material/Grid';
+import Switch from '@mui/material/Switch';
+import { useState, Fragment, MouseEvent, ChangeEvent } from 'react';
 import { Link } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
-const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
+export type MobileDrawerProps = {
+  userId: string | undefined;
+  language: string;
+};
+
+const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [openLanguage, setOpenLanguage] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
+  const [drawerLang, setDrawerLang] = useState(language);
 
-  const handleLanguageClick = (event: MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    setOpenLanguage(!openLanguage);
-  };
+  const theme = useTheme();
 
   const handleProfileClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     setOpenProfile(!openProfile);
+  };
+
+  const mobileDrawerLanuageChange = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    setDrawerLang(drawerLang === 'English' ? 'Chinese' : 'English');
   };
 
   const toggleDrawer = (openState: boolean) => () => {
@@ -45,7 +55,7 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
 
   const list = () => (
     <Box onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
-      <List sx={{ width: 250, bgcolor: 'background.paper' }}>
+      <List sx={{ width: 250, bgcolor: 'background.paper', height: '100vh' }}>
         <Link href="/" underline="none">
           <ListItem disablePadding>
             <ListItemButton>
@@ -133,29 +143,6 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
           </ListItem>
         </Link>
 
-        <ListItem disablePadding>
-          {/* no link, dropdown to english and chinese options */}
-          <ListItemButton onClick={handleLanguageClick}>
-            <ListItemIcon>
-              <TranslateIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
-            </ListItemIcon>
-            <ListItemText primary="Language" />
-            {openLanguage ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-        </ListItem>
-        <Collapse in={openLanguage} timeout="auto" unmountOnExit>
-          {/* add logic when translate function in */}
-          <List component="div" disablePadding>
-            <ListItemButton>
-              <ListItemText sx={({ spacing }) => ({ pl: spacing(2) })} primary="English" />
-            </ListItemButton>
-
-            <ListItemButton>
-              <ListItemText sx={({ spacing }) => ({ pl: spacing(2) })} primary="Chinese" />
-            </ListItemButton>
-          </List>
-        </Collapse>
-
         {/* update with logic when ready */}
         <Link href="/" underline="none">
           <ListItem disablePadding>
@@ -167,6 +154,22 @@ const MobileDrawer = ({ userId }: { userId: string | undefined }) => {
             </ListItemButton>
           </ListItem>
         </Link>
+
+        <ListItem disablePadding sx={{ position: 'absolute', bottom: 0 }}>
+          <ListItemButton onClick={mobileDrawerLanuageChange}>
+            <Grid component="label" container alignItems="center">
+              <Grid sx={{ fontSize: theme.typography.subtitle2 }} item>
+                EN
+              </Grid>
+              <Grid item>
+                <Switch checked={drawerLang === 'Chinese'} value="checked" />
+              </Grid>
+              <Grid sx={{ fontSize: theme.typography.subtitle2 }} item>
+                CN
+              </Grid>
+            </Grid>
+          </ListItemButton>
+        </ListItem>
       </List>
     </Box>
   );

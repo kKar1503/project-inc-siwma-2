@@ -51,7 +51,8 @@ const NavBar = () => {
     if (isMd) {
       return {
         switchTxt: {
-          fontSize: typography.subtitle2,
+          fontSize: '10px',
+          fontWeight: 500,
         },
       };
     }
@@ -59,7 +60,7 @@ const NavBar = () => {
     if (isLg) {
       return {
         switchTxt: {
-          fontSize: '9px',
+          fontSize: typography.subtitle2,
         },
       };
     }
@@ -83,7 +84,9 @@ const NavBar = () => {
       }}
     >
       <Toolbar>
+        {/* <Box sx={{ ml: isLg ? spacing(0) : spacing(2) }}> */}
         <Image src="/images/favicons/SIWMA-icon.png" alt="logo" width={60} height={40} />
+        {/* </Box> */}
 
         {!isSm && (
           <Link href="/" underline="none">
@@ -91,7 +94,7 @@ const NavBar = () => {
               noWrap
               sx={({ spacing, typography }) => ({
                 fontSize: typography.subtitle2,
-                ml: spacing(3),
+                ml: isLg ? spacing(3) : spacing(2),
               })}
             >
               Home
@@ -104,8 +107,8 @@ const NavBar = () => {
               noWrap
               sx={({ spacing, typography }) => ({
                 fontSize: typography.subtitle2,
-                ml: spacing(3),
-                mr: spacing(3),
+                ml: isLg ? spacing(3) : spacing(2),
+                mr: isLg ? spacing(3) : spacing(2),
               })}
             >
               All Categories
@@ -123,9 +126,9 @@ const NavBar = () => {
             </Grid>
             <Grid item>
               <Switch
-                checked={language === 'Chinese'} // relevant state for your case
-                onChange={handleLanguageChange} // relevant method to handle your change
-                value="checked" // some value you need
+                checked={language === 'Chinese'}
+                onChange={handleLanguageChange}
+                value="checked"
               />
             </Grid>
             <Grid sx={navBarStyles?.switchTxt} item>
@@ -137,7 +140,7 @@ const NavBar = () => {
             <IconButton
               size="medium"
               sx={({ spacing }) => ({
-                ml: spacing(2),
+                ml: isMd ? spacing(1) : spacing(2),
               })}
             >
               <Badge>
@@ -151,28 +154,12 @@ const NavBar = () => {
             </IconButton>
           </Link>
 
-          <IconButton
-            size="medium"
-            sx={({ spacing }) => ({
-              ml: spacing(2),
-            })}
-          >
-            <Badge>
-              <NotificationsIcon
-                sx={({ typography, palette }) => ({
-                  fontSize: typography.h5,
-                  color: palette.text.secondary,
-                })}
-              />
-            </Badge>
-          </IconButton>
-
           <Profile userName={userName} userId={userId} />
         </Box>
 
         {/* mobile drawer icon here */}
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-          <MobileDrawer userId={userId} />
+          <MobileDrawer userId={userId} language={language} />
         </Box>
         {/* end of mobile drawer icon */}
       </Toolbar>
