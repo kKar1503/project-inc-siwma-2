@@ -9,7 +9,7 @@ export const EVENTS = {
 
   // Client Events
   CLIENT: {
-    DELETE_MESSAGE: 'deleteMessage',
+    DELETE_MESSAGE: 'clientDeleteMessage',
     CREATE_ROOM: 'createRoom',
     SEND_MESSAGE: 'sendMessage',
     PING: 'clientPing',
@@ -21,6 +21,7 @@ export const EVENTS = {
   // Server Events
   SERVER: {
     ROOMS: 'rooms',
+    DELETE_MESSAGE: 'serverDeleteMessage',
     JOINED_ROOM: 'joinedRoom',
     ROOM_MESSAGE: 'roomMessage',
     PING: 'serverPing',
