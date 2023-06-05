@@ -1,5 +1,11 @@
 import React, { useRef } from 'react';
-import { Box, Grid, Link, Typography, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
+import {
+  Box,
+  Grid,
+  Link,
+  Typography,
+  CircularProgress,
+} from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 
@@ -15,7 +21,7 @@ import fetchListings from '@/middlewares/fetchListings';
 import fetchAdvertisements from '@/middlewares/fetchAdvertisements';
 import fetchPopularListings from '@/middlewares/fetchPopularListings';
 
-import {InfiniteScroll} from '@inc/ui';
+import { InfiniteScroll, useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 
 const useGetCategoriesQuery = () => {
@@ -37,9 +43,8 @@ const useGetPopularListingsQuery = () => {
 };
 
 const Marketplace = () => {
-  const theme = useTheme();
   const { data: session } = useSession();
-  const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isMediumScreen = useResponsiveness(['md']);
   const scrollRef = useRef<Element>(null);
 
   const [listings, setListings] = React.useState<Array<ProductListingItemProps>>([]);
@@ -75,7 +80,11 @@ const Marketplace = () => {
 
   return (
     <>
-      {advertisementsData?.length ? <Carousel data={advertisementsData} /> : <AdvertisementsPlaceholder />}
+      {advertisementsData?.length ? (
+        <Carousel data={advertisementsData} />
+      ) : (
+        <AdvertisementsPlaceholder />
+      )}
       <Box display="flex" justifyContent="center" paddingTop="2em">
         <Box
           sx={{
@@ -126,19 +135,20 @@ const Marketplace = () => {
           reachedMaxItems={maxItems}
           loadingComponent={<CircularProgress />}
           parent={Grid}
+          endMessage=""
           parentProps={{
             container: true,
             spacing: 2,
             gap: 2,
             justifyContent: 'center',
-            display: 'flex'
+            display: 'flex',
           }}
           child={Grid}
           childProps={{
             item: true,
             xl: 2,
             lg: 3,
-            md: 4,
+            md: 6,
             sm: 6,
             xs: 12,
           }}
