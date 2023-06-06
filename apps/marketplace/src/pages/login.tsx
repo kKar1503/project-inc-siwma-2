@@ -13,7 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { FormEvent, useMemo, useState } from 'react';
 import { signIn } from 'next-auth/react';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -44,8 +44,8 @@ const LoginForm = () => {
     if (isSm) {
       return {
         boxShadow: shadows[5],
-        px: '5rem',
-        pb: '10rem',
+        px: '2rem',
+        pb: '9rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -93,7 +93,9 @@ const LoginForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" fill />
+        <Box sx={{ width: '100%', height: '100%' }}>
+          <Image src="/images/siwma-bg.png" alt="logo" style={{ objectFit: 'cover' }} fill />
+        </Box>
         <Container
           component="main"
           maxWidth="md"
@@ -106,17 +108,22 @@ const LoginForm = () => {
         >
           <Box sx={stylesLogin}>
             <Box
-              sx={({ spacing }) => ({
+              sx={{
                 position: 'relative',
                 margin: 'auto',
                 display: 'flex',
                 justifyContent: 'center',
                 width: '100%',
                 height: '20%',
-                mb: spacing(2),
-              })}
+                objectFit: 'fill',
+              }}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
+              <Image
+                src="/images/siwma-logo.jpeg"
+                alt="logo"
+                fill
+                style={{ objectFit: 'contain' }}
+              />
             </Box>
             <Divider flexItem />
             <Box

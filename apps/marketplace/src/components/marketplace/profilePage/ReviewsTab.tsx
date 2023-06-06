@@ -1,18 +1,19 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { SelectComponent, StarsRating } from '@inc/ui';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { SelectComponent, StarsRating, useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material';
 import { useMemo } from 'react';
-import ReviewMessage, { ReviewProps } from './ReviewMessage';
+import { Review } from '@/utils/api/client/zod';
+import ReviewMessage from './ReviewMessage';
 import FilterChips from './FilterChips';
+
 
 // pass filter values to select component
 const sortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
 
 export type ReviewsTabProps = {
-  allReviews: ReviewProps[];
+  allReviews: Review[];
   userRating: number;
   totalReviews: number;
   filterReviews: (newData: string) => void;
@@ -111,8 +112,8 @@ const ReviewsTab = ({
       <Divider />
       {/* lower portion showing marketplace cards */}
       <Box>
-        {allReviews.map((review) => (
-          <ReviewMessage data={review} />
+        {allReviews.map((Review) => (
+          <ReviewMessage data={Review} />
         ))}
       </Box>
     </Box>

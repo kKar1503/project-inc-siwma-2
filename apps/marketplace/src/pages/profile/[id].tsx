@@ -13,7 +13,6 @@ import Box from '@mui/material/Box';
 import { useState, SyntheticEvent, useMemo } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import apiClient from '@/utils/api/client/apiClient';
 import { useQuery } from 'react-query';
 // import fetchUser from '@/middlewares/fetchUser';
@@ -22,6 +21,7 @@ import { useRouter } from 'next/router';
 import { Listing, Review } from '@/utils/api/client/zod';
 import fetchListing from '@/middlewares/fetchListing';
 import fetchReview from '@/middlewares/fetchReview';
+import { useResponsiveness } from '@inc/ui';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: 60,
@@ -99,7 +99,6 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
 
   const [value, setValue] = useState(0);
   // when filter/sorts are called use set states to set the new listings/reviews again
-  const [listings, setListings] = useState(serverSideListings);
   const [reviews, setReviews] = useState(serverSideReviews);
   const [filterListings, setFilterListings] = useState('');
   const [sortByListings, setSortByListings] = useState('');
