@@ -10,7 +10,9 @@ import { File } from 'formidable';
 import { IS3Object } from '@inc/s3-simplified';
 
 
-const ListingBucketName = process.env.AWS_BUCKET as string;
+const awsBucket = process.env.AWS_BUCKET as string;
+const acceptedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
 
 const ParamSchema = z.object({
   id: z.string().transform(zodParseToInteger),
@@ -56,7 +58,7 @@ const validateListing = async (id: number) => {
 
 const getSortOrder = (obj: IS3Object) => parseInt(obj.Metadata.get('sort-order') ?? '0', 10);
 const append = async (listing: { listingImages: { image: string }[] }, files: File[]) => {
-  const bucket = await s3Connection.getBucket(ListingBucketName);
+  const bucket = await s3Connection.getBucket(awsBucket);
   const previousImages = listing.listingImages;
   const offset = previousImages.length;
   const objects = await Promise.all(
@@ -70,7 +72,7 @@ const append = async (listing: { listingImages: { image: string }[] }, files: Fi
 };
 
 const prepend = async (listing: { listingImages: { image: string }[] }, files: File[]) => {
-  const bucket = await s3Connection.getBucket(ListingBucketName);
+  const bucket = await s3Connection.getBucket(awsBucket);
   const previousImages = (await Promise
     .all(listing.listingImages.map(async (image) => bucket.getObject(image.image))))
     .sort((a, b) => getSortOrder(a) - getSortOrder(b));
@@ -89,7 +91,7 @@ const insert = async (listing: { listingImages: { image: string }[] }, files: Fi
   if (insertIndex < 0) return prepend(listing, files);
   if (insertIndex > listing.listingImages.length) return append(listing, files);
 
-  const bucket = await s3Connection.getBucket(ListingBucketName);
+  const bucket = await s3Connection.getBucket(awsBucket);
   const previousImages = (await Promise
     .all(listing.listingImages.map(async (image) => bucket.getObject(image.image))))
     .sort((a, b) => getSortOrder(a) - getSortOrder(b));
@@ -115,7 +117,8 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   if (!isAdmin(user) && !(await validateUser(user, listing.owner))) throw new ForbiddenError();
 
 
-  const files = await getFilesFromRequest(req, { multiples: true });
+  const files = (await getFilesFromRequest(req, { multiples: true }))
+    .filter((file) => file.mimetype ? acceptedMimeTypes.includes(file.mimetype) : false);
   if (files.length === 0) throw new ParamError();
 
   const index = req.query.insertIndex ? parseToNumber(req.query.insertIndex as string, 'insertIndex') : undefined;
@@ -128,6 +131,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       image: image.image,
     })),
   });
+
   res.status(204).end();
 };
 
@@ -139,5 +143,5 @@ export default apiHandler()
 export const config = {
   api: {
     bodyParser: false,
-  }
-}
+  },
+};
