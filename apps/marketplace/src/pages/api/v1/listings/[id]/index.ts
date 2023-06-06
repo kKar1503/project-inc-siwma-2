@@ -1,8 +1,6 @@
 import { apiHandler, handleBookmarks, formatAPIResponse, UpdateType } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
-import { ListingType } from '@prisma/client';
-import z from 'zod';
 import s3Connection from '@/utils/s3Connection';
 import { listingSchema } from '@/utils/api/server/zod';
 import { formatSingleListingResponse, parseListingId } from '..';
@@ -41,7 +39,6 @@ export async function checkListingExists($id: string | number) {
   if (!listing) {
     throw new NotFoundError(`Listing with id '${id}'`);
   }
-
   return listing;
 }
 

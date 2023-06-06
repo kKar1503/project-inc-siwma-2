@@ -18,7 +18,9 @@ export type ListingWithParameters = Listing & {
   offersOffersListingTolistings: Array<{
     accepted: boolean;
   }>;
-  images: Array<string>;
+  listingImages: Array<{
+    image: string;
+  }>;
   users: Users & {
     companies: Companies;
   };
@@ -138,8 +140,8 @@ export async function formatSingleListingResponse(
       contactMethod: listing.users.contact,
       bio: listing.users.bio,
     },
-    images: listing.images,
-    coverImage: listing.images[0],
+    images: listing.listingImages.map((image) => image.image),
+    coverImage: listing.listingImages[0].image,
     open: listing.multiple
       ? true
       : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
