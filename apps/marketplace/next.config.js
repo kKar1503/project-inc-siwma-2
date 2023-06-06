@@ -48,11 +48,22 @@ const nextConfig = {
           ]
         : [],
   },
-  resolve:{
+  resolve: {
     alias: {
-        'aws-crt': path.resolve(__dirname, '../../node_modules/.pnpm/aws-crt'),
+      'aws-crt': path.resolve(__dirname, '../../node_modules/.pnpm/aws-crt'),
     },
-  }
+  },
+  i18n: {
+    /**
+     * Provide the locales you want to support in your application
+     */
+    locales: ['en', 'cn'],
+    /**
+     * This is the default locale you want to be used when visiting
+     * a non-locale prefixed path.
+     */
+    defaultLocale: 'en',
+  },
 };
 
 module.exports = nextConfig;
