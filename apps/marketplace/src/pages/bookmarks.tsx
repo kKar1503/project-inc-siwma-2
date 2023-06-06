@@ -59,13 +59,16 @@ const Bookmarks = () => {
     }
 
     const usersData = await Promise.all(userIDs.map(fetchUser));
-    const users = usersData[0]?.data.data;
+
+    const users = usersData.map((user) => user?.data.data[0]);
+
     setUsers(users);
   };
 
   useEffect(() => {
     if (userDetails) {
       const { bookmarks } = userDetails.data.data[0];
+      console.log(bookmarks);
 
       findListings(bookmarks.listings);
       findUsers(bookmarks.users);

@@ -23,7 +23,7 @@ const useBookmarkUser = (userUuid: string, updateBookmarkData: () => void) => {
   const [isBookmarked, setIsBookmarked] = useState(true);
 
   const handleBookmarkUser = async () => {
-    if (isBookmarked) {
+    if (isBookmarked && updateBookmarkData) {
       await bookmarkUser(userUuid);
       setIsBookmarked(false);
       updateBookmarkData();
@@ -60,7 +60,6 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
         action={
           <IconButton
             aria-label="bookmark"
-            color={isBookmarked ? 'primary' : 'default'}
             onClick={handleBookmarkUser}
             sx={({ palette }) => ({
               color: isBookmarked ? palette.warning[100] : palette.grey[500],
