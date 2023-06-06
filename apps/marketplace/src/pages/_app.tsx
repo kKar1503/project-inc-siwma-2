@@ -7,8 +7,8 @@ import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
 import { ThemeComponent } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
-const queryClient = new QueryClient();
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../i18n/i18n'
 
 // -- Type declarations --//
 // Page type
@@ -62,7 +62,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           allowNonAuthenticated={allowNonAuthenticated}
         >
           <QueryClientProvider client={queryClient}>
-            {getLayout(<Component {...pageProps} />)}
+            <I18nextProvider i18n={i18n}>{getLayout(<Component {...pageProps} />)}</I18nextProvider>
           </QueryClientProvider>
         </AuthenticationGuard>
       </SessionProvider>
