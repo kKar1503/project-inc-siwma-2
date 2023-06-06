@@ -1,4 +1,4 @@
-import { apiHandler, zodParseToInteger } from '@/utils/api';
+import { apiHandler, parseToNumber, zodParseToInteger } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
@@ -10,7 +10,7 @@ import { File } from 'formidable';
 import { IS3Object } from '@inc/s3-simplified';
 
 
-const ListingBucketName = process.env.LISTING_BUCKET_NAME as string;
+const ListingBucketName = process.env.AWS_BUCKET as string;
 
 const ParamSchema = z.object({
   id: z.string().transform(zodParseToInteger),
@@ -118,7 +118,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const files = await getFilesFromRequest(req, { multiples: true });
   if (files.length === 0) throw new ParamError();
 
-  const index = req.query.insertIndex ? parseInt(req.query.insertIndex as string, 10) : undefined;
+  const index = req.query.insertIndex ? parseToNumber(req.query.insertIndex as string, 'insertIndex') : undefined;
 
   const newImages = typeof index === 'number' ? await insert(listing, files, index) : await append(listing, files);
 
@@ -134,3 +134,10 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
 export default apiHandler()
   .put(PUT);
+
+
+export const config = {
+  api: {
+    bodyParser: false,
+  }
+}
