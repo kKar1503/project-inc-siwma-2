@@ -68,7 +68,6 @@ const Bookmarks = () => {
   useEffect(() => {
     if (userDetails) {
       const { bookmarks } = userDetails.data.data[0];
-      console.log(bookmarks);
 
       findListings(bookmarks.listings);
       findUsers(bookmarks.users);

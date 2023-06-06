@@ -124,7 +124,6 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
   const currentUser = useGetUserQuery(loggedUserUuid);
   const profileUserUuid = data?.id as string;
   const bookmarkedUsers = currentUser?.data?.data[0].bookmarks.users;
-  console.log(bookmarkedUsers);
 
   const { isBookmarked, handleBookmarkUser } = useBookmarkUserQuery(
     profileUserUuid,
