@@ -171,7 +171,7 @@ export default apiHandler()
     const listings = await PrismaClient.listing.findMany({
       where: {
         categoryId: queryParams.category ? queryParams.category : undefined,
-        negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+        negotiable: queryParams.negotiable != null ? queryParams.negotiable : undefined,
         price: {
           gte: queryParams.minPrice ? queryParams.minPrice : undefined,
           lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
