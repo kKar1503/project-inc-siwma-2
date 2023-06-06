@@ -19,7 +19,7 @@ import { useQuery } from 'react-query';
 import users from '@/utils/api/client/zod/users';
 import { useRouter } from 'next/router';
 import { Listing, Review } from '@/utils/api/client/zod';
-import fetchListing from '@/middlewares/fetchListing';
+import fetchListing from '@/middlewares/fetchListings';
 import fetchReview from '@/middlewares/fetchReview';
 import { useResponsiveness } from '@inc/ui';
 
