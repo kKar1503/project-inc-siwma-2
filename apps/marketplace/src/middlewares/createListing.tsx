@@ -11,7 +11,7 @@ const createListing = async (data: { listingBody: PostListingsRequestBody, image
 
   const result = await apiClient.post('/v1/listings', listingBody);
   const { id } = result.data;
-  await apiClient.post(`/v1/listings/${id}/images`, formData);
+  await apiClient.put(`/v1/listings/${id}/images`, formData);
 
   return true;
 };
