@@ -7,6 +7,7 @@ import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import { ForbiddenError, NotFoundError } from '@inc/errors';
 import { File } from 'formidable';
+import { IS3Object } from '@inc/s3-simplified';
 
 
 const ListingBucketName = process.env.LISTING_BUCKET_NAME as string;
@@ -56,15 +57,33 @@ const validateListing = async (id: number) => {
 const append = async (listing: { listingImages: { image: string }[] }, files: File[]) => {
   const bucket = await s3Connection.getBucket(ListingBucketName);
   const previousImages = listing.listingImages;
+  const offset = previousImages.length;
   const objects = await Promise.all(
     files.map((file, i) => {
-      const sortOrder = i * 10000;
+      const sortOrder = (i + offset) * 10000;
       const object = fileToS3Object(file, { 'sort-order': sortOrder.toString() });
       return bucket.createObject(object);
     }),
   );
-  const images = objects.map((object) => ({ image: object.Id }));
-  return [...previousImages, ...images];
+  return objects.map((object) => ({ image: object.Id }));
+};
+
+const insert = async (listing: { listingImages: { image: string }[] }, files: File[], insertIndex: number) => {
+  const getSortOrder = (obj: IS3Object) => parseInt(obj.Metadata.get('sort-order') ?? '0', 10);
+  const bucket = await s3Connection.getBucket(ListingBucketName);
+  const previousImages = (await Promise
+    .all(listing.listingImages.map(async (image) => bucket.getObject(image.image))))
+    .sort((a, b) => getSortOrder(a) - getSortOrder(b));
+  if (insertIndex > previousImages.length) return append(listing, files);
+  const [before, after] = [getSortOrder(previousImages.at(insertIndex - 1) as IS3Object), getSortOrder(previousImages.at(insertIndex) as IS3Object)];
+  const sortOffset = (after - before) / (files.length + 1);
+  const objects = await Promise.all(
+    files.map((file, i) => {
+      const sortOrder = before + sortOffset * (i + 1);
+      const object = fileToS3Object(file, { 'sort-order': sortOrder.toString() });
+      return bucket.createObject(object);
+    }));
+  return objects.map((object) => ({ image: object.Id }));
 };
 
 const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
@@ -79,21 +98,13 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
 
   const files = await getFilesFromRequest(req, { multiples: true });
+  const newImages = await append(listing, files);
 
-  const updatedListingImages = append(listing, files);
-
-  await PrismaClient.listing.update({
-    where: {
-      id,
-    },
-    data: {
-      listingImages: {
-        create: await updatedListingImages,
-      },
-    },
-    include: {
-      listingsParametersValues: true,
-    },
+  await PrismaClient.listingImages.createMany({
+    data: newImages.map((image) => ({
+      listingId: id,
+      image: image.image,
+    })),
   });
 
   res.status(204).end();
