@@ -1,4 +1,4 @@
-import { apiHandler, parseToNumber, zodParseToInteger } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber, zodParseToInteger } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
-import { File } from 'formidable';
 import { IS3Object } from '@inc/s3-simplified';
 
 
@@ -49,61 +48,57 @@ const validateListing = async (id: number) => {
       id,
     },
     include: {
-      listingImages: true,
+      listingImages: {
+        orderBy: {
+          order: 'asc'
+        }
+      },
     },
   });
   if (!listing) throw new NotFoundError(`Listing with id '${id}`);
   return listing;
 };
-
-const getSortOrder = (obj: IS3Object) => parseInt(obj.Metadata.get('sort-order') ?? '0', 10);
-const append = async (listing: { listingImages: { image: string }[] }, files: File[]) => {
-  const bucket = await s3Connection.getBucket(awsBucket);
+const append = async (listing: { listingImages: { image: string,order:number }[] }, objects: IS3Object[]) => {
   const previousImages = listing.listingImages;
-  const offset = previousImages.length;
-  const objects = await Promise.all(
-    files.map((file, i) => {
-      const sortOrder = (i + offset) * 10000;
-      const object = fileToS3Object(file, { 'sort-order': sortOrder.toString() });
-      return bucket.createObject(object);
-    }),
-  );
-  return objects.map((object) => ({ image: object.Id }));
+  const offset = previousImages[previousImages.length - 1].order;
+
+  return objects.map((object, i) => {
+    const sortOrder = i * 10000 + offset;
+    return {
+      image: object.Id,
+      order: sortOrder,
+    };
+  });
 };
 
-const prepend = async (listing: { listingImages: { image: string }[] }, files: File[]) => {
-  const bucket = await s3Connection.getBucket(awsBucket);
-  const previousImages = (await Promise
-    .all(listing.listingImages.map(async (image) => bucket.getObject(image.image))))
-    .sort((a, b) => getSortOrder(a) - getSortOrder(b));
-  const firstImage = getSortOrder(previousImages[0] as IS3Object);
-  const offset = (-10000 * files.length) + firstImage;
-  const objects = await Promise.all(
-    files.map((file, i) => {
-      const sortOrder = i * 10000 + offset;
-      const object = fileToS3Object(file, { 'sort-order': sortOrder.toString() });
-      return bucket.createObject(object);
-    }),
-  );
-  return objects.map((object) => ({ image: object.Id }));
-};
-const insert = async (listing: { listingImages: { image: string }[] }, files: File[], insertIndex: number) => {
-  if (insertIndex < 0) return prepend(listing, files);
-  if (insertIndex > listing.listingImages.length) return append(listing, files);
+const prepend = async (listing: { listingImages: { image: string,order:number }[] }, objects: IS3Object[]) => {
 
-  const bucket = await s3Connection.getBucket(awsBucket);
-  const previousImages = (await Promise
-    .all(listing.listingImages.map(async (image) => bucket.getObject(image.image))))
-    .sort((a, b) => getSortOrder(a) - getSortOrder(b));
-  const [before, after] = [getSortOrder(previousImages.at(insertIndex - 1) as IS3Object), getSortOrder(previousImages.at(insertIndex) as IS3Object)];
-  const sortOffset = (after - before) / (files.length + 1);
-  const objects = await Promise.all(
-    files.map((file, i) => {
-      const sortOrder = before + sortOffset * (i + 1);
-      const object = fileToS3Object(file, { 'sort-order': sortOrder.toString() });
-      return bucket.createObject(object);
-    }));
-  return objects.map((object) => ({ image: object.Id }));
+  const firstImage = listing.listingImages[0].order;
+  const offset = (-10000 * objects.length) + firstImage;
+
+  return objects.map((object, i) => {
+    const sortOrder = i * 10000 + offset;
+    return {
+      image: object.Id,
+      order: sortOrder,
+    };
+  });
+};
+const insert = async (listing: { listingImages: { image: string,order:number }[] }, objects: IS3Object[], insertIndex: number) => {
+  if (insertIndex < 0) return prepend(listing, objects);
+  if (insertIndex >= listing.listingImages.length) return append(listing, objects);
+
+
+  const [before, after] = [listing.listingImages[insertIndex - 1].order, listing.listingImages[insertIndex].order];
+  const sortOffset = (after - before) / (objects.length + 1);
+
+  return objects.map((object, i) => {
+    const sortOrder = before + sortOffset * (i + 1);
+    return {
+      image: object.Id,
+      order: sortOrder,
+    };
+  });
 };
 
 const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
@@ -121,18 +116,33 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     .filter((file) => file.mimetype ? acceptedMimeTypes.includes(file.mimetype) : false);
   if (files.length === 0) throw new ParamError();
 
+  const bucket = await s3Connection.getBucket(awsBucket);
+  const objects = await Promise.all(
+    files.map((file) => {
+      const object = fileToS3Object(file);
+      return bucket.createObject(object);
+    }));
+
   const index = req.query.insertIndex ? parseToNumber(req.query.insertIndex as string, 'insertIndex') : undefined;
 
-  const newImages = typeof index === 'number' ? await insert(listing, files, index) : await append(listing, files);
+  const newImages = typeof index === 'number' ? await insert(listing, objects, index) : await append(listing, objects);
 
   await PrismaClient.listingImages.createMany({
     data: newImages.map((image) => ({
       listingId: id,
       image: image.image,
+      order: image.order,
     })),
   });
 
-  res.status(204).end();
+
+  // refetch listing
+  const updatedListing = await validateListing(id);
+  const response = {
+    images: updatedListing.listingImages,
+    coverImage: updatedListing.listingImages[0],
+  };
+  res.status(204).json(formatAPIResponse(response));
 };
 
 
