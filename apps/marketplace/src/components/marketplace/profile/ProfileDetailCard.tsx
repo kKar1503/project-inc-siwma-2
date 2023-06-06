@@ -8,11 +8,17 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { StarsRating, useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import fetchUser from '@/middlewares/fetchUser';
+import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
+import { useQuery } from 'react-query';
+import { useSession } from 'next-auth/react';
 
 export type ProfileDetailCardProps =
   | {
@@ -35,6 +41,35 @@ export type ProfileDetailCardProps =
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
+};
+
+const useGetUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+
+  return data;
+};
+
+const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | undefined) => {
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+
+  const handleBookmarkUser = async () => {
+    await bookmarkUser(userUuid);
+    setIsBookmarked((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (bookmarkedUsers) {
+      const bookmarked = bookmarkedUsers.includes(userUuid);
+      setIsBookmarked(bookmarked);
+    }
+  }, [bookmarkedUsers, userUuid]);
+
+  return {
+    isBookmarked,
+    handleBookmarkUser,
+  };
 };
 
 const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
@@ -84,6 +119,18 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
     };
   }, [isSm, isMd, isLg]);
 
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
+  const currentUser = useGetUserQuery(loggedUserUuid);
+  const profileUserUuid = data?.id as string;
+  const bookmarkedUsers = currentUser?.data?.data[0].bookmarks.users;
+  console.log(bookmarkedUsers);
+
+  const { isBookmarked, handleBookmarkUser } = useBookmarkUserQuery(
+    profileUserUuid,
+    bookmarkedUsers
+  );
+
   return (
     <Card sx={styleProfileCard}>
       <CardHeader
@@ -93,6 +140,18 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
         subheaderTypographyProps={{
           fontSize: 16,
         }}
+        action={
+          <IconButton
+            aria-label="bookmark"
+            onClick={handleBookmarkUser}
+            sx={({ spacing, palette }) => ({
+              p: spacing(0),
+              color: isBookmarked ? palette.warning[100] : palette.grey[500],
+            })}
+          >
+            <BookmarkIcon fontSize="large" />
+          </IconButton>
+        }
         title="Your Profile"
         subheader="View your profile details here"
       />

@@ -24,6 +24,7 @@ import NegotiableBadge from './NegotiableBadge';
 
 export type ProductListingItemData = {
   data: Listing;
+  showBookmark?: boolean;
   updateBookmarkData?: () => void;
 };
 
@@ -44,7 +45,7 @@ const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) 
   };
 };
 
-const ProductListingItem = ({ data, updateBookmarkData }: ProductListingItemData) => {
+const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductListingItemData) => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const placeholder = '/images/Placeholder.png';
@@ -125,7 +126,7 @@ const ProductListingItem = ({ data, updateBookmarkData }: ProductListingItemData
             )}
           </Grid>
           <Box>
-            {updateBookmarkData && (
+            {showBookmark && (
               <IconButton
                 aria-label="bookmark"
                 onClick={handleBookmarkListing}

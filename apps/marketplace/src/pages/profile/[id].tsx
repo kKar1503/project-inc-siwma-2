@@ -92,7 +92,6 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const userListings = useGetListing(id);
   const userReviews = useGetReview(id);
   // console.log(userDetails);
-  console.log(userListings);
 
   const theme = useTheme();
   const { spacing } = theme;
