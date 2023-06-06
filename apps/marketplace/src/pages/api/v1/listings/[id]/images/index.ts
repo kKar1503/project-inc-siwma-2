@@ -71,7 +71,11 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const previousImages = listing.listingImages;
 
   const objects = await Promise.all(
-    files.map((file) => bucket.createObject(fileToS3Object(file))),
+    files.map((file,i) => {
+      const sortOrder = i * 10000;
+      const object = fileToS3Object(file,{'sort-order': sortOrder.toString()});
+      return bucket.createObject(object);
+    }),
   );
   const images = objects.map((object) => ({ image: object.Id }));
 
