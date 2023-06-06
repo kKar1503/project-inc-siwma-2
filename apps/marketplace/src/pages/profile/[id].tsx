@@ -19,7 +19,7 @@ import { useQuery } from 'react-query';
 import users from '@/utils/api/client/zod/users';
 import { useRouter } from 'next/router';
 import { Listing, Review } from '@/utils/api/client/zod';
-import fetchListing from '@/middlewares/fetchListing';
+import fetchListings from '@/middlewares/fetchListings';
 import fetchReview from '@/middlewares/fetchReview';
 import { useResponsiveness } from '@inc/ui';
 
@@ -69,7 +69,7 @@ const useGetUser = (userUuid: string) => {
 };
 
 const useGetListing = (userUuid: string) => {
-  const { data } = useQuery('listingdata', async () => fetchListing(userUuid), {
+  const { data } = useQuery('listingdata', async () => fetchListings(userUuid), {
     enabled: userUuid !== undefined,
   });
   // console.log(data);
