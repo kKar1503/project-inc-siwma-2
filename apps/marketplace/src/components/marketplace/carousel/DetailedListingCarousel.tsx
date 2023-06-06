@@ -6,21 +6,16 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
+import { ListingResponseBody } from '@/utils/api/client/zod';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-export interface Image {
-  id: string;
-  fileName: string;
-  url: string;
-}
-
 export type DetailedListingCarouselProps = {
-  data: Image[];
+  data: ListingResponseBody;
 };
 
 const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
-  const maxSteps = data.length;
+  const maxSteps = data.images?.length as number;
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -44,7 +39,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         onChangeIndex={handleStepChange}
         enableMouseEvents
       >
-        {data.map((step, index) => (
+        {data.images?.map((step, index) => (
           <div>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
