@@ -22,14 +22,6 @@ const listing = z.object({
   purchased: z.boolean(),
 });
 
-const getChatRoom = z.object({
-  id: z.string().uuid(),
-  seller: user,
-  buyer: user,
-  listing,
-  createdAt: z.string().datetime(),
-});
-
 const getChatMessage = z.object({
   id: z.string(),
   contentType: z.string(),
@@ -37,6 +29,16 @@ const getChatMessage = z.object({
   content: z.string().optional(),
   offer: z.number().nullable().optional(),
   author: z.string().uuid(),
+  createdAt: z.string().datetime(),
+});
+
+const getChatRoom = z.object({
+  id: z.string().uuid(),
+  seller: user,
+  buyer: user,
+  listing,
+  latestMessage: getChatMessage.nullable(),
+  unreadMessagesCount: z.number(),
   createdAt: z.string().datetime(),
 });
 
