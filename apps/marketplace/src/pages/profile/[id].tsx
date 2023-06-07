@@ -245,7 +245,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
                 <ReviewsTab
-                  allReviews={reviews}
+                  allReviews={userReviews}
                   // rmb to add userDetails.rating and userDetails.reviews
                   userRating={2}
                   totalReviews={200}
