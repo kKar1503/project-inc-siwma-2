@@ -41,9 +41,12 @@ const ChatList = ({
   selectChat: string;
   setSelectChat: (val: string) => void;
 }) => {
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, palette, typography } = useTheme();
+
   const [category, setCategory] = useState<CategoryType>('all');
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const myColor = alpha('#000000', 0.04);
+  const myColor = alpha(palette.common.white, 0.04);
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
     setCategory(event.target.value as CategoryType);
@@ -58,9 +61,6 @@ const ChatList = ({
     );
     return filteredItems;
   };
-
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
 
   const chatListStyles = useMemo(() => {
     if (isSm) {
@@ -235,19 +235,19 @@ const ChatList = ({
 
   return (
     <Box
-      sx={({ palette }) => ({
+      sx={{
         backgroundColor: palette.common.white,
         height: '100%',
-      })}
+      }}
     >
       <Box sx={chatListStyles?.listHeader}>
         <Box
-          sx={({ spacing }) => ({
+          sx={{
             display: 'flex',
             justifyContent: 'space-between',
             mb: 0,
             pl: spacing(1),
-          })}
+          }}
         >
           <Typography variant="h5" sx={chatListStyles?.listTitle}>
             Conversations
@@ -260,18 +260,18 @@ const ChatList = ({
         <FormControl
           variant="outlined"
           size="small"
-          sx={({ spacing }) => ({
+          sx={{
             width: 'fit-content',
             background: 'none',
             border: 'none',
             mb: 1,
             pl: spacing(1),
-          })}
+          }}
         >
           <Select
             value={category}
             onChange={handleCategoryChange}
-            sx={({ spacing }) => ({
+            sx={{
               '& .MuiSelect-select': { p: spacing(0) },
               '& fieldset': {
                 border: spacing(0),
@@ -287,7 +287,7 @@ const ChatList = ({
               },
               fontWeight: 500,
               ...chatListStyles?.searchBar,
-            })}
+            }}
           >
             <MenuItem value="all">ALL CHATS</MenuItem>
             <MenuItem value="Buying">BUYING</MenuItem>
@@ -303,7 +303,7 @@ const ChatList = ({
           placeholder="Search messages, listings, usernames"
           variant="filled"
           fullWidth
-          sx={({ spacing }) => ({
+          sx={{
             '& .MuiFilledInput-root': {
               background: myColor,
               borderRadius: '4px',
@@ -325,7 +325,7 @@ const ChatList = ({
                 outline: 'none',
               },
             },
-          })}
+          }}
         />
       </Box>
       <List sx={{ overflowY: 'auto', height: 'calc(100% - 105px)' }}>
@@ -337,10 +337,10 @@ const ChatList = ({
                 setActiveItem(chat.id);
                 setSelectChat(chat.id);
               }}
-              sx={({ palette }) => ({
+              sx={{
                 background: activeItem === chat.id ? palette.grey[300] : 'none',
                 height: '100%',
-              })}
+              }}
             >
               <ListItemAvatar>
                 <Badge overlap="circular" color="error" badgeContent={chat.badgeContent}>
@@ -353,7 +353,7 @@ const ChatList = ({
                   />
                 </Badge>
               </ListItemAvatar>
-              <ListItemText sx={({ spacing }) => ({ pl: spacing(1) })}>
+              <ListItemText sx={{ pl: spacing(1) }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography
                     variant="h6"
@@ -410,11 +410,11 @@ const ChatList = ({
             </ListItem>
             {filteredChats(category, chats).length !== index && (
               <Divider
-                sx={({ palette }) => ({
+                sx={{
                   borderColor: palette.grey[400],
                   width: '95%',
                   m: 'auto',
-                })}
+                }}
               />
             )}
           </Box>
