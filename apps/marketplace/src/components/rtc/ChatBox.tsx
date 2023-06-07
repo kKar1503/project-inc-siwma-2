@@ -27,7 +27,7 @@ export type ChatBoxProps = {
   ChatText: JSX.Element;
 };
 
-const ChatBox: React.FC<ChatBoxProps> = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
+const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
 
