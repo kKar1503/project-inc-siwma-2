@@ -1,11 +1,9 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import s3Connection from '@/utils/s3Connection';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
-import { loadImageBuilder } from '@/utils/imageUtils';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
 export const select = (isAdmin: boolean) => ({
@@ -76,18 +74,14 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     take: limit,
   });
 
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-  const loadImage = loadImageBuilder(AdvertisementBucket, 'image');
-  const advertisements = await Promise.all(advertisementsNoLink.map(advertisement => {
+  const advertisements = advertisementsNoLink.map(advertisement => {
     const { companyId, ...advertisementContent } = advertisement;
 
-    const response = {
+    return {
       ...advertisementContent,
       companyId: companyId.toString(),
     };
-    if (advertisement.image === 'null') return response;
-    return loadImage(response);
-  }));
+  });
 
 
   // Return advertisements
