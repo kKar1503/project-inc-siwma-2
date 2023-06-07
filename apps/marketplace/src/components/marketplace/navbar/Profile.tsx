@@ -8,9 +8,9 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
-import EditNotificationsIcon from '@mui/icons-material/EditNotifications';
 import Link from '@mui/material/Link';
 import { useResponsiveness } from '@inc/ui';
+import { useTheme } from '@mui/material/styles';
 
 export type UserNameProps = {
   userName: string | undefined;
@@ -21,6 +21,8 @@ const Profile = ({ userName, userId }: UserNameProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const { typography, palette, spacing } = useTheme();
 
   const isMenuOpen = anchorEl !== null;
 
@@ -42,10 +44,10 @@ const Profile = ({ userName, userId }: UserNameProps) => {
         })}
       >
         <AccountCircle
-          sx={({ typography, palette }) => ({
+          sx={{
             fontSize: typography.h5,
             color: palette.text.secondary,
-          })}
+          }}
         />
       </IconButton>
 
@@ -91,12 +93,12 @@ const Profile = ({ userName, userId }: UserNameProps) => {
         }}
       >
         <Typography
-          sx={({ spacing, typography, palette }) => ({
+          sx={{
             fontSize: typography.h6,
             color: palette.text.secondary,
             mx: spacing(2),
             my: spacing(1),
-          })}
+          }}
         >
           Hi, {userName}!
         </Typography>
@@ -106,22 +108,22 @@ const Profile = ({ userName, userId }: UserNameProps) => {
         <Link href={`/profile/${userId}`} underline="none">
           <MenuItem onClick={handleMenuClose}>
             <AccountCircle
-              sx={({ spacing, typography, palette }) => ({
+              sx={{
                 fontSize: typography.h5,
                 color: palette.text.secondary,
                 mr: spacing(2),
                 mt: spacing(1),
                 mb: spacing(1),
-              })}
+              }}
             />
             <Typography
-              sx={({ spacing, typography, palette }) => ({
+              sx={{
                 fontSize: typography.subtitle2,
                 color: palette.text.secondary,
                 mr: spacing(2),
                 mt: spacing(1),
                 mb: spacing(1),
-              })}
+              }}
             >
               Profile
             </Typography>
@@ -131,22 +133,22 @@ const Profile = ({ userName, userId }: UserNameProps) => {
         <Link href={`/profile/${userId}/edit-profile`} underline="none">
           <MenuItem onClick={handleMenuClose}>
             <EditIcon
-              sx={({ spacing, typography, palette }) => ({
+              sx={{
                 fontSize: typography.h5,
                 color: palette.text.secondary,
                 mr: spacing(2),
                 mt: spacing(1),
                 mb: spacing(1),
-              })}
+              }}
             />
             <Typography
-              sx={({ spacing, typography, palette }) => ({
+              sx={{
                 fontSize: typography.subtitle2,
                 color: palette.text.secondary,
                 mr: spacing(2),
                 mt: spacing(1),
                 mb: spacing(1),
-              })}
+              }}
             >
               Edit Profile
             </Typography>
@@ -155,22 +157,22 @@ const Profile = ({ userName, userId }: UserNameProps) => {
 
         <MenuItem onClick={handleMenuClose}>
           <LockIcon
-            sx={({ spacing, typography, palette }) => ({
+            sx={{
               fontSize: typography.h5,
               color: palette.text.secondary,
               mr: spacing(2),
               mt: spacing(1),
               mb: spacing(1),
-            })}
+            }}
           />
           <Typography
-            sx={({ spacing, typography, palette }) => ({
+            sx={{
               fontSize: typography.subtitle2,
               color: palette.text.secondary,
               mr: spacing(2),
               mt: spacing(1),
               mb: spacing(1),
-            })}
+            }}
           >
             Change Password
           </Typography>
@@ -178,22 +180,22 @@ const Profile = ({ userName, userId }: UserNameProps) => {
 
         <MenuItem onClick={handleMenuClose}>
           <LogoutIcon
-            sx={({ spacing, typography, palette }) => ({
+            sx={{
               fontSize: typography.h5,
               color: palette.text.secondary,
               mr: spacing(2),
               mt: spacing(1),
               mb: spacing(1),
-            })}
+            }}
           />
           <Typography
-            sx={({ spacing, typography, palette }) => ({
+            sx={{
               fontSize: typography.subtitle2,
               color: palette.text.secondary,
               mr: spacing(2),
               mt: spacing(1),
               mb: spacing(1),
-            })}
+            }}
           >
             Log Out
           </Typography>
