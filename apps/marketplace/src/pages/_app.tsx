@@ -7,6 +7,8 @@ import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
 import { ThemeComponent } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import NavBar from '@/components/marketplace/navbar/NavBar';
+import Box from '@mui/material/Box';
 
 const queryClient = new QueryClient();
 
@@ -17,6 +19,7 @@ interface PageType extends React.FunctionComponent<any> {
   allowAuthenticated: boolean;
   allowNonAuthenticated: boolean;
   auth?: boolean;
+  includeNavbar?: boolean;
 }
 
 // App prop type
@@ -50,7 +53,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
-  const { allowAuthenticated, allowNonAuthenticated } = Component;
+  const { allowAuthenticated, allowNonAuthenticated, includeNavbar = true } = Component;
 
   return (
     <ThemeComponent>
@@ -62,7 +65,11 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           allowNonAuthenticated={allowNonAuthenticated}
         >
           <QueryClientProvider client={queryClient}>
-            {getLayout(<Component {...pageProps} />)}
+            {getLayout(
+              <Box>
+                {includeNavbar && <NavBar />}
+                <Component {...pageProps} />
+              </Box>)}
           </QueryClientProvider>
         </AuthenticationGuard>
       </SessionProvider>
