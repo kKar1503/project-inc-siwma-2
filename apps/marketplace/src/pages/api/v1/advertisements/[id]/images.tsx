@@ -41,5 +41,5 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   res.status(201).json(formatAPIResponse(updated));
 };
 
-export default apiHandler()
-  .put(apiGuardMiddleware({ allowAdminsOnly: true }), PUT);
+export default apiHandler({ allowAdminsOnly: true })
+  .put(PUT);
