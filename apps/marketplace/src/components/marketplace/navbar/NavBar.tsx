@@ -1,14 +1,9 @@
-import React, { useState, MouseEvent, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MenuIcon from '@mui/icons-material/Menu';
-import TranslateIcon from '@mui/icons-material/Translate';
 import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
@@ -24,15 +19,14 @@ import MobileDrawer from './MobileDrawer';
 
 const NavBar = () => {
   const user = useSession();
-  const theme = useTheme();
 
   const userName = user.data?.user.name;
   const userId = user.data?.user.id;
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
+  const { spacing, palette, typography, zIndex } = useTheme();
 
-  const [language, setLanguage] = useState('English');
+  const [language, setLanguage] = useState<'English' | 'Chinese'>('English');
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // handle i18 change here
@@ -80,7 +74,7 @@ const NavBar = () => {
         boxShadow: 1,
         position: 'sticky',
         top: 0,
-        zIndex: theme.zIndex.appBar,
+        zIndex: zIndex.appBar,
       }}
     >
       <Toolbar>
@@ -92,10 +86,10 @@ const NavBar = () => {
           <Link href="/" underline="none">
             <Typography
               noWrap
-              sx={({ spacing, typography }) => ({
+              sx={{
                 fontSize: typography.subtitle2,
                 ml: isLg ? spacing(3) : spacing(2),
-              })}
+              }}
             >
               Home
             </Typography>
@@ -105,11 +99,11 @@ const NavBar = () => {
           <Link href="/categories" underline="none">
             <Typography
               noWrap
-              sx={({ spacing, typography }) => ({
+              sx={{
                 fontSize: typography.subtitle2,
                 ml: isLg ? spacing(3) : spacing(2),
                 mr: isLg ? spacing(3) : spacing(2),
-              })}
+              }}
             >
               All Categories
             </Typography>
@@ -145,10 +139,10 @@ const NavBar = () => {
             >
               <Badge>
                 <MessageIcon
-                  sx={({ typography, palette }) => ({
+                  sx={{
                     fontSize: typography.h5,
                     color: palette.text.secondary,
-                  })}
+                  }}
                 />
               </Badge>
             </IconButton>
