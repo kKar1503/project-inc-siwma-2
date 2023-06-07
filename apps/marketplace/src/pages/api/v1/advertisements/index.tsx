@@ -30,8 +30,6 @@ export const where = (isAdmin: boolean, other = {}) =>
       ...other,
     };
 
-export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
-
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const payload = advertisementSchema.post.body.parse(req.body);

@@ -3,10 +3,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
 import s3Connection from '@/utils/s3Connection';
-import { AdvertisementBucketName, select } from '@api/v1/advertisements';
+import { select } from '@api/v1/advertisements';
 import { updateImage } from '@/utils/imageUtils';
+import process from 'process';
 
-
+const AWS_BUCKET = process.env.AWS_BUCKET as string;
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const id = parseToNumber(req.query.id as string, 'id');
@@ -23,7 +24,7 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   // Throw error if advertisement not found
   if (!advertisement) throw new NotFoundError(`advertisement`);
 
-  const bucket = await s3Connection.getBucket(AdvertisementBucketName);
+  const bucket = await s3Connection.getBucket(AWS_BUCKET);
 
   // update advertisement
   const updated = await PrismaClient.advertisements.update({
