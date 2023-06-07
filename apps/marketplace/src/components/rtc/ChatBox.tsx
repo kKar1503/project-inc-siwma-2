@@ -67,15 +67,11 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
     return fileType;
   };
 
-  const downloadFile = (url: string) => {
+  const handleDownload = (url: string) => {
     const anchor = document.createElement('a');
     anchor.href = url;
     anchor.download = ''; // Specify a custom file name if desired
     anchor.click();
-  };
-
-  const handleDownload = (url: string) => {
-    downloadFile(url);
   };
 
   return (
