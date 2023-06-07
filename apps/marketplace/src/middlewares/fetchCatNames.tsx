@@ -1,10 +1,10 @@
 import apiClient from '@/utils/api/client/apiClient';
 import categories from '@/utils/api/client/zod/categories';
 
-const fetchCat = async (catID: number) => {
-  const response = await apiClient.get(`v1/categories/${catID}`);
+const fetchCat = async () => {
+  const response = await apiClient.get(`v1/categories/`);
   // parse data through zod to ensure data is correct
-  const catData = categories.getById.parse(response.data.data[0]);
+  const catData = categories.getAll.parse(response.data.data);
   return catData;
 };
 
