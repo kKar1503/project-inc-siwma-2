@@ -1,6 +1,12 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import {
+  UpdateType,
+  apiHandler,
+  formatAPIResponse,
+  handleBookmarks,
+  parseToNumber,
+} from '@/utils/api';
 import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
-import { NotFoundError, ParamError } from '@inc/errors';
+import { ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
 
@@ -20,16 +26,27 @@ export type ListingWithParameters = Listing & {
   reviewCount: number;
 };
 
-export function parseListingId($id: string) {
-  // Parse and validate listing id provided
-  const id = parseToNumber($id, 'id');
+/**
+ * Obtains the listing id from the url
+ * @example // Listing url: /api/v1/listings/1; Returns { name: '', id: 1 }
+ * @example // Listing url: /api/v1/listings/some-listing-name-1; Returns { name: 'some listing name', id: 1 }
+ */
+export function parseListingId($id: string, strict = true) {
+  // Check if strict mode is set
+  if (strict) {
+    // Attempt to parse the listing id
+    const id = parseToNumber($id, 'id');
 
-  // Check if the listing id is valid
-  if (Number.isNaN(id)) {
-    throw new NotFoundError(`Listing with id '${id}'`);
+    return id;
   }
 
-  return id;
+  // Attempt to retrieve the listing id and name from the url
+  const id = $id.split('-').pop() || '';
+
+  // Parse and validate listing id provided
+  const listingId = parseToNumber(id, 'id');
+
+  return listingId;
 }
 
 /**
@@ -57,6 +74,10 @@ function orderByOptions(sortBy: string | undefined): Prisma.ListingOrderByWithRe
       return { createdAt: 'desc' };
     case 'recent_oldest':
       return { createdAt: 'asc' };
+    case 'popularity_desc':
+      return { listingClicksListingClicksListingTolistings: { _count: 'desc' } };
+    case 'popularity_asc':
+      return { listingClicksListingClicksListingTolistings: { _count: 'asc' } };
     default:
       return { id: 'asc' };
   }
@@ -262,21 +283,23 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
         listingsParametersValues: true,
       },
     });
+
+    handleBookmarks(UpdateType.CREATE, listing);
 
     res.status(201).json(formatAPIResponse({ listingId: listing.id }));
   });

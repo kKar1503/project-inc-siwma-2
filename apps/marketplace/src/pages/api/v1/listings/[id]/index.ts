@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, handleBookmarks, formatAPIResponse, UpdateType } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
@@ -15,8 +15,10 @@ export async function checkListingExists($id: string | number) {
   const id = typeof $id === 'number' ? $id : parseListingId($id);
 
   // Check if the listing exists
-  const listing = await PrismaClient.listing.findUnique({
-    where: { id },
+  const listing = await PrismaClient.listing.findFirst({
+    where: {
+      id,
+    },
     include: {
       users: {
         include: {
@@ -57,7 +59,7 @@ export default apiHandler()
     const queryParams = listingSchema.get.query.parse(req.query);
 
     // Retrieve the listing from the database
-    const id = parseListingId(req.query.id as string);
+    const id = parseListingId(req.query.id as string, false);
     const { _avg, _count } = await PrismaClient.reviews.aggregate({
       _avg: {
         rating: true,
@@ -124,7 +126,7 @@ export default apiHandler()
     }
 
     // Do not remove this, it is necessary to update the listing
-    await PrismaClient.listing.update({
+    const updatedListing = await PrismaClient.listing.update({
       where: { id },
       data: {
         name: data.name,
@@ -208,6 +210,35 @@ export default apiHandler()
       multiOffer: completeListing.multiple,
     };
 
+    // MARK: - Notifications
+
+    /* Notify when:
+     * Listing price is updated
+     * Listing is sold out
+     */
+    if (data.price) {
+      const formattedPrice = listing.price.toNumber();
+      if (formattedPrice > data.price) {
+        handleBookmarks(UpdateType.PRICE_INCREASE, listing);
+      } else if (formattedPrice < data.price) {
+        handleBookmarks(UpdateType.PRICE_DECREASE, listing);
+      }
+    }
+
+    const wasListingOpen = listing.multiple
+      ? true
+      : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted);
+
+    const isListingOpen = updatedListing.multiple
+      ? true
+      : !updatedListing.offersOffersListingTolistings?.some((offer) => offer.accepted);
+
+    if (wasListingOpen && !isListingOpen) {
+      handleBookmarks(UpdateType.SOLD_OUT, listing);
+    } else if (!wasListingOpen && isListingOpen) {
+      handleBookmarks(UpdateType.RESTOCKED, listing);
+    }
+
     res
       .status(200)
       .json(
@@ -237,6 +268,8 @@ export default apiHandler()
     await PrismaClient.listing.delete({
       where: { id },
     });
+
+    handleBookmarks(UpdateType.DELETE, listing);
 
     res.status(204).end();
   });
