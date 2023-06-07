@@ -29,7 +29,7 @@ import { useTheme } from '@mui/material/styles';
 
 export type MobileDrawerProps = {
   userId: string | undefined;
-  language: string;
+  language: 'English' | 'Chinese';
 };
 
 const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
