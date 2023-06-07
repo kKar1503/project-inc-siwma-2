@@ -269,7 +269,7 @@ export default apiHandler()
       )
     );
 
-    res.status(200).json(formatAPIResponse({ listings: formattedListings, totalCount }));
+    res.status(200).json(formatAPIResponse({ totalCount, listings: formattedListings }));
   })
   .post(async (req, res) => {
     const data = listingSchema.post.body.parse(req.body);
