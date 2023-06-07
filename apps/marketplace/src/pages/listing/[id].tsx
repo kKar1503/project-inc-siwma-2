@@ -2,7 +2,6 @@ import Box from '@mui/material/Box';
 import { useTheme, styled } from '@mui/material/styles';
 import DetailedListingCarousel, {
   DetailedListingCarouselProps,
-  Image,
 } from '@/components/marketplace/carousel/DetailedListingCarousel';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
@@ -18,12 +17,13 @@ import StarRating from '@/components/marketplace/profilePage/StarRatings';
 import { Button } from '@mui/material';
 import { useResponsiveness } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import fetchCat from '@/middlewares/fetchCatNames';
-import fetchUser from '@/middlewares/fetchUser';
+import fetchUsers from '@/middlewares/fetchUser';
 import fetchReviews from '@/middlewares/fetchReviews';
 import fetchParams from '@/middlewares/fetchParamNames';
 import { DateTime } from 'luxon';
+import { User } from '@/utils/api/client/zod/users';
 
 const carouselData = [
   {
@@ -43,55 +43,56 @@ const carouselData = [
   },
 ];
 
-const listingData = [
-  {
-    id: '1',
-    name: 'Aluminium I-Beams',
-    description: 'Listing description',
-    price: 300,
-    unitPrice: false,
-    negotiable: true,
-    categoryId: '1',
-    type: 'SELL',
-    multiple: true,
-    owner: {
-      id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-      name: 'Elon Musk',
-      email: 'elon.musk@example.com',
-      company: {
-        id: '1',
-        name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
-        website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
-        bio: 'Owner bio',
-        image: '',
-        visible: true,
-      },
-      profilePic: null,
-      mobileNumber: '69694202',
-      contactMethod: 'email',
-      bio: null,
-    },
-    open: true,
-    rating: 4.5,
-    reviewCount: 12,
-    parameter: [
-      {
-        paramId: '3',
-        value: 200,
-      },
-      {
-        paramId: '2',
-        value: 300,
-      },
-    ],
-    createdAt: '2023-05-15T18:03:01.036Z',
-  },
-];
+// const listingData = [
+//   {
+//     id: '1',
+//     name: 'Aluminium I-Beams',
+//     description: 'Listing description',
+//     price: 300,
+//     unitPrice: false,
+//     negotiable: true,
+//     categoryId: '1',
+//     type: 'SELL',
+//     multiple: true,
+//     owner: {
+//       id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
+//       name: 'Elon Musk',
+//       email: 'elon.musk@example.com',
+//       company: {
+//         id: '1',
+//         name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
+//         website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
+//         bio: 'Owner bio',
+//         image: '',
+//         visible: true,
+//       },
+//       profilePic: null,
+//       mobileNumber: '69694202',
+//       contactMethod: 'email',
+//       bio: null,
+//     },
+//     open: true,
+//     rating: 4.5,
+//     reviewCount: 12,
+//     parameter: [
+//       {
+//         paramId: '3',
+//         value: 200,
+//       },
+//       {
+//         paramId: '2',
+//         value: 300,
+//       },
+//     ],
+//     createdAt: '2023-05-15T18:03:01.036Z',
+//   },
+// ];
 
 const useGetListingQuery = (listingID: string) => {
   const { data } = useQuery('listing', async () => fetchListing(listingID), {
     enabled: listingID !== undefined,
   });
+  console.log(data)
   return data;
 };
 
@@ -102,10 +103,8 @@ const useGetReviewsQuery = (listingID: string) => {
   return data;
 };
 
-const useGetUserQuery = (uuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(uuid), {
-    enabled: uuid !== undefined,
-  });
+const useGetUserQuery = () => {
+  const { data } = useQuery('user', async () => fetchUsers());
   return data;
 };
 
@@ -131,13 +130,12 @@ const DetailedListingPage = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
 
-  const listings = useGetListingQuery('1');
-  const reviews = useGetReviewsQuery('1');
+  const listings = useGetListingQuery('3');
+  const reviews = useGetReviewsQuery('3');
   const catID = listings?.categoryId as unknown as number;
   const cats = useGetCategoryNameQuery(catID);
-  // const uuid = reviews?.userId
-  // const user = useGetUserQuery(uuid);
-  const param = useGetParamQuery;
+  const user = useGetUserQuery();
+  const param = useGetParamQuery();
   // const listingImg = useGetListingImagesQuery('3');
 
   const datetime = useMemo(
@@ -155,6 +153,16 @@ const DetailedListingPage = () => {
     }
     return 0;
   });
+
+  // const userIds = reviews?.map((review) => review.userId);
+
+  // const usersPromise = userIds?.map(async (userId) => {
+  //   const user = await fetchUser(userId);
+  //   return user;
+  // });
+
+  // const [users, setUsers] = useState([])
+
 
   // converts to UI design if screen goes to mobile
   const listingStyles = useMemo(() => {
@@ -200,7 +208,7 @@ const DetailedListingPage = () => {
           bgcolor: theme.palette.common.white,
         })}
       >
-        <DetailedListingCarousel data={carouselData} />
+        {/* <DetailedListingCarousel data={carouselData} /> */}
         <Box
           sx={{
             width: '70%',
@@ -312,8 +320,8 @@ const DetailedListingPage = () => {
                 })}
               >
                 <Grid container columns={4}>
-                  {listings?.parameters?.map(({ paramId, value }) => (
-                    // <Grid key={paramId}>
+                  {listings?.parameters?.map((parameter) => (
+                    <Grid key={parameter?.paramId}>
                     <Box
                       sx={({ spacing }) => ({
                         pl: spacing(2),
@@ -321,7 +329,7 @@ const DetailedListingPage = () => {
                       })}
                     >
                       <Typography sx={{ color: theme.palette.grey[500] }}>
-                        Dimension {paramId}
+                        {param?.find((x) => x.id === parameter?.paramId)?.name}
                       </Typography>
                       <Typography
                         variant="body1"
@@ -329,10 +337,10 @@ const DetailedListingPage = () => {
                           fontWeight: 500,
                         }}
                       >
-                        {value}
+                        {parameter?.value}
                       </Typography>
                     </Box>
-                    // </Grid>
+                    </Grid>
                   ))}
                 </Grid>
               </Box>
@@ -441,22 +449,21 @@ const DetailedListingPage = () => {
                 </Grid>
               </Grid>
 
-              {reviews?.map(({ review, rating }) => (
+              {reviews?.map((individualReview) => (
                 <Box sx={({ spacing }) => ({ width: 300, pt: spacing(3) })}>
                   <Grid container>
                     <Grid item xs={6}>
-                      {/* <Typography
+                      <Typography
                         sx={{
                           fontWeight: 500,
                         }}
-                      > */}
-                      {/* {user.find((x) => x.id === id)?.name} */}
-                      {/* {user?.name} */}
-                      {/* </Typography> */}
-                      {review}
+                      >
+                        {user?.find((x) => x.id === individualReview?.userId)?.name}
+                      </Typography>
+                      {individualReview?.review}
                     </Grid>
                     <Grid item xs={6}>
-                      <StarRating rating={rating} />
+                      <StarRating rating={individualReview?.rating} />
                     </Grid>
                   </Grid>
                   <Divider
