@@ -2,7 +2,6 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
 import { AdvertisementBucketName, select } from '@api/v1/advertisements';
 import { updateImage } from '@/utils/imageUtils';
