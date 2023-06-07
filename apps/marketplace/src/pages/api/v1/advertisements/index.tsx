@@ -8,8 +8,6 @@ import * as process from 'process';
 import { loadImageBuilder } from '@/utils/imageUtils';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
-const defaultImage = 'https://via.placeholder.com/150';
-
 export const select = (isAdmin: boolean) => ({
   companyId: true,
   image: true,
@@ -48,7 +46,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         companyId: payload.companyId,
-        image: defaultImage,
+        image: 'null',
         endDate: new Date(payload.endDate),
         startDate: new Date(payload.startDate),
         active: payload.active,
@@ -83,10 +81,12 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const advertisements = await Promise.all(advertisementsNoLink.map(advertisement => {
     const { companyId, ...advertisementContent } = advertisement;
 
-    return loadImage({
+    const response = {
       ...advertisementContent,
       companyId: companyId.toString(),
-    });
+    };
+    if (advertisement.image === 'null') return response;
+    return loadImage(response);
   }));
 
 
