@@ -1,8 +1,6 @@
 import Box from '@mui/material/Box';
 import { useTheme, styled } from '@mui/material/styles';
-import DetailedListingCarousel, {
-  DetailedListingCarouselProps,
-} from '@/components/marketplace/carousel/DetailedListingCarousel';
+import DetailedListingCarousel from '@/components/marketplace/carousel/DetailedListingCarousel';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -17,13 +15,12 @@ import StarRating from '@/components/marketplace/profilePage/StarRatings';
 import { Button } from '@mui/material';
 import { useResponsiveness } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import fetchCat from '@/middlewares/fetchCatNames';
 import fetchUsers from '@/middlewares/fetchUser';
 import fetchReviews from '@/middlewares/fetchReviews';
 import fetchParams from '@/middlewares/fetchParamNames';
 import { DateTime } from 'luxon';
-import { User } from '@/utils/api/client/zod/users';
 
 const carouselData = [
   {
@@ -43,56 +40,10 @@ const carouselData = [
   },
 ];
 
-// const listingData = [
-//   {
-//     id: '1',
-//     name: 'Aluminium I-Beams',
-//     description: 'Listing description',
-//     price: 300,
-//     unitPrice: false,
-//     negotiable: true,
-//     categoryId: '1',
-//     type: 'SELL',
-//     multiple: true,
-//     owner: {
-//       id: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
-//       name: 'Elon Musk',
-//       email: 'elon.musk@example.com',
-//       company: {
-//         id: '1',
-//         name: 'AIK LIAN METAL & GLAZING PTE.LTD.',
-//         website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
-//         bio: 'Owner bio',
-//         image: '',
-//         visible: true,
-//       },
-//       profilePic: null,
-//       mobileNumber: '69694202',
-//       contactMethod: 'email',
-//       bio: null,
-//     },
-//     open: true,
-//     rating: 4.5,
-//     reviewCount: 12,
-//     parameter: [
-//       {
-//         paramId: '3',
-//         value: 200,
-//       },
-//       {
-//         paramId: '2',
-//         value: 300,
-//       },
-//     ],
-//     createdAt: '2023-05-15T18:03:01.036Z',
-//   },
-// ];
-
 const useGetListingQuery = (listingID: string) => {
   const { data } = useQuery('listing', async () => fetchListing(listingID), {
     enabled: listingID !== undefined,
   });
-  console.log(data)
   return data;
 };
 
@@ -108,13 +59,13 @@ const useGetUserQuery = () => {
   return data;
 };
 
-const useGetCategoryNameQuery = (catID: number) => {
-  const { data } = useQuery('cat', async () => fetchCat(catID));
+const useGetCategoryNameQuery = () => {
+  const { data } = useQuery('cat', async () => fetchCat());
   return data;
 };
 
 const useGetListingImagesQuery = (listingID: string) => {
-  const { data } = useQuery('listingImage', async () => fetchListingImages(listingID), {
+  const { data } = useQuery('listingImages', async () => fetchListingImages(listingID), {
     enabled: listingID !== undefined,
   });
   return data;
@@ -130,13 +81,12 @@ const DetailedListingPage = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
 
-  const listings = useGetListingQuery('3');
-  const reviews = useGetReviewsQuery('3');
-  const catID = listings?.categoryId as unknown as number;
-  const cats = useGetCategoryNameQuery(catID);
+  const listings = useGetListingQuery('4');
+  const reviews = useGetReviewsQuery('4');
+  const cats = useGetCategoryNameQuery();
   const user = useGetUserQuery();
   const param = useGetParamQuery();
-  // const listingImg = useGetListingImagesQuery('3');
+  const listingImgs = useGetListingImagesQuery('4');
 
   const datetime = useMemo(
     () =>
@@ -153,16 +103,6 @@ const DetailedListingPage = () => {
     }
     return 0;
   });
-
-  // const userIds = reviews?.map((review) => review.userId);
-
-  // const usersPromise = userIds?.map(async (userId) => {
-  //   const user = await fetchUser(userId);
-  //   return user;
-  // });
-
-  // const [users, setUsers] = useState([])
-
 
   // converts to UI design if screen goes to mobile
   const listingStyles = useMemo(() => {
@@ -208,7 +148,9 @@ const DetailedListingPage = () => {
           bgcolor: theme.palette.common.white,
         })}
       >
-        {/* <DetailedListingCarousel data={carouselData} /> */}
+        {/* <DetailedListingCarousel data={listingImgs} /> */}
+        {/* <DetailedListingCarousel data={listingImgs as []} /> */}
+        {/* <DetailedListingCarousel data={listings?.images} /> */}
         <Box
           sx={{
             width: '70%',
@@ -322,24 +264,24 @@ const DetailedListingPage = () => {
                 <Grid container columns={4}>
                   {listings?.parameters?.map((parameter) => (
                     <Grid key={parameter?.paramId}>
-                    <Box
-                      sx={({ spacing }) => ({
-                        pl: spacing(2),
-                        pr: spacing(2),
-                      })}
-                    >
-                      <Typography sx={{ color: theme.palette.grey[500] }}>
-                        {param?.find((x) => x.id === parameter?.paramId)?.name}
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          fontWeight: 500,
-                        }}
+                      <Box
+                        sx={({ spacing }) => ({
+                          pl: spacing(2),
+                          pr: spacing(2),
+                        })}
                       >
-                        {parameter?.value}
-                      </Typography>
-                    </Box>
+                        <Typography sx={{ color: theme.palette.grey[500] }}>
+                          {param?.find((x) => x.id === parameter?.paramId)?.name}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
+                          }}
+                        >
+                          {parameter?.value}
+                        </Typography>
+                      </Box>
                     </Grid>
                   ))}
                 </Grid>
@@ -382,9 +324,9 @@ const DetailedListingPage = () => {
                     })}
                   >
                     <Typography sx={{ color: theme.palette.grey[500] }}>Category</Typography>
-                    {/* <Typography>{cat?.((x) => x.id === listings?.categoryId)?.name}</Typography> */}
-                    <Typography>{cats?.name}</Typography>
-                    {/* <Typography>{listings?.categoryId}</Typography> */}
+                    <Typography>
+                      {cats?.find((x) => x.id === listings?.categoryId)?.name}
+                    </Typography>
                   </Box>
                   <Box
                     sx={({ spacing }) => ({
