@@ -6,7 +6,6 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import s3Connection from '@/utils/s3Connection';
 import { AdvertisementBucketName, select, where } from '@api/v1/advertisements';
 import { APIRequestType } from '@/types/api-types';
-import { loadImage } from '@/utils/imageUtils';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
@@ -28,15 +27,13 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   if (!advertisement) throw new NotFoundError(`advertisement`);
   const { companyId, ...advertisementContent } = advertisement;
 
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-
   // Return advertisement
   res
     .status(200)
-    .json(formatAPIResponse(await loadImage({
+    .json(formatAPIResponse({
       ...advertisementContent,
       companyId: companyId.toString(),
-    }, AdvertisementBucket, 'image')));
+    }));
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
