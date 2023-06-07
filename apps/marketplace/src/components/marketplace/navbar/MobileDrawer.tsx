@@ -37,7 +37,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
   const [openProfile, setOpenProfile] = useState(false);
   const [drawerLang, setDrawerLang] = useState(language);
 
-  const theme = useTheme();
+  const { typography, palette } = useTheme();
 
   const handleProfileClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -60,7 +60,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                <HomeIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
+                <HomeIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
               <ListItemText primary="Home" />
             </ListItemButton>
@@ -71,7 +71,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                <CategoryIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
+                <CategoryIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
               <ListItemText primary="All Categories" />
             </ListItemButton>
@@ -82,7 +82,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                <AddCircleIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
+                <AddCircleIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
               <ListItemText primary="Add Listing" />
             </ListItemButton>
@@ -94,7 +94,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
         <ListItem disablePadding>
           <ListItemButton onClick={handleProfileClick}>
             <ListItemIcon>
-              <AccountCircle sx={({ palette }) => ({ color: palette.grey[600] })} />
+              <AccountCircle sx={{ color: palette.grey[600] }} />
             </ListItemIcon>
             <ListItemText primary="Profile" />
             {openProfile ? <ExpandLess /> : <ExpandMore />}
@@ -105,7 +105,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
             <Link href={`/profile/${userId}`} underline="none">
               <ListItemButton>
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
-                  <PersonOutlineIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
+                  <PersonOutlineIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
                 <ListItemText primary="My Profile" />
               </ListItemButton>
@@ -114,7 +114,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
             <Link href={`/profile/${userId}/edit-profile`} underline="none">
               <ListItemButton>
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
-                  <EditIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
+                  <EditIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
                 <ListItemText primary="Edit Profile" />
               </ListItemButton>
@@ -124,7 +124,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
             <Link href={`/profile/${userId}/change-password`} underline="none">
               <ListItemButton>
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
-                  <LockIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
+                  <LockIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
                 <ListItemText primary="Change Password" />
               </ListItemButton>
@@ -136,7 +136,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                <ChatIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
+                <ChatIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
               <ListItemText primary="Chat" />
             </ListItemButton>
@@ -148,7 +148,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                <LogoutIcon sx={({ palette }) => ({ color: palette.grey[600] })} />
+                <LogoutIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
               <ListItemText primary="Log Out" />
             </ListItemButton>
@@ -158,13 +158,13 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
         <ListItem disablePadding sx={{ position: 'absolute', bottom: 0 }}>
           <ListItemButton onClick={mobileDrawerLanuageChange}>
             <Grid component="label" container alignItems="center">
-              <Grid sx={{ fontSize: theme.typography.subtitle2 }} item>
+              <Grid sx={{ fontSize: typography.subtitle2 }} item>
                 EN
               </Grid>
               <Grid item>
                 <Switch checked={drawerLang === 'Chinese'} value="checked" />
               </Grid>
-              <Grid sx={{ fontSize: theme.typography.subtitle2 }} item>
+              <Grid sx={{ fontSize: typography.subtitle2 }} item>
                 CN
               </Grid>
             </Grid>

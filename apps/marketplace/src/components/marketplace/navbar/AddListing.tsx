@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material/styles';
 
 const AddListing = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
+  const { palette } = useTheme();
 
   const addListingStyles = useMemo(() => {
     if (isSm) {
@@ -44,10 +44,10 @@ const AddListing = () => {
   return (
     <Button
       variant="contained"
-      sx={({ palette }) => ({
+      sx={{
         backgroundColor: palette.primary.main,
         textTransform: 'capitalize',
-      })}
+      }}
     >
       <Typography noWrap sx={addListingStyles?.textBtn}>
         ADD LISTINGS
