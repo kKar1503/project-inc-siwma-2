@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import Box from '@mui/material/Box';
-import { TextField, alpha } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -14,7 +14,7 @@ import Badge from '@mui/material/Badge';
 import Image from 'next/image';
 import { DateTime } from 'luxon';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha } from '@mui/material/styles';
 
 export interface ChatListProps {
   id: string;
@@ -30,29 +30,26 @@ export interface ChatListProps {
 }
 type CategoryType = 'all' | 'Buying' | 'Selling';
 
-const ChatList = ({
-  chats,
-  onChange,
-  selectChat,
-  setSelectChat,
-}: {
+export type ChatListPageProps = {
   chats: ChatListProps[];
   onChange: (e: React.FormEvent<HTMLInputElement>) => void;
   selectChat: string;
   setSelectChat: (val: string) => void;
-}) => {
+};
+
+const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPageProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography } = useTheme();
 
   const [category, setCategory] = useState<CategoryType>('all');
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const myColor = alpha(palette.common.white, 0.04);
+  const whiteTransparent = alpha(palette.common.white, 0.04);
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
     setCategory(event.target.value as CategoryType);
   };
 
-  const filteredChats = (category: CategoryType, chats: ChatListProps[]) => {
+  const filteredChats = useMemo(() => {
     if (category.toLowerCase() === 'all') {
       return chats.filter((chat) => chat.inProgress);
     }
@@ -60,7 +57,7 @@ const ChatList = ({
       (chat) => chat.category.toLowerCase() === category.toLowerCase() && chat.inProgress
     );
     return filteredItems;
-  };
+  }, [chats, category]);
 
   const chatListStyles = useMemo(() => {
     if (isSm) {
@@ -253,8 +250,7 @@ const ChatList = ({
             Conversations
           </Typography>
           <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
-            {filteredChats(category, chats).length} ACTIVE{' '}
-            {filteredChats(category, chats).length !== 1 ? 'CHATS' : 'CHAT'}
+            {filteredChats.length} ACTIVE {filteredChats.length !== 1 ? 'CHATS' : 'CHAT'}
           </Typography>
         </Box>
         <FormControl
@@ -305,10 +301,10 @@ const ChatList = ({
           fullWidth
           sx={{
             '& .MuiFilledInput-root': {
-              background: myColor,
+              background: whiteTransparent,
               borderRadius: '4px',
               '&:hover': {
-                background: myColor,
+                background: whiteTransparent,
               },
             },
             '& .MuiInputBase-input': {
@@ -329,7 +325,7 @@ const ChatList = ({
         />
       </Box>
       <List sx={{ overflowY: 'auto', height: 'calc(100% - 105px)' }}>
-        {filteredChats(category, chats).map((chat, index) => (
+        {filteredChats.map((chat, index) => (
           <Box>
             <ListItem
               key={chat.id}
@@ -408,7 +404,7 @@ const ChatList = ({
                 </Typography>
               </ListItemText>
             </ListItem>
-            {filteredChats(category, chats).length !== index && (
+            {filteredChats.length !== index && (
               <Divider
                 sx={{
                   borderColor: palette.grey[400],
@@ -423,4 +419,5 @@ const ChatList = ({
     </Box>
   );
 };
+
 export default ChatList;
