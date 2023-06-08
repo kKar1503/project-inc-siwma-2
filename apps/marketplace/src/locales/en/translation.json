@@ -61,5 +61,11 @@
 
   "ALL": "ALL",
   "FROM BUYERS": "FROM BUYERS",
-  "FROM SELLERS": "FROM SELLERS"
+  "FROM SELLERS": "FROM SELLERS",
+
+  "Filter": "Filter",
+  "Sort By": "Sort By",
+  "All Listings": "All Listings",
+  "Buy Listings": "Buy Listings",
+  "Sell Listings": "Sell Listings"
 }
