@@ -79,10 +79,9 @@ const DisplayResults = ({
       {filter && !isMd && !isSm && (
         <Grid
           item
-          lg={2}
+          md={2}
           sx={({ spacing }) => ({
-            width: '100%',
-            mt: spacing(4),
+            mt: spacing(2),
             mr: spacing(3),
           })}
         >
@@ -102,26 +101,26 @@ const DisplayResults = ({
         </Grid>
       )}
 
-      <Grid item sm={12} lg={10} sx={{ width: '100%' }}>
+      <Grid item sm={12} md={10} sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex' }}>
           <Grid item xs={10} md={8} container justifyContent="flex-start">
             <Grid item xs={12} md={12} sx={{ marginTop: 2, marginBottom: 3 }}>
-              <Typography variant="h3" fontSize={isSm ? '2rem' : '3rem'} fontWeight="700">
-                {data.title.single}
-              </Typography>
               {subHeader && (
-                <Typography variant="h5" fontSize={isSm ? '1rem' : '1.5rem'}>
-                  {data?.noOfItems > 1 && data?.noOfItems !== 0
-                    ? `${data?.noOfItems} ${data.title.plural}`
-                    : `${data?.noOfItems} ${data.title.single}`}
+                <Typography variant="h3" fontSize={isSm ? '2rem' : '3rem'} fontWeight="700">
+                  {data.title.single} Bookmarks
                 </Typography>
               )}
+              <Typography variant={isSm ? 'h6' : 'h5'} fontSize={isSm ? '1rem' : '1.5rem'}>
+                {data?.noOfItems > 1 && data?.noOfItems !== 0
+                  ? `${subHeader ? data?.noOfItems : ''} ${data.title.plural}`
+                  : `${subHeader ? data?.noOfItems : ''} ${data.title.single}`}
+              </Typography>
             </Grid>
           </Grid>
           {(isMd || isSm) && filter && (
-            <Grid item xs={2} container justifyContent="flex-end" alignContent="center">
+            <Grid item xs={2} md={4} container justifyContent="flex-end" alignContent="center">
               <Button
-                size="large"
+                size={isSm ? 'small' : 'large'}
                 variant="outlined"
                 onClick={toggleDrawer}
                 endIcon={<FilterAltIcon />}
@@ -148,12 +147,26 @@ const DisplayResults = ({
                     setMaxPrice={setMaxPrice}
                     handleSubmit={handleSubmit}
                   />
+                  <Button
+                    sx={{ width: '100%', mt: 2 }}
+                    size="large"
+                    color="error"
+                    variant="contained"
+                    onClick={toggleDrawer}
+                  >
+                    Close
+                  </Button>
                 </Box>
               </Drawer>
             </Grid>
           )}
         </Box>
         {children}
+        {data && data.noOfItems === 0 && (
+          <Grid container justifyContent="center">
+            <Typography>No items found.</Typography>
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );

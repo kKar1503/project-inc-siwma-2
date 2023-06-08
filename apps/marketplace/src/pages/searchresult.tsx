@@ -8,12 +8,14 @@ import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 // middleware
 import fetchListings, { FilterOptions } from '@/middlewares/fetchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
+import { Box, Container } from '@mui/material';
 
 const useSearchListings = (matching: string, filter?: FilterOptions) => {
-  const { data } = useQuery(
+  const data = useQuery(
     ['listings', filter, matching],
     async () => fetchListings(matching, filter),
     {
@@ -24,7 +26,7 @@ const useSearchListings = (matching: string, filter?: FilterOptions) => {
   return data;
 };
 
-const convertListing = (listing: Listing, uuid: string) => ({
+const convertListing = (listing: Listing, uuid: string | undefined) => ({
   productId: Number(listing.id),
   img: listing.coverImage ? listing.coverImage : '',
   profileImg: listing.owner.profilePic ? listing.owner.profilePic : '',
@@ -41,51 +43,48 @@ const convertListing = (listing: Listing, uuid: string) => ({
   isOwnProfile: listing.owner.id === uuid,
 });
 
-const convertToProductListingItems = (
-  listings: Listing[] | undefined,
-  uuid: string | undefined
-) => {
-  const temp: ProductListingItemProps[] = [];
-  if (listings && uuid) {
-    listings.forEach((listing) => {
-      temp.push(convertListing(listing, uuid));
-    });
-  }
-
-  return temp;
-};
-
 const Searchresult = () => {
   const router = useRouter();
   const { search } = router.query;
   const { data: session } = useSession();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
 
-  const listingData = convertToProductListingItems(
-    useSearchListings(search as string, filterOptions),
-    session?.user.id
-  );
+  const { data: listingData, isLoading } = useSearchListings(search as string, filterOptions);
 
   const Header: HeaderProps = {
     title: {
-      single: `Displaying search result for ${search}:`,
-      plural: `Displaying search results for ${search}:`,
+      single: `Displaying search result for: "${search}"`,
+      plural: `Displaying search results for: "${search}"`,
     },
-    noOfItems: 1,
+    noOfItems: listingData ? listingData.length : 0,
   };
 
   return (
-    <DisplayResults filter data={Header} setFilterOptions={setFilterOptions} subHeader={false}>
-      {listingData && listingData.length > 0 && (
-        <Grid container display="flex" spacing={2}>
-          {listingData.map((item: ProductListingItemProps) => (
-            <Grid item xs={6} md={4} xl={3} key={item.productId}>
-              <ProductListingItem data={item} />
-            </Grid>
-          ))}
-        </Grid>
-      )}
-    </DisplayResults>
+    <Container maxWidth="xl" sx={{ mt: 2 }}>
+      <DisplayResults filter data={Header} setFilterOptions={setFilterOptions} subHeader={false}>
+        {isLoading && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh',
+            }}
+          >
+            <Image src="/images/Fading-balls.gif" alt="Loading" width={64} height={64} />
+          </Box>
+        )}
+        {listingData && listingData.length > 0 && (
+          <Grid container display="flex" spacing={2}>
+            {listingData.map((item: Listing) => (
+              <Grid item xs={6} md={4} xl={3} key={item.id}>
+                <ProductListingItem data={convertListing(item, session?.user.id)} />
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </DisplayResults>
+    </Container>
   );
 };
 
