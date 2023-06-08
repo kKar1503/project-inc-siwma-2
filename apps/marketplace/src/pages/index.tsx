@@ -3,6 +3,7 @@ import { Button } from '@inc/ui';
 import type { Person } from '@inc/types';
 import NavBar from '@/components/marketplace/navbar/NavBar';
 import { signIn, useSession } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
 
 // eslint-disable-next-line no-unused-vars
 const p: Person = {
@@ -11,8 +12,9 @@ const p: Person = {
 };
 
 const Home = () => {
+  const { t } = useTranslation();
   const { data: session } = useSession();
-
+  // console.log(t);
   return (
     <>
       <Head>
@@ -23,7 +25,7 @@ const Home = () => {
       </Head>
       <main>
         <Button onClick={() => console.log('clicked')}>Hello</Button>
-        <p>Hello World</p>
+        <p>{t('Hello World')}</p>
         Not signed in <br />
         <button onClick={() => signIn()}>Sign in</button>
       </main>

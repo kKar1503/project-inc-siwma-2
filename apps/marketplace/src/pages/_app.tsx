@@ -9,8 +9,8 @@ import { ThemeComponent } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import NavBar from '@/components/marketplace/navbar/NavBar';
 import Box from '@mui/material/Box';
-
-const queryClient = new QueryClient();
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/i18n/i18n';
 
 // -- Type declarations --//
 // Page type
@@ -67,9 +67,12 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           <QueryClientProvider client={queryClient}>
             {getLayout(
               <Box>
-                {includeNavbar && <NavBar />}
-                <Component {...pageProps} />
-              </Box>)}
+                <I18nextProvider i18n={i18n}>
+                  {includeNavbar && <NavBar />}
+                  <Component {...pageProps} />
+                </I18nextProvider>
+              </Box>
+            )}
           </QueryClientProvider>
         </AuthenticationGuard>
       </SessionProvider>
