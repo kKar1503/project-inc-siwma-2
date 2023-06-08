@@ -43,6 +43,8 @@ const user = z.object({
   bookmarks,
 });
 
+export type UserResponseBody = z.infer<typeof user>;
+
 // Request Schemas (Not Implemented)
 // export const updateUser = user.partial(); // .partial() means that all fields are optional
 // export const createUser = user.omit({ id: true, createdAt: true, enabled: true });
