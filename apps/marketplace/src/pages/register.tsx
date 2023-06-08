@@ -1,12 +1,14 @@
+import { FormEvent, useState, useMemo } from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
-import { FormEvent, useMemo, useState } from 'react';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
 const Register = () => {
@@ -16,13 +18,83 @@ const Register = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
+  const [companyError, setCompanyError] = useState(false);
+  const [userNameError, setUserNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const { spacing, shape, shadows, palette } = useTheme();
-  // const router = useRouter();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Check input validations
+    if (company.trim() === '') {
+      // Set error state for company field
+      setCompanyError(true);
+    } else {
+      // Reset error state for company field
+      setCompanyError(false);
+    }
+
+    if (userName.trim() === '') {
+      // Set error state for username field
+      setUserNameError(true);
+    } else {
+      // Reset error state for username field
+      setUserNameError(false);
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email.trim() === '' || !emailRegex.test(email)) {
+      // Set error state for email field
+      setEmailError(true);
+    } else {
+      // Reset error state for email field
+      setEmailError(false);
+    }
+
+    // Validate phone number format (to have 8 numbers)
+    const phoneRegex = /^\d{8}$/;
+    if (phone.trim() === '' || !phoneRegex.test(phone)) {
+      // Set error state for phone field
+      setPhoneError(true);
+    } else {
+      // Reset error state for phone field
+      setPhoneError(false);
+    }
+
+    if (password.trim() === '') {
+      // Set error state for password field
+      setPasswordError(true);
+    } else {
+      // Reset error state for password field
+      setPasswordError(false);
+    }
+
+    if (confirmPassword !== password) {
+      // Set error state for confirm password field
+      setConfirmPasswordError(true);
+    } else {
+      // Reset error state for confirm password field
+      setConfirmPasswordError(false);
+    }
+
+    // Perform form submission logic if all inputs are valid
+    if (
+      company.trim() !== '' &&
+      userName.trim() !== '' &&
+      emailRegex.test(email) &&
+      phoneRegex.test(phone) &&
+      password.trim() !== '' &&
+      confirmPassword === password
+    ) {
+      // Perform form submission logic here
+      console.log('Form submitted');
+    }
   };
 
   const stylesBox = useMemo(() => {
@@ -70,14 +142,13 @@ const Register = () => {
     };
   }, [isSm, isMd, isLg]);
 
+  const handleBackToLogin = () => {
+    window.location.href = '/login';
+  };
+
   return (
     <Box>
-      <Box
-        sx={{
-          width: '100vw',
-          backgroundSize: 'cover',
-        }}
-      >
+      <Box>
         <Image src="/images/siwma-bg.png" alt="logo" fill />
         <Container
           component="main"
@@ -104,6 +175,7 @@ const Register = () => {
               <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
             </Box>
             <Divider flexItem />
+
             <Box
               sx={({ spacing }) => ({
                 mb: spacing(2),
@@ -127,7 +199,7 @@ const Register = () => {
               </Typography>
             </Box>
 
-            <Box component="form" onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <TextField
                 fullWidth
                 label="Company"
@@ -137,6 +209,8 @@ const Register = () => {
                 autoFocus
                 margin="normal"
                 onChange={(e) => setCompany(e.target.value)}
+                error={companyError}
+                helperText={companyError ? 'Company field is required' : ''}
               />
 
               <TextField
@@ -146,60 +220,71 @@ const Register = () => {
                 value={userName}
                 type="text"
                 variant="standard"
-                autoFocus
                 margin="normal"
                 onChange={(e) => setUserName(e.target.value)}
+                error={userNameError}
+                helperText={userNameError ? 'Username field is required' : ''}
               />
-              <TextField
-                fullWidth
-                label="Email"
-                placeholder="Your Company's Email"
-                value={email}
-                variant="standard"
-                autoFocus
-                margin="normal"
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{ width: '45%' }}
-              />
-              <TextField
-                fullWidth
-                label="Mobile Number"
-                placeholder="Your Mobile Number"
-                value={phone}
-                variant="standard"
-                autoFocus
-                margin="normal"
-                onChange={(e) => setPhone(e.target.value)}
-                sx={{
-                  float: 'right',
-                  width: '45%',
-                }}
-              />
-              <TextField
-                fullWidth
-                label="Password"
-                placeholder="Your Password"
-                value={password}
-                variant="standard"
-                autoFocus
-                margin="normal"
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{ width: '45%' }}
-              />
-              <TextField
-                fullWidth
-                label="Confirm Password"
-                placeholder="Confirm Your Password"
-                value={confirmPassword}
-                variant="standard"
-                autoFocus
-                margin="normal"
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                sx={{
-                  float: 'right',
-                  width: '45%',
-                }}
-              />
+
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    placeholder="Your Company's Email"
+                    value={email}
+                    variant="standard"
+                    margin="normal"
+                    onChange={(e) => setEmail(e.target.value)}
+                    error={emailError}
+                    helperText={emailError ? 'Invalid email format' : ''}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Mobile Number"
+                    placeholder="Your Mobile Number"
+                    value={phone}
+                    variant="standard"
+                    margin="normal"
+                    onChange={(e) => setPhone(e.target.value)}
+                    error={phoneError}
+                    helperText={phoneError ? 'Invalid phone number' : ''}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    placeholder="Your Password"
+                    value={password}
+                    type="password"
+                    variant="standard"
+                    margin="normal"
+                    onChange={(e) => setPassword(e.target.value)}
+                    error={passwordError}
+                    helperText={passwordError ? 'Password is required' : ''}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Confirm Password"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    type="password"
+                    variant="standard"
+                    margin="normal"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    error={confirmPasswordError}
+                    helperText={confirmPasswordError ? 'Passwords do not match' : ''}
+                  />
+                </Grid>
+              </Grid>
+
               <Button
                 type="submit"
                 fullWidth
@@ -210,200 +295,51 @@ const Register = () => {
               >
                 REGISTER
               </Button>
-            </Box>
+            </form>
+
+            {/* <Box>
+              <CheckCircleIcon
+                sx={({ spacing, palette }) => ({
+                  position: 'relative',
+                  display: 'flex',
+                  margin: 'auto',
+                  justifyContent: 'center',
+                  color: palette.primary.main,
+                  fontSize: '6rem',
+                  mt: spacing(4),
+                  mb: spacing(1),
+                })}
+              />
+              <Typography
+                align="center"
+                sx={({ spacing, typography }) => ({
+                  position: 'relative',
+                  display: 'flex',
+                  margin: 'auto',
+                  justifyContent: 'center',
+                  fontSize: typography.h5,
+                  fontWeight: 'bold',
+                })}
+              >
+                You have successfully registered.
+              </Typography>
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                onClick={handleBackToLogin}
+                sx={({ spacing }) => ({
+                  mt: spacing(3),
+                })}
+              >
+                BACK TO LOGIN
+              </Button>
+            </Box> */}
           </Box>
         </Container>
       </Box>
     </Box>
   );
 };
-
 export default Register;
-
-// import Typography from '@mui/material/Typography';
-// import Button from '@mui/material/Button';
-// import Divider from '@mui/material/Divider';
-// import TextField from '@mui/material/TextField';
-// import Box from '@mui/material/Box';
-// import Container from '@mui/material/Container';
-// import Image from 'next/image';
-// import { FormEvent, useState } from 'react';
-
-// const RegisterForm = () => {
-//   const [companyName, setCompanyName] = useState('');
-//   const [userName, setUserName] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [phoneNumber, setPhoneNumber] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [confirmPassword, setConfirmPassword] = useState('');
-
-//   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-
-//     if (!companyName || !userName || !email || !phoneNumber || !password || !confirmPassword) {
-//       alert('Please fill in all the fields!');
-//     } else if (password !== confirmPassword) {
-//       alert('Password does not match! Please try again');
-//       setPassword('');
-//       setConfirmPassword('');
-//     }
-//   };
-
-//   return (
-//     <Box>
-//       <Box
-//         sx={{
-//           width: '100vw',
-//           backgroundSize: 'cover',
-//         }}
-//       >
-//         <Image src="/images/siwma-bg.png" alt="background_pic" fill />
-//         <Container
-//           component="main"
-//           maxWidth="md"
-//           sx={{
-//             justifyContent: 'center',
-//             display: 'flex',
-//             flexDirection: 'column',
-//             height: '100vh',
-//           }}
-//         >
-//           <Box
-//             sx={({ shape, shadows, spacing, palette }) => ({
-//               boxShadow: shadows[5],
-//               px: '8rem',
-//               pb: '10rem',
-//               pt: spacing(2),
-//               position: 'relative',
-//               bgcolor: palette.common.white,
-//               ...shape,
-//             })}
-//           >
-//             <Box
-//               sx={({ spacing }) => ({
-//                 position: 'relative',
-//                 margin: 'auto',
-//                 display: 'flex',
-//                 justifyContent: 'center',
-//                 width: '80%',
-//                 height: '20%',
-//                 mb: spacing(1),
-//               })}
-//             >
-//               <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
-//             </Box>
-//             <Divider flexItem />
-//             <Box
-//               sx={({ spacing }) => ({
-//                 mb: spacing(1),
-//               })}
-//             >
-//               <Typography
-//                 sx={({ spacing, typography }) => ({
-//                   fontSize: typography.h5,
-//                   mt: spacing(3),
-//                   fontWeight: 'bold',
-//                 })}
-//               >
-//                 Register Here
-//               </Typography>
-//               <Typography
-//                 sx={({ typography }) => ({
-//                   fontSize: typography.body2,
-//                 })}
-//               >
-//                 Register your user details to create an account
-//               </Typography>
-//             </Box>
-//             <Box component="form" onSubmit={handleSubmit}>
-//               <TextField
-//                 fullWidth
-//                 label="Company Name"
-//                 placeholder="Registerzzd Company Name"
-//                 value={companyName}
-//                 variant="standard"
-//                 margin="normal"
-//                 onChange={(e) => setCompanyName(e.target.value)}
-//               />
-
-//               <TextField
-//                 fullWidth
-//                 label="Full Name"
-//                 placeholder="Your Full Name"
-//                 value={userName}
-//                 variant="standard"
-//                 margin="normal"
-//                 onChange={(e) => setUserName(e.target.value)}
-//               />
-
-//               <TextField
-//                 label="Email"
-//                 placeholder="Your Email"
-//                 value={email}
-//                 variant="standard"
-//                 margin="normal"
-//                 onChange={(e) => setEmail(e.target.value)}
-//                 sx={{ width: '45.3%' }}
-//               />
-
-//               <TextField
-//                 label="Mobile Number"
-//                 placeholder="Your Mobile Number"
-//                 value={phoneNumber}
-//                 variant="standard"
-//                 margin="normal"
-//                 onChange={(e) => setPhoneNumber(e.target.value)}
-//                 sx={({ spacing }) => ({
-//                   ml: spacing(4),
-//                   width: '45.3%',
-//                 })}
-//               />
-
-//               <TextField
-//                 fullWidth
-//                 label="Password"
-//                 placeholder="Your password"
-//                 value={password}
-//                 type="password"
-//                 variant="standard"
-//                 onChange={(e) => setPassword(e.target.value)}
-//                 sx={({ spacing }) => ({
-//                   mt: spacing(1),
-//                   width: '45.3%',
-//                 })}
-//               />
-
-//               <TextField
-//                 fullWidth
-//                 label="Confirm Password"
-//                 placeholder="Confirm Your password"
-//                 value={confirmPassword}
-//                 type="password"
-//                 variant="standard"
-//                 onChange={(e) => setConfirmPassword(e.target.value)}
-//                 sx={({ spacing }) => ({
-//                   mt: spacing(1),
-//                   ml: spacing(4),
-//                   width: '45.3%',
-//                 })}
-//               />
-
-//               <Button
-//                 type="submit"
-//                 fullWidth
-//                 variant="contained"
-//                 sx={({ spacing }) => ({
-//                   mt: spacing(4),
-//                 })}
-//               >
-//                 REGISTER
-//               </Button>
-//             </Box>
-//           </Box>
-//         </Container>
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default RegisterForm;
