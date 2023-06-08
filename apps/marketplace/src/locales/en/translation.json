@@ -15,5 +15,19 @@
 
   "Uh oh! Looks like this page does not exist or you cannot access this page.": "Uh oh! Looks like this page does not exist or you cannot access this page.",
 
-  "Loading...": "Loading..."
+  "Loading...": "Loading...",
+
+  "Search Filter": "Search Filter",
+  "Recent": "Recent",
+  "Price (Low to High)": "Price (Low to High)",
+  "Price (High to Low)": "Price (High to Low)",
+  "Sort by": "Sort by",
+  "Category": "Category",
+  "Negotiability": "Negotiability",
+  "Negotiable": "Negotiable",
+  "Non-negotiable": "Non-negotiable",
+  "Min": "Min",
+  "Max": "Max",
+  "Price": "Price",
+  "APPLY": "APPLY"
 }
