@@ -8,7 +8,7 @@ const createChatRoom = z.object({
 const user = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  profilePicture: z.string().url(),
+  profilePicture: z.string(),
   enabled: z.boolean(),
 });
 
@@ -42,19 +42,10 @@ const getChatMessage = z.object({
 
 const getChatMessages = getChatMessage.array();
 
-const getUserChat = z.object({
-  id: z.string().uuid(),
-  seller: z.string().uuid(),
-  buyer: z.string().uuid(),
-  listing: z.string(),
-  createdAt: z.string().datetime(),
-});
-
-const getUserChats = getUserChat.array();
+const getUserChats = getChatRoom.array();
 
 export type ChatRoom = z.infer<typeof getChatRoom>;
 export type ChatMessage = z.infer<typeof getChatMessage>;
-export type Chat = z.infer<typeof getUserChat>;
 
 export default {
   room: {
