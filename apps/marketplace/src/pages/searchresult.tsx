@@ -1,23 +1,20 @@
-import ProductListingItem, {
-  ProductListingItemProps,
-} from '@/components/marketplace/listing/ProductListingItem';
+import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
 import DisplayResults, { HeaderProps } from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 // middleware
-import fetchListings, { FilterOptions } from '@/middlewares/fetchListings';
+import searchListings, { FilterOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { Box, Container } from '@mui/material';
 
 const useSearchListings = (matching: string, filter?: FilterOptions) => {
   const data = useQuery(
     ['listings', filter, matching],
-    async () => fetchListings(matching, filter),
+    async () => searchListings(matching, filter),
     {
       enabled: matching !== undefined,
     }

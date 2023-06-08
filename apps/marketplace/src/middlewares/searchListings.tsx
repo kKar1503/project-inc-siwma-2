@@ -17,7 +17,7 @@ export type FilterOptions = {
   maxPrice?: number;
 };
 
-const fetchCategories = async (matching?: string, filter?: FilterOptions) => {
+const searchListings = async (matching?: string, filter?: FilterOptions) => {
   let query = `/v1/listings?matching=${matching}`;
   if (filter?.sortBy) query += `&sortBy=${filter.sortBy}`;
   if (filter?.category) query += `&category=${filter.category}`;
@@ -32,4 +32,4 @@ const fetchCategories = async (matching?: string, filter?: FilterOptions) => {
   return parsedListings;
 };
 
-export default fetchCategories;
+export default searchListings;
