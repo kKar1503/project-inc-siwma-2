@@ -14,6 +14,8 @@ const createListing = async (listingBody: PostListingsRequestBody | undefined, i
     // Post listing
   const result = await apiClient.post('/v1/listings', listingBody);
 
+  // if you're not posting images then just ignore the rest of the code and just return true
+
   /**
    * 2. Post images
    */
