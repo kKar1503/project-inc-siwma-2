@@ -26,6 +26,7 @@
   "Negotiability": "Negotiability",
   "Negotiable": "Negotiable",
   "Non-negotiable": "Non-negotiable",
+  "PIKACHUUUU": "PIKACHUUUU",
   "Min": "Min",
   "Max": "Max",
   "Price": "Price",
@@ -67,5 +68,8 @@
   "Sort By": "Sort By",
   "All Listings": "All Listings",
   "Buy Listings": "Buy Listings",
-  "Sell Listings": "Sell Listings"
+  "Sell Listings": "Sell Listings",
+
+  "Filter reviews:": "Filter reviews",
+  "Sort By:": "Sort By:"
 }
