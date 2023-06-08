@@ -76,5 +76,9 @@
   "Are you sure you want to delete chat?": "Are you sure you want to delete chat?",
   "The chat cannot be restored": "The chat cannot be restored",
   "cancel": "cancel",
-  "Delete chat": "Delete chat"
+  "Delete chat": "Delete chat",
+
+  "Make an offer": "Make an offer",
+  "Enter an alternative amount to offer for the listing below.": "Enter an alternative amount to offer for the listing below.",
+  "make offer": "make offer"
 }
