@@ -31,23 +31,25 @@ const CategoriesPage = () => {
         maxHeight: 'xl',
       }}
     >
-      <Typography
+      <Box
+       sx={{
+        textAlign: 'center',
+      }}
+      >
+        <Typography
         sx={({ spacing }) => ({
           pt: spacing(3),
-          pb: spacing(2),
-          pl: spacing(2),
-          fontSize: { xs: 0, sm: 30, md: 40, lg: 45 },
+          pb: spacing(3),
+          fontSize: { xs: 20, sm: 30, md: 40, lg: 45 },
           fontWeight: 700,
         })}
       >
         More Metal Types
       </Typography>
+      </Box>
+      
 
-      <Grid
-        sx={({ spacing }) => ({
-          py: spacing(2),
-        })}
-      >
+      <Grid>
         <Grid
           container
           columnSpacing={3}
