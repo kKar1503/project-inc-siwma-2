@@ -17,9 +17,9 @@ import useModals from '@/components/marketplace/createListing/useModals';
 import useForms from '@/components/marketplace/createListing/useForms';
 
 const usePostListingQuery = (
-  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined
+  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
 ) => {
-  const { data } = useQuery(['postListing', listing], () => createListing(listing), {
+  const { data } = useQuery(['postListing', listing], () => createListing(listing?.listingBody, listing?.images), {
     enabled:
       listing !== undefined && listing.listingBody !== undefined && listing.images !== undefined,
   });
@@ -54,14 +54,14 @@ const CreateListingPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ boxShadow: 4, padding: 2, marginTop: 2, marginBottom: 2 }}>
+    <Container maxWidth='lg' sx={{ boxShadow: 4, padding: 2, marginTop: 2, marginBottom: 2 }}>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={12} sx={{ width: '100%' }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant='h6' sx={{ fontWeight: 'bold' }}>
               Create Listing
             </Typography>
-            <Typography variant="body1">
+            <Typography variant='body1'>
               Create a buy or a sell listing to be shared on your profile.
             </Typography>
           </Grid>
@@ -73,9 +73,9 @@ const CreateListingPage = () => {
 
           <Grid item xs={6} md={6} sx={{ width: '100%' }}>
             <Button
-              variant="contained"
-              type="submit"
-              size="large"
+              variant='contained'
+              type='submit'
+              size='large'
               onClick={handleCancel}
               sx={({ palette }) => ({
                 backgroundColor: palette.error.main,
@@ -87,7 +87,7 @@ const CreateListingPage = () => {
             {cancelModal.element}
           </Grid>
           <Grid item xs={6} md={6} sx={{ width: '100%' }}>
-            <Button variant="contained" type="submit" size="large" fullWidth>
+            <Button variant='contained' type='submit' size='large' fullWidth>
               CREATE LISTING
             </Button>
             {createModal.element}
