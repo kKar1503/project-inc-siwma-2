@@ -42,7 +42,6 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
       {filter && !isMd && !isSm && (
         <Grid
           item
-          xs={12}
           md={2}
           sx={({ spacing }) => ({
             mt: spacing(4),
