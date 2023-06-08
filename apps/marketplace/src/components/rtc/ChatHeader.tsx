@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
@@ -24,7 +25,7 @@ export type ChatHeaderProps = {
 const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatHeaderProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
-
+  const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState<null | HTMLElement>(null);
   const [openReport, setOpenReport] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
@@ -177,14 +178,14 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
       >
         <ArrowBackIosIcon sx={chatHeaderStyles?.backButton} onClick={handleBack} />
         {/* <Avatar alt="company profile picture" src={profilePic} sx={chatHeaderStyles?.profilePic} /> */}
-        {!isSm && <Avatar alt="company profile picture" src={profilePic} />}
+        {!isSm && <Avatar alt={t('company profile picture').toString()} src={profilePic} />}
       </IconButton>
       <Typography sx={chatHeaderStyles?.companyName}>{companyName}</Typography>
       <Button sx={chatHeaderStyles?.statusButton} disabled>
-        {available ? 'Available' : 'Sold'}
+        {available ? t('Available') : t('Sold')}
       </Button>
       <IconButton
-        aria-label="display more actions"
+        aria-label={t('display more actions').toString()}
         edge="end"
         color="inherit"
         onClick={handleClick}
@@ -196,7 +197,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
           onClick={() => setOpenDelete(true)}
           sx={({ typography }) => ({ fontSize: typography.subtitle1 })}
         >
-          Delete Chat
+          {t('Delete Chat')}
         </MenuItem>
         <DeleteChat open={openDelete} setOpen={setOpenDelete} />
         <Divider sx={({ spacing }) => ({ mx: spacing(1) })} />
@@ -204,7 +205,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
           onClick={() => setOpenReport(true)}
           sx={({ typography }) => ({ fontSize: typography.subtitle1 })}
         >
-          Report User
+          {t('Report User')}
         </MenuItem>
         <ReportModal open={openReport} setOpen={setOpenReport} />
       </Menu>

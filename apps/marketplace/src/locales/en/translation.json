@@ -107,5 +107,11 @@
   "Text File": "Text File",
   "CSV File": "CSV File",
   "Zip File": "Zip File",
-  "File": "File"
+  "File": "File",
+
+  "Available": "Available",
+  "Sold": "Sold",
+  "company profile picture": "company profile picture",
+  "display more actions": "display more actions",
+  "Delete Chat": "Delete Chat"
 }
