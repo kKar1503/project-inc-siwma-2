@@ -8,7 +8,7 @@ const email = z.string();
 const company = z.string();
 const createdAt = z.string().datetime();
 const enabled = z.boolean();
-const profilePic = z.string().url().nullable();
+const profilePic = z.string().nullable();
 const comments = z.string().nullable().optional(); // Only returned for admins
 const mobileNumber = z.string();
 const whatsappNumber = z.string().nullable();
@@ -42,6 +42,8 @@ const user = z.object({
   bio,
   bookmarks,
 });
+
+export type UserResponseBody = z.infer<typeof user>;
 
 // Request Schemas (Not Implemented)
 // export const updateUser = user.partial(); // .partial() means that all fields are optional
