@@ -1,5 +1,6 @@
 import { ModalSelect } from '@inc/ui';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type ReportModalProps = {
   open: boolean;
@@ -10,6 +11,7 @@ const ReportModal = ({ open, setOpen }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const [selectInput, setSelectInput] = useState<string>('');
+  const { t } = useTranslation();
 
   // report should get from BE
   const report = [
@@ -24,9 +26,9 @@ const ReportModal = ({ open, setOpen }: ReportModalProps) => {
       open={open}
       setOpen={setOpen}
       buttonColor="#D32F2F"
-      title="Report User"
-      leftButtonText="cancel"
-      rightButtonText="Report"
+      title={t('Report User')}
+      leftButtonText={t('cancel')}
+      rightButtonText={t('Report')}
       selectData={report}
       selectInput={selectInput}
       setselectInput={setSelectInput}
