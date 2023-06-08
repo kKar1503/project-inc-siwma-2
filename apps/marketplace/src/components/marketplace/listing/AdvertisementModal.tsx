@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogActions from '@mui/material/DialogActions'
 import Box from '@mui/material/Box';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 
@@ -28,9 +29,6 @@ const AdvertisementModal = ( { id, companyName, description, url,  onClose, open
 
   const router = useRouter();
 
-  const handleRedirect = () => {
-  router.push(url);
-  };
 
   return (
     <Dialog open={open} onClose={() => onClose(true)}>
@@ -54,7 +52,9 @@ const AdvertisementModal = ( { id, companyName, description, url,  onClose, open
       </DialogContent>
       
       <DialogActions>
-        <Button onClick={handleRedirect}  variant="contained"  sx={({ palette,spacing }) => ({
+        <Link href="/advertisement">
+        <Button  variant="contained" 
+            sx={({ palette,spacing }) => ({
             marginTop: spacing(3),
             marginBottom: spacing(2),
             border: '4px',
@@ -64,6 +64,7 @@ const AdvertisementModal = ( { id, companyName, description, url,  onClose, open
           >
         Show Me!
         </Button>
+        </Link>
         <Button variant='outlined' onClick={() => onClose(false)}
           sx={({ palette,spacing }) => ({
             marginTop: spacing(3),
