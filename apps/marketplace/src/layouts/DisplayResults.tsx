@@ -26,16 +26,13 @@ const DisplayResults = ({ children, filter, data, setFilterOptions }: DisplayRes
   const isMediumScreen = useMediaQuery(Theme.breakpoints.down('md'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [sort, setSort] = useState<SortProps>('Recent');
-  const [category, setCategory] = useState<number>();
-  const [negotiation, setNegotiation] = useState<boolean>();
+  const [category, setCategory] = useState<number>(0);
+  const [negotiation, setNegotiation] = useState<string>('');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
 
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-
-  useEffect(() => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     let sortBy: SortingOptions = 'recent_newest';
     switch (sort) {
       case 'Recent':
@@ -50,19 +47,21 @@ const DisplayResults = ({ children, filter, data, setFilterOptions }: DisplayRes
       default:
         break;
     }
-
     const filterOptions: FilterOptions = {
       sortBy,
       category,
-      negotiable: negotiation,
+      negotiable: negotiation === 'negotiable',
       minPrice: parseInt(minPrice, 10),
       maxPrice: parseInt(maxPrice, 10),
     };
-
     if (setFilterOptions) {
       setFilterOptions(filterOptions);
     }
-  }, [sort, category, negotiation, minPrice, maxPrice, setFilterOptions]);
+  };
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
 
   return (
     <Container maxWidth="xl">
@@ -78,11 +77,17 @@ const DisplayResults = ({ children, filter, data, setFilterOptions }: DisplayRes
             })}
           >
             <FilterForm
+              sort={sort}
+              category={category}
+              negotiation={negotiation}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
               setSort={setSort}
               setCategory={setCategory}
               setNegotiation={setNegotiation}
               setMinPrice={setMinPrice}
               setMaxPrice={setMaxPrice}
+              handleSubmit={handleSubmit}
             />
           </Grid>
         ) : (
@@ -119,11 +124,17 @@ const DisplayResults = ({ children, filter, data, setFilterOptions }: DisplayRes
                     })}
                   >
                     <FilterForm
+                      sort={sort}
+                      category={category}
+                      negotiation={negotiation}
+                      minPrice={minPrice}
+                      maxPrice={maxPrice}
                       setSort={setSort}
                       setCategory={setCategory}
                       setNegotiation={setNegotiation}
                       setMinPrice={setMinPrice}
                       setMaxPrice={setMaxPrice}
+                      handleSubmit={handleSubmit}
                     />
                   </Box>
                 </Drawer>

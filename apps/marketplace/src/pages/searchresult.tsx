@@ -77,7 +77,8 @@ const Searchresult = () => {
         </Grid>
         <Grid item xs={12} md={12}>
           <Typography variant="h5">
-            Displaying {listingData ? listingData.length : 0} search results for:
+            Displaying {listingData ? listingData.length : 0} search{' '}
+            {listingData && listingData?.length < 2 ? 'result' : 'results'} for {search}:
           </Typography>
         </Grid>
       </>
