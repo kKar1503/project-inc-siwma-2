@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { Button } from '@inc/ui';
 import type { Person } from '@inc/types';
+import NavBar from '@/components/marketplace/navbar/NavBar';
 import { signIn, useSession } from 'next-auth/react';
 
 // eslint-disable-next-line no-unused-vars
@@ -29,5 +30,7 @@ const Home = () => {
     </>
   );
 };
+
+// Home.includeNavbar = false;
 
 export default Home;
