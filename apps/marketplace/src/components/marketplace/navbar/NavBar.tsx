@@ -11,6 +11,7 @@ import SearchBar from '@inc/ui/lib/components/SearchBar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
 import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import AddListing from './AddListing';
@@ -19,7 +20,7 @@ import MobileDrawer from './MobileDrawer';
 
 const NavBar = () => {
   const user = useSession();
-
+  const { t } = useTranslation();
   const userName = user.data?.user.name;
   const userId = user.data?.user.id;
 
@@ -91,7 +92,7 @@ const NavBar = () => {
                 ml: isLg ? spacing(3) : spacing(2),
               }}
             >
-              Home
+              {t('Home')}
             </Typography>
           </Link>
         )}
@@ -105,7 +106,7 @@ const NavBar = () => {
                 mr: isLg ? spacing(3) : spacing(2),
               }}
             >
-              All Categories
+              {t('All Categories')}
             </Typography>
           </Link>
         )}
@@ -116,7 +117,7 @@ const NavBar = () => {
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <Grid component="label" container alignItems="center">
             <Grid sx={navBarStyles?.switchTxt} item>
-              EN
+              {t('EN')}
             </Grid>
             <Grid item>
               <Switch
@@ -126,7 +127,7 @@ const NavBar = () => {
               />
             </Grid>
             <Grid sx={navBarStyles?.switchTxt} item>
-              CN
+              {t('CN')}
             </Grid>
           </Grid>
 

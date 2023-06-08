@@ -4,5 +4,10 @@
   "Hello": "Hello",
   "Hello World": "Hello World",
   "Not signed in ": "Not signed in ",
-  "Sign in": "Sign in"
+  "Sign in": "Sign in",
+
+  "Home": "Home",
+  "All Categories": "All Categories",
+  "EN": "EN",
+  "CN": "CN"
 }
