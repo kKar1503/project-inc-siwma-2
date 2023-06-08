@@ -88,5 +88,15 @@
   "stay here": "stay here",
 
   "Report User": "Report User",
-  "Report": "Report"
+  "Report": "Report",
+
+  "Conversations": "Conversations",
+  "CHAT": "CHAT",
+  "CHATS": "CHATS",
+  "ALL CHATS": "ALL CHATS",
+  "BUYING": "BUYING",
+  "SELLING": "SELLING",
+  "Search messages, listings, usernames": "Search messages, listings, usernames",
+  "In progress": "In progress",
+  "Offered price": "Offered price"
 }

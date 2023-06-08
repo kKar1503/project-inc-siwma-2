@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { DateTime } from 'luxon';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme, alpha } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 export interface ChatListProps {
   id: string;
@@ -44,6 +45,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
   const [category, setCategory] = useState<CategoryType>('all');
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const whiteTransparent = alpha(palette.common.white, 0.04);
+  const { t } = useTranslation();
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
     setCategory(event.target.value as CategoryType);
@@ -247,10 +249,10 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
           }}
         >
           <Typography variant="h5" sx={chatListStyles?.listTitle}>
-            Conversations
+            {t('Conversations')}
           </Typography>
           <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
-            {filteredChats.length} ACTIVE {filteredChats.length !== 1 ? 'CHATS' : 'CHAT'}
+            {filteredChats.length} ACTIVE {filteredChats.length !== 1 ? t('CHATS') : t('CHAT')}
           </Typography>
         </Box>
         <FormControl
@@ -285,9 +287,9 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
               ...chatListStyles?.searchBar,
             }}
           >
-            <MenuItem value="all">ALL CHATS</MenuItem>
-            <MenuItem value="Buying">BUYING</MenuItem>
-            <MenuItem value="Selling">SELLING</MenuItem>
+            <MenuItem value="all">{t('ALL CHATS')}</MenuItem>
+            <MenuItem value="Buying">{t('BUYING')}</MenuItem>
+            <MenuItem value="Selling">{t('SELLING')}</MenuItem>
           </Select>
         </FormControl>
 
@@ -296,7 +298,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
             disableUnderline: true,
             style: chatListStyles?.searchBar,
           }}
-          placeholder="Search messages, listings, usernames"
+          placeholder={t('Search messages, listings, usernames').toString()}
           variant="filled"
           fullWidth
           sx={{
@@ -400,7 +402,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     ...chatListStyles?.progressText,
                   }}
                 >
-                  {chat.inProgress ? 'In progress' : `Offered price: $${chat.price}`}
+                  {chat.inProgress ? t('In progress') : `${t('Offered price')}: ${chat.price}`}
                 </Typography>
               </ListItemText>
             </ListItem>
