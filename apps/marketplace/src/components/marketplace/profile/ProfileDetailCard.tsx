@@ -119,7 +119,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
-        <Typography>{data?.bio}</Typography>
+        <Typography>{data?.data.data[0].bio}</Typography>
       </CardContent>
 
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
@@ -197,19 +197,6 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
               Edit profile
             </Button>
           )}
-          <Button
-            component={Link}
-            href="/logout"
-            variant="contained"
-            type="submit"
-            color="error"
-            sx={{
-              width: '100%',
-              fontWeight: 'bold',
-            }}
-          >
-            Logout
-          </Button>
         </Box>
       </CardActions>
     </Card>

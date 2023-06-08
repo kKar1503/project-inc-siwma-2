@@ -15,7 +15,6 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
@@ -80,7 +79,7 @@ const EditProfile = () => {
 
   const mutation = useUpdateUserMutation(loggedUserUuid);
 
-  console.log(mutation);
+  // console.log(mutation);
 
   const theme = useTheme();
   const { spacing } = theme;
@@ -100,9 +99,6 @@ const EditProfile = () => {
   );
   const [whatsappNumber, setWhatsappNumber] = useState<string>(
     userDetails?.data?.data[0].whatsappNumber || undefined
-  );
-  const [facebookUsername, setFacebookUsername] = useState<string>(
-    userDetails?.data?.data[0].facebookUsername || undefined
   );
   const [contact, setContact] = useState<string>(userDetails?.data?.data[0].contact || undefined);
 
@@ -134,13 +130,8 @@ const EditProfile = () => {
     if (selectedContact === 'whatsapp') {
       setWhatsappNumber('');
       setTelegramUsername('');
-      setFacebookUsername('');
     } else if (selectedContact === 'telegram') {
       setWhatsappNumber('');
-      setFacebookUsername('');
-    } else if (selectedContact === 'facebook') {
-      setWhatsappNumber('');
-      setTelegramUsername('');
     }
   };
 
@@ -400,7 +391,6 @@ const EditProfile = () => {
                     >
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="Whatsapp">Whatsapp</MenuItem>
-                      <MenuItem value="facebook">Facebook</MenuItem>
                     </Select>
                   </FormControl>
 
@@ -434,22 +424,6 @@ const EditProfile = () => {
                       }}
                       value={telegramUsername}
                       onChange={(e) => setTelegramUsername(e.target.value)}
-                    />
-                  )}
-
-                  {contact === 'facebook' && (
-                    <TextField
-                      label="Facebook Username"
-                      placeholder="account_username"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <FacebookOutlinedIcon />@
-                          </InputAdornment>
-                        ),
-                      }}
-                      value={facebookUsername}
-                      onChange={(e) => setFacebookUsername(e.target.value)}
                     />
                   )}
                 </Box>
