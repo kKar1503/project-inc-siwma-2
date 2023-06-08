@@ -1,5 +1,9 @@
 import React, { useRef } from 'react';
-import { Box, Grid, Link, Typography, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 
@@ -15,7 +19,7 @@ import fetchListings from '@/middlewares/fetchListings';
 import fetchAdvertisements from '@/middlewares/fetchAdvertisements';
 import fetchPopularListings from '@/middlewares/fetchPopularListings';
 
-import {InfiniteScroll} from '@inc/ui';
+import { InfiniteScroll, useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 
 const useGetCategoriesQuery = () => {
@@ -37,9 +41,8 @@ const useGetPopularListingsQuery = () => {
 };
 
 const Marketplace = () => {
-  const theme = useTheme();
   const { data: session } = useSession();
-  const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isMediumScreen = useResponsiveness(['md']);
   const scrollRef = useRef<Element>(null);
 
   const [listings, setListings] = React.useState<Array<ProductListingItemProps>>([]);
@@ -75,7 +78,11 @@ const Marketplace = () => {
 
   return (
     <>
-      {advertisementsData?.length ? <Carousel data={advertisementsData} /> : <AdvertisementsPlaceholder />}
+      {advertisementsData?.length ? (
+        <Carousel data={advertisementsData} />
+      ) : (
+        <AdvertisementsPlaceholder />
+      )}
       <Box display="flex" justifyContent="center" paddingTop="2em">
         <Box
           sx={{
@@ -110,7 +117,7 @@ const Marketplace = () => {
         </Box>
       </Box>
       <ListingStream listingItemsData={popularListingsData} />
-      <Box display="flex" justifyContent="center" paddingTop="4em">
+      <Box display="flex" justifyContent="center" marginTop="2em">
         <Box
           sx={{
             width: '80%',
@@ -119,28 +126,36 @@ const Marketplace = () => {
           <Typography variant="h4">Recommended</Typography>
         </Box>
       </Box>
-      <Box display="flex" justifyContent="center" paddingTop="2em">
+      <Box marginTop="2em">
         <InfiniteScroll
           onLoadMore={refetch}
           loading={isLoading}
           reachedMaxItems={maxItems}
           loadingComponent={<CircularProgress />}
           parent={Grid}
+          endMessage={<Typography variant="h6" textAlign="center">No more listings</Typography>}
           parentProps={{
             container: true,
             spacing: 2,
             gap: 2,
+            display: 'flex',
             justifyContent: 'center',
-            display: 'flex'
           }}
           child={Grid}
           childProps={{
             item: true,
+            maxWidth: 'fit-content',
+            width: 'fit-content',
             xl: 2,
-            lg: 3,
-            md: 4,
-            sm: 6,
+            lg: 2.5,
+            md: 3.5,
+            sm: 5,
             xs: 12,
+          }}
+          infiniteScrollSx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
           }}
         >
           {listings?.map((item) => (

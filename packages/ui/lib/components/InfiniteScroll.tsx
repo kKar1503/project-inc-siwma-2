@@ -1,4 +1,6 @@
 import { ReactNode, Children, useEffect, ComponentType, useRef } from 'react';
+import Box from '@mui/material/Box';
+import { SxProps, Theme } from '@mui/material';
 
 // TODO: fix typing for props of parent and child
 interface InfiniteScrollProps<TParent, TChild> {
@@ -15,6 +17,7 @@ interface InfiniteScrollProps<TParent, TChild> {
   fetching?: boolean;
   scrollThreshold?: number;
   inverse?: boolean;
+  infiniteScrollSx?: SxProps<Theme>;
 }
 
 /**
@@ -30,8 +33,9 @@ interface InfiniteScrollProps<TParent, TChild> {
  * @prop {parentProps} props to pass to parent
  * @prop {childProps} props to pass to child
  * @prop {fetching} boolean to indicate if fetching
- * @prop {scrollThreshold} number to indicate how far from bottom to trigger onLoadMore
- * @prop {inverse} boolean to indicate if scroll should be inverted
+ * @prop DEPRECATED {scrollThreshold} number to indicate how far from bottom to trigger onLoadMore
+ * @prop DEPRECATED {inverse} boolean to indicate if scroll should be inverted
+ * @prop {infiniteScrollSx} SxProps<Theme> to pass to InfiniteScroll
  */
 const InfiniteScroll = <TParent, TChild>({
   children,
@@ -45,8 +49,9 @@ const InfiniteScroll = <TParent, TChild>({
   parentProps = {},
   childProps = {},
   fetching = false,
-  scrollThreshold = 1,
-  inverse = false,
+  // scrollThreshold = 1,
+  // inverse = false,
+  infiniteScrollSx = {},
 }: InfiniteScrollProps<TParent, TChild>) => {
   const parentRef = useRef<Element>(null);
   const childRef = useRef<Element>(null);
@@ -79,30 +84,30 @@ const InfiniteScroll = <TParent, TChild>({
   }, [loading, fetching]);
 
   return (
-    <>
-      {/* {loading && loadingComponent} */}
+    <Box sx={infiniteScrollSx}>
+      {loading && fetching && loadingComponent}
 
-      <Parent {...parentProps} ref={parentRef}>
-        {children !== null &&
-          children !== undefined &&
-          Children.map(children, (child, index) => {
-            if (index === children.length - 1) {
+        <Parent {...parentProps} ref={parentRef}>
+          {children !== null &&
+            children !== undefined &&
+            Children.map(children, (child, index) => {
+              if (index === children.length - 1) {
+                return (
+                  <Child {...childProps} key={index}>
+                    {child}
+                  </Child>
+                );
+              }
               return (
-                <Child {...childProps} key={index}>
+                <Child {...childProps} key={index} ref={childRef}>
                   {child}
                 </Child>
               );
-            }
-            return (
-              <Child {...childProps} key={index} ref={childRef}>
-                {child}
-              </Child>
-            );
-          })}
-      </Parent>
+            })}
+        </Parent>
 
-      {/* {reachedMaxItems && endMessage} */}
-    </>
+      {reachedMaxItems && endMessage}
+    </Box>
   );
 };
 
