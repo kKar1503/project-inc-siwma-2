@@ -106,8 +106,8 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
               pb: spacing(2),
             })}
           >
-            {type === 'Buy' && <BuyBadge />}
-            {type === 'Sell' && <SellBadge />}
+            {type === 'BUY' && <BuyBadge />}
+            {type === 'SELL' && <SellBadge />}
             {negotiable && <NegotiableBadge />}
 
             <Box sx={{ ml: 'auto' }}>
