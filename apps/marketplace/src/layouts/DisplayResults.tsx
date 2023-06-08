@@ -45,7 +45,6 @@ const DisplayResults = ({ children, filter, data }: DisplayResultsProps) => {
           xs={12}
           md={2}
           sx={({ spacing }) => ({
-            width: '100%',
             mt: spacing(4),
             mr: spacing(3),
           })}
