@@ -1,5 +1,7 @@
-import { ProductListingItemProps } from '@/components/marketplace/listing/ProductListingItem';
-import DisplayResults from '@/layouts/DisplayResults';
+import ProductListingItem, {
+  ProductListingItemProps,
+} from '@/components/marketplace/listing/ProductListingItem';
+import DisplayResults, { HeaderProps } from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useQuery } from 'react-query';
@@ -11,9 +13,13 @@ import fetchListings, { FilterOptions } from '@/middlewares/fetchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
 
 const useSearchListings = (matching: string, filter?: FilterOptions) => {
-  const { data } = useQuery(['listings', filter], async () => fetchListings(matching, filter), {
-    enabled: matching !== undefined,
-  });
+  const { data } = useQuery(
+    ['listings', filter, matching],
+    async () => fetchListings(matching, filter),
+    {
+      enabled: matching !== undefined,
+    }
+  );
 
   return data;
 };
@@ -55,33 +61,30 @@ const Searchresult = () => {
   const { data: session } = useSession();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
 
-  const listingData = useSearchListings(search as string, filterOptions);
+  const listingData = convertToProductListingItems(
+    useSearchListings(search as string, filterOptions),
+    session?.user.id
+  );
+
+  const Header: HeaderProps = {
+    title: {
+      single: `Displaying search result for ${search}:`,
+      plural: `Displaying search results for ${search}:`,
+    },
+    noOfItems: 1,
+  };
 
   return (
-    <DisplayResults
-      filter
-      data={convertToProductListingItems(listingData, session?.user.id)}
-      setFilterOptions={setFilterOptions}
-    >
-      <>
-        <Grid item xs={12} md={12}>
-          <Typography
-            variant="h4"
-            sx={({ typography, spacing }) => ({
-              fontWeight: typography.fontWeightBold,
-              mb: spacing(2),
-            })}
-          >
-            Search Results
-          </Typography>
+    <DisplayResults filter data={Header} setFilterOptions={setFilterOptions} subHeader={false}>
+      {listingData && listingData.length > 0 && (
+        <Grid container display="flex" spacing={2}>
+          {listingData.map((item: ProductListingItemProps) => (
+            <Grid item xs={6} md={4} xl={3} key={item.productId}>
+              <ProductListingItem data={item} />
+            </Grid>
+          ))}
         </Grid>
-        <Grid item xs={12} md={12}>
-          <Typography variant="h5">
-            Displaying {listingData ? listingData.length : 0} search{' '}
-            {listingData && listingData?.length < 2 ? 'result' : 'results'} for {search}:
-          </Typography>
-        </Grid>
-      </>
+      )}
     </DisplayResults>
   );
 };

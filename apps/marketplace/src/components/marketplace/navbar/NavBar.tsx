@@ -13,12 +13,15 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
+import { useRouter } from 'next/router';
 import AddListing from './AddListing';
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
 
 const NavBar = () => {
   const user = useSession();
+
+  const router = useRouter();
 
   const userName = user.data?.user.name;
   const userId = user.data?.user.id;
@@ -27,6 +30,12 @@ const NavBar = () => {
   const { spacing, palette, typography, zIndex } = useTheme();
 
   const [language, setLanguage] = useState<'English' | 'Chinese'>('English');
+
+  const handleSearch = (search: string) => {
+    if (search.trim() !== '') {
+      router.push(`/searchresult?search=${search}`);
+    }
+  };
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // handle i18 change here
@@ -109,7 +118,7 @@ const NavBar = () => {
             </Typography>
           </Link>
         )}
-        <SearchBar />
+        <SearchBar handleSearch={handleSearch} />
 
         {!isSm && <AddListing />}
         <Box sx={{ flexGrow: 1 }} />
