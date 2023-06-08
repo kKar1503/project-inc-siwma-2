@@ -94,12 +94,24 @@ const DetailedListingPage = () => {
     [listings?.createdAt]
   );
 
+  // listings?.parameters?.sort((a, b) => {
+  //   if (a.paramId < b.paramId) {
+  //     return -1;
+  //   }
+  //   if (a.paramId > b.paramId) {
+  //     return 1;
+  //   }
+  //   return 0;
+  // });
+
   listings?.parameters?.sort((a, b) => {
-    if (a.paramId < b.paramId) {
-      return -1;
-    }
-    if (a.paramId > b.paramId) {
-      return 1;
+    if (a?.paramId && b?.paramId) {
+      if (a.paramId < b.paramId) {
+        return -1;
+      }
+      if (a.paramId > b.paramId) {
+        return 1;
+      }
     }
     return 0;
   });
