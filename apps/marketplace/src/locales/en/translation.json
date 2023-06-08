@@ -71,5 +71,10 @@
   "Sell Listings": "Sell Listings",
 
   "Filter reviews:": "Filter reviews",
-  "Sort By:": "Sort By:"
+  "Sort By:": "Sort By:",
+
+  "Are you sure you want to delete chat?": "Are you sure you want to delete chat?",
+  "The chat cannot be restored": "The chat cannot be restored",
+  "cancel": "cancel",
+  "Delete chat": "Delete chat"
 }
