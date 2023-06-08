@@ -19,31 +19,33 @@ const useCategoryPageQuery = () => {
 };
 
 const CategoriesPage = () => {
-  const catData = useCategoryPageQuery()
+  const catData = useCategoryPageQuery();
 
   return (
     <Box
       sx={{
-        width: '80%',
-        height: 'full',
         mr: 'auto',
         ml: 'auto',
+        width: '90%',
+        height: 'full',
         maxHeight: 'xl',
       }}
     >
       <Typography
         sx={({ spacing }) => ({
-          pl: spacing(4),
           pt: spacing(3),
-          fontSize: { xs: 20, md: 40, lg: 50 },
+          pb: spacing(2),
+          pl: spacing(2),
+          fontSize: { xs: 0, sm: 30, md: 40, lg: 45 },
           fontWeight: 700,
         })}
       >
         More Metal Types
       </Typography>
+
       <Grid
         sx={({ spacing }) => ({
-          py: spacing(4),
+          py: spacing(2),
         })}
       >
         <Grid
@@ -58,9 +60,9 @@ const CategoriesPage = () => {
         >
           {catData?.map(({ id, name, image }) => (
             <Grid key={id} item>
-              <Card sx={{ }}>
+              <Card sx={{}}>
                 <CardActionArea>
-                  <CardMedia component="img" height="140" width="140" image={image} />
+                  <CardMedia component="img" height="160" width="160" image={image} />
                   <CardContent>
                     <Typography
                       gutterBottom
