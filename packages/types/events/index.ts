@@ -1,4 +1,5 @@
 import { Socket, Server } from 'socket.io';
+import * as buffer from 'buffer';
 
 type Room = {
   id: string;
@@ -11,6 +12,7 @@ type RoomMessage = {
   message: string;
   username: string;
   contentType: string;
+  file:undefined| Buffer;
   time: Date;
 };
 
@@ -21,9 +23,13 @@ type StartStopType = {
 
 type Read = {
   room: string;
-  message: string;
-};
+  messageId: number;
+}
 
+type DeleteMessage = {
+  room: string;
+  messageId: number;
+};
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
@@ -35,7 +41,7 @@ type EventParams = {
   createRoom: { roomName: string };
   sendMessage: RoomMessage;
   clientPing: string;
-  deleteMessage: { room: string; message: number };
+  clientDeleteMessage: DeleteMessage;
   clientStartType: StartStopType;
   clientStopType: StartStopType;
   clientRead: Read;
@@ -44,6 +50,7 @@ type EventParams = {
   rooms: Record<string, Room>;
   joinedRoom: Room;
   roomMessage: RoomMessage;
+  serverDeleteMessage: DeleteMessage;
   serverPing: string;
   serverStartType: StartStopType;
   serverStopType: StartStopType;
@@ -52,10 +59,13 @@ type EventParams = {
 
 type Event = keyof EventParams;
 
-type EventFile = (io: Server) => {
+type EventFile = (
+  io: Server,
+  socket?: Socket
+) => {
   [K in keyof EventParams]: {
     eventName: K;
-    callback: (param: EventParams[K]) => void;
+    callback: (param: EventParams[K], callback?: (...args: any[]) => void) => void;
     type: 'on' | 'once';
   };
 }[keyof EventParams];
