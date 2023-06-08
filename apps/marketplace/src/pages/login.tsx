@@ -221,4 +221,5 @@ const LoginForm = () => {
   );
 };
 
+LoginForm.includeNavbar = false;
 export default LoginForm;
