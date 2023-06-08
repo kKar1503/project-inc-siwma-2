@@ -98,5 +98,14 @@
   "SELLING": "SELLING",
   "Search messages, listings, usernames": "Search messages, listings, usernames",
   "In progress": "In progress",
-  "Offered price": "Offered price"
+  "Offered price": "Offered price",
+
+  "Make Offer": "Make Offer",
+  "PDF File": "PDF File",
+  "Document File": "Document File",
+  "Excel File": "Excel File",
+  "Text File": "Text File",
+  "CSV File": "CSV File",
+  "Zip File": "Zip File",
+  "File": "File"
 }

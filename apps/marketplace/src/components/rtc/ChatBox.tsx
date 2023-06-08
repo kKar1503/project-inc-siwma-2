@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 type ChatData = {
   id: string;
@@ -28,6 +29,7 @@ export type ChatBoxProps = {
 };
 
 const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
+  const { t } = useTranslation();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
 
@@ -136,7 +138,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                           letterSpacing: '0.15px',
                         })}
                       >
-                        Make Offer
+                        {t('Make Offer')}
                       </Typography>
                       <Typography
                         sx={({ palette }) => ({
@@ -175,7 +177,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                           })}
                           onClick={() => handleDownload(message.content || '')}
                         >
-                          {filterFileType(message.content)}
+                          {t(filterFileType(message.content))}
                         </Button>
                       </Box>
                     </Box>
