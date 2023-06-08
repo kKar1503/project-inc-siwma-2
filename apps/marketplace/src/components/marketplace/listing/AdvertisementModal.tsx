@@ -24,6 +24,10 @@ export type AdvertisementModalProps = {
 
 const AdvertisementModal = ( { id, companyName, description, url,  onClose, open }: AdvertisementModalProps ) => {
 
+  const item = {
+    id: 1,
+    name: 'item 1',
+  };
 
 
 
@@ -52,11 +56,12 @@ const AdvertisementModal = ( { id, companyName, description, url,  onClose, open
       </DialogContent>
       
       <DialogActions>
-        <Link href="/advertisement">
+        <Link href={`/advertisement/${item.id}`}>
         <Button  variant="contained" 
             sx={({ palette,spacing }) => ({
             marginTop: spacing(3),
             marginBottom: spacing(2),
+            marginRight: spacing(2),
             border: '4px',
             color:  palette.common.white,
             backgroundColor: palette.primary.main
@@ -65,14 +70,18 @@ const AdvertisementModal = ( { id, companyName, description, url,  onClose, open
         Show Me!
         </Button>
         </Link>
-        <Button variant='outlined' onClick={() => onClose(false)}
+        <Button variant='contained' onClick={() => onClose(false)}
           sx={({ palette,spacing }) => ({
             marginTop: spacing(3),
             marginBottom: spacing(2),
             marginRight: spacing(3),
             border: '4px ',
             color: palette.common.black,
-            backgroundColor: palette.background.default
+            
+            backgroundColor: palette.background.default,
+            '&:hover': {
+              backgroundColor: palette.grey[500],
+            },
           })}
           >
           Close
