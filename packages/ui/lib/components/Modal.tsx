@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import MUIModal from '@mui/material/Modal';
@@ -9,6 +9,8 @@ import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOu
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import useResponsiveness from '../hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
 
 export type ComponentProps = {
   open: boolean;
@@ -41,6 +43,51 @@ const Modal = ({
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
   const isMinWidth = useMediaQuery('(min-width:600px)');
+
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, palette, typography, shadows } = useTheme();
+
+  const modalStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        modalWidth: {
+          width: '80%',
+        },
+        buttonTxt: {
+          fontSize: '0.85rem',
+          // fontWeight: '400',
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        modalWidth: {
+          width: '45%',
+        },
+        buttonTxt: {
+          fontSize: '1rem',
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        modalWidth: {
+          width: '35%',
+        },
+        buttonTxt: {
+          fontSize: '1rem',
+        },
+      };
+    }
+    return {
+      modalWidth: {
+        width: '50%',
+      },
+      buttonTxt: {
+        fontSize: '1rem',
+      },
+    };
+  }, [isSm, isMd, isLg]);
 
   let iconType: ReactNode;
   switch (icon) {
@@ -86,17 +133,17 @@ const Modal = ({
       >
         <Fade in={open}>
           <Box
-            sx={({ spacing, palette, shadows }) => ({
+            sx={{
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: '25%',
               borderRadius: 3,
               padding: spacing(2),
               position: 'absolute',
               boxShadow: shadows[3],
               backgroundColor: palette.common.white,
-            })}
+              ...modalStyles?.modalWidth,
+            }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               {iconType}
@@ -105,10 +152,9 @@ const Modal = ({
                   id="transition-modal-title"
                   variant="h6"
                   component="h2"
-                  sx={({ palette }) => ({
+                  sx={{
                     color: palette.info[800],
-                    fontSize: { xs: 'subtitle2', sm: 'h5' },
-                  })}
+                  }}
                 >
                   {title}
                 </Typography>
@@ -131,37 +177,36 @@ const Modal = ({
               {leftButtonText != null && (
                 <Button
                   variant={leftButtonText != null ? 'outlined' : 'contained'}
-                  sx={({ spacing }) => ({
+                  sx={{
                     bgcolor: leftButtonText != null ? '' : buttonColor,
                     marginRight: '16px',
-                    width: 1 / 2,
+                    width: 1 / 3,
                     marginTop: spacing(2),
-                    padding: isMinWidth ? '7px 20px' : '2px 4px',
-                  })}
+                    padding: isMinWidth ? '7px 20px' : '8px 4px',
+                  }}
                   onClick={() => setLeftButtonState(true)}
                 >
-                  <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
-                    {leftButtonText}
-                  </Typography>
+                  <Typography sx={modalStyles?.buttonTxt}>{leftButtonText}</Typography>
                 </Button>
               )}
 
               {/* Right Button Text */}
               <Button
                 variant="contained"
-                sx={({ spacing }) => ({
+                sx={{
                   bgcolor: buttonColor,
-                  width: 1 / 2,
+                  width: 1 / 3,
                   marginTop: spacing(2),
-                  padding: isMinWidth ? '7px 20px' : '2px 4px',
-                })}
+                  padding: isMinWidth ? '7px 20px' : '8px 4px',
+                }}
                 onClick={() => setRightButtonState(true)}
               >
                 <Typography
-                  sx={({ palette }) => ({
-                    fontSize: { xs: 'overline', sm: 'subtitle1' },
+                  variant="h6"
+                  sx={{
                     color: palette.common.white,
-                  })}
+                    ...modalStyles?.buttonTxt,
+                  }}
                 >
                   {rightButtonText}
                 </Typography>
