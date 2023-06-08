@@ -25,6 +25,7 @@ import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import { useState, Fragment, MouseEvent, ChangeEvent } from 'react';
 import { Link } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
 
 export type MobileDrawerProps = {
@@ -36,7 +37,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const [drawerLang, setDrawerLang] = useState(language);
-
+  const { t } = useTranslation();
   const { typography, palette } = useTheme();
 
   const handleProfileClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -62,7 +63,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               <ListItemIcon>
                 <HomeIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary="Home" />
+              <ListItemText primary={t('Home')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -73,7 +74,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               <ListItemIcon>
                 <CategoryIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary="All Categories" />
+              <ListItemText primary={t('All Categories')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -84,7 +85,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               <ListItemIcon>
                 <AddCircleIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary="Add Listing" />
+              <ListItemText primary={t('Add Listing')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -96,7 +97,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
             <ListItemIcon>
               <AccountCircle sx={{ color: palette.grey[600] }} />
             </ListItemIcon>
-            <ListItemText primary="Profile" />
+            <ListItemText primary={t('Profile')} />
             {openProfile ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
         </ListItem>
@@ -107,7 +108,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <PersonOutlineIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
-                <ListItemText primary="My Profile" />
+                <ListItemText primary={t('My Profile')} />
               </ListItemButton>
             </Link>
 
@@ -116,7 +117,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <EditIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
-                <ListItemText primary="Edit Profile" />
+                <ListItemText primary={t('Edit Profile')} />
               </ListItemButton>
             </Link>
 
@@ -126,7 +127,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <LockIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
-                <ListItemText primary="Change Password" />
+                <ListItemText primary={t('Change Password')} />
               </ListItemButton>
             </Link>
           </List>
@@ -138,7 +139,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               <ListItemIcon>
                 <ChatIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary="Chat" />
+              <ListItemText primary={t('Chat')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -150,7 +151,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               <ListItemIcon>
                 <LogoutIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary="Log Out" />
+              <ListItemText primary={t('Log Out')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -159,13 +160,13 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           <ListItemButton onClick={mobileDrawerLanuageChange}>
             <Grid component="label" container alignItems="center">
               <Grid sx={{ fontSize: typography.subtitle2 }} item>
-                EN
+                {t('EN')}
               </Grid>
               <Grid item>
                 <Switch checked={drawerLang === 'Chinese'} value="checked" />
               </Grid>
               <Grid sx={{ fontSize: typography.subtitle2 }} item>
-                CN
+                {t('CN')}
               </Grid>
             </Grid>
           </ListItemButton>

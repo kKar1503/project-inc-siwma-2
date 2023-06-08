@@ -38,5 +38,13 @@
 
   "Edit Listing": "Edit Listing",
   "Archive Listing": "Archive Listing",
-  "Delete Listing": "Delete Listing"
+  "Delete Listing": "Delete Listing",
+
+  "Add Listing": "Add Listing",
+  "Profile": "Profile",
+  "My Profile": "My Profile",
+  "Edit Profile": "Edit Profile",
+  "Change Password": "Change Password",
+  "Chat": "Chat",
+  "Log Out": "Log Out"
 }
