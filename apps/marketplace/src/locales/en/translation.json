@@ -57,5 +57,9 @@
   "Bio": "Bio",
   "Linked accounts": "Linked accounts",
   "Edit profile": "Edit profile",
-  "Logout": "Logout"
+  "Logout": "Logout",
+
+  "ALL": "ALL",
+  "FROM BUYERS": "FROM BUYERS",
+  "FROM SELLERS": "FROM SELLERS"
 }
