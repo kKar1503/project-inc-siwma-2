@@ -19,8 +19,8 @@ import { useQuery } from 'react-query';
 import users from '@/utils/api/client/zod/users';
 import { useRouter } from 'next/router';
 import { Listing, Review } from '@/utils/api/client/zod';
-import fetchListing from '@/middlewares/fetchListings';
-import fetchReview from '@/middlewares/fetchReview';
+import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
+import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useResponsiveness } from '@inc/ui';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
@@ -69,7 +69,7 @@ const useGetUser = (userUuid: string) => {
 };
 
 const useGetListing = (userUuid: string) => {
-  const { data } = useQuery('listingdata', async () => fetchListing(userUuid), {
+  const { data } = useQuery('listingdata', async () => fetchProfilesListings(userUuid), {
     enabled: userUuid !== undefined,
   });
   // console.log(data);
@@ -77,7 +77,7 @@ const useGetListing = (userUuid: string) => {
 };
 
 const useGetReview = (userUuid: string) => {
-  const { data } = useQuery('reviewdata', async () => fetchReview(userUuid), {
+  const { data } = useQuery('reviewdata', async () => fetchProfilesReview(userUuid), {
     enabled: userUuid !== undefined,
   });
   // console.log(data);
