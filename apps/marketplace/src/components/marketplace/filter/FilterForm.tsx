@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 export type SortProps = 'Recent' | 'Price - High to Low' | 'Price - Low to High';
 
+const sortOptions = ['Recent', 'Price - High to Low', 'Price - Low to High'];
 export type FilterFormProps = {
   setSort: (sort: SortProps) => void;
   setCategory: (category: string) => void;
@@ -30,7 +31,6 @@ const FilterForm = ({
   setMaxPrice,
 }: FilterFormProps) => {
   const { t } = useTranslation();
-  const sortOptions = [t('Recent'), t('Price - High to Low'), t('Price - Low to High')];
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<SortProps>('Recent');
   const [categoryOption, setCategoryOption] = useState<string>('');
@@ -72,7 +72,7 @@ const FilterForm = ({
       >
         {sortOptions.map((option) => (
           <MenuItem key={option} value={option}>
-            {option}
+            {t(option)}
           </MenuItem>
         ))}
       </Select>
