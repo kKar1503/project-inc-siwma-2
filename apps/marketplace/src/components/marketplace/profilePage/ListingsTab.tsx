@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
-import { SelectComponent, useResponsiveness } from '@inc/ui';
+import { SelectComponent, useResponsiveness, SearchBar } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useMemo } from 'react';
 import { Listing } from '@/utils/api/client/zod';
@@ -58,8 +58,11 @@ const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTa
       display: 'flex',
       margin: 'auto',
       marginBottom: spacing(2),
+      // width: '100%',
       flexDirection: isSm ? 'column' : 'row',
-      alignItems: isSm ? 'flex-start' : 'center',
+      // alignItems: isSm ? 'flex-start' : 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
     }),
     [isSm]
   );
@@ -71,6 +74,10 @@ const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTa
         {/* search bar component goes here */}
         {/* Select Components */}
         <Box sx={styleFilter}>
+          <SearchBar />
+          {/* <Box sx={{ display: 'flex', alignItems: 'center', }}>
+            <SearchBar />
+          </Box> */}
           <Box sx={({ spacing }) => ({ display: 'flex', alignItems: 'center', mr: spacing(2) })}>
             <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
               Filter:
