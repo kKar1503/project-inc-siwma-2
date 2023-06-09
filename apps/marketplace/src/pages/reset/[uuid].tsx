@@ -5,34 +5,77 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useTheme } from '@mui/material/styles';
 import { FormEvent, useMemo, useState } from 'react';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useRouter } from 'next/router';
+import apiClient from '@/utils/api/client/apiClient'
+
+
+const resetpassword = async (password: string, token: string, uuid: string) => {
+
+  if (!token||!uuid) {
+    return null
+  }
+  
+  const passwordchange = {
+  'newPassword': password,
+  'token' : token
+
+
+  }
+
+  const data = await apiClient.post(`/v1/users/${uuid}/reset-password`, passwordchange)
+  return data
+
+}
 
 const ResetForm = () => {
+  const router = useRouter();
+  const {uuid,token} = router.query 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const { spacing, shape, shadows, palette } = useTheme();
+  
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+   
+  
     if (password !== confirmPassword) {
         setErrorMessage(true);
+
       }
     else {
-    console.log('done')
+      setErrorMessage(false);
+      console.log(token,uuid)
+      const response = await resetpassword(password , token as string  , uuid as string );
+        if (response === null){
+        console.log(response)
+        alert('Response did not went through')
+        }
+        else {
+          console.log(response)
+          alert('Response  went through')
+          router.push('/reset/resetcfm')
+        }
+        
     }
   };
+  
+
 
   const stylesReset = useMemo(() => {
     if (isSm) {
       return {
+       
         boxShadow: shadows[5],
+        border: 1,
         px: '5rem',
         pb: '10rem',
         pt: spacing(3),
@@ -43,7 +86,9 @@ const ResetForm = () => {
     }
     if (isMd) {
       return {
+       
         boxShadow: shadows[5],
+        border: 1,
         px: '10rem',
         pb: '12rem',
         pt: spacing(3),
@@ -165,7 +210,7 @@ const ResetForm = () => {
                     my: spacing(2),
                   })}
                 >
-                  The passwords dont match
+                  The passwords does not match
                 </Typography>
               )}
               <Button
@@ -176,6 +221,7 @@ const ResetForm = () => {
                 CHANGE PASSWORD
               </Button>
             </Box>
+            
           </Box>
         </Container>
       </Box>

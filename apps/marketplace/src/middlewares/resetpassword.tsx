@@ -1,21 +1,16 @@
-// import apiClient from '@/utils/api/client/apiClient'
+import apiClient from '@/utils/api/client/apiClient'
 
+const resetpassword = async (password: string, token: string, uuid: string) => {
 
-// const resetpassword = aysnc (password: any) => {
+		const passwordchange = {
+		'newPassword': password,
+		'token' : token
+		
+		}
 
-// 		const data = {
-// 		'password': password,
-// 		}
+		const data = await apiClient.post(`/v1/users/$={uuid}/reset-password`, passwordchange)
+  	return data.status 
 
-//   		let status;
-//   		let data;
+}
 
-//   		await apiClient.post('v1/users/:uuid/reset-Password', data).then( (response: any) => {
-//           	data = response.data;
-//           	status = response.status;
-//      		 }
-//   		)
-//   	return status? { data, status } 
-// } 
-
-// export default resetpassword
+export default resetpassword
