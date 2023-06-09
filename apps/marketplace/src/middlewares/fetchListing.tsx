@@ -9,3 +9,5 @@ const fetchListing = async (listingID: string) => {
 };
 
 export default fetchListing;
+
+export default fetchListing;
