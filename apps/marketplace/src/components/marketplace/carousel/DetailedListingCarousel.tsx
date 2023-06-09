@@ -6,16 +6,27 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
-import { ListingResponseBody } from '@/utils/api/client/zod';
+import { Listing } from '@/utils/api/client/zod';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
+export interface Image {
+  id: string,
+  fileName: string,
+  url: string,
+}
+
 export type DetailedListingCarouselProps = {
-  data: ListingResponseBody;
+  // data: Listing;
+  // data: Image[]
+  data: Pick<Listing, 'images'>
 };
+
+// type ImageTypes = Pick<Listing, 'images'>
 
 const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
   const maxSteps = data.images?.length as number;
+  // const maxSteps = data.length;
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -40,6 +51,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         enableMouseEvents
       >
         {data.images?.map((step, index) => (
+        // {data.map((step, index) => (
           <div>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
@@ -58,7 +70,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
                     marginLeft: 'auto',
                     marginRight: 'auto',
                   }}
-                  src={step.url}
+                  src={step.url as string}
                 />
                 <Box
                   component="img"
@@ -73,7 +85,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
                     marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
-                  src={step.url}
+                  src={step.url as string}
                 />
               </Box>
             ) : null}
@@ -90,14 +102,20 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         position="static"
         activeStep={activeStep}
         nextButton={
+          // <Button
+          //   size="small"
+          //   sx={{
+          //     borderRadius: 12,
+          //     position: 'relative',
+          //     bottom: { sm: 190, md: 190, lg: 190 },
+          //     right: { sm: 12, md: 50, lg: 250 },
+          //   }}
+          //   onClick={handleNext}
+          //   disabled={activeStep === maxSteps - 1}
+          // >
           <Button
             size="small"
-            sx={{
-              borderRadius: 12,
-              position: 'relative',
-              bottom: { sm: 190, md: 190, lg: 190 },
-              right: { sm: 12, md: 50, lg: 250 },
-            }}
+            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
           >
@@ -105,14 +123,20 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
           </Button>
         }
         backButton={
+          // <Button
+          //   size="small"
+          //   sx={{
+          //     borderRadius: 12,
+          //     position: 'relative',
+          //     bottom: { sm: 190, md: 190, lg: 190 },
+          //     left: { sm: 20, md: 50, lg: 250 },
+          //   }}
+          //   onClick={handleBack}
+          //   disabled={activeStep === 0}
+          // >
           <Button
             size="small"
-            sx={{
-              borderRadius: 12,
-              position: 'relative',
-              bottom: { sm: 190, md: 190, lg: 190 },
-              left: { sm: 20, md: 50, lg: 250 },
-            }}
+            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
             onClick={handleBack}
             disabled={activeStep === 0}
           >

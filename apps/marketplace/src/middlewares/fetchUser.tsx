@@ -1,4 +1,5 @@
 import apiClient from '@/utils/api/client/apiClient';
+import users from '@/utils/api/client/zod/users';
 
 const fetchUser = async (uuid: string) => {
   if (uuid) {

@@ -17,28 +17,29 @@ import { useResponsiveness } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo } from 'react';
 import fetchCat from '@/middlewares/fetchCatNames';
-import fetchUsers from '@/middlewares/fetchUser';
+import fetchUsers from '@/middlewares/fetchUsers';
 import fetchReviews from '@/middlewares/fetchReviews';
 import fetchParams from '@/middlewares/fetchParamNames';
 import { DateTime } from 'luxon';
+import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
 
-const carouselData = [
-  {
-    id: '4f18716b-ba33-4a98-9f9c-88df0ce50f51',
-    fileName: 'myimage-20230322T120000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    id: 'f45c0d48-b93e-45aa-8e33-7d9d3f1c4397',
-    fileName: 'myotherimage-20230321T080000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    id: '8b63d6f4-6d58-4f2c-b2f3-33d156ee3c4e',
-    fileName: 'myotherimage2-20230321T080000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
-  },
-];
+// const carouselData = [
+//   {
+//     id: '4f18716b-ba33-4a98-9f9c-88df0ce50f51',
+//     fileName: 'myimage-20230322T120000Z.jpg',
+//     url: 'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
+//   },
+//   {
+//     id: 'f45c0d48-b93e-45aa-8e33-7d9d3f1c4397',
+//     fileName: 'myotherimage-20230321T080000Z.jpg',
+//     url: 'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
+//   },
+//   {
+//     id: '8b63d6f4-6d58-4f2c-b2f3-33d156ee3c4e',
+//     fileName: 'myotherimage2-20230321T080000Z.jpg',
+//     url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
+//   },
+// ];
 
 const useGetListingQuery = (listingID: string) => {
   const { data } = useQuery('listing', async () => fetchListing(listingID), {
@@ -93,16 +94,6 @@ const DetailedListingPage = () => {
       DateTime.fromISO(listings?.createdAt as unknown as string).toRelative({ locale: 'en-SG' }),
     [listings?.createdAt]
   );
-
-  // listings?.parameters?.sort((a, b) => {
-  //   if (a.paramId < b.paramId) {
-  //     return -1;
-  //   }
-  //   if (a.paramId > b.paramId) {
-  //     return 1;
-  //   }
-  //   return 0;
-  // });
 
   listings?.parameters?.sort((a, b) => {
     if (a?.paramId && b?.paramId) {
@@ -160,9 +151,14 @@ const DetailedListingPage = () => {
           bgcolor: theme.palette.common.white,
         })}
       >
-        {/* <DetailedListingCarousel data={listingImgs} /> */}
-        {/* <DetailedListingCarousel data={listingImgs as []} /> */}
-        {/* <DetailedListingCarousel data={listings?.images} /> */}
+        
+        {listingImgs?.length ? (
+        <DetailedListingCarousel data={listingImgs} />
+        // <DetailedListingCarousel data={listingImgs as []} />
+        // <DetailedListingCarousel data={listings?.images} />
+      ) : (
+        <ListingImgsPlaceholder />
+      )}
         <Box
           sx={{
             width: '70%',
