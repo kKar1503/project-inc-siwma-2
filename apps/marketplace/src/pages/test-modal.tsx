@@ -1,10 +1,12 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { ModalImage, Modal, ModalSelect, ModalInput } from '@inc/ui';
+import { Modal, ModalInput } from '@inc/ui';
 import Button from '@mui/material/Button';
 import ReportModal from '@/components/modal/ReportModal';
 import MakeOfferModal from '@/components/modal/MakeOfferModal';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
+import ModalImage from '@/components/modal/ModalImage';
+import ModalSelect from '@/components/modal/ModalSelect';
 
 const TestModal = () => {
   const report = [
@@ -100,10 +102,7 @@ const TestModal = () => {
         setInputValue={setInputValue}
       />
       <Button onClick={() => setOpenLeave(true)}> On Leave Modal</Button>
-      <OnLeaveModal
-        open={openLeave}
-        setOpen={setOpenLeave}
-      />
+      <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
     </>
   );
 };
