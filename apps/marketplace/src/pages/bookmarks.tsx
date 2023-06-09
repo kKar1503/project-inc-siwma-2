@@ -35,6 +35,7 @@ const Bookmarks = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   const user = useSession();
+  console.log(user);
   const loggedUserUuid = user.data?.user.id as string;
   const userDetails = useGetUserQuery(loggedUserUuid);
 
@@ -59,27 +60,27 @@ const Bookmarks = () => {
     }
 
     const usersData = await Promise.all(userIDs.map(fetchUser));
-
-    const users = usersData.map((user) => user?.data.data[0]);
-
-    setUsers(users);
+    console.log(usersData);
+    setUsers(usersData);
   };
 
   useEffect(() => {
-    if (userDetails) {
-      const { bookmarks } = userDetails.data.data[0];
+    if (userDetails?.bookmarks) {
+      const { listings, users } = userDetails.bookmarks;
 
-      findListings(bookmarks.listings);
-      findUsers(bookmarks.users);
+      findListings(listings);
+      findUsers(users);
     }
   }, [userDetails]);
 
   const updateBookmarkData = async () => {
     const updatedUserDetails = await fetchUser(loggedUserUuid);
-    const updatedBookmarkData = updatedUserDetails?.data.data[0]?.bookmarks;
+    const updatedBookmarkData = updatedUserDetails?.bookmarks;
 
-    findListings(updatedBookmarkData.listings);
-    findUsers(updatedBookmarkData.users);
+    if (updatedBookmarkData) {
+      findListings(updatedBookmarkData.listings);
+      findUsers(updatedBookmarkData.users);
+    }
   };
 
   return (
