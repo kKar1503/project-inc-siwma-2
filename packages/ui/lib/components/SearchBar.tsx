@@ -1,6 +1,9 @@
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
+import useResponsiveness from '../hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
+import { useRef, useMemo } from 'react';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -35,13 +38,81 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: '96%',
 }));
 
-const SearchBar = () => (
-  <Search>
-    <SearchIconWrapper>
-      <SearchIcon sx={{ color: 'white', fontSize: '16px' }} />
-    </SearchIconWrapper>
-    <StyledInputBase placeholder="Search for listings…" />
-  </Search>
-);
+interface SearchBarProps {
+  handleSearch: (search: string) => void;
+}
+
+const SearchBar = ({ handleSearch }: SearchBarProps) => {
+  const SearchBarRef = useRef<HTMLInputElement>(null);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, shape, shadows, palette, typography } = useTheme();
+  const searchBarStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        search: {
+          width: '100%',
+          mr: spacing(1),
+          ml: spacing(3),
+        },
+        searchPlaceholder: {
+          fontSize: '0.2rem',
+          '&::placeholder': {
+            fontSize: '16px',
+          },
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        search: {
+          width: '33%',
+        },
+        searchPlaceholder: {
+          fontSize: '0.2rem',
+          '&::placeholder': {
+            fontSize: '0.2rem',
+          },
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        search: {
+          width: '40%',
+        },
+        searchPlaceholder: {
+          fontSize: '0.2rem',
+          '&::placeholder': {
+            fontSize: '0.2rem',
+          },
+        },
+      };
+    }
+    return {};
+  }, [isSm, isMd, isLg]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      if (SearchBarRef.current) {
+        handleSearch(SearchBarRef.current.value);
+      }
+      console.log(SearchBarRef.current?.value);
+    }
+  };
+
+  return (
+    <Search sx={searchBarStyles?.search}>
+      <SearchIconWrapper>
+        <SearchIcon sx={{ color: 'white', fontSize: '16px' }} />
+      </SearchIconWrapper>
+      <StyledInputBase
+        inputRef={SearchBarRef}
+        placeholder="Search for listings…"
+        sx={searchBarStyles?.searchPlaceholder}
+        onKeyDown={handleKeyDown}
+      />
+    </Search>
+  );
+};
 
 export default SearchBar;
