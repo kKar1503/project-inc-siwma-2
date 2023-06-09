@@ -19,7 +19,9 @@ const fetchAdvertisements = async (permissions: number) => {
   //   return filteredArr;
   // }
   advertisementsData.forEach((item) => {
-    item.image = "https://pbs.twimg.com/profile_images/1546442267149225984/gcEhSyAV_400x400.jpg"
+    // TODO: remove after adding images to advertisements
+    // eslint-disable-next-line no-param-reassign
+    item.image = 'https://pbs.twimg.com/profile_images/1546442267149225984/gcEhSyAV_400x400.jpg'
   })
 
   return advertisementsData;
