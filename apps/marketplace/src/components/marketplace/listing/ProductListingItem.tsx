@@ -103,12 +103,6 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
                 </Grid>
               )}
             </Grid>
-
-            {data.owner.id === loggedUserUuid && (
-              <Box>
-                <MoreProfileIcon productId={data.id} />
-              </Box>
-            )}
           </Box>
           <Box
             sx={({ spacing }) => ({
@@ -154,11 +148,18 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
         <Box
           sx={({ spacing }) => ({
             pb: spacing(1),
+            display: 'flex',
+            justifyContent: 'space-between',
           })}
         >
           <Typography variant="subtitle1" color={theme.palette.text.secondary} fontSize={16}>
             {datetime}
           </Typography>
+          {data.owner.id === loggedUserUuid && (
+            <Box>
+              <MoreProfileIcon productId={data.id} />
+            </Box>
+          )}
         </Box>
       </CardContent>
     </Card>
