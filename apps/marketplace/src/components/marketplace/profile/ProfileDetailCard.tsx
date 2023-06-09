@@ -38,26 +38,6 @@ export type ProfileDetailCardData = {
 };
 
 const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
-  // destructure data
-
-  // const {
-  //   // username,
-  //   name,
-  //   email,
-  //   company,
-  //   profilePic,
-  //   mobileNumber,
-  //   telegramUsername,
-  //   bio,
-  //   // rating,
-  //   // reviews,
-  //   ownerId,
-  //   enabled,
-  //   createdAt,
-  //   WhatsappNumber,
-  //   contactMethod,
-  //   comments,
-  // } = data;
 
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);

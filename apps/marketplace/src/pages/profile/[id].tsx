@@ -2,7 +2,6 @@ import Head from 'next/head';
 import ProfileDetailCard, {
   ProfileDetailCardProps,
 } from '@/components/marketplace/profile/ProfileDetailCard';
-// import { ReviewProps } from '@/components/marketplace/profilePage/ReviewMessage';
 import ListingsTab from '@/components/marketplace/profilePage/ListingsTab';
 import ReviewsTab from '@/components/marketplace/profilePage/ReviewsTab';
 import TabPanel from '@/components/marketplace/profilePage/TabPanel';
@@ -13,10 +12,8 @@ import Box from '@mui/material/Box';
 import { useState, SyntheticEvent, useMemo } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import apiClient from '@/utils/api/client/apiClient';
 import { useQuery } from 'react-query';
-// import fetchUser from '@/middlewares/fetchUser';
-import users from '@/utils/api/client/zod/users';
+import fetchUser from '@/middlewares/fetchUser';
 import { useRouter } from 'next/router';
 import { Listing, Review } from '@/utils/api/client/zod';
 import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
@@ -46,18 +43,6 @@ export type ProfilePageProps = {
   data: ProfileDetailCardProps;
   serverSideListings: Listing[];
   serverSideReviews: Review[];
-};
-
-// user profile page
-const fetchUser = async (uuid: string) => {
-  if (uuid) {
-    const response = await apiClient.get(`/v1/users/${uuid}`);
-    // parse data through zod to ensure data is correct
-    const parsedUser = users.getById.parse(response.data.data[0]);
-    return parsedUser;
-  }
-
-  return null;
 };
 
 const useGetUser = (userUuid: string) => {
