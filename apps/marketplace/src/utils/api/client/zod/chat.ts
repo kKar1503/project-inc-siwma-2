@@ -8,7 +8,7 @@ const createChatRoom = z.object({
 const user = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  profilePicture: z.string().url(),
+  profilePicture: z.string(),
   enabled: z.boolean(),
 });
 
