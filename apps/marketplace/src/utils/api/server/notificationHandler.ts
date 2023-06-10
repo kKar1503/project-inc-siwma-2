@@ -6,7 +6,6 @@ import { EmailTemplateNotFoundError } from '@inc/errors';
 // Read Notifications from DB
 
 export default async function handleNotifications(): Promise<void> {
-  
   type Notification = {
     userId: string;
     targetUser?: string;
@@ -31,15 +30,18 @@ export default async function handleNotifications(): Promise<void> {
     });
 
     // groupedNotifications will be an array of subarrays, each subarray containing notifications for a single user
-    const groupedNotifications = notifications.reduce((acc, notification) => {
-      const index = acc.findIndex((group: { userId: string; }[]) => group[0].userId === notification.userId);
-      if (index === -1) {
-        acc.push([notification]);
-      } else {
-        acc[index].push(notification);
-      }
-      return acc;
-    }, []);
+    const groupedNotifications = notifications.reduce(
+      (acc: { userId: string }[][], notification) => {
+        const index = acc.findIndex((group) => group[0].userId === notification.userId);
+        if (index === -1) {
+          acc.push([notification]);
+        } else {
+          acc[index].push(notification);
+        }
+        return acc;
+      },
+      []
+    );
 
     let content: string;
     try {
@@ -50,20 +52,25 @@ export default async function handleNotifications(): Promise<void> {
 
     const messageVersions: any[] = [];
 
-    for (let i = 0; i < groupedNotifications.length; i++) {
-      // Get user email using userId
-      const user = await PrismaClient.users.findUnique({
-        where: {
-          id: notifications[i].userId,
-        },
-        select: {
-          name: true,
-          email: true,
-        },
-      });
+    const userFetchPromises = groupedNotifications.flatMap((group) =>
+      group.map((notification) =>
+        PrismaClient.users.findUnique({
+          where: {
+            id: notification.userId,
+          },
+          select: {
+            name: true,
+            email: true,
+          },
+        })
+      )
+    );
 
+    const users = await Promise.all(userFetchPromises);
+
+    users.forEach((user) => {
       if (!user) {
-        throw new Error('User not found');
+        return;
       }
 
       messageVersions.push({
@@ -75,11 +82,11 @@ export default async function handleNotifications(): Promise<void> {
         ],
         params: {
           name: user.name,
-          notifications: notifications[i].notifications,
+          notifications: '',
           notificationSettingsUrl: `${process.env.FRONTEND_URL}/notificationSettings`,
         },
       });
-    }
+    });
 
     const bulkNotificationEmailRequestBody = {
       content,
