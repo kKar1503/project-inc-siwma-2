@@ -5,6 +5,7 @@ import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { ListingResponseBody } from '@/utils/api/client/zod';
+import Link from '@mui/material/Link';
 
 export type ChatNowProps = {
   data: ListingResponseBody;
@@ -54,12 +55,14 @@ const ChatNow = ({ data }: ChatNowProps) => (
         </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Link href="/chat">
         <Button
           variant="contained"
           sx={({ palette }) => ({ width: 250, backgroundColor: palette.primary.main })}
         >
           Chat Now
         </Button>
+        </Link>
       </Box>
     </CardContent>
   </Card>

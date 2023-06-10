@@ -22,6 +22,9 @@ import fetchReviews from '@/middlewares/fetchReviews';
 import fetchParams from '@/middlewares/fetchParamNames';
 import { DateTime } from 'luxon';
 import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
+import fetchChatList from '@/middlewares/fetchChatList';
+import { useSession } from 'next-auth/react';
+import createRoom from '@/middlewares/createChat';
 
 // const carouselData = [
 //   {
@@ -77,6 +80,18 @@ const useGetParamQuery = () => {
   return data;
 };
 
+const useChatListQuery = (loggedUserUuid: string) => {
+  const { data } = useQuery('chatList', async () => fetchChatList(loggedUserUuid), {
+    enabled: loggedUserUuid !== undefined,
+  });
+  return data;
+};
+
+const useCreateChatQuery = () => {
+  const { data } = useQuery('createChat', async () => createRoom());
+  return data;
+};
+
 const DetailedListingPage = () => {
   const theme = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -85,15 +100,39 @@ const DetailedListingPage = () => {
   const listings = useGetListingQuery('4');
   const reviews = useGetReviewsQuery('4');
   const cats = useGetCategoryNameQuery();
+  const currentUser = useSession();
   const user = useGetUserQuery();
   const param = useGetParamQuery();
   const listingImgs = useGetListingImagesQuery('4');
+  const loggedUserUuid = currentUser?.data?.user.id as string;
+  const chatRooms = useChatListQuery(loggedUserUuid);
+  const newRoom = useCreateChatQuery();
+  console.log(chatRooms);
 
   const datetime = useMemo(
     () =>
       DateTime.fromISO(listings?.createdAt as unknown as string).toRelative({ locale: 'en-SG' }),
     [listings?.createdAt]
   );
+
+  // check if room exists btwn buyer and seller
+  const checkChatRoom = () => {
+    for (let i = 0; i < chatRooms?.length; i++) {
+      // if it exists redirect to /chat
+      if (
+        chatRooms?.buyer?.id === loggedUserUuid &&
+        chatRooms?.seller?.id === loggedUserUuid &&
+        chatRooms.buyer?.id === listings?.owner.id &&
+        chatRooms?.seller?.id === listings?.owner.id
+      ) {
+        // if it exists redirect to /chat
+      } else {
+        // if it doesnt exist, create a new room btwn the buyer and seller
+        return newRoom;
+      }
+    }
+  };
+  // const chatRooms = useChatListQuery(loggedUserUuid)
 
   listings?.parameters?.sort((a, b) => {
     if (a?.paramId && b?.paramId) {
@@ -151,14 +190,13 @@ const DetailedListingPage = () => {
           bgcolor: theme.palette.common.white,
         })}
       >
-        
         {listingImgs?.length ? (
-        <DetailedListingCarousel data={listingImgs} />
-        // <DetailedListingCarousel data={listingImgs as []} />
-        // <DetailedListingCarousel data={listings?.images} />
-      ) : (
-        <ListingImgsPlaceholder />
-      )}
+          <DetailedListingCarousel data={listingImgs} />
+        ) : (
+          // <DetailedListingCarousel data={listingImgs as []} />
+          // <DetailedListingCarousel data={listings?.images} />
+          <ListingImgsPlaceholder />
+        )}
         <Box
           sx={{
             width: '70%',
@@ -372,7 +410,7 @@ const DetailedListingPage = () => {
                 pl: spacing(5),
               })}
             >
-              {/* <ChatNow data={listingData} /> */}
+              <ChatNow data={listings} />
             </Grid>
 
             <Box
