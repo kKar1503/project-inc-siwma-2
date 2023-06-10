@@ -63,7 +63,7 @@ const validateListing = async (id: number) => {
 };
 const append = async (listing: { listingImages: { image: string, order: number }[] }, objects: IS3Object[]) => {
   const previousImages = listing.listingImages;
-  const offset = previousImages[previousImages.length - 1].order;
+  const offset = listing.listingImages.length === 0 ? 0 : previousImages[previousImages.length - 1].order;
 
   return objects.map((object, i) => {
     const sortOrder = i * 10000 + offset;
@@ -76,7 +76,7 @@ const append = async (listing: { listingImages: { image: string, order: number }
 
 const prepend = async (listing: { listingImages: { image: string, order: number }[] }, objects: IS3Object[]) => {
 
-  const firstImage = listing.listingImages[0].order;
+  const firstImage = listing.listingImages.length === 0 ? 0 : listing.listingImages[0].order;
   const offset = (-10000 * objects.length) + firstImage;
 
   return objects.map((object, i) => {
