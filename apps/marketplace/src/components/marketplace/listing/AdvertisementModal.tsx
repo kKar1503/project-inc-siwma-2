@@ -24,11 +24,6 @@ export type AdvertisementModalProps = {
 
 const AdvertisementModal = ( { id, companyName, description, url,  onClose, open }: AdvertisementModalProps ) => {
 
-  const item = {
-    id: 1,
-    name: 'item 1',
-  };
-
 
 
   const router = useRouter();
@@ -56,7 +51,7 @@ const AdvertisementModal = ( { id, companyName, description, url,  onClose, open
       </DialogContent>
       
       <DialogActions>
-        <Link href={`/advertisement/${item.id}`}>
+        <Link href={`/advertisement/${id}`}>
         <Button  variant="contained" 
             sx={({ palette,spacing }) => ({
             marginTop: spacing(3),
