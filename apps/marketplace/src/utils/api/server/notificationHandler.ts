@@ -5,25 +5,34 @@ import { EmailTemplateNotFoundError } from '@inc/errors';
 
 // Read Notifications from DB
 
-export default async function cj() {
-  const notifications = [];
+export default async function handleNotifications(): Promise<void> {
+  
+  type Notification = {
+    userId: string;
+    targetUser?: string;
+    targetListing?: number;
+    targetCompany?: number;
+    notificationString: string;
+  };
+
+  const notifications: Notification[] = [];
 
   try {
-    PrismaClient.userNotifications.findMany({}).then((data) => {
+    await PrismaClient.userNotifications.findMany({}).then((data) => {
       notifications.push(...data);
     });
 
-    PrismaClient.listingNotifications.findMany({}).then((data) => {
+    await PrismaClient.listingNotifications.findMany({}).then((data) => {
       notifications.push(...data);
     });
 
-    PrismaClient.companiesNotifications.findMany({}).then((data) => {
+    await PrismaClient.companiesNotifications.findMany({}).then((data) => {
       notifications.push(...data);
     });
 
     // groupedNotifications will be an array of subarrays, each subarray containing notifications for a single user
     const groupedNotifications = notifications.reduce((acc, notification) => {
-      const index = acc.findIndex((group) => group[0].userId === notification.userId);
+      const index = acc.findIndex((group: { userId: string; }[]) => group[0].userId === notification.userId);
       if (index === -1) {
         acc.push([notification]);
       } else {
@@ -32,18 +41,18 @@ export default async function cj() {
       return acc;
     }, []);
 
-    let content;
+    let content: string;
     try {
       content = getContentFor(EmailTemplate.NOTIFICATION);
     } catch (e) {
       throw new EmailTemplateNotFoundError();
     }
 
-    const messageVersions = [];
+    const messageVersions: any[] = [];
 
     for (let i = 0; i < groupedNotifications.length; i++) {
       // Get user email using userId
-      const user = PrismaClient.users.findUnique({
+      const user = await PrismaClient.users.findUnique({
         where: {
           id: notifications[i].userId,
         },
@@ -52,6 +61,10 @@ export default async function cj() {
           email: true,
         },
       });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
 
       messageVersions.push({
         to: [
