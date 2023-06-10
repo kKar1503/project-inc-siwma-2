@@ -42,7 +42,6 @@ const main = async (): Promise<void> => {
     prismaClient.listingBookmarks.deleteMany({}),
     prismaClient.listingImages.deleteMany({}),
     prismaClient.listingsParametersValue.deleteMany({}),
-    prismaClient.notificationSettings.deleteMany({}),
     prismaClient.userBookmarks.deleteMany({}),
     prismaClient.refreshTokens.deleteMany({}),
     prismaClient.accessTokens.deleteMany({}),
