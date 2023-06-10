@@ -12,6 +12,9 @@ import { IS3Object } from '@inc/s3-simplified';
 const awsBucket = process.env.AWS_BUCKET as string;
 const acceptedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
+const deleteSchema = z.object({
+  delete: z.array(z.string().transform(zodParseToInteger)),
+}).optional();
 
 const ParamSchema = z.object({
   id: z.string().transform(zodParseToInteger),
@@ -50,15 +53,15 @@ const validateListing = async (id: number) => {
     include: {
       listingImages: {
         orderBy: {
-          order: 'asc'
-        }
+          order: 'asc',
+        },
       },
     },
   });
   if (!listing) throw new NotFoundError(`Listing with id '${id}`);
   return listing;
 };
-const append = async (listing: { listingImages: { image: string,order:number }[] }, objects: IS3Object[]) => {
+const append = async (listing: { listingImages: { image: string, order: number }[] }, objects: IS3Object[]) => {
   const previousImages = listing.listingImages;
   const offset = previousImages[previousImages.length - 1].order;
 
@@ -71,7 +74,7 @@ const append = async (listing: { listingImages: { image: string,order:number }[]
   });
 };
 
-const prepend = async (listing: { listingImages: { image: string,order:number }[] }, objects: IS3Object[]) => {
+const prepend = async (listing: { listingImages: { image: string, order: number }[] }, objects: IS3Object[]) => {
 
   const firstImage = listing.listingImages[0].order;
   const offset = (-10000 * objects.length) + firstImage;
@@ -84,7 +87,9 @@ const prepend = async (listing: { listingImages: { image: string,order:number }[
     };
   });
 };
-const insert = async (listing: { listingImages: { image: string,order:number }[] }, objects: IS3Object[], insertIndex: number) => {
+const insert = async (listing: {
+  listingImages: { image: string, order: number }[]
+}, objects: IS3Object[], insertIndex: number) => {
   if (insertIndex < 0) return prepend(listing, objects);
   if (insertIndex >= listing.listingImages.length) return append(listing, objects);
 
@@ -145,9 +150,43 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   res.status(204).json(formatAPIResponse(response));
 };
 
+const DELETE = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
+  // Validate query params
+  const { id } = ParamSchema.parse(req.query);
+  // find listing
+  const listing = await validateListing(id);
+
+  // Check if the user is the owner of the listing or an admin
+  const user = req.token?.user;
+  if (!isAdmin(user) && !(await validateUser(user, listing.owner))) throw new ForbiddenError();
+
+  const body = deleteSchema.parse(req.body);
+  const indexesToDelete = body ? body.delete : [listing.listingImages.length - 1];
+
+  const objectsToDelete = listing.listingImages.filter((_, i) => indexesToDelete.includes(i));
+  const idsToDelete = objectsToDelete.map((image) => image.id);
+  const s3ObjectsToDelete = objectsToDelete.map((image) => image.image);
+
+  const databaseDeleteOperation = PrismaClient.listingImages.deleteMany({
+    where: {
+      id: {
+        in: idsToDelete,
+      },
+    },
+  });
+
+  const bucket = await s3Connection.getBucket(awsBucket);
+
+  const s3DeleteOperation = bucket.deleteObjects(s3ObjectsToDelete);
+
+  await Promise.all([databaseDeleteOperation, s3DeleteOperation]);
+
+  res.status(204).end();
+};
 
 export default apiHandler()
-  .put(PUT);
+  .put(PUT)
+  .delete(DELETE);
 
 
 export const config = {
