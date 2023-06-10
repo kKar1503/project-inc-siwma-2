@@ -1,5 +1,9 @@
 import PrismaClient from '@inc/db';
-import { getContentFor, EmailTemplate } from '@inc/send-in-blue/templates';
+import {
+  getContentFor,
+  EmailTemplate,
+  BulkNotificationEmailRequestBody,
+} from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
 import { EmailTemplateNotFoundError } from '@inc/errors';
 
@@ -28,74 +32,97 @@ export default async function handleNotifications(): Promise<void> {
     await PrismaClient.companiesNotifications.findMany({}).then((data) => {
       notifications.push(...data);
     });
+  } catch (e) {
+    // No critical errors are thrown here
+  }
 
-    // groupedNotifications will be an array of subarrays, each subarray containing notifications for a single user
-    const groupedNotifications = notifications.reduce(
-      (acc: { userId: string }[][], notification) => {
-        const index = acc.findIndex((group) => group[0].userId === notification.userId);
-        if (index === -1) {
-          acc.push([notification]);
-        } else {
-          acc[index].push(notification);
-        }
-        return acc;
-      },
-      []
+  if (notifications.length === 0) {
+    return;
+  }
+
+  // groupedNotifications is an array of subarrays, each subarray containing notifications for a single user
+  const groupedNotifications: Notification[][] = [];
+
+  // Group notifications by user
+  notifications.forEach((notification) => {
+    const userNotifications = groupedNotifications.find(
+      (group) => group[0]?.userId === notification.userId
     );
 
-    let content: string;
-    try {
-      content = getContentFor(EmailTemplate.NOTIFICATION);
-    } catch (e) {
-      throw new EmailTemplateNotFoundError();
+    if (userNotifications) {
+      userNotifications.push(notification);
+    } else {
+      groupedNotifications.push([notification]);
+    }
+  });
+
+  let content: string;
+  try {
+    content = getContentFor(EmailTemplate.NOTIFICATION);
+  } catch (e) {
+    throw new EmailTemplateNotFoundError();
+  }
+
+  const bulkNotificationEmailRequestBody: BulkNotificationEmailRequestBody = {
+    htmlContent: content,
+    subject: 'Updates from the SIWMA Marketplace',
+    messageVersions: [],
+  };
+
+  const userFetchPromises = groupedNotifications.flatMap((group) =>
+    group.map((notification) =>
+      PrismaClient.users.findUnique({
+        where: {
+          id: notification.userId,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      })
+    )
+  );
+
+  const users = await Promise.all(userFetchPromises);
+
+  const uniqueUsers = new Set(users); // Set will remove duplicates
+
+  uniqueUsers.forEach((user) => {
+    if (!user) {
+      return;
     }
 
-    const messageVersions: any[] = [];
+    const userNotifications = groupedNotifications.find((group) => group[0]?.userId === user.id);
 
-    const userFetchPromises = groupedNotifications.flatMap((group) =>
-      group.map((notification) =>
-        PrismaClient.users.findUnique({
-          where: {
-            id: notification.userId,
-          },
-          select: {
-            name: true,
-            email: true,
-          },
-        })
-      )
-    );
+    if (!userNotifications) {
+      return;
+    }
 
-    const users = await Promise.all(userFetchPromises);
+    // Create a string of notifications for the user, separated by a newline
+    const notificationsString: string = userNotifications
+      .map((notification) => notification.notificationString)
+      .join('\n');
 
-    users.forEach((user) => {
-      if (!user) {
-        return;
-      }
-
-      messageVersions.push({
-        to: [
-          {
-            email: user.email,
-            name: user.name,
-          },
-        ],
-        params: {
+    bulkNotificationEmailRequestBody.messageVersions.push({
+      to: [
+        {
+          email: user.email,
           name: user.name,
-          notifications: '',
-          notificationSettingsUrl: `${process.env.FRONTEND_URL}/notificationSettings`,
         },
-      });
+      ],
+      params: {
+        name: user.name,
+        notifications: notificationsString,
+        notificationSettingsUrl: `${process.env.FRONTEND_URL}/notificationSettings`,
+      },
     });
+  });
 
-    const bulkNotificationEmailRequestBody = {
-      content,
-      subject: 'New Changes in the SIWMA Marketplace',
-      messageVersions,
-    };
+  await sendEmails(bulkNotificationEmailRequestBody);
 
-    await sendEmails(bulkNotificationEmailRequestBody);
-  } catch (e) {
-    console.log(e);
-  }
+  // Delete all notifications
+  await PrismaClient.userNotifications.deleteMany({});
+  await PrismaClient.listingNotifications.deleteMany({});
+  await PrismaClient.companiesNotifications.deleteMany({});
 }
