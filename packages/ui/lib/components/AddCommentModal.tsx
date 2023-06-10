@@ -192,7 +192,7 @@ const AddCommentModal = ({
                       color: palette.text.primary,
                       ml: spacing(3),
                       my: 'auto',
-                      ...modalStyles?.userName
+                      ...modalStyles?.userName,
                     })}
                   >
                     {userName}
@@ -215,10 +215,10 @@ const AddCommentModal = ({
                       mt: spacing(2),
                       textAlign: 'left',
                       mb: spacing(1),
-                      ...modalStyles?.comment
+                      ...modalStyles?.comment,
                     })}
                   >
-                    Comment:
+                    Description:
                   </Typography>
                   <FormControl sx={{ width: '100%' }}>
                     <OutlinedInput
