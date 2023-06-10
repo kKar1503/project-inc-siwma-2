@@ -1,12 +1,13 @@
 import Box from '@mui/material/Box';
 import { useTheme, styled } from '@mui/material/styles';
-import DetailedListingCarousel from '@/components/marketplace/carousel/DetailedListingCarousel';
+// import DetailedListingCarousel from '@/components/marketplace/carousel/DetailedListingCarousel';
+import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
-import ChatNow from '@/components/marketplace/listing/ChatNow';
+// import ChatNow from '@/components/marketplace/listing/ChatNow';
 import SellBadge from '@/components/marketplace/listing/SellBadge';
 import BuyBadge from '@/components/marketplace/listing/BuyBadge';
 import fetchListing from '@/middlewares/fetchListing';
@@ -116,22 +117,22 @@ const DetailedListingPage = () => {
   );
 
   // check if room exists btwn buyer and seller
-  const checkChatRoom = () => {
-    for (let i = 0; i < chatRooms?.length; i++) {
-      // if it exists redirect to /chat
-      if (
-        chatRooms?.buyer?.id === loggedUserUuid &&
-        chatRooms?.seller?.id === loggedUserUuid &&
-        chatRooms.buyer?.id === listings?.owner.id &&
-        chatRooms?.seller?.id === listings?.owner.id
-      ) {
-        // if it exists redirect to /chat
-      } else {
-        // if it doesnt exist, create a new room btwn the buyer and seller
-        return newRoom;
-      }
-    }
-  };
+  // const checkChatRoom = () => {
+  //   for (let i = 0; i < chatRooms?.length; i++) {
+  //     // if it exists redirect to /chat
+  //     if (
+  //       chatRooms?.buyer?.id === loggedUserUuid &&
+  //       chatRooms?.seller?.id === loggedUserUuid &&
+  //       chatRooms.buyer?.id === listings?.owner.id &&
+  //       chatRooms?.seller?.id === listings?.owner.id
+  //     ) {
+  //       // if it exists redirect to /chat
+  //     } else {
+  //       // if it doesnt exist, create a new room btwn the buyer and seller
+  //       return newRoom;
+  //     }
+  //   }
+  // };
   // const chatRooms = useChatListQuery(loggedUserUuid)
 
   listings?.parameters?.sort((a, b) => {
@@ -190,23 +191,16 @@ const DetailedListingPage = () => {
           bgcolor: theme.palette.common.white,
         })}
       >
-        {listingImgs?.length ? (
+        <Container maxWidth="lg">
+          {/* {listingImgs?.length ? (
           <DetailedListingCarousel data={listingImgs} />
         ) : (
           // <DetailedListingCarousel data={listingImgs as []} />
           // <DetailedListingCarousel data={listings?.images} />
           <ListingImgsPlaceholder />
-        )}
-        <Box
-          sx={{
-            width: '70%',
-            height: 'full',
-            mr: 'auto',
-            ml: 'auto',
-          }}
-        >
-          <Grid container columns={12} sx={({ spacing }) => ({ direction: 'row', pl: spacing(4) })}>
-            <Grid item xs={9} sx={({ spacing }) => ({ pl: spacing(5) })}>
+        )} */}
+          <Grid container columns={12} sx={{ direction: 'row' }}>
+            <Grid item xs={12} md={8} lg={9} alignItems={isSm ? 'flex-start' : 'center'}>
               <Grid
                 container
                 columns={12}
@@ -224,19 +218,22 @@ const DetailedListingPage = () => {
                       pl: spacing(2),
                     })}
                   >
-                    <Box>
-                      {listings?.type === 'BUY' && <BuyBadge />}
-                      {listings?.type === 'SELL' && <SellBadge />}
-                    </Box>
-                    <Typography
-                      sx={({ spacing }) => ({
-                        fontWeight: 600,
-                        pl: spacing(2),
-                      })}
-                      variant="h6"
-                    >
-                      {listings?.name}
-                    </Typography>
+                    <Grid item>
+                      <Box>
+                        {listings?.type === 'BUY' && <BuyBadge />}
+                        {listings?.type === 'SELL' && <SellBadge />}
+                      </Box>
+                    </Grid>
+                    <Grid item>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                        }}
+                        variant={isSm || isMd ? 'h6' : 'h5'}
+                      >
+                        {listings?.name}
+                      </Typography>
+                    </Grid>
                   </Grid>
 
                   <Typography
@@ -402,16 +399,18 @@ const DetailedListingPage = () => {
                 </Grid>
               </Box>
             </Grid>
-            <Grid
-              item
-              xs={3}
-              sx={({ spacing }) => ({
-                pt: spacing(2),
-                pl: spacing(5),
-              })}
-            >
-              <ChatNow data={listings} />
-            </Grid>
+            {!isSm && (
+              <Grid
+                item
+                md={4}
+                lg={3}
+                sx={({ spacing }) => ({
+                  pt: spacing(2),
+                })}
+              >
+                {/* <ChatNow data={listings} /> */}
+              </Grid>
+            )}
 
             <Box
               sx={({ spacing }) => ({
@@ -461,8 +460,14 @@ const DetailedListingPage = () => {
                 </Box>
               ))}
             </Box>
+
+            {isSm && (
+              <Button variant="contained" type="submit" size="large" fullWidth>
+                CHAT NOW
+              </Button>
+            )}
           </Grid>
-        </Box>
+        </Container>
       </Box>
     </main>
   );
