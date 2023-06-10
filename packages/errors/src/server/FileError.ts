@@ -17,9 +17,10 @@ export class FileInvalidExtensionError extends FileError {
   public static readonly status: number = 400;
   public static readonly code: number = 7001;
 
-  constructor(filename:string) {
+  constructor(filename:string|null|undefined = undefined) {
     super();
-    this.message = `File extension of ${filename} not allowed`;
+
+    this.message = filename? `File extension of ${filename} not allowed`: 'File extension not allowed';
     this.status = FileInvalidExtensionError.status;
     this.code = FileInvalidExtensionError.code;
   }
