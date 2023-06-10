@@ -22,7 +22,7 @@ const ListingStream: React.FC<Props> = ({ listingItemsData }) => (
     <Box sx={{ margin: 'auto', overflow: 'hidden', position: 'relative', width: 'auto' }}>
       <Box
         sx={{
-          animation: 'scroll 32s linear infinite',
+          animation: 'scroll 40s linear infinite',
           display: 'flex',
           width: 'calc(288px * 14 + (48px * 14))',
         }}

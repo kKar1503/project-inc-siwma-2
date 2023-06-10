@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
@@ -21,9 +21,13 @@ import fetchPopularListings from '@/middlewares/fetchPopularListings';
 
 import { InfiniteScroll, useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
+import { useTheme } from '@mui/material';
+import zIndex from '@mui/material/styles/zIndex';
 
 const useGetCategoriesQuery = () => {
-  const { data } = useQuery('categories', async () => fetchCategories());
+  let { data } = useQuery('categories', async () => fetchCategories());
+
+  data = data?.slice(0, 6);
 
   return data;
 };
@@ -42,7 +46,8 @@ const useGetPopularListingsQuery = () => {
 
 const Marketplace = () => {
   const { data: session } = useSession();
-  const isMediumScreen = useResponsiveness(['md']);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { typography, zIndex } = useTheme();
   const scrollRef = useRef<Element>(null);
 
   const [listings, setListings] = React.useState<Array<ProductListingItemProps>>([]);
@@ -76,6 +81,42 @@ const Marketplace = () => {
   const advertisementsData = useGetAdvertisementsQuery(session?.user.permissions);
   const popularListingsData = useGetPopularListingsQuery();
 
+  const headerStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        switchTxt: {
+          fontSize: typography.h6,
+          zIndex: 99
+        },
+      };
+    }
+
+    if (isMd) {
+      return {
+        switchTxt: {
+          fontSize: typography.h5,
+          fontWeight: 500,
+          zIndex: 99
+        },
+      };
+    }
+
+    if (isLg) {
+      return {
+        switchTxt: {
+          fontSize: typography.h4,
+          zIndex: 99
+        },
+      };
+    }
+
+    return {
+      switchTxt: {
+        fontSize: '24px',
+      },
+    };
+  }, [isSm, isMd, isLg]);
+
   return (
     <>
       {advertisementsData?.length ? (
@@ -92,8 +133,8 @@ const Marketplace = () => {
             width: '80%',
           }}
         >
-          <Typography sx={{ fontSize: isMediumScreen ? '22px' : '36px' }}>Categories</Typography>
-          <Link href="/" sx={{ fontSize: isMediumScreen ? '22px' : '36px' }}>
+          <Typography sx={headerStyles?.switchTxt}>Categories</Typography>
+          <Link href="/categories" sx={headerStyles?.switchTxt}>
             View All Categories
           </Link>
         </Box>
@@ -113,7 +154,7 @@ const Marketplace = () => {
             width: '80%',
           }}
         >
-          <Typography variant="h4">Popular</Typography>
+          <Typography sx={headerStyles?.switchTxt}>Popular</Typography>
         </Box>
       </Box>
       <ListingStream listingItemsData={popularListingsData} />
@@ -123,7 +164,7 @@ const Marketplace = () => {
             width: '80%',
           }}
         >
-          <Typography variant="h4">Recommended</Typography>
+          <Typography sx={headerStyles?.switchTxt}>Recommended</Typography>
         </Box>
       </Box>
       <Box marginTop="2em">
@@ -133,7 +174,11 @@ const Marketplace = () => {
           reachedMaxItems={maxItems}
           loadingComponent={<CircularProgress />}
           parent={Grid}
-          endMessage={<Typography variant="h6" textAlign="center">No more listings</Typography>}
+          endMessage={
+            <Typography variant="h6" textAlign="center">
+              No more listings
+            </Typography>
+          }
           parentProps={{
             container: true,
             spacing: 2,
