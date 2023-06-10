@@ -61,6 +61,7 @@ const validateListing = async (id: number) => {
   if (!listing) throw new NotFoundError(`Listing with id '${id}`);
   return listing;
 };
+
 const append = async (listing: { listingImages: { image: string, order: number }[] }, objects: IS3Object[]) => {
   const previousImages = listing.listingImages;
   const offset = listing.listingImages.length === 0 ? 0 : previousImages[previousImages.length - 1].order;
@@ -87,6 +88,7 @@ const prepend = async (listing: { listingImages: { image: string, order: number 
     };
   });
 };
+
 const insert = async (listing: {
   listingImages: { image: string, order: number }[]
 }, objects: IS3Object[], insertIndex: number) => {
@@ -131,7 +133,10 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
   const index = req.query.insertIndex ? parseToNumber(req.query.insertIndex as string, 'insertIndex') : undefined;
 
-  const newImages = typeof index === 'number' ? await insert(listing, objects, index) : await append(listing, objects);
+  const newImages = typeof index === 'number'
+    ? await insert(listing, objects, index)
+    // default action when no index is provided
+    : await append(listing, objects);
 
   await PrismaClient.listingImages.createMany({
     data: newImages.map((image) => ({
@@ -142,7 +147,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   });
 
 
-  // refetch listing
+  // fetch updated listing
   const updatedListing = await validateListing(id);
   const response = {
     images: updatedListing.listingImages,
