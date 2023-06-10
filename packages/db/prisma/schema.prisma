@@ -192,7 +192,6 @@ model ListingImages {
   id        Int      @id(map: "listing_images_pk") @default(sequence(maxValue: 2147483647))
   listingId Int      @map("listing_id")
   image     String
-  order     Int      @default(0)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
   order     Int
