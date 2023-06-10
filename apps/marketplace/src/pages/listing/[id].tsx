@@ -454,16 +454,19 @@ const DetailedListingPage = () => {
               <Grid
                 container
                 columns={12}
-                sx={{
-                  direction: 'row',
-                }}
+                sx={({ spacing }) => ({
+                  directon: 'row',
+                  pt: spacing(2),
+                  pb: spacing(2),
+                  pl: spacing(2),
+                })}
               >
-                <Grid item xs={6} md={9}>
+                <Grid item xs={8} md={9}>
                   <Typography sx={{ fontWeight: 600 }} variant="h5">
                     Reviews
                   </Typography>
                 </Grid>
-                <Grid item xs={6} md={3} justifyContent="flex-end">
+                <Grid item xs={4} md={2.75}>
                   <Button
                     fullWidth
                     variant="contained"
@@ -472,6 +475,7 @@ const DetailedListingPage = () => {
                     ADD A REVIEW
                   </Button>
                 </Grid>
+                <Grid item xs={6} md={0.25} />
 
                 {reviews?.map((individualReview) => (
                   <Box sx={({ spacing }) => ({ width: 300, pt: spacing(3) })}>
@@ -499,9 +503,11 @@ const DetailedListingPage = () => {
               </Grid>
 
               {isSm && (
-                <Button variant="contained" type="submit" size="large" fullWidth>
-                  CHAT NOW
-                </Button>
+                <Box sx={({ spacing }) => ({ pb: spacing(2) })}>
+                  <Button variant="contained" type="submit" size="large" fullWidth>
+                    CHAT NOW
+                  </Button>
+                </Box>
               )}
             </Grid>
           </Grid>
