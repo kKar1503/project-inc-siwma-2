@@ -11,7 +11,6 @@ const updateUser = async (
   telegramUsername: string,
   bio: string
 ) => {
-
   if (uuid) {
     const res = await apiClient.put(`/v1/users/${uuid}`, {
       name,
@@ -19,8 +18,8 @@ const updateUser = async (
       // profilePicture,
       mobileNumber,
       contact,
-      ...(contact === 'whatsapp' && { whatsappNumber }),
-      ...(contact === 'telegram' && { telegramUsername }),
+      whatsappNumber,
+      telegramUsername,
       bio,
     });
 

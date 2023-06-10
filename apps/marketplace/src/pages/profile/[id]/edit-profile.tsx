@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent, FormEvent, useMemo } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent, useMemo, useRef} from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import ProfileDetailCard, {
@@ -26,11 +26,9 @@ import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import fetchUser from '@/middlewares/fetchUser';
 import updateUser from '@/middlewares/updateUser';
-import apiClient from '@/utils/api/client/apiClient';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useQuery, useMutation } from 'react-query';
-import users from '@/pages/api/v1/users';
 import { useRouter } from 'next/router';
 
 const useGetUserQuery = (userUuid: string) => {
@@ -75,37 +73,123 @@ const EditProfile = () => {
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
-  // console.log(userDetails);
-
   const mutation = useUpdateUserMutation(loggedUserUuid);
-
   // console.log(mutation);
-
   const theme = useTheme();
   const { spacing } = theme;
-
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [name, setName] = useState<string>(userDetails?.data?.data[0].name || '');
-  const [mobileNumber, setMobileNumber] = useState<string>(
-    userDetails?.data?.data[0].mobileNumber || undefined
-  );
-  const [email, setEmail] = useState<string>(userDetails?.data?.data[0].email || undefined);
-  const [bio, setBio] = useState<string>(userDetails?.data?.data[0].bio || undefined);
-
+  const [name, setName] = useState<string>(userDetails?.name || '');
+  const [nameError, setNameError] = useState('');
+  const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
+  const [mobileNumberError, setMobileNumberError] = useState('');
+  const [email, setEmail] = useState<string>(userDetails?.email || '');
+  const [emailError, setEmailError] = useState('');
+  const [bio, setBio] = useState<string>(userDetails?.bio || '');
+  const [bioError, setBioError] = useState('');
   const [telegramUsername, setTelegramUsername] = useState<string>(
-    userDetails?.data?.data[0].telegramUsername || undefined
+    userDetails?.telegramUsername || ''
   );
-  const [whatsappNumber, setWhatsappNumber] = useState<string>(
-    userDetails?.data?.data[0].whatsappNumber || undefined
-  );
-  const [contact, setContact] = useState<string>(userDetails?.data?.data[0].contact || undefined);
-
+  const [telegramError, setTelegramError] = useState('');
+  const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.whatsappNumber || '');
+  const [whatsappError, setWhatsappError] = useState('');
+  const [contact, setContact] = useState<string>(userDetails?.contactMethod || '');
   const [modalMessage] = useState(
     'Once you leave the page, your user details will be removed and your profile will not be updated'
   );
   const [openLeave, setOpenLeave] = useState<boolean>(false);
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setName(newName);
+    if (newName.trim() === '') {
+      setNameError('Please enter your full name');
+    } else if (/\d/.test(newName)) {
+      setNameError('Name cannot contain numbers');
+    } else {
+      setNameError('');
+    }
+  };
+
+  const validatePhone = (phone: string) => {
+    const phoneRegex = /^(?:\+65)?[689][0-9]{7}$/;
+    return phoneRegex.test(phone);
+  };
+  const handleMobileNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    const formattedInput = input.replace(/\D/g, '');
+    setMobileNumber(formattedInput);
+
+    if (formattedInput === '') {
+      setMobileNumberError('Please enter a mobile number');
+    } else {
+      const isValidPhone = validatePhone(formattedInput);
+      setMobileNumberError(isValidPhone ? '' : 'Please enter a valid Singapore phone number');
+    }
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
+    return emailRegex.test(email);
+  };
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+
+    if (newEmail.trim() === '') {
+      setEmailError('Please enter an email address');
+    } else {
+      const isValidEmail = validateEmail(newEmail);
+      setEmailError(isValidEmail ? '' : 'Please enter a valid email address');
+    }
+  };
+
+  const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newBio = e.target.value;
+    setBio(newBio);
+
+    if (newBio.trim() === '') {
+      setBioError('Please enter a bio');
+    } else {
+      setBioError('');
+    }
+  };
+
+  const handleContactChange = (e: SelectChangeEvent) => {
+    const selectedContact = e.target.value;
+    setContact(selectedContact);
+
+    if (selectedContact === 'whatsapp') {
+      setTelegramUsername('');
+    } else if (selectedContact === 'telegram') {
+      setWhatsappNumber('');
+    }
+  };
+
+  const handleTelegramChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTelegram = e.target.value;
+    setTelegramUsername(newTelegram);
+
+    if (newTelegram.trim() === '') {
+      setTelegramError('Please enter your telegram username');
+    } else {
+      setTelegramError('');
+    }
+  };
+
+  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    const formattedInput = input.replace(/\D/g, '');
+    setWhatsappNumber(formattedInput);
+
+    if (formattedInput === '') {
+      setWhatsappError('Please enter a mobile number');
+    } else {
+      const isValidPhone = validatePhone(formattedInput);
+      setWhatsappError(isValidPhone ? '' : 'Please enter a valid Singapore phone number');
+    }
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -119,31 +203,19 @@ const EditProfile = () => {
       contact,
       // profilePicture: imageUrl || '',
     };
-
     mutation.mutate(updatedUserData);
-  };
-  
-  const handleContactChange = (e: SelectChangeEvent) => {
-    const selectedContact = e.target.value;
-    setContact(selectedContact);
-
-    if (selectedContact === 'whatsapp') {
-      setWhatsappNumber('');
-      setTelegramUsername('');
-    } else if (selectedContact === 'telegram') {
-      setWhatsappNumber('');
-    }
   };
 
   useEffect(() => {
     if (userDetails) {
-      setName(userDetails?.data?.data[0].name);
-      setMobileNumber(userDetails?.data?.data[0].mobileNumber);
-      setEmail(userDetails?.data?.data[0].email);
-      setBio(userDetails?.data?.data[0].bio);
-      setContact(userDetails?.data?.data[0].contact);
+      setName(userDetails?.name);
+      setMobileNumber(userDetails?.mobileNumber);
+      setEmail(userDetails?.email);
+      // setBio(userDetails?.bio);
+      setContact(userDetails?.contactMethod);
     }
   }, [userDetails]);
+
   useEffect(() => {
     if (profilePicture) {
       setImageUrl(URL.createObjectURL(profilePicture));
@@ -303,7 +375,7 @@ const EditProfile = () => {
                   sx={({ spacing }) => ({
                     mt: spacing(2),
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                   })}
                 >
                   <FormControl
@@ -318,7 +390,9 @@ const EditProfile = () => {
                       placeholder="Your Full Name"
                       InputLabelProps={{ shrink: true }}
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={handleNameChange}
+                      error={!!nameError}
+                      helperText={nameError}
                     />
                   </FormControl>
 
@@ -334,7 +408,13 @@ const EditProfile = () => {
                       placeholder="91234567"
                       InputLabelProps={{ shrink: true }}
                       value={mobileNumber}
-                      onChange={(e) => setMobileNumber(e.target.value)}
+                      onChange={handleMobileNumberChange}
+                      error={!!mobileNumberError}
+                      helperText={mobileNumberError}
+                      inputProps={{
+                        maxLength: 8,
+                        pattern: '[0-9]*',
+                      }}
                     />
                   </FormControl>
                 </Box>
@@ -348,7 +428,9 @@ const EditProfile = () => {
                       mt: spacing(2),
                     })}
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
+                    error={!!emailError}
+                    helperText={emailError}
                   />
                 </FormControl>
 
@@ -364,7 +446,9 @@ const EditProfile = () => {
                       mb: spacing(1),
                     })}
                     value={bio}
-                    onChange={(e) => setBio(e.target.value)}
+                    onChange={handleBioChange}
+                    error={!!bioError}
+                    helperText={bioError}
                   />
                 </FormControl>
               </CardContent>
@@ -384,11 +468,7 @@ const EditProfile = () => {
                 >
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
                     <InputLabel>Contact</InputLabel>
-                    <Select
-                      value={contact}
-                      label="Platform"
-                      onChange={(e) => handleContactChange(e)}
-                    >
+                    <Select label="contact" value={contact} onChange={handleContactChange}>
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="Whatsapp">Whatsapp</MenuItem>
                     </Select>
@@ -407,7 +487,9 @@ const EditProfile = () => {
                         ),
                       }}
                       value={whatsappNumber}
-                      onChange={(e) => setWhatsappNumber(e.target.value)}
+                      onChange={handleWhatsappChange}
+                      error={!!whatsappError}
+                      helperText={whatsappError}
                     />
                   )}
 
@@ -423,7 +505,9 @@ const EditProfile = () => {
                         ),
                       }}
                       value={telegramUsername}
-                      onChange={(e) => setTelegramUsername(e.target.value)}
+                      onChange={handleTelegramChange}
+                      error={!!telegramError}
+                      helperText={telegramError}
                     />
                   )}
                 </Box>
@@ -445,6 +529,14 @@ const EditProfile = () => {
                       mt: 'auto',
                       mb: spacing(1),
                     })}
+                    disabled={
+                      name.trim() === '' ||
+                      mobileNumber.trim() === '' ||
+                      email.trim() === '' ||
+                      bio.trim() === '' ||
+                      (contact === 'whatsapp' && whatsappNumber.trim() === '') ||
+                      (contact === 'telegram' && telegramUsername.trim() === '')
+                    }
                   >
                     Save Changes
                   </Button>

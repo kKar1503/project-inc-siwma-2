@@ -80,16 +80,16 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
 
       <CardContent>
         <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>
-          {data?.data.data[0].profilePicture}
+          {data?.profilePicture}
         </Avatar>
-        <Typography sx={{ fontWeight: 'bold' }}>{data?.data.data[0].name}</Typography>
-        <Typography>{data?.data.data[0].company}</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
+        <Typography>{data?.company}</Typography>
         <Typography
           sx={{
             wordWrap: 'break-word',
           }}
         >
-          {data?.data.data[0].email}
+          {data?.email}
         </Typography>
 
         <Box
@@ -119,7 +119,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
-        <Typography>{data?.data.data[0].bio}</Typography>
+        <Typography>{data?.bio}</Typography>
       </CardContent>
 
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
@@ -145,7 +145,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
               ml: spacing(1),
             })}
           >
-            {data?.data.data[0].telegramUsername}
+            {data?.telegramUsername}
           </Typography>
         </Box>
         <Box
@@ -168,7 +168,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
               ml: spacing(1),
             })}
           >
-            +65 {data?.data.data[0].mobileNumber}
+            +65 {data?.mobileNumber}
           </Typography>
         </Box>
       </CardContent>
@@ -184,7 +184,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
           {isEditMode && (
             <Button
               component={Link}
-              href={`/profile/${data.data.data[0].id}/edit-profile`}
+              href={`/profile/${data?.id}/edit-profile`}
               variant="contained"
               type="submit"
               sx={({ spacing }) => ({
