@@ -6,29 +6,20 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useRouter } from 'next/router';
-import apiClient from '@/utils/api/client/apiClient'
+import resetpassword from '@/middlewares/resetpassword';
+import { useQuery } from 'react-query';
+import { string } from 'zod';
 
 
-const resetpassword = async (password: string, token: string, uuid: string) => {
+const useResetPassword = (password:string , token:string|undefined, uuid:string|undefined ) => {
+  const {data,isError} = useQuery(['resetpassword'], () => resetpassword (password ,token as string ,uuid as string  ) ,
+  {enabled: token !== undefined && uuid !== undefined && password.trim() !== ''});
+  return {data,isError}
+} 
 
-  if (!token||!uuid) {
-    return null
-  }
-  
-  const passwordchange = {
-  'newPassword': password,
-  'token' : token
-
-
-  }
-
-  const data = await apiClient.post(`/v1/users/${uuid}/reset-password`, passwordchange)
-  return data
-
-}
 
 const ResetForm = () => {
   const router = useRouter();
@@ -36,16 +27,27 @@ const ResetForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
+  const [passwordapi, setPasswordApi ] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const { spacing, shape, shadows, palette } = useTheme();
   
+  const resetpassword = useResetPassword(passwordapi,token as string ,uuid as string );
 
-
+  useEffect(() => {
+    if (resetpassword?.isError){
+      alert('Response did not went through')
+    }
+    if (resetpassword?.data === 204){
+      alert('Response  went through')
+      router.push('/reset/resetcfm')
+    }
+    
+  
+  },[resetpassword, router])  
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-   
   
     if (password !== confirmPassword) {
         setErrorMessage(true);
@@ -54,17 +56,7 @@ const ResetForm = () => {
     else {
       setErrorMessage(false);
       console.log(token,uuid)
-      const response = await resetpassword(password , token as string  , uuid as string );
-        if (response === null){
-        console.log(response)
-        alert('Response did not went through')
-        }
-        else {
-          console.log(response)
-          alert('Response  went through')
-          router.push('/reset/resetcfm')
-        }
-        
+      setPasswordApi(password)  
     }
   };
   
