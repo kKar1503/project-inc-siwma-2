@@ -198,7 +198,7 @@ const DetailedListingPage = () => {
           <ListingImgsPlaceholder />
         )} */}
           <Grid container columns={12} sx={{ direction: 'row' }}>
-            <Grid item xs={12} md={8} lg={9} alignItems={isSm ? 'flex-start' : 'center'}>
+            <Grid item xs={12} md={8} pt={2} alignItems={isSm ? 'flex-start' : 'center'}>
               <Grid
                 container
                 columns={12}
@@ -211,7 +211,6 @@ const DetailedListingPage = () => {
                     container
                     sx={({ spacing }) => ({
                       directon: 'row',
-                      pt: spacing(2),
                       pb: spacing(2),
                       pl: spacing(2),
                     })}
@@ -250,7 +249,6 @@ const DetailedListingPage = () => {
                   xs={2}
                   sx={({ spacing }) => ({
                     pt: spacing(2),
-                    pr: spacing(2),
                   })}
                 >
                   <Grid container sx={{ direction: 'row' }}>
@@ -397,82 +395,63 @@ const DetailedListingPage = () => {
                 </Grid>
               </Box>
             </Grid>
+
             {!isSm && (
-              <Grid
-                item
-                md={4}
-                lg={3}
-                sx={({ spacing }) => ({
-                  pt: spacing(2),
-                })}
-              >
-                <Grid
-                  item
-                  xs={3}
-                  sx={({ spacing }) => ({
-                    pt: spacing(2),
-                    pl: spacing(5),
+              <Grid item md={4} pt={2}>
+                {/* Chat Now Component */}
+                <Card
+                  sx={({ palette }) => ({
+                    border: palette.grey[300],
+                    backgroundColor: palette.grey[100],
                   })}
                 >
-                  {/* Chat Now Component */}
-                  <Card
-                    sx={({ palette }) => ({
-                      width: { md: 250, lg: 300 },
-                      maxHeight: { md: 300, lg: 400 },
-                      border: palette.grey[300],
-                      backgroundColor: palette.grey[100],
-                    })}
-                  >
-                    <CardContent sx={{ pl: 2 }}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingLeft: { sx: 0, md: 0, lg: 3 },
-                          paddingTop: 1,
-                          paddingBottom: 2,
-                          width: { sx: 0 },
-                        }}
+                  <CardContent>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingTop: 1,
+                        paddingBottom: 2,
+                      }}
+                    >
+                      <Avatar
+                        sx={({ spacing }) => ({
+                          mb: spacing(2),
+                          height: { sx: 21, md: 35, lg: 42 },
+                          width: { sx: 21, md: 35, lg: 42 },
+                        })}
                       >
-                        <Avatar
-                          sx={({ spacing }) => ({
-                            mb: spacing(2),
-                            height: { sx: 21, md: 35, lg: 42 },
-                            width: { sx: 21, md: 35, lg: 42 },
+                        {listings?.owner.profilePic}
+                      </Avatar>
+                      <Box sx={{ pb: { md: 1, lg: 2 }, marginLeft: 2 }}>
+                        <Typography
+                          variant="body2"
+                          fontWeight={500}
+                          sx={({ palette }) => ({
+                            color: palette.common.black,
+                            fontSize: { sx: 8, md: 12, lg: 16 },
                           })}
                         >
-                          {listings?.owner.profilePic}
-                        </Avatar>
-                        <Box sx={{ pb: { md: 1, lg: 2 }, marginLeft: 2 }}>
-                          <Typography
-                            variant="body2"
-                            fontWeight={500}
-                            sx={({ palette }) => ({
-                              color: palette.common.black,
-                              fontSize: { sx: 8, md: 12, lg: 16 },
-                            })}
-                          >
-                            {listings?.owner.company.name}
-                          </Typography>
-                        </Box>
+                          {listings?.owner.company.name}
+                        </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <Link href="/chat">
-                          <Button
-                            variant="contained"
-                            sx={({ palette }) => ({
-                              width: 250,
-                              backgroundColor: palette.primary.main,
-                            })}
-                          >
-                            Chat Now
-                          </Button>
-                        </Link>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <Link href="/chat">
+                        <Button
+                          variant="contained"
+                          sx={({ palette }) => ({
+                            backgroundColor: palette.primary.main,
+                            width: isMd ? 240 : 340,
+                          })}
+                        >
+                          Chat Now
+                        </Button>
+                      </Link>
+                    </Box>
+                  </CardContent>
+                </Card>
               </Grid>
             )}
 
