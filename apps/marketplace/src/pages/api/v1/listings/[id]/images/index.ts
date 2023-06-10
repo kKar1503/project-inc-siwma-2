@@ -124,6 +124,15 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     throw new FileInvalidExtensionError(file.originalFilename);
   });
 
+  if (files.length === 0) {
+    const response = {
+      images: listing.listingImages,
+      coverImage: listing.listingImages[0],
+    };
+    res.status(204).json(formatAPIResponse(response));
+    return;
+  }
+
   const bucket = await s3Connection.getBucket(awsBucket);
   const objects = await Promise.all(
     files.map((file) => {
