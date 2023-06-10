@@ -4,8 +4,9 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { CardActionArea } from '@mui/material';
+import CardActionArea from '@mui/material/CardActionArea';
 import { useQuery } from 'react-query';
+import { useTheme } from '@mui/material';
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCats from '@/middlewares/fetchCat';
 
@@ -21,6 +22,8 @@ const useCategoryPageQuery = () => {
 const CategoriesPage = () => {
   const catData = useCategoryPageQuery();
 
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -32,45 +35,54 @@ const CategoriesPage = () => {
       }}
     >
       <Box
-       sx={{
-        textAlign: 'center',
-      }}
+        sx={{
+          textAlign: 'center',
+        }}
       >
         <Typography
-        sx={({ spacing }) => ({
-          pt: spacing(3),
-          pb: spacing(3),
-          fontSize: { xs: 20, sm: 30, md: 40, lg: 45 },
-          fontWeight: 700,
-        })}
-      >
-        More Metal Types
-      </Typography>
+          sx={({ spacing }) => ({
+            pt: spacing(3),
+            pb: spacing(3),
+            fontSize: { xs: 20, sm: 30, md: 40, lg: 45 },
+            fontWeight: 700,
+          })}
+        >
+          More Metal Types
+        </Typography>
       </Box>
-      
 
       <Grid>
         <Grid
           container
-          columnSpacing={3}
-          rowSpacing={3}
+          spacing={3}
           sx={{
             direction: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
+            // justifyContent: 'center',
           }}
         >
           {catData?.map(({ id, name, image }) => (
-            <Grid key={id} item>
-              <Card sx={{}}>
+            <Grid key={id} item xl={2} lg={3} md={4} sm={6} xs={12}>
+              <Card>
                 <CardActionArea>
-                  <CardMedia component="img" height="160" width="160" image={image} />
+                  <div style={{ display:'flex', justifyContent:'center' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        height: 'auto',
+                        maxHeight: 250,
+                        width: 'auto',
+                        maxWidth: 250,
+                      }}
+                      image={image}
+                    />
+                  </div>
                   <CardContent>
                     <Typography
                       gutterBottom
                       variant="body1"
                       sx={{
-                        fontWeight: 500,
+                        fontWeight: theme.typography.h6,
                       }}
                     >
                       {name}
