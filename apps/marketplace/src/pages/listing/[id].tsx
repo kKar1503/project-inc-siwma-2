@@ -198,7 +198,7 @@ const DetailedListingPage = () => {
           <ListingImgsPlaceholder />
         )} */}
           <Grid container columns={12} sx={{ direction: 'row' }}>
-            <Grid item xs={12} md={8} pt={2} alignItems={isSm ? 'flex-start' : 'center'}>
+            <Grid item xs={12} md={8} pt={2}>
               <Grid
                 container
                 columns={12}
@@ -244,18 +244,13 @@ const DetailedListingPage = () => {
                     S${listings?.price}
                   </Typography>
                 </Grid>
-                <Grid
-                  item
-                  xs={2}
-                  sx={({ spacing }) => ({
-                    pt: spacing(2),
-                  })}
-                >
+                <Grid item xs={2}>
                   <Grid container sx={{ direction: 'row' }}>
-                    <Grid item xs={6}>
+                    <Grid item xs={2} />
+                    <Grid item xs={4}>
                       <IosShareOutlinedIcon sx={{ fontSize: 30 }} />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       <BookmarkBorderOutlinedIcon sx={{ fontSize: 30 }} />
                     </Grid>
                   </Grid>
@@ -455,60 +450,60 @@ const DetailedListingPage = () => {
               </Grid>
             )}
 
-            <Box
-              sx={({ spacing }) => ({
-                pt: spacing(3),
-                pb: spacing(4),
-                pl: '6%',
-                width: '70%',
-              })}
-            >
-              <Grid container>
-                <Grid item xs={6}>
+            <Grid item xs={12} md={8}>
+              <Grid
+                container
+                columns={12}
+                sx={{
+                  direction: 'row',
+                }}
+              >
+                <Grid item xs={6} md={9}>
                   <Typography sx={{ fontWeight: 600 }} variant="h5">
                     Reviews
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} md={3} justifyContent="flex-end">
                   <Button
+                    fullWidth
                     variant="contained"
-                    sx={({ palette }) => ({ width: 250, backgroundColor: palette.primary.main })}
+                    sx={({ palette }) => ({ backgroundColor: palette.primary.main })}
                   >
                     ADD A REVIEW
                   </Button>
                 </Grid>
+
+                {reviews?.map((individualReview) => (
+                  <Box sx={({ spacing }) => ({ width: 300, pt: spacing(3) })}>
+                    <Grid container>
+                      <Grid item xs={6}>
+                        <Typography
+                          sx={{
+                            fontWeight: 500,
+                          }}
+                        >
+                          {user?.find((x) => x.id === individualReview?.userId)?.name}
+                        </Typography>
+                        {individualReview?.review}
+                      </Grid>
+                      <Grid item xs={6}>
+                        <StarRating rating={individualReview?.rating} />
+                      </Grid>
+                    </Grid>
+                    <Divider
+                      sx={({ spacing }) => ({ pt: spacing(2), width: 'full' })}
+                      variant="fullWidth"
+                    />
+                  </Box>
+                ))}
               </Grid>
 
-              {reviews?.map((individualReview) => (
-                <Box sx={({ spacing }) => ({ width: 300, pt: spacing(3) })}>
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <Typography
-                        sx={{
-                          fontWeight: 500,
-                        }}
-                      >
-                        {user?.find((x) => x.id === individualReview?.userId)?.name}
-                      </Typography>
-                      {individualReview?.review}
-                    </Grid>
-                    <Grid item xs={6}>
-                      <StarRating rating={individualReview?.rating} />
-                    </Grid>
-                  </Grid>
-                  <Divider
-                    sx={({ spacing }) => ({ pt: spacing(2), width: 'full' })}
-                    variant="fullWidth"
-                  />
-                </Box>
-              ))}
-            </Box>
-
-            {isSm && (
-              <Button variant="contained" type="submit" size="large" fullWidth>
-                CHAT NOW
-              </Button>
-            )}
+              {isSm && (
+                <Button variant="contained" type="submit" size="large" fullWidth>
+                  CHAT NOW
+                </Button>
+              )}
+            </Grid>
           </Grid>
         </Container>
       </Box>
