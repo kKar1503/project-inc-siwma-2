@@ -13,7 +13,11 @@ import BuyBadge from '@/components/marketplace/listing/BuyBadge';
 import fetchListing from '@/middlewares/fetchListing';
 import { useQuery } from 'react-query';
 import StarRating from '@/components/marketplace/profilePage/StarRatings';
-import { Button } from '@mui/material';
+import CardContent from '@mui/material/CardContent';
+import Card from '@mui/material/Card';
+import Button from '@mui/material/Button';
+import Avatar from '@mui/material/Avatar';
+import Link from '@mui/material/Link';
 import { useResponsiveness } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo } from 'react';
@@ -81,9 +85,9 @@ const useGetParamQuery = () => {
   return data;
 };
 
-const useChatListQuery = (loggedUserUuid: string) => {
-  const { data } = useQuery('chatList', async () => fetchChatList(loggedUserUuid), {
-    enabled: loggedUserUuid !== undefined,
+const useChatListQuery = (userUuid: string) => {
+  const { data } = useQuery('chatList', async () => fetchChatList(userUuid), {
+    enabled: userUuid !== undefined,
   });
   return data;
 };
@@ -119,16 +123,10 @@ const DetailedListingPage = () => {
   // check if room exists btwn buyer and seller
   // const checkChatRoom = () => {
   //   for (let i = 0; i < chatRooms?.length; i++) {
-  //     // if it exists redirect to /chat
-  //     if (
-  //       chatRooms?.buyer?.id === loggedUserUuid &&
-  //       chatRooms?.seller?.id === loggedUserUuid &&
-  //       chatRooms.buyer?.id === listings?.owner.id &&
-  //       chatRooms?.seller?.id === listings?.owner.id
-  //     ) {
-  //       // if it exists redirect to /chat
-  //     } else {
-  //       // if it doesnt exist, create a new room btwn the buyer and seller
+  //     if (chatRooms?[i].buyer?.id === loggedUserUuid && chatRooms[i].seller?.id === loggedUserUuid && chatRooms[i].buyer?.id === listings?.owner.id && chatRooms[i].seller?.id === listings?.owner.id) {
+  // if it exists redirect to /chat
+  // } else {
+  // if it doesnt exist, create a new room btwn the buyer and seller
   //       return newRoom;
   //     }
   //   }
@@ -408,7 +406,73 @@ const DetailedListingPage = () => {
                   pt: spacing(2),
                 })}
               >
-                {/* <ChatNow data={listings} /> */}
+                <Grid
+                  item
+                  xs={3}
+                  sx={({ spacing }) => ({
+                    pt: spacing(2),
+                    pl: spacing(5),
+                  })}
+                >
+                  {/* Chat Now Component */}
+                  <Card
+                    sx={({ palette }) => ({
+                      width: { md: 250, lg: 300 },
+                      maxHeight: { md: 300, lg: 400 },
+                      border: palette.grey[300],
+                      backgroundColor: palette.grey[100],
+                    })}
+                  >
+                    <CardContent sx={{ pl: 2 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          paddingLeft: { sx: 0, md: 0, lg: 3 },
+                          paddingTop: 1,
+                          paddingBottom: 2,
+                          width: { sx: 0 },
+                        }}
+                      >
+                        <Avatar
+                          sx={({ spacing }) => ({
+                            mb: spacing(2),
+                            height: { sx: 21, md: 35, lg: 42 },
+                            width: { sx: 21, md: 35, lg: 42 },
+                          })}
+                        >
+                          {listings?.owner.profilePic}
+                        </Avatar>
+                        <Box sx={{ pb: { md: 1, lg: 2 }, marginLeft: 2 }}>
+                          <Typography
+                            variant="body2"
+                            fontWeight={500}
+                            sx={({ palette }) => ({
+                              color: palette.common.black,
+                              fontSize: { sx: 8, md: 12, lg: 16 },
+                            })}
+                          >
+                            {listings?.owner.company.name}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Link href="/chat">
+                          <Button
+                            variant="contained"
+                            sx={({ palette }) => ({
+                              width: 250,
+                              backgroundColor: palette.primary.main,
+                            })}
+                          >
+                            Chat Now
+                          </Button>
+                        </Link>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
               </Grid>
             )}
 
