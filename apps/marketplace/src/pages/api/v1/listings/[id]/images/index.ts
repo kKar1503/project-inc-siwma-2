@@ -5,7 +5,7 @@ import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
-import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
+import { FileInvalidExtensionError, ForbiddenError, NotFoundError } from '@inc/errors';
 import { IS3Object } from '@inc/s3-simplified';
 
 
@@ -116,10 +116,11 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const user = req.token?.user;
   if (!isAdmin(user) && !(await validateUser(user, listing.owner))) throw new ForbiddenError();
 
-
-  const files = (await getFilesFromRequest(req, { multiples: true }))
-    .filter((file) => file.mimetype ? acceptedMimeTypes.includes(file.mimetype) : false);
-  if (files.length === 0) throw new ParamError();
+  const files = await getFilesFromRequest(req, { multiples: true });
+  files.forEach((file) => {
+    if (file.mimetype && acceptedMimeTypes.includes(file.mimetype)) return;
+    throw new FileInvalidExtensionError(file.originalFilename);
+  });
 
   const bucket = await s3Connection.getBucket(awsBucket);
   const objects = await Promise.all(
