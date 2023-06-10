@@ -2,13 +2,17 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 // eslint-disable-next-line import/extensions
 import en from '@/locales/en/translation.json';
+// eslint-disable-next-line import/extensions
+// import zh from '@/locales/zh/translation.json';
 
-export const defaultLang = 'en';
+export const defaultLang = 'zh';
 export const resources = {
   en: {
     translation: en,
   },
-  // zn: {},
+  // zh: {
+  //   translation: zh,
+  // },
 } as const;
 
 i18n.use(initReactI18next).init({

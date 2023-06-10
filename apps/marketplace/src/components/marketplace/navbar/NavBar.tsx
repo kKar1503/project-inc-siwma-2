@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -7,16 +7,19 @@ import Badge from '@mui/material/Badge';
 import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
+import i18next from 'i18next';
+import Grid from '@mui/material/Grid';
 import SearchBar from '@inc/ui/lib/components/SearchBar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
-import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import AddListing from './AddListing';
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
+
+const getLanguage = () => i18next.language || window.localStorage.i18nextLng;
 
 const NavBar = () => {
   const user = useSession();
@@ -32,6 +35,7 @@ const NavBar = () => {
   const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // handle i18 change here
     setLanguage(language === 'English' ? 'Chinese' : 'English');
+    i18next.changeLanguage(getLanguage() === 'en' ? 'zh' : 'en');
   };
 
   const navBarStyles = useMemo(() => {
