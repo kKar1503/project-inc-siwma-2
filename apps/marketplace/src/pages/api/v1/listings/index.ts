@@ -167,6 +167,32 @@ export default apiHandler()
 
     const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
+    // Get total count ignoring pagination
+    const totalCount = await PrismaClient.listing.count({
+      where: {
+        categoryId: queryParams.category ? queryParams.category : undefined,
+        negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+        price: {
+          gte: queryParams.minPrice ? queryParams.minPrice : undefined,
+          lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
+        },
+        name: queryParams.matching
+          ? {
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
+          : undefined,
+        listingsParametersValues: queryParams.params
+          ? {
+            some: {
+              parameterId: queryParams.params.paramId,
+              value: queryParams.params.value,
+            },
+          }
+          : undefined,
+      },
+    });
+
     // Retrieve filtered and sorted listings from the database
     const listings = await PrismaClient.listing.findMany({
       where: {
@@ -178,17 +204,17 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-              contains: queryParams.matching,
-              mode: 'insensitive',
-            }
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-              some: {
-                parameterId: queryParams.params.paramId,
-                value: queryParams.params.value,
-              },
-            }
+            some: {
+              parameterId: queryParams.params.paramId,
+              value: queryParams.params.value,
+            },
+          }
           : undefined,
       },
       orderBy,
@@ -243,7 +269,7 @@ export default apiHandler()
       )
     );
 
-    res.status(200).json(formatAPIResponse(formattedListings));
+    res.status(200).json(formatAPIResponse({ totalCount, listings: formattedListings }));
   })
   .post(async (req, res) => {
     const data = listingSchema.post.body.parse(req.body);
@@ -283,15 +309,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-              create: data.parameters.map((parameter) => ({
-                value: parameter.value.toString(),
-                parameter: {
-                  connect: {
-                    id: parameter.paramId,
-                  },
+            create: data.parameters.map((parameter) => ({
+              value: parameter.value.toString(),
+              parameter: {
+                connect: {
+                  id: parameter.paramId,
                 },
-              })),
-            }
+              },
+            })),
+          }
           : undefined,
       },
       include: {
