@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { StarsRating, useResponsiveness } from '@inc/ui';
@@ -143,12 +144,20 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
           <IconButton
             aria-label="bookmark"
             onClick={handleBookmarkUser}
-            sx={({ spacing, palette }) => ({
+            sx={({ spacing }) => ({
               p: spacing(0),
-              color: isBookmarked ? palette.warning[100] : palette.grey[500],
             })}
           >
-            <BookmarkIcon fontSize="large" />
+            {isBookmarked ? (
+              <BookmarkIcon
+                fontSize="large"
+                sx={({ palette }) => ({
+                  color: palette.warning[100],
+                })}
+              />
+            ) : (
+              <BookmarkBorderIcon fontSize="large" />
+            )}
           </IconButton>
         }
         title="Your Profile"

@@ -7,6 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Link from 'next/link';
 import { red } from '@mui/material/colors';
 import { StarsRating, useResponsiveness } from '@inc/ui';
@@ -130,12 +131,20 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
               <IconButton
                 aria-label="bookmark"
                 onClick={handleBookmarkListing}
-                sx={({ spacing, palette }) => ({
+                sx={({ spacing }) => ({
                   p: spacing(0),
-                  color: isBookmarked ? palette.warning[100] : palette.grey[500],
                 })}
               >
-                <BookmarkIcon fontSize="large" />
+                {isBookmarked ? (
+                  <BookmarkIcon
+                    fontSize="large"
+                    sx={({ palette }) => ({
+                      color: palette.warning[100],
+                    })}
+                  />
+                ) : (
+                  <BookmarkBorderIcon fontSize="large" />
+                )}
               </IconButton>
             )}
           </Box>

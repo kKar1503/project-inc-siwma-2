@@ -4,6 +4,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
@@ -61,11 +62,20 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
           <IconButton
             aria-label="bookmark"
             onClick={handleBookmarkUser}
-            sx={({ palette }) => ({
-              color: isBookmarked ? palette.warning[100] : palette.grey[500],
+            sx={({ spacing }) => ({
+              p: spacing(0),
             })}
           >
-            <BookmarkIcon fontSize="large" />
+            {isBookmarked ? (
+              <BookmarkIcon
+                fontSize="large"
+                sx={({ palette }) => ({
+                  color: palette.warning[100],
+                })}
+              />
+            ) : (
+              <BookmarkBorderIcon fontSize="large" />
+            )}
           </IconButton>
         }
       />
