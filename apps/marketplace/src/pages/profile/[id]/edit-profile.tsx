@@ -30,6 +30,7 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useQuery, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
+import fetchCompany from '@/middlewares/fetchCompany';
 
 const useGetUserQuery = (userUuid: string) => {
   const { data } = useQuery('user', async () => fetchUser(userUuid), {
@@ -37,6 +38,33 @@ const useGetUserQuery = (userUuid: string) => {
   });
   return data;
 };
+
+// const useGetUserQuery = (userUuid: string) => {
+//   const { data: userData } = useQuery('user', async () => fetchUser(userUuid), {
+//     enabled: userUuid !== undefined,
+//   });
+
+//   const { data: companyData } = useQuery('company', async () => {
+//     if (userData && userData.company) {
+//       return fetchCompany(userData.company);
+//     }
+//     return null;
+//   }, {
+//     enabled: userData && userData.company !== undefined,
+//   });
+
+//   const userDetails = {
+//     data: {
+//       user: userData,
+//       company: companyData,
+//     },
+//   };
+
+//   return userDetails;
+//   console.log(userDetails);
+// };
+
+
 
 export type ProfilePageProps = {
   data: ProfileDetailCardProps;
@@ -81,8 +109,11 @@ const EditProfile = () => {
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [name, setName] = useState<string>(userDetails?.name || '');
+  // const [name, setName] = useState<string>(userDetails?.data?.user?.name || '');
+
   const [nameError, setNameError] = useState('');
   const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
+  // const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.data?.user?.mobileNumber || '');
   const [mobileNumberError, setMobileNumberError] = useState('');
   const [email, setEmail] = useState<string>(userDetails?.email || '');
   const [emailError, setEmailError] = useState('');
@@ -215,6 +246,17 @@ const EditProfile = () => {
       setContact(userDetails?.contactMethod);
     }
   }, [userDetails]);
+
+  // useEffect(() => {
+  //   if (userDetails && userDetails.data && userDetails.data.user) {
+  //     const { name, mobileNumber, email, contactMethod } = userDetails.data.user;
+  //     setName(name);
+  //     setMobileNumber(mobileNumber);
+  //     setEmail(email);
+  //     setContact(contactMethod);
+  //   }
+  // }, [userDetails]);
+  
 
   useEffect(() => {
     if (profilePicture) {

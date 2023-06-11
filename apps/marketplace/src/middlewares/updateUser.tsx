@@ -1,4 +1,5 @@
 import apiClient from '@/utils/api/client/apiClient';
+import users from '@/utils/api/client/zod/users';
 
 const updateUser = async (
   uuid: string,
@@ -12,7 +13,7 @@ const updateUser = async (
   bio: string
 ) => {
   if (uuid) {
-    const res = await apiClient.put(`/v1/users/${uuid}`, {
+    const response = await apiClient.put(`/v1/users/${uuid}`, {
       name,
       email,
       // profilePicture,
@@ -22,10 +23,8 @@ const updateUser = async (
       telegramUsername,
       bio,
     });
-
-    return {
-      data: res?.data,
-    };
+    const parsedUser = users.update.parse(response.data.data[0]);
+    return parsedUser;  
   }
 
   return null;
