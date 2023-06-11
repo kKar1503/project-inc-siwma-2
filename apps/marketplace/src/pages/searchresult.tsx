@@ -68,7 +68,7 @@ const Searchresult = () => {
               height: '100vh',
             }}
           >
-            <Image src="/images/Fading-balls.gif" alt="Loading" width={64} height={64} />
+            <Image src="/images/loading.gif" alt="Loading" width={150} height={150} />
           </Box>
         )}
         {listingData && listingData.length > 0 && (
