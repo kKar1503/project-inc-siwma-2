@@ -114,17 +114,15 @@ const useCreateChatQuery = () => {
 
 const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[] | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  console.log(bookmarkedListings);
+
   const handleBookmarkListing = async () => {
     await bookmarkListing(listingId);
     setIsBookmarked((prevState) => !prevState);
   };
 
   useEffect(() => {
-    console.log('is this even running');
     if (bookmarkedListings) {
       const bookmarked = bookmarkedListings.includes(listingId);
-      console.log(bookmarked);
       setIsBookmarked(bookmarked);
     }
   }, [bookmarkedListings, listingId]);
@@ -150,18 +148,13 @@ const DetailedListingPage = () => {
   const cats = useGetCategoryNameQuery();
   const currentUser = useSession();
   const user = useGetUserQuery();
-  console.log(user);
   const param = useGetParamQuery();
   const loggedUserUuid = currentUser.data?.user.id as string;
-  console.log(loggedUserUuid);
   const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
-  console.log(loggedInUser);
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
   const chatRooms = useChatListQuery(loggedUserUuid);
   const newRoom = useCreateChatQuery();
-  console.log(currentUser);
-  console.log(bookmarkedListings);
-  console.log(listingId);
+
   const { isBookmarked, handleBookmarkListing } = useBookmarkListingQuery(
     listingId,
     bookmarkedListings
