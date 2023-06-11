@@ -25,6 +25,8 @@ const CategoriesPage = () => {
 
   const theme = useTheme();
 
+  const placeholder = '/images/catPlaceholder.png';
+
   return (
     <Box
       sx={{
@@ -59,7 +61,6 @@ const CategoriesPage = () => {
           sx={{
             direction: 'row',
             alignItems: 'center',
-            // justifyContent: 'center',
           }}
         >
           {catData?.map(({ id, name, image }) => (
@@ -67,7 +68,7 @@ const CategoriesPage = () => {
               <Card>
                 <CardActionArea>
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    {image ? (
+                    {/* {image ? (
                       <CardMedia
                       component="img"
                       sx={{
@@ -80,7 +81,17 @@ const CategoriesPage = () => {
                     />
                     ) : (
                       <CatImgsPlaceholder />
-                    )}
+                    )} */}
+                    <CardMedia
+                      component="img"
+                      sx={{
+                        height: 'auto',
+                        maxHeight: 250,
+                        width: 'auto',
+                        maxWidth: 250,
+                      }}
+                      image={image || placeholder}
+                    />
                     
                   </div>
                   <CardContent>
