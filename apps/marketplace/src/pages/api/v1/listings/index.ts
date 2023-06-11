@@ -222,7 +222,11 @@ export default apiHandler()
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
-        listingImages: true,
+        listingImages: {
+          orderBy: {
+            order: 'asc',
+          }
+        },
         listingsParametersValues: queryParams.includeParameters,
         offersOffersListingTolistings: true,
         users: {

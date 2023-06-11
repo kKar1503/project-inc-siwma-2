@@ -1,4 +1,4 @@
-import { apiHandler, handleBookmarks, formatAPIResponse, UpdateType } from '@/utils/api';
+import { apiHandler, formatAPIResponse, handleBookmarks, UpdateType } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import s3Connection from '@/utils/s3Connection';
@@ -29,7 +29,11 @@ export async function checkListingExists($id: string | number) {
         },
       },
       listingsParametersValues: true,
-      listingImages: true,
+      listingImages: {
+        orderBy: {
+          order: 'asc',
+        },
+      },
       offersOffersListingTolistings: true,
       reviewsReviewsListingTolistings: true,
     },
@@ -182,7 +186,11 @@ export default apiHandler()
           },
         },
         listingsParametersValues: true,
-        listingImages: queryParams.includeImages,
+        listingImages: {
+          orderBy: {
+            order: 'asc',
+          }
+        },
         offersOffersListingTolistings: true,
         reviewsReviewsListingTolistings: true,
       },
