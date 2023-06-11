@@ -28,11 +28,6 @@ export async function checkListingExists($id: string | number) {
       listingsParametersValues: true,
       offersOffersListingTolistings: true,
       reviewsReviewsListingTolistings: true,
-      listingImages: {
-        orderBy: {
-          order: 'asc',
-        }
-      }
     },
   });
 
