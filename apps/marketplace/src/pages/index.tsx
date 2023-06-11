@@ -30,6 +30,7 @@ const Home = () => {
         <br />
         <button onClick={() => signIn()}>{t('Sign in')}</button>
       </main>
+      
     </>
   );
 };
