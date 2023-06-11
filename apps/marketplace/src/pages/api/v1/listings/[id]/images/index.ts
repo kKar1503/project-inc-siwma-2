@@ -13,8 +13,10 @@ const awsBucket = process.env.AWS_BUCKET as string;
 const acceptedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
 const deleteSchema = z.object({
-  delete: z.array(z.string().transform(zodParseToInteger)),
-}).optional();
+  delete: z.array(z.string().transform(zodParseToInteger))
+    .or(z.string().transform(zodParseToInteger).transform((id) => [id]))
+    .optional(),
+});
 
 const ParamSchema = z.object({
   id: z.string().transform(zodParseToInteger),
@@ -175,8 +177,8 @@ const DELETE = async (req: NextApiRequest & APIRequestType, res: NextApiResponse
   const user = req.token?.user;
   if (!isAdmin(user) && !(await validateUser(user, listing.owner))) throw new ForbiddenError();
 
-  const body = deleteSchema.parse(req.body);
-  const indexesToDelete = body ? body.delete : [listing.listingImages.length - 1];
+  const  deleteIds = deleteSchema.parse(req.query).delete;
+  const indexesToDelete = deleteIds || [listing.listingImages.length - 1];
 
   const objectsToDelete = listing.listingImages.filter((_, i) => indexesToDelete.includes(i));
   const idsToDelete = objectsToDelete.map((image) => image.id);
