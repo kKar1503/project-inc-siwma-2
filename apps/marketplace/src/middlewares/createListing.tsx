@@ -23,7 +23,7 @@ const createListing = async (listingBody: PostListingsRequestBody | undefined, i
   if (images.length === 0) return true; // no images to post
 
   // get listing id
-  const { id } = result.data;
+  const { listingId: id } = result.data.data[0];
 
   // form data to store images
   const formData = new FormData();
