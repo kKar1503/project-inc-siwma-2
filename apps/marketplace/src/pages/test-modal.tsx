@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { ModalImage, Modal, ModalSelect, ModalInput, AddCommentModal } from '@inc/ui';
 import Button from '@mui/material/Button';
@@ -29,12 +28,6 @@ const TestModal = () => {
   const [openLeave, setOpenLeave] = useState(false);
   const [inputValue, setInputValue] = useState<number>(0);
   const [rating, setRating] = useState<number | null >(1);
-
-  const router = useRouter();
-
-  if (leftButtonState === true) {
-    router.back();
-  }
 
   return (
     <>

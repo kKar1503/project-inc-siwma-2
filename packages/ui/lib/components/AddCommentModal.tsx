@@ -1,4 +1,4 @@
-import React , { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -38,13 +38,17 @@ const MyFormHelperText = () => {
 
   const helperText = useMemo(() => {
     if (focused) {
-      return 'Review comment is needed.';
+      return 'Review description is needed.';
     }
 
-    return 'Review comment is needed.';
+    return 'Review description is needed.';
   }, [focused]);
 
-  return <FormHelperText>{helperText}</FormHelperText>;
+  return (
+    <FormHelperText sx={({ palette }) => ({ color: palette.error.main })}>
+      {helperText}
+    </FormHelperText>
+  );
 };
 
 const AddCommentModal = ({
@@ -68,85 +72,94 @@ const AddCommentModal = ({
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { typography } = useTheme();
 
-    const modalStyles = useMemo(() => {
-      if (isSm) {
-        return {
-          modalWidth: {
-            width: '80%',
-          },
-          buttonTxt: {
-            fontSize: '0.9rem',
-          },
-          starSize: {
-            fontSize: '2.0rem',
-          },
-          avatarSize: {
-            width: '35px',
-            height: '35px',
-          },
-          userName: {
-            fontSize: typography.subtitle1,
-          },
-          comment: {
-            fontSize: typography.subtitle2,
-          },
-        };
-      }
-      if (isMd) {
-        return {
-          modalWidth: {
-            width: '45%',
-          },
-          buttonTxt: {
-            fontSize: '1rem',
-          },
-          starSize: {
-            fontSize: '3.0rem',
-          },
-          avatarSize: {
-            width: '50px',
-            height: '50px',
-          },
-          userName: {
-            fontSize: typography.h6,
-          },
-          comment: {
-            fontSize: typography.subtitle1,
-          },
-        };
-      }
-      if (isLg) {
-        return {
-          modalWidth: {
-            width: '35%',
-          },
-          buttonTxt: {
-            fontSize: '1rem',
-          },
-          starSize: {
-            fontSize: '3.0rem',
-          },
-          avatarSize: {
-            width: '60px',
-            height: '60px',
-          },
-          userName: {
-            fontSize: typography.h5,
-          },
-          comment: {
-            fontSize: typography.h6,
-          },
-        };
-      }
+  // on cancel, clear select value and close modal
+  const handleCancel = () => {
+    setOpen(false);
+    setLeftButtonState(true);
+    setInputText('');
+  };
+
+  const modalStyles = useMemo(() => {
+    if (isSm) {
       return {
         modalWidth: {
-          width: '50%',
+          width: '80%',
+        },
+        buttonTxt: {
+          fontSize: '0.9rem',
+        },
+        starSize: {
+          fontSize: '2.0rem',
+        },
+        avatarSize: {
+          width: '35px',
+          height: '35px',
+        },
+        userName: {
+          fontSize: typography.subtitle1,
+          fontWeight: 500,
+        },
+        comment: {
+          fontSize: typography.subtitle2,
+          fontWeight: 500,
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        modalWidth: {
+          width: '45%',
         },
         buttonTxt: {
           fontSize: '1rem',
         },
+        starSize: {
+          fontSize: '3.0rem',
+        },
+        avatarSize: {
+          width: '50px',
+          height: '50px',
+        },
+        userName: {
+          fontSize: typography.h6,
+        },
+        comment: {
+          fontSize: typography.subtitle1,
+        },
       };
-    }, [isSm, isMd, isLg]);
+    }
+    if (isLg) {
+      return {
+        modalWidth: {
+          width: '35%',
+        },
+        buttonTxt: {
+          fontSize: '1rem',
+        },
+        starSize: {
+          fontSize: '3.0rem',
+        },
+        avatarSize: {
+          width: '60px',
+          height: '60px',
+        },
+        userName: {
+          fontSize: typography.h5,
+        },
+        comment: {
+          fontSize: typography.h6,
+        },
+      };
+    }
+    return {
+      modalWidth: {
+        width: '50%',
+      },
+      buttonTxt: {
+        fontSize: '1rem',
+      },
+    };
+  }, [isSm, isMd, isLg]);
 
   return (
     <div>
@@ -239,11 +252,11 @@ const AddCommentModal = ({
                 variant={leftButtonText != null ? 'outlined' : 'contained'}
                 sx={({ spacing }) => ({
                   bgcolor: leftButtonText != null ? '' : buttonColor,
-                  marginRight: '16px',
+                  marginRight: spacing(2),
                   width: 1 / 2,
                   marginTop: spacing(2),
                 })}
-                onClick={() => setLeftButtonState(true)}
+                onClick={handleCancel}
               >
                 <Typography sx={modalStyles?.buttonTxt}>{leftButtonText}</Typography>
               </Button>
@@ -256,6 +269,7 @@ const AddCommentModal = ({
                   marginTop: spacing(2),
                 })}
                 onClick={() => setRightButtonState(true)}
+                disabled={inputText === ''}
               >
                 <Typography
                   sx={({ palette }) => ({
