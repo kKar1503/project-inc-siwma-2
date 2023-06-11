@@ -1,10 +1,22 @@
 import apiClient from '@/utils/api/client/apiClient';
-import { PostUserRequestBody } from '@/utils/api/server/zod/users';
 
-const createUser = async (userBody: PostUserRequestBody | undefined) => {
-  if (userBody === undefined) return false;
-  await apiClient.post('/v1/users', userBody);
-  return true;
+const createUser = async (
+  company: string,
+  email: string,
+  password: string,
+  userName: string,
+  phone: string,
+  token: string
+) => {
+  const newUser = {
+    'token': token,
+    'company': company,
+    'email': email,
+    'password': password,
+   'name': userName,
+    'mobileNumber': phone,
+  };
+  const data = await apiClient.post('/v1/users', newUser);
+  return data.status;
 };
-
 export default createUser;

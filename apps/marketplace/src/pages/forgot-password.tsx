@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useMemo, useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -10,16 +10,88 @@ import Container from '@mui/material/Container';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
-import { useRouter } from 'next/router';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useQuery } from 'react-query';
+import { ForgetPasswordQueryParameter } from '@/utils/api/server/zod/users';
+import forgetPW from '@/middlewares/forget-password';
+import { useRouter } from 'next/router';
+
+const useForgotPasswordQuery = (email: string, token: string | undefined) => {
+  const { data, isError } = useQuery(['createUser'], () => forgetPW(email, token as string), {
+    enabled: token !== undefined && email !== undefined,
+  });
+  return { data, isError };
+};
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
-  const { spacing, shape, shadows, palette } = useTheme();
   const router = useRouter();
+  const { token } = router.query;
+  const forgetPWBody = useForgotPasswordQuery(email, token as string);
+  const { spacing, shape, shadows, palette } = useTheme();
+
+  useEffect(() => {
+    if (forgetPWBody?.isError) {
+      alert('Respond did not went through');
+    } else if (forgetPWBody?.data === 204) {
+      alert('Respond went through');
+      const handleBackToLogin = () => {
+        window.location.href = '/login';
+      };
+
+      <Box
+        sx={({ spacing }) => ({
+          position: 'relative',
+          margin: 'auto',
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%',
+          height: '20%',
+          mb: spacing(2),
+        })}
+      >
+        <CheckCircleIcon
+          sx={({ spacing, palette }) => ({
+            position: 'relative',
+            display: 'flex',
+            margin: 'auto',
+            justifyContent: 'center',
+            color: palette.primary.main,
+            fontSize: '6rem',
+            mt: spacing(4),
+            mb: spacing(1),
+          })}
+        />
+        <Typography
+          align="center"
+          sx={({ typography }) => ({
+            position: 'relative',
+            display: 'flex',
+            margin: 'auto',
+            justifyContent: 'center',
+            fontSize: typography.h5,
+            fontWeight: 'bold',
+          })}
+        >
+          You have successfully registered.
+        </Typography>
+
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          onClick={handleBackToLogin}
+          sx={({ spacing }) => ({
+            mt: spacing(3),
+          })}
+        >
+          BACK TO LOGIN
+        </Button>
+      </Box>;
+    }
+  });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,7 +107,8 @@ const ForgetPassword = () => {
       setEmailError('Please enter a valid email address');
     } else {
       setEmailError(''); // Reset the email error when the email is valid
-      console.log('submitted');
+
+      console.log(email);
     }
   };
 
@@ -129,7 +202,7 @@ const ForgetPassword = () => {
               })}
             >
               <Typography
-                sx={({ spacing, typography }) => ({
+                sx={({ typography }) => ({
                   fontSize: typography.h5,
                   fontWeight: 'bold',
                 })}
