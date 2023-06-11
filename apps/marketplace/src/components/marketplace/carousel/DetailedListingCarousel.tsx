@@ -6,7 +6,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
-import { Listing } from '@/utils/api/client/zod';
+// import { Listing } from '@/utils/api/client/zod';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -17,15 +17,14 @@ export interface Image {
 }
 
 export type DetailedListingCarouselProps = {
-  // data: Listing;
-  // data: Image[]
-  data: Pick<Listing, 'images'>
+  // data: Listing
+  data: Image[]
 };
 
 // type ImageTypes = Pick<Listing, 'images'>
 
 const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
-  const maxSteps = data.images?.length as number;
+  const maxSteps = data.length as number;
   // const maxSteps = data.length;
 
   const [activeStep, setActiveStep] = useState(0);
@@ -50,7 +49,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         onChangeIndex={handleStepChange}
         enableMouseEvents
       >
-        {data.images?.map((step, index) => (
+        {data.map((step, index) => (
         // {data.map((step, index) => (
           <div>
             {Math.abs(activeStep - index) <= 2 ? (
@@ -115,7 +114,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
           // >
           <Button
             size="small"
-            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
+            sx={{ borderRadius: 12, position: 'relative', bottom: 180 }}
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
           >
@@ -136,7 +135,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
           // >
           <Button
             size="small"
-            sx={{ borderRadius: 12, position: 'relative', bottom: 130 }}
+            sx={{ borderRadius: 12, position: 'relative', bottom: 180 }}
             onClick={handleBack}
             disabled={activeStep === 0}
           >
