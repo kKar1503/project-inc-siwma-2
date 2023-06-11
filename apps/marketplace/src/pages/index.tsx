@@ -27,6 +27,7 @@ const Home = () => {
         Not signed in <br />
         <button onClick={() => signIn()}>Sign in</button>
       </main>
+      
     </>
   );
 };
