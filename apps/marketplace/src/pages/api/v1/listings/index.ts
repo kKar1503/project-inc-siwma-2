@@ -229,6 +229,11 @@ export default apiHandler()
           },
         },
         reviewsReviewsListingTolistings: true,
+        listingImages: {
+          orderBy: {
+            order: 'asc',
+          }
+        }
       },
     });
 
