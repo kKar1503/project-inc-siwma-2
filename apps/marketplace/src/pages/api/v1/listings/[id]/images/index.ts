@@ -164,7 +164,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     images: updatedListing.listingImages,
     coverImage: updatedListing.listingImages[0],
   };
-  res.status(204).json(formatAPIResponse(response));
+  res.status(200).json(formatAPIResponse(response));
 };
 
 const DELETE = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
