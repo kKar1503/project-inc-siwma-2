@@ -1,10 +1,4 @@
-import {
-  UpdateType,
-  apiHandler,
-  formatAPIResponse,
-  handleBookmarks,
-  parseToNumber,
-} from '@/utils/api';
+import { apiHandler, formatAPIResponse, handleBookmarks, parseToNumber, UpdateType } from '@/utils/api';
 import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
 import { ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
@@ -141,7 +135,9 @@ export async function formatSingleListingResponse(
       bio: listing.users.bio,
     },
     images: listing.listingImages.map((image) => image.image),
-    coverImage: listing.listingImages[0].image,
+    coverImage: listing.listingImages.length === 0
+      ? ''
+      : listing.listingImages[0].image,
     open: listing.multiple
       ? true
       : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
