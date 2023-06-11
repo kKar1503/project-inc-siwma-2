@@ -254,61 +254,6 @@ const ForgetPassword = () => {
                 SEND EMAIL
               </Button>
             </Box>
-
-            {/* <Box>
-              <CheckCircleIcon
-                sx={({ spacing, palette }) => ({
-                  position: 'relative',
-                  display: 'flex',
-                  margin: 'auto',
-                  justifyContent: 'center',
-                  color: palette.primary.main,
-                  fontSize: '6rem',
-                  mt: spacing(4),
-                  mb: spacing(1),
-                })}
-              />
-              <Typography
-                align="center"
-                sx={({ spacing, typography }) => ({
-                  position: 'relative',
-                  display: 'flex',
-                  margin: 'auto',
-                  justifyContent: 'center',
-                  fontSize: typography.h5,
-                  fontWeight: 'bold',
-                })}
-              >
-                A link has been sent to your email account to reset your password.
-              </Typography>
-
-              <Typography
-                align="center"
-                sx={({ spacing, typography }) => ({
-                  position: 'relative',
-                  display: 'flex',
-                  margin: 'auto',
-                  justifyContent: 'center',
-                  mt: spacing(2),
-                  fontSize: typography.body2,
-                })}
-              >
-                Please click on the link that has just been sent to your email account to carry on
-                with resetting your password
-              </Typography>
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                onClick={handleBackToLogin}
-                sx={({ spacing }) => ({
-                  mt: spacing(3),
-                })}
-              >
-                BACK TO LOGIN
-              </Button>
-            </Box> */}
           </Box>
         </Container>
       </Box>
