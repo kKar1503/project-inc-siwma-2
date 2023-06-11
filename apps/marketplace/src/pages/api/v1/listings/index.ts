@@ -329,10 +329,3 @@ export default apiHandler()
 
     res.status(201).json(formatAPIResponse({ listingId: listing.id }));
   });
-
-
-export const config = {
-  api: {
-    bodyParser: false,
-  }
-}
