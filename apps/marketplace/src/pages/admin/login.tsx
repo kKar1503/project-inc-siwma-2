@@ -30,7 +30,7 @@ const LoginForm = () => {
     if (!authResult?.ok) {
       setErrorMessage(true);
     } else {
-      return router.push('/');
+      return router.push('/admin');
     }
 
     return authResult;
@@ -151,7 +151,7 @@ const LoginForm = () => {
                   />
                 </Grid>
                 <Grid item>
-                  <Link href="/forgot-your-password">
+                  <Link href="/admin/forgot-your-password">
                     <Typography
                       sx={({ spacing, palette }) => ({
                         mt: spacing(1),
