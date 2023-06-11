@@ -9,6 +9,7 @@ import { useQuery } from 'react-query';
 import { useTheme } from '@mui/material';
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCats from '@/middlewares/fetchCat';
+import CatImgsPlaceholder from '@/components/marketplace/category/CarouselImgsPlaceholder';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -65,8 +66,9 @@ const CategoriesPage = () => {
             <Grid key={id} item xl={2} lg={3} md={4} sm={6} xs={12}>
               <Card>
                 <CardActionArea>
-                  <div style={{ display:'flex', justifyContent:'center' }}>
-                    <CardMedia
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    {image ? (
+                      <CardMedia
                       component="img"
                       sx={{
                         height: 'auto',
@@ -76,6 +78,10 @@ const CategoriesPage = () => {
                       }}
                       image={image}
                     />
+                    ) : (
+                      <CatImgsPlaceholder />
+                    )}
+                    
                   </div>
                   <CardContent>
                     <Typography
