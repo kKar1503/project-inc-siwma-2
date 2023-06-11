@@ -8,9 +8,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import ShareIcon from '@mui/icons-material/Share';
-import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
-import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
+import IosShareIcon from '@mui/icons-material/IosShare';
 // import ChatNow from '@/components/marketplace/listing/ChatNow';
 import SellBadge from '@/components/marketplace/listing/SellBadge';
 import BuyBadge from '@/components/marketplace/listing/BuyBadge';
@@ -303,7 +301,7 @@ const DetailedListingPage = () => {
                           p: spacing(0),
                         })}
                       >
-                        <BookmarkIcon fontSize="large" />
+                        <IosShareIcon fontSize="large" />
                       </IconButton>
                     </Grid>
                     <Grid item xs={4}>
