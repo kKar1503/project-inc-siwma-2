@@ -5,6 +5,10 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import ShareIcon from '@mui/icons-material/Share';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
 // import ChatNow from '@/components/marketplace/listing/ChatNow';
@@ -20,11 +24,13 @@ import Avatar from '@mui/material/Avatar';
 import Link from '@mui/material/Link';
 import { useResponsiveness } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import fetchCat from '@/middlewares/fetchCatNames';
 import fetchUsers from '@/middlewares/fetchUsers';
 import fetchReviews from '@/middlewares/fetchReviews';
 import fetchParams from '@/middlewares/fetchParamNames';
+import fetchUser from '@/middlewares/fetchUser';
+import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { DateTime } from 'luxon';
 import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
 import fetchChatList from '@/middlewares/fetchChatList';
@@ -65,7 +71,15 @@ const useGetReviewsQuery = (listingID: string) => {
 };
 
 const useGetUserQuery = () => {
-  const { data } = useQuery('user', async () => fetchUsers());
+  const { data } = useQuery('users', async () => fetchUsers());
+  return data;
+};
+
+const useGetCurrentUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+
   return data;
 };
 
@@ -98,6 +112,29 @@ const useCreateChatQuery = () => {
   return data;
 };
 
+const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[] | undefined) => {
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  console.log(bookmarkedListings);
+  const handleBookmarkListing = async () => {
+    await bookmarkListing(listingId);
+    setIsBookmarked((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    console.log('is this even running');
+    if (bookmarkedListings) {
+      const bookmarked = bookmarkedListings.includes(listingId);
+      console.log(bookmarked);
+      setIsBookmarked(bookmarked);
+    }
+  }, [bookmarkedListings, listingId]);
+
+  return {
+    isBookmarked,
+    handleBookmarkListing,
+  };
+};
+
 const DetailedListingPage = () => {
   const theme = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -113,10 +150,22 @@ const DetailedListingPage = () => {
   const cats = useGetCategoryNameQuery();
   const currentUser = useSession();
   const user = useGetUserQuery();
+  console.log(user);
   const param = useGetParamQuery();
-  const loggedUserUuid = currentUser?.data?.user.id as string;
+  const loggedUserUuid = currentUser.data?.user.id as string;
+  console.log(loggedUserUuid);
+  const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
+  console.log(loggedInUser);
+  const bookmarkedListings = loggedInUser?.bookmarks?.listings;
   const chatRooms = useChatListQuery(loggedUserUuid);
   const newRoom = useCreateChatQuery();
+  console.log(currentUser);
+  console.log(bookmarkedListings);
+  console.log(listingId);
+  const { isBookmarked, handleBookmarkListing } = useBookmarkListingQuery(
+    listingId,
+    bookmarkedListings
+  );
 
   const datetime = useMemo(
     () =>
@@ -255,10 +304,34 @@ const DetailedListingPage = () => {
                   <Grid container sx={{ direction: 'row' }}>
                     <Grid item xs={2} />
                     <Grid item xs={4}>
-                      <IosShareOutlinedIcon sx={{ fontSize: 30 }} />
+                      <IconButton
+                        aria-label="bookmark"
+                        sx={({ spacing }) => ({
+                          p: spacing(0),
+                        })}
+                      >
+                        <BookmarkIcon fontSize="large" />
+                      </IconButton>
                     </Grid>
                     <Grid item xs={4}>
-                      <BookmarkBorderOutlinedIcon sx={{ fontSize: 30 }} />
+                      <IconButton
+                        aria-label="bookmark"
+                        onClick={handleBookmarkListing}
+                        sx={({ spacing }) => ({
+                          p: spacing(0),
+                        })}
+                      >
+                        {isBookmarked ? (
+                          <BookmarkIcon
+                            fontSize="large"
+                            sx={({ palette }) => ({
+                              color: palette.warning[100],
+                            })}
+                          />
+                        ) : (
+                          <BookmarkBorderIcon fontSize="large" />
+                        )}
+                      </IconButton>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -483,7 +556,7 @@ const DetailedListingPage = () => {
                   </Button>
                 </Grid>
                 <Grid item xs={6} md={0.25} />
-                  {reviews?.map((individualReview) => (
+                {reviews?.map((individualReview) => (
                   <Box sx={({ spacing }) => ({ width: '100%', pt: spacing(3) })}>
                     <Grid container>
                       <Grid item xs={7} md={9}>
@@ -510,7 +583,13 @@ const DetailedListingPage = () => {
 
               {isSm && (
                 <Box sx={({ spacing }) => ({ pb: spacing(2) })}>
-                  <Button variant="contained" type="submit" size="large" onClick={checkChatRoom} fullWidth>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    size="large"
+                    onClick={checkChatRoom}
+                    fullWidth
+                  >
                     CHAT NOW
                   </Button>
                 </Box>
