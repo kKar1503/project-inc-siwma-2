@@ -12,3 +12,5 @@ packages/errors/index.js
 
 #macOS
 .DS_Store
+
+v8-compile-cache*
