@@ -7,6 +7,7 @@ import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
 import { ThemeComponent } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import Box from '@mui/material/Box';
 
 const queryClient = new QueryClient();
 
@@ -62,7 +63,11 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           allowNonAuthenticated={allowNonAuthenticated}
         >
           <QueryClientProvider client={queryClient}>
-            {getLayout(<Component {...pageProps} />)}
+            {getLayout(
+              <Box>
+                <Component {...pageProps} />
+              </Box>
+            )}
           </QueryClientProvider>
         </AuthenticationGuard>
       </SessionProvider>
