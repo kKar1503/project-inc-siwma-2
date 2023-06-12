@@ -10,35 +10,12 @@ import Link from 'next/link';
 import { StarsRating, useResponsiveness } from '@inc/ui';
 import { Review } from '@/utils/api/client/zod';
 
-// export type ReviewProps = {
-//   ownerId: number;
-//   noOfReviews: number;
-//   profilePic: string;
-//   createdAt: string;
-//   rating: number;
-//   username: string;
-//   companyName: string;
-//   body: string;
-//   buyer: boolean;
-// };
-
 export type ReviewMessageData = {
   data: Review;
 };
 
 const ReviewMessage = ({ data }: ReviewMessageData) => {
   // destructure data
-  // const {
-  //   ownerId,
-  //   noOfReviews,
-  //   profilePic,
-  //   createdAt,
-  //   rating,
-  //   username,
-  //   companyName,
-  //   body,
-  //   buyer,
-  // } = data;
 
   const datetime = useMemo(
     () => DateTime.fromISO(data.createdAt).toRelative({ locale: 'en-SG' }),

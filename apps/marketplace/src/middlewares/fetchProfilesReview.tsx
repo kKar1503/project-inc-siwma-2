@@ -5,7 +5,7 @@ const fetchReview = async (uuid: string) => {
   const response = await apiClient.get(`v1/users/${uuid}/reviews`);
   // parse data through zod to ensure data is correct
   // console.log(response);
-  const reviewData = listing.getAll.parse(response.data.data);
+  const reviewData = listing.getReviews.parse(response.data.data);
   return reviewData;
 };
 

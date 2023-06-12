@@ -13,7 +13,7 @@ import FilterChips from './FilterChips';
 const sortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
 
 export type ReviewsTabProps = {
-  allReviews: Review[];
+  allReviews: Review[] | null | undefined;
   userRating: number;
   totalReviews: number;
   filterReviews: (newData: string) => void;
@@ -112,7 +112,7 @@ const ReviewsTab = ({
       <Divider />
       {/* lower portion showing marketplace cards */}
       <Box>
-        {allReviews.map((Review) => (
+        {allReviews?.map((Review) => (
           <ReviewMessage data={Review} />
         ))}
       </Box>

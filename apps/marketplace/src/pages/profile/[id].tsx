@@ -2,7 +2,6 @@ import Head from 'next/head';
 import ProfileDetailCard, {
   ProfileDetailCardProps,
 } from '@/components/marketplace/profile/ProfileDetailCard';
-// import { ReviewProps } from '@/components/marketplace/profilePage/ReviewMessage';
 import ListingsTab from '@/components/marketplace/profilePage/ListingsTab';
 import ReviewsTab from '@/components/marketplace/profilePage/ReviewsTab';
 import TabPanel from '@/components/marketplace/profilePage/TabPanel';
@@ -13,15 +12,14 @@ import Box from '@mui/material/Box';
 import { useState, SyntheticEvent, useMemo } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import apiClient from '@/utils/api/client/apiClient';
 import { useQuery } from 'react-query';
-// import fetchUser from '@/middlewares/fetchUser';
-import users from '@/utils/api/client/zod/users';
+import fetchUser from '@/middlewares/fetchUser';
 import { useRouter } from 'next/router';
 import { Listing, Review } from '@/utils/api/client/zod';
-import fetchListings from '@/middlewares/fetchListings';
-import fetchReview from '@/middlewares/fetchReview';
+import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
+import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useResponsiveness } from '@inc/ui';
+import fetchProfileListingImages from '@/middlewares/fetchProfileListingImages';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: 60,
@@ -48,18 +46,6 @@ export type ProfilePageProps = {
   serverSideReviews: Review[];
 };
 
-// user profile page
-const fetchUser = async (uuid: string) => {
-  if (uuid) {
-    const response = await apiClient.get(`/v1/users/${uuid}`);
-    // parse data through zod to ensure data is correct
-    const parsedUser = users.getById.parse(response.data.data[0]);
-    return parsedUser;
-  }
-
-  return null;
-};
-
 const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userdata', async () => fetchUser(userUuid), {
     enabled: userUuid !== undefined,
@@ -69,15 +55,22 @@ const useGetUser = (userUuid: string) => {
 };
 
 const useGetListing = (userUuid: string) => {
-  const { data } = useQuery('listingdata', async () => fetchListings(userUuid), {
+  const { data } = useQuery('listingdata', async () => fetchProfilesListings(userUuid), {
     enabled: userUuid !== undefined,
   });
   // console.log(data);
   return data;
 };
 
+const useGetProfileListingImagesQuery = (listingID: string) => {
+  const { data } = useQuery('listingImages', async () => fetchProfileListingImages(listingID), {
+    enabled: listingID !== undefined,
+  });
+  return data;
+};
+
 const useGetReview = (userUuid: string) => {
-  const { data } = useQuery('reviewdata', async () => fetchReview(userUuid), {
+  const { data } = useQuery('reviewdata', async () => fetchProfilesReview(userUuid), {
     enabled: userUuid !== undefined,
   });
   // console.log(data);
@@ -90,6 +83,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
   const userListings = useGetListing(id);
+  const profileListingImages = useGetProfileListingImagesQuery(id);
   const userReviews = useGetReview(id);
   // console.log(userDetails);
 
@@ -244,7 +238,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
                 <ReviewsTab
-                  allReviews={reviews}
+                  allReviews={userReviews}
                   // rmb to add userDetails.rating and userDetails.reviews
                   userRating={2}
                   totalReviews={200}
