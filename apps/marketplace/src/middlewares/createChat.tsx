@@ -10,22 +10,4 @@ const createRoom = async () => {
   return newRoom;
 };
 
-// const checkForRoom = async (loggedUserUuid: string) => {
-//   const response = await apiClient.get(`v1/users/${loggedUserUuid}/chats`);
-//   // parse data through zod to ensure data is correct
-//   console.log(response.data.data);
-//   const parsedChatList = chat.getByUser.parse(response.data.data);
-
-//   for (let i = 0; i < parsedChatList.length; i++) {
-//     const data = parsedChatList[i];
-
-//     if (data.buyer.id === loggedUserUuid && data.seller.id === loggedUserUuid &&  &&) {
-//       ;
-//     } else {
-//       ;
-//     }
-//     console.log(data);
-//   }
-// };
-
 export default createRoom;
