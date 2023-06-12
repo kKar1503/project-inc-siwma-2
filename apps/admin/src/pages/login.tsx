@@ -30,7 +30,7 @@ const LoginForm = () => {
     if (!authResult?.ok) {
       setErrorMessage(true);
     } else {
-      return router.push('/admin');
+      return router.push('/'); 
     }
 
     return authResult;
@@ -44,7 +44,7 @@ const LoginForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/admin-bg.png" alt="logo" fill />
+        <Image src="/images/admin-bg.png" alt="login-bg" fill />
         <Container
           component="main"
           maxWidth="md"
