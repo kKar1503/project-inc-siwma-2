@@ -96,7 +96,6 @@ const SearchBar = ({ handleSearch }: SearchBarProps) => {
       if (SearchBarRef.current) {
         handleSearch(SearchBarRef.current.value);
       }
-      console.log(SearchBarRef.current?.value);
     }
   };
 

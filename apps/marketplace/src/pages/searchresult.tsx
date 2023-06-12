@@ -23,23 +23,6 @@ const useSearchListings = (matching: string, filter?: FilterOptions) => {
   return data;
 };
 
-const convertListing = (listing: Listing, uuid: string | undefined) => ({
-  productId: Number(listing.id),
-  img: listing.coverImage ? listing.coverImage : '',
-  profileImg: listing.owner.profilePic ? listing.owner.profilePic : '',
-  type: listing.type,
-  name: listing.name,
-  rating: listing.rating ? listing.rating : 0,
-  price: listing.price,
-  negotiable: listing.negotiable,
-  ownerId: listing.owner.id,
-  ownerFullName: listing.owner.name,
-  createdAt: listing.createdAt,
-  companyName: listing.owner.company.name,
-  isUnitPrice: listing.unitPrice,
-  isOwnProfile: listing.owner.id === uuid,
-});
-
 const Searchresult = () => {
   const router = useRouter();
   const { search } = router.query;
@@ -75,7 +58,7 @@ const Searchresult = () => {
           <Grid container display="flex" spacing={2}>
             {listingData.map((item: Listing) => (
               <Grid item xs={6} md={4} xl={3} key={item.id}>
-                <ProductListingItem data={convertListing(item, session?.user.id)} />
+                <ProductListingItem data={item} showBookmark />
               </Grid>
             ))}
           </Grid>

@@ -27,7 +27,7 @@ const searchListings = async (matching?: string, filter?: FilterOptions) => {
 
   const response = await apiClient.get(query);
 
-  const parsedListings = listings.getAll.parse(response.data.data);
+  const parsedListings = listings.getAll.parse(response.data.data[0].listings);
 
   return parsedListings;
 };
