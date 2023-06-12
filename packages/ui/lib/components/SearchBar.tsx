@@ -93,7 +93,7 @@ const SearchBar = ({ handleSearch }: SearchBarProps) => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
-      if (SearchBarRef.current) {
+      if (SearchBarRef.current && handleSearch) {
         handleSearch(SearchBarRef.current.value);
       }
     }
