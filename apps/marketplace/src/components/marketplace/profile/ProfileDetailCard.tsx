@@ -8,47 +8,111 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import { StarsRating } from '@inc/ui';
+import { StarsRating, useResponsiveness } from '@inc/ui';
+import { useTheme } from '@mui/material/styles';
+import { useEffect, useMemo, useState } from 'react';
+import fetchUser from '@/middlewares/fetchUser';
+import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
+import { useQuery } from 'react-query';
+import { useSession } from 'next-auth/react';
 
-export type ProfileDetailCardProps = {
-  username: string;
-  name: string;
-  email: string;
-  company: string;
-  profilePic: string;
-  mobileNumber: number;
-  telegramUsername: string;
-  bio: string;
-  rating: number;
-  reviews: number;
-  ownerId: number;
-};
+export type ProfileDetailCardProps =
+  | {
+      email: string;
+      id: string;
+      name: string;
+      enabled: boolean;
+      createdAt: string;
+      profilePic: string | null;
+      company: string;
+      mobileNumber: string;
+      whatsappNumber: string | null;
+      telegramUsername: string | null;
+      contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone';
+      bio: string | null;
+      comments?: string | null | undefined;
+    }
+  | null
+  | undefined;
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
 };
 
-const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
-  // destructure data
+const useGetUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
 
-  const {
-    username,
-    name,
-    email,
-    company,
-    profilePic,
-    mobileNumber,
-    telegramUsername,
-    bio,
-    rating,
-    reviews,
-    ownerId,
-  } = data;
+  return data;
+};
+
+const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | undefined) => {
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+
+  const handleBookmarkUser = async () => {
+    await bookmarkUser(userUuid);
+    setIsBookmarked((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (bookmarkedUsers) {
+      const bookmarked = bookmarkedUsers.includes(userUuid);
+      setIsBookmarked(bookmarked);
+    }
+  }, [bookmarkedUsers, userUuid]);
+
+  return {
+    isBookmarked,
+    handleBookmarkUser,
+  };
+};
+
+const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
+
+  const { spacing } = useTheme();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const styleProfileCard = useMemo(() => {
+    if (isSm || isMd) {
+      return {
+        width: '100%',
+        height: '100%',
+        mb: spacing(3),
+      };
+    }
+    if (isLg) {
+      return {
+        width: '25%',
+        height: '100%',
+        mb: spacing(0),
+      };
+    }
+    return {
+      width: '100%',
+      height: '100%',
+      mb: spacing(3),
+    };
+  }, [isSm, isMd, isLg]);
+
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
+  const currentUser = useGetUserQuery(loggedUserUuid);
+  const profileUserUuid = data?.id as string;
+  const bookmarkedUsers = currentUser?.bookmarks?.users;
+
+  const { isBookmarked, handleBookmarkUser } = useBookmarkUserQuery(
+    profileUserUuid,
+    bookmarkedUsers
+  );
 
   return (
-    <Card sx={{ width: '25%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={styleProfileCard}>
       <CardHeader
         titleTypographyProps={{
           fontSize: 16,
@@ -56,16 +120,37 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
         subheaderTypographyProps={{
           fontSize: 16,
         }}
+        action={
+          <IconButton
+            aria-label="bookmark"
+            onClick={handleBookmarkUser}
+            sx={({ spacing }) => ({
+              p: spacing(0),
+            })}
+          >
+            {isBookmarked ? (
+              <BookmarkIcon
+                fontSize="large"
+                sx={({ palette }) => ({
+                  color: palette.warning[100],
+                })}
+              />
+            ) : (
+              <BookmarkBorderIcon fontSize="large" />
+            )}
+          </IconButton>
+        }
         title="Your Profile"
         subheader="View your profile details here"
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{profilePic}</Avatar>
-        <Typography sx={{ fontWeight: 'bold' }}>{name}</Typography>
-        <Typography variant="body2">{company}</Typography>
-        <Typography>@{username}</Typography>
-        <Typography>{email}</Typography>
+        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
+        <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
+        <Typography variant="body2">{data?.company}</Typography>
+        {/* <Typography>@{username}</Typography> */}
+        <Typography>@{data?.name}</Typography>
+        <Typography>{data?.email}</Typography>
 
         <Box
           sx={({ spacing }) => ({
@@ -79,22 +164,22 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               mr: spacing(1),
             })}
           >
-            {rating.toFixed(1)}
+            {/* {rating.toFixed(1)} */}
           </Typography>
-          <StarsRating rating={rating} />
+          {/* <StarsRating rating={rating} /> */}
           <Typography
             sx={({ spacing }) => ({
               ml: spacing(1),
             })}
           >
-            ({reviews} {reviews === 1 ? ' Review' : ' Reviews'})
+            {/* ({reviews} {reviews === 1 ? ' Review' : ' Reviews'}) */}
           </Typography>
         </Box>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
-        <Typography>{bio}</Typography>
+        <Typography>{data?.bio}</Typography>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
@@ -119,7 +204,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               ml: spacing(1),
             })}
           >
-            {telegramUsername}
+            {data?.telegramUsername}
           </Typography>
         </Box>
         <Box
@@ -134,7 +219,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               borderRadius: spacing(2),
               p: '1px',
               color: palette.common.white,
-              backgroundColor: palette.secondary.main
+              backgroundColor: palette.secondary.main,
             })}
           />
           <Typography
@@ -142,7 +227,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               ml: spacing(1),
             })}
           >
-            +65 {mobileNumber}
+            +65 {data?.mobileNumber}
           </Typography>
         </Box>
       </CardContent>
@@ -150,7 +235,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
         <Box sx={{ width: '98%' }}>
           <Button
             component={Link}
-            href={`/profile/${ownerId}/edit-profile`}
+            href={`/profile/${data?.id}/edit-profile`}
             variant="contained"
             type="submit"
             sx={({ spacing }) => ({
