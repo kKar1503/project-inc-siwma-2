@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import DetailedListingCarousel from '@/components/marketplace/carousel/DetailedListingCarousel';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
@@ -7,7 +7,6 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
-// import ChatNow from '@/components/marketplace/listing/ChatNow';
 import SellBadge from '@/components/marketplace/listing/SellBadge';
 import BuyBadge from '@/components/marketplace/listing/BuyBadge';
 import fetchListing from '@/middlewares/fetchListing';
