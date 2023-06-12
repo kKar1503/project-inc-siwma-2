@@ -8,7 +8,6 @@ import InputLabel from '@mui/material/InputLabel';
 import FilledInput from '@mui/material/FilledInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMemo } from 'react';
 import useResponsiveness from '../hook/useResponsiveness';
 
@@ -44,7 +43,6 @@ const ModalInput = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-  const isMinWidth = useMediaQuery('(min-width:600px)');
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
@@ -172,7 +170,6 @@ const ModalInput = ({
                         marginRight: '16px',
                         width: 1 / 2,
                         marginTop: spacing(2),
-                        padding: isMinWidth ? '7px 20px' : '8px 4px',
                       })}
                       onClick={handleCancel}
                     >
@@ -188,7 +185,6 @@ const ModalInput = ({
                       bgcolor: buttonColor,
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: isMinWidth ? '7px 20px' : '8px 4px',
                     })}
                     onClick={() => setRightButtonState(true)}
                   >

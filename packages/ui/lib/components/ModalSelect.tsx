@@ -8,7 +8,6 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMemo } from 'react';
 import useResponsiveness from '../hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
@@ -47,7 +46,6 @@ const ModalSelect = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-  const isMinWidth = useMediaQuery('(min-width:600px)');
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography, shadows } = useTheme();
@@ -188,7 +186,6 @@ const ModalSelect = ({
                       marginRight: '16px',
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: isMinWidth ? '7px 20px' : '8px 4px',
                     })}
                     onClick={handleCancel}
                   >
@@ -202,7 +199,6 @@ const ModalSelect = ({
                       bgcolor: buttonColor,
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: isMinWidth ? '7px 20px' : '8px 4px',
                     })}
                     onClick={() => setRightButtonState(true)}
                   >

@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import useResponsiveness from '../hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 
@@ -42,7 +41,6 @@ const Modal = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-  const isMinWidth = useMediaQuery('(min-width:600px)');
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography, shadows } = useTheme();
@@ -182,7 +180,6 @@ const Modal = ({
                     marginRight: '16px',
                     width: 1 / 3,
                     marginTop: spacing(2),
-                    padding: isMinWidth ? '7px 20px' : '8px 4px',
                   }}
                   onClick={() => setLeftButtonState(true)}
                 >
@@ -197,7 +194,6 @@ const Modal = ({
                   bgcolor: buttonColor,
                   width: 1 / 3,
                   marginTop: spacing(2),
-                  padding: isMinWidth ? '7px 20px' : '8px 4px',
                 }}
                 onClick={() => setRightButtonState(true)}
               >
