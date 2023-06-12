@@ -131,7 +131,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       images: listing.listingImages,
       coverImage: listing.listingImages[0],
     };
-    res.status(204).json(formatAPIResponse(response));
+    res.status(200).json(formatAPIResponse(response));
     return;
   }
 
