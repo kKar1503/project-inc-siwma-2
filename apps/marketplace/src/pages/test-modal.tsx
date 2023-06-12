@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import ReportModal from '@/components/modal/ReportModal';
 import MakeOfferModal from '@/components/modal/MakeOfferModal';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
-
+import AdvertisementModal from '@/components/marketplace/listing/AdvertisementModal';
 
 const TestModal = () => {
   const report = [
@@ -28,6 +28,10 @@ const TestModal = () => {
   const [openLeave, setOpenLeave] = useState(false);
   const [inputValue, setInputValue] = useState<number>(0);
   const [rating, setRating] = useState<number | null >(1);
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClose = (val: boolean) => {
+    setIsOpen(false);
+  };
 
   return (
     <>
@@ -116,6 +120,15 @@ const TestModal = () => {
       />
       <Button onClick={() => setOpenLeave(true)}> On Leave Modal</Button>
       <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
+      <Button onClick={() => setIsOpen(true)}> Modal</Button>
+      <AdvertisementModal
+        id={1}
+        companyName="Shi lin Fang Metal Comapany 1"
+        description="Are you looking for high-quality metalwork products that are durable and made to last? Look no further than SHI LI FANG IRONWORKS PTE. Our team of skilled craftsmen and engineers use only the best "
+        onClose={handleClose}
+        open={isOpen}
+        url="https://www.google.com"
+      />
     </>
   );
 };
