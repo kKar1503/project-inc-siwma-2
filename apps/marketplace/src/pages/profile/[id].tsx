@@ -19,6 +19,7 @@ import { Listing, Review } from '@/utils/api/client/zod';
 import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
 import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useResponsiveness } from '@inc/ui';
+import fetchProfileListingImages from '@/middlewares/fetchProfileListingImages';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: 60,
@@ -61,6 +62,13 @@ const useGetListing = (userUuid: string) => {
   return data;
 };
 
+const useGetProfileListingImagesQuery = (listingID: string) => {
+  const { data } = useQuery('listingImages', async () => fetchProfileListingImages(listingID), {
+    enabled: listingID !== undefined,
+  });
+  return data;
+};
+
 const useGetReview = (userUuid: string) => {
   const { data } = useQuery('reviewdata', async () => fetchProfilesReview(userUuid), {
     enabled: userUuid !== undefined,
@@ -75,6 +83,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
   const userListings = useGetListing(id);
+  const profileListingImages = useGetProfileListingImagesQuery(id);
   const userReviews = useGetReview(id);
   // console.log(userDetails);
   console.log(userListings);
