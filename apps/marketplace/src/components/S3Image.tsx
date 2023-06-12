@@ -19,17 +19,11 @@ const STATES = {
 
 const useImageQuery = (imgSrc: string) => {
   const { data } = useQuery(['image', imgSrc], async () => {
-    const response = await fetch(imgSrc, {
-      method: 'GET',
-      headers: {
-        'Access-Control-Request-Headers': 'x-amz-meta-original-name',
-      },
-    });
-    console.log(response);
+    const response = await fetch(imgSrc);
     return {
       blob: await response.blob(),
-      originalName: response.headers.get('x-amz-meta-original-name'),
-      headers: response.headers,
+      // originalName: response.headers.get('x-amz-meta-original-name'),
+      // headers: response.headers,
     };
   }, {
     enabled: imgSrc !== undefined,
@@ -47,7 +41,6 @@ const S3Image = ({
 
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [state, setState] = useState<number>(STATES.NOT_STARTED);
-  const [headers, setHeaders] = useState<boolean>(true);
 
   const response = useImageQuery(`https://${bucketName}.s3.${region}.amazonaws.com/${src}`);
 
@@ -57,10 +50,8 @@ const S3Image = ({
       setState(STATES.LOADING);
       return;
     }
-    console.log(response);
     try {
       const url = URL.createObjectURL(response.blob);
-      console.log(response.headers);
       setImageUrl(url);
       setState(STATES.LOADED);
     } catch (e) {
