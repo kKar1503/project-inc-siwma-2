@@ -39,7 +39,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 interface SearchBarProps {
-  handleSearch: (search: string) => void;
+  handleSearch?: (search: string) => void;
 }
 
 const SearchBar = ({ handleSearch }: SearchBarProps) => {
