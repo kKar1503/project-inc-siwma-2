@@ -175,8 +175,8 @@ const Marketplace = () => {
           loadingComponent={<CircularProgress />}
           parent={Grid}
           endMessage={
-            <Typography variant="h6" textAlign="center">
-              No more listings
+            <Typography variant="h6" textAlign="center" sx={{marginTop:'2em'}}>
+              No more listings available
             </Typography>
           }
           parentProps={{
@@ -196,11 +196,6 @@ const Marketplace = () => {
             md: 3.5,
             sm: 5,
             xs: 12,
-          }}
-          infiniteScrollSx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
           }}
         >
           {listings?.map((item) => (

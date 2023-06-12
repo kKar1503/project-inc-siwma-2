@@ -7,7 +7,7 @@ const fetchListings = async (lastListingId: number) => {
   const listingsArr: Array<ProductListingItemProps> = [];
 
   // parse data through zod to ensure that data is correct
-  const listingsData = listings.getAll.parse(response.data.data);
+  const listingsData = listings.getAll.parse(response.data.data[0].listings);
 
   listingsData.forEach((listing) => {
     const newListingsObj = {
