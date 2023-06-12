@@ -9,3 +9,5 @@ tmp/**/*
 
 #macOS
 .DS_Store
+
+v8-compile-cache*

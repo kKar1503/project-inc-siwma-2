@@ -8,13 +8,23 @@ const email = z.string();
 const company = z.string();
 const createdAt = z.string().datetime();
 const enabled = z.boolean();
-const profilePic = z.string().url().nullable();
+const profilePic = z.string().nullable();
 const comments = z.string().nullable().optional(); // Only returned for admins
 const mobileNumber = z.string();
 const whatsappNumber = z.string().nullable();
 const telegramUsername = z.string().nullable();
 const contactMethod = z.nativeEnum(UserContacts);
 const bio = z.string().nullable();
+const bookmarks = z
+  .object({
+    users: z.array(z.string()),
+    companies: z.array(z.string()),
+    listings: z.array(z.string()),
+  })
+  .optional();
+const bookmarkUser = z.object({
+  bookmarked: z.boolean(),
+});
 
 const user = z.object({
   id,
@@ -30,7 +40,10 @@ const user = z.object({
   telegramUsername,
   contactMethod,
   bio,
+  bookmarks,
 });
+
+export type UserResponseBody = z.infer<typeof user>;
 
 // Request Schemas (Not Implemented)
 // export const updateUser = user.partial(); // .partial() means that all fields are optional
@@ -57,5 +70,6 @@ export default {
   update: updateUser,
   delete: deleteUser,
   toggle: toggleUser,
+  bookmark: bookmarkUser,
   getListings: listingSchemas.getAll,
 };
