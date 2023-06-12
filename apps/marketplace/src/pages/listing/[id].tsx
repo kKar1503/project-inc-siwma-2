@@ -12,13 +12,12 @@ import SellBadge from '@/components/marketplace/listing/SellBadge';
 import BuyBadge from '@/components/marketplace/listing/BuyBadge';
 import fetchListing from '@/middlewares/fetchListing';
 import { useQuery } from 'react-query';
-import StarRating from '@/components/marketplace/profilePage/StarRatings';
 import CardContent from '@mui/material/CardContent';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Link from '@mui/material/Link';
-import { useResponsiveness } from '@inc/ui';
+import { StarsRating, useResponsiveness } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo } from 'react';
 import fetchCat from '@/middlewares/fetchCatNames';
@@ -497,7 +496,7 @@ const DetailedListingPage = () => {
                         {individualReview?.review}
                       </Grid>
                       <Grid item xs={5} md={3}>
-                        <StarRating rating={individualReview?.rating} />
+                        <StarsRating rating={individualReview?.rating} />
                       </Grid>
                     </Grid>
                     <Divider
