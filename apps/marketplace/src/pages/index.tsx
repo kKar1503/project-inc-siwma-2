@@ -3,6 +3,7 @@ import { Button } from '@inc/ui';
 import type { Person } from '@inc/types';
 import NavBar from '@/components/marketplace/navbar/NavBar';
 import { signIn, useSession } from 'next-auth/react';
+import S3Image from '@/components/S3Image';
 
 // eslint-disable-next-line no-unused-vars
 const p: Person = {
@@ -26,8 +27,9 @@ const Home = () => {
         <p>Hello World</p>
         Not signed in <br />
         <button onClick={() => signIn()}>Sign in</button>
+        <S3Image src="dcf658ac4b90e40a7e8c4cee75da2e17ce03c47a5058b867c3d65ac0adea3a41.gif" alt="randomImage"/>
       </main>
-      
+
     </>
   );
 };
