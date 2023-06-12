@@ -8,7 +8,9 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useMemo } from 'react';
+import useResponsiveness from '../hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
 
 export type ComponentProps = {
   open: boolean;
@@ -44,7 +46,50 @@ const ModalSelect = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-  const isMinWidth = useMediaQuery('(min-width:600px)');
+
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, palette, typography, shadows } = useTheme();
+
+  const modalStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        modalWidth: {
+          width: '80%',
+        },
+        buttonTxt: {
+          fontSize: '0.9rem',
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        modalWidth: {
+          width: '45%',
+        },
+        buttonTxt: {
+          fontSize: '1rem',
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        modalWidth: {
+          width: '35%',
+        },
+        buttonTxt: {
+          fontSize: '1rem',
+        },
+      };
+    }
+    return {
+      modalWidth: {
+        width: '50%',
+      },
+      buttonTxt: {
+        fontSize: '1rem',
+      },
+    };
+  }, [isSm, isMd, isLg]);
 
   // on cancel, clear select value and close modal
   const handleCancel = () => {
@@ -74,12 +119,12 @@ const ModalSelect = ({
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: '25%',
               borderRadius: 3,
               padding: spacing(2),
               position: 'absolute',
               boxShadow: shadows[3],
               backgroundColor: palette.common.white,
+              ...modalStyles?.modalWidth,
             })}
           >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -141,13 +186,10 @@ const ModalSelect = ({
                       marginRight: '16px',
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: isMinWidth ? '7px 20px' : '2px 4px',
                     })}
                     onClick={handleCancel}
                   >
-                    <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
-                      {leftButtonText}
-                    </Typography>
+                    <Typography sx={modalStyles?.buttonTxt}>{leftButtonText}</Typography>
                   </Button>
 
                   {/* Right Button Text */}
@@ -157,15 +199,14 @@ const ModalSelect = ({
                       bgcolor: buttonColor,
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: isMinWidth ? '7px 20px' : '2px 4px',
                     })}
                     onClick={() => setRightButtonState(true)}
                   >
                     <Typography
-                      sx={({ palette }) => ({
-                        fontSize: { xs: 'overline', sm: 'subtitle1' },
+                      sx={{
                         color: palette.common.white,
-                      })}
+                        ...modalStyles?.buttonTxt,
+                      }}
                     >
                       {rightButtonText}
                     </Typography>
