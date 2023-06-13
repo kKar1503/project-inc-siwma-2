@@ -4,7 +4,6 @@ import { useQuery } from 'react-query';
 import fetchCategories from '@/middlewares/fetchCategories';
 import useParameter from '@/components/marketplace/createListing/useParameter';
 
-
 const useGetCategoriesQuery = () => {
   const { data } = useQuery('categories', () => fetchCategories());
 
@@ -17,10 +16,14 @@ const useCategory = () => {
 
   const [categoryError, setCategoryError] = useState<string>('');
 
-  const categoryForm = categoriesData && <CategoryForm
-    setCategory={setCategory}
-    data={categoriesData}
-    error={categoryError} />;
+  const categoryForm = categoriesData && (
+    <CategoryForm
+      setCategory={setCategory}
+      data={categoriesData}
+      error={categoryError}
+      value={category}
+    />
+  );
 
   const resetCategoryErrors = () => {
     setCategoryError('');
@@ -41,9 +44,10 @@ const useCategory = () => {
     categoryData,
     categoryValidation,
     resetCategoryErrors,
-    parameters:useParameter(category),
+    parameters: useParameter(category),
+    setCategory,
+    categoriesData,
   };
-
 };
 
 export default useCategory;
