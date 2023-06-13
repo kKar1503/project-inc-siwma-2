@@ -7,35 +7,62 @@ import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
 
 const menuItems = [
-  { name: 'Overview', link: '/overview' },
-  { name: 'Data Analytics', link: '/data-analytics' },
+  { name: 'Overview', link: '/overview' , logo: '/images/favicons/overview-icon.png' },
+  { name: 'Data Analytics', link: '/data-analytics', logo: '/images/favicons/data-analytics-icon.png' },
   {
     name: 'Advertisement',
     link: '/advertisement',
+    logo: '/images/favicons/advertisment-icon.png',
     dropdown: [
-      { name: 'Subitem 1', link: '/subitem-1' },
-      { name: 'Subitem 2', link: '/subitem-2' },
+      {
+        name: 'Advertisement Dashboard',
+        link: '/advertisement/dashboard',
+        logo: '/images/favicons/subitem1-icon.png',
+      },
+      {
+        name: 'Advertisement Upload',
+        link: '/advertisement/upload',
+        logo: '/images/favicons/subitem2-icon.png',
+      },
     ],
   },
   {
     name: 'Category Management',
     link: '/categoryManagement',
+    logo: '/images/favicons/category-management-icon.png',
     dropdown: [
-      { name: 'Category', link: '/categoryManagement/category' },
-      { name: 'Parameters', link: '/categoryManagement/parameters' },
+      {
+        name: 'Category',
+        link: '/categoryManagement/category',
+        logo: '/images/favicons/category-icon.png',
+      },
+      {
+        name: 'Parameters',
+        link: '/categoryManagement/parameters',
+        logo: '/images/favicons/parameters-icon.png',
+      },
     ],
   },
   {
     name: 'User Management',
     link: '/user-management',
+    logo: '/images/favicons/user-management-icon.png',
     dropdown: [
-      { name: 'Subitem 1', link: '/subitem-1' },
-      { name: 'Subitem 2', link: '/subitem-2' },
+      {
+        name: 'Subitem 1',
+        link: '/subitem-1',
+        logo: '/images/favicons/subitem1-icon.png',
+      },
+      {
+        name: 'Subitem 2',
+        link: '/subitem-2',
+        logo: '/images/favicons/subitem2-icon.png',
+      },
     ],
   },
 ];
 
-const AdminNavBar = () => {
+const AdminSideBar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const router = useRouter();
 
@@ -71,8 +98,22 @@ const AdminNavBar = () => {
       }}
     >
       <div>
-        <div>
-          <Image src="/images/favicons/SIWMA-icon.png" alt="Company Logo" width={50} height={50} />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            margin: '2em 0',
+          }}
+        >
+          <div style={{ marginBottom: '1em' }}>
+            <Image
+              src="/images/favicons/SIWMA-icon.png"
+              alt="Company Logo"
+              width={100}
+              height={70}
+            />
+          </div>
         </div>
         <h2>General</h2>
         <Divider />
@@ -84,8 +125,13 @@ const AdminNavBar = () => {
                 onClick={() => handleClick(item.name)}
                 style={{
                   backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
                 }}
               >
+                <div style={{ marginRight: '1em' }}>
+                  {item.logo && <Image src={item.logo} alt="Logo" width={24} height={24} />}
+                </div>
                 <Link href={item.link} passHref>
                   <ListItemText
                     primary={item.name}
@@ -115,8 +161,15 @@ const AdminNavBar = () => {
                     style={{
                       backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
                       paddingLeft: '2em',
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
                   >
+                    <div style={{ marginRight: '1em' }}>
+                      {subitem.logo && (
+                        <Image src={subitem.logo} alt="Logo" width={24} height={24} />
+                      )}
+                    </div>
                     <Link href={subitem.link} passHref>
                       <ListItemText
                         primary={subitem.name}
@@ -138,4 +191,4 @@ const AdminNavBar = () => {
   );
 };
 
-export default AdminNavBar;
+export default AdminSideBar;
