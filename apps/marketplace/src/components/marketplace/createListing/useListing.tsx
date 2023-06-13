@@ -18,6 +18,11 @@ const useListing = () => {
 
   const listingForm = (
     <ListingForm
+      title={title}
+      price={price}
+      negotiable={negotiable}
+      unitPrice={unitPrice}
+      description={description}
       setTitle={setTitle}
       setPrice={setPrice}
       setNegotiable={setNegotiable}
@@ -82,6 +87,11 @@ const useListing = () => {
     listingValidation,
     listingData,
     resetListingErrors,
+    setTitle,
+    setPrice,
+    setNegotiable,
+    setUnitPrice,
+    setDescription,
   };
 };
 
