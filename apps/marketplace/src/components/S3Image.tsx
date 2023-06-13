@@ -10,20 +10,13 @@ const bucketName = 'imagebuckettesting';
 // const bucketName = process.env.AWS_BUCKET as string || 'siwma-marketplace';
 const region = process.env.AWS_REGION as string || 'ap-southeast-1';
 
-const STATES = {
-  NOT_STARTED: 0,
-  LOADING: 1,
-  LOADED: 2,
-  FAILED: 3,
-};
-
 const useImageQuery = (imgSrc: string) => {
   const { data } = useQuery(['image', imgSrc], async () => {
     const response = await fetch(imgSrc);
     return {
-      blob: await response.blob(),
-      // originalName: response.headers.get('x-amz-meta-original-name'),
-      // headers: response.headers,
+      blob: await response.blob(),                                      // image blob
+      originalName: response.headers.get('x-amz-meta-original-name'),   // null
+      headers: response.headers,                                        // {}
     };
   }, {
     enabled: imgSrc !== undefined,
@@ -40,37 +33,22 @@ const S3Image = ({
   // fetch the image from S3 with headers
 
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-  const [state, setState] = useState<number>(STATES.NOT_STARTED);
 
   const response = useImageQuery(`https://${bucketName}.s3.${region}.amazonaws.com/${src}`);
 
 
   useEffect(() => {
-    if (response === undefined) {
-      setState(STATES.LOADING);
-      return;
-    }
+    if (response === undefined) return;
     try {
       const url = URL.createObjectURL(response.blob);
       setImageUrl(url);
-      setState(STATES.LOADED);
     } catch (e) {
-      setState(STATES.FAILED);
+      // error
     }
   }, [response]);
 
-  switch (state) {
-    case STATES.NOT_STARTED:
-      return <p>...</p>;
-    case STATES.LOADING:
-      return <p>Loading...</p>;
-    case STATES.LOADED:
-      return <img src={imageUrl} alt={alt} {...others} />;
-    case STATES.FAILED:
-      return <p>Failed to load image</p>;
-    default:
-      return <p>Unexpected state</p>;
-  }
+
+  return <img src={imageUrl} alt={alt} {...others} />;
 };
 
 export default S3Image;
