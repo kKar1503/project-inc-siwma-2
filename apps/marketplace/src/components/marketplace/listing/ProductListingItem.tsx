@@ -68,6 +68,8 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
     <Card
       sx={{
         width: 288,
+        ml: 'auto',
+        mr: 'auto',
         height: '100%',
         border: `1px solid ${theme.palette.grey[400]}`,
         transition: 'transform .2s',

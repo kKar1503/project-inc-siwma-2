@@ -24,8 +24,14 @@ import AdvertisementsPlaceholder from '@/components/marketplace/carousel/Adverti
 import { useTheme } from '@mui/material';
 import zIndex from '@mui/material/styles/zIndex';
 
+// changed all to not refetch on window refocus or reconnect
+// this is to prevent constantly making requests
+// or updating data that is not supposed to be updated
 const useGetCategoriesQuery = () => {
-  let { data } = useQuery('categories', async () => fetchCategories());
+  let { data } = useQuery('categories', async () => fetchCategories(), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   data = data?.slice(0, 6);
 
@@ -33,13 +39,19 @@ const useGetCategoriesQuery = () => {
 };
 
 const useGetAdvertisementsQuery = (permissions: number | undefined) => {
-  const { data } = useQuery('advertisements', async () => fetchAdvertisements(permissions!));
+  const { data } = useQuery('advertisements', async () => fetchAdvertisements(permissions!), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   return data;
 };
 
 const useGetPopularListingsQuery = () => {
-  const { data } = useQuery('popular', async () => fetchPopularListings());
+  const { data } = useQuery('popular', async () => fetchPopularListings(), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   return data;
 };
@@ -86,7 +98,7 @@ const Marketplace = () => {
       return {
         switchTxt: {
           fontSize: typography.h6,
-          zIndex: 99
+          zIndex: 99,
         },
       };
     }
@@ -96,7 +108,7 @@ const Marketplace = () => {
         switchTxt: {
           fontSize: typography.h5,
           fontWeight: 500,
-          zIndex: 99
+          zIndex: 99,
         },
       };
     }
@@ -105,7 +117,7 @@ const Marketplace = () => {
       return {
         switchTxt: {
           fontSize: typography.h4,
-          zIndex: 99
+          zIndex: 99,
         },
       };
     }
@@ -167,41 +179,40 @@ const Marketplace = () => {
           <Typography sx={headerStyles?.switchTxt}>Recommended</Typography>
         </Box>
       </Box>
-      <Box marginTop="2em">
-        <InfiniteScroll
-          onLoadMore={refetch}
-          loading={isLoading}
-          reachedMaxItems={maxItems}
-          loadingComponent={<CircularProgress />}
-          parent={Grid}
-          endMessage={
-            <Typography variant="h6" textAlign="center" sx={{marginTop:'2em'}}>
-              No more listings available
-            </Typography>
-          }
-          parentProps={{
-            container: true,
-            spacing: 2,
-            gap: 2,
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-          child={Grid}
-          childProps={{
-            item: true,
-            maxWidth: 'fit-content',
-            width: 'fit-content',
-            xl: 2,
-            lg: 2.5,
-            md: 3.5,
-            sm: 5,
-            xs: 12,
-          }}
-        >
-          {listings?.map((item) => (
-            <ProductListingItem data={item} key={item.productId} />
-          ))}
-        </InfiniteScroll>
+      <Box marginTop="2em" display="flex" flexDirection="column" justifyContent="center">
+        <Box marginX="2rem">
+          <InfiniteScroll
+            onLoadMore={refetch}
+            loading={isLoading}
+            reachedMaxItems={maxItems}
+            loadingComponent={<CircularProgress />}
+            parent={Grid}
+            endMessage={
+              <Typography variant="h6" textAlign="center" sx={{ marginTop: '2em' }}>
+                No more listings available
+              </Typography>
+            }
+            parentProps={{
+              container: true,
+              display: 'flex',
+              gap: 2,
+              justifyContent: 'space-evenly',
+            }}
+            child={Grid}
+            childProps={{
+              item: true,
+              xl: 2,
+              lg: 2.5,
+              md: 3.5,
+              sm: 5,
+              xs: 12,
+            }}
+          >
+            {listings?.map((item) => (
+              <ProductListingItem data={item} key={item.productId} />
+            ))}
+          </InfiniteScroll>
+        </Box>
       </Box>
     </>
   );
