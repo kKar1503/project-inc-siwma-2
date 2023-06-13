@@ -1,0 +1,23 @@
+{
+  "name": "@inc/api",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "pnpx rimraf dist && tsc",
+    "dev": "pnpx rimraf dist && tsc -w"
+  },
+  "dependencies": {
+    "@inc/db": "workspace:*",
+    "@inc/errors": "workspace:*",
+    "@inc/s3-simplified": "workspace:*",
+    "@inc/send-in-blue": "workspace:*",
+    "@inc/types": "workspace:*",
+    "@types/formidable": "2.0.6",
+    "formidable": "2.1.1",
+    "next": "13.2.4",
+    "next-auth": "^4.20.1",
+    "next-connect": "^0.13.0",
+    "zod": "3.21.4"
+  }
+}

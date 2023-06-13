@@ -18,8 +18,8 @@ import {
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import { ZodError } from 'zod';
-import { Prisma } from '@prisma/client';
-import { APIHandlerOptions, APIRequestType } from '@/types/api-types';
+import { Prisma } from '@inc/db';
+import { APIHandlerOptions, APIRequestType } from '@inc/types/api';
 import { S3Error } from '@inc/s3-simplified';
 import { apiGuardMiddleware } from './middlewares/apiGuardMiddleware';
 import jwtMiddleware from './middlewares/jwtMiddleware';

@@ -1,1 +1,2 @@
-export * from './SomeType';
+export * from './api-types';
+export * from './next-auth';
