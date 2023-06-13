@@ -12,11 +12,14 @@ const region = process.env.AWS_REGION as string || 'ap-southeast-1';
 
 const useImageQuery = (imgSrc: string) => {
   const { data } = useQuery(['image', imgSrc], async () => {
-    const response = await fetch(imgSrc);
+    const response = await fetch(imgSrc, {
+      headers: {
+        'Access-Control-Request-Headers': '*',
+      },
+    });
     return {
-      blob: await response.blob(),                                      // image blob
-      originalName: response.headers.get('x-amz-meta-original-name'),   // null
-      headers: response.headers,                                        // {}
+      blob: await response.blob(),
+      originalName: response.headers.get('x-amz-meta-original-name'),
     };
   }, {
     enabled: imgSrc !== undefined,
@@ -32,7 +35,7 @@ const S3Image = ({
 
   // fetch the image from S3 with headers
 
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const [image, setImage] = useState<{url: string,name:string } | undefined>(undefined);
 
   const response = useImageQuery(`https://${bucketName}.s3.${region}.amazonaws.com/${src}`);
 
@@ -40,15 +43,24 @@ const S3Image = ({
   useEffect(() => {
     if (response === undefined) return;
     try {
-      const url = URL.createObjectURL(response.blob);
-      setImageUrl(url);
+      console.log(response);
+      const name = response.originalName || alt;
+
+      const renamedFile = new File([response.blob], name, { type: response.blob.type });
+      const url = URL.createObjectURL(renamedFile);
+      URL.createObjectURL(renamedFile);
+
+      setImage({
+        url,
+        name,
+      });
     } catch (e) {
       // error
     }
   }, [response]);
 
 
-  return <img src={imageUrl} alt={alt} {...others} />;
+  return <a href={image?.url} download={image?.name}><img src={image?.url} alt={alt} {...others} /></a>;
 };
 
 export default S3Image;
