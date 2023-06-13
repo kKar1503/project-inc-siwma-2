@@ -1,6 +1,6 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { userSchema } from '@/utils/api/server/zod';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
+import { userSchema } from '@inc/api/api/server/zod';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 

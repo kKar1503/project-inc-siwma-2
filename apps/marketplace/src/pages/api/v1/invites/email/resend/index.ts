@@ -1,4 +1,4 @@
-import { apiHandler } from '@/utils/api';
+import { apiHandler } from '@inc/api/api';
 import PrismaClient from '@inc/db';
 import {
   NotFoundError,
@@ -12,7 +12,7 @@ import {
   BulkInviteEmailRequestBody,
 } from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
-import { inviteSchema } from '@/utils/api/server/zod';
+import { inviteSchema } from '@inc/api/api/server/zod';
 import bcrypt from 'bcrypt';
 
 async function getInvite(email: string) {

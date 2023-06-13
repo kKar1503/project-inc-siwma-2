@@ -4,11 +4,11 @@ import {
   formatAPIResponse,
   handleBookmarks,
   parseToNumber,
-} from '@/utils/api';
+} from '@inc/api/api';
 import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
 import { ParamError } from '@inc/errors';
-import { listingSchema } from '@/utils/api/server/zod';
-import { ListingResponseBody } from '@/utils/api/client/zod';
+import { listingSchema } from '@inc/api/api/server/zod';
+import { ListingResponseBody } from '@inc/api/api/client/zod';
 
 export type ListingWithParameters = Listing & {
   listingsParametersValues: Array<{
@@ -178,17 +178,17 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-            some: {
-              parameterId: queryParams.params.paramId,
-              value: queryParams.params.value,
-            },
-          }
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
           : undefined,
       },
     });
@@ -204,17 +204,17 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-            some: {
-              parameterId: queryParams.params.paramId,
-              value: queryParams.params.value,
-            },
-          }
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
           : undefined,
       },
       orderBy,
@@ -309,15 +309,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {

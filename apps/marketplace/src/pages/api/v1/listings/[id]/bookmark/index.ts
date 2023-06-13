@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError } from '@inc/errors';
 import { parseListingId } from '../..';

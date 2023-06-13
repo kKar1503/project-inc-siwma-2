@@ -1,5 +1,5 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { userSchema } from '@/utils/api/server/zod';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
+import { userSchema } from '@inc/api/api/server/zod';
 import client from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 

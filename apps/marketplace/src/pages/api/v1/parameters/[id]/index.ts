@@ -1,7 +1,7 @@
-import { apiHandler } from '@/utils/api';
+import { apiHandler } from '@inc/api/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
-import { paramSchema } from '@/utils/api/server/zod';
+import { paramSchema } from '@inc/api/api/server/zod';
 import { formatParamResponse, validateOptions } from '..';
 
 // -- Functions --//

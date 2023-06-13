@@ -1,10 +1,10 @@
 import { NextApiResponse } from 'next';
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import PrismaClient, { ListingsParametersValue } from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
+import { listingSchema } from '@inc/api/api/server/zod';
+import { ListingParameter } from '@inc/api/api/client/zod';
 import { APIRequestType } from '@/types/api-types';
-import { listingSchema } from '@/utils/api/server/zod';
-import { ListingParameter } from '@/utils/api/client/zod';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
 

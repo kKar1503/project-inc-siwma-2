@@ -1,8 +1,8 @@
 import { NotFoundError, ParamError } from '@inc/errors';
-import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
+import { apiHandler, parseToNumber, formatAPIResponse } from '@inc/api/api';
 import PrismaClient from '@inc/db';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { CompanyResponseBody } from '@/utils/api/client/zod';
+import { CompanyResponseBody } from '@inc/api/api/client/zod';
 
 export default apiHandler({ allowAdminsOnly: true }).patch(
   async (req: NextApiRequest, res: NextApiResponse) => {

@@ -16,6 +16,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@inc/api": "workspace:*",
     "@inc/db": "workspace:*",
     "@inc/errors": "workspace:*",
     "@inc/s3-simplified": "workspace:*",

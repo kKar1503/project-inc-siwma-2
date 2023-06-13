@@ -1,5 +1,5 @@
-import apiClient from '@/utils/api/client/apiClient';
-import chat, { ChatRoom } from '@/utils/api/client/zod/chat';
+import { apiClient } from '@inc/api';
+import chat, { ChatRoom } from '@inc/api/api/client/zod/chat';
 
 // create a type that extends from the chat type and accepts the category property
 // type ChatList = typeof chat.getByUser['_output'] & { category: 'Buying' | 'Selling' };

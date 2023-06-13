@@ -1,5 +1,5 @@
-import apiClient from '@/utils/api/client/apiClient';
-import chat from '@/utils/api/client/zod/chat';
+import apiClient from '@inc/api/api/client/apiClient';
+import chat from '@inc/api/api/client/zod/chat';
 
 const fetchRoomMessages = async (roomUuid: string) => {
   const response = await apiClient.get(`v1/chat/${roomUuid}/messages`);

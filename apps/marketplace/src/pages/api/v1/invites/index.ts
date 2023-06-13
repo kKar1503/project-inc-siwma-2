@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@inc/api/api';
 import client from '@inc/db';
 import bcrypt from 'bcrypt';
 import {
@@ -7,14 +7,14 @@ import {
   NotFoundError,
   EmailTemplateNotFoundError,
 } from '@inc/errors';
-import { validateEmail, validateName } from '@/utils/api/validate';
+import { validateEmail, validateName } from '@inc/api/api/validate';
 import sendEmails from '@inc/send-in-blue/sendEmails';
 import {
   getContentFor,
   BulkInviteEmailRequestBody,
   EmailTemplate,
 } from '@inc/send-in-blue/templates';
-import { inviteSchema } from '@/utils/api/server/zod';
+import { inviteSchema } from '@inc/api/api/server/zod';
 
 export default apiHandler({ allowAdminsOnly: true })
   .post(async (req, res) => {

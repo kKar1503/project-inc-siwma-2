@@ -316,6 +316,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.10.6
         version: 11.10.6(@emotion/react@11.10.6)(@types/react@18.0.28)(react@18.2.0)
+      '@inc/api':
+        specifier: workspace:*
+        version: link:../../packages/api
       '@inc/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -517,9 +520,15 @@ importers:
       '@inc/types':
         specifier: workspace:*
         version: link:../types
+      '@prisma/client':
+        specifier: 4.12.0
+        version: 4.12.0(prisma@4.12.0)
       '@types/formidable':
         specifier: 2.0.6
         version: 2.0.6
+      axios:
+        specifier: ^1.3.6
+        version: 1.3.6
       formidable:
         specifier: 2.1.1
         version: 2.1.1
@@ -533,8 +542,8 @@ importers:
         specifier: ^0.13.0
         version: 0.13.0
       zod:
-        specifier: 3.21.4
-        version: 3.21.4
+        specifier: 3.22.0-canary.20230522T011705
+        version: 3.22.0-canary.20230522T011705
 
   packages/configs: {}
 
@@ -633,6 +642,13 @@ importers:
         version: link:../@types/sib
 
   packages/types:
+    dependencies:
+      next:
+        specifier: 13.2.4
+        version: 13.2.4(react-dom@18.2.0)(react@18.2.0)
+      next-auth:
+        specifier: ^4.20.1
+        version: 4.20.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       socket.io:
         specifier: ^4.6.1

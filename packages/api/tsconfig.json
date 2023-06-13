@@ -7,9 +7,7 @@
     "module": "CommonJS",
     "target": "ESNext",
     "outDir": "./dist",
-  },
-  "paths": {
-    "@/*": ["./src/*"],
+    "moduleResolution": "node",
   },
   "include": [
     "src/**/*"

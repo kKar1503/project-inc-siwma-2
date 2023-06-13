@@ -3,7 +3,7 @@ import { NextApiResponse } from 'next';
 import { NextHandler } from 'next-connect';
 import PrismaClient from '@inc/db';
 import { validateToken } from '../authHandler';
-import { APIGuardOptions, APIRequestType } from '@inc/types';
+import { APIGuardOptions, APIRequestType } from '../../../types/api-types';
 
 /**
  * Checks if a access token is valid

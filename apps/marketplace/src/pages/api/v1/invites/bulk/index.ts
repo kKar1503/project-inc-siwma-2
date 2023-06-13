@@ -1,7 +1,7 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import bcrypt from 'bcrypt';
 import client from '@inc/db';
-import { validateEmail, validateName } from '@/utils/api/validate';
+import { validateEmail, validateName } from '@inc/api/api/validate';
 import {
   NotFoundError,
   DuplicateError,
@@ -15,7 +15,7 @@ import {
   EmailTemplate,
 } from '@inc/send-in-blue/templates';
 import sendEmails from '@inc/send-in-blue/sendEmails';
-import { inviteSchema } from '@/utils/api/server/zod';
+import { inviteSchema } from '@inc/api/api/server/zod';
 
 export default apiHandler({
   allowAdminsOnly: true,

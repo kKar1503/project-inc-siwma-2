@@ -1,11 +1,11 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@inc/api/api';
 import client from '@inc/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
 import bcrypt from 'bcrypt';
 import { DuplicateError, InvalidRangeError, ParamInvalidError } from '@inc/errors';
-import { validatePassword, validatePhone } from '@/utils/api/validate';
-import { userSchema } from '@/utils/api/server/zod';
+import { validatePassword, validatePhone } from '@inc/api/api/validate';
+import { userSchema } from '@inc/api/api/server/zod';
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(

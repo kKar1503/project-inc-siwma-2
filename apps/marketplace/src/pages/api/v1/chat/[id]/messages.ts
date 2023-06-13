@@ -1,8 +1,8 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import PrismaClient, { Messages } from '@inc/db';
 import { NotFoundError, InvalidRangeError, ForbiddenError } from '@inc/errors';
-import { chatSchema } from '@/utils/api/server/zod';
-import { ChatMessage } from '@/utils/api/client/zod/chat';
+import { chatSchema } from '@inc/api/api/server/zod';
+import { ChatMessage } from '@inc/api/api/client/zod/chat';
 import { checkChatExists } from '.';
 
 async function getMessages(chatId: string, lastIdPointer: number, limit: number) {

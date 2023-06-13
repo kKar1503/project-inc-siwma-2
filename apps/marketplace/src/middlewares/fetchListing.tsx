@@ -1,5 +1,5 @@
-import apiClient from '@/utils/api/client/apiClient';
-import listing from '@/utils/api/client/zod/listings';
+import apiClient from '@inc/api/api/client/apiClient';
+import listing from '@inc/api/api/client/zod/listings';
 
 const fetchListing = async (listingID: string) => {
   const response = await apiClient.get(`v1/listings/${listingID}`);

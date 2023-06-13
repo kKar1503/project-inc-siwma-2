@@ -1,5 +1,5 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
-import { CategoryResponseBody } from '@/utils/api/client/zod';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@inc/api/api';
+import { CategoryResponseBody } from '@inc/api/api/client/zod';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 

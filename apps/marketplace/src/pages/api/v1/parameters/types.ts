@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import { ParameterType } from '@inc/db';
 
 export default apiHandler().get(async (req, res) => {

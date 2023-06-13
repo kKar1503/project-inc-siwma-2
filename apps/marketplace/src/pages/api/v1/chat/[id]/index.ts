@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import PrismaClient, { Rooms, Users } from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 

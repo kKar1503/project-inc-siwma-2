@@ -1,17 +1,17 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@inc/api/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import s3Connection from '@/utils/s3Connection';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
+import s3Connection from '@inc/api/s3Connection';
 import { AdvertisementBucketName, select, where } from '@api/v1/advertisements/index';
+import { fileToS3Object, getFilesFromRequest, loadImage } from '@inc/api/imageUtils';
+import { advertisementSchema } from '@inc/api/api/server/zod';
 import { APIRequestType } from '@/types/api-types';
-import { fileToS3Object, getFilesFromRequest, loadImage } from '@/utils/imageUtils';
-import { advertisementSchema } from '@/utils/api/server/zod';
 
 const updateImage = async (
   OldImage: string,
-  req: NextApiRequest & APIRequestType,
+  req: NextApiRequest & APIRequestType
 ): Promise<string> => {
   const files = await getFilesFromRequest(req);
   if (files.length > 0) {
@@ -53,12 +53,18 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
 
   // Return advertisement
-  res
-    .status(200)
-    .json(formatAPIResponse(await loadImage({
-      ...advertisementContent,
-      companyId: companyId.toString(),
-    }, AdvertisementBucket, 'image')));
+  res.status(200).json(
+    formatAPIResponse(
+      await loadImage(
+        {
+          ...advertisementContent,
+          companyId: companyId.toString(),
+        },
+        AdvertisementBucket,
+        'image'
+      )
+    )
+  );
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {

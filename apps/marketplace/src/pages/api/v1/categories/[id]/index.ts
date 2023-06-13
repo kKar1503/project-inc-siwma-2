@@ -1,9 +1,9 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@inc/api/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ParamError } from '@inc/errors';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { categorySchema } from '@/utils/api/server/zod';
-import { CategoryResponseBody } from '@/utils/api/client/zod';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
+import { categorySchema } from '@inc/api/api/server/zod';
+import { CategoryResponseBody } from '@inc/api/api/client/zod';
 import { QueryResult, formatParamters } from '../index';
 
 function parseId(id: string | undefined): number {

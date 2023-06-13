@@ -1,9 +1,9 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import PrismaClient, { Companies } from '@inc/db';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
-import { companySchema } from '@/utils/api/server/zod';
-import { CompanyResponseBody } from '@/utils/api/client/zod';
+import { companySchema } from '@inc/api/api/server/zod';
+import { CompanyResponseBody } from '@inc/api/api/client/zod';
 
 function formatResponse(response: Companies[]): CompanyResponseBody[] {
   const temp: CompanyResponseBody[] = [];

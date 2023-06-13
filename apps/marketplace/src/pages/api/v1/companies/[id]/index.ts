@@ -1,9 +1,9 @@
 import { NotFoundError, ParamError, ForbiddenError } from '@inc/errors';
-import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
+import { apiHandler, parseToNumber, formatAPIResponse } from '@inc/api/api';
 import PrismaClient, { Companies } from '@inc/db';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { companySchema } from '@/utils/api/server/zod';
-import { CompanyResponseBody } from '@/utils/api/client/zod';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
+import { companySchema } from '@inc/api/api/server/zod';
+import { CompanyResponseBody } from '@inc/api/api/client/zod';
 
 function parseCompanyId(id: string | undefined): number {
   if (!id) {

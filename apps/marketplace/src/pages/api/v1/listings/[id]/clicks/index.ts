@@ -1,8 +1,8 @@
-import { apiHandler, zodParseToInteger } from '@/utils/api';
+import { apiHandler, zodParseToInteger } from '@inc/api/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
+import { APIRequestType } from '@/types/api-types';
 
 const ParamSchema = z.object({
   id: z.string().transform(zodParseToInteger),
@@ -29,6 +29,4 @@ const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) 
   res.status(204).end();
 };
 
-
-export default apiHandler()
-  .post(POST);
+export default apiHandler().post(POST);

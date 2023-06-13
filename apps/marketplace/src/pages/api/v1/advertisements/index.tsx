@@ -1,13 +1,13 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import s3Connection from '@/utils/s3Connection';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { APIRequestType } from '@/types/api-types';
+import s3Connection from '@inc/api/s3Connection';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
 import * as process from 'process';
-import { fileToS3Object, getFilesFromRequest, loadImageBuilder } from '@/utils/imageUtils';
+import { fileToS3Object, getFilesFromRequest, loadImageBuilder } from '@inc/api/imageUtils';
 import { ParamError } from '@inc/errors/src';
-import { advertisementSchema } from '@/utils/api/server/zod';
+import { advertisementSchema } from '@inc/api/api/server/zod';
+import { APIRequestType } from '@/types/api-types';
 
 export const select = (isAdmin: boolean) => ({
   companyId: true,
@@ -23,15 +23,15 @@ export const where = (isAdmin: boolean, other = {}) =>
   isAdmin
     ? other
     : {
-      endDate: {
-        gte: new Date(),
-      },
-      startDate: {
-        lte: new Date(),
-      },
-      active: true,
-      ...other,
-    };
+        endDate: {
+          gte: new Date(),
+        },
+        startDate: {
+          lte: new Date(),
+        },
+        active: true,
+        ...other,
+      };
 
 export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
 
@@ -87,15 +87,16 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
   const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
   const loadImage = loadImageBuilder(AdvertisementBucket, 'image');
-  const advertisements = await Promise.all(advertisementsNoLink.map(advertisement => {
-    const { companyId, ...advertisementContent } = advertisement;
+  const advertisements = await Promise.all(
+    advertisementsNoLink.map((advertisement) => {
+      const { companyId, ...advertisementContent } = advertisement;
 
-    return loadImage({
-      ...advertisementContent,
-      companyId: companyId.toString(),
-    });
-  }));
-
+      return loadImage({
+        ...advertisementContent,
+        companyId: companyId.toString(),
+      });
+    })
+  );
 
   // Return advertisements
   res.status(200).json(formatAPIResponse(advertisements));

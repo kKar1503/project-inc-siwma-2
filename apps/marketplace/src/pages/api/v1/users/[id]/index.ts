@@ -1,10 +1,15 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@inc/api/api';
 import client from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamRequiredError, WrongPasswordError } from '@inc/errors';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
+import {
+  validateEmail,
+  validateName,
+  validatePhone,
+  validatePassword,
+} from '@inc/api/api/validate';
 import bcrypt from 'bcrypt';
-import { userSchema } from '@/utils/api/server/zod';
+import { userSchema } from '@inc/api/api/server/zod';
 
 export default apiHandler()
   .get(async (req, res) => {

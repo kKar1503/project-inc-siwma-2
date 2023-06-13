@@ -1,5 +1,5 @@
-import { apiHandler } from '@/utils/api';
-import { inviteSchema } from '@/utils/api/server/zod';
+import { apiHandler } from '@inc/api/api';
+import { inviteSchema } from '@inc/api/api/server/zod';
 import client from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 

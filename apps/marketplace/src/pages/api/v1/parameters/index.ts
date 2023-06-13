@@ -1,10 +1,10 @@
-import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@inc/api/api';
 import PrismaClient from '@inc/db';
 import { Parameter, ParameterType } from '@prisma/client';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
 import { ParamSizeError } from '@inc/errors';
-import { paramSchema, ParamsRequestBody } from '@/utils/api/server/zod';
-import { ParameterResponseBody } from '@/utils/api/client/zod';
+import { paramSchema, ParamsRequestBody } from '@inc/api/api/server/zod';
+import { ParameterResponseBody } from '@inc/api/api/client/zod';
 
 // -- Helper functions -- //
 export function formatParamResponse(

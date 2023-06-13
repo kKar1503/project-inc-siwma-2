@@ -1,4 +1,4 @@
-import { APIRequestType } from '@inc/types';
+import { APIRequestType } from '../../../types/api-types';
 import { NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 import { NextHandler } from 'next-connect';

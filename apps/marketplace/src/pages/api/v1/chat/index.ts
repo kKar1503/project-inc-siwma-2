@@ -1,5 +1,5 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { chatSchema } from '@/utils/api/server/zod';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
+import { chatSchema } from '@inc/api/api/server/zod';
 import PrismaClient from '@inc/db';
 import {
   ParamError,

@@ -1,7 +1,7 @@
-import { apiHandler, handleBookmarks, formatAPIResponse, UpdateType } from '@/utils/api';
+import { apiHandler, handleBookmarks, formatAPIResponse, UpdateType } from '@inc/api/api';
 import PrismaClient from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
-import { listingSchema } from '@/utils/api/server/zod';
+import { listingSchema } from '@inc/api/api/server/zod';
 import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//

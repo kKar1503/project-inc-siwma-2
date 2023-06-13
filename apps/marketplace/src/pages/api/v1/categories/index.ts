@@ -1,9 +1,9 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@inc/api/api';
 import PrismaClient, { CategoriesParameters } from '@inc/db';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { apiGuardMiddleware } from '@inc/api/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
-import { categorySchema } from '@/utils/api/server/zod';
-import { CategoryResponseBody, CatgeoryParameter } from '@/utils/api/client/zod';
+import { categorySchema } from '@inc/api/api/server/zod';
+import { CategoryResponseBody, CatgeoryParameter } from '@inc/api/api/client/zod';
 
 export type QueryResult = {
   id: number;
