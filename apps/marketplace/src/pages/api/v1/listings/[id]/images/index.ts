@@ -25,6 +25,7 @@ const ParamSchema = z.object({
 const isAdmin = (user: { permissions: number } & APIRequestType) => user.permissions === 1;
 const validateUser = async (user: { id: string }, owner: string) => {
   const userId = user.id;
+  if(userId === owner) return true;
   const companyPromise = PrismaClient.companies.findFirst({
     where: {
       users: {
