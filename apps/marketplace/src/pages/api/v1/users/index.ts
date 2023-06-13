@@ -9,7 +9,7 @@ import { userSchema } from '@/utils/api/server/zod';
 import process from 'process';
 import s3Connection from '@/utils/s3Connection';
 
-export const UserBucketName = process.env.AWS_USER_BUCKET_NAME as string;
+export const BucketName = process.env.AWS_BUCKET as string;
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
@@ -65,7 +65,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         bio: user.bio,
       }));
 
-      const bucket = await s3Connection.getBucket(UserBucketName);
+      const bucket = await s3Connection.getBucket(BucketName);
 
       const mappedUsers = await Promise.all(
         mappedUsersNoProfile.map(async (user) => {

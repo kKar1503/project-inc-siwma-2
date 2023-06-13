@@ -6,7 +6,7 @@ import { validateEmail, validateName, validatePassword, validatePhone } from '@/
 import bcrypt from 'bcrypt';
 import { userSchema } from '@/utils/api/server/zod';
 import s3Connection from '@/utils/s3Connection';
-import { UserBucketName } from '@api/v1/users';
+import { BucketName } from '@api/v1/users';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 
 export default apiHandler()
@@ -168,7 +168,7 @@ export default apiHandler()
     const files = await getFilesFromRequest(req);
     let { profilePicture } = userExists;
     if (files.length > 0) {
-      const bucket = await s3Connection.getBucket(UserBucketName);
+      const bucket = await s3Connection.getBucket(BucketName);
       const createObject = async () => {
         const s3Object = fileToS3Object(files[0]);
         return bucket.createObject(s3Object);
@@ -239,7 +239,7 @@ export default apiHandler()
       }
 
       if (userExists.profilePicture) {
-        const bucket = await s3Connection.getBucket(UserBucketName);
+        const bucket = await s3Connection.getBucket(BucketName);
         await bucket.deleteObject(userExists.profilePicture);
       }
 

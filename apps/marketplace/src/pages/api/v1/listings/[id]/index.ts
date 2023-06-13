@@ -6,7 +6,7 @@ import { listingSchema } from '@/utils/api/server/zod';
 import { formatSingleListingResponse, parseListingId } from '..';
 
 
-const ListingBucketName = process.env.LISTING_BUCKET_NAME as string;
+const BucketName = process.env.AWS_BUCKET as string;
 // -- Functions --//
 /**
  * Checks if a listing exists
@@ -276,7 +276,7 @@ export default apiHandler()
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
     }
-    const bucket = await s3Connection.getBucket(ListingBucketName);
+    const bucket = await s3Connection.getBucket(BucketName);
     await Promise.all(listing.listingImages.map(async (image) => bucket.deleteObject(image.image)));
 
     await PrismaClient.listing.delete({

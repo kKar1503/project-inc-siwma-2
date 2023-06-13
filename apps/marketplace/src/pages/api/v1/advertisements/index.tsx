@@ -33,7 +33,7 @@ export const where = (isAdmin: boolean, other = {}) =>
       ...other,
     };
 
-export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
+export const BucketName = process.env.AWS_BUCKET as string;
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
@@ -44,8 +44,8 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
     throw new ParamError(`advertisement image`);
   }
 
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-  const s3Object = await AdvertisementBucket.createObject(fileToS3Object(files[0]));
+  const bucket = await s3Connection.getBucket(BucketName);
+  const s3Object = await bucket.createObject(fileToS3Object(files[0]));
 
   // Create advertisement
   const advertisementId = (
@@ -85,8 +85,8 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     take: limit,
   });
 
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-  const loadImage = loadImageBuilder(AdvertisementBucket, 'image');
+  const bucket = await s3Connection.getBucket(BucketName);
+  const loadImage = loadImageBuilder(bucket, 'image');
   const advertisements = await Promise.all(advertisementsNoLink.map(advertisement => {
     const { companyId, ...advertisementContent } = advertisement;
 

@@ -6,7 +6,7 @@ import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import { companySchema } from '@/utils/api/server/zod';
 import { CompanyResponseBody } from '@/utils/api/client/zod';
-import { CompanyBucketName } from '..';
+import { BucketName } from '..';
 
 function parseCompanyId(id: string | undefined): number {
   if (!id) {
@@ -64,7 +64,7 @@ export default apiHandler()
     }
 
     if (response.logo) {
-      const bucket = await s3Connection.getBucket(CompanyBucketName);
+      const bucket = await s3Connection.getBucket(BucketName);
       response.logo = await bucket.getObjectUrl(response.logo);
     }
     return res.status(200).json(formatAPIResponse(formatResponse(response)));
@@ -106,7 +106,7 @@ export default apiHandler()
 
     let { logo } = company;
     if (files.length > 0) {
-      const bucket = await s3Connection.getBucket(CompanyBucketName);
+      const bucket = await s3Connection.getBucket(BucketName);
       const createObject = async () => {
         const s3Object = fileToS3Object(files[0]);
         return bucket.createObject(s3Object);
@@ -162,7 +162,7 @@ export default apiHandler()
     }
 
     if (company.logo) {
-      const bucket = await s3Connection.getBucket(CompanyBucketName);
+      const bucket = await s3Connection.getBucket(BucketName);
       await bucket.deleteObject(company.logo);
     }
 
