@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -44,9 +44,10 @@ export interface SetParameterProps {
   setParameters: (parameters: ParameterFormProps[]) => void;
   data: ParameterProps[];
   errors: ParameterValidationProps[];
+  value?: ParameterFormProps[];
 }
 
-const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
+const ParameterForm = ({ setParameters, data, errors, value }: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
 
   const handleFormValueChange = (
@@ -75,6 +76,16 @@ const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
     }
     return '';
   };
+
+  useEffect(() => {
+    if (value) {
+      const obj: { [key: string]: ParameterFormProps } = {};
+      value.forEach((v) => {
+        obj[v.paramId] = v;
+      });
+      setFormValues(obj);
+    }
+  }, [value]);
 
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>

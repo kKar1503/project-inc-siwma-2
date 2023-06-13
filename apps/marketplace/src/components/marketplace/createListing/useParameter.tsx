@@ -31,7 +31,12 @@ const useParameter = (category: CategoryProps | null) => {
   const parametersData = useGetParametersQuery(parameterIDs, category);
 
   const parameterForm = category && parametersData && (
-    <ParameterForm setParameters={setParameters} data={parametersData} errors={parameterErrors} />
+    <ParameterForm
+      setParameters={setParameters}
+      data={parametersData}
+      errors={parameterErrors}
+      value={parameters}
+    />
   );
 
   const resetParameterErrors = () => {
@@ -116,6 +121,7 @@ const useParameter = (category: CategoryProps | null) => {
     parameterData,
     parameterValidation,
     resetParameterErrors,
+    setParameters,
   };
 };
 
