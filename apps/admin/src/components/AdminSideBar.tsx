@@ -7,8 +7,12 @@ import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
 
 const menuItems = [
-  { name: 'Overview', link: '/overview' , logo: '/images/favicons/overview-icon.png' },
-  { name: 'Data Analytics', link: '/data-analytics', logo: '/images/favicons/data-analytics-icon.png' },
+  { name: 'Overview', link: '/overview', logo: '/images/favicons/overview-icon.png' },
+  {
+    name: 'Data Analytics',
+    link: '/data-analytics',
+    logo: '/images/favicons/data-analytics-icon.png',
+  },
   {
     name: 'Advertisement',
     link: '/advertisement',
@@ -95,6 +99,9 @@ const AdminSideBar = () => {
         width: '20%',
         borderRight: '1px solid grey',
         padding: '1em',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
       }}
     >
       <div>
@@ -187,6 +194,37 @@ const AdminSideBar = () => {
           ))}
         </List>
       </div>
+      <Box
+        sx={{
+          backgroundColor: '#F7F7F8',
+          padding: '1em',
+          display: 'flex',
+          alignItems: 'flex-end',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              marginRight: '1em',
+            }}
+          >
+            <Image src="/images/admin-bg.png" alt="Profile Picture" width={40} height={40} />
+          </div>
+          <div>
+            <div style={{ fontSize: '18px', fontWeight: 'bold' }}>John Doe</div>
+            <div style={{ fontSize: '14px', color: '#9E9E9E' }}>john.doe@example.com</div>
+          </div>
+        </div>
+      </Box>
     </Box>
   );
 };
