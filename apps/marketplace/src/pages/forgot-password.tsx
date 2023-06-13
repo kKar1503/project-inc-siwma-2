@@ -17,7 +17,7 @@ import forgetPW from '@/middlewares/forget-password';
 import { useRouter } from 'next/router';
 
 const useForgotPasswordQuery = (email: string, token: string | undefined) => {
-  const { data, isError } = useQuery(['createUser'], () => forgetPW(email, token as string), {
+  const { data, isError } = useQuery(['forgotPassword'], () => forgetPW(email, token as string), {
     enabled: token !== undefined && email !== undefined,
   });
   return { data, isError };
@@ -109,6 +109,7 @@ const ForgetPassword = () => {
       setEmailError(''); // Reset the email error when the email is valid
 
       console.log(email);
+      useForgotPasswordQuery(email, token);
     }
   };
 

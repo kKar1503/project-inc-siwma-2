@@ -8,15 +8,15 @@ const createUser = async (
   phone: string,
   token: string
 ) => {
-  const newUser = {
+  const userBody = {
     'token': token,
     'company': company,
     'email': email,
     'password': password,
-   'name': userName,
+    'name': userName,
     'mobileNumber': phone,
   };
-  const data = await apiClient.post('/v1/users', newUser);
+  const data = await apiClient.post('/v1/users', userBody);
   return data.status;
 };
 export default createUser;
