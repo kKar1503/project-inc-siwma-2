@@ -3,8 +3,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import s3Connection from '@/utils/s3Connection';
-import { BucketName, select, where } from '@api/v1/advertisements/index';
+import bucket from '@/utils/s3Bucket';
+import { select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { advertisementSchema } from '@/utils/api/server/zod';
@@ -16,8 +16,6 @@ const updateImage = async (
   const files = await getFilesFromRequest(req);
   if (files.length > 0) {
     const s3ObjectBuilder = fileToS3Object(files[0]);
-
-    const bucket = await s3Connection.getBucket(BucketName);
 
     // create new image and delete old image as aws doesn't support update
     // also do these in parallel for faster response
@@ -126,7 +124,6 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Delete image from s3
   const deleteImage = async () => {
-    const bucket = await s3Connection.getBucket(BucketName);
     await bucket.deleteObject(advertisement.image);
   };
 

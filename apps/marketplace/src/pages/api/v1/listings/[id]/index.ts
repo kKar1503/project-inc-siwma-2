@@ -1,12 +1,10 @@
 import { apiHandler, formatAPIResponse, handleBookmarks, UpdateType } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
-import s3Connection from '@/utils/s3Connection';
+import bucket from '@/utils/s3Bucket';
 import { listingSchema } from '@/utils/api/server/zod';
 import { formatSingleListingResponse, parseListingId } from '..';
 
-
-const BucketName = process.env.AWS_BUCKET as string;
 // -- Functions --//
 /**
  * Checks if a listing exists
@@ -276,7 +274,6 @@ export default apiHandler()
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
     }
-    const bucket = await s3Connection.getBucket(BucketName);
     await Promise.all(listing.listingImages.map(async (image) => bucket.deleteObject(image.image)));
 
     await PrismaClient.listing.delete({

@@ -6,7 +6,6 @@ import bcrypt from 'bcrypt';
 import { DuplicateError, InvalidRangeError, ParamInvalidError } from '@inc/errors';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
 import { userSchema } from '@/utils/api/server/zod';
-import process from 'process';
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(

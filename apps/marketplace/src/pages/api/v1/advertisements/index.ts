@@ -1,10 +1,9 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import s3Connection from '@/utils/s3Connection';
+import bucket from '@/utils/s3Bucket';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
-import * as process from 'process';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { ParamError } from '@inc/errors/src';
 import { advertisementSchema } from '@/utils/api/server/zod';
@@ -33,7 +32,6 @@ export const where = (isAdmin: boolean, other = {}) =>
       ...other,
     };
 
-export const BucketName = process.env.AWS_BUCKET as string;
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
@@ -43,8 +41,6 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   if (files.length === 0) {
     throw new ParamError(`advertisement image`);
   }
-
-  const bucket = await s3Connection.getBucket(BucketName);
   const s3Object = await bucket.createObject(fileToS3Object(files[0]));
 
   // Create advertisement

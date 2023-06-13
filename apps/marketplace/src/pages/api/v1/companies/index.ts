@@ -5,10 +5,7 @@ import { ParamError } from '@inc/errors';
 import { companySchema } from '@/utils/api/server/zod';
 import { CompanyResponseBody } from '@/utils/api/client/zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
-import s3Connection from '@/utils/s3Connection';
-import * as process from 'process';
-
-export const BucketName = process.env.AWS_BUCKET as string;
+import bucket from '@/utils/s3Bucket';
 
 function formatResponse(response: Companies[]): CompanyResponseBody[] {
   const temp: CompanyResponseBody[] = [];
@@ -47,7 +44,6 @@ export default apiHandler()
       throw new ParamError('company logo');
     }
 
-    const bucket = await s3Connection.getBucket(BucketName);
     const s3Object = await bucket.createObject(fileToS3Object(files[0]));
 
     const response = await PrismaClient.companies.create({

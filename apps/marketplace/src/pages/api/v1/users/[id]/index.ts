@@ -5,9 +5,8 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
 import { userSchema } from '@/utils/api/server/zod';
-import s3Connection from '@/utils/s3Connection';
-import { BucketName } from '@api/v1/users';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import bucket from '@/utils/s3Bucket';
 
 export default apiHandler()
   .get(async (req, res) => {
@@ -168,7 +167,6 @@ export default apiHandler()
     const files = await getFilesFromRequest(req);
     let { profilePicture } = userExists;
     if (files.length > 0) {
-      const bucket = await s3Connection.getBucket(BucketName);
       const createObject = async () => {
         const s3Object = fileToS3Object(files[0]);
         return bucket.createObject(s3Object);
@@ -239,7 +237,6 @@ export default apiHandler()
       }
 
       if (userExists.profilePicture) {
-        const bucket = await s3Connection.getBucket(BucketName);
         await bucket.deleteObject(userExists.profilePicture);
       }
 
