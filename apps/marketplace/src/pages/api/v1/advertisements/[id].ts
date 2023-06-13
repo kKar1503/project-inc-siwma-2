@@ -4,9 +4,9 @@ import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
-import { AdvertisementBucketName, select, where } from '@api/v1/advertisements/index';
+import { BucketName, select, where } from '@api/v1/advertisements/index';
 import { APIRequestType } from '@/types/api-types';
-import { fileToS3Object, getFilesFromRequest, loadImage } from '@/utils/imageUtils';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
 const updateImage = async (
@@ -17,7 +17,7 @@ const updateImage = async (
   if (files.length > 0) {
     const s3ObjectBuilder = fileToS3Object(files[0]);
 
-    const bucket = await s3Connection.getBucket(AdvertisementBucketName);
+    const bucket = await s3Connection.getBucket(BucketName);
 
     // create new image and delete old image as aws doesn't support update
     // also do these in parallel for faster response
@@ -50,15 +50,13 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   if (!advertisement) throw new NotFoundError(`advertisement`);
   const { companyId, ...advertisementContent } = advertisement;
 
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-
   // Return advertisement
   res
     .status(200)
-    .json(formatAPIResponse(await loadImage({
+    .json(formatAPIResponse({
       ...advertisementContent,
       companyId: companyId.toString(),
-    }, AdvertisementBucket, 'image')));
+    }));
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -128,7 +126,7 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Delete image from s3
   const deleteImage = async () => {
-    const bucket = await s3Connection.getBucket(AdvertisementBucketName);
+    const bucket = await s3Connection.getBucket(BucketName);
     await bucket.deleteObject(advertisement.image);
   };
 

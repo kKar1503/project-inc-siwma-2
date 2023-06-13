@@ -54,31 +54,3 @@ export const fileToS3Object = (file: File): S3ObjectBuilder => {
   });
   return new S3ObjectBuilder(buffer, metadata);
 };
-
-export const loadImage = async <T extends Record<string, unknown>>(
-  source: T,
-  bucket: S3BucketService,
-  imageKey: string,
-): Promise<T> => {
-  if (typeof source[imageKey] !== 'string') return source;
-  try {
-    const image = await bucket.getObject(source[imageKey] as string);
-    return {
-      ...source,
-      [imageKey]: await image.generateLink(),
-    };
-  } catch (e) {
-    return {
-      ...source,
-      [imageKey]: null,
-    };
-  }
-};
-
-export const loadImageBuilder =
-  <T extends Record<string, unknown>>(
-    bucket: S3BucketService,
-    imageKey: string,
-  ): ((source: T) => Promise<T>) =>
-    async (source) =>
-      loadImage(source, bucket, imageKey);

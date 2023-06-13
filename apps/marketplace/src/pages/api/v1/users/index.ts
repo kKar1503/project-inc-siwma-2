@@ -7,9 +7,6 @@ import { DuplicateError, InvalidRangeError, ParamInvalidError } from '@inc/error
 import { validatePassword, validatePhone } from '@/utils/api/validate';
 import { userSchema } from '@/utils/api/server/zod';
 import process from 'process';
-import s3Connection from '@/utils/s3Connection';
-
-export const BucketName = process.env.AWS_BUCKET as string;
 
 export default apiHandler({ allowNonAuthenticated: true })
   .get(
@@ -49,7 +46,7 @@ export default apiHandler({ allowNonAuthenticated: true })
         },
       });
 
-      const mappedUsersNoProfile = users.map((user) => ({
+      const mappedUsers = users.map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
@@ -65,19 +62,6 @@ export default apiHandler({ allowNonAuthenticated: true })
         bio: user.bio,
       }));
 
-      const bucket = await s3Connection.getBucket(BucketName);
-
-      const mappedUsers = await Promise.all(
-        mappedUsersNoProfile.map(async (user) => {
-          if (!user.profilePic) return user;
-          const profilePic = await bucket.getObjectUrl(user.profilePic);
-
-          return {
-            ...user,
-            profilePic,
-          };
-        })
-      );
       return res.status(200).json(formatAPIResponse(mappedUsers));
     }
   )

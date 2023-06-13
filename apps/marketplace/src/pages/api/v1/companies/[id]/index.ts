@@ -63,10 +63,6 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
-    if (response.logo) {
-      const bucket = await s3Connection.getBucket(BucketName);
-      response.logo = await bucket.getObjectUrl(response.logo);
-    }
     return res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .put(async (req, res) => {

@@ -5,7 +5,7 @@ import s3Connection from '@/utils/s3Connection';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
-import { fileToS3Object, getFilesFromRequest, loadImageBuilder } from '@/utils/imageUtils';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import { ParamError } from '@inc/errors/src';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
@@ -75,7 +75,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const { limit, lastIdPointer } = advertisementSchema.get.query.parse(req.query);
 
   // Get advertisements
-  const advertisementsNoLink = await PrismaClient.advertisements.findMany({
+  const advertisements = await PrismaClient.advertisements.findMany({
     select: select(isAdmin),
     where: where(isAdmin, {
       id: {
@@ -84,17 +84,6 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     }),
     take: limit,
   });
-
-  const bucket = await s3Connection.getBucket(BucketName);
-  const loadImage = loadImageBuilder(bucket, 'image');
-  const advertisements = await Promise.all(advertisementsNoLink.map(advertisement => {
-    const { companyId, ...advertisementContent } = advertisement;
-
-    return loadImage({
-      ...advertisementContent,
-      companyId: companyId.toString(),
-    });
-  }));
 
 
   // Return advertisements

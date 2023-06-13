@@ -66,7 +66,7 @@ export default apiHandler()
 
     const { lastIdPointer = 0, limit = 10, name } = companySchema.get.query.parse(req.query);
 
-    const responseNoLogo = await PrismaClient.companies.findMany({
+    const response = await PrismaClient.companies.findMany({
       select: {
         id: true,
         name: true,
@@ -88,18 +88,6 @@ export default apiHandler()
       take: limit,
     });
 
-    const bucket = await s3Connection.getBucket(BucketName);
-    const response = await Promise.all(
-      responseNoLogo.map(async (r) => {
-        const logoId = r.logo;
-        if (!logoId) return r;
-        const logo = await bucket.getObjectUrl(logoId);
-        return {
-          ...r,
-          logo,
-        };
-      })
-    );
 
     res.status(200).json(formatAPIResponse(formatResponse(response)));
   });
