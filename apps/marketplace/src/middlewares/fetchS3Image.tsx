@@ -1,5 +1,4 @@
-const bucketName = 'imagebuckettesting';
-// const bucketName = process.env.AWS_BUCKET as string || 'siwma-marketplace';
+const bucketName = process.env.AWS_BUCKET as string || 'siwma-marketplace';
 const region = process.env.AWS_REGION as string || 'ap-southeast-1';
 
 const fetchS3Image = async (imgKey : string) => {
