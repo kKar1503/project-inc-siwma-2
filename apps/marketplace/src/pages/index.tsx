@@ -27,7 +27,7 @@ const Home = () => {
         <p>Hello World</p>
         Not signed in <br />
         <button onClick={() => signIn()}>Sign in</button>
-        <S3Image src="dcf658ac4b90e40a7e8c4cee75da2e17ce03c47a5058b867c3d65ac0adea3a41.gif" alt="randomImage"/>
+        <S3Image src="dcf658ac4b90e40a7e8c4cee75da2e17ce03c47a5058b867c3d65ac0adea3a41.gif" alt="randomImage" width={100} height={100}/>
       </main>
 
     </>
