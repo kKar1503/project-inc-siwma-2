@@ -86,3 +86,17 @@ export class InvalidCompanyNameError extends InputError {
     this.code = InvalidCompanyNameError.code;
   }
 }
+/**
+ * Same password 
+ */
+export class WrongPasswordError extends InputError {
+  public static readonly status = 422;
+  public static readonly code = 4006;
+
+  constructor() {
+    super();
+    this.message = `Incorrect password`;
+    this.status = WrongPasswordError.status;
+    this.code = WrongPasswordError.code;
+  }
+}

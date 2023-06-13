@@ -7,6 +7,8 @@ import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
 import { ThemeComponent, useResponsiveness } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import NavBar from '@/components/marketplace/navbar/NavBar';
+import Box from '@mui/material/Box';
 import { SnackbarProvider, MaterialDesignContent, SnackbarOrigin } from 'notistack';
 import { styled } from '@mui/material';
 
@@ -17,6 +19,7 @@ interface PageType extends React.FunctionComponent<any> {
   allowAuthenticated: boolean;
   allowNonAuthenticated: boolean;
   auth?: boolean;
+  includeNavbar?: boolean;
 }
 
 // App prop type
@@ -59,7 +62,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
-  const { allowAuthenticated, allowNonAuthenticated } = Component;
+  const { allowAuthenticated, allowNonAuthenticated, includeNavbar = true } = Component;
   // Stying snackbar responsiveness
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const alertStyle: SnackbarOrigin | undefined = useMemo(() => {
@@ -93,7 +96,11 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
                 default: StyledMaterialDesignContent,
               }}
             >
-              {getLayout(<Component {...pageProps} />)}
+              {getLayout(
+              <Box>
+                {includeNavbar && <NavBar />}
+                <Component {...pageProps} />
+              </Box>)}
             </SnackbarProvider>
           </QueryClientProvider>
         </AuthenticationGuard>
