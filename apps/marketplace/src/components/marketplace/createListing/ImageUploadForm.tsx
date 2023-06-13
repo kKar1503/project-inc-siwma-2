@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,20 +15,48 @@ export type ImageProps = {
 };
 
 export type PreviewImageProps = {
-  file: File;
+  file?: File;
+  id?: string;
   preview: string;
+};
+
+export type Order = {
+  [key: string]: number;
 };
 
 export type SetImageProps = {
   setImages: (parameters: Blob[]) => void;
+  imagesData: PreviewImageProps[];
+  setOrder: (parameters: Order) => void;
+  setDeletedImages: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-const ImageUploadForm = ({ setImages }: SetImageProps) => {
+const ImageUploadForm = ({ setImages, imagesData, setOrder, setDeletedImages }: SetImageProps) => {
   const [images, setPreivewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
 
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+
+  useEffect(() => {
+    setPreivewImages(imagesData);
+  }, [imagesData]);
+
+  useEffect(() => {
+    const order: Order = {};
+    images.forEach((image, index) => {
+      if (image.file) {
+        order[image.file.name] = index;
+      }
+      if (image.id) {
+        order[image.id] = index;
+      }
+    });
+    setOrder(order);
+  }, [images, setOrder]);
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPreivewImages([]);
+    setPreivewImages(images.filter((item) => item.file === undefined));
     setError('');
 
     const selectedImages = Array.from(e.target.files || []);
@@ -56,6 +84,9 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
   };
 
   const handleImageRemove = (index: number) => {
+    if (images[index].id !== undefined) {
+      setDeletedImages((prevData: string[]) => [...prevData, index.toString()]);
+    }
     setPreivewImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
@@ -63,17 +94,51 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
     window.open(url, '_blank');
   };
 
+  const dragStart = (e: React.DragEvent<HTMLDivElement>, position: number) => {
+    dragItem.current = position;
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const dragEnter = (e: React.DragEvent<HTMLDivElement>, position: number) => {
+    dragOverItem.current = position;
+  };
+
+  const drop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const copyItems = [...images];
+    if (dragItem.current === null) return false;
+    if (dragOverItem.current === null) return false;
+
+    const dragItemContent = copyItems[dragItem.current];
+    copyItems.splice(dragItem.current, 1);
+    copyItems.splice(dragOverItem.current, 0, dragItemContent);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setPreivewImages(copyItems);
+    return true;
+  };
+
   const renderImages = () => {
     if (images.length === 0) return null;
 
     return (
-      <Grid container spacing={2}>
-        {images.map(({ file, preview }, index) => (
-          <Grid item xs={2} md={1} key={file.name}>
+      <Grid container spacing={2} onDrop={drop}>
+        {images.map(({ file, preview, id }, index) => (
+          <Grid
+            draggable
+            onDragStart={(e) => dragStart(e, index)}
+            onDragEnter={(e) => dragEnter(e, index)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={drop}
+            item
+            xs={2}
+            md={1}
+            key={file?.name || id}
+          >
             <Box position="relative" mt="1rem">
               <Image
                 src={preview}
-                alt={file.name}
+                alt={file?.name || preview}
                 width={100}
                 height={100}
                 style={{ paddingRight: '1rem' }}
