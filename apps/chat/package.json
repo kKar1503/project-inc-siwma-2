@@ -1,8 +1,13 @@
 {
   "name": "@inc/chat",
   "version": "0.0.0",
+  "main": "dist/server.js",
+  "typings": "",
   "scripts": {
-    "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/server.ts\""
+    "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/server.ts\"",
+    "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
+    "build:prod": "rm -rf dist && node esbuild.config.js",
+    "start": "node dist/server.js"
   },
   "dependencies": {
     "@inc/db": "workspace:*",

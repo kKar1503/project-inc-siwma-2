@@ -3,6 +3,7 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "esModuleInterop": true,
+    "emitDeclarationOnly": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "module": "CommonJS",
@@ -10,5 +11,5 @@
     "outDir": "./dist"
   },
   "include": ["."],
-  "exclude": ["dist", "node_modules", "**/*.spec.ts"]
+  "exclude": ["dist", "node_modules", "**/*.spec.ts", "esbuild.config.js"]
 }
