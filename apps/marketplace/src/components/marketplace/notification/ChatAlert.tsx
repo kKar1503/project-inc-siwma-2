@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import apiClient from '@/utils/api/client/apiClient';
 import { useQuery } from 'react-query';
 import users from '@/utils/api/client/zod/users';
+import { useResponsiveness } from '@inc/ui';
 
 export type ChatData = {
   id: string;
@@ -40,6 +41,8 @@ const useGetUserQuery = (userUuid: string) => {
 };
 
 const ChatAlert = ({ chatData, reply, setReply }: Response) => {
+  const [isSm] = useResponsiveness(['sm']);
+
   const userDetail = useGetUserQuery(chatData.author);
 
   return (
@@ -57,6 +60,7 @@ const ChatAlert = ({ chatData, reply, setReply }: Response) => {
         border: 1,
         borderColor: 'primary.main',
         margin: 0,
+        width: isSm ? '90vw' : 'auto',
       })}
     >
       <Typography
@@ -70,7 +74,7 @@ const ChatAlert = ({ chatData, reply, setReply }: Response) => {
         noWrap
         sx={({ typography }) => ({
           fontSize: typography.body1,
-          width: '280px'
+          width: isSm ? '100%' : '280px',
         })}
       >
         {chatData.content}
