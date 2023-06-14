@@ -13,6 +13,7 @@ const updateUser = async (
   bio: string
 ) => {
   if (uuid) {
+    
     const response = await apiClient.put(`/v1/users/${uuid}`, {
       name,
       email,

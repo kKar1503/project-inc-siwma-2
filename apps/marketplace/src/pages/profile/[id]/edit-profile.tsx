@@ -29,8 +29,8 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useQuery, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import fetchUser from '@/middlewares/fetchCompany';
-// import fetchUser from '@/middlewares/fetchUser';
+// import fetchUser from '@/middlewares/fetchCompany';
+import fetchUser from '@/middlewares/fetchUser';
 
 const useGetUserQuery = (userUuid: string) => {
   const { data } = useQuery('user', async () => fetchUser(userUuid), {
@@ -470,7 +470,7 @@ const EditProfile = () => {
                   sx={({ spacing }) => ({
                     mt: spacing(2),
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                   })}
                 >
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
