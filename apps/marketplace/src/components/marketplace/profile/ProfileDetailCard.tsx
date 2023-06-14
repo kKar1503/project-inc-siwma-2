@@ -20,6 +20,7 @@ import fetchUser from '@/middlewares/fetchUser';
 import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
 import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 export type ProfileDetailCardProps =
   | {
@@ -74,7 +75,6 @@ const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | unde
 };
 
 const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
-
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
@@ -106,6 +106,9 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
   const profileUserUuid = data?.id as string;
   const bookmarkedUsers = currentUser?.bookmarks?.users;
 
+  const router = useRouter();
+  const userId = router.query.id as string;
+
   const { isBookmarked, handleBookmarkUser } = useBookmarkUserQuery(
     profileUserUuid,
     bookmarkedUsers
@@ -121,24 +124,26 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
           fontSize: 16,
         }}
         action={
-          <IconButton
-            aria-label="bookmark"
-            onClick={handleBookmarkUser}
-            sx={({ spacing }) => ({
-              p: spacing(0),
-            })}
-          >
-            {isBookmarked ? (
-              <BookmarkIcon
-                fontSize="large"
-                sx={({ palette }) => ({
-                  color: palette.warning[100],
-                })}
-              />
-            ) : (
-              <BookmarkBorderIcon fontSize="large" />
-            )}
-          </IconButton>
+          loggedUserUuid !== userId && (
+            <IconButton
+              aria-label="bookmark"
+              onClick={handleBookmarkUser}
+              sx={({ spacing }) => ({
+                p: spacing(0),
+              })}
+            >
+              {isBookmarked ? (
+                <BookmarkIcon
+                  fontSize="large"
+                  sx={({ palette }) => ({
+                    color: palette.warning[100],
+                  })}
+                />
+              ) : (
+                <BookmarkBorderIcon fontSize="large" />
+              )}
+            </IconButton>
+          )
         }
         title="Your Profile"
         subheader="View your profile details here"
@@ -233,6 +238,22 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
       </CardContent>
       <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
         <Box sx={{ width: '98%' }}>
+          {loggedUserUuid === userId && (
+            <Button
+              component={Link}
+              href="/bookmarks"
+              variant="contained"
+              type="submit"
+              sx={({ spacing }) => ({
+                width: '100%',
+                mb: spacing(1),
+                mt: spacing(2),
+                fontWeight: 'bold',
+              })}
+            >
+              Bookmarks
+            </Button>
+          )}
           <Button
             component={Link}
             href={`/profile/${data?.id}/edit-profile`}
@@ -240,8 +261,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
             type="submit"
             sx={({ spacing }) => ({
               width: '100%',
-              mb: spacing(2),
-              mt: spacing(2),
+              mb: spacing(1),
               fontWeight: 'bold',
             })}
           >
