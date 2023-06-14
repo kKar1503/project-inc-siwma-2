@@ -5,12 +5,21 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
+import ConfirmationDialog from './confirmationDialog';
 
 const Form = () => {
     const theme = useTheme();
     const { spacing } = theme;
     const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
+    const handleClickOpen = () => {
+        setDialogOpen(true);
+    };
+
+    const handleClose = () => {
+        setDialogOpen(false);
+    };
 
     const gridCols = useMemo(() => {
         if (isSm) {
@@ -139,7 +148,7 @@ const Form = () => {
                     })}
                 >
                     <Button
-                        type="submit"
+                        onClick={handleClickOpen}
                         variant="contained"
                         sx={({ spacing }) => ({
                             width: '10%',
@@ -149,6 +158,7 @@ const Form = () => {
                     >
                         Submit
                     </Button>
+                    <ConfirmationDialog open={dialogOpen} onClose={handleClose} />
                 </Box>
             </Box>
         </Grid>
