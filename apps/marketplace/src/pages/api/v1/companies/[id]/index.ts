@@ -97,24 +97,6 @@ export default apiHandler()
       throw new NotFoundError('Company');
     }
 
-    const files = await getFilesFromRequest(req);
-
-    let { logo } = company;
-    if (files.length > 0) {
-      const createObject = async () => {
-        const s3Object = fileToS3Object(files[0]);
-        return bucket.createObject(s3Object);
-      };
-      const deleteObject = async () => {
-        if (!company.logo) return;
-        await bucket.deleteObject(company.logo);
-      };
-
-      const [logoObject] = await Promise.all([createObject(), deleteObject()]);
-
-      logo = logoObject.Id;
-    }
-
     // update the company
     const response = await PrismaClient.companies.update({
       where: {
@@ -124,7 +106,6 @@ export default apiHandler()
         name,
         website,
         bio,
-        logo,
         comments,
       },
       select: {
