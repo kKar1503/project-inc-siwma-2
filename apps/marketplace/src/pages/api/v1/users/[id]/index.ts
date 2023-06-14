@@ -164,22 +164,6 @@ export default apiHandler()
       throw new NotFoundError('User');
     }
 
-    const files = await getFilesFromRequest(req);
-    let { profilePicture } = userExists;
-    if (files.length > 0) {
-      const createObject = async () => {
-        const s3Object = fileToS3Object(files[0]);
-        return bucket.createObject(s3Object);
-      };
-      const deleteObject = async () => {
-        if (!userExists.profilePicture) return;
-        await bucket.deleteObject(userExists.profilePicture);
-      };
-
-      const [profilePictureObject] = await Promise.all([createObject(), deleteObject()]);
-
-      profilePicture = profilePictureObject.Id;
-    }
 
     const user = await client.users.update({
       where: {
@@ -190,7 +174,6 @@ export default apiHandler()
         email,
         companyId,
         password,
-        profilePicture,
         phone: mobileNumber,
         contact: contactMethod,
         whatsappNumber,
@@ -249,9 +232,3 @@ export default apiHandler()
       return res.status(204).end();
     }
   );
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
