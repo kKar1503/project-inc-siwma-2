@@ -20,24 +20,11 @@ export interface S3BucketService {
     getObject(key: string): Promise<IS3Object>;
 
     /**
-     * Retrieves the URL of an S3 object with the specified key.
-     * @param key - The key of the object to retrieve.
-     * @returns {Promise<string>} - A promise that resolves with the URL of the object.
-     */
-    getObjectUrl(key: string): Promise<string>;
-
-    /**
      * Retrieves an array of S3 objects with the specified keys.
      * @param {string[]} keys - The keys of the objects to retrieve.
      * @returns {Promise<IS3Object[]>} - A promise that resolves with the retrieved objects.
      */
     getObjects(keys: string[]): Promise<IS3Object[]>;
-
-    /**
-     * Retrieves an array of URLs for S3 objects with the specified keys.
-     * @param keys
-     */
-    getObjectUrls(keys: string[]): Promise<string[]>;
 
     /**
      * Deletes the S3 object with the specified key.
