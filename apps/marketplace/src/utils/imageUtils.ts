@@ -58,7 +58,7 @@ export const fileToS3Object = (file: File): S3ObjectBuilder => {
 export const loadImage = async <T extends Record<string, unknown>>(
   source: T,
   bucket: S3BucketService,
-  imageKey: string
+  imageKey: string,
 ): Promise<T> => {
   if (typeof source[imageKey] !== 'string') return source;
   try {
@@ -78,3 +78,7 @@ export const loadImage = async <T extends Record<string, unknown>>(
 export const loadImageBuilder =
   <T extends Record<string, unknown>>(
     bucket: S3BucketService,
+    imageKey: string,
+  ): ((source: T) => Promise<T>) =>
+    async (source) =>
+      loadImage(source, bucket, imageKey);
