@@ -19,7 +19,7 @@ import { Listing, Review } from '@/utils/api/client/zod';
 import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
 import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useResponsiveness } from '@inc/ui';
-import fetchProfileListingImages from '@/middlewares/fetchProfileListingImages';
+import fetchListingImages from '@/middlewares/fetchListingImages';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: 60,
@@ -63,7 +63,7 @@ const useGetListing = (userUuid: string) => {
 };
 
 const useGetProfileListingImagesQuery = (listingID: string) => {
-  const { data } = useQuery('listingImages', async () => fetchProfileListingImages(listingID), {
+  const { data } = useQuery('listingImages', async () => fetchListingImages(listingID), {
     enabled: listingID !== undefined,
   });
   return data;
