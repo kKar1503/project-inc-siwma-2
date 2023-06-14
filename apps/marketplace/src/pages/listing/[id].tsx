@@ -18,7 +18,7 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Link from '@mui/material/Link';
-import { StarsRating, useResponsiveness } from '@inc/ui';
+import { StarsRating, useResponsiveness, ModalImage, Modal, ModalSelect, ModalInput, AddCommentModal } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo, useState, useEffect } from 'react';
 import fetchCat from '@/middlewares/fetchCatNames';
@@ -33,6 +33,7 @@ import fetchChatList from '@/middlewares/fetchChatList';
 import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
+import postReview from '@/middlewares/postReview';
 
 const carouselData = [
   {
@@ -71,9 +72,9 @@ const useGetUserQuery = () => {
   return data;
 };
 
-const useGetCurrentUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(userUuid), {
-    enabled: userUuid !== undefined,
+const useGetCurrentUserQuery = (loggedInUser: string) => {
+  const { data } = useQuery('user', async () => fetchUser(loggedInUser), {
+    enabled: loggedInUser !== undefined,
   });
 
   return data;
@@ -108,6 +109,11 @@ const useCreateChatQuery = () => {
   return data;
 };
 
+const usePostReviewQuery = (userUuid: string) => {
+  const { data } = useQuery('newReview', async () => postReview(userUuid));
+  return data;
+}
+
 const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[] | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
@@ -136,20 +142,35 @@ const DetailedListingPage = () => {
 
   const router = useRouter();
   const listingId = router.query.id as string;
-
   const listings = useGetListingQuery(listingId);
   const reviews = useGetReviewsQuery(listingId);
   const listingImgs = useGetListingImagesQuery(listingId);
-
   const cats = useGetCategoryNameQuery();
-  const currentUser = useSession();
   const user = useGetUserQuery();
+  const currentUser = useSession();
   const param = useGetParamQuery();
   const loggedUserUuid = currentUser.data?.user.id as string;
   const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
   const chatRooms = useChatListQuery(loggedUserUuid);
   const newRoom = useCreateChatQuery();
+  const postReview = usePostReviewQuery(loggedUserUuid)
+  
+  const [leftButtonState, setLeftButtonState] = useState(false);
+  const [rightButtonState, setRightButtonState] = useState(false);
+  const [inputText, setInputText] = useState<string>('');
+  const [openComment, setOpenComment] = useState(false);
+  const [rating, setRating] = useState<number | null >(1);
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClose = (val: boolean) => {
+    setIsOpen(false);
+  };
+
+  // const createReview = (val: boolean) => {
+  //   setRightButtonState(val)
+  //   if (rightButtonState === true) { return postReview }
+  //   return null
+  // };
 
   const { isBookmarked, handleBookmarkListing } = useBookmarkListingQuery(
     listingId,
@@ -540,9 +561,28 @@ const DetailedListingPage = () => {
                     fullWidth
                     variant="contained"
                     sx={({ palette }) => ({ backgroundColor: palette.primary.main })}
+                    onClick={() => setOpenComment(true)}
                   >
                     ADD A REVIEW
                   </Button>
+                  <AddCommentModal
+                    open={openComment}
+                    setOpen={setOpenComment}
+                    buttonColor="#0288D1"
+                    // image api not up, so img not displayed
+                    userImage={loggedInUser?.profilePic}
+                    userName={loggedInUser?.name}
+                    inputText={inputText}
+                    setInputText={setInputText}
+                    rating={rating}
+                    setRating={setRating}
+                    leftButtonText="cancel"
+                    rightButtonText="Publish"
+                    leftButtonState={leftButtonState}
+                    rightButtonState={rightButtonState}
+                    setLeftButtonState={setLeftButtonState}
+                    setRightButtonState={setRightButtonState}
+                  />
                 </Grid>
                 <Grid item xs={6} md={0.25} />
                 {reviews?.map((individualReview) => (
