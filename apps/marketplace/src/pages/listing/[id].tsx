@@ -21,7 +21,7 @@ import Link from '@mui/material/Link';
 import { StarsRating, useResponsiveness, ModalImage, Modal, ModalSelect, ModalInput, AddCommentModal } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo, useState, useEffect } from 'react';
-import fetchCat from '@/middlewares/fetchCatNames';
+import fetchCategories from '@/middlewares/fetchCategories';
 import fetchUsers from '@/middlewares/fetchUsers';
 import fetchReviews from '@/middlewares/fetchReviews';
 import fetchParams from '@/middlewares/fetchParamNames';
@@ -81,7 +81,7 @@ const useGetCurrentUserQuery = (loggedInUser: string) => {
 };
 
 const useGetCategoryNameQuery = () => {
-  const { data } = useQuery('cat', async () => fetchCat());
+  const { data } = useQuery('cat', async () => fetchCategories());
   return data;
 };
 
