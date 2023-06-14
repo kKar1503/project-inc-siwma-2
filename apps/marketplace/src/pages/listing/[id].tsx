@@ -212,40 +212,6 @@ const DetailedListingPage = () => {
     return 0;
   });
 
-  // converts to UI design if screen goes to mobile
-  const listingStyles = useMemo(() => {
-    if (isSm) {
-      return {
-        pagePadding: {
-          mx: spacing(0),
-          mt: spacing(0),
-        },
-      };
-    }
-    if (isMd) {
-      return {
-        pagePadding: {
-          mx: spacing(5),
-          mt: spacing(3),
-        },
-      };
-    }
-    if (isLg) {
-      return {
-        pagePadding: {
-          mx: spacing(5),
-          mt: spacing(3),
-        },
-      };
-    }
-    return {
-      pagePadding: {
-        mx: spacing(5),
-        mt: spacing(3),
-      },
-    };
-  }, [isSm, isMd, isLg]);
-
   return (
     <main>
       <Box
@@ -289,9 +255,10 @@ const DetailedListingPage = () => {
                     </Grid>
                     <Grid item>
                       <Typography
-                        sx={{
+                        sx={({ spacing }) => ({
                           fontWeight: 600,
-                        }}
+                          pl: spacing(2)
+                        })}
                         variant={isSm || isMd ? 'h6' : 'h5'}
                       >
                         {listings?.name}
