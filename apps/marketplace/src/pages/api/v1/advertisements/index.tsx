@@ -3,7 +3,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
-import * as process from 'process';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
 export const select = (isAdmin: boolean) => ({
@@ -42,7 +41,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         companyId: payload.companyId,
-        image: 'null',
+        image: '',
         endDate: new Date(payload.endDate),
         startDate: new Date(payload.startDate),
         active: payload.active,
