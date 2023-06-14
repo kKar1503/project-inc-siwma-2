@@ -4,8 +4,6 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { ParamError } from '@inc/errors';
 import { companySchema } from '@/utils/api/server/zod';
 import { CompanyResponseBody } from '@/utils/api/client/zod';
-import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
-import bucket from '@/utils/s3Bucket';
 
 function formatResponse(response: Companies[]): CompanyResponseBody[] {
   const temp: CompanyResponseBody[] = [];
@@ -37,11 +35,6 @@ export default apiHandler()
 
     if (website && !websiteRegex.test(website)) {
       throw new ParamError('website');
-    }
-
-    const files = await getFilesFromRequest(req);
-    if (files.length === 0) {
-      throw new ParamError('company logo');
     }
 
     const response = await PrismaClient.companies.create({
