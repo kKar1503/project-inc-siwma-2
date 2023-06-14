@@ -61,7 +61,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const { limit, lastIdPointer } = advertisementSchema.get.query.parse(req.query);
 
   // Get advertisements
-  const advertisementsNoLink = await PrismaClient.advertisements.findMany({
+  const advertisements = await PrismaClient.advertisements.findMany({
     select: select(isAdmin),
     where: where(isAdmin, {
       id: {
@@ -71,18 +71,16 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     take: limit,
   });
 
-  const advertisements = advertisementsNoLink.map(advertisement => {
+  const mappedAdvertisements = advertisements.map((advertisement) => {
     const { companyId, ...advertisementContent } = advertisement;
-
     return {
       ...advertisementContent,
       companyId: companyId.toString(),
     };
   });
 
-
   // Return advertisements
-  res.status(200).json(formatAPIResponse(advertisements));
+  res.status(200).json(formatAPIResponse(mappedAdvertisements));
 };
 
 export default apiHandler()
