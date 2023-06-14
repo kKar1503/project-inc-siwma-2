@@ -44,13 +44,10 @@ export default apiHandler()
       throw new ParamError('company logo');
     }
 
-    const s3Object = await bucket.createObject(fileToS3Object(files[0]));
-
     const response = await PrismaClient.companies.create({
       data: {
         name,
         website,
-        logo: s3Object.Id,
         comments,
       },
     });
