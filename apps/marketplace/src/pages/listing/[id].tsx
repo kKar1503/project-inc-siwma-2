@@ -292,9 +292,12 @@ const DetailedListingPage = () => {
                 <Grid item xs={2}>
                   <Grid container sx={{ direction: 'row' }}>
                     <Grid item xs={2} />
+
+                    {listings?.owner.id !== loggedUserUuid && <Grid item xs={4} />}
+
                     <Grid item xs={4}>
                       <IconButton
-                        aria-label="bookmark"
+                        aria-label="share"
                         sx={({ spacing }) => ({
                           p: spacing(0),
                         })}
@@ -302,26 +305,28 @@ const DetailedListingPage = () => {
                         <IosShareIcon fontSize="large" />
                       </IconButton>
                     </Grid>
-                    <Grid item xs={4}>
-                      <IconButton
-                        aria-label="bookmark"
-                        onClick={handleBookmarkListing}
-                        sx={({ spacing }) => ({
-                          p: spacing(0),
-                        })}
-                      >
-                        {isBookmarked ? (
-                          <BookmarkIcon
-                            fontSize="large"
-                            sx={({ palette }) => ({
-                              color: palette.warning[100],
-                            })}
-                          />
-                        ) : (
-                          <BookmarkBorderIcon fontSize="large" />
-                        )}
-                      </IconButton>
-                    </Grid>
+                    {listings?.owner.id === loggedUserUuid && (
+                      <Grid item xs={4}>
+                        <IconButton
+                          aria-label="bookmark"
+                          onClick={handleBookmarkListing}
+                          sx={({ spacing }) => ({
+                            p: spacing(0),
+                          })}
+                        >
+                          {isBookmarked ? (
+                            <BookmarkIcon
+                              fontSize="large"
+                              sx={({ palette }) => ({
+                                color: palette.warning[100],
+                              })}
+                            />
+                          ) : (
+                            <BookmarkBorderIcon fontSize="large" />
+                          )}
+                        </IconButton>
+                      </Grid>
+                    )}
                   </Grid>
                 </Grid>
               </Grid>
