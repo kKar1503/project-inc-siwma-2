@@ -3,67 +3,41 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "lint",
-          "build",
-          "test",
-          "prisma:compile"
-        ],
+        "cacheableOperations": ["lint", "build", "test", "prisma:compile"],
         "cacheDirectory": "tmp/nx/cache"
       }
     },
     "cloud": {
       "runner": "nx-cloud",
       "options": {
-        "cacheableOperations": [
-          "lint",
-          "build",
-          "test",
-          "prisma:compile"
-        ],
+        "cacheableOperations": ["lint", "build", "test", "prisma:compile"],
         "cacheDirectory": "tmp/nx/cache",
         "accessToken": "YWYzNGQzOTQtNmQwYy00ZDJiLTk2ZGUtOWUzMjExMDc1OTI1fHJlYWQtd3JpdGU="
       }
     }
   },
   "namedInputs": {
-    "prismaCompile": [
-      "{projectRoot}/**/casingFix.ts"
-    ],
-    "default": [
-      "{projectRoot}/**/*"
-    ]
+    "prismaCompile": ["{projectRoot}/**/casingFix.ts"],
+    "default": ["{projectRoot}/**/*"]
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": ["default", "^default"]
     },
     "dev": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "build:prod": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build:prod"],
       "inputs": ["default", "^default"]
     },
     "prisma:patchCasing": {
-      "dependsOn": [
-        "prisma:compile"
-      ]
+      "dependsOn": ["prisma:compile"]
     },
     "prisma:compile": {
-      "inputs": [
-        "prismaCompile"
-      ],
-      "outputs": [
-        "{projectRoot}/**/casingFix.js"
-      ]
+      "inputs": ["prismaCompile"],
+      "outputs": ["{projectRoot}/**/casingFix.js"]
     }
   }
 }
