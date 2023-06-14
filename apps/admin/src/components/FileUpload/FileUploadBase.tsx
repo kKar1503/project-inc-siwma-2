@@ -1,6 +1,7 @@
 import { FiUpload } from 'react-icons/fi';
 import { BsFileEarmarkSpreadsheet } from 'react-icons/bs';
 import { Box, Typography, Paper, IconButton } from '@mui/material';
+import Image from 'next/image';
 
 export enum AcceptedFileTypes {
   XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -9,6 +10,8 @@ export enum AcceptedFileTypes {
   PDF = 'application/pdf',
   DOC = 'application/msword',
   DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  JPG = 'image/jpeg', // JPG and JPEG are the same thing with different names (thanks, Microsoft)
+  PNG = 'image/png',
 }
 
 export interface FileUploadProps {
@@ -48,16 +51,22 @@ const FileUpload = ({
           gap: 2,
         }}
       >
-        <Box sx={{ height: '20px' }}>
+        <Box>
           <label htmlFor="fileInput">
-            {selectedFile == null ? (
+            {selectedFile === null || !selectedFile.type.startsWith('image/') ? (
               <IconButton component="span">
-                <FiUpload />
+                {selectedFile === null ? <FiUpload /> : <BsFileEarmarkSpreadsheet />}
               </IconButton>
             ) : (
-              <IconButton component="span">
-                <BsFileEarmarkSpreadsheet />
-              </IconButton>
+              <Box sx={{ width: '100px', height: '100px' }}>
+                <Image
+                  src={URL.createObjectURL(selectedFile)}
+                  alt="preview"
+                  style={{ objectFit: 'contain', display: 'block', height: '100%', width: '100%' }}
+                  width={10} // Arbitrary width and height to make NextJS happy
+                  height={10}
+                />
+              </Box>
             )}
           </label>
           <input
@@ -68,7 +77,6 @@ const FileUpload = ({
             accept={accept ? accept.join(',') : undefined}
           />
         </Box>
-
         {selectedFile != null ? (
           <Typography variant="body1" textAlign="center">
             {selectedFile.name}
