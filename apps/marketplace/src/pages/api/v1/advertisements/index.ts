@@ -1,11 +1,8 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import bucket from '@/utils/s3Bucket';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
-import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
-import { ParamError } from '@inc/errors/src';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
 export const select = (isAdmin: boolean) => ({
@@ -37,12 +34,6 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const payload = advertisementSchema.post.body.parse(req.body);
 
-  const files = await getFilesFromRequest(req);
-  if (files.length === 0) {
-    throw new ParamError(`advertisement image`);
-  }
-  const s3Object = await bucket.createObject(fileToS3Object(files[0]));
-
   // Create advertisement
   const advertisementId = (
     await PrismaClient.advertisements.create({
@@ -51,7 +42,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         companyId: payload.companyId,
-        image: s3Object.Id,
+        image: '',
         endDate: new Date(payload.endDate),
         startDate: new Date(payload.startDate),
         active: payload.active,
