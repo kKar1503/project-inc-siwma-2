@@ -20,6 +20,8 @@ export interface FileUploadProps {
   selectedFile: File | null;
   changeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   accept?: AcceptedFileTypes[];
+  maxWidth?: string;
+  maxHeight?: string;
 }
 
 const FileUpload = ({
@@ -28,6 +30,8 @@ const FileUpload = ({
   selectedFile,
   changeHandler,
   accept,
+  maxWidth,
+  maxHeight,
 }: FileUploadProps) => (
   <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
     <Box sx={{ mb: 2 }}>
@@ -51,41 +55,58 @@ const FileUpload = ({
           gap: 2,
         }}
       >
-        <Box>
-          <label htmlFor="fileInput">
-            {selectedFile === null || !selectedFile.type.startsWith('image/') ? (
-              <IconButton component="span">
-                {selectedFile === null ? <FiUpload /> : <BsFileEarmarkSpreadsheet />}
-              </IconButton>
-            ) : (
-              <Box sx={{ width: '100px', height: '100px' }}>
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <label htmlFor="fileInput" style={{ cursor: 'pointer', width: '100%', height: '100%' }}>
+            <Box
+              sx={{
+                width: maxWidth ?? '100px',
+                height: maxHeight ?? '100px',
+                margin: 'auto',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {selectedFile === null || !selectedFile.type.startsWith('image/') ? (
+                <IconButton component="span">
+                  {selectedFile === null ? <FiUpload /> : <BsFileEarmarkSpreadsheet />}
+                </IconButton>
+              ) : (
                 <Image
                   src={URL.createObjectURL(selectedFile)}
                   alt="preview"
-                  style={{ objectFit: 'contain', display: 'block', height: '100%', width: '100%' }}
+                  style={{
+                    objectFit: 'contain',
+                    display: 'block',
+                    height: '100%',
+                    width: '100%',
+                    margin: 'auto',
+                  }}
                   width={10} // Arbitrary width and height to make NextJS happy
                   height={10}
                 />
-              </Box>
-            )}
+              )}
+            </Box>
+            <Typography variant="body1" textAlign="center">
+              {selectedFile != null ? selectedFile.name : 'Click to Upload a File'}
+            </Typography>
           </label>
           <input
             id="fileInput"
             type="file"
             onChange={changeHandler}
             style={{ display: 'none' }}
-            accept={accept ? accept.join(',') : undefined}
+            accept={accept ? accept.join(',') : undefined} // Accept all file types if no accept prop is provided
           />
         </Box>
-        {selectedFile != null ? (
-          <Typography variant="body1" textAlign="center">
-            {selectedFile.name}
-          </Typography>
-        ) : (
-          <Typography variant="body1" textAlign="center" sx={{ width: '75%' }}>
-            Click to Upload a File
-          </Typography>
-        )}
       </Box>
     </Box>
   </Paper>
