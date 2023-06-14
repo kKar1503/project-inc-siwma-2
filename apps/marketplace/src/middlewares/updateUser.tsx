@@ -7,7 +7,7 @@ const updateUser = async (
   email: string,
   // profilePicture: string,
   mobileNumber: string,
-  contact: string,
+  contactMethod: string,
   whatsappNumber: string,
   telegramUsername: string,
   bio: string
@@ -19,7 +19,7 @@ const updateUser = async (
       email,
       // profilePicture,
       mobileNumber,
-      contact,
+      contactMethod,
       whatsappNumber,
       telegramUsername,
       bio,

@@ -79,9 +79,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
       <Divider variant="middle" sx={{ height: '1px' }} />
 
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>
-          {data?.profilePicture}
-        </Avatar>
+        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePicture}</Avatar>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography>{data?.company}</Typography>
         <Typography
@@ -125,53 +123,59 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
-        <Box
-          sx={({ spacing }) => ({
-            mt: spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-          })}
-        >
-          <TelegramIcon
-            sx={({ spacing, palette }) => ({
-              borderRadius: spacing(2),
-              pr: '2px',
-              color: palette.common.white,
-              backgroundColor: palette.primary[500],
-            })}
-          />
-          <Typography
+        {data?.contactMethod === 'telegram' && (
+          <Box
             sx={({ spacing }) => ({
-              ml: spacing(1),
+              mt: spacing(1),
+              display: 'flex',
+              alignItems: 'center',
             })}
           >
-            {data?.telegramUsername}
-          </Typography>
-        </Box>
-        <Box
-          sx={({ spacing }) => ({
-            mt: spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-          })}
-        >
-          <WhatsAppIcon
-            sx={({ spacing, palette }) => ({
-              borderRadius: spacing(2),
-              p: '1px',
-              color: palette.common.white,
-              backgroundColor: palette.secondary.main,
-            })}
-          />
-          <Typography
+            <TelegramIcon
+              sx={({ spacing, palette }) => ({
+                borderRadius: spacing(2),
+                pr: '2px',
+                color: palette.common.white,
+                backgroundColor: palette.primary[500],
+              })}
+            />
+            <Typography
+              sx={({ spacing }) => ({
+                ml: spacing(1),
+              })}
+            >
+              {data?.telegramUsername}
+            </Typography>
+          </Box>
+        )}
+
+        {data?.contactMethod === 'whatsapp' && (
+          <Box
             sx={({ spacing }) => ({
-              ml: spacing(1),
+              mt: spacing(1),
+              display: 'flex',
+              alignItems: 'center',
             })}
           >
-            +65 {data?.mobileNumber}
-          </Typography>
-        </Box>
+            <WhatsAppIcon
+              sx={({ spacing, palette }) => ({
+                borderRadius: spacing(2),
+                p: '1px',
+                color: palette.common.white,
+                backgroundColor: palette.secondary.main,
+              })}
+            />
+            <Typography
+              sx={({ spacing }) => ({
+                ml: spacing(1),
+              })}
+            >
+              +65 {data?.mobileNumber}
+            </Typography>
+          </Box>
+        )}
       </CardContent>
+
       <CardActions
         sx={({ spacing }) => ({
           display: 'flex',

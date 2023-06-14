@@ -1,6 +1,5 @@
-import { useState, useEffect, ChangeEvent, FormEvent, useMemo, useRef} from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent, useMemo, } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import ProfileDetailCard, {
   ProfileDetailCardProps,
 } from '@/components/marketplace/profile/ProfileDetailCard';
@@ -50,7 +49,7 @@ interface UserData {
   bio: string;
   telegramUsername: string;
   whatsappNumber: string;
-  contact: string;
+  contactMethod: string;
   // profilePicture: string,
 }
 
@@ -61,7 +60,7 @@ const useUpdateUserMutation = (userUuid: string) =>
       updatedUserData.name,
       updatedUserData.email,
       updatedUserData.mobileNumber,
-      updatedUserData.contact,
+      updatedUserData.contactMethod,
       updatedUserData.whatsappNumber,
       updatedUserData.telegramUsername,
       // updatedUserData.profilePicture,
@@ -74,7 +73,7 @@ const EditProfile = () => {
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
-  console.log(userDetails);
+  // console.log(userDetails);
 
   const mutation = useUpdateUserMutation(loggedUserUuid);
   // console.log(mutation);
@@ -85,7 +84,6 @@ const EditProfile = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [name, setName] = useState<string>(userDetails?.name || '');
   // const [name, setName] = useState<string>(userDetails?.data?.user?.name || '');
-
   const [nameError, setNameError] = useState('');
   const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
   // const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.data?.user?.mobileNumber || '');
@@ -100,7 +98,8 @@ const EditProfile = () => {
   const [telegramError, setTelegramError] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.whatsappNumber || '');
   const [whatsappError, setWhatsappError] = useState('');
-  const [contact, setContact] = useState<string>(userDetails?.contactMethod || '');
+  const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
+
   const [modalMessage] = useState(
     'Once you leave the page, your user details will be removed and your profile will not be updated'
   );
@@ -164,7 +163,7 @@ const EditProfile = () => {
 
   const handleContactChange = (e: SelectChangeEvent) => {
     const selectedContact = e.target.value;
-    setContact(selectedContact);
+    setContactMethod(selectedContact);
 
     if (selectedContact === 'whatsapp') {
       setTelegramUsername('');
@@ -206,7 +205,7 @@ const EditProfile = () => {
       bio,
       telegramUsername,
       whatsappNumber,
-      contact,
+      contactMethod,
       // profilePicture: imageUrl || '',
     };
     mutation.mutate(updatedUserData);
@@ -217,11 +216,12 @@ const EditProfile = () => {
       setName(userDetails?.name);
       setMobileNumber(userDetails?.mobileNumber);
       setEmail(userDetails?.email);
-      // setBio(userDetails?.bio);
-      setContact(userDetails?.contactMethod);
+      setBio(userDetails?.bio || '');
+      setContactMethod(userDetails?.contactMethod);
+      setWhatsappNumber(userDetails?.whatsappNumber || '');
+      setTelegramUsername(userDetails?.telegramUsername || '');
     }
   }, [userDetails]);
- 
 
   useEffect(() => {
     if (profilePicture) {
@@ -383,65 +383,52 @@ const EditProfile = () => {
                     mt: spacing(2),
                     display: 'flex',
                     alignItems: 'flex-start',
+                    width: '100%',
                   })}
                 >
-                  <FormControl
-                    fullWidth
-                    variant="outlined"
+                  <TextField
+                    label="Full Name"
+                    placeholder="Your Full Name"
+                    InputLabelProps={{ shrink: true }}
+                    value={name}
+                    onChange={handleNameChange}
+                    error={!!nameError}
+                    helperText={nameError}
                     sx={({ spacing }) => ({
                       mr: spacing(2),
+                      width: '100%',
                     })}
-                  >
-                    <TextField
-                      label="Full Name"
-                      placeholder="Your Full Name"
-                      InputLabelProps={{ shrink: true }}
-                      value={name}
-                      onChange={handleNameChange}
-                      error={!!nameError}
-                      helperText={nameError}
-                    />
-                  </FormControl>
-
-                  <FormControl
-                    fullWidth
-                    variant="outlined"
-                    sx={({ spacing }) => ({
-                      mr: spacing(2),
-                    })}
-                  >
-                    <TextField
-                      label="Phone"
-                      placeholder="91234567"
-                      InputLabelProps={{ shrink: true }}
-                      value={mobileNumber}
-                      onChange={handleMobileNumberChange}
-                      error={!!mobileNumberError}
-                      helperText={mobileNumberError}
-                      inputProps={{
-                        maxLength: 8,
-                        pattern: '[0-9]*',
-                      }}
-                    />
-                  </FormControl>
+                  />
+                  <TextField
+                    label="Phone"
+                    placeholder="91234567"
+                    InputLabelProps={{ shrink: true }}
+                    value={mobileNumber}
+                    onChange={handleMobileNumberChange}
+                    error={!!mobileNumberError}
+                    helperText={mobileNumberError}
+                    inputProps={{
+                      maxLength: 8,
+                      pattern: '[0-9]*',
+                    }}
+                    sx={{
+                      width: '100%',
+                    }}
+                  />
                 </Box>
-
-                <FormControl fullWidth variant="outlined">
                   <TextField
                     label="Email"
                     placeholder="user@gmail.com"
                     InputLabelProps={{ shrink: true }}
                     sx={({ spacing }) => ({
                       mt: spacing(2),
+                      width:'100%',
                     })}
                     value={email}
                     onChange={handleEmailChange}
                     error={!!emailError}
                     helperText={emailError}
                   />
-                </FormControl>
-
-                <FormControl fullWidth variant="outlined">
                   <TextField
                     multiline
                     rows={5}
@@ -451,13 +438,13 @@ const EditProfile = () => {
                     sx={({ spacing }) => ({
                       mt: spacing(2),
                       mb: spacing(1),
+                      width:'100%',
                     })}
                     value={bio}
                     onChange={handleBioChange}
                     error={!!bioError}
                     helperText={bioError}
                   />
-                </FormControl>
               </CardContent>
               <Divider
                 variant="middle"
@@ -475,13 +462,13 @@ const EditProfile = () => {
                 >
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
                     <InputLabel>Contact</InputLabel>
-                    <Select label="contact" value={contact} onChange={handleContactChange}>
+                    <Select label="contact" value={contactMethod} onChange={handleContactChange}>
                       <MenuItem value="telegram">Telegram</MenuItem>
-                      <MenuItem value="Whatsapp">Whatsapp</MenuItem>
+                      <MenuItem value="whatsapp">Whatsapp</MenuItem>
                     </Select>
                   </FormControl>
 
-                  {contact === 'Whatsapp' && (
+                  {contactMethod === 'whatsapp' && (
                     <TextField
                       label="Whatsapp Number"
                       placeholder="8123 4567"
@@ -500,7 +487,7 @@ const EditProfile = () => {
                     />
                   )}
 
-                  {contact === 'telegram' && (
+                  {contactMethod === 'telegram' && (
                     <TextField
                       label="Telegram Username"
                       placeholder="account_username"
@@ -541,8 +528,8 @@ const EditProfile = () => {
                       mobileNumber.trim() === '' ||
                       email.trim() === '' ||
                       bio.trim() === '' ||
-                      (contact === 'whatsapp' && whatsappNumber.trim() === '') ||
-                      (contact === 'telegram' && telegramUsername.trim() === '')
+                      (contactMethod === 'whatsapp' && whatsappNumber.trim() === '') ||
+                      (contactMethod === 'telegram' && telegramUsername.trim() === '')
                     }
                   >
                     Save Changes
