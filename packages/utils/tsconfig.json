@@ -3,11 +3,12 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "emitDeclarationOnly": true,
     "declaration": true,
     "module": "CommonJS",
     "target": "ESNext",
     "outDir": "./dist"
   },
   "include": ["."],
-  "exclude": ["dist", "node_modules", "**/*.spec.ts"]
+  "exclude": ["dist", "node_modules", "**/*.spec.ts", "esbuild.config.js"]
 }
