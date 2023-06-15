@@ -35,7 +35,6 @@ const Bookmarks = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   const user = useSession();
-  console.log(user);
   const loggedUserUuid = user.data?.user.id as string;
   const userDetails = useGetUserQuery(loggedUserUuid);
 
@@ -60,7 +59,6 @@ const Bookmarks = () => {
     }
 
     const usersData = await Promise.all(userIDs.map(fetchUser));
-    console.log(usersData);
     setUsers(usersData);
   };
 
@@ -84,11 +82,11 @@ const Bookmarks = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} display="flex" justifyContent="center">
           {['LISTINGS', 'USERS'].map((type) => (
-            <Grid item xs={6} md={6} key={type}>
+            <Grid item xs={12} md={6} key={type}>
               <Button
                 size="large"
                 variant={selectedButton === type ? 'contained' : 'outlined'}

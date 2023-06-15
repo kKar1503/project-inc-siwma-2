@@ -75,7 +75,7 @@ const DisplayResults = ({
   };
 
   return (
-    <Grid item sm={12} md={12} display="flex">
+    <Grid item xs={12} md={12} display="flex">
       {filter && !isMd && !isSm && (
         <Grid
           item
@@ -101,7 +101,7 @@ const DisplayResults = ({
         </Grid>
       )}
 
-      <Grid item sm={12} md={10} sx={{ width: '100%' }}>
+      <Grid item sm={12} md={filter ? 10 : 12} sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex' }}>
           <Grid item xs={10} md={8} container justifyContent="flex-start">
             <Grid item xs={12} md={12} sx={{ marginTop: 2, marginBottom: 3 }}>
