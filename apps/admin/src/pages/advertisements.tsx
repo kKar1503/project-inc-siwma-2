@@ -1,5 +1,6 @@
 import React from 'react';
 import AdSpaceTable from '@/components/advertisementsDashboard/adSpaceTable';
+import Table from '@/components/advertisementsDashboard/adSpaceTable/table';
 
 
 const rows = [
@@ -19,8 +20,9 @@ const AdvertisementDashboard = () => {
   return (
     <div>
       <h1>Advertisement Dashboard</h1>
-
-      <AdSpaceTable title="Active Ad Spaces" users={rows}/>
+      <Table active/>
+      <Table active={false}/>
+      <AdSpaceTable title='Active Ad Spaces' users={rows} />
       <AdSpaceTable title="Inactive Ad Spaces" users={rows} />
     </div>
   );
