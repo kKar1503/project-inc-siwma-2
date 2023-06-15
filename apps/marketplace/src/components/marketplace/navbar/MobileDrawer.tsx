@@ -11,7 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
 import CategoryIcon from '@mui/icons-material/Category';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import TranslateIcon from '@mui/icons-material/Translate';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
@@ -130,6 +130,15 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               </ListItemButton>
             </Link>
           </List>
+
+          <Link href={`/bookmarks`} underline="none">
+            <ListItemButton>
+              <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
+                <BookmarksIcon sx={{ color: palette.grey[600] }} />
+              </ListItemIcon>
+              <ListItemText primary="Bookmarks" />
+            </ListItemButton>
+          </Link>
         </Collapse>
 
         <Link href="/chat" underline="none">
