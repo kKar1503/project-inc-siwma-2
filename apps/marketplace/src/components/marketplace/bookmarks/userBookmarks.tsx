@@ -22,7 +22,7 @@ const UserBookmarks = ({ data, updateBookmarkData }: UserBookmarksProps) => {
       {data && data.length > 0 && (
         <Grid container display="flex" spacing={1}>
           {data.map((item: User) => (
-            <Grid item sm={3} md={4} key={item.name}>
+            <Grid item xs={6} md={4} lg={3} key={item.name}>
               <UserItem data={item} updateBookmarkData={updateBookmarkData} />
             </Grid>
           ))}

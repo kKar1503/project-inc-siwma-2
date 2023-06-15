@@ -42,7 +42,7 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
   const { isBookmarked, handleBookmarkUser } = useBookmarkUser(data.id, updateBookmarkData);
 
   return (
-    <Card>
+    <Card sx={{ height: '100%' }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} src={data.profilePic || '/images/Placeholder.png'}>
@@ -80,12 +80,12 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
         }
       />
       <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
-        <CardContent>
+        <CardContent sx={{ paddingTop: '0px' }}>
           <Typography variant="body1" align="center" sx={{ fontWeight: 500 }}>
-            Email: {data.email}
+            {data.email}
           </Typography>
           <Typography variant="body1" align="center" sx={{ fontWeight: 500 }}>
-            Phone Number: {data.mobileNumber}
+            {data.mobileNumber}
           </Typography>
         </CardContent>
       </Link>
