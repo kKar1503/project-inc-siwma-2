@@ -18,13 +18,14 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
-  pointerEvents: 'none',
+  pointerEvents: 'fill',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   borderTopLeftRadius: theme.shape.borderRadius,
   borderBottomLeftRadius: theme.shape.borderRadius,
   backgroundColor: '#2962FF',
+  zIndex: 1,
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -99,9 +100,15 @@ const SearchBar = ({ handleSearch }: SearchBarProps) => {
     }
   };
 
+  const handleOnClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (SearchBarRef.current && handleSearch) {
+      handleSearch(SearchBarRef.current.value);
+    }
+  };
+
   return (
     <Search sx={searchBarStyles?.search}>
-      <SearchIconWrapper>
+      <SearchIconWrapper onClick={handleOnClick}>
         <SearchIcon sx={{ color: 'white', fontSize: '16px' }} />
       </SearchIconWrapper>
       <StyledInputBase
