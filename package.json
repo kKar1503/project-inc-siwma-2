@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "nx run-many -t dev -p @inc/chat @inc/marketplace",
     "dev:packages": "nx run-many -t dev -p @inc/ui @inc/events @inc/s3-simplified @inc/errors @inc/send-in-blue @inc/utils --parallel=6",
+    "dev:admin": "nx run @inc/admin:dev",
     "dev:marketplace": "nx run @inc/marketplace:dev",
     "dev:chat": "nx run @inc/chat:dev",
     "test": "nx run-many -t test",
