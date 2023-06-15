@@ -11,6 +11,7 @@ import MainHeader from '@/components/advertisementsDashboard/adSpaceTable/mainHe
 import RowHeader from '@/components/advertisementsDashboard/adSpaceTable/rowHeader';
 import { rows } from '@/components/advertisementsDashboard/adSpaceTable/utils';
 import RowBody from '@/components/advertisementsDashboard/adSpaceTable/rowBody';
+import usePagination from '@/components/advertisementsDashboard/adSpaceTable/hooks/usePagination';
 
 interface Props {
   active: boolean;
@@ -21,8 +22,13 @@ export default function({
                           active,
                         }: Props) {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(4);
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    rowPageOptions
+  } = usePagination(4);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -51,15 +57,6 @@ export default function({
     }
 
     setSelected(newSelected);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -110,7 +107,7 @@ export default function({
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[4, 8, 16]}
+          rowsPerPageOptions={rowPageOptions}
           component='div'
           count={rows.length}
           rowsPerPage={rowsPerPage}

@@ -12,8 +12,7 @@ interface Props {
 }
 
 const rowHeader = (props: Props) => {
-  const { onSelectAllClick,numSelected, rowCount } =
-    props;
+  const { onSelectAllClick, numSelected, rowCount } = props;
 
   return (
     <TableHead>
@@ -24,18 +23,15 @@ const rowHeader = (props: Props) => {
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
           />
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            align='left'
+            padding='normal'
           >
-              {headCell.label}
+            {headCell.label}
           </TableCell>
         ))}
       </TableRow>

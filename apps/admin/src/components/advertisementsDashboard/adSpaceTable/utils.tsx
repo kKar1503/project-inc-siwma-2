@@ -38,45 +38,30 @@ export const rows = [
   createData('Nougat', 360, 19.0, 9, 37.0),
   createData('Oreo', 437, 18.0, 63, 4.0),
 ];
-
-export type Order = 'asc' | 'desc';
-
 export interface HeadCell {
-  disablePadding: boolean;
   id: keyof Data;
   label: string;
-  numeric: boolean;
 }
 
 export const headCells: readonly HeadCell[] = [
   {
     id: 'name',
-    numeric: false,
-    disablePadding: true,
     label: 'Dessert (100g serving)',
   },
   {
     id: 'calories',
-    numeric: true,
-    disablePadding: false,
     label: 'Calories',
   },
   {
     id: 'fat',
-    numeric: true,
-    disablePadding: false,
     label: 'Fat (g)',
   },
   {
     id: 'carbs',
-    numeric: true,
-    disablePadding: false,
     label: 'Carbs (g)',
   },
   {
     id: 'protein',
-    numeric: true,
-    disablePadding: false,
     label: 'Protein (g)',
   },
 ];
