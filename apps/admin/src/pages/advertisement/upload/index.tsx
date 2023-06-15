@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography } from '@mui/material';
 import Form from './form';
-import Upload, { FileUploadProps } from './upload';
-
-export enum AcceptedFileTypes {
-    XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    TXT = 'text/plain',
-    CSV = 'text/csv',
-    PDF = 'application/pdf',
-    DOC = 'application/msword',
-    DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-}
-
+import Upload, { FileUploadProps } from '../../../components/FileUpload/FileUploadBase';
 const AdvertisementUpload = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -24,12 +14,6 @@ const AdvertisementUpload = () => {
     return (
         <Box>
             <Card>
-                {/* <Typography variant="h4" sx={{ mb: 2 }}>
-                    Advertisement Upload
-                </Typography>
-                <Typography variant="subtitle1" sx={{ mb: 2 }}>
-                    Import a JPG or PNG file to upload an advertisement
-                </Typography> */}
                 <CardContent>
                     <Upload
                         title="Advertisement Image Upload"
