@@ -4,6 +4,7 @@ import PrismaClient, { Prisma } from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 import { APIRequestType } from '@/types/api-types';
 import { userSchema } from '@/utils/api/server/zod';
+import { reviewSchemas } from '@/utils/api/client/zod';
 
 function orderByOptions(sortBy: string | undefined): Prisma.ReviewsOrderByWithRelationInput {
     switch (sortBy) {
@@ -42,7 +43,20 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
         orderBy,
     });
 
-    res.status(200).json(formatAPIResponse(reviews));
+    const formatReviews = reviews.map(review => ({
+        ...review,
+        id: review.id.toString(),
+        listingId: review.listing.toString(),
+        createdAt: review.createdAt.toISOString(),
+        userId: review.user.toString(),
+
+
+    }));
+
+    // Validate response body using Zod schema
+    const parsedReviews = reviewSchemas.getAll.parse(formatReviews);
+
+    res.status(200).json(formatAPIResponse(parsedReviews));
 };
 
 export default apiHandler()
