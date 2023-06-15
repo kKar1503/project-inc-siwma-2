@@ -10,7 +10,7 @@ const menuItems = [
   { name: 'Overview', link: '/overview', logo: '/images/favicons/overview-icon.png' },
   {
     name: 'Data Analytics',
-    link: '/data-analytics',
+    link: '/dataAnalytics',
     logo: '/images/favicons/data-analytics-icon.png',
   },
   {
@@ -21,12 +21,12 @@ const menuItems = [
       {
         name: 'Advertisement Dashboard',
         link: '/advertisement/dashboard',
-        logo: '/images/favicons/subitem1-icon.png',
+        logo: '/images/favicons/advertisement-dashboard-icon.png',
       },
       {
         name: 'Advertisement Upload',
         link: '/advertisement/upload',
-        logo: '/images/favicons/subitem2-icon.png',
+        logo: '/images/favicons/advertisement-upload-icon.png',
       },
     ],
   },
@@ -43,24 +43,29 @@ const menuItems = [
       {
         name: 'Parameters',
         link: '/categoryManagement/parameters',
-        logo: '/images/favicons/parameters-icon.png',
+        logo: '/images/favicons/users-icon.png',
       },
     ],
   },
   {
     name: 'User Management',
-    link: '/user-management',
+    link: '/userManagement',
     logo: '/images/favicons/user-management-icon.png',
     dropdown: [
       {
-        name: 'Subitem 1',
-        link: '/subitem-1',
-        logo: '/images/favicons/subitem1-icon.png',
+        name: 'Companies',
+        link: '/userManagement/companies',
+        logo: '/images/favicons/companies-icon.png',
       },
       {
-        name: 'Subitem 2',
-        link: '/subitem-2',
-        logo: '/images/favicons/subitem2-icon.png',
+        name: 'Users',
+        link: '/userManagement/users',
+        logo: '/images/favicons/users-icon.png',
+      },
+      {
+        name: 'Invites',
+        link: '/userManagement/invites',
+        logo: '/images/favicons/invites-icon.png',
       },
     ],
   },
