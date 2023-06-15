@@ -131,7 +131,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
             </Link>
           </List>
 
-          <Link href={`/bookmarks`} underline="none">
+          <Link href="/bookmarks" underline="none">
             <ListItemButton>
               <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                 <BookmarksIcon sx={{ color: palette.grey[600] }} />
