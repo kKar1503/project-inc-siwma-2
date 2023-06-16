@@ -230,11 +230,14 @@ const AdminSideBar = () => {
         </List>
       </div>
       <Box
-        sx={{
+         sx={{
           backgroundColor: '#F7F7F8',
           padding: '1em',
           display: 'flex',
           alignItems: 'flex-end',
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
         }}
       >
         <div
