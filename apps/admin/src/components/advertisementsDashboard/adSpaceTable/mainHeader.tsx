@@ -4,18 +4,26 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import * as React from 'react';
+import EditIcon from '@mui/icons-material/Edit';
+import MinusIcon from '@mui/icons-material/Remove';
+import PlusIcon from '@mui/icons-material/Add';
+import { MouseEventHandler } from 'react';
 
 interface Props {
   numSelected: number;
   active: boolean;
+  onDelete: MouseEventHandler<HTMLDivElement>;
+  onEdit: MouseEventHandler<HTMLDivElement>;
+  onChangeActiveStatus: MouseEventHandler<HTMLDivElement>;
 }
 
 const MainHeader = ({
-                                numSelected,
-                                active,
-                              }: Props) => {
+                      numSelected,
+                      active,
+                      onDelete,
+                      onEdit,
+                      onChangeActiveStatus,
+                    }: Props) => {
 
   const isElementSelected = numSelected > 0;
 
@@ -50,18 +58,28 @@ const MainHeader = ({
         </Typography>
       )}
       {isElementSelected ? (
-        <Tooltip title='Delete'>
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title='Filter list'>
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+        <>
+          <Tooltip title={active ? 'Make Inactive' : 'Make Active'} onClick={onChangeActiveStatus}>
+            <IconButton>
+              {active
+                ? <MinusIcon fontSize='large' />
+                : <PlusIcon fontSize='large' />}
+            </IconButton>
+          </Tooltip>
+          {numSelected === 1
+            ? <Tooltip title='Edit' onClick={onEdit}>
+              <IconButton>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+            : null}
+          <Tooltip title='Delete' onClick={onDelete}>
+            <IconButton>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ) : null}
     </Toolbar>
   );
 };

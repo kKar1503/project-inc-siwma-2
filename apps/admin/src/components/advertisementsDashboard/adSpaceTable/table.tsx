@@ -16,12 +16,18 @@ import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/data
 interface Props {
   active: boolean;
   rows: readonly DataType[];
+  onDelete: (ids: readonly string[]) => void;
+  onEdit: (id: string) => void;
+  onChangeActiveStatus: (ids: readonly string[]) => void;
 }
 
 // eslint-disable-next-line react/function-component-definition
 export default function({
                           active,
                           rows,
+                          onDelete,
+                          onEdit,
+                          onChangeActiveStatus,
                         }: Props) {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const {
@@ -71,14 +77,35 @@ export default function({
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =  Math.max(0, (1 + page) * rowsPerPage - data.length);
+  const emptyRows = Math.max(0, (1 + page) * rowsPerPage - data.length);
 
+
+  const handleDelete = () => {
+    onDelete(selected);
+    setSelected([]);
+  };
+
+  const handleEdit = () => {
+    onEdit(selected[0]);
+    setSelected([]);
+  };
+
+  const handleChangeStatus = () => {
+    onChangeActiveStatus(selected);
+    setSelected([]);
+  };
 
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <MainHeader numSelected={selected.length} active={active} />
+        <MainHeader
+          numSelected={selected.length}
+          active={active}
+          onChangeActiveStatus={handleChangeStatus}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
