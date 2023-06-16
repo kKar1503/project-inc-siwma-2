@@ -3,15 +3,15 @@ import { initReactI18next } from 'react-i18next';
 // eslint-disable-next-line import/extensions
 import en from '@/locales/en/translation.json';
 // eslint-disable-next-line import/extensions
-import zh from '@/locales/zh/translation.json';
+import cn from '@/locales/cn/translation.json';
 
 export const defaultLang = 'en';
 export const resources = {
   en: {
     translation: en,
   },
-  zh: {
-    translation: zh,
+  cn: {
+    translation: cn,
   },
 } as const;
 

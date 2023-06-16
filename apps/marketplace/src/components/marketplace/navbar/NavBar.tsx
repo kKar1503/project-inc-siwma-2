@@ -47,10 +47,10 @@ const NavBar = () => {
     const newLanguage = language === 'English' ? 'Chinese' : 'English';
 
     // Update the selected language in local storage
-    localStorage.setItem('i18nextLng', newLanguage === 'English' ? 'en' : 'zh');
+    localStorage.setItem('i18nextLng', newLanguage === 'English' ? 'en' : 'cn');
 
     // Change the language using i18next
-    i18next.changeLanguage(newLanguage === 'English' ? 'en' : 'zh');
+    i18next.changeLanguage(newLanguage === 'English' ? 'en' : 'cn');
 
     // Update the state with the new language
     setLanguage(newLanguage);
