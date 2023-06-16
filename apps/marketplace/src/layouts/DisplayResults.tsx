@@ -25,6 +25,7 @@ export type DisplayResultsProps = {
   data: HeaderProps;
   subHeader: boolean;
   setFilterOptions?: (filter: FilterOptions) => void;
+  isLoading?: boolean;
 };
 
 const DisplayResults = ({
@@ -33,6 +34,7 @@ const DisplayResults = ({
   data,
   subHeader,
   setFilterOptions,
+  isLoading,
 }: DisplayResultsProps) => {
   const [isMd, isSm] = useResponsiveness(['md', 'sm']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -49,11 +51,20 @@ const DisplayResults = ({
       case 'Recent':
         sortBy = 'recent_newest';
         break;
+      case 'Oldest':
+        sortBy = 'recent_oldest';
+        break;
       case 'Price - High to Low':
         sortBy = 'price_desc';
         break;
       case 'Price - Low to High':
         sortBy = 'price_asc';
+        break;
+      case 'Rating - High to Low':
+        sortBy = 'highest_rating';
+        break;
+      case 'Rating - Low to High':
+        sortBy = 'lowest_rating';
         break;
       default:
         break;
@@ -61,7 +72,7 @@ const DisplayResults = ({
     const filterOptions: FilterOptions = {
       sortBy,
       category,
-      negotiable: negotiation === 'negotiable',
+      negotiable: negotiation === 'true',
       minPrice: parseInt(minPrice, 10),
       maxPrice: parseInt(maxPrice, 10),
     };
@@ -162,7 +173,7 @@ const DisplayResults = ({
           )}
         </Box>
         {children}
-        {data && data.noOfItems === 0 && (
+        {!isLoading && data && data.noOfItems === 0 && (
           <Grid container justifyContent="center">
             <Typography>No items found.</Typography>
           </Grid>

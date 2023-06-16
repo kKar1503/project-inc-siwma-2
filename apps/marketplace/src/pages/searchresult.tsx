@@ -4,12 +4,10 @@ import Grid from '@mui/material/Grid';
 import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
-import Image from 'next/image';
 // middleware
 import searchListings, { FilterOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
-import { Box, Container } from '@mui/material';
+import { Box, CircularProgress, Container } from '@mui/material';
 
 const useSearchListings = (matching: string, filter?: FilterOptions) => {
   const data = useQuery(
@@ -26,7 +24,6 @@ const useSearchListings = (matching: string, filter?: FilterOptions) => {
 const Searchresult = () => {
   const router = useRouter();
   const { search } = router.query;
-  const { data: session } = useSession();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
 
   const { data: listingData, isLoading } = useSearchListings(search as string, filterOptions);
@@ -41,7 +38,13 @@ const Searchresult = () => {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 2 }}>
-      <DisplayResults filter data={Header} setFilterOptions={setFilterOptions} subHeader={false}>
+      <DisplayResults
+        filter
+        data={Header}
+        setFilterOptions={setFilterOptions}
+        subHeader={false}
+        isLoading={isLoading}
+      >
         {isLoading && (
           <Box
             sx={{
@@ -51,7 +54,7 @@ const Searchresult = () => {
               height: '100vh',
             }}
           >
-            <Image src="/images/loading.gif" alt="Loading" width={150} height={150} />
+            <CircularProgress />
           </Box>
         )}
         {listingData && listingData.length > 0 && (

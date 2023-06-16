@@ -15,7 +15,13 @@ import { useQuery } from 'react-query';
 // middleware
 import fetchCategories from '@/middlewares/fetchCategories';
 
-export type SortProps = 'Recent' | 'Price - High to Low' | 'Price - Low to High';
+export type SortProps =
+  | 'Recent'
+  | 'Oldest'
+  | 'Price - High to Low'
+  | 'Price - Low to High'
+  | 'Rating - High to Low'
+  | 'Rating - Low to High';
 
 export type FilterFormProps = {
   sort: SortProps;
@@ -50,7 +56,14 @@ const FilterForm = ({
   setMaxPrice,
   handleSubmit,
 }: FilterFormProps) => {
-  const sortOptions = ['Recent', 'Price - High to Low', 'Price - Low to High'];
+  const sortOptions = [
+    'Recent',
+    'Oldest',
+    'Price - High to Low',
+    'Price - Low to High',
+    'Rating - High to Low',
+    'Rating - Low to High',
+  ];
 
   const categoriesData = useGetCategoriesQuery();
 
@@ -103,8 +116,8 @@ const FilterForm = ({
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>Negotiability</FormLabel>
       <RadioGroup onChange={(e) => setNegotiation(e.target.value)} value={negotiation}>
-        <FormControlLabel value="negotiable" control={<Radio />} label="Negotiable" />
-        <FormControlLabel value="nonNegotiable" control={<Radio />} label="Non-Negotiable" />
+        <FormControlLabel value="true" control={<Radio />} label="Negotiable" />
+        <FormControlLabel value="false" control={<Radio />} label="Non-Negotiable" />
       </RadioGroup>
 
       <Divider sx={{ my: 2 }} />
@@ -120,6 +133,7 @@ const FilterForm = ({
           id="min"
           label="Min"
           variant="standard"
+          type="number"
           sx={{ mr: 2 }}
           onChange={(e) => setMinPrice(e.target.value)}
           value={minPrice}
@@ -127,6 +141,7 @@ const FilterForm = ({
         <TextField
           id="max"
           label="Max"
+          type="number"
           variant="standard"
           onChange={(e) => setMaxPrice(e.target.value)}
           value={maxPrice}

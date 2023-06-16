@@ -33,7 +33,7 @@ const NavBar = () => {
 
   const handleSearch = (search: string) => {
     if (search.trim() !== '') {
-      router.push(`/searchresult?search=${search}`);
+      router.push(`/searchResult?search=${search}`);
     }
   };
 
