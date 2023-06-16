@@ -8,7 +8,9 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import Link from '@mui/material/Link';
+import { signOut } from 'next-auth/react';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 
@@ -32,6 +34,11 @@ const Profile = ({ userName, userId }: UserNameProps) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogOut = async () => {
+    setAnchorEl(null);
+    await signOut();
   };
 
   return (
@@ -178,7 +185,32 @@ const Profile = ({ userName, userId }: UserNameProps) => {
           </Typography>
         </MenuItem>
 
-        <MenuItem onClick={handleMenuClose}>
+        <Link href="/bookmarks" underline="none">
+          <MenuItem onClick={handleMenuClose}>
+            <BookmarksIcon
+              sx={{
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: typography.subtitle2,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            >
+              Bookmarks
+            </Typography>
+          </MenuItem>
+        </Link>
+
+        <MenuItem onClick={handleLogOut}>
           <LogoutIcon
             sx={{
               fontSize: typography.h5,
