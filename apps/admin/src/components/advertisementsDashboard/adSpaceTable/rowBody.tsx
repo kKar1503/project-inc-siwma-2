@@ -23,11 +23,11 @@ const RowBody = ({
   return (
     <TableRow
       hover
-      onClick={(event) => onSelect(event, row.name)}
+      onClick={(event) => onSelect(event, row.id)}
       role='checkbox'
       aria-checked={isSelected}
       tabIndex={-1}
-      key={row.name}
+      key={row.id}
       selected={isSelected}
       sx={{ cursor: 'pointer' }}
     >
@@ -40,16 +40,10 @@ const RowBody = ({
           }}
         />
       </TableCell>
-      <TableCell
-        id={labelId}
-        align='left'
-      >
-        {row.name}
-      </TableCell>
-      <TableCell align='left'>{row.calories}</TableCell>
-      <TableCell align='left'>{row.fat}</TableCell>
-      <TableCell align='left'>{row.carbs}</TableCell>
-      <TableCell align='left'>{row.protein}</TableCell>
+      <TableCell align='left'>{row.user}</TableCell>
+      <TableCell align='left'>{row.email}</TableCell>
+      <TableCell align='left'>{row.company}</TableCell>
+      <TableCell align='left'>{row.mobileNumber}</TableCell>
     </TableRow>
   );
 };

@@ -31,10 +31,17 @@ export default function({
   } = usePagination(4);
 
   const data = React.useMemo(() => rows.filter(r => r.active === active), [active]);
-
+  const visibleRows = React.useMemo(
+    () => {
+      const pageStart = page * rowsPerPage;
+      const pageEnd = pageStart + rowsPerPage;
+      return data.slice(pageStart, pageEnd);
+    },
+    [page, rowsPerPage],
+  );
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
+      const newSelected = data.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -64,14 +71,7 @@ export default function({
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =  Math.max(0, (1 + page) * rowsPerPage - data.length);
 
-  const visibleRows = React.useMemo(
-    () => {
-      const pageStart = page * rowsPerPage;
-      const pageEnd = pageStart + rowsPerPage;
-      return data.slice(pageStart, pageEnd);
-    },
-    [page, rowsPerPage],
-  );
+
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -91,7 +91,7 @@ export default function({
             <TableBody>
               {
                 visibleRows.map((row, index) => {
-                  const isSelected = selected.indexOf(row.name) !== -1;
+                  const isSelected = selected.indexOf(row.id) !== -1;
                   return <RowBody row={row} index={index} isSelected={isSelected} onSelect={handleClick} />;
                 })
               }
