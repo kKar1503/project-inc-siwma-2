@@ -1,6 +1,11 @@
 import { DataType } from '@/components/advertisementsDashboard/adSpaceTable';
 
-const fetchAdSpaceData = async (): Promise<DataType[]> => {
+interface Response {
+  data: DataType[];
+  totalClicks: number;
+}
+
+const fetchAdSpaceData = async (): Promise<Response> => {
   function createData(
     id: string,
     user: string,
@@ -19,15 +24,19 @@ const fetchAdSpaceData = async (): Promise<DataType[]> => {
     };
   }
 
-  return [
-    createData('1', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
-    createData('2', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
-    createData('3', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
-    createData('4', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
-    createData('5', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
-    createData('6', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', false),
-    createData('7', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', false),
-  ];
+  return {
+    data:
+      [
+        createData('1', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
+        createData('2', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
+        createData('3', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
+        createData('4', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
+        createData('5', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
+        createData('6', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', false),
+        createData('7', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', false),
+      ],
+    totalClicks: 125,
+  };
 };
 
 export default fetchAdSpaceData;

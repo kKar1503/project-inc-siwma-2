@@ -8,8 +8,6 @@ const AdvertisementDashboard = () => (
         <div style={{ border: '1px solid red', width: '20%', height: '20%' }}>NAVBAR</div>
       </div>
       <div style={{ flex: 5 }}>
-        {/* Data card placeholder */}
-        <div style={{ border: '1px solid red', width: '20%', height: '10%' }}>DATA CARD THING</div>
         <AdSpaceSection />
       </div>
       <div style={{ flex: 2 }}>
