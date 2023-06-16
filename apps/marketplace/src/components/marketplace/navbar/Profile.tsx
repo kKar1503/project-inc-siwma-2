@@ -39,7 +39,6 @@ const Profile = ({ userName, userId }: UserNameProps) => {
   const handleLogOut = async () => {
     setAnchorEl(null);
     await signOut();
-    window.location.href = '/login';
   };
 
   return (
