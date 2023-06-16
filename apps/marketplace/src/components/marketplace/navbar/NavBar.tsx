@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -19,8 +19,6 @@ import AddListing from './AddListing';
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
 
-const getLanguage = () => i18next.language || window.localStorage.i18nextLng;
-
 const NavBar = () => {
   const user = useSession();
   const { t } = useTranslation();
@@ -32,10 +30,30 @@ const NavBar = () => {
 
   const [language, setLanguage] = useState<'English' | 'Chinese'>('English');
 
+  const initializeLanguage = () => {
+    const storedLanguage = localStorage.getItem('i18nextLng');
+
+    if (storedLanguage) {
+      i18next.changeLanguage(storedLanguage);
+      setLanguage(storedLanguage === 'en' ? 'English' : 'Chinese');
+    }
+  };
+
+  useEffect(() => {
+    initializeLanguage();
+  }, []);
+
   const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // handle i18 change here
-    setLanguage(language === 'English' ? 'Chinese' : 'English');
-    i18next.changeLanguage(getLanguage() === 'en' ? 'zh' : 'en');
+    const newLanguage = language === 'English' ? 'Chinese' : 'English';
+
+    // Update the selected language in local storage
+    localStorage.setItem('i18nextLng', newLanguage === 'English' ? 'en' : 'zh');
+
+    // Change the language using i18next
+    i18next.changeLanguage(newLanguage === 'English' ? 'en' : 'zh');
+
+    // Update the state with the new language
+    setLanguage(newLanguage);
   };
 
   const navBarStyles = useMemo(() => {
