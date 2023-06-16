@@ -34,7 +34,11 @@ const AdvertisementDashboard = () => {
 
   return apiData
     ? (
-      <Box style={{ transform: 'scale(1.2)', marginTop: '8%' }}>
+      <Box style={{
+        transform: 'scale(0.8)',
+        width: '50%',
+        marginTop: '-2%',
+      }}>
         <AdSpaceTable
           active
           rows={apiData}

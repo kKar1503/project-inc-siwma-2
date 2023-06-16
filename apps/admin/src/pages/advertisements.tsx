@@ -2,20 +2,16 @@ import React from 'react';
 import AdSpaceSection from '@/components/advertisementsDashboard/adSpaceSection';
 import Box from '@mui/material/Box';
 
-const AdvertisementDashboard = () => {
-
-  return (
+const AdvertisementDashboard = () => (
     <div>
       <h1>Advertisement Dashboard</h1>
-      <Box sx={{
-        width: '50%',
-        marginLeft: '15%',
-      }}>
-        <AdSpaceSection />
+      <AdSpaceSection />
+      <Box>
+        <Box style={{ border: 'red' }} />
+        <Box style={{ border: 'red' }} />
       </Box>
     </div>
   );
-};
 
 export default AdvertisementDashboard;
 
