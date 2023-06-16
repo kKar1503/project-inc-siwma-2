@@ -2,6 +2,7 @@ import React from 'react';
 import AdSpaceTable from '@/components/advertisementsDashboard/adSpaceTable';
 import { useQuery } from 'react-query';
 import fetchAdSpaceData from '@/middlewares/fetchAdSpaceData';
+import Box from '@mui/material/Box';
 
 
 const onDelete = (ids: readonly string[]) => {
@@ -33,7 +34,7 @@ const AdvertisementDashboard = () => {
 
   return apiData
     ? (
-      <>
+      <Box style={{ transform: 'scale(1.2)', marginTop: '8%' }}>
         <AdSpaceTable
           active
           rows={apiData}
@@ -48,7 +49,7 @@ const AdvertisementDashboard = () => {
           onEdit={onEdit}
           onChangeActiveStatus={onSetActive}
         />
-      </>
+      </Box>
     )
     : null;
 };

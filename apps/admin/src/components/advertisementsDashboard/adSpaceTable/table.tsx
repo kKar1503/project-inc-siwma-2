@@ -97,7 +97,7 @@ export default function({
 
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '80%'}}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <MainHeader
           numSelected={selected.length}
@@ -108,7 +108,7 @@ export default function({
         />
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
+            sx={{ minWidth: 550 }}
             aria-labelledby='tableTitle'
             size='medium'
           >
