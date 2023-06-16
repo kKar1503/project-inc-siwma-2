@@ -2,31 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { List, ListItem, ListItemText, Divider } from '@mui/material';
 import { ChevronRight, ExpandMore } from '@mui/icons-material';
 import Image from 'next/image';
-import Link from 'next/link';
+import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
 
 const menuItems = [
-  { name: 'Overview', link: '/overview', logo: '/images/favicons/overview-icon.png' },
+  {
+    name: 'Overview',
+    link: '/overview',
+    logo: '/images/favicons/overview-icon.png',
+    highlightedLogo: '/images/favicons/overview-icon-blue.png',
+  },
   {
     name: 'Data Analytics',
     link: '/dataAnalytics',
     logo: '/images/favicons/data-analytics-icon.png',
+    highlightedLogo: '/images/favicons/data-analytics-icon-blue.png',
   },
   {
     name: 'Advertisement',
     link: '/advertisement',
     logo: '/images/favicons/advertisment-icon.png',
+    highlightedLogo: '/images/favicons/advertisement-icon-blue.png',
     dropdown: [
       {
         name: 'Advertisement Dashboard',
         link: '/advertisement/dashboard',
         logo: '/images/favicons/advertisement-dashboard-icon.png',
+        highlightedLogo: '/images/favicons/advertisement-dashboard-icon-blue.png',
       },
       {
         name: 'Advertisement Upload',
         link: '/advertisement/upload',
         logo: '/images/favicons/advertisement-upload-icon.png',
+        highlightedLogo: '/images/favicons/advertisement-upload-icon-blue.png',
       },
     ],
   },
@@ -34,16 +43,19 @@ const menuItems = [
     name: 'Category Management',
     link: '/categoryManagement',
     logo: '/images/favicons/category-management-icon.png',
+    highlightedLogo: '/images/favicons/category-management-icon-blue.png',
     dropdown: [
       {
         name: 'Category',
         link: '/categoryManagement/category',
         logo: '/images/favicons/category-icon.png',
+        highlightedLogo: '/images/favicons/category-icon-blue.png',
       },
       {
         name: 'Parameters',
         link: '/categoryManagement/parameters',
         logo: '/images/favicons/users-icon.png',
+        highlightedLogo: '/images/favicons/parameter-icon-blue.png',
       },
     ],
   },
@@ -51,21 +63,25 @@ const menuItems = [
     name: 'User Management',
     link: '/userManagement',
     logo: '/images/favicons/user-management-icon.png',
+    highlightedLogo: '/images/favicons/user-management-icon-blue.png',
     dropdown: [
       {
         name: 'Companies',
         link: '/userManagement/companies',
         logo: '/images/favicons/companies-icon.png',
+        highlightedLogo: '/images/favicons/companies-icon-blue.png',
       },
       {
         name: 'Users',
         link: '/userManagement/users',
         logo: '/images/favicons/users-icon.png',
+        highlightedLogo: '/images/favicons/users-icon-blue.png',
       },
       {
         name: 'Invites',
         link: '/userManagement/invites',
         logo: '/images/favicons/invites-icon.png',
+        highlightedLogo: '/images/favicons/invites-icon-blue.png',
       },
     ],
   },
@@ -87,8 +103,7 @@ const AdminSideBar = () => {
     });
   }, [router.pathname]);
 
-  const isCurrentRoute = (path: string) =>
-    router.pathname === path || router.pathname.includes(path);
+  const isCurrentRoute = (path: string) => router.pathname.includes(path);
 
   const handleClick = (name: string) => {
     if (openDropdown === name) {
@@ -102,7 +117,6 @@ const AdminSideBar = () => {
     <Box
       sx={{
         width: '20%',
-        borderRight: '1px solid grey',
         padding: '1em',
         display: 'flex',
         flexDirection: 'column',
@@ -142,15 +156,23 @@ const AdminSideBar = () => {
                 }}
               >
                 <div style={{ marginRight: '1em' }}>
-                  {item.logo && <Image src={item.logo} alt="Logo" width={24} height={24} />}
+                  {item.logo && (
+                    <Image
+                      src={
+                        isCurrentRoute(item.link) ? item.highlightedLogo || item.logo : item.logo
+                      }
+                      alt="Logo"
+                      width={24}
+                      height={24}
+                    />
+                  )}
                 </div>
-                <Link href={item.link} passHref>
+                <Link href={item.link} underline="none">
                   <ListItemText
                     primary={item.name}
                     primaryTypographyProps={{
                       style: {
                         color: isCurrentRoute(item.link) ? '#2962FF' : 'black',
-                        textDecoration: 'none',
                       },
                     }}
                   />
@@ -179,16 +201,24 @@ const AdminSideBar = () => {
                   >
                     <div style={{ marginRight: '1em' }}>
                       {subitem.logo && (
-                        <Image src={subitem.logo} alt="Logo" width={24} height={24} />
+                        <Image
+                          src={
+                            isCurrentRoute(subitem.link)
+                              ? subitem.highlightedLogo || subitem.logo
+                              : subitem.logo
+                          }
+                          alt="Logo"
+                          width={24}
+                          height={24}
+                        />
                       )}
                     </div>
-                    <Link href={subitem.link} passHref>
+                    <Link href={item.link} underline="none">
                       <ListItemText
                         primary={subitem.name}
                         primaryTypographyProps={{
                           style: {
                             color: isCurrentRoute(subitem.link) ? '#2962FF' : 'black',
-                            textDecoration: 'none',
                           },
                         }}
                       />
