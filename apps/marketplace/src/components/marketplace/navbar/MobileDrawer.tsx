@@ -26,6 +26,7 @@ import Switch from '@mui/material/Switch';
 import { useState, Fragment, MouseEvent, ChangeEvent } from 'react';
 import { Link } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { signOut } from 'next-auth/react';
 
 export type MobileDrawerProps = {
   userId: string | undefined;
@@ -51,6 +52,12 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
 
   const toggleDrawer = (openState: boolean) => () => {
     setOpenDrawer(openState);
+  };
+
+  const handleLogOut = async () => {
+    toggleDrawer(false);
+    await signOut();
+    window.location.href = '/login';
   };
 
   const list = () => (
@@ -152,17 +159,14 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           </ListItem>
         </Link>
 
-        {/* update with logic when ready */}
-        <Link href="/" underline="none">
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <LogoutIcon sx={{ color: palette.grey[600] }} />
-              </ListItemIcon>
-              <ListItemText primary="Log Out" />
-            </ListItemButton>
-          </ListItem>
-        </Link>
+        <ListItem disablePadding onClick={handleLogOut}>
+          <ListItemButton>
+            <ListItemIcon>
+              <LogoutIcon sx={{ color: palette.grey[600] }} />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItemButton>
+        </ListItem>
 
         <ListItem disablePadding sx={{ position: 'absolute', bottom: 0 }}>
           <ListItemButton onClick={mobileDrawerLanuageChange}>

@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import Link from '@mui/material/Link';
+import { signOut } from 'next-auth/react';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 
@@ -33,6 +34,12 @@ const Profile = ({ userName, userId }: UserNameProps) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogOut = async () => {
+    setAnchorEl(null);
+    await signOut();
+    window.location.href = '/login';
   };
 
   return (
@@ -204,7 +211,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
           </MenuItem>
         </Link>
 
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={handleLogOut}>
           <LogoutIcon
             sx={{
               fontSize: typography.h5,
