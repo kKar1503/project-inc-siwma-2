@@ -5,20 +5,21 @@ import fetchAdSpaceData from '@/middlewares/fetchAdSpaceData';
 
 
 const useGetListingImagesQuery = () => {
-  const { data } = useQuery('listingImage', async () => fetchAdSpaceData() );
-  return data || [];
+  const { data } = useQuery('adSpace', async () => fetchAdSpaceData());
+  return data;
 };
 
 
 const AdvertisementDashboard = () => {
 
-  const data = useGetListingImagesQuery();
+  const apiData = useGetListingImagesQuery();
+
 
   return (
     <div>
       <h1>Advertisement Dashboard</h1>
-      <AdSpaceTable active rows={data} />
-      <AdSpaceTable active={false} rows={data}/>
+      {apiData ? <AdSpaceTable active rows={apiData} /> : null}
+      {apiData ? <AdSpaceTable active={false} rows={apiData} /> : null}
     </div>
   );
 };
