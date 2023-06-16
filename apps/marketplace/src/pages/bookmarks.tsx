@@ -22,9 +22,7 @@ export type RawUserProps = {
 };
 
 const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(userUuid), {
-    enabled: userUuid !== undefined,
-  });
+  const { data } = useQuery(['user', userUuid], async () => fetchUser(userUuid));
 
   return data;
 };
