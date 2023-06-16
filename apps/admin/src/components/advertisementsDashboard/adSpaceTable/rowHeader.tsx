@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { ChangeEvent } from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -7,7 +7,7 @@ import { headCells } from '@/components/advertisementsDashboard/adSpaceTable/dat
 
 interface Props {
   numSelected: number;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSelectAllClick: (event: ChangeEvent<HTMLInputElement>) => void;
   rowCount: number;
 }
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import AdSpaceTable from '@/components/advertisementsDashboard/adSpaceTable';
 import { useQuery } from 'react-query';
 import fetchAdSpaceData from '@/middlewares/fetchAdSpaceData';

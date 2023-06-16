@@ -1,4 +1,3 @@
-
 export interface DataType {
   id: string;
   user: string;

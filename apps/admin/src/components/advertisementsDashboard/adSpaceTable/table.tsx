@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { ChangeEvent, MouseEvent, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -29,7 +29,7 @@ export default function({
                           onEdit,
                           onChangeActiveStatus,
                         }: Props) {
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
+  const [selected, setSelected] = useState<readonly string[]>([]);
   const {
     page,
     rowsPerPage,
@@ -38,8 +38,8 @@ export default function({
     rowPageOptions,
   } = usePagination(4);
 
-  const data = React.useMemo(() => rows.filter(r => r.active === active), [active]);
-  const visibleRows = React.useMemo(
+  const data = useMemo(() => rows.filter(r => r.active === active), [active]);
+  const visibleRows = useMemo(
     () => {
       const pageStart = page * rowsPerPage;
       const pageEnd = pageStart + rowsPerPage;
@@ -47,7 +47,7 @@ export default function({
     },
     [page, rowsPerPage],
   );
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelected = data.map((n) => n.id);
       setSelected(newSelected);
@@ -56,7 +56,7 @@ export default function({
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+  const handleClick = (event: MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: readonly string[] = [];
 

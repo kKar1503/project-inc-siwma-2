@@ -1,14 +1,14 @@
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
-import * as React from 'react';
+import { MouseEvent } from 'react';
 import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/dataLayout';
 
 interface Props {
   row: DataType;
   index: number;
   isSelected: boolean;
-  onSelect: (event: React.MouseEvent<unknown>, name: string) => void;
+  onSelect: (event: MouseEvent<unknown>, name: string) => void;
 }
 
 const RowBody = ({

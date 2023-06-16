@@ -1,4 +1,3 @@
-import React from 'react';
 import AdSpaceSection from '@/components/advertisementsDashboard/adSpaceSection';
 import Box from '@mui/material/Box';
 
