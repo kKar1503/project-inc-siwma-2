@@ -35,8 +35,8 @@ const AdvertisementDashboard = () => {
     ? (
       <Box style={{
         transform: 'scale(0.8)',
-        width: '50%',
-        marginTop: '-2%',
+        width: '90%',
+        marginTop: '-3%',
       }}>
         <AdSpaceTable
           active
