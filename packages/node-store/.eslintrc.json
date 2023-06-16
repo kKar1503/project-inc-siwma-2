@@ -1,0 +1,6 @@
+{
+  "extends": ["@inc/eslint-config-custom"],
+  "parserOptions": {
+    "project": "packages/node-store/tsconfig.json"
+  }
+}

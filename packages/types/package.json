@@ -1,7 +1,15 @@
 {
   "name": "@inc/types",
   "version": "0.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
+    "build:prod": "rm -rf dist && node esbuild.config.js",
+    "dev": "pnpx rimraf dist && tsc"
+  },
   "devDependencies": {
+    "@inc/eslint-config-custom": "workspace:*",
     "socket.io": "^4.6.1"
   }
 }

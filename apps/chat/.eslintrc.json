@@ -1,0 +1,6 @@
+{
+  "extends": ["@inc/eslint-config-custom"],
+  "parserOptions": {
+    "project": "apps/chat/tsconfig.json"
+  }
+}

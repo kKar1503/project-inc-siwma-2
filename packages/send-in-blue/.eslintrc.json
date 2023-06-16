@@ -1,0 +1,6 @@
+{
+  "extends": ["@inc/eslint-config-custom"],
+  "parserOptions": {
+    "project": "packages/send-in-blue/tsconfig.json"
+  }
+}

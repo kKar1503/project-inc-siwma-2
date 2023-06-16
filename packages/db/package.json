@@ -19,6 +19,7 @@
     "prisma": "4.12.0"
   },
   "devDependencies": {
+    "@inc/eslint-config-custom": "workspace:*",
     "@types/node": "18.15.3",
     "@types/pluralize": "^0.0.29",
     "pluralize": "^8.0.0",

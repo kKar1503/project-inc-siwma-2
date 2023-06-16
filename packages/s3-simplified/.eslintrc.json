@@ -1,0 +1,6 @@
+{
+  "extends": ["@inc/eslint-config-custom"],
+  "parserOptions": {
+    "project": "packages/s3-simplified/tsconfig.json"
+  }
+}

@@ -10,5 +10,8 @@
   },
   "dependencies": {
     "@inc/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@inc/eslint-config-custom": "workspace:*"
   }
 }
