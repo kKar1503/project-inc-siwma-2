@@ -19,7 +19,7 @@ const usePagination = (pageSize: number) => {
     rowsPerPage,
     handleChangePage,
     handleChangeRowsPerPage,
-    rowPageOptions: [pageSize, pageSize * 2, pageSize * 4]
+    rowPageOptions: [pageSize, pageSize * 2, pageSize * 4],
   };
 };
 
