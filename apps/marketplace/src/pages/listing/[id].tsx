@@ -12,13 +12,21 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import SellBadge from '@/components/marketplace/listing/SellBadge';
 import BuyBadge from '@/components/marketplace/listing/BuyBadge';
 import fetchListing from '@/middlewares/fetchListing';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import CardContent from '@mui/material/CardContent';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Link from '@mui/material/Link';
-import { StarsRating, useResponsiveness, ModalImage, Modal, ModalSelect, ModalInput, AddCommentModal } from '@inc/ui';
+import {
+  StarsRating,
+  useResponsiveness,
+  ModalImage,
+  Modal,
+  ModalSelect,
+  ModalInput,
+  AddCommentModal,
+} from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo, useState, useEffect } from 'react';
 import fetchCategories from '@/middlewares/fetchCategories';
@@ -34,6 +42,7 @@ import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
+import { Review } from '@/utils/api/client/zod';
 
 const carouselData = [
   {
@@ -109,10 +118,16 @@ const useCreateChatQuery = () => {
   return data;
 };
 
-const usePostReviewQuery = (userUuid: string) => {
-  const { data } = useQuery('newReview', async () => postReview(userUuid));
-  return data;
+interface addNewReview {
+  userUuid: string;
+  review: string;
+  rating: number;
 }
+
+const usePostReviewQuery = (userUuid: string) =>
+  useMutation((addReview: addNewReview) =>
+    postReview(userUuid, addReview.review, addReview.rating)
+  );
 
 const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[] | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
@@ -153,24 +168,29 @@ const DetailedListingPage = () => {
   const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
   const chatRooms = useChatListQuery(loggedUserUuid);
-  const newRoom = useCreateChatQuery();
-  const postReview = usePostReviewQuery(loggedUserUuid)
-  
+  // const newRoom = useCreateChatQuery();
+  const postReview = usePostReviewQuery(loggedUserUuid);
+
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const [inputText, setInputText] = useState<string>('');
   const [openComment, setOpenComment] = useState(false);
-  const [rating, setRating] = useState<number | null >(1);
+  const [rating, setRating] = useState<number | null>(1);
   const [isOpen, setIsOpen] = useState(false);
-  const handleClose = (val: boolean) => {
-    setIsOpen(false);
-  };
+  // const handleClose = (val: boolean) => {
+  //   setIsOpen(false);
+  // };
 
   // const createReview = (val: boolean) => {
   //   setRightButtonState(val)
   //   if (rightButtonState === true) { return postReview }
   //   return null
   // };
+
+  useEffect(() => {
+    if (rightButtonState === true) {
+    }
+  }, [rightButtonState]);
 
   const { isBookmarked, handleBookmarkListing } = useBookmarkListingQuery(
     listingId,
@@ -257,7 +277,7 @@ const DetailedListingPage = () => {
                       <Typography
                         sx={({ spacing }) => ({
                           fontWeight: 600,
-                          pl: spacing(2)
+                          pl: spacing(2),
                         })}
                         variant={isSm || isMd ? 'h6' : 'h5'}
                       >
@@ -542,8 +562,8 @@ const DetailedListingPage = () => {
                     setOpen={setOpenComment}
                     buttonColor="#0288D1"
                     // image api not up, so img not displayed
-                    userImage={loggedInUser?.profilePic}
-                    userName={loggedInUser?.name}
+                    userImage={loggedInUser?.profilePic as string}
+                    userName={loggedInUser?.name as string}
                     inputText={inputText}
                     setInputText={setInputText}
                     rating={rating}
@@ -560,7 +580,12 @@ const DetailedListingPage = () => {
                 {reviews?.map((individualReview) => (
                   <Box sx={({ spacing }) => ({ width: '100%', pt: spacing(3) })}>
                     <Grid container>
-                      <Grid item xs={7} md={9}>
+                      <Grid item xs={2} md={1}>
+                        <Avatar>
+                          {user?.find((x) => x.id === individualReview?.userId)?.profilePic}
+                        </Avatar>
+                      </Grid>
+                      <Grid item xs={9} md={8}>
                         <Typography
                           sx={{
                             fontWeight: 500,
@@ -570,7 +595,7 @@ const DetailedListingPage = () => {
                         </Typography>
                         {individualReview?.review}
                       </Grid>
-                      <Grid item xs={5} md={3}>
+                      <Grid item xs={0} md={3}>
                         <StarsRating rating={individualReview?.rating} />
                       </Grid>
                     </Grid>
