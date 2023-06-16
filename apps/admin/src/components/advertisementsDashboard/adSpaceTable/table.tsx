@@ -27,8 +27,10 @@ export default function({
     rowsPerPage,
     handleChangePage,
     handleChangeRowsPerPage,
-    rowPageOptions
+    rowPageOptions,
   } = usePagination(4);
+
+  const data = React.useMemo(() => rows.filter(r => r.active === active), [active]);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -60,13 +62,13 @@ export default function({
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows =  Math.max(0, (1 + page) * rowsPerPage - data.length);
 
   const visibleRows = React.useMemo(
     () => {
       const pageStart = page * rowsPerPage;
       const pageEnd = pageStart + rowsPerPage;
-      return rows.slice(pageStart, pageEnd);
+      return data.slice(pageStart, pageEnd);
     },
     [page, rowsPerPage],
   );
@@ -84,7 +86,7 @@ export default function({
             <RowHeader
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
-              rowCount={rows.length}
+              rowCount={data.length}
             />
             <TableBody>
               {
@@ -109,7 +111,7 @@ export default function({
         <TablePagination
           rowsPerPageOptions={rowPageOptions}
           component='div'
-          count={rows.length}
+          count={data.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
