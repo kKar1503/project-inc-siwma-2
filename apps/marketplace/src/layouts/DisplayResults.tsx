@@ -159,9 +159,9 @@ const DisplayResults = ({
                     handleSubmit={handleSubmit}
                   />
                   <Button
-                    sx={{ width: '100%', mt: 2 }}
+                    sx={{ width: '100%' }}
                     size="large"
-                    color="error"
+                    color="info"
                     variant="contained"
                     onClick={toggleDrawer}
                   >

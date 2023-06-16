@@ -65,7 +65,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
     <Card
       sx={{
         maxWidth: 500,
-        maxHeight: '100%',
+        height: '100%',
         border: `1px solid ${theme.palette.grey[400]}`,
         transition: 'transform .2s',
         '&:hover': {

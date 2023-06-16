@@ -67,6 +67,14 @@ const FilterForm = ({
 
   const categoriesData = useGetCategoriesQuery();
 
+  const resetForm = () => {
+    setSort('Recent');
+    setCategory(0);
+    setNegotiation('');
+    setMinPrice('');
+    setMaxPrice('');
+  };
+
   return (
     <form style={{ padding: 1, width: '100%' }} onSubmit={handleSubmit}>
       <Divider sx={{ my: 2 }} />
@@ -151,6 +159,16 @@ const FilterForm = ({
       <Divider sx={{ my: 2 }} />
       <Button variant="contained" type="submit" fullWidth>
         APPLY
+      </Button>
+      <Button
+        onClick={resetForm}
+        sx={{ my: 2 }}
+        variant="contained"
+        type="button"
+        color="error"
+        fullWidth
+      >
+        RESET
       </Button>
     </form>
   );
