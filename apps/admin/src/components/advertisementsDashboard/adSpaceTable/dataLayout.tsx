@@ -1,26 +1,33 @@
-import { GridColDef } from '@mui/x-data-grid';
 
-export interface AdSpaceUser {
-  id: number;
+export interface DataType {
+  id: string;
   user: string;
   email: string;
-  companyName: string;
-  number: number;
+  company: string;
+  mobileNumber: string;
+  active: boolean;
 }
 
-export const displayColumns: GridColDef[] = [
-  { field: 'user', headerName: 'User', width: 130 },
-  { field: 'email', headerName: 'Email', width: 130 },
+export interface HeadCell {
+  id: keyof DataType;
+  label: string;
+}
+
+export const headCells: readonly HeadCell[] = [
   {
-    field: 'companyName',
-    headerName: 'Company',
-    type: 'number',
-    width: 90,
+    id: 'user',
+    label: 'User',
   },
   {
-    field: 'number',
-    headerName: 'Number',
-    width: 160,
+    id: 'email',
+    label: 'Email',
+  },
+  {
+    id: 'company',
+    label: 'Company',
+  },
+  {
+    id: 'mobileNumber',
+    label: 'Mobile Number',
   },
 ];
-

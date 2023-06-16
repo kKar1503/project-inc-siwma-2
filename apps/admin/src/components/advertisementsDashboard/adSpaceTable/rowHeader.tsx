@@ -3,7 +3,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
-import { headCells } from '@/components/advertisementsDashboard/adSpaceTable/utils';
+import { headCells } from '@/components/advertisementsDashboard/adSpaceTable/dataLayout';
 
 interface Props {
   numSelected: number;

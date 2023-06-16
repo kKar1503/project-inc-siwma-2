@@ -2,10 +2,10 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
 import * as React from 'react';
-import { Data } from '@/components/advertisementsDashboard/adSpaceTable/utils';
+import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/dataLayout';
 
 interface Props {
-  row: Data;
+  row: DataType;
   index: number;
   isSelected: boolean;
   onSelect: (event: React.MouseEvent<unknown>, name: string) => void;

@@ -9,17 +9,19 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MainHeader from '@/components/advertisementsDashboard/adSpaceTable/mainHeader';
 import RowHeader from '@/components/advertisementsDashboard/adSpaceTable/rowHeader';
-import { rows } from '@/components/advertisementsDashboard/adSpaceTable/utils';
 import RowBody from '@/components/advertisementsDashboard/adSpaceTable/rowBody';
 import usePagination from '@/components/advertisementsDashboard/adSpaceTable/hooks/usePagination';
+import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/dataLayout';
 
 interface Props {
   active: boolean;
+  rows: readonly DataType[];
 }
 
 // eslint-disable-next-line react/function-component-definition
 export default function({
                           active,
+                          rows,
                         }: Props) {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const {
