@@ -1,4 +1,4 @@
-FROM node:18.15.0-alpine3.17 as depsbuilder
+FROM node:18.16.0-alpine3.18 as depsbuilder
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ RUN rm -rf node_modules */**/node_modules */**/**/node_modules && pnpm install -
 
 # ===================================================================
 
-FROM node:18.15.0-alpine3.17 as runner
+FROM node:18.16.0-alpine3.18 as runner
 
 WORKDIR /app
 ENV NODE_ENV production
