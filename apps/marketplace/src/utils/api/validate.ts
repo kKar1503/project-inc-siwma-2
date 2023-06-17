@@ -4,6 +4,7 @@ import {
   InvalidPhoneNumberError,
   InvalidNameError,
   InvalidCompanyNameError,
+  // InvalidBioError,
 } from '@inc/errors';
 
 const validatePassword = (password: string) => {
@@ -38,5 +39,22 @@ const validateCompanyName = (company: string) => {
     throw new InvalidCompanyNameError();
   }
 };
+
+const hasRepeatedLetters = (text: string): boolean => {
+  const regex = /([a-zA-Z])\1+/;
+  return regex.test(text);
+};
+
+// const validateBio = (bio: string) => {
+//   if (bio.trim().length === 0) {
+//     throw new InvalidBioError();
+//   }
+  
+//   if (hasRepeatedLetters(bio)) {
+//     throw new InvalidBioError();
+//   }
+// };
+
+
 
 export { validatePassword, validateEmail, validateName, validatePhone, validateCompanyName };

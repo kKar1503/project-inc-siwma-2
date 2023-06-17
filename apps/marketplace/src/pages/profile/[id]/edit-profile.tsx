@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent, FormEvent, useMemo, } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent, useMemo } from 'react';
 import Head from 'next/head';
 import ProfileDetailCard, {
   ProfileDetailCardProps,
@@ -28,45 +28,35 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useQuery, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-// import fetchUser from '@/middlewares/fetchCompany';
+// import fetchCompany from '@/middlewares/fetchCompany';
 import fetchUser from '@/middlewares/fetchUser';
-
-const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-  return data;
-};
+import { PutUserRequestBody } from '@/utils/api/server/zod';
+import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
+import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 
 export type ProfilePageProps = {
   data: ProfileDetailCardProps;
 };
 
-interface UserData {
-  name: string;
-  mobileNumber: string;
-  email: string;
-  bio: string;
-  telegramUsername: string;
-  whatsappNumber: string;
-  contactMethod: string;
-  // profilePicture: string,
-}
+const updateUserRequestBody: PutUserRequestBody = {
+  name: '',
+  email: '',
+  mobileNumber: '',
+  whatsappNumber: '',
+  telegramUsername: '',
+  contactMethod: 'email',
+  bio: '',
+};
+
+const useGetUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  return data;
+};
 
 const useUpdateUserMutation = (userUuid: string) =>
-  useMutation((updatedUserData: UserData) =>
-    updateUser(
-      userUuid,
-      updatedUserData.name,
-      updatedUserData.email,
-      updatedUserData.mobileNumber,
-      updatedUserData.contactMethod,
-      updatedUserData.whatsappNumber,
-      updatedUserData.telegramUsername,
-      // updatedUserData.profilePicture,
-      updatedUserData.bio
-    )
-  );
+  useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
 
 const EditProfile = () => {
   const user = useSession();
@@ -99,11 +89,11 @@ const EditProfile = () => {
   const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.whatsappNumber || '');
   const [whatsappError, setWhatsappError] = useState('');
   const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
-
   const [modalMessage] = useState(
     'Once you leave the page, your user details will be removed and your profile will not be updated'
   );
   const [openLeave, setOpenLeave] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -117,10 +107,6 @@ const EditProfile = () => {
     }
   };
 
-  const validatePhone = (phone: string) => {
-    const phoneRegex = /^(?:\+65)?[689][0-9]{7}$/;
-    return phoneRegex.test(phone);
-  };
   const handleMobileNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     const formattedInput = input.replace(/\D/g, '');
@@ -128,16 +114,18 @@ const EditProfile = () => {
 
     if (formattedInput === '') {
       setMobileNumberError('Please enter a mobile number');
-    } else {
-      const isValidPhone = validatePhone(formattedInput);
-      setMobileNumberError(isValidPhone ? '' : 'Please enter a valid Singapore phone number');
+      return;
+    }
+    try {
+      validatePhone(formattedInput);
+      setMobileNumberError('');
+    } catch (error) {
+      if (error instanceof InvalidPhoneNumberError) {
+        setMobileNumberError('Please enter a valid Singapore phone number');
+      }
     }
   };
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
-    return emailRegex.test(email);
-  };
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
@@ -145,9 +133,20 @@ const EditProfile = () => {
     if (newEmail.trim() === '') {
       setEmailError('Please enter an email address');
     } else {
-      const isValidEmail = validateEmail(newEmail);
-      setEmailError(isValidEmail ? '' : 'Please enter a valid email address');
+      try {
+        validateEmail(newEmail);
+        setEmailError('');
+      } catch (error) {
+        if (error instanceof InvalidEmailError) {
+          setEmailError('Please enter a valid email address');
+        }
+      }
     }
+  };
+
+  const hasRepeatedLetters = (text: string) => {
+    const regex = /([a-zA-Z])\1+/;
+    return regex.test(text);
   };
 
   const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,9 +156,30 @@ const EditProfile = () => {
     if (newBio.trim() === '') {
       setBioError('Please enter a bio');
     } else {
-      setBioError('');
+      const isValidBio = !hasRepeatedLetters(newBio);
+      setBioError(isValidBio ? '' : 'Please enter a valid bio');
     }
   };
+
+  // const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newBio = e.target.value;
+  //   setBio(newBio);
+
+  //   if (newBio.trim() === '') {
+  //     setBioError('Please enter a bio');
+  //   } else {
+  //     try {
+  //       validateBio(newBio);
+  //       setBioError('');
+  //     } catch (error) {
+  //       if (error instanceof InvalidBioError) {
+  //         setBioError('Bio should not contain repeated letters');
+  //       } else {
+  //         // Handle other errors
+  //       }
+  //     }
+  //   }
+  // };
 
   const handleContactChange = (e: SelectChangeEvent) => {
     const selectedContact = e.target.value;
@@ -189,26 +209,59 @@ const EditProfile = () => {
     setWhatsappNumber(formattedInput);
 
     if (formattedInput === '') {
-      setWhatsappError('Please enter a mobile number');
+      setMobileNumberError('Please enter a mobile number');
     } else {
-      const isValidPhone = validatePhone(formattedInput);
-      setWhatsappError(isValidPhone ? '' : 'Please enter a valid Singapore phone number');
+      try {
+        validatePhone(formattedInput);
+        setWhatsappError('');
+      } catch (error) {
+        if (error instanceof InvalidPhoneNumberError) {
+          setWhatsappError('Please enter a valid Singapore phone number');
+        }
+      }
     }
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const updatedUserData: UserData = {
-      name,
-      mobileNumber,
-      email,
-      bio,
-      telegramUsername,
-      whatsappNumber,
-      contactMethod,
-      // profilePicture: imageUrl || '',
-    };
-    mutation.mutate(updatedUserData);
+
+    try {
+      validateName(name);
+      validatePhone(mobileNumber);
+      validateEmail(email);
+
+      if (bioError !== '') {
+        throw new Error('Invalid bio');
+      }
+
+      if (telegramError !== '') {
+        throw new Error('Invalid telegram username');
+      }
+
+      const updatedUserData: PutUserRequestBody = {
+        name,
+        mobileNumber,
+        email,
+        bio,
+        telegramUsername,
+        whatsappNumber,
+        contactMethod: contactMethod as 'whatsapp' | 'email' | 'phone' | 'telegram' | 'facebook',
+      };
+      mutation.mutate(updatedUserData);
+    } catch (error) {
+      if (error instanceof InvalidNameError) {
+        setNameError('Invalid name');
+      } else if (error instanceof InvalidPhoneNumberError) {
+        setMobileNumberError('Invalid phone number');
+        setWhatsappError('Invalid whatsapp number');
+      } else if (error instanceof InvalidEmailError) {
+        setEmailError('Invalid email');
+      } else if ((error as Error).message === 'Invalid bio') {
+        setBioError('Invalid bio');
+      } else if ((error as Error).message === 'Invalid telegram username') {
+        setTelegramError('Please enter a telegram username');
+      }
+    }
   };
 
   useEffect(() => {
@@ -416,35 +469,35 @@ const EditProfile = () => {
                     }}
                   />
                 </Box>
-                  <TextField
-                    label="Email"
-                    placeholder="user@gmail.com"
-                    InputLabelProps={{ shrink: true }}
-                    sx={({ spacing }) => ({
-                      mt: spacing(2),
-                      width:'100%',
-                    })}
-                    value={email}
-                    onChange={handleEmailChange}
-                    error={!!emailError}
-                    helperText={emailError}
-                  />
-                  <TextField
-                    multiline
-                    rows={5}
-                    label="Bio"
-                    placeholder="Bio Description"
-                    InputLabelProps={{ shrink: true }}
-                    sx={({ spacing }) => ({
-                      mt: spacing(2),
-                      mb: spacing(1),
-                      width:'100%',
-                    })}
-                    value={bio}
-                    onChange={handleBioChange}
-                    error={!!bioError}
-                    helperText={bioError}
-                  />
+                <TextField
+                  label="Email"
+                  placeholder="user@gmail.com"
+                  InputLabelProps={{ shrink: true }}
+                  sx={({ spacing }) => ({
+                    mt: spacing(2),
+                    width: '100%',
+                  })}
+                  value={email}
+                  onChange={handleEmailChange}
+                  error={!!emailError}
+                  helperText={emailError}
+                />
+                <TextField
+                  multiline
+                  rows={5}
+                  label="Bio"
+                  placeholder="Bio Description"
+                  InputLabelProps={{ shrink: true }}
+                  sx={({ spacing }) => ({
+                    mt: spacing(2),
+                    mb: spacing(1),
+                    width: '100%',
+                  })}
+                  value={bio}
+                  onChange={handleBioChange}
+                  error={!!bioError}
+                  helperText={bioError}
+                />
               </CardContent>
               <Divider
                 variant="middle"
@@ -479,6 +532,10 @@ const EditProfile = () => {
                             +65
                           </InputAdornment>
                         ),
+                        inputProps: {
+                          maxLength: 8,
+                          pattern: '[0-9]*',
+                        },
                       }}
                       value={whatsappNumber}
                       onChange={handleWhatsappChange}

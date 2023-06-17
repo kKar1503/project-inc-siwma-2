@@ -2,7 +2,7 @@ import apiClient from '@/utils/api/client/apiClient';
 import users from '@/utils/api/client/zod/users';
 import companies from '@/utils/api/client/zod/companies';
 
-const fetchUser = async (uuid: string) => {
+const fetchCompany = async (uuid: string) => {
   if (uuid) {
     const response = await apiClient.get(`/v1/users/${uuid}`);
     const parsedUser = users.getById.parse(response.data.data[0]);
@@ -20,4 +20,4 @@ const fetchUser = async (uuid: string) => {
   }
   return null;
 };
-export default fetchUser;
+export default fetchCompany;
