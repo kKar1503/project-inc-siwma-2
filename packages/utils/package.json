@@ -6,10 +6,11 @@
   "scripts": {
     "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
     "build:prod": "rm -rf dist && node esbuild.config.js",
-    "dev": "pnpx rimraf dist && tsc -w"
+    "clean": "pnpx rimraf dist",
+    "dev": "pnpx rimraf dist && tsc -w",
+    "lint": "eslint ./*.ts --parser-options project:\"./tsconfig.json\""
   },
   "devDependencies": {
-    "@inc/eslint-config-custom": "workspace:*",
-    "@types/node": "18.15.3"
+    "@inc/eslint-config-custom": "workspace:*"
   }
 }

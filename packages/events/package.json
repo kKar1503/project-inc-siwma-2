@@ -6,7 +6,9 @@
   "scripts": {
     "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
     "build:prod": "rm -rf dist && node esbuild.config.js",
-    "dev": "tsc -w"
+    "clean": "pnpx rimraf dist",
+    "dev": "pnpx rimraf dist && tsc -w",
+    "lint": "eslint ./*.ts --parser-options project:\"./tsconfig.json\""
   },
   "dependencies": {
     "@inc/types": "workspace:*"

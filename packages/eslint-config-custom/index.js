@@ -1,11 +1,14 @@
 module.exports = {
+  root: true,
   extends: [
     'airbnb',
+    'airbnb-typescript',
     'prettier',
     'plugin:@typescript-eslint/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
   ],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -15,7 +18,6 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  root: true,
   plugins: ['@typescript-eslint'],
   settings: {
     'import/resolver': {

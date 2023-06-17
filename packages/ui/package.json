@@ -6,7 +6,9 @@
   "scripts": {
     "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
     "build:prod": "rm -rf dist && node esbuild.config.js",
-    "dev": "pnpx rimraf dist && tsc -w"
+    "clean": "pnpx rimraf dist",
+    "dev": "pnpx rimraf dist && tsc -w",
+    "lint": "eslint lib/** --ext .tsx,.ts --parser-options project:\"./tsconfig.json\""
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",

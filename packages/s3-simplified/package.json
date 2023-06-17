@@ -6,7 +6,9 @@
   "scripts": {
     "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
     "build:prod": "rm -rf dist && node esbuild.config.js",
-    "dev": "pnpx rimraf dist && tsc -w"
+    "clean": "pnpx rimraf dist",
+    "dev": "pnpx rimraf dist && tsc -w",
+    "lint": "eslint src/** --ext .ts --parser-options project:\"./tsconfig.json\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.315.0",
@@ -15,7 +17,6 @@
   },
   "devDependencies": {
     "@inc/eslint-config-custom": "workspace:*",
-    "@types/node": "^18.15.11",
     "typescript": "^5.0.4"
   }
 }

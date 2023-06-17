@@ -6,7 +6,9 @@
   "scripts": {
     "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
     "build:prod": "rm -rf dist && node esbuild.config.js",
-    "dev": "pnpx rimraf dist && tsc"
+    "clean": "pnpx rimraf dist",
+    "dev": "pnpx rimraf dist && tsc -w",
+    "lint": "eslint src/** --ext .ts --parser-options project:\"./tsconfig.json\" --ignore-pattern \"src/**/*.html\""
   },
   "dependencies": {
     "@inc/db": "workspace:*",
@@ -15,7 +17,6 @@
   },
   "devDependencies": {
     "@inc/eslint-config-custom": "workspace:*",
-    "@types/node": "18.15.3",
     "@types/sib-api-v3-sdk": "workspace:*"
   }
 }

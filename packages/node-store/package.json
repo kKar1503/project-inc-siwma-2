@@ -4,14 +4,16 @@
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "pnpx rimraf dist && tsc && node esbuild.config.js",
-		"build:prod": "rm -rf dist && node esbuild.config.js"
-	},
-	"devDependencies": {
-		"@inc/eslint-config-custom": "workspace:*",
-		"@types/lodash.clonedeep": "4.5.7",
-		"@types/node": "20.2.1"
+		"build:prod": "rm -rf dist && node esbuild.config.js",
+    "clean": "pnpx rimraf dist",
+		"dev": "pnpx rimraf dist && tsc -w",
+		"lint": "eslint ./*.ts --parser-options project:\"./tsconfig.json\""
 	},
 	"dependencies": {
 		"lodash.clonedeep": "4.5.0"
+	},
+	"devDependencies": {
+		"@inc/eslint-config-custom": "workspace:*",
+		"@types/lodash.clonedeep": "4.5.7"
 	}
 }
