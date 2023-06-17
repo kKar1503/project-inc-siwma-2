@@ -11,7 +11,6 @@ import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
 import CategoryIcon from '@mui/icons-material/Category';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import TranslateIcon from '@mui/icons-material/Translate';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
@@ -22,23 +21,21 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
-import Switch from '@mui/material/Switch';
-import { useState, Fragment, MouseEvent, ChangeEvent } from 'react';
+import { useState, Fragment, MouseEvent } from 'react';
 import { Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
+import ChangeLanguageButton from './ChangeLanguageButton';
 
 export type MobileDrawerProps = {
   userId: string | undefined;
-  language: 'English' | 'Chinese';
 };
 
-const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
+const MobileDrawer = ({ userId }: MobileDrawerProps) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
-  const [drawerLang, setDrawerLang] = useState(language);
   const { t } = useTranslation();
-  const { typography, palette } = useTheme();
+  const { palette } = useTheme();
 
   const handleProfileClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -47,7 +44,6 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
 
   const mobileDrawerLanuageChange = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
-    setDrawerLang(drawerLang === 'English' ? 'Chinese' : 'English');
   };
 
   const toggleDrawer = (openState: boolean) => () => {
@@ -159,15 +155,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
         <ListItem disablePadding sx={{ position: 'absolute', bottom: 0 }}>
           <ListItemButton onClick={mobileDrawerLanuageChange}>
             <Grid component="label" container alignItems="center">
-              <Grid sx={{ fontSize: typography.subtitle2 }} item>
-                {t('EN')}
-              </Grid>
-              <Grid item>
-                <Switch checked={drawerLang === 'Chinese'} value="checked" />
-              </Grid>
-              <Grid sx={{ fontSize: typography.subtitle2 }} item>
-                {t('CN')}
-              </Grid>
+              <ChangeLanguageButton />
             </Grid>
           </ListItemButton>
         </ListItem>
