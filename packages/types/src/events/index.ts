@@ -1,4 +1,4 @@
-import { Socket, Server } from 'socket.io';
+import type { Socket, Server } from 'socket.io';
 import * as buffer from 'buffer';
 
 type Room = {

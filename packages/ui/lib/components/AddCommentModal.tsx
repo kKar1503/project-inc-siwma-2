@@ -13,7 +13,7 @@ import FormControl, { useFormControl } from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { useTheme } from '@mui/material/styles';
-import useResponsiveness from '../hook/useResponsiveness';
+import useResponsiveness from '../hooks/useResponsiveness';
 
 export type ComponentProps = {
   open: boolean;

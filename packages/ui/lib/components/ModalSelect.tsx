@@ -9,7 +9,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useMemo } from 'react';
-import useResponsiveness from '../hook/useResponsiveness';
+import useResponsiveness from '../hooks/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 
 export type ComponentProps = {

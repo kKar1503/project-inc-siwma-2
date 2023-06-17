@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
-import useResponsiveness from '../hook/useResponsiveness';
+import useResponsiveness from '../hooks/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useMemo } from 'react';
 

@@ -34,7 +34,7 @@ export const arrayToString = (arr: (string | number)[], joinWord: string) => {
  * @example
  * generateString(10); // Returns 'aBcDeFgHiJ'
  * generateString(5); // Returns 'aBcDe'
- **/
+ */
 export function generateString(length: number): string {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
-import useResponsiveness from '../hook/useResponsiveness';
+import useResponsiveness from '../hooks/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 
 export type ComponentProps = {

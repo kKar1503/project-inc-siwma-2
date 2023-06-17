@@ -9,7 +9,7 @@ import FilledInput from '@mui/material/FilledInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import { useMemo } from 'react';
-import useResponsiveness from '../hook/useResponsiveness';
+import useResponsiveness from '../hooks/useResponsiveness';
 
 export type ComponentProps = {
   open: boolean;
