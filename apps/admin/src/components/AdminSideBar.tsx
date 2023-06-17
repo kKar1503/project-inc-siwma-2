@@ -2,9 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { List, ListItem, ListItemText, Divider } from '@mui/material';
 import { ChevronRight, ExpandMore } from '@mui/icons-material';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
-import { useRouter } from 'next/router';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import Drawer from '@mui/material/Drawer';
+import Hidden from '@mui/material/Hidden';
+import Avatar from '@mui/material/Avatar';
 
 const menuItems = [
   {
@@ -54,7 +61,7 @@ const menuItems = [
       {
         name: 'Parameters',
         link: '/categoryManagement/parameters',
-        logo: '/images/favicons/users-icon.png',
+        logo: '/images/favicons/parameter-icon.png',
         highlightedLogo: '/images/favicons/parameter-icon-blue.png',
       },
     ],
@@ -89,6 +96,7 @@ const menuItems = [
 
 const AdminSideBar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -105,6 +113,10 @@ const AdminSideBar = () => {
 
   const isCurrentRoute = (path: string) => router.pathname.includes(path);
 
+  const handleDrawerToggle = () => {
+    setIsSideBarOpen(!isSideBarOpen);
+  };
+
   const handleClick = (name: string) => {
     if (openDropdown === name) {
       setOpenDropdown(null);
@@ -113,157 +125,207 @@ const AdminSideBar = () => {
     }
   };
 
-  return (
-    <Box
-      sx={{
-        width: '20%',
-        padding: '1em',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      }}
-    >
-      <div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            margin: '2em 0',
-          }}
-        >
-          <div style={{ marginBottom: '1em' }}>
-            <Image
-              src="/images/favicons/SIWMA-icon.png"
-              alt="Company Logo"
-              width={100}
-              height={70}
-            />
-          </div>
-        </div>
-        <h2>General</h2>
-        <Divider />
-        <List>
-          {menuItems.map((item) => (
-            <div key={item.name}>
-              <ListItem
-                button
-                onClick={() => handleClick(item.name)}
-                style={{
-                  backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <div style={{ marginRight: '1em' }}>
-                  {item.logo && (
-                    <Image
-                      src={
-                        isCurrentRoute(item.link) ? item.highlightedLogo || item.logo : item.logo
-                      }
-                      alt="Logo"
-                      width={24}
-                      height={24}
-                    />
-                  )}
-                </div>
-                <Link href={item.link} underline="none">
-                  <ListItemText
-                    primary={item.name}
-                    primaryTypographyProps={{
-                      style: {
-                        color: isCurrentRoute(item.link) ? '#2962FF' : 'black',
-                      },
-                    }}
-                  />
-                </Link>
-                {item.dropdown &&
-                  (openDropdown === item.name ? (
-                    <ExpandMore
-                      style={{ color: isCurrentRoute(item.link) ? '#2962FF' : 'black' }}
-                    />
-                  ) : (
-                    <ChevronRight style={{ color: 'black' }} />
-                  ))}
-              </ListItem>
-              {item.dropdown &&
-                openDropdown === item.name &&
-                item.dropdown.map((subitem) => (
-                  <ListItem
-                    button
-                    key={subitem.name}
-                    style={{
-                      backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
-                      paddingLeft: '2em',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div style={{ marginRight: '1em' }}>
-                      {subitem.logo && (
-                        <Image
-                          src={
-                            isCurrentRoute(subitem.link)
-                              ? subitem.highlightedLogo || subitem.logo
-                              : subitem.logo
-                          }
-                          alt="Logo"
-                          width={24}
-                          height={24}
-                        />
-                      )}
-                    </div>
-                    <Link href={item.link} underline="none">
-                      <ListItemText
-                        primary={subitem.name}
-                        primaryTypographyProps={{
-                          style: {
-                            color: isCurrentRoute(subitem.link) ? '#2962FF' : 'black',
-                          },
-                        }}
-                      />
-                    </Link>
-                  </ListItem>
-                ))}
-            </div>
-          ))}
-        </List>
-      </div>
+  const drawer = (
+    <div>
       <Box
-         sx={{
-          backgroundColor: '#F7F7F8',
+        sx={{
           padding: '1em',
           display: 'flex',
-          alignItems: 'flex-end',
-          position: 'absolute',
-          bottom: 0,
-          width: '100%',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
         }}
       >
-        <div
-          style={{
+        <div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              margin: '2em 0',
+            }}
+          >
+            <div style={{ marginBottom: '1em' }}>
+              <Image
+                src="/images/favicons/SIWMA-icon.png"
+                alt="Company Logo"
+                width={100}
+                height={70}
+              />
+            </div>
+          </div>
+          <h2>General</h2>
+          <Divider />
+          <List>
+            {menuItems.map((item) => (
+              <div key={item.name}>
+                <ListItem
+                  button
+                  onClick={() => handleClick(item.name)}
+                  style={{
+                    backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div style={{ marginRight: '1em' }}>
+                    {item.logo && (
+                      <Image
+                        src={
+                          isCurrentRoute(item.link) ? item.highlightedLogo || item.logo : item.logo
+                        }
+                        alt="Logo"
+                        width={24}
+                        height={24}
+                      />
+                    )}
+                  </div>
+                  <Link href={item.link} underline="none">
+                    <ListItemText
+                      primary={item.name}
+                      primaryTypographyProps={{
+                        style: {
+                          color: isCurrentRoute(item.link) ? '#2962FF' : 'black',
+                        },
+                      }}
+                    />
+                  </Link>
+                  {item.dropdown &&
+                    (openDropdown === item.name ? (
+                      <ExpandMore
+                        style={{ color: isCurrentRoute(item.link) ? '#2962FF' : 'black' }}
+                      />
+                    ) : (
+                      <ChevronRight style={{ color: 'black' }} />
+                    ))}
+                </ListItem>
+                {item.dropdown &&
+                  openDropdown === item.name &&
+                  item.dropdown.map((subitem) => (
+                    <ListItem
+                      button
+                      key={subitem.name}
+                      style={{
+                        backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
+                        paddingLeft: '2em',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <div style={{ marginRight: '1em' }}>
+                        {subitem.logo && (
+                          <Image
+                            src={
+                              isCurrentRoute(subitem.link)
+                                ? subitem.highlightedLogo || subitem.logo
+                                : subitem.logo
+                            }
+                            alt="Logo"
+                            width={24}
+                            height={24}
+                          />
+                        )}
+                      </div>
+                      <Link href={item.link} underline="none">
+                        <ListItemText
+                          primary={subitem.name}
+                          primaryTypographyProps={{
+                            style: {
+                              color: isCurrentRoute(subitem.link) ? '#2962FF' : 'black',
+                            },
+                          }}
+                        />
+                      </Link>
+                    </ListItem>
+                  ))}
+              </div>
+            ))}
+          </List>
+        </div>
+        <Box
+          sx={{
+            backgroundColor: '#F7F7F8',
+            padding: '1em',
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-end',
+            position: 'absolute',
+            bottom: 0,
+            width: '100%',
           }}
         >
           <div
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              marginRight: '1em',
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
-            <Image src="/images/admin-bg.png" alt="Profile Picture" width={40} height={40} />
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                marginRight: '1em',
+              }}
+            >
+              <Image src="/images/admin-bg.png" alt="Profile Picture" width={40} height={40} />
+            </div>
+            <div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>John Doe</div>
+              <div style={{ fontSize: '14px', color: '#9E9E9E' }}>john.doe@example.com</div>
+            </div>
           </div>
-          <div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold' }}>John Doe</div>
-            <div style={{ fontSize: '14px', color: '#9E9E9E' }}>john.doe@example.com</div>
-          </div>
-        </div>
+        </Box>
       </Box>
-    </Box>
+    </div>
+  );
+
+  return (
+    <div>
+      <Hidden mdUp>
+        <AppBar
+          position="fixed"
+          sx={{
+            bgcolor: '#ffffff',
+            borderBottomRightRadius: '15px',
+            borderBottomLeftRadius: '15px',
+            boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ color: 'black' }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <div style={{ flexGrow: 1 }} />
+            <Avatar alt="Profile Picture" src="/images/admin-bg.png" />
+          </Toolbar>
+        </AppBar>
+      </Hidden>
+      <nav>
+        <Hidden mdUp implementation="css">
+          <Drawer
+            variant="temporary"
+            open={isSideBarOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true,
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+        <Hidden mdDown implementation="css">
+          <Drawer variant="permanent" open={isSideBarOpen}>
+            {drawer}
+          </Drawer>
+        </Hidden>
+      </nav>
+    </div>
   );
 };
 
