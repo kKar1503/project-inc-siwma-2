@@ -56,8 +56,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
 
   const handleLogOut = async () => {
     toggleDrawer(false);
-    await signOut();
-    window.location.href = '/login';
+    await signOut({ callbackUrl: '/login' });
   };
 
   const list = () => (

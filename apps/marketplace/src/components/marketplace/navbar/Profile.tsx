@@ -38,7 +38,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
 
   const handleLogOut = async () => {
     setAnchorEl(null);
-    await signOut();
+    await signOut({ callbackUrl: '/login' });
   };
 
   return (
