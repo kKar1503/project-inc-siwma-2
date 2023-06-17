@@ -12,7 +12,7 @@ import fetchListing from '@/middlewares/fetchListing';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import fetchUser from '@/middlewares/fetchUser';
 import fetchRoomMessages from '@/middlewares/fetchRoomMessages';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 
 const useChatListQuery = (loggedUserUuid: string) => {

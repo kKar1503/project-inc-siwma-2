@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 
 const AddListing = () => {

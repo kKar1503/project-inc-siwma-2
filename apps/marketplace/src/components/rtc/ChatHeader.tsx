@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';

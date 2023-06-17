@@ -6,7 +6,7 @@ import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddl
 import { APIRequestType } from '@/types/api-types';
 import * as process from 'process';
 import { fileToS3Object, getFilesFromRequest, loadImageBuilder } from '@/utils/imageUtils';
-import { ParamError } from '@inc/errors/src';
+import { ParamError } from '@inc/errors';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
 export const select = (isAdmin: boolean) => ({
