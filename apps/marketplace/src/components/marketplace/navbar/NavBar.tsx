@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -7,17 +7,16 @@ import Badge from '@mui/material/Badge';
 import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
-import i18next from 'i18next';
 import Grid from '@mui/material/Grid';
 import SearchBar from '@inc/ui/lib/components/SearchBar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
-import Switch from '@mui/material/Switch';
 import AddListing from './AddListing';
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
+import ChangeLanguageButton from './ChangeLanguageButton';
 
 const NavBar = () => {
   const user = useSession();
@@ -27,67 +26,6 @@ const NavBar = () => {
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography, zIndex } = useTheme();
-
-  const [language, setLanguage] = useState<'English' | 'Chinese'>('English');
-
-  const initializeLanguage = () => {
-    const storedLanguage = localStorage.getItem('i18nextLng');
-
-    if (storedLanguage) {
-      i18next.changeLanguage(storedLanguage);
-      setLanguage(storedLanguage === 'en' ? 'English' : 'Chinese');
-    }
-  };
-
-  useEffect(() => {
-    initializeLanguage();
-  }, []);
-
-  const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newLanguage = language === 'English' ? 'Chinese' : 'English';
-
-    // Update the selected language in local storage
-    localStorage.setItem('i18nextLng', newLanguage === 'English' ? 'en' : 'cn');
-
-    // Change the language using i18next
-    i18next.changeLanguage(newLanguage === 'English' ? 'en' : 'cn');
-
-    // Update the state with the new language
-    setLanguage(newLanguage);
-  };
-
-  const navBarStyles = useMemo(() => {
-    if (isSm) {
-      return {
-        switchTxt: {
-          fontSize: typography.subtitle2,
-        },
-      };
-    }
-
-    if (isMd) {
-      return {
-        switchTxt: {
-          fontSize: '10px',
-          fontWeight: 500,
-        },
-      };
-    }
-
-    if (isLg) {
-      return {
-        switchTxt: {
-          fontSize: typography.subtitle2,
-        },
-      };
-    }
-
-    return {
-      switchTxt: {
-        fontSize: '24px',
-      },
-    };
-  }, [isSm, isMd, isLg]);
 
   return (
     <Box
@@ -138,19 +76,7 @@ const NavBar = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <Grid component="label" container alignItems="center">
-            <Grid sx={navBarStyles?.switchTxt} item>
-              {t('EN')}
-            </Grid>
-            <Grid item>
-              <Switch
-                checked={language === 'Chinese'}
-                onChange={handleLanguageChange}
-                value="checked"
-              />
-            </Grid>
-            <Grid sx={navBarStyles?.switchTxt} item>
-              {t('CN')}
-            </Grid>
+            <ChangeLanguageButton />
           </Grid>
 
           <Link href="/chat" underline="none">
@@ -158,6 +84,8 @@ const NavBar = () => {
               size="medium"
               sx={({ spacing }) => ({
                 ml: isMd ? spacing(1) : spacing(2),
+                // TODO: Not sure why this is being pushed down, fix it later
+                mt: '5px',
               })}
             >
               <Badge>
@@ -176,7 +104,7 @@ const NavBar = () => {
 
         {/* mobile drawer icon here */}
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-          <MobileDrawer userId={userId} language={language} />
+          <MobileDrawer userId={userId} />
         </Box>
         {/* end of mobile drawer icon */}
       </Toolbar>
