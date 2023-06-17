@@ -1,10 +1,4 @@
-import {
-  ContentType,
-  DataType,
-  ListingType,
-  ParameterType,
-  UserContacts,
-} from './index';
+import { ContentType, DataType, ListingType, ParameterType, UserContacts } from '@prisma/client';
 
 type TContentType = keyof typeof ContentType;
 type TDataType = keyof typeof DataType;
