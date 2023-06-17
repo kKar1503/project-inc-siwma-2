@@ -10,18 +10,25 @@ export default (io: Server) => {
   logger.info('Sockets enabled');
 
   io.on(EVENTS.CONNECTION.CONNECT, (socket) => {
-    logger.info(`${socket.id} is connected.`);
+    const logHeader = `[${socket.id}]`;
+
+    logger.info(`${logHeader} Socket is connected.`);
     let eventsAttached: string[] = [];
+
+    // Attaching event listeners
     for (const event of Object.values(events)) {
       const { callback, eventName, type } = event(io, socket);
       socket[type](eventName, callback);
       eventsAttached.push(eventName);
     }
+    logger.info(`${logHeader} Attached ${eventsAttached.length} events.`);
 
     socket.once(EVENTS.CONNECTION.DISCONNECT, () => {
-      logger.info(`Disconnected: ${socket.id}`);
-    });
+      // Detaching event listeners
+      logger.info(`${logHeader} Removing all listeners from socket.`);
+      socket.removeAllListeners();
 
-    logger.info(`Attached ${eventsAttached.length} events to ${socket.id}`);
+      logger.info(`${logHeader} Socket is disconnected.`);
+    });
   });
 };
