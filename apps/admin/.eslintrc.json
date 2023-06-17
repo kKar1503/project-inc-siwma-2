@@ -5,11 +5,11 @@
   },
   "settings": {
     "next": {
-      "rootDir": "apps/admin"
+      "rootDir": "apps/admin/"
     },
     "import/resolver": {
       "typescript": {
-        "project": "apps/admin"
+        "project": "apps/admin/"
       }
     }
   }

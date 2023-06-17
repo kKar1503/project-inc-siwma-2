@@ -26,6 +26,8 @@ ARG NEXT_ESLINT_OPTION
 ENV NEXT_BUILD_OPTION=$NEXT_BUILD_OPTION
 ENV NEXT_ESLINT_OPTION=$NEXT_ESLINT_OPTION
 
+RUN rm -f apps/marketplace/.eslintrc.json && mv apps/marketplace/.eslintrc.cli.json apps/marketplace/.eslintrc.json
+
 # Building NextJS
 RUN npx nx run @inc/marketplace:build:prod
 
