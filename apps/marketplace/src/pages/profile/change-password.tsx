@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import Head from 'next/head';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -28,6 +28,12 @@ const ChangePassword = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [confirmPasswordErrorText, setConfirmPasswordErrorText] = useState('');
+  const [newPasswordError, setNewPasswordError] = useState(false);
+  const [newPasswordErrorText, setNewPasswordErrorText] = useState('');
+  const [currentPasswordError, setCurrentPasswordError] = useState(false);
+  const [currentPasswordErrorText, setCurrentPasswordErrorText] = useState('');
   const [openLeave, setOpenLeave] = useState(false);
 
   const loggedUserUuid = useSession().data?.user.id as string;
@@ -35,7 +41,34 @@ const ChangePassword = () => {
   const mutation = useUpdateUserMutation(loggedUserUuid);
 
   const [isSm] = useResponsiveness(['sm']);
-  const { typography, palette } = useTheme();
+  const { palette } = useTheme();
+
+  useEffect(() => {
+    if (newPassword !== confirmNewPassword) {
+      setConfirmPasswordError(true);
+      setConfirmPasswordErrorText('New password and confirm new password must be the same');
+    } else {
+      setConfirmPasswordError(false);
+      setConfirmPasswordErrorText('');
+    }
+
+    if (newPassword.length < 8 && newPassword.length >= 1) {
+      setNewPasswordError(true);
+      setNewPasswordErrorText('New password must be at least 8 characters long');
+    } else {
+      setNewPasswordError(false);
+      setNewPasswordErrorText('');
+    }
+
+    // if mutation fails, show error message
+    if (mutation.isError) {
+      setCurrentPasswordError(true);
+      setCurrentPasswordErrorText('Current password is incorrect');
+    } else {
+      setCurrentPasswordError(false);
+      setCurrentPasswordErrorText('');
+    }
+  }, [newPassword, confirmNewPassword, mutation.isError]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -43,18 +76,6 @@ const ChangePassword = () => {
     if (!currentPassword || !newPassword || !confirmNewPassword) {
       setError(true);
       setErrorMessage('Please fill in all fields');
-      return;
-    }
-    // Check if new password is at least 8 char long
-    if (newPassword.length < 8) {
-      setError(true);
-      setErrorMessage('New password must be at least 8 characters long');
-      return;
-    }
-    // Check if new password and confirm new password is the same
-    if (newPassword !== confirmNewPassword) {
-      setError(true);
-      setErrorMessage('New password and confirm new password must be the same');
       return;
     }
 
@@ -134,6 +155,8 @@ const ChangePassword = () => {
                       })}
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
+                      error={!!currentPasswordError}
+                      helperText={currentPasswordErrorText}
                     />
                   </FormControl>
 
@@ -147,6 +170,8 @@ const ChangePassword = () => {
                       })}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
+                      error={!!newPasswordError}
+                      helperText={newPasswordErrorText}
                     />
                   </FormControl>
 
@@ -160,6 +185,8 @@ const ChangePassword = () => {
                       })}
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      error={!!confirmPasswordError}
+                      helperText={confirmPasswordErrorText}
                     />
                   </FormControl>
                 </CardContent>
@@ -176,22 +203,6 @@ const ChangePassword = () => {
                       }}
                     >
                       {errorMessage}
-                    </Typography>
-                  )
-                }
-
-                {
-                  // Show error msg if mutation is error
-                  mutation.isError && (
-                    <Typography
-                      sx={{
-                        color: 'red',
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                      }}
-                    >
-                      The given current password does not match the current password
                     </Typography>
                   )
                 }
