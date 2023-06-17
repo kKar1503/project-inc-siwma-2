@@ -56,3 +56,6 @@ tmp
 
 # Build stuff
 **/dist
+
+# NextJS stuff
+.next
