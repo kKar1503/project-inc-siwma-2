@@ -16,6 +16,7 @@ import { useSession } from 'next-auth/react';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { useMutation } from 'react-query';
 import updateUser from '@/middlewares/updateUser';
+import { useResponsiveness } from '@inc/ui';
 
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
@@ -30,6 +31,8 @@ const ChangePassword = () => {
   const loggedUserUuid = useSession().data?.user.id as string;
 
   const mutation = useUpdateUserMutation(loggedUserUuid);
+
+  const [isSm] = useResponsiveness(['sm']);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -91,10 +94,7 @@ const ChangePassword = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <CardHeader
                     titleTypographyProps={{
-                      fontSize: 24,
-                    }}
-                    subheaderTypographyProps={{
-                      fontSize: 16,
+                      fontSize: isSm ? 16 : 24,
                     }}
                     title="Change Password"
                   />
@@ -108,7 +108,10 @@ const ChangePassword = () => {
                     <Button
                       variant="contained"
                       color="error"
-                      sx={({ palette }) => ({ bgcolor: palette.error[400] })}
+                      sx={({ palette }) => ({
+                        bgcolor: palette.error[400],
+                        fontSize: isSm ? 10 : 'auto',
+                      })}
                     >
                       Cancel Edit
                     </Button>
