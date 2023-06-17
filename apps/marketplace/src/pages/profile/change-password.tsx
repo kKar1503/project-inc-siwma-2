@@ -1,8 +1,5 @@
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import Head from 'next/head';
-import ProfileDetailCard, {
-  ProfileDetailCardProps,
-} from '@/components/marketplace/profile/ProfileDetailCard';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
@@ -15,21 +12,45 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
-import LinearProgress from '@mui/material/LinearProgress';
 
-export type ProfilePageProps = {
-  data: ProfileDetailCardProps;
-};
-
-const ChangePassword = ({ data }: { data: ProfileDetailCardProps }) => {
+const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    // Check if all fields are filled
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      setError(true);
+      setErrorMessage('Please fill in all fields');
+      return;
+    }
+    // Check if new password is at least 8 char long
+    if (newPassword.length < 8) {
+      setError(true);
+      setErrorMessage('New password must be at least 8 characters long');
+      return;
+    }
+    // Check if new password and confirm new password is the same
+    if (newPassword !== confirmNewPassword) {
+      setError(true);
+      setErrorMessage('New password and confirm new password must be the same');
+      return;
+    }
+    // Check if current password is correct
+    // if (currentPassword !== data.password) {
+    //     setError(true);
+    //     setErrorMessage('The given current password does not match the current password');
+    //     return;
+    // }
+    setError(false);
     console.log({
+      currentPassword,
       newPassword,
+      confirmNewPassword,
     });
   };
 
@@ -128,7 +149,23 @@ const ChangePassword = ({ data }: { data: ProfileDetailCardProps }) => {
                   </FormControl>
                 </CardContent>
 
-                <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
+                {
+                  // Show err msg if error is true
+                  error && (
+                    <Typography
+                      sx={{
+                        color: 'red',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                      }}
+                    >
+                      {errorMessage}
+                    </Typography>
+                  )
+                }
+
+                <CardActions sx={{ display: 'flex', flexDirection: 'column' }}>
                   <Box
                     sx={({ spacing }) => ({
                       width: '98%',
