@@ -162,28 +162,30 @@ const Profile = ({ userName, userId }: UserNameProps) => {
           </MenuItem>
         </Link>
 
-        <MenuItem onClick={handleMenuClose}>
-          <LockIcon
-            sx={{
-              fontSize: typography.h5,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            }}
-          />
-          <Typography
-            sx={{
-              fontSize: typography.subtitle2,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            }}
-          >
-            Change Password
-          </Typography>
-        </MenuItem>
+        <Link href="/profile/change-password" underline="none">
+          <MenuItem onClick={handleMenuClose}>
+            <LockIcon
+              sx={{
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: typography.subtitle2,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            >
+              Change Password
+            </Typography>
+          </MenuItem>
+        </Link>
 
         <Link href="/bookmarks" underline="none">
           <MenuItem onClick={handleMenuClose}>

@@ -128,7 +128,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
             </Link>
 
             {/* update link when page ready */}
-            <Link href={`/profile/${userId}/change-password`} underline="none">
+            <Link href="/profile/change-password" underline="none">
               <ListItemButton>
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <LockIcon sx={{ color: palette.grey[600] }} />

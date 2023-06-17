@@ -12,6 +12,13 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
+import { useSession } from 'next-auth/react';
+import { PutUserRequestBody } from '@/utils/api/server/zod';
+import { useMutation } from 'react-query';
+import updateUser from '@/middlewares/updateUser';
+
+const useUpdateUserMutation = (userUuid: string) =>
+  useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -19,6 +26,10 @@ const ChangePassword = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const loggedUserUuid = useSession().data?.user.id as string;
+
+  const mutation = useUpdateUserMutation(loggedUserUuid);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -47,11 +58,12 @@ const ChangePassword = () => {
     //     return;
     // }
     setError(false);
-    console.log({
-      currentPassword,
-      newPassword,
-      confirmNewPassword,
-    });
+
+    const updatedUserData: PutUserRequestBody = {
+      password: newPassword,
+      oldPassword: currentPassword,
+    };
+    mutation.mutate(updatedUserData);
   };
 
   return (
@@ -161,6 +173,38 @@ const ChangePassword = () => {
                       }}
                     >
                       {errorMessage}
+                    </Typography>
+                  )
+                }
+
+                {
+                  // Show error msg if mutation is error
+                  mutation.isError && (
+                    <Typography
+                      sx={{
+                        color: 'red',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                      }}
+                    >
+                      The given current password does not match the current password
+                    </Typography>
+                  )
+                }
+
+                {
+                  // Show success msg if mutation is successful
+                  mutation.isSuccess && (
+                    <Typography
+                      sx={{
+                        color: 'green',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Password changed successfully!
                     </Typography>
                   )
                 }
