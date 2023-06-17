@@ -518,10 +518,14 @@ const EditProfile = () => {
                     onClick={handleSubmit}
                     variant="contained"
                     type="submit"
-                    sx={({ spacing }) => ({
+                    sx={({ spacing, palette }) => ({
                       width: '100%',
                       mt: 'auto',
                       mb: spacing(1),
+                      '&.Mui-disabled': {
+                        bgcolor: palette.grey[400],
+                        color: palette.grey[100],
+                        }
                     })}
                     disabled={
                       name.trim() === '' ||
