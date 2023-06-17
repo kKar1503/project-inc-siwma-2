@@ -16,6 +16,8 @@ import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { useMutation } from 'react-query';
 import updateUser from '@/middlewares/updateUser';
 import { useResponsiveness } from '@inc/ui';
+import { useTheme } from '@mui/material/styles';
+import OnLeaveModal from '@/components/modal/OnLeaveModal';
 
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
@@ -26,12 +28,14 @@ const ChangePassword = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [openLeave, setOpenLeave] = useState(false);
 
   const loggedUserUuid = useSession().data?.user.id as string;
 
   const mutation = useUpdateUserMutation(loggedUserUuid);
 
   const [isSm] = useResponsiveness(['sm']);
+  const { typography, palette } = useTheme();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -100,6 +104,7 @@ const ChangePassword = () => {
                     })}
                   >
                     <Button
+                      onClick={() => setOpenLeave(true)}
                       variant="contained"
                       color="error"
                       sx={({ palette }) => ({
@@ -109,6 +114,7 @@ const ChangePassword = () => {
                     >
                       Cancel Edit
                     </Button>
+                    <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
                   </Box>
                 </Box>
                 <Divider
@@ -163,7 +169,7 @@ const ChangePassword = () => {
                   error && (
                     <Typography
                       sx={{
-                        color: 'red',
+                        color: palette.error.main,
                         fontSize: '14px',
                         fontWeight: 'bold',
                         textAlign: 'center',
