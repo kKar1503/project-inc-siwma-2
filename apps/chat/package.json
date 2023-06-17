@@ -7,6 +7,7 @@
     "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/server.ts\"",
     "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
     "build:prod": "rm -rf dist && node esbuild.config.js",
+    "lint": "eslint src/** --ext .ts --parser-options project:\"./tsconfig.json\"",
     "start": "node dist/server.js"
   },
   "dependencies": {
@@ -21,7 +22,7 @@
     "pino": "^8.12.1",
     "pino-pretty": "^10.0.0",
     "sharp": "^0.32.0",
-    "socket.io": "^4.6.1",
+    "socket.io": "^4.6.2",
     "zod": "^3.21.4"
   },
   "devDependencies": {

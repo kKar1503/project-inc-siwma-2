@@ -2,8 +2,8 @@
   "name": "@inc/db-cost-calculator",
   "version": "0.0.0",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
+    "dev": "next dev",
     "start": "next start"
   },
   "dependencies": {
