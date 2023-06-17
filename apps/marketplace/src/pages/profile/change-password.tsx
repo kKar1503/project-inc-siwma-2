@@ -4,7 +4,6 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -54,12 +53,7 @@ const ChangePassword = () => {
       setErrorMessage('New password and confirm new password must be the same');
       return;
     }
-    // Check if current password is correct
-    // if (currentPassword !== data.password) {
-    //     setError(true);
-    //     setErrorMessage('The given current password does not match the current password');
-    //     return;
-    // }
+
     setError(false);
 
     const updatedUserData: PutUserRequestBody = {
