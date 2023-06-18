@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next';
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient, { Prisma } from '@inc/db';
+import PrismaClient, { ListingType, Prisma } from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 import { APIRequestType } from '@/types/api-types';
 import { userSchema } from '@/utils/api/server/zod';
@@ -25,6 +25,16 @@ function orderByOptions(sortBy: string | undefined): Prisma.ReviewsOrderByWithRe
 const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
     const { id } = userSchema.userId.parse(req.query);
     const sortBy = req.query.sortBy as string;
+    const reviewFrom = req.query.reviewFrom as string | undefined;
+
+    let reviewType: ListingType | undefined;
+    if (reviewFrom) {
+        if (reviewFrom === 'seller') {
+            reviewType = 'BUY';
+        } else if (reviewFrom === 'buyer') {
+            reviewType = 'SELL';
+        }
+    }
 
     // Check if user exists
     const user = await PrismaClient.users.findUnique({
@@ -39,7 +49,14 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
 
     // Fetch reviews from database using Prisma
     const reviews = await PrismaClient.reviews.findMany({
-        where: { user: id },
+        where: {
+            user: id,
+            ...(reviewType && {
+                listingReviewsListingTolisting: {
+                    type: reviewType,
+                },
+            }),
+        },
         orderBy,
     });
 
