@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
@@ -22,7 +22,6 @@ import fetchPopularListings from '@/middlewares/fetchPopularListings';
 import { InfiniteScroll, useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 import { useTheme } from '@mui/material';
-import zIndex from '@mui/material/styles/zIndex';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -58,8 +57,8 @@ const useGetPopularListingsQuery = () => {
 
 const Marketplace = () => {
   const { data: session } = useSession();
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { typography, zIndex } = useTheme();
+  const [isSm, isMd, isLg, isXl] = useResponsiveness(['sm', 'md', 'lg', 'xl']);
+  const { typography } = useTheme();
   const scrollRef = useRef<Element>(null);
 
   const [listings, setListings] = React.useState<Array<ProductListingItemProps>>([]);
@@ -92,6 +91,22 @@ const Marketplace = () => {
   const categories = useGetCategoriesQuery();
   const advertisementsData = useGetAdvertisementsQuery(session?.user.permissions);
   const popularListingsData = useGetPopularListingsQuery();
+
+  useEffect(() => {
+    const totalListingsCount = listings.length;
+    let listingsNeededCount = 0;
+
+    if (isXl) {
+      listingsNeededCount = 5 - (totalListingsCount % 5)
+    } else if (isLg) {
+      listingsNeededCount = 4 - (totalListingsCount % 5)
+    } else if (isMd) {
+      listingsNeededCount = 3 - (totalListingsCount % 5)
+    }
+
+    const listingsNeeded = listings.slice(0, listingsNeededCount);
+    setListings((prev) => [...prev, ...listingsNeeded]);
+  }, [maxItems]);
 
   const headerStyles = useMemo(() => {
     if (isSm) {
@@ -181,6 +196,7 @@ const Marketplace = () => {
       </Box>
       <Box marginTop="2em" display="flex" flexDirection="column" justifyContent="center">
         <Box marginX="2rem">
+          {listings.length}
           <InfiniteScroll
             onLoadMore={refetch}
             loading={isLoading}
