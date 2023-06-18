@@ -115,13 +115,29 @@ const DisplayResults = ({
       <Grid item sm={12} md={filter ? 10 : 12} sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex' }}>
           <Grid item xs={10} md={8} container justifyContent="flex-start">
-            <Grid item xs={12} md={12} sx={{ marginTop: 2, marginBottom: 3 }}>
+            <Grid
+              item
+              xs={12}
+              md={12}
+              sx={({ spacing }) => ({
+                mb: spacing(2),
+              })}
+            >
               {subHeader && (
-                <Typography variant="h3" fontSize={isSm ? '2rem' : '3rem'} fontWeight="700">
+                <Typography
+                  sx={({ typography }) => ({
+                    fontSize: isSm ? typography.h5 : typography.h4,
+                    fontWeight: typography.fontWeightBold,
+                  })}
+                >
                   {data.title.single} Bookmarks
                 </Typography>
               )}
-              <Typography variant={isSm ? 'h6' : 'h5'} fontSize={isSm ? '1rem' : '1.5rem'}>
+              <Typography
+                sx={({ typography }) => ({
+                  fontSize: isSm ? typography.h6 : typography.h5,
+                })}
+              >
                 {data?.noOfItems > 1 && data?.noOfItems !== 0
                   ? `${subHeader ? data?.noOfItems : ''} ${data.title.plural}`
                   : `${subHeader ? data?.noOfItems : ''} ${data.title.single}`}

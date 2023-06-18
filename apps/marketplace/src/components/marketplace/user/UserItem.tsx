@@ -51,12 +51,10 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
         }
         title={data.name}
         titleTypographyProps={{
-          fontSize: isSm ? 14 : 16,
-          fontWeight: 'bold',
-        }}
-        subheader={data.bio}
-        subheaderTypographyProps={{
-          fontSize: isSm ? 12 : 14,
+          sx: ({ typography }) => ({
+            fontSize: isSm ? typography.body1 : typography.body2,
+            fontWeight: typography.fontWeightBold,
+          }),
         }}
         action={
           <IconButton
@@ -80,7 +78,11 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
         }
       />
       <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
-        <CardContent sx={{ pt: '0px' }}>
+        <CardContent
+          sx={({ spacing }) => ({
+            pt: spacing(0),
+          })}
+        >
           <Typography
             align="center"
             sx={({ typography }) => ({
