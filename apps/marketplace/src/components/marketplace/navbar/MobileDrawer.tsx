@@ -11,7 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
 import CategoryIcon from '@mui/icons-material/Category';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import TranslateIcon from '@mui/icons-material/Translate';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
@@ -26,6 +26,7 @@ import Switch from '@mui/material/Switch';
 import { useState, Fragment, MouseEvent, ChangeEvent } from 'react';
 import { Link } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { signOut } from 'next-auth/react';
 
 export type MobileDrawerProps = {
   userId: string | undefined;
@@ -51,6 +52,11 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
 
   const toggleDrawer = (openState: boolean) => () => {
     setOpenDrawer(openState);
+  };
+
+  const handleLogOut = async () => {
+    toggleDrawer(false);
+    await signOut({ callbackUrl: '/login' });
   };
 
   const list = () => (
@@ -121,7 +127,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
             </Link>
 
             {/* update link when page ready */}
-            <Link href={`/profile/${userId}/change-password`} underline="none">
+            <Link href="/profile/change-password" underline="none">
               <ListItemButton>
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <LockIcon sx={{ color: palette.grey[600] }} />
@@ -130,6 +136,15 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               </ListItemButton>
             </Link>
           </List>
+
+          <Link href="/bookmarks" underline="none">
+            <ListItemButton>
+              <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
+                <BookmarksIcon sx={{ color: palette.grey[600] }} />
+              </ListItemIcon>
+              <ListItemText primary="Bookmarks" />
+            </ListItemButton>
+          </Link>
         </Collapse>
 
         <Link href="/chat" underline="none">
@@ -143,17 +158,14 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           </ListItem>
         </Link>
 
-        {/* update with logic when ready */}
-        <Link href="/" underline="none">
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <LogoutIcon sx={{ color: palette.grey[600] }} />
-              </ListItemIcon>
-              <ListItemText primary="Log Out" />
-            </ListItemButton>
-          </ListItem>
-        </Link>
+        <ListItem disablePadding onClick={handleLogOut}>
+          <ListItemButton>
+            <ListItemIcon>
+              <LogoutIcon sx={{ color: palette.grey[600] }} />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItemButton>
+        </ListItem>
 
         <ListItem disablePadding sx={{ position: 'absolute', bottom: 0 }}>
           <ListItemButton onClick={mobileDrawerLanuageChange}>
