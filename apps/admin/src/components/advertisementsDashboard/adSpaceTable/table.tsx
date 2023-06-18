@@ -97,7 +97,7 @@ export default function({
 
 
   return (
-    <Box sx={{ width: '120%'}}>
+    <Box sx={{ width: '100%'}}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <MainHeader
           numSelected={selected.length}
