@@ -238,22 +238,6 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
       </CardContent>
       <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
         <Box sx={{ width: '98%' }}>
-          {loggedUserUuid === userId && (
-            <Button
-              component={Link}
-              href="/bookmarks"
-              variant="contained"
-              type="submit"
-              sx={({ spacing }) => ({
-                width: '100%',
-                mb: spacing(1),
-                mt: spacing(2),
-                fontWeight: 'bold',
-              })}
-            >
-              Bookmarks
-            </Button>
-          )}
           <Button
             component={Link}
             href={`/profile/${data?.id}/edit-profile`}
@@ -266,20 +250,6 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
             })}
           >
             Edit profile
-          </Button>
-          <Button
-            component={Link}
-            href="/logout"
-            variant="contained"
-            type="submit"
-            color="error"
-            sx={({ spacing }) => ({
-              width: '100%',
-              mb: spacing(1),
-              fontWeight: 'bold',
-            })}
-          >
-            Logout
           </Button>
         </Box>
       </CardActions>
