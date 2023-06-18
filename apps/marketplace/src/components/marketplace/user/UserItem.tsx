@@ -45,7 +45,7 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
     <Card sx={{ height: '100%' }}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} src={data.profilePic || '/images/Placeholder.png'}>
+          <Avatar sx={{ bgcolor: red[500] }} src={data.profilePic || '/images/placeholder.png'}>
             {data.name.charAt(0)}
           </Avatar>
         }
