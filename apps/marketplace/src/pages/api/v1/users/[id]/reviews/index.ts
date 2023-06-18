@@ -59,7 +59,7 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
         },
         orderBy,
         include: {
-            listingReviewsListingTolisting: true // Include the related record here
+            listingReviewsListingTolisting: true
         }
     });
 
@@ -69,7 +69,7 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
         listingId: review.listing.toString(),
         createdAt: review.createdAt.toISOString(),
         userId: review.user.toString(),
-        isBuyer: !(review.listingReviewsListingTolisting.type === 'BUY') // Add the new key here
+        type: review.listingReviewsListingTolisting.type === 'BUY' ? 'seller' : 'buyer' // Add the new key here
     }));
 
     // Validate response body using Zod schema

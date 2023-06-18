@@ -6,7 +6,7 @@ const rating = z.number();
 const userId = z.string();
 const listingId = z.string();
 const createdAt = z.string().datetime();
-const isBuyer = z.boolean(); // Add the new key here
+const type = z.string();
 
 const reviewSchema = z.object({
     id,
@@ -15,7 +15,7 @@ const reviewSchema = z.object({
     userId,
     listingId,
     createdAt,
-    isBuyer // Add the new key here
+    type
 });
 
 export type ReviewResponseBody = z.infer<typeof reviewSchema>;
