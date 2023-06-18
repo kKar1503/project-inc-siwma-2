@@ -97,7 +97,23 @@ const menuItems = [
 const AdminSideBar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+  const [user, setUser] = useState({ name: '', email: '', imageUrl: '' });
   const router = useRouter();
+
+  // function that fetches the user info from your backend
+  function getUserInfo() {
+    return {
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      imageUrl: '/images/admin-bg.png',
+    };
+  }
+
+  useEffect(() => {
+    // Assume that `getUserInfo` is a function that fetches the user info from your backend
+    const userInfo = getUserInfo();
+    setUser(userInfo);
+  }, []);
 
   useEffect(() => {
     menuItems.forEach((item) => {
@@ -112,6 +128,7 @@ const AdminSideBar = () => {
   }, [router.pathname]);
 
   const isCurrentRoute = (path: string) => router.pathname.includes(path);
+  const isCurrentSubRoute = (path: string) => router.pathname.startsWith(path);
 
   const handleDrawerToggle = () => {
     setIsSideBarOpen(!isSideBarOpen);
@@ -179,16 +196,14 @@ const AdminSideBar = () => {
                       />
                     )}
                   </div>
-                  <Link href={item.link} underline="none">
-                    <ListItemText
-                      primary={item.name}
-                      primaryTypographyProps={{
-                        style: {
-                          color: isCurrentRoute(item.link) ? '#2962FF' : 'black',
-                        },
-                      }}
-                    />
-                  </Link>
+                  <ListItemText
+                    primary={item.name}
+                    primaryTypographyProps={{
+                      style: {
+                        color: isCurrentRoute(item.link) ? '#2962FF' : 'black',
+                      },
+                    }}
+                  />
                   {item.dropdown &&
                     (openDropdown === item.name ? (
                       <ExpandMore
@@ -215,7 +230,7 @@ const AdminSideBar = () => {
                         {subitem.logo && (
                           <Image
                             src={
-                              isCurrentRoute(subitem.link)
+                              isCurrentSubRoute(subitem.link)
                                 ? subitem.highlightedLogo || subitem.logo
                                 : subitem.logo
                             }
@@ -225,22 +240,30 @@ const AdminSideBar = () => {
                           />
                         )}
                       </div>
-                      <Link href={item.link} underline="none">
-                        <ListItemText
-                          primary={subitem.name}
-                          primaryTypographyProps={{
-                            style: {
-                              color: isCurrentRoute(subitem.link) ? '#2962FF' : 'black',
-                            },
-                          }}
-                        />
-                      </Link>
+                      <ListItemText
+                        primary={
+                          <Link
+                            href={subitem.link}
+                            underline="none"
+                            sx={{
+                              color: isCurrentSubRoute(subitem.link) ? '#2962FF' : 'black',
+                              textDecoration: 'none',
+                              '&:hover': {
+                                textDecoration: 'none',
+                              },
+                            }}
+                          >
+                            {subitem.name}
+                          </Link>
+                        }
+                      />
                     </ListItem>
                   ))}
               </div>
             ))}
           </List>
         </div>
+        <Hidden mdDown implementation="css">
         <Box
           sx={{
             backgroundColor: '#F7F7F8',
@@ -267,14 +290,15 @@ const AdminSideBar = () => {
                 marginRight: '1em',
               }}
             >
-              <Image src="/images/admin-bg.png" alt="Profile Picture" width={40} height={40} />
+              <Image src={user.imageUrl} alt="Profile Picture" width={40} height={40} />
             </div>
             <div>
-              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>John Doe</div>
-              <div style={{ fontSize: '14px', color: '#9E9E9E' }}>john.doe@example.com</div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>{user.name}</div>
+              <div style={{ fontSize: '14px', color: '#9E9E9E' }}>{user.email}</div>
             </div>
           </div>
         </Box>
+        </Hidden>
       </Box>
     </div>
   );
@@ -302,7 +326,20 @@ const AdminSideBar = () => {
               <MenuIcon />
             </IconButton>
             <div style={{ flexGrow: 1 }} />
-            <Avatar alt="Profile Picture" src="/images/admin-bg.png" />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'end',
+                marginRight: '1em',
+              }}
+            >
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'black' }}>
+                {user.name}
+              </div>
+              <div style={{ fontSize: '14px', color: '#9E9E9E' }}>{user.email}</div>
+            </div>
+            <Avatar alt="Profile Picture" src={user.imageUrl} />
           </Toolbar>
         </AppBar>
       </Hidden>
