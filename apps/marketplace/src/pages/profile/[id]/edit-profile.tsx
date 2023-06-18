@@ -580,8 +580,8 @@ const EditProfile = () => {
                       mt: 'auto',
                       mb: spacing(1),
                       '&.Mui-disabled': {
-                        bgcolor: palette.grey[400],
-                        color: palette.grey[100],
+                        bgcolor: palette.action.disabled,
+                        color: palette.common.white,
                         }
                     })}
                     disabled={
