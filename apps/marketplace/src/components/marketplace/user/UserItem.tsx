@@ -80,11 +80,23 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
         }
       />
       <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
-        <CardContent sx={{ paddingTop: '0px' }}>
-          <Typography variant="body1" align="center" sx={{ fontWeight: 500 }}>
+        <CardContent sx={{ pt: '0px' }}>
+          <Typography
+            align="center"
+            sx={({ typography }) => ({
+              fontSize: typography.body1,
+              fontWeight: typography.fontWeightMedium,
+            })}
+          >
             {data.email}
           </Typography>
-          <Typography variant="body1" align="center" sx={{ fontWeight: 500 }}>
+          <Typography
+            align="center"
+            sx={({ typography }) => ({
+              fontSize: typography.body1,
+              fontWeight: typography.fontWeightMedium,
+            })}
+          >
             {data.mobileNumber}
           </Typography>
         </CardContent>

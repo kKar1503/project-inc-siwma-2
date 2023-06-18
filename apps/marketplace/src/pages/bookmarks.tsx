@@ -80,7 +80,7 @@ const Bookmarks = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="lg" sx={{ my: 4 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} display="flex" justifyContent="center">
           {['LISTINGS', 'USERS'].map((type) => (
