@@ -3,8 +3,8 @@ node_modules
 **/node_modules
 
 # All secrets
-**/.env.local
-**/.env.*.local
+**/.env.*
+**/.env
 
 # By default all git files
 .git
@@ -33,7 +33,7 @@ tsconfig.tsbuildinfo
 
 # Docker related
 .dockerignore
-Dockerfile
+**/Dockerfile
 docker-compose.*.yml
 docker-compose.yml
 docker
@@ -47,6 +47,12 @@ tmp
 *.tmp
 
 # IDE related
-
 .idea
 .vscode
+
+# DB related
+**/*.sql
+**/*.toml
+
+# Build stuff
+**/dist
