@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Form from './form';
-import Upload, { FileUploadProps } from '../../../components/FileUpload/FileUploadBase';
+import Upload, { FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 
 const AdvertisementUpload = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const isSmallOrMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -15,7 +15,7 @@ const AdvertisementUpload = () => {
     };
 
     return (
-        <Box marginLeft={isSmallScreen ? 0 : '300px'}>
+        <Box marginLeft={isSmallOrMediumScreen ? 0 : '300px'}>
             <Card>
                 <CardContent>
                     <Upload
