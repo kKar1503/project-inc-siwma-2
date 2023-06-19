@@ -1,7 +1,7 @@
 import AdSpaceTable from '@/components/advertisementsDashboard/adSpaceTable';
 import { useQuery } from 'react-query';
 import fetchAdSpaceData from '@/middlewares/fetchAdSpaceData';
-import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import Debug from '@/components/Debug';
 
@@ -30,7 +30,6 @@ const useGetAdSpaceDataQuery = () => {
 const AdvertisementDashboard = () => {
 
   const apiData = useGetAdSpaceDataQuery();
-  const [sm, md, lg] = useResponsiveness(['sm', 'md', 'lg']);
 
   if (!apiData) return null;
 
@@ -41,34 +40,42 @@ const AdvertisementDashboard = () => {
 
   return (
     <Debug>
-      <Box style={{}}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Grid container spacing={2}>
+        <Grid item xs={6} md={6} lg={6}>
           <Debug>
-            <div style={{ width: '50%', height: '2em' }} />
+            <div style={{ width: '100%', height: '2em' }} />
+            {/* <AdminCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon} value={active.length.toString()}/> */}
           </Debug>
+        </Grid>
+        <Grid item xs={6} md={6} lg={6}>
           <Debug>
-            <div style={{ width: '50%', height: '2em' }} />
+            <div style={{ width: '100%', height: '2em' }} />
+            {/* <AdminCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} /> */}
           </Debug>
-          {/* <AdminCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon} value={active.length.toString()}/> */}
-          {/* <AdminCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} /> */}
-        </div>
-        <AdSpaceTable
-          active
-          rows={active}
-          onDelete={onDelete}
-          onEdit={onEdit}
-          onChangeActiveStatus={onSetInactive}
-        />
-        <AdSpaceTable
-          active={false}
-          rows={inactive}
-          onDelete={onDelete}
-          onEdit={onEdit}
-          onChangeActiveStatus={onSetActive}
-        />
-      </Box>
+        </Grid>
+        <Grid item xs={12} md={12} lg={12}>
+          <AdSpaceTable
+            active
+            rows={active}
+            onDelete={onDelete}
+            onEdit={onEdit}
+            onChangeActiveStatus={onSetInactive}
+          />
+        </Grid>
+        <Grid item xs={12} md={12} lg={12}>
+          <AdSpaceTable
+            active={false}
+            rows={inactive}
+            onDelete={onDelete}
+            onEdit={onEdit}
+            onChangeActiveStatus={onSetActive}
+          />
+        </Grid>
+      </Grid>
     </Debug>
   );
+
+
 };
 
 export default AdvertisementDashboard;
