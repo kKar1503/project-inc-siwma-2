@@ -25,8 +25,8 @@ const AdvertisementUpload = () => {
                             selectedFile={selectedFile}
                             changeHandler={handleFileChange}
                             accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-                            maxWidth="100px"
-                            maxHeight="100px"
+                            maxWidth="500px"
+                            maxHeight="500px"
                         />
                     </Box>
                     <Form />
