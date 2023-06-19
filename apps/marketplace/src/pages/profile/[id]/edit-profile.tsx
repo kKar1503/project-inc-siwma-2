@@ -64,9 +64,7 @@ const EditProfile = () => {
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
   // console.log(userDetails);
-
   const mutation = useUpdateUserMutation(loggedUserUuid);
-  // console.log(mutation);
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -160,26 +158,6 @@ const EditProfile = () => {
       setBioError(isValidBio ? '' : 'Please enter a valid bio');
     }
   };
-
-  // const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const newBio = e.target.value;
-  //   setBio(newBio);
-
-  //   if (newBio.trim() === '') {
-  //     setBioError('Please enter a bio');
-  //   } else {
-  //     try {
-  //       validateBio(newBio);
-  //       setBioError('');
-  //     } catch (error) {
-  //       if (error instanceof InvalidBioError) {
-  //         setBioError('Bio should not contain repeated letters');
-  //       } else {
-  //         // Handle other errors
-  //       }
-  //     }
-  //   }
-  // };
 
   const handleContactChange = (e: SelectChangeEvent) => {
     const selectedContact = e.target.value;
@@ -515,7 +493,7 @@ const EditProfile = () => {
                 >
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
                     <InputLabel>Contact</InputLabel>
-                    <Select label="contact" value={contactMethod} onChange={handleContactChange}>
+                    <Select label="contact" value={contactMethod} onChange={handleContactChange} >
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="whatsapp">Whatsapp</MenuItem>
                     </Select>
@@ -527,8 +505,20 @@ const EditProfile = () => {
                       placeholder="8123 4567"
                       InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">
-                            <WhatsAppIcon />
+                          <InputAdornment
+                            position="start"
+                            sx={({ palette }) => ({
+                              color: palette.common.black,
+                            })}
+                          >
+                            <WhatsAppIcon
+                              sx={({ spacing, palette }) => ({
+                                borderRadius: spacing(2),
+                                p: '1px',
+                                color: palette.common.white,
+                                backgroundColor: palette.secondary.main,
+                              })}
+                            />
                             +65
                           </InputAdornment>
                         ),
@@ -550,8 +540,21 @@ const EditProfile = () => {
                       placeholder="account_username"
                       InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">
-                            <TelegramIcon />@
+                          <InputAdornment
+                            position="start"
+                            sx={({ palette }) => ({
+                              color: palette.common.black,
+                            })}
+                          >
+                            <TelegramIcon
+                              sx={({ spacing, palette }) => ({
+                                borderRadius: spacing(2),
+                                pr: '1px',
+                                color: palette.common.white,
+                                backgroundColor: palette.primary[500],
+                              })}
+                            />
+                            @
                           </InputAdornment>
                         ),
                       }}
@@ -580,9 +583,9 @@ const EditProfile = () => {
                       mt: 'auto',
                       mb: spacing(1),
                       '&.Mui-disabled': {
-                        bgcolor: palette.action.disabled,
+                        bgColor: palette.action.disabled,
                         color: palette.common.white,
-                        }
+                      },
                     })}
                     disabled={
                       name.trim() === '' ||
