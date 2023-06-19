@@ -1,20 +1,10 @@
 import apiClient from '@/utils/api/client/apiClient';
 
-const createUser = async (
-  company: string,
-  email: string,
-  password: string,
-  userName: string,
-  phone: string,
-  token: string
-) => {
+const createUser = async (token: string, phone: string, password: string) => {
   const userBody = {
-    'token': token,
-    'company': company,
-    'email': email,
-    'password': password,
-    'name': userName,
-    'mobileNumber': phone,
+    token,
+    mobileNumber: phone,
+    password,
   };
   const data = await apiClient.post('/v1/users', userBody);
   return data.status;
