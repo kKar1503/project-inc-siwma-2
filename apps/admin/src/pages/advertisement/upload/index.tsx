@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Form from './form';
-import Upload, { FileUploadProps } from '@/components/FileUpload/FileUploadBase';
+import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 
 const AdvertisementUpload = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -15,19 +15,27 @@ const AdvertisementUpload = () => {
     };
 
     return (
-        <Box marginLeft={isSmallOrMediumScreen ? 0 : '300px'}>
+        <Box marginLeft={isSmallOrMediumScreen ? 0 : '300px'} sx={{ boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)' }}>
             <Card>
                 <CardContent>
-                    <Upload
-                        title="Advertisement Image Upload"
-                        description="Select a JPG or PNG file to upload as an advertisement image."
-                        selectedFile={selectedFile}
-                        changeHandler={handleFileChange}
-                    />
+                    <Box sx={{ marginBottom: '16px' }}>
+                        <Upload
+                            title="Advertisement Image Upload"
+                            description="Select a JPG or PNG file to upload as an advertisement image."
+                            selectedFile={selectedFile}
+                            changeHandler={handleFileChange}
+                            accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
+                            maxWidth="100px"
+                            maxHeight="100px"
+                        />
+                    </Box>
                     <Form />
                 </CardContent>
             </Card>
         </Box>
+
+
+
     );
 };
 
