@@ -129,6 +129,12 @@ const usePostReviewQuery = (userUuid: string) =>
     postReview(userUuid, addReview.review, addReview.rating)
   );
 
+//   const usePostReviewQuery = (userUuid: string) =>
+//   useMutation({mutationFn: (addReview: addNewReview) => {
+//       postReview(userUuid, addReview.review, addReview.rating)
+//   }
+// });
+
 const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[] | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
@@ -175,7 +181,7 @@ const DetailedListingPage = () => {
   const [rightButtonState, setRightButtonState] = useState(false);
   const [inputText, setInputText] = useState<string>('');
   const [openComment, setOpenComment] = useState(false);
-  const [rating, setRating] = useState<number | null>(1);
+  const [rating, setRating] = useState<number | null>(0);
   const [isOpen, setIsOpen] = useState(false);
   // const handleClose = (val: boolean) => {
   //   setIsOpen(false);
@@ -189,6 +195,7 @@ const DetailedListingPage = () => {
 
   useEffect(() => {
     if (rightButtonState === true) {
+      postReview.mutate(review, rating);
     }
   }, [rightButtonState]);
 
@@ -577,34 +584,46 @@ const DetailedListingPage = () => {
                   />
                 </Grid>
                 <Grid item xs={6} md={0.25} />
-                {reviews?.map((individualReview) => (
-                  <Box sx={({ spacing }) => ({ width: '100%', pt: spacing(3) })}>
-                    <Grid container>
-                      <Grid item xs={2} md={1}>
-                        <Avatar>
-                          {user?.find((x) => x.id === individualReview?.userId)?.profilePic}
-                        </Avatar>
+                {reviews?.length ? (
+                  reviews?.map((individualReview) => (
+                    <Box sx={({ spacing }) => ({ width: '100%', pt: spacing(3) })}>
+                      <Grid container>
+                        <Grid item xs={2} md={1}>
+                          <Avatar>
+                            {user?.find((x) => x.id === individualReview?.userId)?.profilePic}
+                          </Avatar>
+                        </Grid>
+                        <Grid item xs={9} md={8}>
+                          <Typography
+                            sx={{
+                              fontWeight: 500,
+                            }}
+                          >
+                            {user?.find((x) => x.id === individualReview?.userId)?.name}
+                          </Typography>
+                          {individualReview?.review}
+                        </Grid>
+                        <Grid item xs={0} md={3}>
+                          <StarsRating rating={individualReview?.rating} />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={9} md={8}>
-                        <Typography
-                          sx={{
-                            fontWeight: 500,
-                          }}
-                        >
-                          {user?.find((x) => x.id === individualReview?.userId)?.name}
-                        </Typography>
-                        {individualReview?.review}
-                      </Grid>
-                      <Grid item xs={0} md={3}>
-                        <StarsRating rating={individualReview?.rating} />
-                      </Grid>
-                    </Grid>
-                    <Divider
-                      sx={({ spacing }) => ({ pt: spacing(2), width: 'full' })}
-                      variant="fullWidth"
-                    />
+                      <Divider
+                        sx={({ spacing }) => ({ pt: spacing(2), width: 'full' })}
+                        variant="fullWidth"
+                      />
+                    </Box>
+                  ))
+                ) : (
+                  <Box
+                    sx={({ spacing }) => ({
+                      pt: spacing(3),
+                      height: { sm: '17vh', md: '14vh', lg: '12vh' },
+                      alignContent: 'center',
+                    })}
+                  >
+                    <Typography sx={{fontWeight: 500}}>No Reviews available for this listing</Typography>
                   </Box>
-                ))}
+                )}
               </Grid>
 
               {isSm && (
