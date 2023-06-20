@@ -140,7 +140,12 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
                   })}
                 />
               ) : (
-                <BookmarkBorderIcon fontSize="large" />
+                <BookmarkBorderIcon
+                  sx={({ palette }) => ({
+                    color: palette.common.black,
+                  })}
+                  fontSize="large"
+                />
               )}
             </IconButton>
           )
