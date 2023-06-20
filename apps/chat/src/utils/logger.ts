@@ -1,11 +1,11 @@
-import logger from 'pino';
+import pino from 'pino';
 import dayjs from 'dayjs';
 import { Event } from '@inc/types';
 import { Socket } from 'socket.io';
 
 export type LogLevels = 'trace' | 'debug' | 'info' | 'event' | 'warn' | 'error' | 'fatal';
 
-const pinoLogger = logger({
+const logger = pino({
   transport: {
     target: 'pino-pretty',
     options: {
@@ -20,9 +20,9 @@ const pinoLogger = logger({
 });
 
 export const eventLogHelper = (eventName: Event, socket: Socket) => {
-  pinoLogger.info(`[${socket.id}:${eventName}]`);
+  logger.info(`[${socket.id}:${eventName}]`);
   return (level: LogLevels, logMessage: string) =>
-    pinoLogger[level](`[${socket.id}:${eventName}] ${logMessage}`);
+    logger[level](`[${socket.id}:${eventName}] ${logMessage}`);
 };
 
-export default pinoLogger;
+export default logger;
