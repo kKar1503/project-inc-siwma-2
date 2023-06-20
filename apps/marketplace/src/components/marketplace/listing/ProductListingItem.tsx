@@ -18,11 +18,11 @@ import NegotiableBadge from './NegotiableBadge';
 
 export type ProductListingItemProps = {
   productId: number;
-  img: string;
+  img: string | undefined;
   profileImg: string;
   type: string;
   name: string;
-  rating: number;
+  rating: number | null;
   price: number;
   negotiable: boolean;
   ownerId: string;
@@ -67,8 +67,10 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
   return (
     <Card
       sx={{
-        maxWidth: 288,
-        maxHeight: '100%',
+        width: 288,
+        ml: 'auto',
+        mr: 'auto',
+        height: '100%',
         border: `1px solid ${theme.palette.grey[400]}`,
         transition: 'transform .2s',
         '&:hover': {
@@ -80,7 +82,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
         <CardHeader
           avatar={
             <Avatar sx={{ bgcolor: red[500] }} src={profileImg}>
-              {ownerFullName.charAt(0)}
+              {ownerFullName?.charAt(0)}
             </Avatar>
           }
           title={ownerFullName}
@@ -92,7 +94,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
         />
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}>
-        <CardMedia component="img" height="288" image={img} />
+        <CardMedia component="img" height="288" image={img || 'https://www.bloomberglinea.com/resizer/cCYxWuUthcqd7ML4NfAFhu8x1Zg=/1440x0/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/bloomberglinea/V22IOSYMMFDQDMMN2WK7U5Y6S4.png'} />
       </Link>
       <CardContent
         sx={({ spacing }) => ({
@@ -152,7 +154,7 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
               pb: spacing(2),
             })}
           >
-            <StarsRating rating={rating} />
+            <StarsRating rating={rating!} />
           </Box>
         </Link>
         <Box
