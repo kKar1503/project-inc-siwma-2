@@ -7,6 +7,6 @@ const s3Connection = new S3libInternal({
     },
     region: process.env.AWS_REGION as Regions,
 })
-const bucket = new S3Bucket(s3Connection, process.env.AWS_BUCKET_NAME as string);
+const bucket = new S3Bucket(s3Connection, process.env.AWS_BUCKET as string);
 
 export default bucket;
