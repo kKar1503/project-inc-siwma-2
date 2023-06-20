@@ -5,20 +5,22 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
-import ConfirmationDialog from './confirmationDialog';
+import Modal from '@inc/ui/lib/components/Modal'
+
 
 const Form = () => {
     const theme = useTheme();
     const { spacing } = theme;
     const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-    const [dialogOpen, setDialogOpen] = useState(false);
+    // const [dialogOpen, setDialogOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [leftButtonState, setLeftButtonState] = useState(false);
 
     const handleClickOpen = () => {
-        setDialogOpen(true);
+        setOpen(true);
     };
-
-    const handleClose = () => {
-        setDialogOpen(false);
+    const handleRightButtonClick = () => {
+        setOpen(false);
     };
 
     const gridCols = useMemo(() => {
@@ -158,7 +160,21 @@ const Form = () => {
                     >
                         Submit
                     </Button>
-                    <ConfirmationDialog open={dialogOpen} onClose={handleClose} />
+                    <Modal
+                        open={open}
+                        setOpen={setOpen}
+                        buttonColor="#0000FF"
+                        icon="info"
+                        title="Confirmation"
+                        content="Advertisement has been successfully added!"
+                        rightButtonText="Back to Dashboard"
+                        rightButtonState={false}
+                        leftButtonState={leftButtonState}
+                        setLeftButtonState={setLeftButtonState}
+                        setRightButtonState={handleRightButtonClick}
+                    />
+
+
                 </Box>
             </Box>
         </Grid>
