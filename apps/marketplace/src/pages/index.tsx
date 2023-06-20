@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import { Button } from '@inc/ui';
 import type { Person } from '@inc/types';
 import NavBar from '@/components/marketplace/navbar/NavBar';
@@ -25,12 +26,12 @@ const Home = () => {
       </Head>
       <main>
         <Button onClick={() => console.log('clicked')}>{t('Hello')}</Button>
+        <Link href="/marketplace">marketplace</Link>
         <p>{t('Hello World')}</p>
         {t('Not signed in ')}
         <br />
         <button onClick={() => signIn()}>{t('Sign in')}</button>
       </main>
-      
     </>
   );
 };
