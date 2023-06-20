@@ -114,7 +114,6 @@ export default async function handleNotifications(): Promise<void> {
       params: {
         name: user.name,
         notifications: notificationsString,
-        notificationSettingsUrl: `${process.env.FRONTEND_URL}/notificationSettings`,
       },
     });
   });
