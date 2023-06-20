@@ -4,10 +4,11 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "module": "CommonJS",
+    "emitDeclarationOnly": true,
     "target": "ESNext",
     "outDir": "./dist",
-		"typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": ["**/*.ts"],
-  "exclude": ["dist", "node_modules", "**/*.spec.ts"]
+  "include": ["**/*.ts", "**/*.d.ts"],
+  "exclude": ["dist", "node_modules", "**/*.spec.ts", "esbuild.config.js"]
 }

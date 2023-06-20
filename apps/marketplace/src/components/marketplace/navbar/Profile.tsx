@@ -8,14 +8,23 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
-import EditNotificationsIcon from '@mui/icons-material/EditNotifications';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
+import Link from '@mui/material/Link';
+import { signOut } from 'next-auth/react';
+import { useResponsiveness } from '@inc/ui';
+import { useTheme } from '@mui/material/styles';
 
 export type UserNameProps = {
-  userName: string;
+  userName: string | undefined;
+  userId: string | undefined;
 };
 
-const Profile = ({ userName }: UserNameProps) => {
+const Profile = ({ userName, userId }: UserNameProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const { typography, palette, spacing } = useTheme();
 
   const isMenuOpen = anchorEl !== null;
 
@@ -27,20 +36,25 @@ const Profile = ({ userName }: UserNameProps) => {
     setAnchorEl(null);
   };
 
+  const handleLogOut = async () => {
+    setAnchorEl(null);
+    await signOut({ callbackUrl: '/login' });
+  };
+
   return (
     <>
       <IconButton
         size="medium"
         onClick={handleProfileMenuOpen}
         sx={({ spacing }) => ({
-          ml: spacing(2),
+          ml: isMd ? spacing(1) : spacing(2),
         })}
       >
         <AccountCircle
-          sx={({ typography, palette }) => ({
+          sx={{
             fontSize: typography.h5,
             color: palette.text.secondary,
-          })}
+          }}
         />
       </IconButton>
 
@@ -58,129 +72,164 @@ const Profile = ({ userName }: UserNameProps) => {
         }}
         open={isMenuOpen}
         onClose={handleMenuClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: '20px',
+            '& .MuiAvatar-root': {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
       >
         <Typography
-          sx={({ spacing, typography, palette }) => ({
+          sx={{
             fontSize: typography.h6,
             color: palette.text.secondary,
-            ml: spacing(2),
-            mb: spacing(1),
-          })}
+            mx: spacing(2),
+            my: spacing(1),
+          }}
         >
           Hi, {userName}!
         </Typography>
 
         <Divider />
 
-        <MenuItem onClick={handleMenuClose}>
-          <AccountCircle
-            sx={({ spacing, typography, palette }) => ({
-              fontSize: typography.h5,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            })}
-          />
-          <Typography
-            sx={({ spacing, typography, palette }) => ({
-              fontSize: typography.subtitle2,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            })}
-          >
-            Profile
-          </Typography>
-        </MenuItem>
+        <Link href={`/profile/${userId}`} underline="none">
+          <MenuItem onClick={handleMenuClose}>
+            <AccountCircle
+              sx={{
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: typography.subtitle2,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            >
+              Profile
+            </Typography>
+          </MenuItem>
+        </Link>
 
-        <MenuItem onClick={handleMenuClose}>
-          <EditIcon
-            sx={({ spacing, typography, palette }) => ({
-              fontSize: typography.h5,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            })}
-          />
-          <Typography
-            sx={({ spacing, typography, palette }) => ({
-              fontSize: typography.subtitle2,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            })}
-          >
-            Edit Profile
-          </Typography>
-        </MenuItem>
+        <Link href={`/profile/${userId}/edit-profile`} underline="none">
+          <MenuItem onClick={handleMenuClose}>
+            <EditIcon
+              sx={{
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: typography.subtitle2,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            >
+              Edit Profile
+            </Typography>
+          </MenuItem>
+        </Link>
 
-        <MenuItem onClick={handleMenuClose}>
-          <LockIcon
-            sx={({ spacing, typography, palette }) => ({
-              fontSize: typography.h5,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            })}
-          />
-          <Typography
-            sx={({ spacing, typography, palette }) => ({
-              fontSize: typography.subtitle2,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            })}
-          >
-            Change Password
-          </Typography>
-        </MenuItem>
+        <Link href="/profile/change-password" underline="none">
+          <MenuItem onClick={handleMenuClose}>
+            <LockIcon
+              sx={{
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: typography.subtitle2,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            >
+              Change Password
+            </Typography>
+          </MenuItem>
+        </Link>
 
-        <MenuItem onClick={handleMenuClose}>
-          <EditNotificationsIcon
-            sx={({ spacing, typography, palette }) => ({
-              fontSize: typography.h5,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            })}
-          />
-          <Typography
-            sx={({ spacing, typography, palette }) => ({
-              fontSize: typography.subtitle2,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            })}
-          >
-            Notification Preference
-          </Typography>
-        </MenuItem>
+        <Link href="/bookmarks" underline="none">
+          <MenuItem onClick={handleMenuClose}>
+            <BookmarksIcon
+              sx={{
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: typography.subtitle2,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            >
+              Bookmarks
+            </Typography>
+          </MenuItem>
+        </Link>
 
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={handleLogOut}>
           <LogoutIcon
-            sx={({ spacing, typography, palette }) => ({
+            sx={{
               fontSize: typography.h5,
               color: palette.text.secondary,
               mr: spacing(2),
               mt: spacing(1),
-            })}
+              mb: spacing(1),
+            }}
           />
           <Typography
-            sx={({ spacing, typography, palette }) => ({
+            sx={{
               fontSize: typography.subtitle2,
               color: palette.text.secondary,
               mr: spacing(2),
               mt: spacing(1),
               mb: spacing(1),
-            })}
+            }}
           >
             Log Out
           </Typography>
