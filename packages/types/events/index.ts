@@ -29,6 +29,7 @@ type EventParams = {
   // ** Client Events
   // Client Room Events
   clientJoinRoom: RoomId;
+  clientPartRoom: RoomId;
   clientCreateRoom: UserId;
   clientDeleteRoom: RoomId;
   // Client Message Events
@@ -47,8 +48,8 @@ type EventParams = {
   serverDeletedMessage: MessageId;
   serverReadMessage: MessageId;
   // Server Typing Events
-  serverStartType: RoomId;
-  serverStopType: RoomId;
+  serverStartType: UserId;
+  serverStopType: UserId;
 };
 
 type Event = keyof EventParams;
