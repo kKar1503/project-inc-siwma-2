@@ -104,7 +104,7 @@ const NavBar = () => {
 
         {/* mobile drawer icon here */}
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-          <MobileDrawer userId={userId} />
+          <MobileDrawer userId={userId} language='English'/>
         </Box>
         {/* end of mobile drawer icon */}
       </Toolbar>

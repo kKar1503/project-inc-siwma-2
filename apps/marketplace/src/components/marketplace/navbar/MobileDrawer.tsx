@@ -23,7 +23,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
-import { useState, Fragment, MouseEvent, ChangeEvent } from 'react';
+import { useState, Fragment, MouseEvent } from 'react';
 import { Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
