@@ -27,6 +27,7 @@ const ResetForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
+  const [regMessage, setRegMessage] = useState(false);
   const [passwordapi, setPasswordApi ] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
@@ -48,28 +49,34 @@ const ResetForm = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+    const isValidPassword = (value: string): boolean => {
+      const passRegex = /^[a-zA-Z0-9]{8}$/;
+      return passRegex.test(value);
+    };
   
-    if (password !== confirmPassword) {
+    if (password !== confirmPassword ) {
         setErrorMessage(true);
-
       }
+
+    else if (isValidPassword(password) ) {
+      setErrorMessage(false);
+      setRegMessage(true)
+    }
+
     else {
       setErrorMessage(false);
-      console.log(token,uuid)
       setPasswordApi(password)  
     }
   };
   
 
 
-  const stylesReset = useMemo(() => {
+  const stylesBox = useMemo(() => {
     if (isSm) {
       return {
-       
         boxShadow: shadows[5],
-        border: 1,
-        px: '5rem',
-        pb: '10rem',
+        px: '2rem',
+        pb: '9rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -78,11 +85,9 @@ const ResetForm = () => {
     }
     if (isMd) {
       return {
-       
         boxShadow: shadows[5],
-        border: 1,
         px: '10rem',
-        pb: '12rem',
+        pb: '5rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -93,7 +98,7 @@ const ResetForm = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '15rem',
+        pb: '8rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -109,7 +114,7 @@ const ResetForm = () => {
       bgcolor: palette.common.white,
       ...shape,
     };
-  }, [isSm, isMd, isLg]);
+  }, [isSm,isMd,isLg]);
 
   return (
     <Box>
@@ -130,7 +135,7 @@ const ResetForm = () => {
             height: '100vh',
           }}
         >
-          <Box sx={stylesReset}>
+          <Box sx={stylesBox}>
             <Box
               sx={({ spacing }) => ({
                 position: 'relative',
@@ -203,6 +208,16 @@ const ResetForm = () => {
                   })}
                 >
                   The passwords does not match
+                </Typography>
+              )}
+               {regMessage && (
+                <Typography
+                  sx={({ palette, spacing }) => ({
+                    color: palette.error.main,
+                    my: spacing(2),
+                  })}
+                >
+                  Min of 8 characters
                 </Typography>
               )}
               <Button
