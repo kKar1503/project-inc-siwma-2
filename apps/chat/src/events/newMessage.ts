@@ -1,19 +1,49 @@
 import { EventFile } from '@inc/types';
 import logger from '../utils/logger';
 import { EVENTS } from '@inc/events';
+import prisma, { ContentType } from '@inc/db';
 
-const newMsgEvent: EventFile = (io) => ({
+const newMsgEvent: EventFile = (io, socket) => ({
   eventName: EVENTS.CLIENT.SEND_MESSAGE,
   type: 'on',
-  callback: ({ roomId, message, username, contentType, time }) => {
+  callback: ({ roomId, message, username, contentType, file, time }, callback) => {
     logger.info(`New message: ${message}`);
-    io.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
-      sender: username,
-      message: message,
-      messageType: contentType,
-      room: roomId,
-      timestamp: time,
+
+    let content: string = message;
+    switch (contentType) {
+      case ContentType.file:
+        // s3 stuff
+        break;
+      case ContentType.offer:
+        // offer stuff
+        break;
+      default:
+        // ignore as message is already set
+        break;
+    }
+
+    prisma.messages.create({
+      data: {
+        content,
+        contentType: contentType as ContentType,
+        room: roomId,
+        author: username,
+      },
+    }).then(() => {
+      socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
+        sender: username,
+        message: message,
+        messageType: contentType,
+        room: roomId,
+        file: file,
+        timestamp: time,
+      });
+      callback({ success: true });
+    }).catch(() => {
+      callback({ success: false });
     });
+
+
   },
 });
 

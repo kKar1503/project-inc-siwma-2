@@ -1,7 +1,6 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient from '@inc/db';
+import PrismaClient, { Rooms, Users } from '@inc/db';
 import { NotFoundError } from '@inc/errors';
-import { formatChatResponse } from '..';
 
 function parseChatId($uuid: string) {
   // Check if $uuid is defined
@@ -27,6 +26,46 @@ export async function checkChatExists(chatId: string) {
     where: {
       id: chatId,
     },
+    select: {
+      id: true,
+      createdAt: true,
+      usersRoomsBuyerTousers: {
+        select: {
+          id: true,
+          name: true,
+          profilePicture: true,
+          enabled: true,
+        },
+      },
+      usersRoomsSellerTousers: {
+        select: {
+          id: true,
+          name: true,
+          profilePicture: true,
+          enabled: true,
+        },
+      },
+      listingRoomsListingTolisting: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          unitPrice: true,
+          type: true,
+          multiple: true,
+          offersOffersListingTolistings: {
+            select: {
+              id: true,
+              messages: {
+                select: {
+                  author: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
   // Check if the chat exists
@@ -49,11 +88,46 @@ export default apiHandler().get(async (req, res) => {
   if (
     !req.token ||
     !req.token.user ||
-    (req.token.user.id !== chat.buyer && req.token.user.id !== chat.seller)
+    (req.token.user.id !== chat.usersRoomsBuyerTousers.id &&
+      req.token.user.id !== chat.usersRoomsSellerTousers.id)
   ) {
     throw new NotFoundError('chat room');
   }
 
+  // Format chats
+  const formattedResponse = {
+    id: chat.id,
+    seller: {
+      id: chat.usersRoomsSellerTousers.id,
+      name: chat.usersRoomsSellerTousers.name,
+      profilePicture: chat.usersRoomsSellerTousers.profilePicture,
+      enabled: chat.usersRoomsSellerTousers.enabled,
+    },
+    buyer: {
+      id: chat.usersRoomsBuyerTousers.id,
+      name: chat.usersRoomsBuyerTousers.name,
+      profilePicture: chat.usersRoomsBuyerTousers.profilePicture,
+      enabled: chat.usersRoomsBuyerTousers.enabled,
+    },
+    listing: {
+      id: chat.listingRoomsListingTolisting.id.toString(),
+      name: chat.listingRoomsListingTolisting.name,
+      price: chat.listingRoomsListingTolisting.price,
+      unitPrice: chat.listingRoomsListingTolisting.unitPrice,
+      type: chat.listingRoomsListingTolisting.type,
+      // Whether or not the listing is still available for purchase
+      open:
+        chat.listingRoomsListingTolisting.multiple ||
+        chat.listingRoomsListingTolisting.offersOffersListingTolistings.length === 0,
+      // Whether or not the user has purchased the listing
+      purchased:
+        chat.listingRoomsListingTolisting.offersOffersListingTolistings.filter(
+          (e) => e.messages[0].author === req.token?.user.id
+        ).length > 0,
+    },
+    createdAt: chat.createdAt.toISOString(),
+  };
+
   // Return the result
-  res.status(200).json(formatAPIResponse(formatChatResponse(chat)));
+  res.status(200).json(formatAPIResponse(formattedResponse));
 });

@@ -194,6 +194,7 @@ model ListingImages {
   image     String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  order     Int
   listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listing_images_fk")
 
   @@map("listing_images")
@@ -222,6 +223,15 @@ model ListingsParametersValue {
 
   @@id([listingId, parameterId], map: "listings_parameters_value_pk")
   @@map("listings_parameters_value")
+}
+
+model Logs {
+  id         BigInt   @id(map: "logs_pk") @default(sequence(maxValue: 2147483647))
+  logLevel   LogType  @map("log_level")
+  logMessage String   @map("log_message")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("logs")
 }
 
 model Messages {
@@ -419,6 +429,12 @@ enum DataType {
 enum ListingType {
   BUY
   SELL
+}
+
+enum LogType {
+  info
+  error
+  fatal
 }
 
 enum ParameterType {
