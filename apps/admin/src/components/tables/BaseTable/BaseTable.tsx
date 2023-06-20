@@ -125,7 +125,12 @@ const BaseTable = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <BaseTableToolbar numSelected={selected.length} onDelete={() => console.log('DELETE!')} />
+        <BaseTableToolbar
+          numSelected={selected.length}
+          onEdit={() => console.log('DELETE!')}
+          onToggle={() => console.log('DELETE!')}
+          onDelete={() => console.log('DELETE!')}
+        />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <BaseTableHead

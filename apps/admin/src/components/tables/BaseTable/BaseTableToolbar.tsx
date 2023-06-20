@@ -2,14 +2,18 @@ import { alpha } from '@mui/material/styles';
 import { IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import EditIcon from '@mui/icons-material/Edit';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 type BaseTableToolbarProps = {
   numSelected: number;
-  onDelete: React.MouseEventHandler<HTMLButtonElement>;
+  onToggle?: React.MouseEventHandler<HTMLButtonElement>;
+  onEdit?: React.MouseEventHandler<HTMLButtonElement>;
+  onDelete?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const BaseTableToolbar = (props: BaseTableToolbarProps) => {
-  const { numSelected, onDelete } = props;
+  const { numSelected, onToggle, onEdit, onDelete } = props;
 
   return (
     <Toolbar
@@ -32,11 +36,29 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
         </Typography>
       )}
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton onClick={onDelete}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          {onToggle && (
+            <Tooltip title="Toggle">
+              <IconButton onClick={onToggle}>
+                <RemoveIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          {onEdit && (
+            <Tooltip title="Edit">
+              <IconButton onClick={onEdit}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          {onDelete && (
+            <Tooltip title="Delete">
+              <IconButton onClick={onDelete}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </>
       ) : (
         <Tooltip title="Filter list">
           <IconButton>
