@@ -15,6 +15,7 @@ export enum AcceptedFileTypes {
 }
 
 export interface FileUploadProps {
+  id: string;
   title: string;
   description: string;
   selectedFile: File | null;
@@ -25,6 +26,7 @@ export interface FileUploadProps {
 }
 
 const FileUpload = ({
+  id,
   title,
   description,
   selectedFile,
@@ -64,7 +66,7 @@ const FileUpload = ({
             alignItems: 'center',
           }}
         >
-          <label htmlFor="fileInput" style={{ cursor: 'pointer', width: '100%', height: '100%' }}>
+          <label htmlFor={id} style={{ cursor: 'pointer', width: '100%', height: '100%' }}>
             <Box
               sx={{
                 width: maxWidth ?? '100px',
@@ -100,7 +102,7 @@ const FileUpload = ({
             </Typography>
           </label>
           <input
-            id="fileInput"
+            id={id}
             type="file"
             onChange={changeHandler}
             style={{ display: 'none' }}
