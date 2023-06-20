@@ -8,7 +8,8 @@ import InputLabel from '@mui/material/InputLabel';
 import FilledInput from '@mui/material/FilledInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useMemo } from 'react';
+import useResponsiveness from '../hook/useResponsiveness';
 
 export type ComponentProps = {
   open: boolean;
@@ -42,7 +43,50 @@ const ModalInput = ({
   setRightButtonState,
 }: ComponentProps) => {
   const handleClose = () => setOpen(false);
-  const isMinWidth = useMediaQuery('(min-width:600px)');
+
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const modalStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        modalWidth: {
+          width: '80%',
+        },
+        buttonTxt: {
+          fontSize: '0.9rem',
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        modalWidth: {
+          width: '45%',
+        },
+        buttonTxt: {
+          fontSize: '1rem',
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        modalWidth: {
+          width: '35%',
+        },
+        buttonTxt: {
+          fontSize: '1rem',
+        },
+      };
+    }
+    return {
+      modalWidth: {
+        width: '50%',
+      },
+      buttonTxt: {
+        fontSize: '1rem',
+      },
+    };
+  }, [isSm, isMd, isLg]);
+
   const handleCancel = () => {
     setOpen(false);
     setLeftButtonState(true);
@@ -70,12 +114,12 @@ const ModalInput = ({
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: '25%',
               borderRadius: 3,
               padding: spacing(2),
               position: 'absolute',
               boxShadow: shadows[3],
               backgroundColor: palette.common.white,
+              ...modalStyles?.modalWidth,
             })}
           >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -111,7 +155,7 @@ const ModalInput = ({
                     onChange={(e) => setselectInput(parseFloat(e.target.value))}
                   />
                   {(selectInput === 0 || Number.isNaN(selectInput)) && (
-                    <Typography variant="caption" color="error">
+                    <Typography variant="caption" color="error" paddingTop={1}>
                       Please enter a valid number.
                     </Typography>
                   )}
@@ -126,13 +170,10 @@ const ModalInput = ({
                         marginRight: '16px',
                         width: 1 / 2,
                         marginTop: spacing(2),
-                        padding: isMinWidth ? '7px 20px' : '2px 4px',
                       })}
                       onClick={handleCancel}
                     >
-                      <Typography sx={{ fontSize: { xs: 'overline', sm: 'subtitle1' } }}>
-                        {leftButtonText}
-                      </Typography>
+                      <Typography sx={modalStyles?.buttonTxt}>{leftButtonText}</Typography>
                     </Button>
                   )}
 
@@ -144,14 +185,13 @@ const ModalInput = ({
                       bgcolor: buttonColor,
                       width: 1 / 2,
                       marginTop: spacing(2),
-                      padding: isMinWidth ? '7px 20px' : '2px 4px',
                     })}
                     onClick={() => setRightButtonState(true)}
                   >
                     <Typography
                       sx={({ palette }) => ({
-                        fontSize: { xs: 'overline', sm: 'subtitle1' },
                         color: palette.common.white,
+                        ...modalStyles?.buttonTxt,
                       })}
                     >
                       {rightButtonText}
