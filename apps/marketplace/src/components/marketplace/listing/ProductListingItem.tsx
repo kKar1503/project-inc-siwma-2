@@ -147,15 +147,8 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
               </IconButton>
             )}
           </Box>
-          <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
-            {data.owner.id === loggedUserUuid && (
-              <Box>
-                <MoreProfileIcon productId={data.id} />
-              </Box>
-            )}
-          </Link>
         </Box>
-        <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
+        <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
           <Box
             sx={({ spacing }) => ({
               pb: spacing(1),
