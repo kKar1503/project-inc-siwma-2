@@ -225,6 +225,15 @@ model ListingsParametersValue {
   @@map("listings_parameters_value")
 }
 
+model Logs {
+  id         BigInt   @id(map: "logs_pk") @default(sequence(maxValue: 2147483647))
+  logLevel   LogType  @map("log_level")
+  logMessage String   @map("log_message")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("logs")
+}
+
 model Messages {
   id          Int         @id(map: "messages_pk") @default(sequence(maxValue: 2147483647))
   author      String      @db.Uuid
@@ -420,6 +429,12 @@ enum DataType {
 enum ListingType {
   BUY
   SELL
+}
+
+enum LogType {
+  info
+  error
+  fatal
 }
 
 enum ParameterType {
