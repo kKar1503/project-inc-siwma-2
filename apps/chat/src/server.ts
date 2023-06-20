@@ -18,6 +18,10 @@ logger.debug(`HOST: ${host}`);
 logger.debug(`PORT: ${port}`);
 logger.debug(`CORS: ${corsOrigin}`);
 
+if (process.env.DATABASE_URL === undefined) {
+  throw new Error('Missing DATABASE_URL env.');
+}
+
 logger.info('Initializing Express Application...');
 const app = express();
 
