@@ -1,23 +1,17 @@
-import { Socket, Server, DisconnectReason } from 'socket.io';
+import type { Socket, Server, DisconnectReason } from 'socket.io';
 
-type Room = {
-  id: string;
-  name: string;
-  activeUsers: number;
-};
+type UserId = string;
+type RoomId = string;
+type MessageId = string;
 
-type RoomMessage = {
-  roomId: string;
+type ClientSendMessage = {
   message: string;
-  username: string;
-  contentType: string;
-  file: undefined | Buffer;
   time: Date;
 };
 
-type StartStopType = {
-  sender: string;
-  roomId: string;
+type Room = {
+  id: RoomId;
+  user: UserId;
 };
 
 type Read = {
@@ -25,28 +19,30 @@ type Read = {
   messageId: number;
 };
 
-type DeleteMessage = {
-  room: string;
-  messageId: number;
-};
-
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
-  // Connections
+  // ** Connections
   connect: Socket;
   disconnect: DisconnectReason;
 
-  // Client Events
-  createRoom: { roomName: string };
-  sendMessage: RoomMessage;
-  clientPing: string;
-  clientDeleteMessage: DeleteMessage;
-  clientStartType: StartStopType;
-  clientStopType: StartStopType;
-  clientRead: Read;
+  // ** Client Events
+  // Client Room Events
+  clientJoinRoom: RoomId;
+  clientCreateRoom: UserId;
+  clientDeletedRoom: RoomId;
+  // Client Message Events
+  clientSendMessage: ClientSendMessage;
+  clientDeleteMessage: MessageId;
+  // Client Typing Events
+  clientStartType: never;
+  clientStopType: never;
 
-  // Server Events
-  rooms: Record<string, Room>;
+  // ** Server Events
+  // Server Room Events
+  serverCreatedRoom: Room;
+  serverDeletedRoom: RoomId;
+  // Server Message Events
+  // Server Typing Events
   joinedRoom: Room;
   roomMessage: RoomMessage;
   serverDeleteMessage: DeleteMessage;

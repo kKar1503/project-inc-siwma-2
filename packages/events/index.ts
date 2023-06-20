@@ -32,6 +32,7 @@ export const EVENTS = {
     },
     MESSAGE: {
       ROOM: 'serverRoomMessage',
+      DELETED: 'serverDeletedMessage',
       READ: 'serverReadMessage',
     },
     TYPING: {
