@@ -26,13 +26,7 @@ const Register = () => {
 
       if (token) {
         // Token retrieved from the URL
-        console.log('Token:', token);
         setToken(token);
-
-        // Perform any additional logic with the token here
-        // ...
-      } else {
-        console.log('Token parameter not found in the URL');
       }
     }
   }, [router]);
@@ -80,13 +74,11 @@ const Register = () => {
       setConfirmPassword('');
 
       mutation.mutate();
-      console.log(token, phone, password);
     }
   };
 
   useEffect(() => {
     if (mutation.isSuccess) {
-      console.log('User created successfully');
       router.push('/success-register');
     }
   }, [mutation.isSuccess, router]);

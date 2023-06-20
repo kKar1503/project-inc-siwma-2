@@ -17,8 +17,8 @@ import { useRouter } from 'next/router';
 import forgetPW from '@/middlewares/forget-password';
 
 const ForgetPassword = () => {
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const router = useRouter();
   const { spacing, shape, shadows, palette } = useTheme();
