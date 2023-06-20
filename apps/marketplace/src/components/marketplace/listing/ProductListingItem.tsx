@@ -49,7 +49,7 @@ const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) 
 const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductListingItemData) => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
-  const placeholder = '/images/Placeholder.png';
+  const placeholder = '/images/placeholder.png';
 
   // save computation power to avoid multiple calculations on each render
   const datetime = useMemo(
@@ -83,8 +83,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           }
           title={data.owner.name}
           titleTypographyProps={{
-            fontSize: isSm ? 14 : 16,
-            fontWeight: 'bold',
+            variant: isSm ? 'subtitle2' : 'subtitle1',
           }}
           subheader={data.owner.company.name}
           subheaderTypographyProps={{
@@ -92,7 +91,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           }}
         />
       </Link>
-      <Link style={{ textDecoration: 'none' }} href={`/product/${data.id}`}>
+      <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
         <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
       </Link>
       <CardContent
@@ -164,10 +163,8 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           >
             <Typography
               sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-              variant="body2"
+              variant="body1"
               color={theme.palette.text.primary}
-              fontWeight={400}
-              fontSize={isSm ? 18 : 20}
             >
               {data.name}
             </Typography>
@@ -177,12 +174,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
               pb: spacing(1),
             })}
           >
-            <Typography
-              variant="subtitle2"
-              color={theme.palette.text.primary}
-              fontWeight="bold"
-              fontSize={isSm ? 20 : 24}
-            >
+            <Typography variant="h5" color={theme.palette.text.primary}>
               {new Intl.NumberFormat('en-SG', {
                 style: 'currency',
                 currency: 'SGD',
@@ -205,7 +197,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
             justifyContent: 'space-between',
           })}
         >
-          <Typography variant="subtitle1" color={theme.palette.text.secondary} fontSize={16}>
+          <Typography variant="subtitle1" color={theme.palette.text.secondary}>
             {datetime}
           </Typography>
           {data.owner.id === loggedUserUuid && (
