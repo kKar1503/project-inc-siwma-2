@@ -4,7 +4,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "pnpx rimraf dist && tsc",
+    "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
+    "build:prod": "rm -rf dist && node esbuild.config.js",
     "dev": "pnpx rimraf dist && tsc -w"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.3"
   }
 }
