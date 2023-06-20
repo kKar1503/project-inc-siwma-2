@@ -7,6 +7,7 @@ declare global {
       PORT?: string;
       HOST?: string;
       LOG_LEVEL?: 'trace' | 'debug' | 'info' | 'event' | 'warn' | 'error' | 'fatal' | 'silent';
+      CORS?: string;
     }
   }
 }
