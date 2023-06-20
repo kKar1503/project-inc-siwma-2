@@ -8,7 +8,7 @@ declare global {
       HOST?: string;
       LOG_LEVEL?: 'trace' | 'debug' | 'info' | 'event' | 'warn' | 'error' | 'fatal' | 'silent';
       CORS?: string;
-      DATABASE_URL: string;
+      DATABASE_URL?: string;
     }
   }
 }
