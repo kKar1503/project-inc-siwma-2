@@ -30,13 +30,12 @@ const BulkInvitesPage = () => {
       setFile(null);
       alert('Please Select a File Smaller Than 64 MB');
     }
-
-    
   };
 
   return (
     <Box>
       <FileUpload
+        id="bulk-invites"
         title="Bulk Add Companies & Invite Users"
         description="Import an .xlsx file below to bulk add company profiles and bulk invite users"
         selectedFile={file}
