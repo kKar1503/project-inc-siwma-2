@@ -87,11 +87,7 @@ const EditProfile = () => {
   const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.whatsappNumber || '');
   const [whatsappError, setWhatsappError] = useState('');
   const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
-  const [modalMessage] = useState(
-    'Once you leave the page, your user details will be removed and your profile will not be updated'
-  );
   const [openLeave, setOpenLeave] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -357,7 +353,7 @@ const EditProfile = () => {
                   >
                     Cancel Edit
                   </Button>
-                  <OnLeaveModal open={openLeave} setOpen={setOpenLeave} message={modalMessage} />
+                  <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
                 </Box>
               </Box>
               <Divider
