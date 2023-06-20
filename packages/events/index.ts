@@ -11,6 +11,7 @@ export const EVENTS = {
   CLIENT: {
     ROOM: {
       JOIN: 'clientJoinRoom',
+      PART: 'clientPartRoom',
       CREATE: 'clientCreateRoom',
       DELETE: 'clientDeleteRoom',
     },
