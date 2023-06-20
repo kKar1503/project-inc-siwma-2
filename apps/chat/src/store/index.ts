@@ -1,31 +1,18 @@
 import { createStoreTemplate, MamaStore, PapaStore } from '@inc/node-store';
+import logger from '../utils/logger';
+import type { Users as User } from '@inc/db';
 
-interface User {
-  first: string;
-  last: string;
-  age: {
-    value: number;
-  };
-}
+type RoomOccupants = [Occupant1: string, Occupant2: string];
 
 type InferFromMama<T> = T extends MamaStore<infer Sons> ? PapaStore<Sons> : never;
 
-const numStoreTemplate = createStoreTemplate(0, 'numTemplate');
-
-const userStoreTemplate = createStoreTemplate<User>(
-  {
-    first: 'First',
-    last: 'Last',
-    age: {
-      value: 0,
-    },
-  },
-  'userTemplate'
-);
+// ** Data Store Templates
+const roomOccupantsTemplate = createStoreTemplate<RoomOccupants>(['', ''], 'roomOccupantsTemplate');
+const socketUserTemplate = createStoreTemplate<User | null>(null, 'socketUserTemplate');
 
 let mamaStore = new MamaStore({
-  num: numStoreTemplate,
-  user: userStoreTemplate,
+  roomOccupants: roomOccupantsTemplate,
+  socketUser: socketUserTemplate,
 });
 
 let instance: { instance: InferFromMama<typeof mamaStore> | undefined } = {
@@ -33,6 +20,7 @@ let instance: { instance: InferFromMama<typeof mamaStore> | undefined } = {
 };
 
 export function spawnPapa() {
+  logger.trace('spawnPapa() | Creating new instance of PapaStore.');
   instance.instance = new PapaStore(mamaStore);
 }
 
