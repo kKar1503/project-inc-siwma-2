@@ -28,7 +28,7 @@ const Register = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const { query } = router;
-      const token = query.token || '';
+      const token = Array.isArray(query.token) ? query.token[0] : query.token || '';
 
       if (token) {
         // Token retrieved from the URL
