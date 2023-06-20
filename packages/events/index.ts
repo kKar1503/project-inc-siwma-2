@@ -22,7 +22,6 @@ export const EVENTS = {
       START: 'clientStartType',
       STOP: 'clientStopType',
     },
-    PING: 'clientPing',
   },
 
   // Server Events
@@ -39,7 +38,6 @@ export const EVENTS = {
       START: 'serverStartType',
       STOP: 'serverStopType',
     },
-    PING: 'serverPing',
   },
 } as const;
 

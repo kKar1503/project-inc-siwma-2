@@ -1,5 +1,4 @@
-import { Socket, Server } from 'socket.io';
-import * as buffer from 'buffer';
+import { Socket, Server, DisconnectReason } from 'socket.io';
 
 type Room = {
   id: string;
@@ -12,7 +11,7 @@ type RoomMessage = {
   message: string;
   username: string;
   contentType: string;
-  file:undefined| Buffer;
+  file: undefined | Buffer;
   time: Date;
 };
 
@@ -24,7 +23,7 @@ type StartStopType = {
 type Read = {
   room: string;
   messageId: number;
-}
+};
 
 type DeleteMessage = {
   room: string;
@@ -35,7 +34,7 @@ type DeleteMessage = {
 type EventParams = {
   // Connections
   connect: Socket;
-  disconnect: string;
+  disconnect: DisconnectReason;
 
   // Client Events
   createRoom: { roomName: string };
