@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import client from '@inc/db';
-import { NotFoundError, ForbiddenError } from '@inc/errors';
+import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import { userSchema } from '@/utils/api/server/zod';
 import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import bucket from '@/utils/s3Bucket';
@@ -30,20 +30,21 @@ export default apiHandler()
 
     const files = await getFilesFromRequest(req);
     let { profilePicture } = userExists;
-    if (files.length > 0) {
-      const createObject = async () => {
-        const s3Object = fileToS3Object(files[0]);
-        return bucket.createObject(s3Object);
-      };
-      const deleteObject = async () => {
-        if (!userExists.profilePicture) return;
-        await bucket.deleteObject(userExists.profilePicture);
-      };
+    if (files.length === 0) throw new ParamError('profile picture');
 
-      const [profilePictureObject] = await Promise.all([createObject(), deleteObject()]);
+    const createObject = async () => {
+      const s3Object = fileToS3Object(files[0]);
+      return bucket.createObject(s3Object);
+    };
+    const deleteObject = async () => {
+      if (!userExists.profilePicture) return;
+      await bucket.deleteObject(userExists.profilePicture);
+    };
 
-      profilePicture = profilePictureObject.Id;
-    }
+    const [profilePictureObject] = await Promise.all([createObject(), deleteObject()]);
+
+    profilePicture = profilePictureObject.Id;
+
 
     const user = await client.users.update({
       where: {
