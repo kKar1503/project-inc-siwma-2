@@ -23,11 +23,12 @@ export default (io: Server) => {
     }
     logger.info(`${logHeader} Attached ${eventsAttached.length} events.`);
 
-    socket.once(EVENTS.CONNECTION.DISCONNECT, () => {
+    socket.once(EVENTS.CONNECTION.DISCONNECT, (reason) => {
       // Detaching event listeners
       logger.info(`${logHeader} Removing all listeners from socket.`);
       socket.removeAllListeners();
 
+      logger.warn(`${logHeader} Socket disconnected due to: ${reason}.`);
       logger.info(`${logHeader} Socket is disconnected.`);
     });
   });
