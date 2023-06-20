@@ -1,11 +1,10 @@
 import apiClient from '@/utils/api/client/apiClient';
 
-const forgetPW = async (email: string, token: string) => {
-  const newUser = {
-    'token': token,
-    'email': email,
+const forgetPW = async (email: string) => {
+  const forgetPWBody = {
+    email,
   };
-  const data = await apiClient.post('/v1/users', newUser);
+  const data = await apiClient.post('/v1/forget-password', forgetPWBody);
   return data.status;
 };
 export default forgetPW;
