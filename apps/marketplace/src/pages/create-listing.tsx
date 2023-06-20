@@ -61,7 +61,7 @@ const CreateListingPage = () => {
     <Container maxWidth="lg" sx={{ boxShadow: 4, p: 2, my: 2 }}>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+          <Grid item xs={12} sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               Create Listing
             </Typography>
@@ -69,13 +69,13 @@ const CreateListingPage = () => {
               Create a buy or a sell listing to be shared on your profile.
             </Typography>
           </Grid>
-          <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+          <Grid item xs={12} sx={{ width: '100%' }}>
             <Divider />
           </Grid>
 
           {forms}
 
-          <Grid item xs={6} md={6} sx={{ width: '100%' }}>
+          <Grid item xs={6} sx={{ width: '100%' }}>
             <Button
               variant="contained"
               type="submit"
@@ -90,7 +90,7 @@ const CreateListingPage = () => {
             </Button>
             {cancelModal.element}
           </Grid>
-          <Grid item xs={6} md={6} sx={{ width: '100%' }}>
+          <Grid item xs={6} sx={{ width: '100%' }}>
             <Button variant="contained" type="submit" size="large" fullWidth>
               CREATE LISTING
             </Button>
