@@ -1,11 +1,5 @@
 import { FormEvent, useState, useMemo, useEffect } from 'react';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
+import { Typography, Button, Divider, TextField, Box, Container, Grid } from '@mui/material';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
