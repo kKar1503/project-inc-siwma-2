@@ -20,11 +20,7 @@ function PascalToSnake(str: string) {
 }
 
 const PRISMA_PRIMITIVES = ['String', 'Boolean', 'Int', 'Float', 'DateTime'];
-const KNEX_INTERNAL_MODELS = [
-  'knex_migrations',
-  'knex_migrations_lock',
-  'pgmigrations',
-];
+const KNEX_INTERNAL_MODELS = ['knex_migrations', 'knex_migrations_lock', 'pgmigrations'];
 const SUPPORTED_ENUMS = [
   'DataType',
   'ListingType',
@@ -32,6 +28,7 @@ const SUPPORTED_ENUMS = [
   'UserContacts',
   'ContentType',
   'ReasonType',
+  'LogType',
 ];
 
 function isKnexInternalModel(typeName: string) {
@@ -49,7 +46,7 @@ function isLowercaseEnumsType(typeName: string) {
 }
 
 function validateSupportedEnum(typeName: string): [isSupportedEnum: boolean, enumIndex: number] {
-  let enumIndex = SUPPORTED_ENUMS.findIndex(e => e.toLowerCase() === typeName.toLowerCase());
+  let enumIndex = SUPPORTED_ENUMS.findIndex((e) => e.toLowerCase() === typeName.toLowerCase());
   let isSupportedEnum = enumIndex !== -1;
   return [isSupportedEnum, enumIndex];
 }
@@ -61,10 +58,14 @@ function fixFieldsArrayString(fields: string) {
     .join(', ');
 }
 
-function parseLine(line: string, persistentData: {
-  currentModelName: string | null,
-  hasAddedModelMap: boolean,
-}, fixedText: string[]) {
+function parseLine(
+  line: string,
+  persistentData: {
+    currentModelName: string | null;
+    hasAddedModelMap: boolean;
+  },
+  fixedText: string[]
+) {
   // Are we at the start of a model definition
   const modelMatch = line.match(/^model\s+(\S+)\s*\{/);
   if (modelMatch) {
@@ -188,7 +189,6 @@ function parseLine(line: string, persistentData: {
       }
     }
 
-
     if (fixedLine.includes('fields: [refresh_token')) {
       fixedLine = fixedLine.replace('fields: [refresh_token', 'fields: [refreshToken');
     }
@@ -232,7 +232,6 @@ async function fixPrismaFile() {
 
   const fixedText: string[] = [];
 
-
   const persistentData = {
     currentModelName: null,
     hasAddedModelMap: false,
@@ -244,6 +243,4 @@ async function fixPrismaFile() {
   await fs.promises.writeFile(PRISMA_FILE_PATH, fixedText.join('\n'));
 }
 
-
-fixPrismaFile()
-  .then(_ => console.log('prisma file fixed'));
+fixPrismaFile().then((_) => console.log('prisma file fixed'));
