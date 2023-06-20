@@ -7,20 +7,20 @@ export type ReportModalProps = {
   setOpen: (val: boolean) => void;
 };
 
-const DuplicateChatModal = ({ open, setOpen }: ReportModalProps) => {
+const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
 
-  if (leftButtonState === true) {
-    router.back();
+  if (rightButtonState === true) {
+    router.reload();
   }
 
   useEffect(() => {
-    if (rightButtonState === true) {
+    if (leftButtonState === true) {
       setOpen(false);
     }
-    setRightButtonState(false);
+    setLeftButtonState(false);
   });
 
   return (
@@ -41,4 +41,4 @@ const DuplicateChatModal = ({ open, setOpen }: ReportModalProps) => {
   );
 };
 
-export default DuplicateChatModal;
+export default OnLeaveModal;
