@@ -84,8 +84,8 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
                 size="small"
                 sx={({ palette }) => ({
                   position: 'absolute',
-                  top: -15,
-                  right: -20,
+                  top: '-15px',
+                  right: '-20px',
                   color: palette.primary.main,
                   bgcolor: palette.common.white,
                 })}
