@@ -46,6 +46,7 @@ const nextConfig = {
             'www.asiamediajournal.com',
             'via.placeholder.com',
             'siwma.org.sg',
+            'siwma-marketplace.s3.ap-southeast-1.amazonaws.com',
           ]
         : [],
   },
