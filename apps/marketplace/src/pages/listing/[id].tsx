@@ -306,38 +306,39 @@ const DetailedListingPage = () => {
                 </Grid>
                 <Grid item xs={2}>
                   <Grid container sx={{ direction: 'row' }}>
-                    <Grid item xs={2} />
+                    <Grid item md={2} />
+                    {listings?.owner.id === loggedUserUuid && <Grid item xs={2} />}
 
-                    {listings?.owner.id !== loggedUserUuid && <Grid item xs={4} />}
-
-                    <Grid item xs={4}>
+                    <Grid item md={4}>
                       <IconButton
                         aria-label="share"
-                        sx={({ spacing }) => ({
+                        sx={({ spacing, palette }) => ({
                           p: spacing(0),
+                          color: palette.common.black,
                         })}
                       >
-                        <IosShareIcon fontSize="large" />
+                        <IosShareIcon fontSize={isSm ? 'medium' : 'large'} />
                       </IconButton>
                     </Grid>
-                    {listings?.owner.id === loggedUserUuid && (
+                    {listings?.owner.id !== loggedUserUuid && (
                       <Grid item xs={4}>
                         <IconButton
                           aria-label="bookmark"
                           onClick={handleBookmarkListing}
-                          sx={({ spacing }) => ({
+                          sx={({ spacing, palette }) => ({
                             p: spacing(0),
+                            color: palette.common.black,
                           })}
                         >
                           {isBookmarked ? (
                             <BookmarkIcon
-                              fontSize="large"
+                              fontSize={isSm ? 'medium' : 'large'}
                               sx={({ palette }) => ({
                                 color: palette.warning[100],
                               })}
                             />
                           ) : (
-                            <BookmarkBorderIcon fontSize="large" />
+                            <BookmarkBorderIcon fontSize={isSm ? 'medium' : 'large'} />
                           )}
                         </IconButton>
                       </Grid>
@@ -621,7 +622,9 @@ const DetailedListingPage = () => {
                       alignContent: 'center',
                     })}
                   >
-                    <Typography sx={{fontWeight: 500}}>No Reviews available for this listing</Typography>
+                    <Typography sx={{ fontWeight: 500 }}>
+                      No Reviews available for this listing
+                    </Typography>
                   </Box>
                 )}
               </Grid>
