@@ -9,25 +9,37 @@ export const EVENTS = {
 
   // Client Events
   CLIENT: {
-    DELETE_MESSAGE: 'clientDeleteMessage',
-    CREATE_ROOM: 'createRoom',
-    SEND_MESSAGE: 'sendMessage',
+    ROOM: {
+      JOIN: 'clientJoinRoom',
+      CREATE: 'clientCreateRoom',
+      DELETE: 'clientDeleteRoom',
+    },
+    MESSAGE: {
+      SEND: 'clientSendMessage',
+      DELETE: 'clientDeleteMessage',
+    },
+    TYPING: {
+      START: 'clientStartType',
+      STOP: 'clientStopType',
+    },
     PING: 'clientPing',
-    START_TYPE: 'clientStartType',
-    STOP_TYPE: 'clientStopType',
-    READ: 'clientRead',
   },
 
   // Server Events
   SERVER: {
-    ROOMS: 'rooms',
-    DELETE_MESSAGE: 'serverDeleteMessage',
-    JOINED_ROOM: 'joinedRoom',
-    ROOM_MESSAGE: 'roomMessage',
+    ROOM: {
+      CREATED: 'serverCreatedRoom',
+      DELETED: 'serverDeletedRoom',
+    },
+    MESSAGE: {
+      ROOM: 'serverRoomMessage',
+      READ: 'serverReadMessage',
+    },
+    TYPING: {
+      START: 'serverStartType',
+      STOP: 'serverStopType',
+    },
     PING: 'serverPing',
-    START_TYPE: 'serverStartType',
-    STOP_TYPE: 'serverStopType',
-    READ: 'serverRead',
   },
 } as const;
 
