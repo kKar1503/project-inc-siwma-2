@@ -9,14 +9,15 @@ type ClientSendMessage = {
   time: Date;
 };
 
+type ServerRoomMessage = {
+  id: MessageId;
+  message: string;
+  time: Date;
+};
+
 type Room = {
   id: RoomId;
   user: UserId;
-};
-
-type Read = {
-  room: string;
-  messageId: number;
 };
 
 // EventParams keys must match all the available events above in the const object.
@@ -29,7 +30,7 @@ type EventParams = {
   // Client Room Events
   clientJoinRoom: RoomId;
   clientCreateRoom: UserId;
-  clientDeletedRoom: RoomId;
+  clientDeleteRoom: RoomId;
   // Client Message Events
   clientSendMessage: ClientSendMessage;
   clientDeleteMessage: MessageId;
@@ -42,14 +43,12 @@ type EventParams = {
   serverCreatedRoom: Room;
   serverDeletedRoom: RoomId;
   // Server Message Events
+  serverRoomMessage: ServerRoomMessage;
+  serverDeletedMessage: MessageId;
+  serverReadMessage: MessageId;
   // Server Typing Events
-  joinedRoom: Room;
-  roomMessage: RoomMessage;
-  serverDeleteMessage: DeleteMessage;
-  serverPing: string;
-  serverStartType: StartStopType;
-  serverStopType: StartStopType;
-  serverRead: Read;
+  serverStartType: RoomId;
+  serverStopType: RoomId;
 };
 
 type Event = keyof EventParams;
