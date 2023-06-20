@@ -51,7 +51,7 @@ const Register = () => {
       setPhoneError(false);
     }
 
-    if (password.trim() === '') {
+    if (password.trim() === '' || password.length < 8) {
       setPasswordError(true);
     } else {
       setPasswordError(false);
@@ -67,6 +67,7 @@ const Register = () => {
       phone.trim() !== '' &&
       phoneRegex.test(phone) &&
       password.trim() !== '' &&
+      password.length >= 8 &&
       confirmPassword === password
     ) {
       setPhone('');
@@ -202,7 +203,7 @@ const Register = () => {
                 margin="normal"
                 onChange={(e) => setPhone(e.target.value)}
                 error={phoneError}
-                helperText={phoneError ? 'Invalid phone number' : ''}
+                helperText={phoneError ? 'Phone number is required to have only 8 numbers' : ''}
               />
 
               <Grid container spacing={2}>
@@ -217,7 +218,9 @@ const Register = () => {
                     margin="normal"
                     onChange={(e) => setPassword(e.target.value)}
                     error={passwordError}
-                    helperText={passwordError ? 'Password is required' : ''}
+                    helperText={
+                      passwordError ? 'Password is required to have at least 8 characters' : ''
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
