@@ -1,4 +1,5 @@
 export * from './misc/s3lib';
+export * from './misc/s3libInternal';
 export * from './buckets/s3Bucket';
 export * from './objects/s3Object';
 export * from './misc/errors';

@@ -1,5 +1,4 @@
-import { Regions, S3Bucket } from '@inc/s3-simplified';
-import { S3libInternal } from '@inc/s3-simplified/dist/classes/misc/s3libInternal';
+import { Regions, S3Bucket, S3libInternal } from '@inc/s3-simplified';
 
 const s3Connection = new S3libInternal({
     accessKey:{
