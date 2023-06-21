@@ -23,7 +23,7 @@ export type ProfileDetailCardProps =
       enabled: boolean;
       createdAt: string;
       profilePicture: string | null;
-      company: string;
+      companyName: string;
       mobileNumber: string;
       whatsappNumber: string | null;
       telegramUsername: string | null;
@@ -81,7 +81,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
       <CardContent>
         <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePicture}</Avatar>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography>{data?.company}</Typography>
+        <Typography>{data?.companyName}</Typography>
         <Typography
           sx={{
             wordWrap: 'break-word',

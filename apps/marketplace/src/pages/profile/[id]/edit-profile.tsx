@@ -28,8 +28,8 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useQuery, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-// import fetchCompany from '@/middlewares/fetchCompany';
-import fetchUser from '@/middlewares/fetchUser';
+import fetchCompany from '@/middlewares/fetchCompany';
+// import fetchUser from '@/middlewares/fetchUser';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
@@ -49,7 +49,7 @@ const updateUserRequestBody: PutUserRequestBody = {
 };
 
 const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', () => fetchUser(userUuid), {
+  const { data } = useQuery('user', () => fetchCompany(userUuid), {
     enabled: userUuid !== undefined,
   });
   return data;
@@ -63,7 +63,6 @@ const EditProfile = () => {
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
-  // console.log(userDetails);
   const mutation = useUpdateUserMutation(loggedUserUuid);
   const theme = useTheme();
   const { spacing } = theme;
@@ -71,10 +70,8 @@ const EditProfile = () => {
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [name, setName] = useState<string>(userDetails?.name || '');
-  // const [name, setName] = useState<string>(userDetails?.data?.user?.name || '');
   const [nameError, setNameError] = useState('');
   const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
-  // const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.data?.user?.mobileNumber || '');
   const [mobileNumberError, setMobileNumberError] = useState('');
   const [email, setEmail] = useState<string>(userDetails?.email || '');
   const [emailError, setEmailError] = useState('');
