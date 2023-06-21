@@ -26,8 +26,8 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
     const { id } = userSchema.userId.parse(req.query);
     const sortBy = req.query.sortBy as string;
     const reviewFrom = req.query.reviewFrom as string | undefined;
-    const skip = parseInt(req.query.skip as string) || 0;
-    const take = parseInt(req.query.take as string) || 10;
+    const skip = parseInt(req.query.skip as string, 10) || 0;
+    const take = parseInt(req.query.take as string, 10) || 10;
 
     let reviewType: ListingType | undefined;
     if (reviewFrom) {
