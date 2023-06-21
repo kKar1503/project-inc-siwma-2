@@ -21,7 +21,8 @@
     "ci": "pnpm install --frozen-lockfile",
     "clean": "pnpx rimraf --glob */**/node_modules && pnpx rimraf node_modules",
     "lint": "nx run-many -t lint",
-    "postinstall": "pnpm --filter db prisma:generate && echo Please restart your VSCode to make your Prisma Client work.",
+    "postinstall": "pnpm prisma:generate && echo Please restart your VSCode to make your Prisma Client work.",
+    "prisma:generate": "nx run-many -t prisma:generate -p @inc/db @inc/chat --parallel=2",
     "prisma:fix": "nx run @inc/db:prisma:compile && nx run @inc/db:prisma:patchCasing"
   },
   "author": "Kar",
