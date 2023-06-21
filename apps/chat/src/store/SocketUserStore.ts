@@ -1,20 +1,43 @@
 import logger from '@/utils/logger';
+import { StateListener } from '@/types/stateListener';
 
 class SocketUserStore {
   private socketSet: Set<string>;
   private userSet: Set<string>;
+  private stateListenerIntervals: NodeJS.Timer[];
 
   constructor() {}
 
   init() {
     this.socketSet = new Set<string>();
     this.userSet = new Set<string>();
+    this.stateListenerIntervals = [];
   }
 
   reset() {
     this.socketSet.clear();
     this.userSet.clear();
   }
+
+  attachStateListener = (
+    stateListener: StateListener<{ sockets: string[]; users: string[] }>,
+    stateListenerInterval?: number
+  ) => {
+    this.stateListenerIntervals.push(
+      setInterval(() => {
+        stateListener({
+          sockets: [...this.socketSet],
+          users: [...this.userSet],
+        });
+      }, stateListenerInterval || 10000)
+    );
+  };
+
+  removeStateListener = () => {
+    this.stateListenerIntervals.forEach((interval) => {
+      clearInterval(interval);
+    });
+  };
 
   /**
    * This method adds the socket and user pair into the cache. Returns the
