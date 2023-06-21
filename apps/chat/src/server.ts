@@ -6,8 +6,10 @@ import { Server } from 'socket.io';
 config();
 
 import logger from './utils/logger';
-import { spawnPapa } from './store';
+// import { spawnPapa } from './store';
 import socket from './socket';
+import RoomOccupantsStore from './store/RoomOccupantsStore';
+import SocketUserStore from './store/SocketUserStore';
 
 logger.info('Validating Env Variables...');
 const host = process.env.HOST ?? 'localhost';
@@ -44,8 +46,16 @@ app.get('/', (_, res) => {
 httpServer.listen(port, host, () => {
   logger.info(`Server is now listening at ${host}:${port}...`);
 
-  logger.info('Initializing Store...');
-  spawnPapa();
+  // Disabling PapaStore as temporary it may not be as relevant to each
+  // storage solution.
+  // logger.info('Initializing Store...');
+  // spawnPapa();
+
+  logger.info('Initializing RoomOccupantsStore...');
+  RoomOccupantsStore.init();
+
+  logger.info('Initializing SocketUserStore...');
+  SocketUserStore.init();
 
   logger.info('Initializing Socket.io connection...');
   socket(io);
