@@ -1,8 +1,8 @@
 import { EventFile, TypedSocketEmitter } from '@inc/types';
-import { eventLogHelper } from '../utils/logger';
+import { eventLogHelper } from '@/utils/logger';
 import { EVENTS } from '@inc/events';
-import RoomOccupantsStore from '../store/RoomOccupantsStore';
-import SocketUserStore from '../store/SocketUserStore';
+import RoomOccupantsStore from '@/store/RoomOccupantsStore';
+import SocketUserStore from '@/store/SocketUserStore';
 
 const eventName = EVENTS.CLIENT.TYPING.STOP;
 
