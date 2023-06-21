@@ -25,7 +25,7 @@ const ForgetPassword = () => {
 
   const mutation = useMutation((email: string) => forgetPW(email), {
     onSuccess: () => {
-      router.push('/success-forgot-password');
+      router.push('forgotpw/success-forgot-password');
     },
   });
 
