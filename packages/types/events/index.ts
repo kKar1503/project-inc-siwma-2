@@ -61,10 +61,13 @@ type Event = keyof EventParams;
 type Acknowlegement =
   | {
       success: true;
-      data: any;
+      data?: any;
     }
   | {
       success: false;
+      err?: {
+        message: string;
+      };
     };
 
 type EventFile = (
