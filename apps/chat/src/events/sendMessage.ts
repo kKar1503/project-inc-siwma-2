@@ -24,6 +24,23 @@ const sendMessage: EventFile = (io, socket) => ({
     eventLog('trace', `Attempting to retrieve other occupant socketId from cache...`);
     const [otherOccupantSocketId] = SocketUserStore.searchSocketUser('userId', otherOccupant);
 
+    eventLog('trace', `Checking for connected sockets to room (${roomId})...`);
+    const connectedSockets = io.sockets.adapter.rooms.get(roomId);
+
+    if (connectedSockets === undefined) {
+      // Unlikely to even reach here, since the socket is already in the room in the client, prior to being
+      // able to send a message.
+      eventLog('warn', `No connected sockets to room (${roomId}).`);
+
+      eventLog('trace', `Acknowledging message...`);
+      ack({ success: false, err: { message: 'No connected sockets to room.' } });
+
+      return;
+    }
+
+    eventLog('trace', `Checking if other occupant is connected...`);
+    const isOtherOccupantConnected = connectedSockets.has(otherOccupantSocketId);
+
     eventLog('trace', `Inserting message into database...`);
     prisma.messages
       .create({
@@ -33,13 +50,14 @@ const sendMessage: EventFile = (io, socket) => ({
           room: roomId,
           author: userId,
           createdAt: time,
+          read: isOtherOccupantConnected,
         },
       })
-      .then(({ id }) => {
+      .then(({ id, read }) => {
         eventLog('debug', `Message inserted into database: ${id}`);
 
         eventLog('trace', `Acknowledging message...`);
-        ack({ success: true, data: { id } });
+        ack({ success: true, data: { id, read } });
 
         eventLog('trace', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
         (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
