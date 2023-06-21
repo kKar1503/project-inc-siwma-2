@@ -21,7 +21,7 @@ const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
       setOpen(false);
     }
     setLeftButtonState(false);
-  });
+  }, [leftButtonState, setOpen]);
 
   return (
     <Modal
