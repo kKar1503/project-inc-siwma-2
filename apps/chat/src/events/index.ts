@@ -5,7 +5,7 @@
 
 // ** Room Events
 export { default as joinRoom } from './joinRoom';
-// export { default as partRoom } from './partRoom';
+export { default as partRoom } from './partRoom';
 // export { default as createRoom } from './createRoom';
 // export { default as deleteRoom } from './deleteRoom';
 
