@@ -1,24 +1,51 @@
 import { EventFile } from '@inc/types';
-import logger from '../utils/logger';
+import { eventLogHelper } from '../utils/logger';
 import { EVENTS } from '@inc/events';
-import prisma from '@inc/db';
+import prisma from '@/db';
+import SocketUserStore from '@/store/SocketUserStore';
+import RoomOccupantsStore from '@/store/RoomOccupantsStore';
+
+const eventName = EVENTS.CLIENT.MESSAGE.DELETE;
 
 const deleteMessageEvent: EventFile = (io, socket) => ({
-  eventName: EVENTS.CLIENT.DELETE_MESSAGE,
+  eventName: eventName,
   type: 'on',
-  callback: async ({ room, messageId }, callback) => {
-    logger.info(`${messageId}  ${room}`);
+  callback: async (messageId, ack) => {
+    const eventLog = eventLogHelper(eventName, socket);
 
-    prisma.messages.delete({
-      where: {
-        id: messageId,
-      },
-    }).then(() => {
-      socket.to(room).emit(EVENTS.SERVER.DELETE_MESSAGE, messageId);
-      callback({ success: true });
-    }).catch(() => {
-      callback({ success: false });
-    });
+    eventLog('trace', `Attempting to retrieve userId for socket (${socket.id}) from cache...`);
+    const [, userId] = SocketUserStore.searchSocketUser('socketId', socket.id);
+
+    eventLog('trace', `Deleting message from database...`);
+    prisma.messages
+      .delete({
+        where: {
+          id: messageId,
+        },
+      })
+      .then(({ room: roomId }) => {
+        eventLog('debug', `Deleted message from database.`);
+
+        eventLog('trace', `Acknowledging message delete...`);
+        ack({ success: true, data: { messageId } });
+
+        eventLog('trace', `Attempting to retrieve other occupant from cache...`);
+        const [, occupants] = RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
+        const otherOccupant = occupants[0] === userId ? occupants[1] : occupants[0];
+
+        eventLog('trace', `Attempting to retrieve other occupant socketId from cache...`);
+        const [otherOccupantSocketId] = SocketUserStore.searchSocketUser('userId', otherOccupant);
+
+        eventLog(
+          'trace',
+          `Emitting ${EVENTS.SERVER.MESSAGE.DELETED} to ${otherOccupantSocketId}...`
+        );
+        io.to(otherOccupantSocketId).emit(EVENTS.SERVER.MESSAGE.DELETED, messageId);
+      })
+      .catch(() => {
+        eventLog('error', `Failed to delete messages from database.`);
+        ack({ success: false });
+      });
   },
 });
 
