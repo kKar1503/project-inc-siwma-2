@@ -4,7 +4,7 @@
   "main": "dist/server.js",
   "typings": "",
   "scripts": {
-    "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"build && start\"",
+    "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"pnpm build && pnpm start\"",
     "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
     "build:prod": "rm -rf dist && node esbuild.config.js",
     "prisma:generate": "prisma generate",
