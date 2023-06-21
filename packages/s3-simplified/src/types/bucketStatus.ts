@@ -1,1 +1,1 @@
-export type bucketStatus = "owned" | "not owned" | "not found"
+export type BucketStatus = 'owned' | 'not owned' | 'not found';

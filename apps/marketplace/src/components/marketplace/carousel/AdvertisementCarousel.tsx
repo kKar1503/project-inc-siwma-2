@@ -40,7 +40,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
         enableMouseEvents
       >
         {data.map((step, index) => (
-          <div>
+          <div key={step.description}>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
                 sx={{
