@@ -73,7 +73,10 @@ const readEvent: EventFile = (_, socket) => ({
               otherOccupant
             );
 
-            eventLog('trace', `Emitting ${EVENTS.SERVER.MESSAGE.READ} to ${roomId}...`);
+            eventLog(
+              'trace',
+              `Emitting ${EVENTS.SERVER.MESSAGE.READ} to ${otherOccupantSocketId}...`
+            );
             socket.to(otherOccupantSocketId).emit(EVENTS.SERVER.MESSAGE.READ, messageIds);
           })
           .catch(() => {
