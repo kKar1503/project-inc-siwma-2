@@ -77,7 +77,7 @@ const LoginForm = () => {
                 mb: spacing(2),
               })}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo" fill  />
+              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
             </Box>
             <Divider flexItem />
             <Box
@@ -151,7 +151,7 @@ const LoginForm = () => {
                   />
                 </Grid>
                 <Grid item>
-                  <Link href="/forgot-your-password">
+                  <Link href="/forgotpw">
                     <Typography
                       sx={({ spacing, palette }) => ({
                         mt: spacing(1),
