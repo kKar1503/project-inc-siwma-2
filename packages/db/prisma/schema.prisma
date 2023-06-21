@@ -159,7 +159,7 @@ model Listing {
   listingImages                               ListingImages[]
   listingNotifications                        ListingNotifications[]
   listingsParametersValues                    ListingsParametersValue[]
-  offersOffersListingTolisting                Offers?                   @relation("offersListingTolisting")
+  offersOffersListingTolistings               Offers[]                  @relation("offersListingTolisting")
   reviewsReviewsListingTolistings             Reviews[]                 @relation("reviewsListingTolisting")
   roomsRoomsListingTolistings                 Rooms[]                   @relation("roomsListingTolisting")
 
@@ -252,7 +252,7 @@ model Messages {
 
 model Offers {
   id                            Int        @id(map: "offers_pk") @default(sequence(maxValue: 2147483647))
-  listing                       Int        @unique(map: "offers_un")
+  listing                       Int
   amount                        Decimal    @default(0.00) @db.Decimal
   accepted                      Boolean    @default(false)
   messages                      Messages[]
