@@ -7,6 +7,7 @@
     "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/server.ts\"",
     "build": "pnpx rimraf dist && tsc && node esbuild.config.js",
     "build:prod": "rm -rf dist && node esbuild.config.js",
+    "prisma:generate": "prisma generate",
     "start": "node dist/server.js"
   },
   "dependencies": {
@@ -14,12 +15,14 @@
     "@inc/errors": "workspace:*",
     "@inc/events": "workspace:*",
     "@inc/node-store": "workspace:*",
+    "@prisma/client": "4.16.0",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "formidable": "2.1.1",
     "pino": "^8.12.1",
     "pino-pretty": "^10.0.0",
+    "prisma": "4.16.0",
     "sharp": "^0.32.0",
     "socket.io": "^4.6.1",
     "zod": "^3.21.4"
