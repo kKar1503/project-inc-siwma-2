@@ -1,5 +1,5 @@
 import { EventFile } from '@inc/types';
-import logger, { eventLogHelper } from '../utils/logger';
+import { eventLogHelper } from '../utils/logger';
 import { EVENTS } from '@inc/events';
 import RoomOccupantsStore from '../store/RoomOccupantsStore';
 import prisma from '@/db';
@@ -9,7 +9,7 @@ const eventName = EVENTS.CLIENT.ROOM.JOIN;
 const joinRoom: EventFile = (_, socket) => ({
   eventName: eventName,
   type: 'on',
-  callback: async (roomId) => {
+  callback: (roomId) => {
     const eventLog = eventLogHelper(eventName, socket);
 
     if (socket.rooms.has(roomId)) {
@@ -25,9 +25,23 @@ const joinRoom: EventFile = (_, socket) => ({
       eventLog('debug', `Room (${roomId}) cannot be found in cache...`);
 
       eventLog('trace', `Attempting to fetch room (${roomId}) from db...`);
-      prisma.users.findMany().then((users) => {
-        console.log(users);
-      });
+      prisma.rooms
+        .findFirst({
+          select: {
+            seller: true,
+            buyer: true,
+          },
+          where: {
+            id: roomId,
+          },
+        })
+        .then(({ seller, buyer }) => {
+          eventLog('trace', `Room (${roomId}) fetched from db.`);
+          eventLog('debug', `Occupants fetched from db: ${buyer}, ${seller}`);
+
+          eventLog('trace', `Adding room (${roomId}) to cache...`);
+          RoomOccupantsStore.addRoomOccupants(roomId, [buyer, seller]);
+        });
     }
 
     socket.join(roomId);
