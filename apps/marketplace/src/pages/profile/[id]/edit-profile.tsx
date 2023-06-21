@@ -29,23 +29,12 @@ import { useSession } from 'next-auth/react';
 import { useQuery, useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import fetchCompany from '@/middlewares/fetchCompany';
-// import fetchUser from '@/middlewares/fetchUser';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 
 export type ProfilePageProps = {
   data: ProfileDetailCardProps;
-};
-
-const updateUserRequestBody: PutUserRequestBody = {
-  name: '',
-  email: '',
-  mobileNumber: '',
-  whatsappNumber: '',
-  telegramUsername: '',
-  contactMethod: 'email',
-  bio: '',
 };
 
 const useGetUserQuery = (userUuid: string) => {
@@ -135,23 +124,17 @@ const EditProfile = () => {
     }
   };
 
-  const hasRepeatedLetters = (text: string) => {
-    const regex = /([a-zA-Z])\1+/;
-    return regex.test(text);
-  };
-
   const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newBio = e.target.value;
     setBio(newBio);
-
+  
     if (newBio.trim() === '') {
       setBioError('Please enter a bio');
     } else {
-      const isValidBio = !hasRepeatedLetters(newBio);
-      setBioError(isValidBio ? '' : 'Please enter a valid bio');
+      setBioError('');
     }
   };
-
+  
   const handleContactChange = (e: SelectChangeEvent) => {
     const selectedContact = e.target.value;
     setContactMethod(selectedContact);
