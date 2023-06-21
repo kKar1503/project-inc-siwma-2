@@ -11,7 +11,7 @@ import { useState } from 'react';
 import BaseTableHead from './BaseTableHead';
 import BaseTableToolbar from './BaseTableToolbar';
 
-interface Data {
+export interface BaseTableData {
   id: string;
   [key: string]: string | number | boolean;
 }
@@ -21,8 +21,9 @@ function createData(
   calories: number,
   fat: number,
   carbs: number,
-  protein: number
-): Data {
+  protein: number,
+  enabled?: boolean
+): BaseTableData {
   return {
     id: name,
     name,
@@ -30,6 +31,7 @@ function createData(
     fat,
     carbs,
     protein,
+    enabled: enabled ?? false,
   };
 }
 
@@ -54,10 +56,14 @@ const headCells = [
     key: 'protein',
     label: 'Protein (g)',
   },
+  {
+    key: 'enabled',
+    label: 'Enabled',
+  },
 ];
 
 const rows = [
-  createData('Cupcake', 305, 3.7, 67, 4.3),
+  createData('Cupcake', 305, 3.7, 67, 4.3, true),
   createData('Donut', 452, 25.0, 51, 4.9),
   createData('Eclair', 262, 16.0, 24, 6.0),
   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
@@ -73,7 +79,7 @@ const rows = [
 ];
 
 const BaseTable = () => {
-  const [selected, setSelected] = useState<readonly Data[]>([]);
+  const [selected, setSelected] = useState<readonly BaseTableData[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -86,9 +92,9 @@ const BaseTable = () => {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, row: Data) => {
+  const handleClick = (event: React.MouseEvent<unknown>, row: BaseTableData) => {
     const selectedIndex = selected.indexOf(row);
-    let newSelected: readonly Data[] = [];
+    let newSelected: readonly BaseTableData[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, row);
@@ -115,7 +121,7 @@ const BaseTable = () => {
     setPage(0);
   };
 
-  const isSelected = (row: Data) => selected.indexOf(row) !== -1;
+  const isSelected = (row: BaseTableData) => selected.indexOf(row) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -124,7 +130,8 @@ const BaseTable = () => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <BaseTableToolbar
-          numSelected={selected.length}
+          selectedRows={selected}
+          toggleColumn="enabled"
           onEdit={() => console.log('DELETE!')}
           onToggle={() => console.log('DELETE!')}
           onDelete={() => console.log('DELETE!')}
@@ -169,6 +176,7 @@ const BaseTable = () => {
                     <TableCell align="left">{row.fat}</TableCell>
                     <TableCell align="left">{row.carbs}</TableCell>
                     <TableCell align="left">{row.protein}</TableCell>
+                    <TableCell align="left">{row.enabled.toString()}</TableCell>
                   </TableRow>
                 );
               })}

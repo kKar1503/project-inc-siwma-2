@@ -5,17 +5,30 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
+import type { BaseTableData } from './BaseTable';
 
 type BaseTableToolbarProps = {
-  numSelected: number;
+  selectedRows: readonly BaseTableData[];
   onToggle?: React.MouseEventHandler<HTMLButtonElement>;
+  toggleColumn?: string;
   onEdit?: React.MouseEventHandler<HTMLButtonElement>;
   onDelete?: React.MouseEventHandler<HTMLButtonElement>;
-  enableToggle?: boolean;
 };
 
+function selectedRowsAreEnabled(selectedRows: readonly BaseTableData[]) {
+  return selectedRows.every((row) => row.enabled === true);
+}
+
+function selectedRowsAreDisabled(selectedRows: readonly BaseTableData[]) {
+  return selectedRows.every((row) => row.enabled === false);
+}
+
 const BaseTableToolbar = (props: BaseTableToolbarProps) => {
-  const { numSelected, onToggle, onEdit, onDelete, enableToggle } = props;
+  // Desctructure props
+  const { selectedRows, onToggle, toggleColumn, onEdit, onDelete } = props;
+
+  // Get number of selected rows
+  const numSelected = selectedRows.length;
 
   return (
     <Toolbar
@@ -39,10 +52,21 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
       )}
       {numSelected > 0 ? (
         <>
-          {onToggle && (
+          {onToggle && toggleColumn && (
             <Tooltip title="Toggle">
-              <IconButton onClick={onToggle}>
-                <RemoveIcon />
+              <IconButton
+                onClick={onToggle}
+                disabled={
+                  !selectedRowsAreEnabled(selectedRows) && !selectedRowsAreDisabled(selectedRows)
+                }
+              >
+                {
+                  /**
+                   * If all selected rows are enabled, show the remove icon.
+                   * If all selected rows are disabled, show the add icon.
+                   */
+                  selectedRowsAreEnabled(selectedRows) ? <RemoveIcon /> : <AddIcon />
+                }
               </IconButton>
             </Tooltip>
           )}
