@@ -64,7 +64,7 @@ httpServer.listen(port, host, () => {
         state.occupants
       )}`
     );
-  }, 5000);
+  }, 10000);
 
   logger.info('Initializing SocketUserStore...');
   SocketUserStore.init();
@@ -77,7 +77,7 @@ httpServer.listen(port, host, () => {
     logger.debug(
       `SocketUserStore State (Users): ${state.users.length} | ${JSON.stringify(state.users)}`
     );
-  }, 5000);
+  }, 10000);
 
   logger.info('Initializing Socket.io connection...');
   socket(io);
