@@ -2,15 +2,17 @@ import type { Socket, Server, DisconnectReason } from 'socket.io';
 
 type UserId = string;
 type RoomId = string;
-type MessageId = string;
+type MessageId = number;
 
 type ClientSendMessage = {
+  roomId: RoomId;
   message: string;
   time: Date;
 };
 
 type ServerRoomMessage = {
   id: MessageId;
+  roomId: RoomId;
   message: string;
   time: Date;
 };
@@ -37,8 +39,8 @@ type EventParams = {
   clientSendMessage: ClientSendMessage;
   clientDeleteMessage: MessageId;
   // Client Typing Events
-  clientStartType: never;
-  clientStopType: never;
+  clientStartType: RoomId;
+  clientStopType: RoomId;
 
   // ** Server Events
   // Server Room Events
@@ -55,13 +57,22 @@ type EventParams = {
 
 type Event = keyof EventParams;
 
+type Acknowlegement =
+  | {
+      success: true;
+      data: any;
+    }
+  | {
+      success: false;
+    };
+
 type EventFile = (
   io: Server,
   socket?: Socket
 ) => {
   [K in keyof EventParams]: {
     eventName: K;
-    callback: (param: EventParams[K], callback?: (...args: any[]) => void) => void;
+    callback: (param: EventParams[K], ack?: (acknowledgement: Acknowlegement) => void) => void;
     type: 'on' | 'once';
   };
 }[keyof EventParams];
