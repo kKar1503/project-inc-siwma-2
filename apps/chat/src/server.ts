@@ -54,6 +54,18 @@ httpServer.listen(port, host, () => {
   logger.info('Initializing RoomOccupantsStore...');
   RoomOccupantsStore.init();
 
+  logger.info('Attaching StateListener to RoomOccupantsStore...');
+  RoomOccupantsStore.attachStateListener((state) => {
+    logger.debug(
+      `RoomOccupantsStore State (Rooms): ${state.rooms.length} | ${JSON.stringify(state.rooms)}`
+    );
+    logger.debug(
+      `RoomOccupantsStore State (Occupants): ${state.occupants.length} | ${JSON.stringify(
+        state.occupants
+      )}`
+    );
+  }, 5000);
+
   logger.info('Initializing SocketUserStore...');
   SocketUserStore.init();
 
