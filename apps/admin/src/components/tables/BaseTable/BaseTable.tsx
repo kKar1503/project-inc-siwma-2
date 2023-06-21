@@ -130,10 +130,11 @@ const BaseTable = () => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <BaseTableToolbar
+          heading="Desserts"
           selectedRows={selected}
           toggleColumn="enabled"
           onEdit={() => console.log('DELETE!')}
-          onToggle={() => console.log('DELETE!')}
+          onToggle={(e, toggled) => console.log(toggled)}
           onDelete={() => console.log('DELETE!')}
         />
         <TableContainer>
