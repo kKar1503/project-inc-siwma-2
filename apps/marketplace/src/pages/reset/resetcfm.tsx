@@ -1,8 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import {Typography, Button,Box, Container} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
@@ -31,6 +28,7 @@ const ResetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
+        pb: '9rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -71,7 +69,7 @@ const ResetPassword = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" fill />
+        <Image src="/images/siwma-bg.png" alt="logo" style={{ objectFit: 'cover' }} fill />
         <Container
           component="main"
           maxWidth="md"
@@ -79,38 +77,35 @@ const ResetPassword = () => {
             justifyContent: 'center',
             display: 'flex',
             flexDirection: 'column',
-            height: '100vh',
+            minHeight: '100vh',
           }}
         >
           <Box sx={stylesBox}>
 
             <Box
              sx={({ spacing, }) => ({
-                margin: 'auto',
                 justifyContent: 'center',
                 mt: spacing(5),
               })}
             >
               <CheckCircleIcon
-                sx={({ spacing, palette }) => ({
+                sx={({ palette }) => ({
                   position: 'relative',
                   display: 'flex',
                   margin: 'auto',
                   justifyContent: 'center',
                   color: palette.primary.main,
                   fontSize: '6rem',
-                  mt: spacing(4),
                 })}
               />
               <Typography
                 align="center"
-                sx={({ spacing, typography }) => ({
+                sx={({ typography }) => ({
                   position: 'relative',
                   display: 'flex',
                   margin: 'auto',
                   justifyContent: 'center',
                   fontSize: typography.h5,
-                  mt: spacing(5),
                   fontWeight: 'bold',
                 })}
               >

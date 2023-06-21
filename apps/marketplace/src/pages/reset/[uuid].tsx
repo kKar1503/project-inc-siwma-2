@@ -1,9 +1,4 @@
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import {Typography, Button, Divider,TextField,Box, Container,FormHelperText} from '@mui/material';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
@@ -26,8 +21,7 @@ const ResetForm = () => {
   const {uuid,token} = router.query 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(false);
-  const [regMessage, setRegMessage] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
   const [passwordapi, setPasswordApi ] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
@@ -40,7 +34,7 @@ const ResetForm = () => {
       alert('Response did not went through')
     }
     if (resetpassword?.data === 204){
-      alert('Response  went through')
+      alert('Response went through')
       router.push('/reset/resetcfm')
     }
     
@@ -50,21 +44,20 @@ const ResetForm = () => {
     e.preventDefault();
     
     const isValidPassword = (value: string): boolean => {
-      const passRegex = /^[a-zA-Z0-9]{8}$/;
+      const passRegex = /^.{8,}$/;
       return passRegex.test(value);
     };
   
     if (password !== confirmPassword ) {
-        setErrorMessage(true);
+      setErrorMsg('Password is not the same');
       }
 
-    else if (isValidPassword(password) ) {
-      setErrorMessage(false);
-      setRegMessage(true)
+    else if (!isValidPassword(password) ) {
+      setErrorMsg('Min of 8 characters is needed for the password');
     }
 
     else {
-      setErrorMessage(false);
+      setErrorMsg('');
       setPasswordApi(password)  
     }
   };
@@ -124,13 +117,14 @@ const ResetForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" fill />
+        <Image  src="/images/siwma-bg.png" alt="logo"  style={{ objectFit: 'cover' }} fill  />
         <Container
           component="main"
           maxWidth="md"
           sx={{
             justifyContent: 'center',
             display: 'flex',
+            objectFit: 'contain',
             flexDirection: 'column',
             height: '100vh',
           }}
@@ -147,7 +141,7 @@ const ResetForm = () => {
                 mb: spacing(2),
               })}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
+              <Image src="/images/siwma-logo.jpeg" alt="logo"  style={{ objectFit: 'contain' }} fill />
             </Box>
             <Divider flexItem />
             <Box
@@ -185,6 +179,7 @@ const ResetForm = () => {
                 type="password"
                 variant="standard"
                 required
+                
                 onChange={(e) => setPassword(e.target.value)}
               />
                 <TextField
@@ -200,26 +195,15 @@ const ResetForm = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               
-              {errorMessage && (
-                <Typography
-                  sx={({ palette, spacing }) => ({
-                    color: palette.error.main,
-                    my: spacing(2),
-                  })}
-                >
-                  The passwords does not match
-                </Typography>
-              )}
-               {regMessage && (
-                <Typography
-                  sx={({ palette, spacing }) => ({
-                    color: palette.error.main,
-                    my: spacing(2),
-                  })}
-                >
-                  Min of 8 characters
-                </Typography>
-              )}
+              {errorMsg && <FormHelperText
+              sx={({typography, palette}) => ({
+                fontSize: typography.body1,
+                color : palette.error.main
+              })}
+              >
+                {errorMsg}
+                
+                </FormHelperText>}
               <Button
                sx={({ spacing }) => ({
                 my: spacing(4),
