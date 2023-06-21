@@ -69,26 +69,24 @@ export default async function handleNotifications(): Promise<void> {
     messageVersions: [],
   };
 
-  const userFetchPromises = groupedNotifications.flatMap((group) =>
-    group.map((notification) =>
-      PrismaClient.users.findUnique({
-        where: {
-          id: notification.userId,
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      })
-    )
-  );
+  // All notifications in a group belong to the same user, so we only need to fetch the user data once per group
+  const userFetchPromises = groupedNotifications.map((group) => {
+    const firstNotification = group[0];
+    return PrismaClient.users.findUnique({
+      where: {
+        id: firstNotification.userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+  });
 
   const users = await Promise.all(userFetchPromises);
 
-  const uniqueUsers = new Set(users); // Set will remove duplicates
-
-  uniqueUsers.forEach((user) => {
+  users.forEach((user) => {
     if (!user) {
       return;
     }
