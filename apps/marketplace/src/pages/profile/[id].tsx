@@ -250,8 +250,9 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
                 <ReviewsTab
                   allReviews={userReviews}
                   // rmb to add userDetails.rating and userDetails.reviews
-                  userRating={2}
-                  totalReviews={200}
+                  userRating={userReviews && userReviews.length > 0 ? userReviews[0].rating : 0}
+                  // userRating={2}
+                  totalReviews={userReviews && userReviews.length > 0 ? userReviews.length : 0}
                   filterReviews={handleFilterReviews}
                   sortByReviews={handleSortByReviews}
                 />
