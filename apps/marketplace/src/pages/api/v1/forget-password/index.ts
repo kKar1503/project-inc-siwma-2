@@ -81,4 +81,4 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
 
 };
 
-export default apiHandler().post(userForgetPassword);
+export default apiHandler({ allowNonAuthenticated: true }).post(userForgetPassword);

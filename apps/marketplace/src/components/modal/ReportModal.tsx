@@ -1,5 +1,6 @@
 import { ModalSelect } from '@inc/ui';
 import { useState } from 'react';
+import type { TReasonType } from '@inc/db';
 
 export type ReportModalProps = {
   open: boolean;
@@ -11,13 +12,16 @@ const ReportModal = ({ open, setOpen }: ReportModalProps) => {
   const [rightButtonState, setRightButtonState] = useState(false);
   const [selectInput, setSelectInput] = useState<string>('');
 
-  // report should get from BE
-  const report = [
-    'Offensive Content/Behavior',
-    'Suspicious Account',
-    'Canceling on Deal',
-    'Mispriced Listings',
+  // Get the report reasons
+  const reasonTypes: TReasonType[] = [
+    'Offensive_Content_Behaviour',
+    'Suspicious_Account',
+    'Cancelling_on_deal',
+    'Inaccurate_Listings',
   ];
+
+  // Remove the _ in the array
+  const updatedReasonTypes = reasonTypes.map((reasonType) => reasonType.replace(/_/g, ' '));
 
   return (
     <ModalSelect
@@ -27,7 +31,7 @@ const ReportModal = ({ open, setOpen }: ReportModalProps) => {
       title="Report User"
       leftButtonText="cancel"
       rightButtonText="Report"
-      selectData={report}
+      selectData={updatedReasonTypes}
       selectInput={selectInput}
       setselectInput={setSelectInput}
       leftButtonState={leftButtonState}
