@@ -1,12 +1,12 @@
 import { Checkbox, Divider, TableCell, TableHead, TableRow } from '@mui/material';
 
-export interface Column {
+export interface Header {
   key: string;
   label: string;
 }
 
 type BaseTableHeadProps = {
-  columns: Column[];
+  columns: Header[];
   numSelected: number;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   rowCount: number;

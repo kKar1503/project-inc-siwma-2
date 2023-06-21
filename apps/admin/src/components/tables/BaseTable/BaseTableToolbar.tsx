@@ -4,16 +4,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
+import AddIcon from '@mui/icons-material/Add';
 
 type BaseTableToolbarProps = {
   numSelected: number;
   onToggle?: React.MouseEventHandler<HTMLButtonElement>;
   onEdit?: React.MouseEventHandler<HTMLButtonElement>;
   onDelete?: React.MouseEventHandler<HTMLButtonElement>;
+  enableToggle?: boolean;
 };
 
 const BaseTableToolbar = (props: BaseTableToolbarProps) => {
-  const { numSelected, onToggle, onEdit, onDelete } = props;
+  const { numSelected, onToggle, onEdit, onDelete, enableToggle } = props;
 
   return (
     <Toolbar
@@ -46,7 +48,7 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
           )}
           {onEdit && (
             <Tooltip title="Edit">
-              <IconButton onClick={onEdit}>
+              <IconButton onClick={onEdit} disabled={numSelected > 1}>
                 <EditIcon />
               </IconButton>
             </Tooltip>
