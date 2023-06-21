@@ -6,7 +6,7 @@ import SocketUserStore from '../store/SocketUserStore';
 
 const eventName = EVENTS.CLIENT.TYPING.STOP;
 
-const startType: EventFile = (io, socket) => ({
+const stopType: EventFile = (io, socket) => ({
   eventName: eventName,
   type: 'on',
   callback: () => {
@@ -62,4 +62,4 @@ const startType: EventFile = (io, socket) => ({
   },
 });
 
-export default startType;
+export default stopType;
