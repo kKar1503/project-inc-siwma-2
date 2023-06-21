@@ -252,9 +252,6 @@ importers:
 
   apps/chat:
     dependencies:
-      '@inc/db':
-        specifier: workspace:*
-        version: link:../../packages/db
       '@inc/errors':
         specifier: workspace:*
         version: link:../../packages/errors
