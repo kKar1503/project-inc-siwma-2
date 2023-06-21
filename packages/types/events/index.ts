@@ -25,6 +25,7 @@ type EventParams = {
   // ** Connections
   connect: Socket;
   disconnect: DisconnectReason;
+  iam: UserId;
 
   // ** Client Events
   // Client Room Events

@@ -5,6 +5,7 @@ export const EVENTS = {
   CONNECTION: {
     CONNECT: 'connect',
     DISCONNECT: 'disconnect',
+    IAM: 'iam',
   },
 
   // Client Events
