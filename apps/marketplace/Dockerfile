@@ -43,6 +43,10 @@ ARG NEXTAUTH_URL
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
+# Challenge for Notifications
+ARG CHALLENGE_API_KEY
+ENV CHALLENGE_API_KEY=$CHALLENGE_API_KEY
+
 # Adding user & usergroup for NextJS's node server
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
