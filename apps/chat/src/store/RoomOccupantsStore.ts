@@ -1,21 +1,44 @@
 import logger from '@/utils/logger';
 import OccupantsSet, { Occupants } from './OccupantsSet';
+import { StateListener } from '@/types/stateListener';
 
 class RoomOccupantsStore {
   private roomSet: Set<string>;
   private usersSet: OccupantsSet;
+  private stateListenerIntervals: NodeJS.Timer[];
 
   constructor() {}
 
   init() {
     this.roomSet = new Set<string>();
     this.usersSet = new OccupantsSet();
+    this.stateListenerIntervals = [];
   }
 
   reset() {
     this.roomSet.clear();
     this.usersSet.clear();
   }
+
+  attachStateListener = (
+    stateListener: StateListener<{ rooms: string[]; occupants: Occupants[] }>,
+    stateListenerInterval?: number
+  ) => {
+    this.stateListenerIntervals.push(
+      setInterval(() => {
+        stateListener({
+          rooms: [...this.roomSet],
+          occupants: [...this.usersSet],
+        });
+      }, stateListenerInterval || 10000)
+    );
+  };
+
+  removeStateListener = () => {
+    this.stateListenerIntervals.forEach((interval) => {
+      clearInterval(interval);
+    });
+  };
 
   /**
    * This method adds the room and occupants pair into the cache. Returns the
