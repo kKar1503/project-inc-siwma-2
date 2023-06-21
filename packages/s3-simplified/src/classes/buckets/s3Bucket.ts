@@ -6,8 +6,8 @@ import { Config } from '../../interfaces/config';
 
 export class S3Bucket implements S3BucketService {
   private internal: S3BucketInternal;
-  private readonly config: Config;
 
+  private readonly config: Config;
 
   public constructor(internal: S3BucketInternal, config: Config) {
     this.internal = internal;
@@ -15,7 +15,7 @@ export class S3Bucket implements S3BucketService {
   }
 
   public async getObjectId(s3Object: S3ObjectBuilder): Promise<string> {
-    return await this.internal.getS3ObjectId(s3Object, this.config.objectCreation);
+    return this.internal.getS3ObjectId(s3Object, this.config.objectCreation);
   }
 
   public async getOrCreateObject(s3Object: S3ObjectBuilder): Promise<IS3Object> {
@@ -30,9 +30,9 @@ export class S3Bucket implements S3BucketService {
     const s3ObjectId = await this.internal.getS3ObjectId(s3Object, this.config.objectCreation);
     await this.assertNoConflicts(s3ObjectId);
     const size = await s3Object.DataSize;
-    return size <= this.config.objectCreation.multiPartUpload.enabledThreshold ?
-      this.internal.createObject_Single(s3Object, this.config) :
-      this.internal.createObject_Multipart(s3Object, this.config);
+    return size <= this.config.objectCreation.multiPartUpload.enabledThreshold
+      ? this.internal.createObject_Single(s3Object, this.config)
+      : this.internal.createObject_Multipart(s3Object, this.config);
   }
 
   public async getObject(key: string): Promise<IS3Object> {
@@ -41,7 +41,7 @@ export class S3Bucket implements S3BucketService {
   }
 
   public async getObjects(keys: string[]): Promise<IS3Object[]> {
-    return Promise.all(keys.map(key => this.getObject(key)));
+    return Promise.all(keys.map((key) => this.getObject(key)));
   }
 
   public async deleteObject(key: string): Promise<void> {
@@ -50,7 +50,7 @@ export class S3Bucket implements S3BucketService {
   }
 
   public async deleteObjects(keys: string[]): Promise<void> {
-    await Promise.all(keys.map(key => this.deleteObject(key)));
+    await Promise.all(keys.map((key) => this.deleteObject(key)));
   }
 
   public async renameObject(oldKey: string, newKey: string): Promise<void> {
@@ -60,7 +60,7 @@ export class S3Bucket implements S3BucketService {
 
   public async getAllObjects(): Promise<IS3Object[]> {
     const objectKeys = await this.internal.listContents();
-    const promises = objectKeys.map(key => this.internal.getObject(key, this.config));
+    const promises = objectKeys.map((key) => this.internal.getObject(key, this.config));
     return Promise.all(promises);
   }
 
@@ -73,10 +73,12 @@ export class S3Bucket implements S3BucketService {
   }
 
   protected async assertExists(key: string): Promise<void> {
-    if (!await this.internal.containsObject(key)) throw new MissingObject(key, this.internal.bucketName);
+    if (!(await this.internal.containsObject(key)))
+      throw new MissingObject(key, this.internal.bucketName);
   }
 
   protected async assertNoConflicts(key: string): Promise<void> {
-    if (await this.internal.containsObject(key)) throw new ExistingObject(key, this.internal.bucketName);
+    if (await this.internal.containsObject(key))
+      throw new ExistingObject(key, this.internal.bucketName);
   }
 }
