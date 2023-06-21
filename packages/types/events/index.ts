@@ -3,6 +3,7 @@ import type { Socket, Server, DisconnectReason } from 'socket.io';
 type UserId = string;
 type RoomId = string;
 type MessageId = number;
+type ListingId = number;
 
 type ClientSendMessage = {
   roomId: RoomId;
@@ -22,6 +23,11 @@ type Room = {
   user: UserId;
 };
 
+type ClientCreateRoom = {
+  sellerId: UserId;
+  listingId: ListingId;
+};
+
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
   // ** Connections
@@ -33,7 +39,7 @@ type EventParams = {
   // Client Room Events
   clientJoinRoom: RoomId;
   clientPartRoom: RoomId;
-  clientCreateRoom: UserId;
+  clientCreateRoom: ClientCreateRoom;
   clientDeleteRoom: RoomId;
   // Client Message Events
   clientSendMessage: ClientSendMessage;
