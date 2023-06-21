@@ -1,6 +1,3 @@
-// export { default as roomMessage } from './roomMessage';
-// export { default as deleteMessage } from './deleteMessage';
-
 // ** Room Events
 export { default as joinRoom } from './joinRoom';
 export { default as partRoom } from './partRoom';
