@@ -3,11 +3,14 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
+    "noEmit": true,
     "module": "CommonJS",
     "target": "ESNext",
-    "emitDeclarationOnly": true,
-    "outFile": "./dist/index.d.ts"
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules", "**/*.spec.ts", "esbuild.config.js"]
