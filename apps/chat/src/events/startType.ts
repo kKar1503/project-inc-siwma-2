@@ -1,13 +1,15 @@
-import { EventFile } from '@inc/types';
-import logger from '../utils/logger';
+import { EventFile, TypedSocketEmitter } from '@inc/types';
+import { eventLogHelper } from '../utils/logger';
 import { EVENTS } from '@inc/events';
 
-const startType: EventFile = (io) => ({
-  eventName: EVENTS.CLIENT.START_TYPE,
+const eventName = EVENTS.CLIENT.TYPING.START;
+
+const startType: EventFile = (io, socket) => ({
+  eventName: eventName,
   type: 'on',
-  callback: ({ sender, roomId }) => {
-    logger.info(`User ${sender} starts typing`);
-    io.to(roomId).emit(EVENTS.SERVER.START_TYPE, { sender: sender, room: roomId})
+  callback: () => {
+    eventLogHelper(eventName, socket);
+    (io.to('testRoom').emit as TypedSocketEmitter)(EVENTS.SERVER.TYPING.START, 'testRoom');
   },
 });
 
