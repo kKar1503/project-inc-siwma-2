@@ -19,6 +19,7 @@ export const EVENTS = {
     MESSAGE: {
       SEND: 'clientSendMessage',
       DELETE: 'clientDeleteMessage',
+      READ: 'clientReadMessage',
     },
     TYPING: {
       START: 'clientStartType',

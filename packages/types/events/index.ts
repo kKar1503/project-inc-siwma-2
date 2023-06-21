@@ -38,6 +38,7 @@ type EventParams = {
   // Client Message Events
   clientSendMessage: ClientSendMessage;
   clientDeleteMessage: MessageId;
+  clientReadMessage: MessageId[];
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
