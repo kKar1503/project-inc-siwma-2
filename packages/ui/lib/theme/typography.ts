@@ -5,6 +5,7 @@ type TypographyOptions = ThemeOptions['typography'];
 
 const Typography: TypographyOptions = (palette) => ({
   fontFamily: [
+    'Heiti',
     '-apple-system',
     'BlinkMacSystemFont',
     '"Segoe UI"',
