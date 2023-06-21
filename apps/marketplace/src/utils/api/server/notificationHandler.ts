@@ -100,7 +100,7 @@ export default async function handleNotifications(): Promise<void> {
     // Create a string of notifications for the user, separated by a newline
     const notificationsString: string = userNotifications
       .map((notification) => notification.notificationString)
-      .join('\n');
+      .join('\n\n')
 
     bulkNotificationEmailRequestBody.messageVersions.push({
       to: [
