@@ -32,17 +32,19 @@ const startType: EventFile = (io, socket) => ({
       }
 
       // Attempt to check if the room is a valid room through cache
-      eventLog('trace', 'Checking if store contains room...');
-      const [roomId, occupantsFromCache] = RoomOccupantsStore.searchRoomOccupantsByRoomId(rooms[0]);
+      const roomId = rooms[0];
+      eventLog('trace', `Checking if cache contains room (${roomId})...`);
+      const [roomIdFromCache, occupantsFromCache] =
+        RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
 
-      if (roomId === '') {
-        eventLog('debug', 'Room canont be found in cache...');
-        eventLog('error', `Disconnecting socket... Reason: Missing room cache (${rooms[0]})`);
+      if (roomIdFromCache === '') {
+        eventLog('debug', `Room (${roomId}) cannot be found in cache...`);
+        eventLog('error', `Disconnecting socket... Reason: Missing room cache (${roomId})`);
         socket.disconnect(true);
         return;
       }
 
-      eventLog('trace', 'Room found from cache...');
+      eventLog('trace', `Room (${roomId}) found from cache...`);
       eventLog('debug', `Occupants found from cache: ${occupantsFromCache}...`);
       otherOccupant =
         occupantsFromCache[0] === socket.id ? occupantsFromCache[1] : occupantsFromCache[0];
