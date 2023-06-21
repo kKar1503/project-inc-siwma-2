@@ -4,9 +4,16 @@ class SocketUserStore {
   private socketSet: Set<string>;
   private userSet: Set<string>;
 
-  constructor() {
-    this.socketSet = new Set();
-    this.userSet = new Set();
+  constructor() {}
+
+  init() {
+    this.socketSet = new Set<string>();
+    this.userSet = new Set<string>();
+  }
+
+  reset() {
+    this.socketSet.clear();
+    this.userSet.clear();
   }
 
   /**

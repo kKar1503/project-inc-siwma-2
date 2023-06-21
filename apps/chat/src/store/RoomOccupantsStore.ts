@@ -5,9 +5,16 @@ class RoomOccupantsStore {
   private roomSet: Set<string>;
   private usersSet: OccupantsSet;
 
-  constructor() {
+  constructor() {}
+
+  init() {
     this.roomSet = new Set<string>();
     this.usersSet = new OccupantsSet();
+  }
+
+  reset() {
+    this.roomSet.clear();
+    this.usersSet.clear();
   }
 
   /**
