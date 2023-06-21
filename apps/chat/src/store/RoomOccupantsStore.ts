@@ -40,8 +40,8 @@ class RoomOccupantsStore {
     logger.trace(`addRoomOccupants() | Adding socketId (${roomId}) to socketSet...`);
     this.roomSet.add(roomId);
 
-    logger.debug(`addRoomOccupants() | Index Pos in socketSet: ${this.roomSet.size - 1}.`);
-    logger.debug(`addRoomOccupants() | Index Pos in userSet: ${this.usersSet.size - 1}.`);
+    logger.debug(`addRoomOccupants() | Index inserted in socketSet: ${this.roomSet.size - 1}.`);
+    logger.debug(`addRoomOccupants() | Index inserted in userSet: ${this.usersSet.size - 1}.`);
     return this.roomSet.size - 1;
   };
 
