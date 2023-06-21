@@ -253,12 +253,11 @@ model Messages {
 model Offers {
   id                            Int        @id(map: "offers_pk") @default(sequence(maxValue: 2147483647))
   listing                       Int
-  amount                        Float      @default(0.0)
+  amount                        Decimal    @default(0.00) @db.Decimal
   accepted                      Boolean    @default(false)
   messages                      Messages[]
   listingOffersListingTolisting Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
 
-  @@unique([id, listing], map: "offers_un")
   @@map("offers")
 }
 
