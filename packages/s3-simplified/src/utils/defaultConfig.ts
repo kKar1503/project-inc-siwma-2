@@ -1,17 +1,15 @@
-import {MB, Minute} from "./constants";
-import {OptionalConfig} from "../interfaces/config";
+import { OptionalConfig } from '../interfaces/config';
 
 export const defaultConfig: OptionalConfig = {
+  signedUrl: {
+    expiration: 5 * 60 * 60,
+  },
 
-    signedUrl: {
-        expiration: 5 * Minute,
+  objectCreation: {
+    multiPartUpload: {
+      maxPartSize: 100,
+      enabledThreshold: 100 * 1024 * 1024,
     },
-
-    objectCreation: {
-        multiPartUpload: {
-            maxPartSize: 100 * MB,
-            enabledThreshold: 100 * MB,
-        },
-        appendFileTypeToKey: true,
-    }
-}
+    appendFileTypeToKey: true,
+  },
+};
