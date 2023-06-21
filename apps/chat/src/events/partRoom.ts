@@ -9,11 +9,15 @@ const eventName = EVENTS.CLIENT.ROOM.PART;
 const partRoom: EventFile = (io, socket) => ({
   eventName: eventName,
   type: 'on',
-  callback: (roomId) => {
+  callback: (roomId, ack) => {
     const eventLog = eventLogHelper(eventName, socket);
 
     if (!socket.rooms.has(roomId)) {
       eventLog('warn', `Not in ${roomId}.`);
+
+      eventLog('trace', `Acknowledging room (${roomId})...`);
+      ack({ success: false, err: { message: 'Not in room.' } });
+
       return;
     }
 
@@ -58,7 +62,9 @@ const partRoom: EventFile = (io, socket) => ({
           'trace',
           `Checking if socket (${otherOccupantSocketId}) is connected to room (${roomId})...`
         );
-        const roomOccupants = io.sockets.adapter.rooms.get(roomId);
+        // We can assert because we checked if the socket has the roomId earlier, which is a two way check.
+        const roomOccupants = io.sockets.adapter.rooms.get(roomId)!;
+
         eventLog('debug', `Room occupants: ${[...roomOccupants]}`);
 
         if (!roomOccupants.has(otherOccupantSocketId)) {
@@ -76,6 +82,9 @@ const partRoom: EventFile = (io, socket) => ({
 
     socket.leave(roomId);
     eventLog('info', `Left ${roomId}.`);
+
+    eventLog('trace', `Acknowledging room (${roomId})...`);
+    ack({ success: true });
   },
 });
 
