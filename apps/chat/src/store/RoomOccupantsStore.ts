@@ -1,4 +1,4 @@
-import logger from '../utils/logger';
+import logger from '@/utils/logger';
 import OccupantsSet, { Occupants } from './OccupantsSet';
 
 class RoomOccupantsStore {
