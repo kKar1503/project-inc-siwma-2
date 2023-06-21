@@ -11,10 +11,8 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
-    "@inc/db": "workspace:*",
     "@inc/errors": "workspace:*",
     "@inc/events": "workspace:*",
-    "@inc/node-store": "workspace:*",
     "@prisma/client": "4.16.0",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
