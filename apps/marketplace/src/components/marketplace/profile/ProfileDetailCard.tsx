@@ -105,6 +105,8 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
   const currentUser = useGetUserQuery(loggedUserUuid);
   const profileUserUuid = data?.id as string;
   const bookmarkedUsers = currentUser?.bookmarks?.users;
+  const isOwnProfile = loggedUserUuid === profileUserUuid;
+
 
   const router = useRouter();
   const userId = router.query.id as string;
@@ -150,12 +152,14 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
             </IconButton>
           )
         }
-        title="Your Profile"
-        subheader="View your profile details here"
+        title="Profile Page"
+        subheader="View profile details here"
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
+        <Link style={{ textDecoration: 'none' }} href={`/profile/${data?.id}`}>
+          <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
+        </Link>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography variant="body2">{data?.company}</Typography>
         {/* <Typography>@{username}</Typography> */}
@@ -206,7 +210,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               borderRadius: spacing(2),
               pr: '2px',
               color: palette.common.white,
-              backgroundColor: palette.primary[500],
+              backgroundColor: '#229ED9',
             })}
           />
           <Typography
@@ -243,7 +247,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
       </CardContent>
       <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
         <Box sx={{ width: '98%' }}>
-          <Button
+          {/* <Button
             component={Link}
             href={`/profile/${data?.id}/edit-profile`}
             variant="contained"
@@ -255,7 +259,22 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
             })}
           >
             Edit profile
-          </Button>
+          </Button> */}
+          {isOwnProfile && ( // Add this condition to check if it's the user's own profile
+            <Button
+              component={Link}
+              href={`/profile/${data?.id}/edit-profile`}
+              variant="contained"
+              type="submit"
+              sx={({ spacing }) => ({
+                width: '100%',
+                mb: spacing(1),
+                fontWeight: 'bold',
+              })}
+            >
+              Edit profile
+            </Button>
+          )}
         </Box>
       </CardActions>
     </Card>
