@@ -1,6 +1,5 @@
-import { Regions, S3Bucket, S3LibInternal } from '@inc/s3-simplified';
+import { Regions, S3Bucket, S3LibInternal,S3BucketInternal } from '@inc/s3-simplified';
 import hashFn from '@/utils/timeBasedHash';
-import { S3BucketInternal } from '@inc/s3-simplified/dist/classes/buckets/s3BucketInternal';
 
 class CustomS3 extends S3LibInternal {
 
