@@ -69,6 +69,16 @@ httpServer.listen(port, host, () => {
   logger.info('Initializing SocketUserStore...');
   SocketUserStore.init();
 
+  logger.info('Attaching StateListener to SocketUserStore...');
+  SocketUserStore.attachStateListener((state) => {
+    logger.debug(
+      `SocketUserStore State (Sockets): ${state.sockets.length} | ${JSON.stringify(state.sockets)}`
+    );
+    logger.debug(
+      `SocketUserStore State (Users): ${state.users.length} | ${JSON.stringify(state.users)}`
+    );
+  }, 5000);
+
   logger.info('Initializing Socket.io connection...');
   socket(io);
 });
