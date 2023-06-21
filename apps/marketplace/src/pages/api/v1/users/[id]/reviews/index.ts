@@ -26,6 +26,8 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
     const { id } = userSchema.userId.parse(req.query);
     const sortBy = req.query.sortBy as string;
     const reviewFrom = req.query.reviewFrom as string | undefined;
+    const skip = parseInt(req.query.skip as string) || 0;
+    const take = parseInt(req.query.take as string) || 10;
 
     let reviewType: ListingType | undefined;
     if (reviewFrom) {
@@ -47,21 +49,48 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
     // Determine sort order based on sortBy parameter
     const orderBy = orderByOptions(sortBy);
 
-    // Fetch reviews from database using Prisma
-    const reviews = await PrismaClient.reviews.findMany({
-        where: {
-            user: id,
-            ...(reviewType && {
-                listingReviewsListingTolisting: {
-                    type: reviewType,
-                },
-            }),
-        },
-        orderBy,
-        include: {
-            listingReviewsListingTolisting: true
-        }
-    });
+    // Fetch reviews and aggregate data from database using Prisma
+    const [reviews, count, avgRating] = await Promise.all([
+        PrismaClient.reviews.findMany({
+            where: {
+                user: id,
+                ...(reviewType && {
+                    listingReviewsListingTolisting: {
+                        type: reviewType,
+                    },
+                }),
+            },
+            orderBy,
+            include: {
+                listingReviewsListingTolisting: true
+            },
+            skip,
+            take,
+        }),
+        PrismaClient.reviews.count({
+            where: {
+                user: id,
+                ...(reviewType && {
+                    listingReviewsListingTolisting: {
+                        type: reviewType,
+                    },
+                }),
+            },
+        }),
+        PrismaClient.reviews.aggregate({
+            where: {
+                user: id,
+                ...(reviewType && {
+                    listingReviewsListingTolisting: {
+                        type: reviewType,
+                    },
+                }),
+            },
+            _avg: {
+                rating: true,
+            },
+        }).then(res => res._avg.rating)
+    ]);
 
     const formatReviews = reviews.map(review => ({
         ...review,
@@ -75,7 +104,8 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
     // Validate response body using Zod schema
     const parsedReviews = reviewSchemas.getAll.parse(formatReviews);
 
-    res.status(200).json(formatAPIResponse(parsedReviews));
+    res.status(200).json(formatAPIResponse({ avgRating, count, reviews: parsedReviews }));
+
 };
 
 export default apiHandler()
