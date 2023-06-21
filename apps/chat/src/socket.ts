@@ -55,8 +55,18 @@ export default (io: Server) => {
       logger.trace(`${logHeader} Attaching Socket.io 'disconnect' event listener...`);
       socket.once(EVENTS.CONNECTION.DISCONNECT, (reason) => {
         // Detaching event listeners
-        logger.trace(`${logHeader} Removing all listeners from socket.`);
+        logger.trace(`${logHeader} Removing all listeners from socket...`);
         socket.removeAllListeners();
+
+        // Removing socketId userId pair from cache
+        logger.trace(`${logHeader} Removing socketId userId pair from cache...`);
+        const isSocketUserPairRemoved = SocketUserStore.removeSocketUserBySocketId(socket.id);
+
+        if (!isSocketUserPairRemoved) {
+          logger.error(`${logHeader} SocketId userId pair not removed from cache.`);
+        } else {
+          logger.debug(`${logHeader} SocketId userId pair removed from cache.`);
+        }
 
         logger.info(`${logHeader} Socket is disconnected. Reason: ${reason}.`);
       });
