@@ -38,7 +38,7 @@ type EventParams = {
   // Client Message Events
   clientSendMessage: ClientSendMessage;
   clientDeleteMessage: MessageId;
-  clientReadMessage: MessageId[];
+  clientReadMessage: RoomId;
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
@@ -50,7 +50,7 @@ type EventParams = {
   // Server Message Events
   serverRoomMessage: ServerRoomMessage;
   serverDeletedMessage: MessageId;
-  serverReadMessage: MessageId;
+  serverReadMessage: MessageId[];
   // Server Typing Events
   serverStartType: UserId;
   serverStopType: UserId;
@@ -69,7 +69,7 @@ type Acknowlegement =
 
 type EventFile = (
   io: Server,
-  socket?: Socket
+  socket: Socket
 ) => {
   [K in keyof EventParams]: {
     eventName: K;
