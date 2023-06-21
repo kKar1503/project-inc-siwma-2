@@ -9,50 +9,27 @@ const eventName = EVENTS.CLIENT.TYPING.STOP;
 const stopType: EventFile = (io, socket) => ({
   eventName: eventName,
   type: 'on',
-  callback: () => {
+  callback: (roomId) => {
     const eventLog = eventLogHelper(eventName, socket);
 
-    const rooms = [...socket.rooms];
-    let otherOccupant: string;
+    eventLog('trace', `Checking if cache contains room (${roomId})...`);
+    const [roomIdFromCache, occupantsFromCache] =
+      RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
 
-    // Validate the rooms variable is correct
-    eventLog('trace', 'Validating sockets.room is size 2...');
-    if (socket.rooms.size !== 2) {
-      if (
-        socket.rooms.size > 2 ||
-        (socket.rooms.size === 1 && rooms[0] === socket.id) ||
-        socket.rooms.size < 1
-      ) {
-        eventLog(
-          'error',
-          `Disconnecting socket... Reason: Invalid socket room size (${socket.rooms.size})`
-        );
-        socket.disconnect(true);
-        return;
-      }
-
-      // Attempt to check if the room is a valid room through cache
-      const roomId = rooms[0];
-      eventLog('trace', `Checking if cache contains room (${roomId})...`);
-      const [roomIdFromCache, occupantsFromCache] =
-        RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
-
-      if (roomIdFromCache === '') {
-        eventLog('debug', `Room (${roomId}) cannot be found in cache...`);
-        eventLog('error', `Disconnecting socket... Reason: Missing room cache (${roomId})`);
-        socket.disconnect(true);
-        return;
-      }
-
-      eventLog('trace', `Room (${roomId}) found from cache...`);
-      eventLog('debug', `Occupants found from cache: ${occupantsFromCache}...`);
-      otherOccupant =
-        occupantsFromCache[0] === socket.id ? occupantsFromCache[1] : occupantsFromCache[0];
+    if (roomIdFromCache === '') {
+      eventLog('debug', `Room (${roomId}) cannot be found in cache.`);
+      eventLog('error', `Disconnecting socket... Reason: Missing room cache (${roomId})`);
+      socket.disconnect(true);
+      return;
     }
 
-    eventLog('debug', `Other occupant userId: ${otherOccupant}...`);
+    eventLog('debug', `Occupants found from cache: ${occupantsFromCache}`);
+    const otherOccupant =
+      occupantsFromCache[0] === socket.id ? occupantsFromCache[1] : occupantsFromCache[0];
+
+    eventLog('debug', `Other occupant userId: ${otherOccupant}`);
     const [otherOccupantSocketId, _] = SocketUserStore.searchSocketUser('userId', otherOccupant);
-    eventLog('debug', `Other occupant socketId: ${otherOccupantSocketId}...`);
+    eventLog('debug', `Other occupant socketId: ${otherOccupantSocketId}`);
 
     eventLog('info', `Emitting ${EVENTS.SERVER.TYPING.STOP} to ${otherOccupantSocketId}...`);
     (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(
