@@ -1,15 +1,8 @@
-import Grid from '@mui/material/Grid';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import CardActionArea from '@mui/material/CardActionArea';
 import { useQuery } from 'react-query';
-import { useTheme } from '@mui/material';
+import { Box, Typography, CardMedia, CardContent, Card, Grid, useTheme } from '@mui/material';
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCats from '@/middlewares/fetchCat';
-import CatImgsPlaceholder from '@/components/marketplace/category/CarouselImgsPlaceholder';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -30,8 +23,7 @@ const CategoriesPage = () => {
   return (
     <Box
       sx={{
-        mr: 'auto',
-        ml: 'auto',
+        mx: 'auto',
         width: '90%',
         height: 'full',
         maxHeight: 'xl',
@@ -44,8 +36,7 @@ const CategoriesPage = () => {
       >
         <Typography
           sx={({ spacing }) => ({
-            pt: spacing(3),
-            pb: spacing(3),
+            py: spacing(3),
             fontSize: { xs: 20, sm: 30, md: 40, lg: 45 },
             fontWeight: 700,
           })}
