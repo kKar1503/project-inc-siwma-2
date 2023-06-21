@@ -57,6 +57,10 @@ export default class OccupantsSet {
     return false;
   }
 
+  clear() {
+    this.#occupants = [];
+  }
+
   get(index: number) {
     return this.#occupants[index];
   }
