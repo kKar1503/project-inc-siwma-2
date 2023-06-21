@@ -14,7 +14,7 @@ import SocketUserStore from './store/SocketUserStore';
 logger.info('Validating Env Variables...');
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT !== undefined ? Number(process.env.PORT) : 4000;
-const corsOrigin = process.env.CORS.split(',') ?? 'http://localhost:3000';
+const corsOrigin = process.env.CORS?.split(',') ?? 'http://localhost:3000';
 
 logger.debug(`HOST: ${host}`);
 logger.debug(`PORT: ${port}`);
