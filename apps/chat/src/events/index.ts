@@ -10,6 +10,7 @@ export { default as partRoom } from './partRoom';
 // ** Message Events
 export { default as sendMessage } from './sendMessage';
 export { default as readMessage } from './readMessage';
+export { default as deleteMessage } from './deleteMessage';
 
 // ** Typing Events
 export { default as startType } from './startType';
