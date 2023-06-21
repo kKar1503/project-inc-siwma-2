@@ -2,39 +2,59 @@ import logger from '@/utils/logger';
 import { StateListener } from '@/types/stateListener';
 
 class SocketUserStore {
-  private socketSet: Set<string>;
-  private userSet: Set<string>;
-  private stateListenerIntervals: NodeJS.Timer[];
+  private isInit = false;
+  private socketSet: Set<string> | undefined;
+  private userSet: Set<string> | undefined;
+  private stateListenerIntervals: NodeJS.Timer[] | undefined;
 
   constructor() {}
 
   init() {
+    this.isInit = true;
     this.socketSet = new Set<string>();
     this.userSet = new Set<string>();
     this.stateListenerIntervals = [];
   }
 
+  private verifyInit() {
+    if (!this.isInit) {
+      throw new Error('SocketUserStore has not been initialized.');
+    } else {
+      return {
+        socketSet: this.socketSet!,
+        userSet: this.userSet!,
+        stateListenerIntervals: this.stateListenerIntervals!,
+      };
+    }
+  }
+
   reset() {
-    this.socketSet.clear();
-    this.userSet.clear();
+    const { socketSet, userSet } = this.verifyInit();
+
+    socketSet.clear();
+    userSet.clear();
   }
 
   attachStateListener = (
     stateListener: StateListener<{ sockets: string[]; users: string[] }>,
     stateListenerInterval?: number
   ) => {
-    this.stateListenerIntervals.push(
+    const { socketSet, userSet, stateListenerIntervals } = this.verifyInit();
+
+    stateListenerIntervals.push(
       setInterval(() => {
         stateListener({
-          sockets: [...this.socketSet],
-          users: [...this.userSet],
+          sockets: [...socketSet],
+          users: [...userSet],
         });
       }, stateListenerInterval || 10000)
     );
   };
 
   removeStateListener = () => {
-    this.stateListenerIntervals.forEach((interval) => {
+    const { stateListenerIntervals } = this.verifyInit();
+
+    stateListenerIntervals.forEach((interval) => {
       clearInterval(interval);
     });
   };
@@ -44,26 +64,28 @@ class SocketUserStore {
    * zero-based index of the insertion, -1 if socket or user already exist.
    */
   addSocketUser = (socketId: string, userId: string) => {
+    const { socketSet, userSet } = this.verifyInit();
+
     logger.trace(`addSocketUser() | Checking if socketId (${socketId}) already exist in cache...`);
-    if (this.socketSet.has(socketId)) {
+    if (socketSet.has(socketId)) {
       logger.warn(`socketId (${socketId}) already exist in cache.`);
       return -1;
     }
 
     logger.trace(`addSocketUser() | Checking if userId (${userId}) already exist in cache...`);
-    if (this.userSet.has(userId)) {
+    if (userSet.has(userId)) {
       logger.warn(`userId (${userId}) already exist in cache.`);
       return -1;
     }
 
     logger.trace(`addSocketUser() | Adding socketId (${socketId}) to socketSet...`);
-    this.socketSet.add(socketId);
+    socketSet.add(socketId);
     logger.trace(`addSocketUser() | Adding userId (${userId}) to userSet...`);
-    this.userSet.add(userId);
+    userSet.add(userId);
 
-    logger.debug(`addSocketUser() | Index Pos in socketSet: ${this.socketSet.size - 1}.`);
-    logger.debug(`addSocketUser() | Index Pos in userSet: ${this.userSet.size - 1}.`);
-    return this.socketSet.size - 1;
+    logger.debug(`addSocketUser() | Index Pos in socketSet: ${socketSet.size - 1}.`);
+    logger.debug(`addSocketUser() | Index Pos in userSet: ${userSet.size - 1}.`);
+    return socketSet.size - 1;
   };
 
   /**
@@ -72,17 +94,19 @@ class SocketUserStore {
    * cache, cannot be removed.
    */
   removeSocketUserBySocketId = (socketId: string) => {
+    const { socketSet, userSet } = this.verifyInit();
+
     logger.trace(`removeSocketUserBySocketId() | Searching for socketId userId pair...`);
     const [, userId] = this.searchSocketUser('socketId', socketId);
 
     if (userId === '') return false;
 
     logger.trace(`removeSocketUserBySocketId() | Removing userId (${userId}) from userSet...`);
-    const isUserRemoved = this.userSet.delete(userId);
+    const isUserRemoved = userSet.delete(userId);
     logger.trace(
       `removeSocketUserBySocketId() | Removing socketId (${socketId}) from socketSet...`
     );
-    const isSocketRemoved = this.socketSet.delete(socketId);
+    const isSocketRemoved = socketSet.delete(socketId);
 
     return isUserRemoved && isSocketRemoved;
   };
@@ -96,10 +120,12 @@ class SocketUserStore {
     searchBy: 'socketId' | 'userId',
     search: string
   ): [SocketId: string, UserId: string] => {
-    const searchForId = searchBy === 'socketId' ? 'userId' : 'socketId';
-    const searchForSet = searchBy === 'socketId' ? this.userSet : this.socketSet;
+    const { socketSet, userSet } = this.verifyInit();
 
-    const searchSet = searchBy === 'socketId' ? this.socketSet : this.userSet;
+    const searchForId = searchBy === 'socketId' ? 'userId' : 'socketId';
+    const searchForSet = searchBy === 'socketId' ? userSet : socketSet;
+
+    const searchSet = searchBy === 'socketId' ? socketSet : userSet;
 
     logger.debug(`searchSocketUser() | Search via ${searchBy}:${search}`);
 
