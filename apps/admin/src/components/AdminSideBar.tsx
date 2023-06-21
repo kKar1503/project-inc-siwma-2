@@ -1,17 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { List, ListItem, ListItemText, Divider } from '@mui/material';
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Link,
+  Box,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Drawer,
+  Hidden,
+  Avatar,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { ChevronRight, ExpandMore } from '@mui/icons-material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import Drawer from '@mui/material/Drawer';
-import Hidden from '@mui/material/Hidden';
-import Avatar from '@mui/material/Avatar';
+import { useResponsiveness } from '@inc/ui';
 
 const menuItems = [
   {
@@ -98,6 +106,8 @@ const AdminSideBar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [user, setUser] = useState({ name: '', email: '', imageUrl: '' });
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { typography } = useTheme();
   const router = useRouter();
 
   // function that fetches the user info from your backend
@@ -142,128 +152,183 @@ const AdminSideBar = () => {
     }
   };
 
+  const textStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        name: {
+          fontSize: typography.h6,
+          fontWeight: 'bold',
+        },
+        email: {
+          fontSize: typography.subtitle1,
+          color: '#9E9E9E',
+        },
+      };
+    }
+
+    if (isMd) {
+      return {
+        name: {
+          fontSize: typography.h6,
+          fontWeight: 'bold',
+        },
+        email: {
+          fontSize: typography.subtitle1,
+          color: '#9E9E9E',
+        },
+      };
+    }
+
+    if (isLg) {
+      return {
+        name: {
+          fontSize: typography.h5,
+          fontWeight: 'bold',
+        },
+        email: {
+          fontSize: typography.subtitle1,
+          color: '#9E9E9E',
+        },
+      };
+    }
+
+    return {
+      name: {
+        fontSize: '24px',
+        fontWeight: 'bold',
+      },
+      email: {
+        fontSize: '14px',
+        color: '#9E9E9E',
+      },
+    };
+  }, [isSm, isMd, isLg, typography]);
+
   const drawer = (
-    <div>
-      <Box
-        sx={{
-          padding: '1em',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              margin: '2em 0',
-            }}
-          >
-            <div style={{ marginBottom: '1em' }}>
-              <Image
-                src="/images/favicons/SIWMA-icon.png"
-                alt="Company Logo"
-                width={100}
-                height={70}
-              />
-            </div>
-          </div>
-          <h2>General</h2>
-          <Divider />
-          <List>
-            {menuItems.map((item) => (
-              <div key={item.name}>
-                <ListItem
-                  button
-                  onClick={() => handleClick(item.name)}
-                  style={{
-                    backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
+    <Box
+      sx={{
+        padding: '1em',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+    >
+      <Box>
+        <Box
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            margin: '2em 0',
+          }}
+        >
+          <Box style={{ marginBottom: '1em' }}>
+            <Image
+              src="/images/favicons/SIWMA-icon.png"
+              alt="Company Logo"
+              width={100}
+              height={70}
+              objectFit="contain"
+            />
+          </Box>
+        </Box>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
+          General
+        </Typography>
+        <Divider />
+        <List>
+          {menuItems.map((item) => (
+            <Box key={item.name}>
+              <ListItem
+                button
+                onClick={() => handleClick(item.name)}
+                style={{
+                  backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <Box style={{ marginRight: '1em' }}>
+                  {item.logo && (
+                    <Image
+                      src={
+                        isCurrentRoute(item.link) ? item.highlightedLogo || item.logo : item.logo
+                      }
+                      alt="Logo"
+                      width={24}
+                      height={24}
+                    />
+                  )}
+                </Box>
+                <ListItemText
+                  primary={item.name}
+                  primaryTypographyProps={{
+                    style: {
+                      color: isCurrentRoute(item.link) ? '#2962FF' : 'black',
+                    },
                   }}
-                >
-                  <div style={{ marginRight: '1em' }}>
-                    {item.logo && (
-                      <Image
-                        src={
-                          isCurrentRoute(item.link) ? item.highlightedLogo || item.logo : item.logo
-                        }
-                        alt="Logo"
-                        width={24}
-                        height={24}
-                      />
-                    )}
-                  </div>
-                  <ListItemText
-                    primary={item.name}
-                    primaryTypographyProps={{
-                      style: {
-                        color: isCurrentRoute(item.link) ? '#2962FF' : 'black',
-                      },
-                    }}
-                  />
-                  {item.dropdown &&
-                    (openDropdown === item.name ? (
-                      <ExpandMore
-                        style={{ color: isCurrentRoute(item.link) ? '#2962FF' : 'black' }}
-                      />
-                    ) : (
-                      <ChevronRight style={{ color: 'black' }} />
-                    ))}
-                </ListItem>
+                />
                 {item.dropdown &&
-                  openDropdown === item.name &&
-                  item.dropdown.map((subitem) => (
-                    <ListItem
-                      button
-                      key={subitem.name}
-                      style={{
-                        backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
-                        paddingLeft: '2em',
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div style={{ marginRight: '1em' }}>
-                        {subitem.logo && (
-                          <Image
-                            src={
-                              isCurrentSubRoute(subitem.link)
-                                ? subitem.highlightedLogo || subitem.logo
-                                : subitem.logo
-                            }
-                            alt="Logo"
-                            width={24}
-                            height={24}
-                          />
-                        )}
-                      </div>
-                      <ListItemText
-                        primary={
-                          <Link
-                            href={subitem.link}
-                            underline="none"
-                            sx={{
-                              color: isCurrentSubRoute(subitem.link) ? '#2962FF' : 'black',
-                              textDecoration: 'none',
-                              '&:hover': {
-                                textDecoration: 'none',
-                              },
-                            }}
-                          >
-                            {subitem.name}
-                          </Link>
-                        }
-                      />
-                    </ListItem>
+                  (openDropdown === item.name ? (
+                    <ExpandMore
+                      style={{ color: isCurrentRoute(item.link) ? '#2962FF' : 'black' }}
+                    />
+                  ) : (
+                    <ChevronRight style={{ color: 'black' }} />
                   ))}
-              </div>
-            ))}
-          </List>
-        </div>
-        <Hidden mdDown implementation="css">
+              </ListItem>
+              {item.dropdown &&
+                openDropdown === item.name &&
+                item.dropdown.map((subitem) => (
+                  <ListItem
+                    button
+                    key={subitem.name}
+                    sx={{
+                      backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
+                      pl: '2em',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Box style={{ marginRight: '1em' }}>
+                      {subitem.logo && (
+                        <Image
+                          src={
+                            isCurrentSubRoute(subitem.link)
+                              ? subitem.highlightedLogo || subitem.logo
+                              : subitem.logo
+                          }
+                          alt="Logo"
+                          width={24}
+                          height={24}
+                          objectFit="contain"
+                        />
+                      )}
+                    </Box>
+                    <ListItemText
+                      primary={
+                        <Link
+                          href={subitem.link}
+                          underline="none"
+                          sx={{
+                            color: isCurrentSubRoute(subitem.link) ? '#2962FF' : 'black',
+                            textDecoration: 'none',
+                            '&:hover': {
+                              textDecoration: 'none',
+                            },
+                          }}
+                        >
+                          {subitem.name}
+                        </Link>
+                      }
+                    />
+                  </ListItem>
+                ))}
+            </Box>
+          ))}
+        </List>
+      </Box>
+      <Hidden mdDown implementation="css">
         <Box
           sx={{
             backgroundColor: '#F7F7F8',
@@ -275,13 +340,13 @@ const AdminSideBar = () => {
             width: '100%',
           }}
         >
-          <div
+          <Box
             style={{
               display: 'flex',
               alignItems: 'center',
             }}
           >
-            <div
+            <Box
               style={{
                 width: '40px',
                 height: '40px',
@@ -291,27 +356,25 @@ const AdminSideBar = () => {
               }}
             >
               <Image src={user.imageUrl} alt="Profile Picture" width={40} height={40} />
-            </div>
-            <div>
-              <div style={{ fontSize: '18px', fontWeight: 'bold' }}>{user.name}</div>
-              <div style={{ fontSize: '14px', color: '#9E9E9E' }}>{user.email}</div>
-            </div>
-          </div>
+            </Box>
+            <Box>
+              <Typography sx={textStyles?.name}>{user.name}</Typography>
+              <Typography sx={textStyles?.email}>{user.email}</Typography>
+            </Box>
+          </Box>
         </Box>
-        </Hidden>
-      </Box>
-    </div>
+      </Hidden>
+    </Box>
   );
 
   return (
-    <div>
+    <Box>
       <Hidden mdUp>
         <AppBar
           position="fixed"
           sx={{
             bgcolor: '#ffffff',
-            borderBottomRightRadius: '15px',
-            borderBottomLeftRadius: '15px',
+            borderRadius: '0 0 15px 15px',
             boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
           }}
         >
@@ -325,8 +388,8 @@ const AdminSideBar = () => {
             >
               <MenuIcon />
             </IconButton>
-            <div style={{ flexGrow: 1 }} />
-            <div
+            <Box style={{ flexGrow: 1 }} />
+            <Box
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -334,16 +397,18 @@ const AdminSideBar = () => {
                 marginRight: '1em',
               }}
             >
-              <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'black' }}>
+              <Typography variant="h6" sx={textStyles?.name}>
                 {user.name}
-              </div>
-              <div style={{ fontSize: '14px', color: '#9E9E9E' }}>{user.email}</div>
-            </div>
+              </Typography>
+              <Typography variant="subtitle1" sx={textStyles?.email}>
+                {user.email}
+              </Typography>
+            </Box>
             <Avatar alt="Profile Picture" src={user.imageUrl} />
           </Toolbar>
         </AppBar>
       </Hidden>
-      <nav>
+      <Box>
         <Hidden mdUp implementation="css">
           <Drawer
             variant="temporary"
@@ -361,8 +426,8 @@ const AdminSideBar = () => {
             {drawer}
           </Drawer>
         </Hidden>
-      </nav>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
