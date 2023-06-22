@@ -44,12 +44,13 @@ export const getAllFilesFromRequest = async (req: NextApiRequest): Promise<File[
     .reduce((acc, val) => acc.concat(val), []);
 };
 
-export const fileToS3Object = (file: File): S3ObjectBuilder => {
+export const fileToS3Object = (file: File, additionalMetadata: Record<string, string> = {}): S3ObjectBuilder => {
   const buffer = fs.readFileSync(file.filepath);
   // Create S3 object
   const metadata = new Metadata({
     'content-type': file.mimetype || 'image/jpeg',
-    'original-name': file.originalFilename || 'untitled-advertisement-image',
+    'original-name': file.originalFilename || 'untitled-image',
+    ...additionalMetadata,
     // "content-disposition": file.newFilename,
   });
   return new S3ObjectBuilder(buffer, metadata);
