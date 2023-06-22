@@ -64,7 +64,7 @@ COPY --from=depsbuilder --chown=socketio:nodejs /app/static ./static
 RUN rm -rf packages/types
 RUN rm -rf packages/configs
 RUN ls -d packages/**/** | grep -v "package.json\|node_modules\|dist" | xargs rm -rf
-RUN ls -d apps/**/** | grep -v "package.json\|node_modules\|dist" | xargs rm -rf
+RUN ls -d apps/**/** | grep -v "package.json\|node_modules\|dist\|pino-pretty.js" | xargs rm -rf
 
 # Changing user to SocketIO's user
 USER socketio
