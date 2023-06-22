@@ -21,10 +21,6 @@ import Link from '@mui/material/Link';
 import {
   StarsRating,
   useResponsiveness,
-  ModalImage,
-  Modal,
-  ModalSelect,
-  ModalInput,
   AddCommentModal,
 } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
@@ -42,7 +38,6 @@ import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
-import { Review } from '@/utils/api/client/zod';
 
 const carouselData = [
   {
@@ -113,8 +108,8 @@ const useChatListQuery = (userUuid: string) => {
   return data;
 };
 
-const useCreateChatQuery = () => {
-  const { data } = useQuery('createChat', async () => createRoom());
+const useCreateChatQuery = (sellerId: string, buyerId: string, listingId: string) => {
+  const { data } = useQuery('createChat', async () => createRoom(sellerId, buyerId, listingId));
   return data;
 };
 
@@ -124,9 +119,9 @@ interface addNewReview {
   rating: number;
 }
 
-const usePostReviewQuery = (userUuid: string) =>
+const usePostReviewQuery = () =>
   useMutation((addReview: addNewReview) =>
-    postReview(userUuid, addReview.review, addReview.rating)
+    postReview(addReview.review, addReview.rating as number)
   );
 
 //   const usePostReviewQuery = (userUuid: string) =>
@@ -173,19 +168,19 @@ const DetailedListingPage = () => {
   const loggedUserUuid = currentUser.data?.user.id as string;
   const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
-  const chatRooms = useChatListQuery(loggedUserUuid);
-  // const newRoom = useCreateChatQuery();
-  const postReview = usePostReviewQuery(loggedUserUuid);
 
+  const chatRooms = useChatListQuery(loggedUserUuid);
+  const buyerId = loggedUserUuid as unknown as string
+  const sellerId = listings?.owner.id as string
+  const newRoom = useCreateChatQuery(sellerId, buyerId, listingId);
+
+  const postReview = usePostReviewQuery();
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const [inputText, setInputText] = useState<string>('');
   const [openComment, setOpenComment] = useState(false);
   const [rating, setRating] = useState<number | null>(0);
   const [isOpen, setIsOpen] = useState(false);
-  // const handleClose = (val: boolean) => {
-  //   setIsOpen(false);
-  // };
 
   // const createReview = (val: boolean) => {
   //   setRightButtonState(val)
@@ -195,9 +190,14 @@ const DetailedListingPage = () => {
 
   useEffect(() => {
     if (rightButtonState === true) {
-      postReview.mutate(review, rating);
+      const review = {
+        userUuid: loggedUserUuid,
+        review: inputText,
+        rating: rating as number
+      }
+      postReview.mutate(review)
     }
-  }, [rightButtonState]);
+  }, [rightButtonState, loggedUserUuid, inputText, rating ]);
 
   const { isBookmarked, handleBookmarkListing } = useBookmarkListingQuery(
     listingId,
@@ -530,6 +530,7 @@ const DetailedListingPage = () => {
                             backgroundColor: palette.primary.main,
                             width: isMd ? 240 : 340,
                           })}
+                          onClick={checkChatRoom}
                         >
                           Chat Now
                         </Button>
