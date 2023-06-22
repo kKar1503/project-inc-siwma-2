@@ -1,4 +1,5 @@
 import type { Socket, Server, DisconnectReason } from 'socket.io';
+import type { Socket as ClientSocket } from 'socket.io-client';
 
 type UserId = string;
 type RoomId = string;
@@ -87,6 +88,14 @@ type EventFile = (
   };
 }[keyof EventParams];
 
+type ClientEventFile = (socket: ClientSocket) => {
+  [K in keyof EventParams]: {
+    eventName: K;
+    callback: (param: EventParams[K], ack: (acknowledgement: Acknowlegement) => void) => void;
+    type: 'on' | 'once';
+  };
+}[keyof EventParams];
+
 type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(event: E, param: P) => void;
 
-export type { Event, EventFile, TypedSocketEmitter };
+export type { Event, ClientEventFile, EventFile, TypedSocketEmitter };
