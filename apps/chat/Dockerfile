@@ -69,7 +69,7 @@ USER socketio
 # Ports host at 4000
 ARG CHAT_PORT
 ENV PORT=$CHAT_PORT
-EXPOSE 4000
+EXPOSE ${CHAT_PORT}
 
 # Socketio server is being run using node server.js
 CMD ["node", "apps/chat/dist/server.js"]
