@@ -3,6 +3,9 @@ import { Checkbox, Divider, TableCell, TableHead, TableRow } from '@mui/material
 export interface Header {
   key: string;
   label: string;
+  replace?: {
+    [key: string]: React.ReactNode;
+  };
 }
 
 type BaseTableHeadProps = {

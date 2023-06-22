@@ -130,14 +130,28 @@ const BaseTable = (props: BaseTableProps) => {
                         }}
                       />
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="left">{row.calories}</TableCell>
-                    <TableCell align="left">{row.fat}</TableCell>
-                    <TableCell align="left">{row.carbs}</TableCell>
-                    <TableCell align="left">{row.protein}</TableCell>
-                    <TableCell align="left">{row.enabled.toString()}</TableCell>
+                    {
+                      // Render each column
+                      headers.map((header, index) => (
+                        <TableCell
+                          component={index === 0 ? 'th' : undefined}
+                          align="left"
+                          key={header.key}
+                          scope="row"
+                        >
+                          {
+                            // Render the value of the column
+                            // Check if the value has any special rendering
+                            // eslint-disable-next-line no-nested-ternary
+                            header.replace
+                              ? header.replace[row[header.key].toString()] !== undefined
+                                ? header.replace[row[header.key].toString()]
+                                : row[header.key].toString()
+                              : row[header.key].toString()
+                          }
+                        </TableCell>
+                      ))
+                    }
                   </TableRow>
                 );
               })}

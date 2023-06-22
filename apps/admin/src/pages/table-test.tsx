@@ -1,4 +1,5 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
+import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import Head from 'next/head';
 import { useState } from 'react';
 
@@ -21,7 +22,7 @@ function createData(
   };
 }
 
-const headCells = [
+const headCells: Header[] = [
   {
     key: 'name',
     label: 'Dessert (100g serving)',
@@ -45,6 +46,10 @@ const headCells = [
   {
     key: 'enabled',
     label: 'Enabled',
+    replace: {
+      a: 'Yes',
+      false: 'No',
+    },
   },
 ];
 
