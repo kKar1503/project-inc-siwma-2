@@ -9,7 +9,9 @@ import { ThemeComponent, useResponsiveness } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import NavBar from '@/components/marketplace/navbar/NavBar';
 import Box from '@mui/material/Box';
-import { SnackbarProvider, MaterialDesignContent, SnackbarOrigin } from 'notistack';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/i18n/i18n';
+import { MaterialDesignContent, SnackbarOrigin, SnackbarProvider } from 'notistack';
 import { styled } from '@mui/material';
 
 // -- Type declarations --//
@@ -97,10 +99,13 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
               }}
             >
               {getLayout(
-              <Box>
-                {includeNavbar && <NavBar />}
-                <Component {...pageProps} />
-              </Box>)}
+                <Box>
+                  <I18nextProvider i18n={i18n}>
+                    {includeNavbar && <NavBar />}
+                    <Component {...pageProps} />
+                  </I18nextProvider>
+                </Box>,
+              )}
             </SnackbarProvider>
           </QueryClientProvider>
         </AuthenticationGuard>

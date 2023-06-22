@@ -1,3 +1,5 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -31,8 +33,9 @@ export type ProfileDetailCardData = {
 };
 
 const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
-  // destructure data
+  const { t } = useTranslation();
 
+  // destructure data
   const {
     username,
     name,
@@ -56,8 +59,8 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
         subheaderTypographyProps={{
           fontSize: 16,
         }}
-        title="Your Profile"
-        subheader="View your profile details here"
+        title={t('Your Profile')}
+        subheader={t('View your profile details here')}
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
       <CardContent>
@@ -87,18 +90,18 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               ml: spacing(1),
             })}
           >
-            ({reviews} {reviews === 1 ? ' Review' : ' Reviews'})
+            ({reviews} {reviews === 1 ? t('Review') : t('Reviews')})
           </Typography>
         </Box>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>{t('Bio')}:</Typography>
         <Typography>{bio}</Typography>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>{t('Linked accounts')}:</Typography>
         <Box
           sx={({ spacing }) => ({
             mt: spacing(1),
@@ -134,7 +137,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               borderRadius: spacing(2),
               p: '1px',
               color: palette.common.white,
-              backgroundColor: palette.secondary.main
+              backgroundColor: palette.secondary.main,
             })}
           />
           <Typography
@@ -160,7 +163,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               fontWeight: 'bold',
             })}
           >
-            Edit profile
+            {t('Edit profile')}
           </Button>
           <Button
             component={Link}
@@ -174,11 +177,12 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               fontWeight: 'bold',
             })}
           >
-            Logout
+            {t('Logout')}
           </Button>
         </Box>
       </CardActions>
     </Card>
   );
 };
+
 export default ProfileDetailCard;
