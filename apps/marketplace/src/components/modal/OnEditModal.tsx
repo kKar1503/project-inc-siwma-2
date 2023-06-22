@@ -14,7 +14,7 @@ const OnEditModal = ({ open, setOpen }: ReportModalProps) => {
       setOpen(false);
     }
     setRightButtonState(false);
-  });
+  }, [rightButtonState, setOpen]);
 
   return (
     <Modal

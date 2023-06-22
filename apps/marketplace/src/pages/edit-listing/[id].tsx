@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 
 // components
 import { Listing } from '@/utils/api/client/zod/listings';
-import { PostListingsRequestBody } from '@/utils/api/server/zod/listings';
+import { PutListingsRequestBody } from '@/utils/api/server/zod/listings';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -18,8 +18,8 @@ import useForms from '@/components/marketplace/createListing/useForms';
 
 // middleware
 import fetchListing from '@/middlewares/fetchListing';
-import { Order, PreviewImageProps } from '@/components/marketplace/createListing/ImageUploadForm';
 import editListing from '@/middlewares/editListing';
+import { Order, PreviewImageProps } from '@/components/marketplace/createListing/ImageUploadForm';
 
 const useGetListingQuery = (id: string) => {
   const { data } = useQuery(['listing', id], async () => fetchListing(id), {
@@ -31,13 +31,13 @@ const useGetListingQuery = (id: string) => {
 
 const useEditListingQuery = (
   id: string,
-  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
+  listing: { listingBody: PutListingsRequestBody; images: Blob[] } | undefined,
   previousData: Listing | undefined,
   imagesOrder: Order,
   deletedImages: string[]
 ) => {
   const { data } = useQuery(
-    ['postListing', listing],
+    ['putListing', listing],
     () => editListing(id, listing?.listingBody, listing?.images, imagesOrder, deletedImages),
     {
       enabled:
@@ -62,9 +62,11 @@ const CreateListingPage = () => {
   const { data } = useSession();
 
   // modals
+
   const { editModal, cancelModal } = useModals();
 
   // form data
+
   const {
     forms,
     formData,
@@ -77,7 +79,9 @@ const CreateListingPage = () => {
   } = useForms();
 
   // Hooks
+
   const listingData = useGetListingQuery(id as string);
+
   const editListingData = useEditListingQuery(
     id as string,
     formData,
@@ -95,8 +99,13 @@ const CreateListingPage = () => {
   // setListingData
   useEffect(() => {
     if (listingData) {
-      setFormData({ listingBody: listingData, images: [] });
+      // Disable form
       setDisabled(true);
+
+      // Set Form Data
+      setFormData({ listingBody: listingData, images: [] });
+
+      // Set Image Data
       if (listingData.images) {
         const previewImages: PreviewImageProps[] = [];
         listingData.images.forEach((image) => {
@@ -110,11 +119,17 @@ const CreateListingPage = () => {
     }
   }, [listingData, setDisabled, setFormData, setListingImages]);
 
+  // open modal if successful
+  useEffect(() => {
+    if (editListingData) {
+      editModal.open(true);
+    }
+  }, [editListingData]);
+
   // Handle Submit/Cancel
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    editModal.open(true);
     submitForm();
   };
 
