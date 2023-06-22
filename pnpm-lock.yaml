@@ -285,9 +285,6 @@ importers:
       socket.io:
         specifier: ^4.6.1
         version: 4.6.1
-      zod:
-        specifier: ^3.21.4
-        version: 3.21.4
     devDependencies:
       '@inc/types':
         specifier: workspace:*
@@ -301,9 +298,6 @@ importers:
       nodemon:
         specifier: ^2.0.22
         version: 2.0.22
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@18.15.3)(typescript@5.0.2)
       typescript:
         specifier: 5.0.2
         version: 5.0.2
