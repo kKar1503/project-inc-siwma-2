@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
 import CategoryIcon from '@mui/icons-material/Category';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
@@ -21,21 +22,24 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
+import Switch from '@mui/material/Switch';
 import { useState, Fragment, MouseEvent } from 'react';
 import { Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
-import ChangeLanguageButton from './ChangeLanguageButton';
+import { signOut } from 'next-auth/react';
 
 export type MobileDrawerProps = {
   userId: string | undefined;
+  language: 'English' | 'Chinese';
 };
 
-const MobileDrawer = ({ userId }: MobileDrawerProps) => {
+const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
+  const [drawerLang, setDrawerLang] = useState(language);
   const { t } = useTranslation();
-  const { palette } = useTheme();
+  const { typography, palette } = useTheme();
 
   const handleProfileClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -44,10 +48,16 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
 
   const mobileDrawerLanuageChange = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
+    setDrawerLang(drawerLang === 'English' ? 'Chinese' : 'English');
   };
 
   const toggleDrawer = (openState: boolean) => () => {
     setOpenDrawer(openState);
+  };
+
+  const handleLogOut = async () => {
+    toggleDrawer(false);
+    await signOut({ callbackUrl: '/login' });
   };
 
   const list = () => (
@@ -118,7 +128,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
             </Link>
 
             {/* update link when page ready */}
-            <Link href={`/profile/${userId}/change-password`} underline="none">
+            <Link href="/profile/change-password" underline="none">
               <ListItemButton>
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <LockIcon sx={{ color: palette.grey[600] }} />
@@ -127,6 +137,15 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
               </ListItemButton>
             </Link>
           </List>
+
+          <Link href="/bookmarks" underline="none">
+            <ListItemButton>
+              <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
+                <BookmarksIcon sx={{ color: palette.grey[600] }} />
+              </ListItemIcon>
+              <ListItemText primary="Bookmarks" />
+            </ListItemButton>
+          </Link>
         </Collapse>
 
         <Link href="/chat" underline="none">
@@ -140,22 +159,27 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
           </ListItem>
         </Link>
 
-        {/* update with logic when ready */}
-        <Link href="/" underline="none">
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <LogoutIcon sx={{ color: palette.grey[600] }} />
-              </ListItemIcon>
-              <ListItemText primary={t('Log Out')} />
-            </ListItemButton>
-          </ListItem>
-        </Link>
+        <ListItem disablePadding onClick={handleLogOut}>
+          <ListItemButton>
+            <ListItemIcon>
+              <LogoutIcon sx={{ color: palette.grey[600] }} />
+            </ListItemIcon>
+            <ListItemText primary={t('Log Out')}/>
+          </ListItemButton>
+        </ListItem>
 
         <ListItem disablePadding sx={{ position: 'absolute', bottom: 0 }}>
           <ListItemButton onClick={mobileDrawerLanuageChange}>
             <Grid component="label" container alignItems="center">
-              <ChangeLanguageButton />
+              <Grid sx={{ fontSize: typography.subtitle2 }} item>
+                EN
+              </Grid>
+              <Grid item>
+                <Switch checked={drawerLang === 'Chinese'} value="checked" />
+              </Grid>
+              <Grid sx={{ fontSize: typography.subtitle2 }} item>
+                CN
+              </Grid>
             </Grid>
           </ListItemButton>
         </ListItem>
