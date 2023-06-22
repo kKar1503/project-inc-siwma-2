@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -39,6 +40,7 @@ export type ProfileDetailCardData = {
 };
 
 const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode?: boolean }) => {
+  const { t } = useTranslation();
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
@@ -64,6 +66,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
     };
   }, [isSm, isMd, isLg]);
 
+
   return (
     <Card sx={styleProfileCard}>
       <CardHeader
@@ -73,8 +76,8 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
         subheaderTypographyProps={{
           fontSize: 16,
         }}
-        title="Your Profile"
-        subheader="View your profile details here"
+        title={t('Your Profile')}
+        subheader={t('View your profile details here')}
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
 
@@ -109,20 +112,21 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
             sx={({ spacing }) => ({
               ml: spacing(1),
             })}
-          >
-            {/* ({reviews} {reviews === 1 ? ' Review' : ' Reviews'}) */}
+          > 
+             {/* ({reviews} {reviews === 1 ? t('Review') : t('Reviews')}) */}
           </Typography>
         </Box>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>{t('Bio')}:</Typography>
         <Typography>{data?.bio}</Typography>
       </CardContent>
 
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
+
+        <Typography sx={{ fontWeight: 'bold' }}>{t('Linked accounts')}:</Typography>
         {data?.contactMethod === 'telegram' && (
           <Box
             sx={({ spacing }) => ({
@@ -185,25 +189,26 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
         })}
       >
         <Box sx={{ width: '98%' }}>
-          {isEditMode && (
-            <Button
-              component={Link}
-              href={`/profile/${data?.id}/edit-profile`}
-              variant="contained"
-              type="submit"
-              sx={({ spacing }) => ({
-                width: '100%',
-                mb: spacing(2),
-                mt: spacing(2),
-                fontWeight: 'bold',
-              })}
-            >
-              Edit profile
-            </Button>
+        {isEditMode && (
+          <Button
+            component={Link}
+            href={`/profile/${data?.id}/edit-profile`}
+            variant="contained"
+            type="submit"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mb: spacing(2),
+              mt: spacing(2),
+              fontWeight: 'bold',
+            })}
+          >
+            {t('Edit profile')}
+          </Button>
           )}
         </Box>
       </CardActions>
     </Card>
   );
 };
+
 export default ProfileDetailCard;

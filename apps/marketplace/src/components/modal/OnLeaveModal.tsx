@@ -1,5 +1,6 @@
 import { Modal } from '@inc/ui';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
 export type ReportModalProps = {
@@ -11,6 +12,7 @@ const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
 
   if (leftButtonState === true) {
     router.back();
@@ -29,10 +31,12 @@ const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
       setOpen={setOpen}
       buttonColor="#0288D1"
       icon="info"
-      title="Confirmation"
-      content="Once you leave the page, your changes will be removed and your changes will not be updated."
-      leftButtonText="leave"
-      rightButtonText="stay here"
+      title={t('Confirmation')}
+      content={t(
+        'Once you leave the page, your changes will be removed and your changes will not be updated.'
+      )}
+      leftButtonText={t('leave')}
+      rightButtonText={t('stay here')}
       leftButtonState={leftButtonState}
       rightButtonState={rightButtonState}
       setLeftButtonState={setLeftButtonState}
