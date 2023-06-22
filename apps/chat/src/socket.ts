@@ -38,7 +38,7 @@ export default (io: Server) => {
 
     // Attaching an 'iam' event listener
     connectEventLog('trace', `Attaching 'iam' event listener to socket...`);
-    socket.once(EVENTS.CONNECTION.IAM, (userId) => {
+    socket.once(EVENTS.CONNECTION.IAM, (userId, ack) => {
       const iamEventLog = eventLogHelper(EVENTS.CONNECTION.IAM, socket);
       iamEventLog('debug', `UserId is ${userId}.`);
 
@@ -49,10 +49,17 @@ export default (io: Server) => {
 
       if (socketUserIndex === -1) {
         iamEventLog('error', `SocketId userId pair not added to cache...`);
+
+        iamEventLog('trace', `Acknowledging 'iam' event...`);
+        ack({ success: false });
+
         iamEventLog('error', `Disconnecting socket... Reason: Failed to add to cache.`);
         socket.disconnect(true);
         return;
       }
+
+      iamEventLog('trace', `Acknowledging 'iam' event...`);
+      ack({ success: true });
 
       iamEventLog('trace', `SocketId userId pair added to cache.`);
 
