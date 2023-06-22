@@ -5,25 +5,25 @@ type RoomId = string;
 type MessageId = number;
 type ListingId = number;
 
-type ClientSendMessage = {
+export type ClientSendMessage = {
   roomId: RoomId;
   message: string;
   time: Date;
 };
 
-type ServerRoomMessage = {
+export type ServerRoomMessage = {
   id: MessageId;
   roomId: RoomId;
   message: string;
   time: Date;
 };
 
-type Room = {
+export type Room = {
   id: RoomId;
   user: UserId;
 };
 
-type ClientCreateRoom = {
+export type ClientCreateRoom = {
   sellerId: UserId;
   listingId: ListingId;
 };
@@ -64,7 +64,7 @@ type EventParams = {
 
 type Event = keyof EventParams;
 
-type Acknowlegement =
+export type Acknowlegement =
   | {
       success: true;
       data?: any;
