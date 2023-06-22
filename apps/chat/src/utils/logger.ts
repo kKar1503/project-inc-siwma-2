@@ -7,7 +7,7 @@ export type LogLevels = 'trace' | 'debug' | 'info' | 'event' | 'warn' | 'error' 
 
 const logger = pino({
   transport: {
-    target: 'pino-pretty',
+    target: '../pino-pretty.js',
     options: {
       colorize: true,
     },
@@ -15,7 +15,6 @@ const logger = pino({
   customLevels: {
     event: 35,
   },
-  level: process.env.LOG_LEVEL || 'debug',
   timestamp: () => `,"time":"${dayjs().format()}"`,
 });
 
