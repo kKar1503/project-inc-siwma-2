@@ -91,6 +91,9 @@ const TableTest = () => {
           headers={headCells}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          onDelete={() => console.log('delete')}
+          onEdit={() => console.log('edit')}
+          onToggle={() => console.log('toggle')}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}

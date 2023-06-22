@@ -24,6 +24,9 @@ type BaseTableProps = {
   totalCount: number;
   onPageChange: React.ComponentProps<typeof TablePagination>['onPageChange'];
   onRowsPerPageChange: React.ComponentProps<typeof TablePagination>['onRowsPerPageChange'];
+  onEdit: (row: BaseTableData) => void;
+  onToggle: (toggled: boolean, rows: readonly BaseTableData[]) => void;
+  onDelete: (rows: readonly BaseTableData[]) => void;
   rowsPerPage: number;
   page: number;
 };
@@ -39,6 +42,9 @@ const BaseTable = (props: BaseTableProps) => {
     totalCount,
     onPageChange,
     onRowsPerPageChange,
+    onEdit,
+    onToggle,
+    onDelete,
     rowsPerPage,
     page,
   } = props;
@@ -80,8 +86,6 @@ const BaseTable = (props: BaseTableProps) => {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  console.log({ selected });
-
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -89,9 +93,9 @@ const BaseTable = (props: BaseTableProps) => {
           heading="Desserts"
           selectedRows={selected}
           toggleColumn="enabled"
-          onEdit={() => console.log('DELETE!')}
-          onToggle={(e, toggled) => console.log(toggled)}
-          onDelete={() => console.log('DELETE!')}
+          onEdit={() => onEdit(selected[0])}
+          onToggle={(e, toggled) => onToggle(toggled, selected)}
+          onDelete={() => onDelete(selected)}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
