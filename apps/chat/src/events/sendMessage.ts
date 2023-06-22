@@ -24,6 +24,8 @@ const sendMessage: EventFile = (io, socket) => ({
     eventLog('trace', `Attempting to retrieve other occupant socketId from cache...`);
     const [otherOccupantSocketId] = SocketUserStore.searchSocketUser('userId', otherOccupant);
 
+    eventLog('debug', `Other occupant socketId: ${otherOccupantSocketId}`);
+
     eventLog('trace', `Checking for connected sockets to room (${roomId})...`);
     const connectedSockets = io.sockets.adapter.rooms.get(roomId);
 
@@ -54,12 +56,12 @@ const sendMessage: EventFile = (io, socket) => ({
         },
       })
       .then(({ id, read }) => {
-        eventLog('debug', `Message inserted into database: ${id}`);
+        eventLog('info', `Created new message (${id}) in database.`);
 
         eventLog('trace', `Acknowledging message...`);
         ack({ success: true, data: { id, read } });
 
-        eventLog('trace', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
+        eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
         (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
           id,
           message,

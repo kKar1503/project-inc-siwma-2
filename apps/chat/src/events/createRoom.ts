@@ -59,7 +59,7 @@ const createRoom: EventFile = (io, socket) => ({
               },
             })
             .then(({ id }) => {
-              eventLog('debug', `Created room in database.`);
+              eventLog('info', `Created new room (${id}) in database.`);
 
               eventLog('trace', `Acknowledging room created...`);
               ack({ success: true, data: { id } });
@@ -67,7 +67,7 @@ const createRoom: EventFile = (io, socket) => ({
               eventLog('trace', `Attempting to retrieve seller socketId from cache...`);
               const [sellerSocketId] = SocketUserStore.searchSocketUser('userId', sellerId);
 
-              eventLog('trace', `Emitting ${EVENTS.SERVER.ROOM.CREATED} to ${sellerSocketId}...`);
+              eventLog('info', `Emitting ${EVENTS.SERVER.ROOM.CREATED} to ${sellerSocketId}...`);
               (io.to(sellerSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.ROOM.CREATED, {
                 id,
                 user: userId,

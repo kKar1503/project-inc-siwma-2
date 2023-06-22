@@ -30,7 +30,7 @@ const readMessage: EventFile = (_, socket) => ({
         },
       })
       .then(({ count }) => {
-        eventLog('debug', `Updated ${count} messages in database.`);
+        eventLog('info', `Updated ${count} messages in database.`);
 
         prisma.messages
           .findMany({
@@ -49,7 +49,8 @@ const readMessage: EventFile = (_, socket) => ({
             take: count,
           })
           .then((messages) => {
-            eventLog('debug', `Retrieved ${messages.length} messages from database.`);
+            eventLog('info', `Retrieved ${messages.length} messages from database.`);
+            eventLog('debug', `Retrieved messages: ${JSON.stringify(messages)}`);
 
             let messageIds: number[] = [];
 
@@ -74,7 +75,7 @@ const readMessage: EventFile = (_, socket) => ({
             );
 
             eventLog(
-              'trace',
+              'info',
               `Emitting ${EVENTS.SERVER.MESSAGE.READ} to ${otherOccupantSocketId}...`
             );
             socket.to(otherOccupantSocketId).emit(EVENTS.SERVER.MESSAGE.READ, messageIds);

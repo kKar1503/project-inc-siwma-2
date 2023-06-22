@@ -23,7 +23,7 @@ const deleteRoom: EventFile = (io, socket) => ({
         },
       })
       .then(({ buyer, seller }) => {
-        eventLog('debug', `Room (${roomId}) deleted from database.`);
+        eventLog('info', `Room (${roomId}) deleted from database.`);
 
         eventLog('trace', `Acknowledging room (${roomId}) deleted from database...`);
         ack({ success: true });
@@ -32,10 +32,7 @@ const deleteRoom: EventFile = (io, socket) => ({
         const otherOccupant = buyer === userId ? seller : buyer;
         const [otherOccupantSocketId] = SocketUserStore.searchSocketUser('userId', otherOccupant);
 
-        eventLog(
-          'trace',
-          `Emitting ${EVENTS.SERVER.ROOM.DELETED} to (${otherOccupantSocketId})...`
-        );
+        eventLog('info', `Emitting ${EVENTS.SERVER.ROOM.DELETED} to (${otherOccupantSocketId})...`);
         (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(
           EVENTS.SERVER.ROOM.DELETED,
           roomId

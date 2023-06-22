@@ -24,7 +24,7 @@ const deleteMessage: EventFile = (io, socket) => ({
         },
       })
       .then(({ room: roomId }) => {
-        eventLog('debug', `Deleted message from database.`);
+        eventLog('info', `Deleted message (${messageId}) from database.`);
 
         eventLog('trace', `Acknowledging message delete...`);
         ack({ success: true, data: { messageId } });
@@ -37,7 +37,7 @@ const deleteMessage: EventFile = (io, socket) => ({
         const [otherOccupantSocketId] = SocketUserStore.searchSocketUser('userId', otherOccupant);
 
         eventLog(
-          'trace',
+          'info',
           `Emitting ${EVENTS.SERVER.MESSAGE.DELETED} to ${otherOccupantSocketId}...`
         );
         io.to(otherOccupantSocketId).emit(EVENTS.SERVER.MESSAGE.DELETED, messageId);

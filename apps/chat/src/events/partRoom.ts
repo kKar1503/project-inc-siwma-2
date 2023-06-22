@@ -54,10 +54,13 @@ const partRoom: EventFile = (io, socket) => ({
       };
 
       if (otherOccupantSocketId === '') {
-        eventLog('debug', `Other occupant socketId cannot be found in cache.`);
+        eventLog('debug', `Other occupant (${otherOccupantId}) socketId cannot be found in cache.`);
         removeRoom();
       } else {
-        eventLog('debug', `Other occupant socketId found in cache: ${otherOccupantSocketId}`);
+        eventLog(
+          'debug',
+          `Other occupant (${otherOccupantId}) socketId found in cache: ${otherOccupantSocketId}`
+        );
         eventLog(
           'trace',
           `Checking if socket (${otherOccupantSocketId}) is connected to room (${roomId})...`

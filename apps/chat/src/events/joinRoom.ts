@@ -26,7 +26,7 @@ const joinRoom: EventFile = (_, socket) => ({
     const [roomIdFromCache, _] = RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
 
     if (roomIdFromCache === '') {
-      eventLog('debug', `Room (${roomId}) cannot be found in cache...`);
+      eventLog('debug', `Room (${roomId}) cannot be found in cache.`);
 
       eventLog('trace', `Attempting to fetch room (${roomId}) from db...`);
       prisma.rooms
@@ -62,7 +62,7 @@ const joinRoom: EventFile = (_, socket) => ({
     socket.join(roomId);
     eventLog('info', `Joined ${roomId}.`);
 
-    eventLog('trace', `Acknowledging room (${roomId})...`);
+    eventLog('trace', `Acknowledging room (${roomId}) joining...`);
     ack({ success: true });
   },
 });
