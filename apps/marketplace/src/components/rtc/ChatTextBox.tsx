@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import InputBase from '@mui/material/InputBase';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
@@ -28,6 +29,7 @@ const ChatTextBox = ({
   onSend,
   setOnSend,
 }: ChatTextBoxProps) => {
+  const { t } = useTranslation();
   const [fileName, setFileName] = useState<string>('');
   const [uploadType, setUploadType] = useState<string>('');
   const imageFileRef = useRef<HTMLInputElement>(null);
@@ -115,7 +117,7 @@ const ChatTextBox = ({
       >
         <MenuItem onClick={handleImageClick} disabled={fileName !== ''}>
           <ImageOutlinedIcon sx={({ spacing }) => ({ mr: spacing(2) })} />
-          Image
+          {t('Image')}
           <input
             hidden
             ref={imageFileRef}
@@ -154,7 +156,7 @@ const ChatTextBox = ({
       )}
       {fileName === '' && (
         <InputBase
-          placeholder="Type your message here"
+          placeholder={t(`Type your message here`).toString()}
           value={inputText}
           fullWidth
           sx={({ spacing, typography }) => ({
