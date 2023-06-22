@@ -8,7 +8,9 @@ import { Listing } from '@/utils/api/client/zod';
 
 // pass filter values to select component
 const filterValues = ['All Listings', 'Buy Listings', 'Sell Listings'];
+const filterEndpointValues = ['all', 'buy', 'sell'];
 const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
+const sortEndpointValues = ['recent_newest', 'price_desc', 'price_asc'];
 
 export type ListingsTabProps = {
   allListings: Listing[] | null | undefined;
@@ -17,7 +19,12 @@ export type ListingsTabProps = {
   sortByListings: (newData: (typeof sortValues)[number]) => void;
 };
 
-const ListingsTab = ({ allListings, handleSearch, filterListings, sortByListings }: ListingsTabProps) => {
+const ListingsTab = ({
+  allListings,
+  handleSearch,
+  filterListings,
+  sortByListings,
+}: ListingsTabProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
 
@@ -84,13 +91,21 @@ const ListingsTab = ({ allListings, handleSearch, filterListings, sortByListings
             <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
               Filter:
             </Typography>
-            <SelectComponent onData={filterListings} values={filterValues} />
+            <SelectComponent
+              onData={filterListings}
+              displayValues={filterValues}
+              values={filterEndpointValues}
+            />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
               Sort By:
             </Typography>
-            <SelectComponent onData={sortByListings} values={sortValues} />
+            <SelectComponent
+              onData={sortByListings}
+              displayValues={sortValues}
+              values={sortEndpointValues}
+            />
           </Box>
         </Box>
       </Box>
