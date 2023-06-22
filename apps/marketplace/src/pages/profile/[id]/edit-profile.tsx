@@ -202,6 +202,7 @@ const EditProfile = () => {
         contactMethod: contactMethod as 'whatsapp' | 'email' | 'phone' | 'telegram' | 'facebook',
       };
       mutation.mutate(updatedUserData);
+      window.location.href = `/profile/${id}`;
     } catch (error) {
       if (error instanceof InvalidNameError) {
         setNameError('Invalid name');
