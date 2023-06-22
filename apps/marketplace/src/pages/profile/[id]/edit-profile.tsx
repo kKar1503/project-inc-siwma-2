@@ -55,6 +55,7 @@ const EditProfile = () => {
   const mutation = useUpdateUserMutation(loggedUserUuid);
   const theme = useTheme();
   const { spacing } = theme;
+  const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -127,14 +128,14 @@ const EditProfile = () => {
   const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newBio = e.target.value;
     setBio(newBio);
-  
+
     if (newBio.trim() === '') {
       setBioError('Please enter a bio');
     } else {
       setBioError('');
     }
   };
-  
+
   const handleContactChange = (e: SelectChangeEvent) => {
     const selectedContact = e.target.value;
     setContactMethod(selectedContact);
@@ -202,7 +203,7 @@ const EditProfile = () => {
         contactMethod: contactMethod as 'whatsapp' | 'email' | 'phone' | 'telegram' | 'facebook',
       };
       mutation.mutate(updatedUserData);
-      window.location.href = `/profile/${id}`;
+      router.push(`/profile/${id}`);
     } catch (error) {
       if (error instanceof InvalidNameError) {
         setNameError('Invalid name');
@@ -470,7 +471,7 @@ const EditProfile = () => {
                 >
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
                     <InputLabel>Contact</InputLabel>
-                    <Select label="contact" value={contactMethod} onChange={handleContactChange} >
+                    <Select label="contact" value={contactMethod} onChange={handleContactChange}>
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="whatsapp">Whatsapp</MenuItem>
                     </Select>
