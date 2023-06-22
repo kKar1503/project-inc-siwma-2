@@ -1,4 +1,4 @@
-import { Prisma, ListingType, Listing } from '../../../index';
+import { Prisma, ListingType } from '../../../index';
 
 interface IListings {
   id?: number;

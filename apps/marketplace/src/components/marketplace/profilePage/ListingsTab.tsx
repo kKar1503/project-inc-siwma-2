@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
 import { SelectComponent, useResponsiveness, SearchBar } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Listing } from '@/utils/api/client/zod';
 
 // pass filter values to select component
@@ -12,11 +12,12 @@ const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
 
 export type ListingsTabProps = {
   allListings: Listing[] | null | undefined;
+  handleSearch: (query: string) => void;
   filterListings: (newData: (typeof filterValues)[number]) => void;
   sortByListings: (newData: (typeof sortValues)[number]) => void;
 };
 
-const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTabProps) => {
+const ListingsTab = ({ allListings, handleSearch, filterListings, sortByListings }: ListingsTabProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
 
@@ -68,28 +69,36 @@ const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTa
   return (
     <Box>
       {/* top portion */}
-        <Box sx={{ display: 'flex', justifyContent: isSm ? 'center' : 'flex-start' }}>
-          {/* Select Components */}
-          <Box sx={styleFilter}>
-            <SearchBar />
-            <Box sx={({ spacing }) => ({ display: 'flex', alignItems: 'center', mr: spacing(1), mt: isSm ? spacing(1) : spacing(0) })}>
-              <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
-                Filter:
-              </Typography>
-              <SelectComponent onData={filterListings} values={filterValues} />
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center'}}>
-              <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
-                Sort By:
-              </Typography>
-              <SelectComponent onData={sortByListings} values={sortValues} />
-            </Box>
+      <Box sx={{ display: 'flex', justifyContent: isSm ? 'center' : 'flex-start' }}>
+        {/* Select Components */}
+        <Box sx={styleFilter}>
+          <SearchBar onChange={handleSearch} />
+          <Box
+            sx={({ spacing }) => ({
+              display: 'flex',
+              alignItems: 'center',
+              mr: spacing(1),
+              mt: isSm ? spacing(1) : spacing(0),
+            })}
+          >
+            <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
+              Filter:
+            </Typography>
+            <SelectComponent onData={filterListings} values={filterValues} />
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
+              Sort By:
+            </Typography>
+            <SelectComponent onData={sortByListings} values={sortValues} />
           </Box>
         </Box>
+      </Box>
       {/* lower portion showing marketplace cards */}
+
       <Box sx={stylesListing}>
         {allListings?.map((listing) => (
-          <ProductListingItem data={listing} />
+          <ProductListingItem data={listing} key={listing.id} />
         ))}
       </Box>
     </Box>

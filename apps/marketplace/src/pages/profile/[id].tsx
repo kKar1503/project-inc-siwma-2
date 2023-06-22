@@ -91,6 +91,13 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const { spacing } = theme;
 
   const [value, setValue] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    console.log(searchQuery);
+  };
+
   // when filter/sorts are called use set states to set the new listings/reviews again
   const [reviews, setReviews] = useState(serverSideReviews);
   const [filterListings, setFilterListings] = useState('');
@@ -109,6 +116,8 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
     setSortByListings(filter);
     fetchUser(loggedUserUuid);
     // make endpoint call to carry out filter
+
+    
   };
 
   const handleFilterReviews = (filter: string) => {
@@ -232,6 +241,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
                 <ListingsTab
                   // allListings={listings}
                   allListings={userListings}
+                  handleSearch={handleSearch}
                   filterListings={handleFilterListings}
                   sortByListings={handleSortByListings}
                 />
@@ -240,8 +250,9 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
                 <ReviewsTab
                   allReviews={userReviews}
                   // rmb to add userDetails.rating and userDetails.reviews
-                  userRating={2}
-                  totalReviews={200}
+                  userRating={userReviews && userReviews.length > 0 ? userReviews[0].rating : 0}
+                  // userRating={2}
+                  totalReviews={userReviews && userReviews.length > 0 ? userReviews.length : 0}
                   filterReviews={handleFilterReviews}
                   sortByReviews={handleSortByReviews}
                 />

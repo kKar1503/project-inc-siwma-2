@@ -41,9 +41,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface SearchBarProps {
   handleSearch?: (search: string) => void;
+  onChange?: (query: string) => void;
 }
 
-const SearchBar = ({ handleSearch }: SearchBarProps) => {
+const SearchBar = ({ handleSearch, onChange }: SearchBarProps) => {
   const SearchBarRef = useRef<HTMLInputElement>(null);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
@@ -97,6 +98,9 @@ const SearchBar = ({ handleSearch }: SearchBarProps) => {
       if (SearchBarRef.current && handleSearch) {
         handleSearch(SearchBarRef.current.value);
       }
+    }
+    if (onChange) {
+      onChange(SearchBarRef.current.value);
     }
   };
 
