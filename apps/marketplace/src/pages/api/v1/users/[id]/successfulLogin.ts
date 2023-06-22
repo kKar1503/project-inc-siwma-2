@@ -18,7 +18,7 @@ export default apiHandler({ allowNonAuthenticated: true }).post(
     const creatingSuccessfulLog = await PrismaClient.logs.create({
       data: {
         logLevel: 'info',
-        logMessage: `Sucessful ${req.body.role} Login - user: ${req.body.username}, userId: ${id}`,
+        logMessage: `Sucessful ${req.body.role} Login - User: ${req.body.username}, UserId: ${id}`,
       },
     });
     return res.status(201).json(formatAPIResponse({ logId: creatingSuccessfulLog.id }));
