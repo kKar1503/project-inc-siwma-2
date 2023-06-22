@@ -208,7 +208,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
                 mb: spacing(1),
               }}
             >
-              Bookmarks
+              {t('Bookmarks')}
             </Typography>
           </MenuItem>
         </Link>
