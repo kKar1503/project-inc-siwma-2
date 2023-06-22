@@ -3,7 +3,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
-logger.info('Validating Env Variables...');
+logger.info('Initializing Env Variables...');
 config();
 
 import { logger } from './utils/logger';
@@ -11,13 +11,19 @@ import socket from './socket';
 import RoomOccupantsStore from './store/RoomOccupantsStore';
 import SocketUserStore from './store/SocketUserStore';
 
+logger.info('Validating Env Variables...');
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT !== undefined ? Number(process.env.PORT) : 4000;
 const corsOrigin = process.env.CORS?.split(',') ?? 'http://localhost:3000';
+const pinoLogLevel = process.env.LOG_LEVEL ?? 'debug';
 
 logger.debug(`HOST: ${host}`);
 logger.debug(`PORT: ${port}`);
 logger.debug(`CORS: ${corsOrigin}`);
+logger.debug(`LOG_LEVEL: ${pinoLogLevel}`);
+
+logger.info('Assigning Pino Log Level');
+logger.level = pinoLogLevel;
 
 if (process.env.DATABASE_URL === undefined) {
   throw new Error('Missing DATABASE_URL env.');
