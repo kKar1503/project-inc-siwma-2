@@ -1,21 +1,18 @@
 {
-    "compilerOptions": {
-        "allowJs": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "declaration": true,
-        "module": "CommonJS",
-        "target": "ESNext",
-        "emitDeclarationOnly": true,
-        "outFile": "./dist/index.d.ts",
-    },
-    "include": [
-        "."
-    ],
-    "exclude": [
-        "dist",
-        "node_modules",
-        "**/*.spec.ts",
-        "esbuild.config.js"
-    ]
+  "compilerOptions": {
+    "allowJs": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "module": "CommonJS",
+    "target": "ESNext",
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules", "**/*.spec.ts", "esbuild.config.js"]
 }
