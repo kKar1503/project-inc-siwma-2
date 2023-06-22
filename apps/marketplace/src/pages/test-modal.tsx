@@ -6,6 +6,7 @@ import ReportModal from '@/components/modal/ReportModal';
 import MakeOfferModal from '@/components/modal/MakeOfferModal';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import AdvertisementModal from '@/components/marketplace/listing/AdvertisementModal';
+import OnRefreshModal from '@/components/modal/RefreshModal';
 
 const TestModal = () => {
   const report = [
@@ -27,6 +28,7 @@ const TestModal = () => {
   const [openReport, setOpenReport] = useState(false);
   const [openOffer, setOpenOffer] = useState(false);
   const [openLeave, setOpenLeave] = useState(false);
+  const[ openRefresh, setOpenRefresh] = useState(false);
   const [inputValue, setInputValue] = useState<number>(0);
   const [rating, setRating] = useState<number | null>(1);
   const [isOpen, setIsOpen] = useState(false);
@@ -121,6 +123,8 @@ const TestModal = () => {
       />
       <Button onClick={() => setOpenLeave(true)}> On Leave Modal</Button>
       <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
+      <Button onClick={() => setOpenRefresh(true)}> Refresh Modal</Button>
+      <OnRefreshModal open={openRefresh} setOpen={setOpenRefresh} />
       <Button onClick={() => setIsOpen(true)}> Modal</Button>
       <AdvertisementModal
         id={1}
