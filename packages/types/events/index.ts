@@ -88,7 +88,10 @@ type EventFile = (
   };
 }[keyof EventParams];
 
-type ClientEventFile = (socket: ClientSocket) => {
+type ClientEventFile<T> = (
+  socket: ClientSocket,
+  hookParams: T
+) => {
   [K in keyof EventParams]: {
     eventName: K;
     callback: (param: EventParams[K], ack: (acknowledgement: Acknowlegement) => void) => void;
