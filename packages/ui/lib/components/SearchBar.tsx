@@ -98,15 +98,18 @@ const SearchBar = ({ handleSearch, onChange }: SearchBarProps) => {
       if (SearchBarRef.current && handleSearch) {
         handleSearch(SearchBarRef.current.value);
       }
-    }
-    if (onChange) {
-      onChange(SearchBarRef.current.value);
+      if (SearchBarRef.current && onChange) {
+        onChange(SearchBarRef.current.value);
+      }
     }
   };
 
   const handleOnClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (SearchBarRef.current && handleSearch) {
       handleSearch(SearchBarRef.current.value);
+    }
+    if (SearchBarRef.current && onChange) {
+      onChange(SearchBarRef.current.value);
     }
   };
 
