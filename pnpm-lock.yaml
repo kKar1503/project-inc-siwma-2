@@ -595,6 +595,9 @@ importers:
       socket.io:
         specifier: ^4.6.1
         version: 4.6.1
+      socket.io-client:
+        specifier: 4.7.0
+        version: 4.7.0
 
   packages/ui:
     dependencies:
@@ -4413,7 +4416,6 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-    dev: false
 
   /engine.io-parser@5.0.6:
     resolution: {integrity: sha512-tjuoZDMAdEhVnSFleYPCtdL2GXwVTGtNjoeJd9IhIG3C1xs9uwxqRNEu5WpnDZCaozwVlK/nuQhpodhXSIMaxw==}
@@ -4422,7 +4424,6 @@ packages:
   /engine.io-parser@5.1.0:
     resolution: {integrity: sha512-enySgNiK5tyZFynt3z7iqBR+Bto9EVVVvDFuTT0ioHCGbzirZVGDGiQjZzEp8hWl6hd5FSVytJGuScX1C1C35w==}
     engines: {node: '>=10.0.0'}
-    dev: false
 
   /engine.io@6.4.2:
     resolution: {integrity: sha512-FKn/3oMiJjrOEOeUub2WCox6JhxBXq/Zn3fZOMCBxKnNYtsdKjxhl7yR3fZhM9PV+rdE75SU5SYMc+2PGzo+Tg==}
@@ -4666,7 +4667,6 @@ packages:
 
   /eslint-config-prettier@8.7.0(eslint@8.36.0):
     resolution: {integrity: sha512-HHVXLSlVUhMSmyW4ZzEuvjpwqamgmlfkutD53cYXLikh4pt/modINRcCIApJ84czDxM4GZInwUrromsDdTImTA==}
-    hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
     dependencies:
@@ -6509,7 +6509,6 @@ packages:
   /next@13.2.4(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-g1I30317cThkEpvzfXujf0O4wtaQHtDCLhlivwlTJ885Ld+eOgcz7r3TGQzeU+cSRoNHtD8tsJgzxVdYojFssw==}
     engines: {node: '>=14.6.0'}
-    hasBin: true
     peerDependencies:
       '@opentelemetry/api': ^1.4.0
       fibers: '>= 3.1.0'
@@ -6712,7 +6711,6 @@ packages:
 
   /nx@16.1.4:
     resolution: {integrity: sha512-fSkgC8wXLdW6QMaBHDXeEUJINgxBa0Vsut6Hq2SxEhtxmnx+lx++7NlhYVNZixTMRmI4a5vK0jdfPpe9hknsRA==}
-    hasBin: true
     requiresBuild: true
     peerDependencies:
       '@swc-node/register': ^1.4.2
@@ -7136,7 +7134,6 @@ packages:
   /prisma@4.16.0:
     resolution: {integrity: sha512-kSCwbTm3LCephyGfZMJYqBXpPJXdJStg5xwfzeFmR5C05zfkOURK9pQpJF6uUQvFWm3lI9ZMSNkObmFkAPnB+g==}
     engines: {node: '>=14.17'}
-    hasBin: true
     requiresBuild: true
     dependencies:
       '@prisma/engines': 4.16.0
@@ -7825,7 +7822,6 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-    dev: false
 
   /socket.io-parser@4.2.2:
     resolution: {integrity: sha512-DJtziuKypFkMMHCm2uIshOYC7QaylbtzQwiMYDuCKy3OPkjLzu4B2vAhTlqipRHHzrI0NJeBAizTK7X+6m1jVw==}
@@ -7844,7 +7840,6 @@ packages:
       debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /socket.io@4.6.1:
     resolution: {integrity: sha512-KMcaAi4l/8+xEjkRICl6ak8ySoxsYG+gG6/XfRCPJPQ/haCRIJBTL4wIl8YCsmtaBovcAXGLOShyVWQ/FG8GZA==}
@@ -8291,7 +8286,6 @@ packages:
 
   /ts-node@10.9.1(@types/node@18.15.3)(typescript@5.0.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
-    hasBin: true
     peerDependencies:
       '@swc/core': '>=1.2.50'
       '@swc/wasm': '>=1.2.50'
@@ -8322,7 +8316,6 @@ packages:
 
   /ts-node@10.9.1(@types/node@20.1.4)(typescript@5.0.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
-    hasBin: true
     peerDependencies:
       '@swc/core': '>=1.2.50'
       '@swc/wasm': '>=1.2.50'
@@ -9036,7 +9029,6 @@ packages:
   /xmlhttprequest-ssl@2.0.0:
     resolution: {integrity: sha512-QKxVRxiRACQcVuQEYFsI1hhkrMlrXHPegbbd1yn9UHOmRxY+si12nQYzri3vbzt8VdTTRviqcKxcyllFas5z2A==}
     engines: {node: '>=0.4.0'}
-    dev: false
 
   /xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
