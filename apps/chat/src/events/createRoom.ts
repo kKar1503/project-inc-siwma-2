@@ -6,7 +6,7 @@ import SocketUserStore from '@/store/SocketUserStore';
 
 const eventName = EVENTS.CLIENT.ROOM.CREATE;
 
-const startType: EventFile = (io, socket) => ({
+const createRoom: EventFile = (io, socket) => ({
   eventName: eventName,
   type: 'on',
   callback: ({ sellerId, listingId }, ack) => {
@@ -86,4 +86,4 @@ const startType: EventFile = (io, socket) => ({
   },
 });
 
-export default startType;
+export default createRoom;
