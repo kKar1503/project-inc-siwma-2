@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import logger, { eventLogHelper } from './utils/logger';
+import eventLogHelper, { logger } from './utils/logger';
 import { EventFile } from '@inc/types';
 import { EVENTS } from '@inc/events';
 import * as eventModules from './events';

@@ -5,7 +5,7 @@ import { Server } from 'socket.io';
 
 config();
 
-import logger from './utils/logger';
+import { logger } from './utils/logger';
 import socket from './socket';
 import RoomOccupantsStore from './store/RoomOccupantsStore';
 import SocketUserStore from './store/SocketUserStore';

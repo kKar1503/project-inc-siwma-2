@@ -1,5 +1,5 @@
 import { EventFile } from '@inc/types';
-import { eventLogHelper } from '@/utils/logger';
+import eventLogHelper from '@/utils/logger';
 import { EVENTS } from '@inc/events';
 import prisma from '@/db';
 import { TypedSocketEmitter } from '@inc/types';
