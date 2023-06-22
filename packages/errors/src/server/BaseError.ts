@@ -6,6 +6,7 @@
  * 4000 - 4999: Input errors
  * 5000 - 5999: Chat errors
  * 6000 - 6999: Email errors
+ * 7000 - 7999: File errors
  */
 
 // -- Type definitions -- //
