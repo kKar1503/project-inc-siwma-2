@@ -101,10 +101,15 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
         type: review.listingReviewsListingTolisting.type === 'BUY' ? 'seller' : 'buyer' // Add the new key here
     }));
 
-    // Validate response body using Zod schema
-    const parsedReviews = reviewSchemas.getAll.parse(formatReviews);
+    // Format the response object
+    const parsedResponse = reviewSchemas.getAll.parse({
+        avgRating,
+        count,
+        reviews: formatReviews
+    });
 
-    res.status(200).json(formatAPIResponse({ avgRating, count, reviews: parsedReviews }));
+
+    res.status(200).json(formatAPIResponse(parsedResponse));
 
 };
 
