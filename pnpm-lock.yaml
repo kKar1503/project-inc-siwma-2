@@ -270,9 +270,6 @@ importers:
       express:
         specifier: ^4.18.2
         version: 4.18.2
-      formidable:
-        specifier: 2.1.1
-        version: 2.1.1
       pino:
         specifier: ^8.12.1
         version: 8.12.1
