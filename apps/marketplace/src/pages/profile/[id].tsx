@@ -9,7 +9,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
-import { useState, SyntheticEvent, useMemo } from 'react';
+import { useState, SyntheticEvent, useMemo, useEffect } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
@@ -54,10 +54,21 @@ const useGetUser = (userUuid: string) => {
   return data;
 };
 
-const useGetListing = (userUuid: string) => {
-  const { data } = useQuery('listingdata', async () => fetchProfilesListings(userUuid), {
-    enabled: userUuid !== undefined,
-  });
+const useGetListing = (userUuid: string, matching?: string, filter?: string) => {
+  const { data } = useQuery(
+    ['listingdata', userUuid, matching, filter],
+    async () => {
+      if (matching || filter) {
+        return fetchProfilesListings(userUuid, matching, filter);
+      }
+      return fetchProfilesListings(userUuid);
+    },
+    {
+      // change the enabled to trigger on filter/sort
+      enabled: userUuid !== undefined || filter !== undefined || matching !== undefined,
+    }
+  );
+
   // console.log(data);
   return data;
 };
@@ -82,7 +93,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
-  const userListings = useGetListing(id);
+  // const userListings = useGetListing(id, 's', { sortBy: 'recent_newest' });
   const profileListingImages = useGetProfileListingImagesQuery(id);
   const userReviews = useGetReview(id);
   // console.log(userDetails);
@@ -99,36 +110,38 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   };
 
   // when filter/sorts are called use set states to set the new listings/reviews again
+  const [listings, setListings] = useState(serverSideListings);
   const [reviews, setReviews] = useState(serverSideReviews);
   const [filterListings, setFilterListings] = useState('');
-  const [sortByListings, setSortByListings] = useState('');
+  const [sortByListings, setSortByListings] = useState('recent_newest');
   const [filterReviews, setFilterReviews] = useState('');
   const [sortByReviews, setSortByReviews] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
+  const userListings = useGetListing(id, searchQuery, sortByListings);
+
+  useEffect(() => {
+    if (userListings) {
+      setListings(userListings);
+    }
+  }, [userListings]);
+
   const handleFilterListings = (filter: string) => {
     setFilterListings(filter);
-    fetchUser(loggedUserUuid);
     // make endpoint call to carry out filter
   };
 
   const handleSortByListings = (filter: string) => {
     setSortByListings(filter);
-    fetchUser(loggedUserUuid);
-    // make endpoint call to carry out filter
-
-    
   };
 
   const handleFilterReviews = (filter: string) => {
     setFilterReviews(filter);
-    fetchUser(loggedUserUuid);
     // make endpoint call to carry out filter
   };
 
   const handleSortByReviews = (filter: string) => {
     setSortByReviews(filter);
-    fetchUser(loggedUserUuid);
     // make endpoint call to carry out filter
   };
 
@@ -239,8 +252,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
             <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
               <TabPanel value={value} index={0} dir={theme.direction} height="100vh">
                 <ListingsTab
-                  // allListings={listings}
-                  allListings={userListings}
+                  allListings={listings}
                   handleSearch={handleSearch}
                   filterListings={handleFilterListings}
                   sortByListings={handleSortByListings}
