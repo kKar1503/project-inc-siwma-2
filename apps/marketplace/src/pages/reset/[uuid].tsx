@@ -1,75 +1,76 @@
-import {Typography, Button, Divider,TextField,Box, Container,FormHelperText} from '@mui/material';
+import {
+  Typography,
+  Button,
+  Divider,
+  TextField,
+  Box,
+  Container,
+  FormHelperText,
+} from '@mui/material';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useRouter } from 'next/router';
-import resetpassword from '@/middlewares/resetpassword';
-import { useQuery } from 'react-query';
-import { string } from 'zod';
-
-
-const useResetPassword = (password:string , token:string|undefined, uuid:string|undefined ) => {
-  const {data,isError} = useQuery(['resetpassword'], () => resetpassword (password ,token as string ,uuid as string  ) ,
-  {enabled: token !== undefined && uuid !== undefined && password.trim() !== ''});
-  return {data,isError}
-} 
-
+import apiClient from '@/utils/api/client/apiClient';
+import { validatePassword } from '@/utils/api/validate';
 
 const ResetForm = () => {
   const router = useRouter();
-  const {uuid,token} = router.query 
+  const { uuid, token } = router.query;
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string>('');
-  const [passwordapi, setPasswordApi ] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const { spacing, shape, shadows, palette } = useTheme();
-  
-  const resetpassword = useResetPassword(passwordapi,token as string ,uuid as string );
 
-  useEffect(() => {
-    if (resetpassword?.isError){
-      alert('Response did not went through')
-    }
-    if (resetpassword?.data === 204){
-      alert('Response went through')
-      router.push('/reset/resetcfm')
-    }
-    
-  
-  },[resetpassword, router])  
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    const isValidPassword = (value: string): boolean => {
-      const passRegex = /^.{8,}$/;
-      return passRegex.test(value);
-    };
-  
-    if (password !== confirmPassword ) {
-      setErrorMsg('Password is not the same');
-      }
 
-    else if (!isValidPassword(password) ) {
-      setErrorMsg('Min of 8 characters is needed for the password');
+    try {
+      validatePassword(password);
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMsg(error.message);
+      }
+      return;
     }
 
-    else {
+    if (password !== confirmPassword) {
+      setErrorMsg('Password is not the same');
+    } else {
       setErrorMsg('');
-      setPasswordApi(password)  
+      apiClient
+        .post(`v1/users/${uuid}/reset-password`, {
+          newPassword: password,
+          token,
+        })
+        .then((response) => {
+          console.log(response);
+          if (response && response.status === 403) {
+            alert('Token Expired');
+          }
+          if (response && response.status === 422) {
+            alert('Invalid userId');
+          }
+          if (!response) {
+            alert('Response did not went through');
+          }
+          if (response && response.status === 204) {
+            alert('Response went through');
+            router.push('/reset/resetcfm');
+          }
+        });
     }
   };
-  
-
 
   const stylesBox = useMemo(() => {
     if (isSm) {
       return {
         boxShadow: shadows[5],
         px: '2rem',
-        pb: '9rem',
+        pb: '5rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -91,7 +92,7 @@ const ResetForm = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '8rem',
+        pb: '6rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -107,7 +108,7 @@ const ResetForm = () => {
       bgcolor: palette.common.white,
       ...shape,
     };
-  }, [isSm,isMd,isLg]);
+  }, [isSm, isMd, isLg]);
 
   return (
     <Box>
@@ -117,7 +118,7 @@ const ResetForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image  src="/images/siwma-bg.png" alt="logo"  style={{ objectFit: 'cover' }} fill  />
+        <Image src="/images/siwma-bg.png" alt="logo" style={{ objectFit: 'cover' }} fill />
         <Container
           component="main"
           maxWidth="md"
@@ -141,7 +142,12 @@ const ResetForm = () => {
                 mb: spacing(2),
               })}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo"  style={{ objectFit: 'contain' }} fill />
+              <Image
+                src="/images/siwma-logo.jpeg"
+                alt="logo"
+                style={{ objectFit: 'contain' }}
+                fill
+              />
             </Box>
             <Divider flexItem />
             <Box
@@ -168,7 +174,6 @@ const ResetForm = () => {
             </Box>
 
             <Box component="form" onSubmit={handleSubmit}>
-
               <TextField
                 fullWidth
                 name="password"
@@ -179,40 +184,42 @@ const ResetForm = () => {
                 type="password"
                 variant="standard"
                 required
-                
                 onChange={(e) => setPassword(e.target.value)}
               />
-                <TextField
-                    fullWidth
-                    name="confirmPassword"
-                    id="confirmPassword"
-                    label="Confirm new Password"
-                    placeholder="Confirm your password"
-                    value={confirmPassword}
-                    type="password"
-                    required
-                    variant="standard"
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              
-              {errorMsg && <FormHelperText
-              sx={({typography, palette}) => ({
-                fontSize: typography.body1,
-                color : palette.error.main
-              })}
-              >
-                {errorMsg}
-                
-                </FormHelperText>}
+              <TextField
+                fullWidth
+                name="confirmPassword"
+                id="confirmPassword"
+                label="Confirm new Password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                type="password"
+                required
+                variant="standard"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              {errorMsg && (
+                <FormHelperText
+                  sx={({ typography, palette }) => ({
+                    fontSize: typography.body1,
+                    color: palette.error.main,
+                  })}
+                >
+                  {errorMsg}
+                </FormHelperText>
+              )}
               <Button
-               sx={({ spacing }) => ({
-                my: spacing(4),
-              })}
-               type="submit" fullWidth variant="contained">
+                sx={({ spacing }) => ({
+                  my: spacing(4),
+                })}
+                type="submit"
+                fullWidth
+                variant="contained"
+              >
                 CHANGE PASSWORD
               </Button>
             </Box>
-            
           </Box>
         </Container>
       </Box>
@@ -220,4 +227,6 @@ const ResetForm = () => {
   );
 };
 
+// Temp solve for the navbar issue by removing it
+ResetForm.includeNavbar = false; 
 export default ResetForm;
