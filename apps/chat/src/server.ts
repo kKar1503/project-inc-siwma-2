@@ -48,30 +48,34 @@ httpServer.listen(port, host, () => {
   logger.info('Initializing RoomOccupantsStore...');
   RoomOccupantsStore.init();
 
-  logger.info('Attaching StateListener to RoomOccupantsStore...');
-  RoomOccupantsStore.attachStateListener((state) => {
-    logger.debug(
-      `RoomOccupantsStore State (Rooms): ${state.rooms.length} | ${JSON.stringify(state.rooms)}`
-    );
-    logger.debug(
-      `RoomOccupantsStore State (Occupants): ${state.occupants.length} | ${JSON.stringify(
-        state.occupants
-      )}`
-    );
-  }, 10000);
+  if (process.env.NODE_ENV === 'development') {
+    logger.info('Attaching StateListener to RoomOccupantsStore...');
+    RoomOccupantsStore.attachStateListener((state) => {
+      logger.debug(
+        `RoomOccupantsStore State (Rooms): ${state.rooms.length} | ${JSON.stringify(state.rooms)}`
+      );
+      logger.debug(
+        `RoomOccupantsStore State (Occupants): ${state.occupants.length} | ${JSON.stringify(
+          state.occupants
+        )}`
+      );
+    }, 10000);
 
-  logger.info('Initializing SocketUserStore...');
-  SocketUserStore.init();
+    logger.info('Initializing SocketUserStore...');
+    SocketUserStore.init();
 
-  logger.info('Attaching StateListener to SocketUserStore...');
-  SocketUserStore.attachStateListener((state) => {
-    logger.debug(
-      `SocketUserStore State (Sockets): ${state.sockets.length} | ${JSON.stringify(state.sockets)}`
-    );
-    logger.debug(
-      `SocketUserStore State (Users): ${state.users.length} | ${JSON.stringify(state.users)}`
-    );
-  }, 10000);
+    logger.info('Attaching StateListener to SocketUserStore...');
+    SocketUserStore.attachStateListener((state) => {
+      logger.debug(
+        `SocketUserStore State (Sockets): ${state.sockets.length} | ${JSON.stringify(
+          state.sockets
+        )}`
+      );
+      logger.debug(
+        `SocketUserStore State (Users): ${state.users.length} | ${JSON.stringify(state.users)}`
+      );
+    }, 10000);
+  }
 
   logger.info('Initializing Socket.io connection...');
   socket(io);
