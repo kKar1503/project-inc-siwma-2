@@ -19,10 +19,12 @@ const logger = pino({
   timestamp: () => `,"time":"${dayjs().format()}"`,
 });
 
-export const eventLogHelper = (eventName: Event, socket: Socket) => {
+const eventLogHelper = (eventName: Event, socket: Socket) => {
   logger.event(`[${socket.id}:${eventName}]`);
   return (level: LogLevels, logMessage: string) =>
     logger[level](`[${socket.id}:${eventName}] ${logMessage}`);
 };
 
-export default logger;
+export default eventLogHelper;
+
+export { logger };
