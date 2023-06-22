@@ -7,7 +7,7 @@ import RoomOccupantsStore from '@/store/RoomOccupantsStore';
 
 const eventName = EVENTS.CLIENT.MESSAGE.DELETE;
 
-const deleteMessageEvent: EventFile = (io, socket) => ({
+const deleteMessage: EventFile = (io, socket) => ({
   eventName: eventName,
   type: 'on',
   callback: async (messageId, ack) => {
@@ -49,4 +49,4 @@ const deleteMessageEvent: EventFile = (io, socket) => ({
   },
 });
 
-export default deleteMessageEvent;
+export default deleteMessage;
