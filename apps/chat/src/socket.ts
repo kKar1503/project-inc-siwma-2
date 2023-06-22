@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import logger from './utils/logger';
+import logger, { eventLogHelper } from './utils/logger';
 import { EventFile } from '@inc/types';
 import { EVENTS } from '@inc/events';
 import * as eventModules from './events';
@@ -10,66 +10,69 @@ const events: Record<string, EventFile> = Object(eventModules);
 export default (io: Server) => {
   logger.trace(`Attaching Socket.io 'connect' event listener...`);
   io.on(EVENTS.CONNECTION.CONNECT, (socket) => {
-    const logHeader = `[${socket.id}]`;
+    const connectEventLog = eventLogHelper(EVENTS.CONNECTION.CONNECT, socket);
 
-    logger.info(`${logHeader} Socket is connected.`);
+    // Attaching disconnect event listener
+    connectEventLog('trace', `Attaching Socket.io 'disconnect' event listener...`);
+    socket.once(EVENTS.CONNECTION.DISCONNECT, (reason) => {
+      const disconnectEventLog = eventLogHelper(EVENTS.CONNECTION.DISCONNECT, socket);
+
+      // Detaching event listeners
+      disconnectEventLog('trace', `Removing all listeners from socket...`);
+      socket.removeAllListeners();
+
+      // Removing socketId userId pair from cache
+      disconnectEventLog('trace', `Removing socketId userId pair from cache...`);
+      const isSocketUserPairRemoved = SocketUserStore.removeSocketUserBySocketId(socket.id);
+
+      if (!isSocketUserPairRemoved) {
+        disconnectEventLog('error', `SocketId userId pair not removed from cache.`);
+      } else {
+        disconnectEventLog('debug', `SocketId userId pair removed from cache.`);
+      }
+
+      disconnectEventLog('info', `Socket is disconnected. Reason: ${reason}.`);
+    });
+
     let eventsAttached: string[] = [];
 
     // Attaching an 'iam' event listener
-    logger.trace(`${logHeader} Attaching 'iam' event listener to socket...`);
+    connectEventLog('trace', `Attaching 'iam' event listener to socket...`);
     socket.once(EVENTS.CONNECTION.IAM, (userId) => {
-      logger.info(`${logHeader} UserId is ${userId}.`);
+      const iamEventLog = eventLogHelper(EVENTS.CONNECTION.IAM, socket);
+      iamEventLog('debug', `UserId is ${userId}.`);
 
       // TODO: Add auth here
 
-      logger.trace(`${logHeader} Attempting to add socketId userId pair to cache...`);
+      iamEventLog('trace', `Attempting to add socketId userId pair to cache...`);
       const socketUserIndex = SocketUserStore.addSocketUser(socket.id, userId);
 
       if (socketUserIndex === -1) {
-        logger.error(`${logHeader} SocketId userId pair not added to cache...`);
-        logger.error(`${logHeader} Disconnecting socket... Reason: Failed to add to cache.`);
+        iamEventLog('error', `SocketId userId pair not added to cache...`);
+        iamEventLog('error', `Disconnecting socket... Reason: Failed to add to cache.`);
         socket.disconnect(true);
         return;
       }
 
-      logger.trace(`${logHeader} SocketId userId pair added to cache.`);
+      iamEventLog('trace', `SocketId userId pair added to cache.`);
 
       // Attaching custom event listeners
-      logger.trace(`${logHeader} Attaching custom event listeners to socket...`);
+      iamEventLog('trace', `Attaching custom event listeners to socket...`);
       for (const event of Object.values(events)) {
         const { callback, eventName, type } = event(io, socket);
 
-        logger.trace(`${logHeader} Attaching ${event} event listener to socket...`);
+        iamEventLog('trace', `Attaching ${event} event listener to socket...`);
         socket[type](eventName, callback);
 
         eventsAttached.push(eventName);
       }
-      logger.debug(
-        `${logHeader} Attached ${eventsAttached.length} events. ${
+      iamEventLog(
+        'info',
+        `Attached ${eventsAttached.length} events. ${
           Object.entries(events).length - eventsAttached.length
         } failed.`
       );
-      logger.debug(`${logHeader} Attached events: ${eventsAttached}.`);
-
-      // Attaching disconnect event listener
-      logger.trace(`${logHeader} Attaching Socket.io 'disconnect' event listener...`);
-      socket.once(EVENTS.CONNECTION.DISCONNECT, (reason) => {
-        // Detaching event listeners
-        logger.trace(`${logHeader} Removing all listeners from socket...`);
-        socket.removeAllListeners();
-
-        // Removing socketId userId pair from cache
-        logger.trace(`${logHeader} Removing socketId userId pair from cache...`);
-        const isSocketUserPairRemoved = SocketUserStore.removeSocketUserBySocketId(socket.id);
-
-        if (!isSocketUserPairRemoved) {
-          logger.error(`${logHeader} SocketId userId pair not removed from cache.`);
-        } else {
-          logger.debug(`${logHeader} SocketId userId pair removed from cache.`);
-        }
-
-        logger.info(`${logHeader} Socket is disconnected. Reason: ${reason}.`);
-      });
+      iamEventLog('debug', `Attached events: ${eventsAttached}.`);
     });
   });
 };
