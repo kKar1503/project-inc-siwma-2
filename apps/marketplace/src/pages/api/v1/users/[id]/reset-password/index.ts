@@ -59,4 +59,4 @@ const resetPassword = async (req: APIRequestType, res: NextApiResponse) => {
 
 };
 
-export default apiHandler().post(resetPassword);
+export default apiHandler({ allowNonAuthenticated: true }).post(resetPassword);
