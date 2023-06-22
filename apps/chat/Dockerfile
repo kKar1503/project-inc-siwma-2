@@ -3,11 +3,8 @@ FROM node:18.15.0-alpine3.17 as depsbuilder
 WORKDIR /app
 
 COPY apps/chat ./apps/chat
-COPY packages/configs ./packages/configs
-COPY packages/db ./packages/db
 COPY packages/errors ./packages/errors
 COPY packages/events ./packages/events
-COPY packages/node-store ./packages/node-store
 COPY packages/types ./packages/types
 COPY packages/utils ./packages/utils
 COPY static ./static
@@ -38,6 +35,18 @@ ENV NODE_ENV production
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
+# CORS
+ARG CHAT_CORS
+ENV CHAT_CORS=$CHAT_CORS
+
+# Host
+ARG CHAT_HOST
+ENV CHAT_HOST=$CHAT_HOST
+
+# Log Level
+ARG CHAT_LOG_LEVEL
+ENV CHAT_LOG_LEVEL=$CHAT_LOG_LEVEL
+
 # Adding user & usergroup for SocketIO's node server
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 socketio
@@ -57,9 +66,10 @@ RUN ls -d apps/**/** | grep -v "package.json\|node_modules\|dist" | xargs rm -rf
 # Changing user to SocketIO's user
 USER socketio
 
-# Ports host at 3000
-EXPOSE 3000
-ENV PORT 3000
+# Ports host at 4000
+ARG CHAT_PORT
+ENV PORT=$CHAT_PORT
+EXPOSE ${CHAT_PORT}
 
 # Socketio server is being run using node server.js
 CMD ["node", "apps/chat/dist/server.js"]
