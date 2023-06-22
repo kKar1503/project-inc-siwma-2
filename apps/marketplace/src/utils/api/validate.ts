@@ -39,4 +39,9 @@ const validateCompanyName = (company: string) => {
   }
 };
 
+const hasRepeatedLetters = (text: string): boolean => {
+  const regex = /([a-zA-Z])\1+/;
+  return regex.test(text);
+};
+
 export { validatePassword, validateEmail, validateName, validatePhone, validateCompanyName };
