@@ -1,19 +1,26 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import PrismaClient from '@inc/db';
 import { NextApiRequest, NextApiResponse } from 'next';
+import PrismaClient from '@inc/db';
 
-export default apiHandler({ allowNonAuthenticated: true }).post(
-  apiGuardMiddleware({
-    allowAdminsOnly: true,
-  }),
-  async (req: NextApiRequest, res: NextApiResponse) => {
-    const creatingSuccessfulLog = await PrismaClient.logs.create({
+const POST = async (req: NextApiRequest, res: NextApiResponse) => {
+  // Validate payload
+  const payload = req.body;
+
+  // Create log message
+  const logId = (
+    await PrismaClient.logs.create({
+      select: {
+        id: true,
+      },
       data: {
         logLevel: 'error',
         logMessage: `Error retrieving Users data`,
       },
-    });
-    return res.status(201).json(formatAPIResponse({ logId: creatingSuccessfulLog.id }));
-  }
-);
+    })
+  ).id;
+
+  // Return log id
+  res.status(201).json(formatAPIResponse({ logId }));
+};
+
+export default apiHandler().post(POST);
