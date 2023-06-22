@@ -69,7 +69,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
     return (
       <Grid container spacing={2}>
         {images.map(({ file, preview }, index) => (
-          <Grid item xs={2} md={1} key={file.name}>
+          <Grid item xs={4} sm={2} md={1} key={file.name}>
             <Box position="relative" mt="1rem">
               <Image
                 src={preview}
