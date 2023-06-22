@@ -25,7 +25,6 @@ const OnRefreshModal = ({ open, setOpen }: RefreshModalProps) => {
       content="Chat server is being disconnected. Refresh the page or click 'Reload'."
       rightButtonText="Reload"
       rightButtonState={buttonState}
-      setLeftButtonState={setButtonState}
       setRightButtonState={setButtonState}
     />
   );
