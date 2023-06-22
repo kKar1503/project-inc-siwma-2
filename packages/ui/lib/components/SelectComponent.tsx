@@ -6,11 +6,12 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 type SelectComponentProps = {
   onData: (newData: string) => void;
+  displayValues: string[];
   values: string[];
 };
 
-const SelectComponent = ({ onData, values }: SelectComponentProps) => {
-  const [selectedValue, setSelectedValue] = useState(values[0]);
+const SelectComponent = ({ onData, displayValues, values }: SelectComponentProps) => {
+  const [selectedValue, setSelectedValue] = useState(displayValues[0]);
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedValue(event.target.value);
@@ -27,8 +28,8 @@ const SelectComponent = ({ onData, values }: SelectComponentProps) => {
           onChange={handleChange}
           sx={({ shape }) => ({ borderRadius: shape, fontSize: '12px' })}
         >
-          {values.map((value) => (
-            <MenuItem sx={{ fontSize: '12px' }} value={value}>
+          {displayValues.map((value, index) => (
+            <MenuItem sx={{ fontSize: '12px' }} value={values[index]} key={value}>
               {value}
             </MenuItem>
           ))}
