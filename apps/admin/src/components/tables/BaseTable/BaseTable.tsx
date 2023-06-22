@@ -11,6 +11,7 @@ import { useState } from 'react';
 import BaseTableHead, { Header } from './BaseTableHead';
 import BaseTableToolbar from './BaseTableToolbar';
 
+// -- Type definitions -- //
 export interface BaseTableData {
   id: string;
   [key: string]: string | number | boolean;
@@ -19,15 +20,28 @@ export interface BaseTableData {
 type BaseTableProps = {
   headers: Header[];
   rows: BaseTableData[];
+  rowsPerPageOptions: React.ComponentProps<typeof TablePagination>['rowsPerPageOptions'];
+  totalCount: number;
+  onPageChange: React.ComponentProps<typeof TablePagination>['onPageChange'];
+  onRowsPerPageChange: React.ComponentProps<typeof TablePagination>['onRowsPerPageChange'];
+  rowsPerPage: number;
+  page: number;
 };
 
 const BaseTable = (props: BaseTableProps) => {
   const [selected, setSelected] = useState<readonly BaseTableData[]>([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Destructure props
-  const { rows, headers } = props;
+  const {
+    rows,
+    headers,
+    rowsPerPageOptions,
+    totalCount,
+    onPageChange,
+    onRowsPerPageChange,
+    rowsPerPage,
+    page,
+  } = props;
 
   /**
    * Event handlers
@@ -59,15 +73,6 @@ const BaseTable = (props: BaseTableProps) => {
     }
 
     setSelected(newSelected);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const isSelected = (row: BaseTableData) => selected.indexOf(row) !== -1;
@@ -143,13 +148,13 @@ const BaseTable = (props: BaseTableProps) => {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={rowsPerPageOptions}
           component="div"
-          count={rows.length}
+          count={totalCount}
           rowsPerPage={rowsPerPage}
           page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          onPageChange={onPageChange}
+          onRowsPerPageChange={onRowsPerPageChange}
         />
       </Paper>
     </Box>
