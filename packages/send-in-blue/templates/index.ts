@@ -61,7 +61,6 @@ export class ForgetPasswordEmailRequestBody implements SendSmtpEmail<BulkInviteR
 type BulkNotificationRequestParams = {
   name: string; // Name of the recipient (to be shown in the email's content)
   notifications: string; // User's notifications, combined into a single string
-  notificationSettingsUrl: string; // URL for the recipient to adjust their notification settings
 };
 
 export class BulkNotificationEmailRequestBody
@@ -74,7 +73,6 @@ export class BulkNotificationEmailRequestBody
     params: {
       name: string; // Name of the recipient (to be shown in the email's content)
       notifications: string; // User's notifications, combined into a single string
-      notificationSettingsUrl: string; // URL for the recipient to adjust their notification settings
     };
   }[];
 }
