@@ -3,6 +3,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
+logger.info('Validating Env Variables...');
 config();
 
 import { logger } from './utils/logger';
@@ -10,7 +11,6 @@ import socket from './socket';
 import RoomOccupantsStore from './store/RoomOccupantsStore';
 import SocketUserStore from './store/SocketUserStore';
 
-logger.info('Validating Env Variables...');
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT !== undefined ? Number(process.env.PORT) : 4000;
 const corsOrigin = process.env.CORS?.split(',') ?? 'http://localhost:3000';
@@ -48,6 +48,9 @@ httpServer.listen(port, host, () => {
   logger.info('Initializing RoomOccupantsStore...');
   RoomOccupantsStore.init();
 
+  logger.info('Initializing SocketUserStore...');
+  SocketUserStore.init();
+
   if (process.env.NODE_ENV === 'development') {
     logger.info('Attaching StateListener to RoomOccupantsStore...');
     RoomOccupantsStore.attachStateListener((state) => {
@@ -60,9 +63,6 @@ httpServer.listen(port, host, () => {
         )}`
       );
     }, 10000);
-
-    logger.info('Initializing SocketUserStore...');
-    SocketUserStore.init();
 
     logger.info('Attaching StateListener to SocketUserStore...');
     SocketUserStore.attachStateListener((state) => {
