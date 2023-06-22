@@ -15,18 +15,20 @@ const editListing = async (
 
   const putData = listingBody;
 
-  // remove invalid parameter values
+  /**
+   * 1. Remove Invalid Parameter values
+   */
   const response = await apiClient.get(
     `/v1/categories/${listingBody.categoryId}?includeParameters=true`
   );
-
   const category = categories.getAll.parse(response.data.data);
+
   const validParameter: string[] = [];
   category[0].parameters?.forEach((parameter) => {
     validParameter.push(parameter.parameterId);
   });
 
-  listingBody.parameters?.forEach((parameter, index) => {
+  listingBody.parameters?.forEach((parameter) => {
     if (!validParameter.includes(parameter.paramId)) {
       putData.parameters = listingBody.parameters?.filter(
         (item) => item.paramId !== parameter.paramId
@@ -34,26 +36,30 @@ const editListing = async (
     }
   });
   /**
-   * 1. Edit listing info
+   * 2. Edit listing info
    */
 
-  const result = await apiClient.put(`/v1/listings/${id}`, putData);
+  const editResult = await apiClient.put(`/v1/listings/${id}`, putData);
+  if (!editResult) return false;
 
   /**
-   * 2. Deleting images
+   * 3. Delete images
    */
 
   if (deletedImages.length !== 0) {
     let api = `/v1/listings/${id}/images?`;
+
     deletedImages.forEach((image, index) => {
       if (index !== 0) api += `&`;
       api += `delete=${image}`;
     });
-    const imagePromise = await apiClient.delete(api);
+
+    const deleteResult = await apiClient.delete(api);
+    if (!deleteResult) return false;
   }
 
   /**
-   * 3. Edit listing images
+   * 4. Add new images
    */
 
   if (images.length === 0) return true; // no images to post
