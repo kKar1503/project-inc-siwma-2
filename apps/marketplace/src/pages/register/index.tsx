@@ -6,6 +6,8 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useMutation } from 'react-query';
 import createUser from '@/middlewares/createUser';
 import { useRouter } from 'next/router';
+import { validatePassword } from '@/utils/api/validate';
+import { InvalidPasswordError } from '@inc/errors';
 
 const Register = () => {
   const [phone, setPhone] = useState('');
@@ -13,6 +15,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phoneError, setPhoneError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const { spacing, shape, shadows, palette } = useTheme();
   const router = useRouter();
@@ -51,10 +54,17 @@ const Register = () => {
       setPhoneError(false);
     }
 
-    if (password.trim() === '' || password.length < 8) {
-      setPasswordError(true);
-    } else {
+    try {
+      validatePassword(password);
       setPasswordError(false);
+      setPasswordErrorMessage('');
+    } catch (error) {
+      if (error instanceof InvalidPasswordError) {
+        setPasswordError(true);
+        setPasswordErrorMessage('Password must be 8 characters or longer');
+      } else {
+        throw error;
+      }
     }
 
     if (confirmPassword !== password) {
@@ -67,7 +77,7 @@ const Register = () => {
       phone.trim() !== '' &&
       phoneRegex.test(phone) &&
       password.trim() !== '' &&
-      password.length >= 8 &&
+      !passwordError &&
       confirmPassword === password
     ) {
       setPhone('');
@@ -218,9 +228,7 @@ const Register = () => {
                     margin="normal"
                     onChange={(e) => setPassword(e.target.value)}
                     error={passwordError}
-                    helperText={
-                      passwordError ? 'Password is required to have at least 8 characters' : ''
-                    }
+                    helperText={passwordError ? passwordErrorMessage : ''}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
