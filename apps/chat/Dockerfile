@@ -16,13 +16,16 @@ ENV DATABASE_URL=$DATABASE_URL
 
 # Installing Dependencies
 RUN npm install -g pnpm
+RUN npm pkg set scripts.postinstall="echo 'Postinstall script is disabled'"
 RUN pnpm install --frozen-lockfile
+RUN pnpm --filter chat prisma:generate
 
 # Building SocketIO server
 RUN pnpx nx run @inc/chat:build:prod
 
 # Remove devDeps
 RUN rm -rf node_modules */**/node_modules */**/**/node_modules && pnpm install --frozen-lockfile --prod --offline
+RUN pnpm --filter chat prisma:generate
 
 # ===================================================================
 
