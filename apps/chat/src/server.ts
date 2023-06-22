@@ -6,7 +6,6 @@ import { Server } from 'socket.io';
 config();
 
 import logger from './utils/logger';
-// import { spawnPapa } from './store';
 import socket from './socket';
 import RoomOccupantsStore from './store/RoomOccupantsStore';
 import SocketUserStore from './store/SocketUserStore';
@@ -45,11 +44,6 @@ app.get('/', (_, res) => {
 
 httpServer.listen(port, host, () => {
   logger.info(`Server is now listening at ${host}:${port}...`);
-
-  // Disabling PapaStore as temporary it may not be as relevant to each
-  // storage solution.
-  // logger.info('Initializing Store...');
-  // spawnPapa();
 
   logger.info('Initializing RoomOccupantsStore...');
   RoomOccupantsStore.init();
