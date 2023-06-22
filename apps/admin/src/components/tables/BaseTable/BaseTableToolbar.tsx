@@ -55,40 +55,42 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
           {heading}
         </Typography>
       )}
-      <>
-        {onToggle && toggleColumn && (
-          <Tooltip title="Toggle">
-            <IconButton
-              onClick={(e) => onToggle(e, !selectedRowsAreEnabled(selectedRows))}
-              disabled={
-                !selectedRowsAreEnabled(selectedRows) && !selectedRowsAreDisabled(selectedRows)
-              }
-            >
-              {
-                /**
-                 * If all selected rows are enabled, show the remove icon.
-                 * If all selected rows are disabled, show the add icon.
-                 */
-                selectedRowsAreEnabled(selectedRows) ? <RemoveIcon /> : <AddIcon />
-              }
-            </IconButton>
-          </Tooltip>
-        )}
-        {onEdit && (
-          <Tooltip title="Edit">
-            <IconButton onClick={onEdit} disabled={numSelected > 1}>
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-        {onDelete && (
-          <Tooltip title="Delete">
-            <IconButton onClick={onDelete}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-      </>
+      {numSelected > 0 && (
+        <>
+          {onToggle && toggleColumn && (
+            <Tooltip title="Toggle">
+              <IconButton
+                onClick={(e) => onToggle(e, !selectedRowsAreEnabled(selectedRows))}
+                disabled={
+                  !selectedRowsAreEnabled(selectedRows) && !selectedRowsAreDisabled(selectedRows)
+                }
+              >
+                {
+                  /**
+                   * If all selected rows are enabled, show the remove icon.
+                   * If all selected rows are disabled, show the add icon.
+                   */
+                  selectedRowsAreEnabled(selectedRows) ? <RemoveIcon /> : <AddIcon />
+                }
+              </IconButton>
+            </Tooltip>
+          )}
+          {onEdit && (
+            <Tooltip title="Edit">
+              <IconButton onClick={onEdit} disabled={numSelected > 1}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          {onDelete && (
+            <Tooltip title="Delete">
+              <IconButton onClick={onDelete}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </>
+      )}
     </Toolbar>
   );
 };
