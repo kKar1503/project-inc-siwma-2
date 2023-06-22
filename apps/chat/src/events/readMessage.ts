@@ -7,7 +7,7 @@ import RoomOccupantsStore from '@/store/RoomOccupantsStore';
 
 const eventName = EVENTS.CLIENT.MESSAGE.READ;
 
-const readEvent: EventFile = (_, socket) => ({
+const readMessage: EventFile = (_, socket) => ({
   eventName: eventName,
   type: 'on',
   callback: (roomId, ack) => {
@@ -91,4 +91,4 @@ const readEvent: EventFile = (_, socket) => ({
   },
 });
 
-export default readEvent;
+export default readMessage;
