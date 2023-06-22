@@ -20,7 +20,7 @@ const logger = pino({
 });
 
 export const eventLogHelper = (eventName: Event, socket: Socket) => {
-  logger.info(`[${socket.id}:${eventName}]`);
+  logger.event(`[${socket.id}:${eventName}]`);
   return (level: LogLevels, logMessage: string) =>
     logger[level](`[${socket.id}:${eventName}] ${logMessage}`);
 };
