@@ -7,7 +7,7 @@ import { useMutation } from 'react-query';
 import createUser from '@/middlewares/createUser';
 import { useRouter } from 'next/router';
 import { validatePassword } from '@/utils/api/validate';
-import { InvalidPasswordError } from '@inc/errors';
+import { InvalidPasswordError } from '@inc/errors/src';
 
 const Register = () => {
   const [phone, setPhone] = useState('');
@@ -168,7 +168,7 @@ const Register = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 width: '100%',
-                height: '10%',
+                height: '20%',
                 objectFit: 'fill',
               }}
             >
