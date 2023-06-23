@@ -10,29 +10,32 @@ import generateThemeOptions from './theme';
 
 export type MuiThemeProps = {
   children: ReactNode;
+  fonts?: string;
 };
 
-const MuiTheme = ({ children }: MuiThemeProps) => {
+const MuiTheme = ({ children, fonts = '' }: MuiThemeProps) => {
   // ** Creates core theme options
   const coreThemeConfig = generateThemeOptions();
 
+  coreThemeConfig.typography = {
+    ...coreThemeConfig.typography,
+    fontFamily: [
+      fonts.replace(/[\s']/g, ''),
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+  };
+
   // ** Pass ThemeOptions to CreateTheme Function to create theme
   let theme = createTheme(coreThemeConfig);
-
-  theme.components = {
-    MuiCssBaseline: {
-      styleOverrides: `
-        @font-face {
-          font-family: 'Heiti';
-          font-style: normal;
-          font-display: swap;
-          font-weight: 400;
-          src: local('Heiti'), local('Heiti'), url('../fonts/Adobe-Heiti-Std-R.otf') format('opentype');
-          unicodeRange: U+4E00-9FFF;
-        }
-      `,
-    },
-  };
 
   return (
     <ThemeProvider theme={theme}>
