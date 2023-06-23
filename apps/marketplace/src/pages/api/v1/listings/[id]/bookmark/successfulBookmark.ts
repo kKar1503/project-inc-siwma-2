@@ -1,16 +1,19 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
-import PrismaClient, { Listing } from '@inc/db';
+import PrismaClient from '@inc/db';
+import { parseListingId } from '../..';
+import { checkListingExists } from '..';
 
 export type ListingBookmarkType = {
   bookmarked: boolean;
-  id: string;
-  name: string;
 };
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const payload = req.body as ListingBookmarkType;
+
+  const id = parseListingId(req.query.id as string);
+  const listing = await checkListingExists(id);
 
   let action = '';
 
@@ -28,7 +31,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         logLevel: 'info',
-        logMessage: `${action} the listing - listing: ${payload.name}, listing id: ${payload.id}`,
+        logMessage: `${action} the listing - Listing: ${listing.name}, Listing id: ${listing.id}`,
       },
     })
   ).id;
