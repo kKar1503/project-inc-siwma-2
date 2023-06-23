@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Modal } from '@inc/ui';
 import { useState, useEffect } from 'react';
 
@@ -9,7 +10,7 @@ export type ReportModalProps = {
 const DeleteChat = ({ open, setOpen }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
-
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (leftButtonState === true) {
@@ -24,10 +25,10 @@ const DeleteChat = ({ open, setOpen }: ReportModalProps) => {
       setOpen={setOpen}
       buttonColor="#D32F2F"
       icon="warning"
-      title="Are you sure you want to delete chat?"
-      content="The chat cannot be restored"
-      leftButtonText="cancel"
-      rightButtonText="Delete chat"
+      title={t('Are you sure you want to delete chat?')}
+      content={t('The chat cannot be restored')}
+      leftButtonText={t('cancel')}
+      rightButtonText={t('Delete chat')}
       leftButtonState={leftButtonState}
       rightButtonState={rightButtonState}
       setLeftButtonState={setLeftButtonState}
