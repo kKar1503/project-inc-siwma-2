@@ -5,6 +5,7 @@ import { ReviewRequestBody } from '@/utils/api/server/zod';
 const postReview = async (requestBody: ReviewRequestBody, uuid: string) => {
   if (uuid) {
     const response = await apiClient.post(`v1/listings/${uuid}/review`, requestBody);
+    console.log(requestBody)
     const newReview = listing.createReview.parse(response.data.data);
     return newReview;
   }

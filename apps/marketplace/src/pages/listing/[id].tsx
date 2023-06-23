@@ -38,6 +38,7 @@ import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
+import { ReviewRequestBody } from '@/utils/api/server/zod';
 
 const carouselData = [
   {
@@ -113,22 +114,12 @@ const useCreateChatQuery = (sellerId: string, buyerId: string, listingId: string
   return data;
 };
 
-interface addNewReview {
+interface reviewDetails {
   userUuid: string;
-  review: string;
-  rating: number;
+  reviewData: ReviewRequestBody;
 }
 
-const usePostReviewQuery = () =>
-  useMutation((addReview: addNewReview) =>
-    postReview(addReview.review, addReview.rating as number)
-  );
-
-//   const usePostReviewQuery = (userUuid: string) =>
-//   useMutation({mutationFn: (addReview: addNewReview) => {
-//       postReview(userUuid, addReview.review, addReview.rating)
-//   }
-// });
+const funnyMoments = (data: reviewDetails) => postReview(data.reviewData, data.userUuid)
 
 const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[] | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
@@ -174,13 +165,18 @@ const DetailedListingPage = () => {
   const sellerId = listings?.owner.id as string
   const newRoom = useCreateChatQuery(sellerId, buyerId, listingId);
 
-  const postReview = usePostReviewQuery();
+  // const postReview = usePostReviewQuery();
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const [inputText, setInputText] = useState<string>('');
   const [openComment, setOpenComment] = useState(false);
   const [rating, setRating] = useState<number | null>(0);
   const [isOpen, setIsOpen] = useState(false);
+
+  const usePostReviewQuery =
+  useMutation({mutationFn: (data: reviewDetails) =>
+    funnyMoments(data)}
+  );
 
   // const createReview = (val: boolean) => {
   //   setRightButtonState(val)
@@ -190,12 +186,17 @@ const DetailedListingPage = () => {
 
   useEffect(() => {
     if (rightButtonState === true) {
-      const review = {
-        userUuid: loggedUserUuid,
+      
+      const reviewData = {
         review: inputText,
         rating: rating as number
       }
-      postReview.mutate(review)
+      const review = {
+        userUuid: loggedUserUuid,
+        reviewData
+      }
+      console.log('peder')
+      usePostReviewQuery.mutate(review)
     }
   }, [rightButtonState, loggedUserUuid, inputText, rating ]);
 
