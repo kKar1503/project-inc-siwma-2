@@ -45,12 +45,10 @@ const owner = z.object({
   bio: z.string().nullable(),
 });
 
-const parameter = z
-  .object({
-    paramId: z.string(),
-    value: z.string(),
-  })
-  .optional();
+const parameter = z.object({
+  paramId: z.string(),
+  value: z.string(),
+});
 
 const open = z.boolean();
 
