@@ -119,7 +119,7 @@ interface reviewDetails {
   reviewData: ReviewRequestBody;
 }
 
-const funnyMoments = (data: reviewDetails) => postReview(data.reviewData, data.userUuid)
+const reviewData = (data: reviewDetails) => postReview(data.reviewData, data.userUuid)
 
 const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[] | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
@@ -175,7 +175,7 @@ const DetailedListingPage = () => {
 
   const usePostReviewQuery =
   useMutation({mutationFn: (data: reviewDetails) =>
-    funnyMoments(data)}
+    reviewData(data)}
   );
 
   // const createReview = (val: boolean) => {
