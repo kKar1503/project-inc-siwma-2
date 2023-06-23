@@ -44,7 +44,7 @@ const LoginForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" fill />
+        <Image src="/images/siwma-background.png" alt="logo" fill />
         <Container
           component="main"
           maxWidth="md"
