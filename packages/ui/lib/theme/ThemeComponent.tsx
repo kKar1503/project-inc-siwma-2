@@ -8,9 +8,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 // ** Theme
 import generateThemeOptions from './theme';
 
-// ** Fonts
-// ** import Heiti from '../fonts/Adobe-Heiti-Std-R.otf';
-
 export type MuiThemeProps = {
   children: ReactNode;
 };
