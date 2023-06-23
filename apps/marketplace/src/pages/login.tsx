@@ -82,7 +82,7 @@ const LoginForm = () => {
                 mb: spacing(2),
               })}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo" fill  />
+              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
             </Box>
             <Divider flexItem />
             <Box
@@ -135,7 +135,12 @@ const LoginForm = () => {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={handleTogglePassword}>
+                      <IconButton
+                        sx={({ palette }) => ({
+                          color: palette.grey[600],
+                        })}
+                        onClick={handleTogglePassword}
+                      >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
