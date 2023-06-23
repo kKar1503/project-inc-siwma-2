@@ -113,7 +113,7 @@ export default apiHandler()
 
     if (data.categoryId) {
       // Remove old parameters if the category has changed
-      if (data.categoryId === listing.categoryId) {
+      if (data.categoryId !== listing.categoryId) {
         await PrismaClient.listingsParametersValue.deleteMany({
           where: {
             listingId: id,
