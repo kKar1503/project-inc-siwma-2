@@ -11,6 +11,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import Link from '@mui/material/Link';
 import { signOut } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 
@@ -23,7 +24,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
+  const { t } = useTranslation();
   const { typography, palette, spacing } = useTheme();
 
   const isMenuOpen = anchorEl !== null;
@@ -107,7 +108,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
             my: spacing(1),
           }}
         >
-          Hi, {userName}!
+          {`${t('Hi, ')}${userName}${t('!')}`}
         </Typography>
 
         <Divider />
@@ -132,7 +133,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
                 mb: spacing(1),
               }}
             >
-              Profile
+              {t('Profile')}
             </Typography>
           </MenuItem>
         </Link>
@@ -157,7 +158,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
                 mb: spacing(1),
               }}
             >
-              Edit Profile
+              {t('Edit Profile')}
             </Typography>
           </MenuItem>
         </Link>
@@ -182,7 +183,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
                 mb: spacing(1),
               }}
             >
-              Change Password
+              {t('Change Password')}
             </Typography>
           </MenuItem>
         </Link>
@@ -207,7 +208,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
                 mb: spacing(1),
               }}
             >
-              Bookmarks
+              {t('Bookmarks')}
             </Typography>
           </MenuItem>
         </Link>
@@ -231,7 +232,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
               mb: spacing(1),
             }}
           >
-            Log Out
+            {t('Log Out')}
           </Typography>
         </MenuItem>
       </Menu>

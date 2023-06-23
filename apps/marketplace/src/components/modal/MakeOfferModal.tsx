@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ModalInput } from '@inc/ui';
 import { useState } from 'react';
 
@@ -11,18 +12,19 @@ export type MakeOfferModalProps = {
 const MakeOfferModal = ({ open, setOpen, inputValue, setInputValue }: MakeOfferModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <ModalInput
       open={open}
       setOpen={setOpen}
       buttonColor="#2962FF"
-      title="Make an offer"
-      content="Enter an alternative amount to offer for the listing below."
+      title={t('Make an offer')}
+      content={t('Enter an alternative amount to offer for the listing below.')}
       selectInput={inputValue}
       setselectInput={setInputValue}
-      leftButtonText="cancel"
-      rightButtonText="make offer"
+      leftButtonText={t('cancel')}
+      rightButtonText={t('make offer')}
       leftButtonState={leftButtonState}
       rightButtonState={rightButtonState}
       setLeftButtonState={setLeftButtonState}
