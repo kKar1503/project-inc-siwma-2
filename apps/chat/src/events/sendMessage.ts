@@ -62,13 +62,15 @@ const sendMessage: EventFile = (io, socket) => ({
         eventLog('trace', `Acknowledging message...`);
         if (typeof ack === 'function') ack({ success: true, data: { id, read } });
 
-        eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
-        (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
-          id,
-          message,
-          roomId,
-          time,
-        });
+        if (otherOccupantSocketId !== '') {
+          eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
+          (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
+            id,
+            message,
+            roomId,
+            time,
+          });
+        }
       })
       .catch(() => {
         eventLog('error', `Failed to insert message into database.`);
