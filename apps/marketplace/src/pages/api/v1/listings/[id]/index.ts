@@ -193,11 +193,11 @@ export default apiHandler()
           },
         },
         listingsParametersValues: true,
-        listingImages: {
+        listingImages: queryParams.includeImages ?  {
           orderBy: {
             order: 'asc',
           }
-        },
+        } : false,
         offersOffersListingTolistings: true,
         reviewsReviewsListingTolistings: true,
       },

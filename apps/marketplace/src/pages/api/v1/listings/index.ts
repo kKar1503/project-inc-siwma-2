@@ -218,11 +218,11 @@ export default apiHandler()
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
-        listingImages: {
+        listingImages: queryParams.includeImages ?  {
           orderBy: {
             order: 'asc',
           }
-        },
+        } : false,
         listingsParametersValues: queryParams.includeParameters,
         offersOffersListingTolistings: true,
         users: {
