@@ -80,15 +80,15 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
                   justifyContent: 'center',
                 }}
               >
-                <IconButton
-                  aria-label="delete"
-                  size="small"
-                  sx={({ palette }) => ({
-                    color: palette.error.main,
-                  })}
-                  onClick={() => handleImageRemove(index)}
-                >
-                  <CancelIcon />
+                <IconButton aria-label="delete" size="small">
+                  <CancelIcon
+                    sx={({ palette }) => ({
+                      color: palette.error.main,
+                      backgroundColor: palette.common.white,
+                      borderRadius: 30,
+                    })}
+                    onClick={() => handleImageRemove(index)}
+                  />
                 </IconButton>
               </Box>
               <Image
