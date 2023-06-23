@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 // ** Event Listeners Imports **
-import listeners from '@/chat';
+import listeners from '@/chat/listeners';
 
 // ** Types Imports **
 import type { Socket } from 'socket.io-client';
