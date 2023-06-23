@@ -12,7 +12,7 @@ const eventName = EVENTS.SERVER.MESSAGE.ROOM;
 const event: ClientEventFile<UseChatParams> = (io, hookParams) => ({
   eventName: eventName,
   type: 'on', // 'on' | 'once'
-  callback: (roomMessage, ack) => {
+  callback: (roomMessage) => {
     const { currentRoom, messageCallback } = hookParams;
 
     if (messageCallback !== undefined) {

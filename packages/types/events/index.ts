@@ -94,7 +94,7 @@ type ClientEventFile<T> = (
 ) => {
   [K in keyof EventParams]: {
     eventName: K;
-    callback: (param: EventParams[K], ack: (acknowledgement: Acknowlegement) => void) => void;
+    callback: (param: EventParams[K]) => void;
     type: 'on' | 'once';
   };
 }[keyof EventParams];
