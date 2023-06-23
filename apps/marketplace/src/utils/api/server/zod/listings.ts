@@ -26,6 +26,7 @@ const getQueryParameters = z.object({
   minPrice: z.string().transform(zodParseToNumber).optional(),
   maxPrice: z.string().transform(zodParseToNumber).optional(),
   sortBy: z.string().optional(),
+  type: z.nativeEnum(ListingType).optional(),
 });
 
 /**

@@ -22,7 +22,7 @@ export type ComponentProps = {
   rightButtonText: string;
   leftButtonState?: boolean;
   rightButtonState: boolean;
-  setLeftButtonState: (val: boolean) => void;
+  setLeftButtonState?: (val: boolean) => void;
   setRightButtonState: (val: boolean) => void;
 };
 
@@ -181,7 +181,9 @@ const Modal = ({
                     width: 1 / 3,
                     marginTop: spacing(2),
                   }}
-                  onClick={() => setLeftButtonState(true)}
+                  onClick={() => {
+                    if (typeof setLeftButtonState === 'function') setLeftButtonState(true);
+                  }}
                 >
                   <Typography sx={modalStyles?.buttonTxt}>{leftButtonText}</Typography>
                 </Button>
