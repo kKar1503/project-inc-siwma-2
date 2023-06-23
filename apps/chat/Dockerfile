@@ -16,13 +16,16 @@ ENV DATABASE_URL=$DATABASE_URL
 
 # Installing Dependencies
 RUN npm install -g pnpm
+RUN npm pkg set scripts.postinstall="echo 'Postinstall script is disabled'"
 RUN pnpm install --frozen-lockfile
+RUN pnpm --filter chat prisma:generate
 
 # Building SocketIO server
 RUN pnpx nx run @inc/chat:build:prod
 
 # Remove devDeps
 RUN rm -rf node_modules */**/node_modules */**/**/node_modules && pnpm install --frozen-lockfile --prod --offline
+RUN pnpm --filter chat prisma:generate
 
 # ===================================================================
 
@@ -37,15 +40,15 @@ ENV DATABASE_URL=$DATABASE_URL
 
 # CORS
 ARG CHAT_CORS
-ENV CHAT_CORS=$CHAT_CORS
+ENV CORS=$CHAT_CORS
 
 # Host
 ARG CHAT_HOST
-ENV CHAT_HOST=$CHAT_HOST
+ENV HOST=$CHAT_HOST
 
 # Log Level
 ARG CHAT_LOG_LEVEL
-ENV CHAT_LOG_LEVEL=$CHAT_LOG_LEVEL
+ENV LOG_LEVEL=$CHAT_LOG_LEVEL
 
 # Adding user & usergroup for SocketIO's node server
 RUN addgroup --system --gid 1001 nodejs
@@ -61,7 +64,7 @@ COPY --from=depsbuilder --chown=socketio:nodejs /app/static ./static
 RUN rm -rf packages/types
 RUN rm -rf packages/configs
 RUN ls -d packages/**/** | grep -v "package.json\|node_modules\|dist" | xargs rm -rf
-RUN ls -d apps/**/** | grep -v "package.json\|node_modules\|dist" | xargs rm -rf
+RUN ls -d apps/**/** | grep -v "package.json\|node_modules\|dist\|pino-pretty.js" | xargs rm -rf
 
 # Changing user to SocketIO's user
 USER socketio
