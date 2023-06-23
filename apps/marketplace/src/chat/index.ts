@@ -1,12 +1,13 @@
 // ** Types Imports **
-import type { EventFile } from '@inc/types';
+import type { UseChatParams } from '@/types/useChatTypes';
+import type { ClientEventFile } from '@inc/types';
 
 // ** Event Listeners Imports **
-// import roomMessage from './roomMessage';
+import roomMessage from './roomMessage';
 
 // ** Event Listeners Compilation **
-const listeners: Record<string, EventFile> = {
-  // roomMessage
+const listeners: Record<string, ClientEventFile<UseChatParams>> = {
+  roomMessage,
 };
 
 export default listeners;
