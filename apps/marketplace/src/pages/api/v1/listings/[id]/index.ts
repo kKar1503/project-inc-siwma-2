@@ -117,6 +117,15 @@ export default apiHandler()
     const data = listingSchema.put.body.parse(req.body);
 
     if (data.categoryId) {
+      // Remove old parameters if the category has changed
+      if (data.categoryId !== listing.categoryId) {
+        await PrismaClient.listingsParametersValue.deleteMany({
+          where: {
+            listingId: id,
+          },
+        });
+      }
+
       // Get valid parameters for the listing's category
       const validParameters = await getValidParametersForCategory(data.categoryId);
 
