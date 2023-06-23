@@ -8,6 +8,6 @@
     "target": "ESNext",
     "outDir": "./dist"
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "**/*.spec.ts", "esbuild.config.js"]
+  "include": ["index.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "esbuild.config.js", "dist"]
 }
