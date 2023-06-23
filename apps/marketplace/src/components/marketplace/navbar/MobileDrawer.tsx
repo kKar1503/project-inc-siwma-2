@@ -28,18 +28,17 @@ import { Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
 import { signOut } from 'next-auth/react';
+import ChangeLanguageButton from './ChangeLanguageButton';
 
 export type MobileDrawerProps = {
   userId: string | undefined;
-  language: 'English' | 'Chinese';
 };
 
-const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
+const MobileDrawer = ({ userId }: MobileDrawerProps) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
-  const [drawerLang, setDrawerLang] = useState(language);
   const { t } = useTranslation();
-  const { typography, palette } = useTheme();
+  const { palette } = useTheme();
 
   const handleProfileClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -48,7 +47,6 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
 
   const mobileDrawerLanuageChange = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
-    setDrawerLang(drawerLang === 'English' ? 'Chinese' : 'English');
   };
 
   const toggleDrawer = (openState: boolean) => () => {
@@ -127,7 +125,6 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               </ListItemButton>
             </Link>
 
-            {/* update link when page ready */}
             <Link href="/profile/change-password" underline="none">
               <ListItemButton>
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
@@ -143,7 +140,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
               <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                 <BookmarksIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary="Bookmarks" />
+              <ListItemText primary={t('Bookmarks')} />
             </ListItemButton>
           </Link>
         </Collapse>
@@ -164,22 +161,14 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
             <ListItemIcon>
               <LogoutIcon sx={{ color: palette.grey[600] }} />
             </ListItemIcon>
-            <ListItemText primary={t('Log Out')}/>
+            <ListItemText primary={t('Log Out')} />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding sx={{ position: 'absolute', bottom: 0 }}>
           <ListItemButton onClick={mobileDrawerLanuageChange}>
             <Grid component="label" container alignItems="center">
-              <Grid sx={{ fontSize: typography.subtitle2 }} item>
-                EN
-              </Grid>
-              <Grid item>
-                <Switch checked={drawerLang === 'Chinese'} value="checked" />
-              </Grid>
-              <Grid sx={{ fontSize: typography.subtitle2 }} item>
-                CN
-              </Grid>
+              <ChangeLanguageButton />
             </Grid>
           </ListItemButton>
         </ListItem>
@@ -205,6 +194,7 @@ const MobileDrawer = ({ userId, language }: MobileDrawerProps) => {
           open={openDrawer}
           onClose={toggleDrawer(false)}
           onOpen={toggleDrawer(true)}
+          sx={{ height: '100%' }}
         >
           {list()}
         </SwipeableDrawer>
