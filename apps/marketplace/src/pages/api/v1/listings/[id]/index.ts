@@ -1,6 +1,6 @@
-import { apiHandler, handleBookmarks, formatAPIResponse, UpdateType } from '@/utils/api';
+import { apiHandler, formatAPIResponse, handleBookmarks, UpdateType } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { NotFoundError, ForbiddenError, ParamError } from '@inc/errors';
+import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { formatSingleListingResponse, parseListingId } from '..';
 
@@ -102,7 +102,7 @@ export default apiHandler()
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
-    const sameCompany = req.token?.user?.company === listing.users.companyId.toString();
+    const sameCompany = req.token?.user?.companyId === listing.users.companyId.toString();
 
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
@@ -112,6 +112,15 @@ export default apiHandler()
     const data = listingSchema.put.body.parse(req.body);
 
     if (data.categoryId) {
+      // Remove old parameters if the category has changed
+      if (data.categoryId !== listing.categoryId) {
+        await PrismaClient.listingsParametersValue.deleteMany({
+          where: {
+            listingId: id,
+          },
+        });
+      }
+
       // Get valid parameters for the listing's category
       const validParameters = await getValidParametersForCategory(data.categoryId);
 
@@ -259,7 +268,7 @@ export default apiHandler()
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
-    const sameCompany = req.token?.user?.company === listing.users.companyId.toString();
+    const sameCompany = req.token?.user?.companyId === listing.users.companyId.toString();
 
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
