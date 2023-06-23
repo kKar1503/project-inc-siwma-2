@@ -38,14 +38,14 @@ type EventParams = {
 
   // ** Client Events
   // Client Room Events
-  clientJoinRoom: RoomId;
-  clientPartRoom: RoomId;
-  clientCreateRoom: ClientCreateRoom;
-  clientDeleteRoom: RoomId;
+  clientJoinRoom: RoomId; // Has Ack
+  clientPartRoom: RoomId; // Has Ack
+  clientCreateRoom: ClientCreateRoom; // Has Ack
+  clientDeleteRoom: RoomId; // Has Ack
   // Client Message Events
-  clientSendMessage: ClientSendMessage;
-  clientDeleteMessage: MessageId;
-  clientReadMessage: RoomId;
+  clientSendMessage: ClientSendMessage; // Has Ack
+  clientDeleteMessage: MessageId; // Has Ack
+  clientReadMessage: RoomId; // Has Ack
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
