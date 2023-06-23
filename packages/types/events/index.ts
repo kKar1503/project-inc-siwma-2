@@ -1,71 +1,88 @@
-import { Socket, Server } from 'socket.io';
-import * as buffer from 'buffer';
+import type { Socket, Server, DisconnectReason } from 'socket.io';
 
-type Room = {
-  id: string;
-  name: string;
-  activeUsers: number;
-};
+type UserId = string;
+type RoomId = string;
+type MessageId = number;
+type ListingId = number;
 
-type RoomMessage = {
-  roomId: string;
+type ClientSendMessage = {
+  roomId: RoomId;
   message: string;
-  username: string;
-  contentType: string;
-  file:undefined| Buffer;
   time: Date;
 };
 
-type StartStopType = {
-  sender: string;
-  roomId: string;
+type ServerRoomMessage = {
+  id: MessageId;
+  roomId: RoomId;
+  message: string;
+  time: Date;
 };
 
-type Read = {
-  room: string;
-  messageId: number;
-}
+type Room = {
+  id: RoomId;
+  user: UserId;
+};
 
-type DeleteMessage = {
-  room: string;
-  messageId: number;
+type ClientCreateRoom = {
+  sellerId: UserId;
+  listingId: ListingId;
 };
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
-  // Connections
+  // ** Connections
   connect: Socket;
-  disconnect: string;
+  disconnect: DisconnectReason;
+  iam: UserId;
 
-  // Client Events
-  createRoom: { roomName: string };
-  sendMessage: RoomMessage;
-  clientPing: string;
-  clientDeleteMessage: DeleteMessage;
-  clientStartType: StartStopType;
-  clientStopType: StartStopType;
-  clientRead: Read;
+  // ** Client Events
+  // Client Room Events
+  clientJoinRoom: RoomId;
+  clientPartRoom: RoomId;
+  clientCreateRoom: ClientCreateRoom;
+  clientDeleteRoom: RoomId;
+  // Client Message Events
+  clientSendMessage: ClientSendMessage;
+  clientDeleteMessage: MessageId;
+  clientReadMessage: RoomId;
+  // Client Typing Events
+  clientStartType: RoomId;
+  clientStopType: RoomId;
 
-  // Server Events
-  rooms: Record<string, Room>;
-  joinedRoom: Room;
-  roomMessage: RoomMessage;
-  serverDeleteMessage: DeleteMessage;
-  serverPing: string;
-  serverStartType: StartStopType;
-  serverStopType: StartStopType;
-  serverRead: Read;
+  // ** Server Events
+  // Server Room Events
+  serverCreatedRoom: Room;
+  serverDeletedRoom: RoomId;
+  // Server Message Events
+  serverRoomMessage: ServerRoomMessage;
+  serverDeletedMessage: MessageId;
+  serverReadMessage: MessageId[];
+  // Server Typing Events
+  serverStartType: UserId;
+  serverStopType: UserId;
 };
 
 type Event = keyof EventParams;
 
+type Acknowlegement =
+  | {
+      success: true;
+      data?: any;
+    }
+  | {
+      success: false;
+      err?: {
+        message: string;
+      };
+    };
+
 type EventFile = (
   io: Server,
-  socket?: Socket
+  socket: Socket
 ) => {
   [K in keyof EventParams]: {
     eventName: K;
-    callback: (param: EventParams[K], callback?: (...args: any[]) => void) => void;
+    callback: (param: EventParams[K], ack: (acknowledgement: Acknowlegement) => void) => void;
     type: 'on' | 'once';
   };
 }[keyof EventParams];

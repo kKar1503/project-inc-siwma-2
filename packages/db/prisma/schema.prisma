@@ -108,6 +108,7 @@ model CompaniesBookmarks {
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "companies_bookmarks_fk")
   users     Users     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "companies_bookmarks_fk1")
 
+  @@unique([userId, companyId], map: "companies_bookmarks_un")
   @@map("companies_bookmarks")
 }
 
@@ -152,6 +153,7 @@ model Listing {
   archived                                    Boolean                   @default(false)
   deletedAt                                   DateTime                  @default(now()) @map("deleted_at") @db.Timestamptz(6)
   multiple                                    Boolean                   @default(false)
+  hashedUrl                                   String?                   @unique(map: "listing_un") @map("hashed_url")
   category                                    Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
   users                                       Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
   listingBookmarks                            ListingBookmarks[]
@@ -174,6 +176,7 @@ model ListingBookmarks {
   users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "listing_bookmarks_fk")
   listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listing_bookmarks_fk_1")
 
+  @@unique([userId, listingId], map: "listing_bookmarks_un")
   @@map("listing_bookmarks")
 }
 
@@ -348,6 +351,7 @@ model UserBookmarks {
   usersUserBookmarksUserIdTousers     Users    @relation("userBookmarksUserIdTousers", fields: [userId], references: [id], onDelete: Cascade, map: "user_bookmarks_fk")
   usersUserBookmarksTargetUserTousers Users    @relation("userBookmarksTargetUserTousers", fields: [targetUser], references: [id], onDelete: Cascade, map: "user_bookmarks_fk1")
 
+  @@unique([userId, targetUser], map: "user_bookmarks_un")
   @@map("user_bookmarks")
 }
 
