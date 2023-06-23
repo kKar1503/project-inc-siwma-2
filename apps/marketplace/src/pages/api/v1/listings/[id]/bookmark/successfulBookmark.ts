@@ -1,10 +1,24 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
-import PrismaClient from '@inc/db';
+import PrismaClient, { Listing } from '@inc/db';
+
+export type ListingBookmarkType = {
+  bookmarked: boolean;
+  id: string;
+  name: string;
+};
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
-  const payload = req.body;
+  const payload = req.body as ListingBookmarkType;
+
+  let action = '';
+
+  if (payload.bookmarked === true) {
+    action = 'Bookmarked';
+  } else {
+    action = 'Unbookmarked';
+  }
 
   // Create log message
   const logId = (
@@ -14,7 +28,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         logLevel: 'info',
-        logMessage: `Unbookmarked the listing - listing: ${payload.id}, listing id: ${payload.id}`,
+        logMessage: `${action} the listing - listing: ${payload.name}, listing id: ${payload.id}`,
       },
     })
   ).id;
