@@ -14,7 +14,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         logLevel: 'error',
-        logMessage: `Error retrieving Listings data`,
+        logMessage: `Error retrieving Listings data - Number of Listings: ${payload.length}`,
       },
     })
   ).id;

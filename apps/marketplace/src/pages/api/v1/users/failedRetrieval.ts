@@ -14,7 +14,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         logLevel: 'error',
-        logMessage: `Error retrieving Users data`,
+        logMessage: `Error retrieving Users data - Number of Users: ${payload.length}`,
       },
     })
   ).id;
