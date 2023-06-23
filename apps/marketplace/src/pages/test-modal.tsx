@@ -7,6 +7,7 @@ import MakeOfferModal from '@/components/modal/MakeOfferModal';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import AdvertisementModal from '@/components/marketplace/listing/AdvertisementModal';
 import OnRefreshModal from '@/components/modal/RefreshModal';
+import ShareModal from '@/components/modal/ShareModal';
 
 const TestModal = () => {
   const report = [
@@ -25,10 +26,11 @@ const TestModal = () => {
   const [open2, setOpen2] = useState(false);
   const [open3, setOpen3] = useState(false);
   const [open4, setOpen4] = useState(false);
+  const [open5, setOpen5] = useState(false);
   const [openReport, setOpenReport] = useState(false);
   const [openOffer, setOpenOffer] = useState(false);
   const [openLeave, setOpenLeave] = useState(false);
-  const[ openRefresh, setOpenRefresh] = useState(false);
+  const [openRefresh, setOpenRefresh] = useState(false);
   const [inputValue, setInputValue] = useState<number>(0);
   const [rating, setRating] = useState<number | null>(1);
   const [isOpen, setIsOpen] = useState(false);
@@ -133,6 +135,14 @@ const TestModal = () => {
         onClose={handleClose}
         open={isOpen}
         url="https://www.google.com"
+      />
+      <Button onClick={() => setOpen5(true)}> Share Modal</Button>
+      <ShareModal
+        open={open5}
+        setOpen={setOpen5}
+        title="Share"
+        content="Share this link with anyone!"
+        link="sussy baka 123"
       />
     </>
   );
