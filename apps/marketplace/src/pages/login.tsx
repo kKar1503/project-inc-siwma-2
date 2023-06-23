@@ -16,7 +16,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
-import useTogglePasswordVisibility from '@inc/ui/lib/hook/usePasswordToggle';
+import { useTogglePasswordVisibility } from '@inc/ui';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
