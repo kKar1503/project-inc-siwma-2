@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import DetailedListingCarousel from '@/components/marketplace/carousel/DetailedListingCarousel';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
@@ -18,11 +18,7 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Link from '@mui/material/Link';
-import {
-  StarsRating,
-  useResponsiveness,
-  AddCommentModal,
-} from '@inc/ui';
+import { StarsRating, useResponsiveness, AddCommentModal } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo, useState, useEffect } from 'react';
 import fetchCategories from '@/middlewares/fetchCategories';
@@ -32,7 +28,7 @@ import fetchParams from '@/middlewares/fetchParamNames';
 import fetchUser from '@/middlewares/fetchUser';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { DateTime } from 'luxon';
-import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
+// import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
 import fetchChatList from '@/middlewares/fetchChatList';
 import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
@@ -115,11 +111,11 @@ const useCreateChatQuery = (sellerId: string, buyerId: string, listingId: string
 };
 
 interface reviewDetails {
-  userUuid: string;
+  listingId: string;
   reviewData: ReviewRequestBody;
 }
 
-const reviewData = (data: reviewDetails) => postReview(data.reviewData, data.userUuid)
+const reviewData = (data: reviewDetails) => postReview(data.reviewData, data.listingId);
 
 const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[] | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
@@ -161,8 +157,8 @@ const DetailedListingPage = () => {
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
 
   const chatRooms = useChatListQuery(loggedUserUuid);
-  const buyerId = loggedUserUuid as unknown as string
-  const sellerId = listings?.owner.id as string
+  const buyerId = loggedUserUuid as unknown as string;
+  const sellerId = listings?.owner.id as string;
   const newRoom = useCreateChatQuery(sellerId, buyerId, listingId);
 
   // const postReview = usePostReviewQuery();
@@ -173,32 +169,21 @@ const DetailedListingPage = () => {
   const [rating, setRating] = useState<number | null>(0);
   const [isOpen, setIsOpen] = useState(false);
 
-  const usePostReviewQuery =
-  useMutation({mutationFn: (data: reviewDetails) =>
-    reviewData(data)}
-  );
-
-  // const createReview = (val: boolean) => {
-  //   setRightButtonState(val)
-  //   if (rightButtonState === true) { return postReview }
-  //   return null
-  // };
+  const usePostReviewQuery = useMutation({ mutationFn: (data: reviewDetails) => reviewData(data) });
 
   useEffect(() => {
     if (rightButtonState === true) {
-      
       const reviewData = {
         review: inputText,
-        rating: rating as number
-      }
+        rating: rating as number,
+      };
       const review = {
-        userUuid: loggedUserUuid,
-        reviewData
-      }
-      console.log('peder')
-      usePostReviewQuery.mutate(review)
+        listingId,
+        reviewData,
+      };
+      usePostReviewQuery.mutate(review);
     }
-  }, [rightButtonState, loggedUserUuid, inputText, rating ]);
+  }, [rightButtonState, listingId, inputText, rating]);
 
   const { isBookmarked, handleBookmarkListing } = useBookmarkListingQuery(
     listingId,
@@ -590,30 +575,37 @@ const DetailedListingPage = () => {
                 {reviews?.length ? (
                   reviews?.map((individualReview) => (
                     <Box sx={({ spacing }) => ({ width: '100%', pt: spacing(3) })}>
-                      <Grid container>
-                        <Grid item xs={2} md={1}>
-                          <Avatar>
-                            {user?.find((x) => x.id === individualReview?.userId)?.profilePic}
-                          </Avatar>
+                      <Link
+                        href={`/profile/${
+                          user?.find((x) => x.id === individualReview?.userId)?.id
+                        }`}
+                        sx={{ textDecoration: 'none' }}
+                      >
+                        <Grid container>
+                          <Grid item xs={2} md={1}>
+                            <Avatar>
+                              {user?.find((x) => x.id === individualReview?.userId)?.profilePic}
+                            </Avatar>
+                          </Grid>
+                          <Grid item xs={9} md={8}>
+                            <Typography
+                              sx={{
+                                fontWeight: 500,
+                              }}
+                            >
+                              {user?.find((x) => x.id === individualReview?.userId)?.name}
+                            </Typography>
+                            <Typography>{individualReview?.review}</Typography>
+                          </Grid>
+                          <Grid item xs={0} md={3}>
+                            <StarsRating rating={individualReview?.rating} />
+                          </Grid>
                         </Grid>
-                        <Grid item xs={9} md={8}>
-                          <Typography
-                            sx={{
-                              fontWeight: 500,
-                            }}
-                          >
-                            {user?.find((x) => x.id === individualReview?.userId)?.name}
-                          </Typography>
-                          {individualReview?.review}
-                        </Grid>
-                        <Grid item xs={0} md={3}>
-                          <StarsRating rating={individualReview?.rating} />
-                        </Grid>
-                      </Grid>
-                      <Divider
-                        sx={({ spacing }) => ({ pt: spacing(2), width: 'full' })}
-                        variant="fullWidth"
-                      />
+                        <Divider
+                          sx={({ spacing }) => ({ pt: spacing(2), width: 'full' })}
+                          variant="fullWidth"
+                        />
+                      </Link>
                     </Box>
                   ))
                 ) : (
