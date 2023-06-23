@@ -74,6 +74,9 @@ const ResetForm = () => {
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
         ...shape,
       };
     }
@@ -84,6 +87,9 @@ const ResetForm = () => {
         pb: '5rem',
         pt: spacing(3),
         position: 'relative',
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
         bgcolor: palette.common.white,
         ...shape,
       };
@@ -95,11 +101,15 @@ const ResetForm = () => {
         pb: '6rem',
         pt: spacing(3),
         position: 'relative',
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
         bgcolor: palette.common.white,
         ...shape,
       };
     }
     return {
+      border: 'none' ,
       boxShadow: shadows[5],
       px: '10rem',
       pb: '15rem',
@@ -114,11 +124,12 @@ const ResetForm = () => {
     <Box>
       <Box
         sx={{
+          
           width: '100vw',
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" style={{ objectFit: 'cover' }} fill />
+        <Image src="/images/siwma-bg.png" alt="logo" style={{ objectFit: 'cover'}} fill />
         <Container
           component="main"
           maxWidth="md"
