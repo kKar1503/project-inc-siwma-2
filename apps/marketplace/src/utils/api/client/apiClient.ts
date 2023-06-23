@@ -50,7 +50,7 @@ client.interceptors.response.use(
       window.location.href = '/login';
     }
 
-    return null;
+    return error.response;
   }
 );
 
