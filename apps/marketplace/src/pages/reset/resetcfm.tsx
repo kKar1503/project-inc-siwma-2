@@ -21,6 +21,9 @@ const ResetPassword = () => {
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
         ...shape,
       };
     }
@@ -32,6 +35,9 @@ const ResetPassword = () => {
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
         ...shape,
       };
     }
@@ -42,6 +48,9 @@ const ResetPassword = () => {
         pb: '10rem',
         pt: spacing(3),
         position: 'relative',
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
         bgcolor: palette.common.white,
         ...shape,
       };
