@@ -20,10 +20,10 @@ const MuiTheme = ({ children, fonts = '' }: MuiThemeProps) => {
   coreThemeConfig.typography = {
     ...coreThemeConfig.typography,
     fontFamily: [
-      fonts.replace(/[\s']/g, ''),
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',
+      fonts.replace(/[\s']/g, ''),
       'Roboto',
       '"Helvetica Neue"',
       'Arial',
