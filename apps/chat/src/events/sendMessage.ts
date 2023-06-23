@@ -35,7 +35,8 @@ const sendMessage: EventFile = (io, socket) => ({
       eventLog('warn', `No connected sockets to room (${roomId}).`);
 
       eventLog('trace', `Acknowledging message...`);
-      ack({ success: false, err: { message: 'No connected sockets to room.' } });
+      if (typeof ack === 'function')
+        ack({ success: false, err: { message: 'No connected sockets to room.' } });
 
       return;
     }
@@ -59,7 +60,7 @@ const sendMessage: EventFile = (io, socket) => ({
         eventLog('info', `Created new message (${id}) in database.`);
 
         eventLog('trace', `Acknowledging message...`);
-        ack({ success: true, data: { id, read } });
+        if (typeof ack === 'function') ack({ success: true, data: { id, read } });
 
         eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
         (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
@@ -73,7 +74,7 @@ const sendMessage: EventFile = (io, socket) => ({
         eventLog('error', `Failed to insert message into database.`);
 
         eventLog('trace', `Acknowledging message...`);
-        ack({ success: false });
+        if (typeof ack === 'function') ack({ success: false });
       });
   },
 });
