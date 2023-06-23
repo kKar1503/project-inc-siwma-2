@@ -24,11 +24,11 @@ export type SetImageProps = {
 };
 
 const ImageUploadForm = ({ setImages }: SetImageProps) => {
-  const [images, setPreivewImages] = useState<PreviewImageProps[]>([]);
+  const [images, setPreviewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPreivewImages([]);
+    setPreviewImages([]);
     setError('');
 
     const selectedImages = Array.from(e.target.files || []);
@@ -48,7 +48,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
       file,
       preview: URL.createObjectURL(file),
     }));
-    setPreivewImages((prevImages) => [...prevImages, ...previewImages].slice(0, 10));
+    setPreviewImages((prevImages) => [...prevImages, ...previewImages].slice(0, 10));
 
     setImages(imageFiles);
 
@@ -56,7 +56,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
   };
 
   const handleImageRemove = (index: number) => {
-    setPreivewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const openFullImage = (url: string) => {
@@ -69,8 +69,28 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
     return (
       <Grid container spacing={2}>
         {images.map(({ file, preview }, index) => (
-          <Grid item xs={4} sm={2} md={1} key={file.name}>
-            <Box position="relative" mt="1rem">
+          <Grid item xs={4} md={1} key={file.name}>
+            <Box sx={{ position: 'relative', mt: '1rem', display: 'inline-block' }}>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '-15px',
+                  right: '0px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <IconButton
+                  aria-label="delete"
+                  size="small"
+                  sx={({ palette }) => ({
+                    color: palette.error.main,
+                  })}
+                  onClick={() => handleImageRemove(index)}
+                >
+                  <CancelIcon />
+                </IconButton>
+              </Box>
               <Image
                 src={preview}
                 alt={file.name}
@@ -79,20 +99,6 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
                 style={{ paddingRight: '1rem' }}
                 onClick={() => openFullImage(preview)}
               />
-              <IconButton
-                aria-label="delete"
-                size="small"
-                sx={({ palette }) => ({
-                  position: 'absolute',
-                  top: '-15px',
-                  right: '-20px',
-                  color: palette.primary.main,
-                  bgcolor: palette.common.white,
-                })}
-                onClick={() => handleImageRemove(index)}
-              >
-                <CancelIcon />
-              </IconButton>
             </Box>
           </Grid>
         ))}
