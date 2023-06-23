@@ -8,10 +8,11 @@ import { formatSingleListingResponse, parseListingId } from '..';
 // -- Functions --//
 /**
  * Checks if a listing exists
- * @param id The listing id
  * @returns The listing if it exists
+ * @param $id
+ * @param requireImages
  */
-export async function checkListingExists($id: string | number) {
+export async function checkListingExists($id: string | number, requireImages = false) {
   // Parse and validate listing id provided
   const id = typeof $id === 'number' ? $id : parseListingId($id);
 
@@ -27,11 +28,11 @@ export async function checkListingExists($id: string | number) {
         },
       },
       listingsParametersValues: true,
-      listingImages: {
+      listingImages: requireImages ? {
         orderBy: {
           order: 'asc',
         },
-      },
+      } : false,
       offersOffersListingTolistings: true,
       reviewsReviewsListingTolistings: true,
     },
@@ -80,7 +81,7 @@ export default apiHandler()
     const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
     const reviewCount = _count && _count.rating;
 
-    const listing = await checkListingExists(id);
+    const listing = await checkListingExists(id, queryParams.includeImages);
 
     const completeListing = {
       ...listing,
@@ -103,7 +104,7 @@ export default apiHandler()
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
 
-    const listing = await checkListingExists(id);
+    const listing = await checkListingExists(id, queryParams.includeImages);
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
@@ -274,7 +275,7 @@ export default apiHandler()
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
 
-    const listing = await checkListingExists(id);
+    const listing = await checkListingExists(id, true);
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
