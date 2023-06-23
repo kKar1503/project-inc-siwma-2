@@ -96,7 +96,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
                 alt={file.name}
                 width={100}
                 height={100}
-                style={{ paddingRight: '1rem' }}
+                style={{ paddingRight: '1rem', objectFit: 'cover' }}
                 onClick={() => openFullImage(preview)}
               />
             </Box>
