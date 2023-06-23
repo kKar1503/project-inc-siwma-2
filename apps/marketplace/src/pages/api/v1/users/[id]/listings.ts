@@ -54,7 +54,11 @@ export default apiHandler().get(async (req, res) => {
     take: queryParams.limit,
     include: {
       listingsParametersValues: queryParams.includeParameters,
-      listingImages: queryParams.includeImages,
+      listingImages: queryParams.includeImages ?  {
+        orderBy: {
+          order: 'asc',
+        }
+      } : false,
       offersOffersListingTolistings: true,
       users: {
         include: {
