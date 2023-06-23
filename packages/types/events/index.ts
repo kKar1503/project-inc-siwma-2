@@ -29,6 +29,30 @@ export type ClientCreateRoom = {
   listingId: ListingId;
 };
 
+export type Messages = {
+  id: number;
+  author: string;
+  room: string;
+  read: boolean;
+  createdAt: Date;
+  contentType: 'text' | 'file' | 'image' | 'offer';
+  offer: number | null;
+  content: string;
+};
+
+export type MessageSync =
+  | {
+      status: 'in_progress';
+      message: Messages;
+    }
+  | {
+      status: 'success';
+    }
+  | {
+      status: 'error';
+      err?: string;
+    };
+
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
   // ** Connections
@@ -46,6 +70,7 @@ type EventParams = {
   clientSendMessage: ClientSendMessage; // Has Ack
   clientDeleteMessage: MessageId; // Has Ack
   clientReadMessage: RoomId; // Has Ack
+  clientSyncMessage: MessageId; // Has Ack
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
@@ -58,6 +83,7 @@ type EventParams = {
   serverRoomMessage: ServerRoomMessage;
   serverDeletedMessage: MessageId;
   serverReadMessage: MessageId[];
+  serverSyncMessage: MessageSync;
   // Server Typing Events
   serverStartType: UserId;
   serverStopType: UserId;
