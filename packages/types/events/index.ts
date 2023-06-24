@@ -43,6 +43,7 @@ export type Messages = {
 export type MessageSync =
   | {
       status: 'in_progress';
+      progress: number;
       message: Messages;
     }
   | {
