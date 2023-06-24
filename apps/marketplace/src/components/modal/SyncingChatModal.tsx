@@ -124,6 +124,7 @@ const SyncingChatModal = ({
         slotProps={{
           backdrop: {
             timeout: 500,
+            onClick: () => null,
           },
         }}
       >
