@@ -25,7 +25,7 @@ const syncLocalStorage = (message: Messages, lastMessagesCache?: Map<string, str
   ).room; // This is to stop the annoying TS error.
   const strMessage = JSON.stringify(message);
 
-  if (lastMessagesCache !== undefined) lastMessagesCache.set(`${room}-last`, strMessage);
+  if (lastMessagesCache !== undefined) lastMessagesCache.set(room, strMessage);
   localStorage.setItem(room, existingMessages + strMessage + ']');
   localStorage.setItem('lastMessageId', JSON.stringify(message.id));
   window.dispatchEvent(new Event('local-storage'));
@@ -40,7 +40,7 @@ const syncLocalStorage = (message: Messages, lastMessagesCache?: Map<string, str
 export const syncLastMessages = (lastMessagesCache: Map<string, string>) => {
   const roomSet = new Set<string>();
   lastMessagesCache.forEach((message, room) => {
-    localStorage.setItem(room, message);
+    localStorage.setItem(`${room}-last`, message);
     if (!roomSet.has(room)) roomSet.add(room);
   });
 
@@ -61,7 +61,10 @@ export const syncRooms = (rooms: Set<string> | string) => {
   const existingRooms = localStorage.getItem('rooms');
 
   if (existingRooms === null) {
-    localStorage.setItem('rooms', JSON.stringify(rooms));
+    localStorage.setItem(
+      'rooms',
+      typeof rooms === 'string' ? JSON.stringify([rooms]) : JSON.stringify([...rooms])
+    );
     window.dispatchEvent(new Event('local-storage'));
   } else {
     const existingRoomsSet = new Set<string>(JSON.parse(existingRooms));
