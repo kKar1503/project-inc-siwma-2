@@ -52,7 +52,7 @@ const readMessage: EventFile = (_, socket) => ({
             eventLog('info', `Retrieved ${messages.length} messages from database.`);
             eventLog('debug', `Retrieved messages: ${JSON.stringify(messages)}`);
 
-            let messageIds: number[] = [];
+            let messageIds = new Array<number>(messages.length);
 
             eventLog('trace', `Mapping messages to messageIds...`);
             for (const message of messages) {
