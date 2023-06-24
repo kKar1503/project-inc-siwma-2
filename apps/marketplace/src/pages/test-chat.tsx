@@ -42,6 +42,10 @@ const TestChatPage = () => {
           console.log(messageSync.progress);
           console.log(messageSync.message);
           syncLocalStorage(messageSync.message, lastMessagesCache.current);
+          break;
+        }
+        default: {
+          break;
         }
       }
     },
@@ -117,26 +121,24 @@ const TestChatPage = () => {
         Emit
       </button>
       <br />
-      {rooms.map((room) => {
-        return (
-          <>
-            <span>{room}</span>
-            <button disabled={roomId !== ''} onClick={() => join(room)}>
-              🚪
-            </button>
-            <button disabled={roomId !== room || roomId === ''} onClick={() => part()}>
-              👋
-            </button>
-            <br />
-          </>
-        );
-      })}
+      {rooms.map((room) => (
+        <>
+          <span>{room}</span>
+          <button disabled={roomId !== ''} onClick={() => join(room)}>
+            🚪
+          </button>
+          <button disabled={roomId !== room || roomId === ''} onClick={() => part()}>
+            👋
+          </button>
+          <br />
+        </>
+      ))}
       <button id="sync-btn" onClick={sync}>
         Sync
       </button>
-      {localStorageMessages.map((message) => {
-        return <p>{message.content}</p>;
-      })}
+      {localStorageMessages.map((message) => (
+        <p>{message.content}</p>
+      ))}
     </>
   );
 };
