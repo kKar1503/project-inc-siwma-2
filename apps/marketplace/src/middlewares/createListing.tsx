@@ -3,36 +3,49 @@ import { PostListingsRequestBody } from '@/utils/api/server/zod/listings';
 
 // backend not confirmed yet, backend stuff still in progress...
 const createListing = async (listingBody: PostListingsRequestBody | undefined, images: Blob[] | undefined) => {
+  try {
+    // undefined validation (simple validation as other validation is done in the form)
+    if (listingBody === undefined || images === undefined) return false;
 
-  // undefined validation (simple validation as other validation is done in the form)
-  if (listingBody === undefined || images === undefined) return false;
+    /**
+     * 1. Post listing
+     */
 
-  /**
-   * 1. Post listing
-   */
+      // Post listing
+    const result = await apiClient.post('/v1/listings', listingBody);
 
-    // Post listing
-  const result = await apiClient.post('/v1/listings', listingBody);
+    // if you're not posting images then just ignore the rest of the code and just return true
 
-  // if you're not posting images then just ignore the rest of the code and just return true
+    /**
+     * 2. Post images
+     */
+    // Post images
+    if (images.length === 0) return true; // no images to post
 
-  /**
-   * 2. Post images
-   */
-  // Post images
-  if (images.length === 0) return true; // no images to post
+    // get listing id
+    const { listingId: id } = result.data.data[0];
 
-  // get listing id
-  const { listingId: id } = result.data.data[0];
+    // form data to store images
+    const formData = new FormData();
+    // append images to form data
+    images.forEach((image) => formData.append('file', image));
+    // post images
+    await apiClient.put(`/v1/listings/${id}/images`, formData);
 
-  // form data to store images
-  const formData = new FormData();
-  // append images to form data
-  images.forEach((image) => formData.append('file', image));
-  // post images
-  await apiClient.put(`/v1/listings/${id}/images`, formData);
-
-  return true;
+    return true;
+  } catch (error: { data: { errors: { detail: string }[] } }) {
+    const { errors } = error.data;
+    const hashset: Record<string, boolean> = {}; // only using keys, values are always true (doesn't matter)
+    errors.forEach((error: { detail: string }) => {
+      hashset[error.detail] = true;
+    });
+    const errorMessages = Object.keys(hashset);
+    window.alert(`Error occurred when creating listing:\n${errorMessages.join('\n')}`);
+    return false;
+  }
 };
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore (for some reason it says that this file has multiple exports but it doesn't)
 export default createListing;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore (apparently the next line is the 'extra' export that it's talking about)
