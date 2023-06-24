@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
-import {Typography, Button,Box, Container} from '@mui/material';
+import { Typography, Button, Box, Container } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
@@ -17,12 +17,12 @@ const ResetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '2rem',
-        pb: '9rem',
+        pb: '5rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
-        display: 'flex', 
-        justifyContent: 'center', 
+        display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center',
         ...shape,
       };
@@ -31,12 +31,12 @@ const ResetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '9rem',
+        pb: '4rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
-        display: 'flex', 
-        justifyContent: 'center', 
+        display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center',
         ...shape,
       };
@@ -45,11 +45,10 @@ const ResetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '10rem',
-        pt: spacing(3),
+        pb: '4rem',
         position: 'relative',
-        display: 'flex', 
-        justifyContent: 'center', 
+        display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center',
         bgcolor: palette.common.white,
         ...shape,
@@ -61,13 +60,16 @@ const ResetPassword = () => {
       pb: '15rem',
       pt: spacing(3),
       position: 'relative',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       bgcolor: palette.common.white,
       ...shape,
     };
-  }, [isSm,isMd,isLg]);
+  }, [isSm, isMd, isLg]);
 
   const handleBackToLogin = () => {
-    window.location.href = '/login';
+    router.push('/reset/resetcfm');
   };
 
   return (
@@ -78,7 +80,7 @@ const ResetPassword = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" style={{ objectFit: 'cover' }} fill />
+        <Image src="/images/siwma-background.png" alt="logo" style={{ objectFit: 'cover' }} fill />
         <Container
           component="main"
           maxWidth="md"
@@ -90,9 +92,8 @@ const ResetPassword = () => {
           }}
         >
           <Box sx={stylesBox}>
-
             <Box
-             sx={({ spacing, }) => ({
+              sx={({ spacing }) => ({
                 justifyContent: 'center',
                 mt: spacing(5),
               })}
@@ -131,7 +132,7 @@ const ResetPassword = () => {
               >
                 BACK TO LOGIN
               </Button>
-            </Box> 
+            </Box>
           </Box>
         </Container>
       </Box>
@@ -139,4 +140,6 @@ const ResetPassword = () => {
   );
 };
 
+// Temp solve for the navbar issue by removing it
+ResetPassword.includeNavbar = false;
 export default ResetPassword;

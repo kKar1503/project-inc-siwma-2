@@ -41,27 +41,23 @@ const ResetForm = () => {
       setErrorMsg('Password is not the same');
     } else {
       setErrorMsg('');
-      apiClient
+      const response = await apiClient
         .post(`v1/users/${uuid}/reset-password`, {
           newPassword: password,
           token,
         })
-        .then((response) => {
-          console.log(response);
-          if (response && response.status === 403) {
+        .catch((error) => {
+          if (error && error.status === 403) {
             alert('Token Expired');
           }
-          if (response && response.status === 422) {
+          if (error && error.status === 422) {
             alert('Invalid userId');
           }
-          if (!response) {
-            alert('Response did not went through');
-          }
-          if (response && response.status === 204) {
-            alert('Response went through');
-            router.push('/reset/resetcfm');
-          }
         });
+      if (response && response.status === 204) {
+        alert('Response went through');
+        router.push('/reset/success');
+      }
     }
   };
 
@@ -71,12 +67,9 @@ const ResetForm = () => {
         boxShadow: shadows[5],
         px: '2rem',
         pb: '5rem',
-        pt: spacing(3),
+        pt: '4rem',
         position: 'relative',
-        bgcolor: palette.common.white,
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center',
+        bgcolor: palette.common.white,  
         ...shape,
       };
     }
@@ -85,11 +78,8 @@ const ResetForm = () => {
         boxShadow: shadows[5],
         px: '10rem',
         pb: '5rem',
-        pt: spacing(3),
+        pt: '5rem',
         position: 'relative',
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center',
         bgcolor: palette.common.white,
         ...shape,
       };
@@ -98,23 +88,23 @@ const ResetForm = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '6rem',
-        pt: spacing(3),
+        pb: '5rem',
+        pt: '4rem',
         position: 'relative',
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center',
         bgcolor: palette.common.white,
         ...shape,
       };
     }
     return {
-      border: 'none' ,
+      border: 'none',
       boxShadow: shadows[5],
       px: '10rem',
       pb: '15rem',
-      pt: spacing(3),
+      pt: spacing(2),
       position: 'relative',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       bgcolor: palette.common.white,
       ...shape,
     };
@@ -124,12 +114,11 @@ const ResetForm = () => {
     <Box>
       <Box
         sx={{
-          
           width: '100vw',
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" style={{ objectFit: 'cover'}} fill />
+        <Image src="/images/siwma-background.png" alt="logo" style={{ objectFit: 'cover' }} fill />
         <Container
           component="main"
           maxWidth="md"
@@ -239,5 +228,5 @@ const ResetForm = () => {
 };
 
 // Temp solve for the navbar issue by removing it
-ResetForm.includeNavbar = false; 
+ResetForm.includeNavbar = false;
 export default ResetForm;
