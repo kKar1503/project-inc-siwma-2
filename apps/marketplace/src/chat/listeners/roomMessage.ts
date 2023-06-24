@@ -19,8 +19,8 @@ const event: ClientEventFile<UseChatParams> = (io, hookParams) => ({
       messageCallback(roomMessage);
     }
 
-    if (currentRoom === roomMessage.roomId) {
-      (io.emit as TypedSocketEmitter)(EVENTS.CLIENT.MESSAGE.READ, roomMessage.roomId);
+    if (currentRoom === roomMessage.room) {
+      (io.emit as TypedSocketEmitter)(EVENTS.CLIENT.MESSAGE.READ, roomMessage.room);
     }
   },
 });
