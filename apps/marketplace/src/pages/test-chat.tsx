@@ -3,17 +3,21 @@ import useChat from '@/hooks/useChat';
 import type { Messages } from '@inc/types';
 import { sendMessage, joinRoom, partRoom, syncMessage } from '@/chat/emitters';
 import { useEffect, useRef, useState } from 'react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import syncLocalStorage from '@/utils/syncLocalStorage';
 
 const socket = io('http://localhost:4000');
 
 const TestChatPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [messages, setMessages] = useState<Messages[]>([]);
+  const roomInputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState(0);
+  const [roomId, setRoomId] = useState('');
+  const [localStorageMessages, setLocalStorageMessages] = useLocalStorage<Messages[]>(roomId, []);
 
   const { isConnected, loading } = useChat(socket, {
     userId: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
-    currentRoom: '',
+    currentRoom: roomId,
     chatMessagesProgressCallback: (progress) => setProgress(progress),
     messageSyncCallback: (messageSync) => {
       switch (messageSync.status) {
@@ -29,7 +33,7 @@ const TestChatPage = () => {
           console.log('Sync in progress');
           console.log(messageSync.progress);
           console.log(messageSync.message);
-          setMessages((curr) => [...curr, messageSync.message]);
+          syncLocalStorage(messageSync.message);
         }
       }
     },
@@ -48,7 +52,6 @@ const TestChatPage = () => {
   // }, [isConnected]);
 
   const sync = () => {
-    setMessages([]);
     syncMessage(socket, 0, (ack) => {
       if (ack.success) {
         console.log(ack.data);
@@ -58,24 +61,31 @@ const TestChatPage = () => {
     });
   };
 
-  const join = () => {
-    joinRoom(socket, '4633cfa1-5a90-4ac4-9bae-5ce3ef14dbf5', (ack) => console.log(ack));
+  const room = () => {
+    setRoomId(roomInputRef.current!.value);
+    joinRoom(socket, roomInputRef.current!.value, (ack) => console.log(ack));
   };
 
   const part = () => {
-    partRoom(socket, '4633cfa1-5a90-4ac4-9bae-5ce3ef14dbf5', (ack) => console.log(ack));
+    partRoom(socket, roomId, (ack) => console.log(ack));
+    setRoomId('');
   };
 
-  const emit = () =>
+  const emit = () => {
+    if (roomId === '') {
+      alert('not in room');
+      return;
+    }
     sendMessage(
       socket,
       {
-        roomId: '4633cfa1-5a90-4ac4-9bae-5ce3ef14dbf5',
+        roomId: roomId,
         message: inputRef.current!.value,
         time: new Date(),
       },
       (ack) => console.log(ack)
     );
+  };
 
   return (
     <>
@@ -88,8 +98,10 @@ const TestChatPage = () => {
         Emit
       </button>
       <br />
-      <button id="join-btn" onClick={join}>
-        Join
+      <span>Room</span>
+      <input id="room" ref={roomInputRef} />
+      <button id="room-emit-btn" onClick={room}>
+        Join Room
       </button>
       <br />
       <button id="part-btn" onClick={part}>
@@ -99,7 +111,7 @@ const TestChatPage = () => {
       <button id="sync-btn" onClick={sync}>
         Sync
       </button>
-      {messages.map((message) => {
+      {localStorageMessages.map((message) => {
         return <p>{message.content}</p>;
       })}
     </>
