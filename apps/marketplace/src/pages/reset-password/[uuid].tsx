@@ -51,7 +51,7 @@ const ResetForm = () => {
             setErrorMsg('Token Expired');
           }
           if (error && error.status === 422) {
-            setErrorMsg('Invalid userId');
+            setErrorMsg('User not found!');
           }
         });
       if (response && response.status === 204) {
@@ -226,6 +226,5 @@ const ResetForm = () => {
   );
 };
 
-// Temp solve for the navbar issue by removing it
 ResetForm.includeNavbar = false;
 export default ResetForm;
