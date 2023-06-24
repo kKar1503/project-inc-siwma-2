@@ -12,10 +12,11 @@ const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z
-    .preprocess(
-      zodDecodeToJson,
-      z.object({
+  includeImages: z.string().transform(zodParseToBoolean).optional().default('false'),
+  params: z.preprocess(
+    zodDecodeToJson,
+    z
+      .object({
         paramId: z.string().transform(zodParseToInteger),
         value: z.string(),
       })
