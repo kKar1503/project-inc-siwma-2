@@ -5,12 +5,9 @@ import type { UseChatParams } from '@/types/useChatTypes';
 // ** Events Imports **
 import { EVENTS } from '@inc/events';
 
-// ** Event Name **
-const eventName = EVENTS.SERVER.MESSAGE.ROOM;
-
 // ** Event File **
 const event: ClientEventFile<UseChatParams> = (io, hookParams) => ({
-  eventName: eventName,
+  eventName: EVENTS.SERVER.MESSAGE.ROOM,
   type: 'on', // 'on' | 'once'
   callback: (roomMessage) => {
     const { currentRoom, messageCallback } = hookParams;

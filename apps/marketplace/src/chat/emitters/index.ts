@@ -3,7 +3,7 @@ import { EVENTS } from '@inc/events';
 
 // ** Types Imports **
 import { Socket } from 'socket.io-client';
-import { Acknowlegement, ClientCreateRoom, ClientSendMessage } from '@inc/types';
+import type { Acknowlegement, ClientCreateRoom, ClientSendMessage } from '@inc/types';
 
 // ** Room Events **
 export function joinRoom(socket: Socket, roomId: string, ack: (ack: Acknowlegement) => void) {

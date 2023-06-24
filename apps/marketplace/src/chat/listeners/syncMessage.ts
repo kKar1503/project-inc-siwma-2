@@ -5,12 +5,9 @@ import type { UseChatParams } from '@/types/useChatTypes';
 // ** Events Imports **
 import { EVENTS } from '@inc/events';
 
-// ** Event Name **
-const eventName = EVENTS.SERVER.MESSAGE.SYNC;
-
 // ** Event File **
 const event: ClientEventFile<UseChatParams> = (_, hookParams, setLoading) => ({
-  eventName: eventName,
+  eventName: EVENTS.SERVER.MESSAGE.SYNC,
   type: 'on', // 'on' | 'once'
   callback: (messageSync) => {
     const { chatMessagesProgressCallback, messageSyncCallback } = hookParams;
