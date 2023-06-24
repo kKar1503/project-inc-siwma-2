@@ -1,5 +1,11 @@
-import { apiHandler, formatAPIResponse, handleBookmarks, parseToNumber, UpdateType } from '@/utils/api';
-import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
+import {
+  apiHandler,
+  formatAPIResponse,
+  handleBookmarks,
+  parseToNumber,
+  UpdateType,
+} from '@/utils/api';
+import PrismaClient, { Companies, Listing, Messages, Prisma, Users } from '@inc/db';
 import { ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
@@ -11,6 +17,7 @@ export type ListingWithParameters = Listing & {
   }>;
   offersOffersListingTolistings: Array<{
     accepted: boolean;
+    messages?: Array<Pick<Messages, 'author'>>;
   }>;
   listingImages: Array<{
     image: string;
@@ -106,6 +113,7 @@ export function sortOptions(sortByStr: string | undefined) {
 // -- Helper functions -- //
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
+  userId: string,
   includeParameters: boolean
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
@@ -134,10 +142,6 @@ export async function formatSingleListingResponse(
       contactMethod: listing.users.contact,
       bio: listing.users.bio,
     },
-    images: listing.listingImages.map((image) => image.image),
-    coverImage: listing.listingImages.length === 0
-      ? ''
-      : listing.listingImages[0].image,
     open: listing.multiple
       ? true
       : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted),
@@ -145,7 +149,17 @@ export async function formatSingleListingResponse(
     createdAt: listing.createdAt.toISOString(),
     rating: listing.rating,
     reviewCount: listing.reviewCount,
+    // Whether or not the user has purchased the listing
+    purchased: listing.offersOffersListingTolistings.some(
+      (offer) => offer.accepted && offer.messages?.some((message) => message.author === userId)
+    ),
   };
+
+  if (listing.listingImages) {
+    formattedListing.images = listing.listingImages.map((image) => image.image);
+    formattedListing.coverImage =
+      listing.listingImages.length === 0 ? '' : listing.listingImages[0].image;
+  }
 
   if (includeParameters && listing.listingsParametersValues) {
     formattedListing.parameters = listing.listingsParametersValues.map((parameter) => ({
@@ -164,6 +178,9 @@ export default apiHandler()
 
     const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
+    // Obtain the user's ID
+    const userId = req.token?.user.id;
+
     // Get total count ignoring pagination
     const totalCount = await PrismaClient.listing.count({
       where: {
@@ -175,17 +192,17 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-            some: {
-              parameterId: queryParams.params.paramId,
-              value: queryParams.params.value,
-            },
-          }
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
           : undefined,
       },
     });
@@ -201,30 +218,41 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-            some: {
-              parameterId: queryParams.params.paramId,
-              value: queryParams.params.value,
-            },
-          }
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
           : undefined,
       },
       orderBy,
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
-        listingImages: queryParams.includeImages ?  {
-          orderBy: {
-            order: 'asc',
-          }
-        } : false,
+        listingImages: queryParams.includeImages
+          ? {
+              orderBy: {
+                order: 'asc',
+              },
+            }
+          : false,
         listingsParametersValues: queryParams.includeParameters,
-        offersOffersListingTolistings: true,
+        offersOffersListingTolistings: {
+          select: {
+            accepted: true,
+            messages: {
+              select: {
+                author: true,
+              },
+            },
+          },
+        },
         users: {
           include: {
             companies: true,
@@ -252,11 +280,9 @@ export default apiHandler()
         const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
         const reviewCount = _count && _count.rating;
         const { multiple } = listing;
-        const images = listing.listingImages.map((image) => image.image);
 
         return {
           ...listing,
-          images,
           rating,
           reviewCount,
           multiple,
@@ -269,7 +295,7 @@ export default apiHandler()
     // Format the listings
     const formattedListings = await Promise.all(
       sortedListings.map((listing) =>
-        formatSingleListingResponse(listing, queryParams.includeParameters)
+        formatSingleListingResponse(listing, userId, queryParams.includeParameters)
       )
     );
 
@@ -313,15 +339,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {
