@@ -17,8 +17,8 @@ const SuccessForgotPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '2rem',
-        pb: '6rem',
-        pt: spacing(3),
+        pb: '5rem',
+        pt: spacing(1),
         position: 'relative',
         bgcolor: palette.common.white,
         ...shape,
@@ -28,7 +28,7 @@ const SuccessForgotPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '5rem',
+        pb: '7rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -39,7 +39,7 @@ const SuccessForgotPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '10rem',
+        pb: '8rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -49,7 +49,7 @@ const SuccessForgotPassword = () => {
     return {
       boxShadow: shadows[5],
       px: '10rem',
-      pb: '15rem',
+      pb: '10rem',
       pt: spacing(3),
       position: 'relative',
       bgcolor: palette.common.white,

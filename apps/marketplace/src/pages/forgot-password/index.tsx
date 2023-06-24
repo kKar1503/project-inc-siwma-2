@@ -47,13 +47,13 @@ const ForgetPassword = () => {
     }
   };
 
-  const stylesBox = useMemo(() => {
+ const stylesBox = useMemo(() => {
     if (isSm) {
       return {
         boxShadow: shadows[5],
         px: '2rem',
         pb: '7rem',
-        pt: spacing(2),
+        pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
         ...shape,
@@ -63,7 +63,7 @@ const ForgetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '7rem',
+        pb: '8rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -74,7 +74,7 @@ const ForgetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '7rem',
+        pb: '8rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -84,7 +84,7 @@ const ForgetPassword = () => {
     return {
       boxShadow: shadows[5],
       px: '10rem',
-      pb: '15rem',
+      pb: '10rem',
       pt: spacing(3),
       position: 'relative',
       bgcolor: palette.common.white,
