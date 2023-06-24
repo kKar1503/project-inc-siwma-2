@@ -1,238 +1,112 @@
-import React, { useState, MouseEvent } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MenuIcon from '@mui/icons-material/Menu';
-import TranslateIcon from '@mui/icons-material/Translate';
 import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
+import Grid from '@mui/material/Grid';
 import SearchBar from '@inc/ui/lib/components/SearchBar';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
+import { useSession } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
 import AddListing from './AddListing';
 import Profile from './Profile';
+import MobileDrawer from './MobileDrawer';
+import ChangeLanguageButton from './ChangeLanguageButton';
 
 const NavBar = () => {
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const user = useSession();
+  const { t } = useTranslation();
+  const userName = user.data?.user.name;
+  const userId = user.data?.user.id;
 
-  const isMobileMenuOpen = mobileMoreAnchorEl !== null;
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event: MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, palette, typography, zIndex } = useTheme();
 
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: 'white', boxShadow: 1 }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        backgroundColor: 'white',
+        boxShadow: 1,
+        position: 'sticky',
+        top: 0,
+        zIndex: zIndex.appBar,
+      }}
+    >
       <Toolbar>
+        {/* <Box sx={{ ml: isLg ? spacing(0) : spacing(2) }}> */}
         <Image src="/images/favicons/SIWMA-icon.png" alt="logo" width={60} height={40} />
+        {/* </Box> */}
 
-        <Link href="/home" underline="none">
-          <Typography
-            noWrap
-            sx={({ spacing, typography }) => ({
-              fontSize: typography.subtitle2,
-              ml: spacing(3),
-            })}
-          >
-            Home
-          </Typography>
-        </Link>
-
-        <Link href="/allCategories" underline="none">
-          <Typography
-            noWrap
-            sx={({ spacing, typography }) => ({
-              fontSize: typography.subtitle2,
-              ml: spacing(3),
-              mr: spacing(3),
-            })}
-          >
-            All Categories
-          </Typography>
-        </Link>
-
+        {!isSm && (
+          <Link href="/" underline="none">
+            <Typography
+              noWrap
+              sx={{
+                fontSize: typography.subtitle2,
+                ml: isLg ? spacing(3) : spacing(2),
+              }}
+            >
+              {t('Home')}
+            </Typography>
+          </Link>
+        )}
+        {!isSm && (
+          <Link href="/categories" underline="none">
+            <Typography
+              noWrap
+              sx={{
+                fontSize: typography.subtitle2,
+                ml: isLg ? spacing(3) : spacing(2),
+                mr: isLg ? spacing(3) : spacing(2),
+              }}
+            >
+              {t('All Categories')}
+            </Typography>
+          </Link>
+        )}
         <SearchBar />
 
-        <AddListing />
-
+        {!isSm && <AddListing />}
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <IconButton size="medium">
-            <TranslateIcon
-              sx={({ typography, palette }) => ({
-                fontSize: typography.h5,
-                color: palette.text.secondary,
+          <Grid component="label" container alignItems="center">
+            <ChangeLanguageButton />
+          </Grid>
+
+          <Link href="/chat" underline="none">
+            <IconButton
+              size="medium"
+              sx={({ spacing }) => ({
+                ml: isMd ? spacing(1) : spacing(2),
+                // TODO: Not sure why this is being pushed down, fix it later
+                mt: '5px',
               })}
-            />
-          </IconButton>
-
-          <IconButton
-            size="medium"
-            sx={({ spacing }) => ({
-              ml: spacing(2),
-            })}
-          >
-            <Badge>
-              <MessageIcon
-                sx={({ typography, palette }) => ({
-                  fontSize: typography.h5,
-                  color: palette.text.secondary,
-                })}
-              />
-            </Badge>
-          </IconButton>
-
-          <IconButton
-            size="medium"
-            sx={({ spacing }) => ({
-              ml: spacing(2),
-            })}
-          >
-            <Badge>
-              <NotificationsIcon
-                sx={({ typography, palette }) => ({
-                  fontSize: typography.h5,
-                  color: palette.text.secondary,
-                })}
-              />
-            </Badge>
-          </IconButton>
-
-          <Profile userName="Placeholder username" />
-        </Box>
-
-        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-          <IconButton
-            size="medium"
-            aria-label="show more"
-            aria-controls="primary-search-account-menu-mobile"
-            aria-haspopup="true"
-            onClick={handleMobileMenuOpen}
-            color="inherit"
-            sx={({ spacing }) => ({
-              ml: spacing(2),
-            })}
-          >
-            <MenuIcon />
-          </IconButton>
-
-          <Menu
-            anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={isMobileMenuOpen}
-            onClose={handleMobileMenuClose}
-          >
-            <MenuItem onClick={handleMenuClose}>
-              <IconButton
-                sx={({ spacing }) => ({
-                  ml: spacing(2),
-                })}
-              >
-                <TranslateIcon
-                  sx={({ typography, palette }) => ({
-                    fontSize: typography.h5,
-                    color: palette.text.secondary,
-                  })}
-                />
-              </IconButton>
-              <Typography
-                sx={({ spacing, typography, palette }) => ({
-                  fontSize: typography.caption,
-                  color: palette.text.secondary,
-                  ml: spacing(1),
-                  mr: spacing(2),
-                })}
-              >
-                Translate
-              </Typography>
-            </MenuItem>
-
-            <MenuItem onClick={handleMenuClose}>
-              <IconButton
-                sx={({ spacing }) => ({
-                  ml: spacing(2),
-                })}
-              >
+            >
+              <Badge>
                 <MessageIcon
-                  sx={({ typography, palette }) => ({
+                  sx={{
                     fontSize: typography.h5,
                     color: palette.text.secondary,
-                  })}
+                  }}
                 />
-              </IconButton>
-              <Typography
-                sx={({ spacing, typography, palette }) => ({
-                  fontSize: typography.caption,
-                  color: palette.text.secondary,
-                  ml: spacing(1),
-                  mr: spacing(2),
-                })}
-              >
-                Message
-              </Typography>
-            </MenuItem>
+              </Badge>
+            </IconButton>
+          </Link>
 
-            <MenuItem onClick={handleMenuClose}>
-              <IconButton
-                sx={({ spacing }) => ({
-                  ml: spacing(2),
-                })}
-              >
-                <NotificationsIcon
-                  sx={({ typography, palette }) => ({
-                    fontSize: typography.h5,
-                    color: palette.text.secondary,
-                  })}
-                />
-              </IconButton>
-
-              <Typography
-                sx={({ spacing, typography, palette }) => ({
-                  fontSize: typography.caption,
-                  color: palette.text.secondary,
-                  ml: spacing(1),
-                  mr: spacing(2),
-                })}
-              >
-                Notification
-              </Typography>
-            </MenuItem>
-
-            <MenuItem>
-              <Profile userName="Placeholder username" />
-              <Typography
-                sx={({ spacing, typography, palette }) => ({
-                  fontSize: typography.caption,
-                  color: palette.text.secondary,
-                  ml: spacing(1),
-                  mr: spacing(2),
-                })}
-              >
-                Profile
-              </Typography>
-            </MenuItem>
-          </Menu>
+          <Profile userName={userName} userId={userId} />
         </Box>
+
+        {/* mobile drawer icon here */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+          <MobileDrawer userId={userId} />
+        </Box>
+        {/* end of mobile drawer icon */}
       </Toolbar>
     </Box>
   );

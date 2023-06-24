@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 
@@ -9,6 +10,7 @@ type FilterChipsProps = {
 const options = ['ALL', 'FROM BUYERS', 'FROM SELLERS'];
 
 const FilterChips = ({ onData }: FilterChipsProps) => {
+  const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = useState('ALL');
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -38,7 +40,7 @@ const FilterChips = ({ onData }: FilterChipsProps) => {
             }),
           })}
           variant="outlined"
-          label={option}
+          label={t(option)} // Translate the option label
           onClick={handleClick}
         />
       ))}

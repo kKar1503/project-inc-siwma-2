@@ -1,10 +1,12 @@
 import { useRouter } from 'next/router';
-import React from 'react';
-import { ModalImage, Modal, ModalSelect, ModalInput } from '@inc/ui';
+import { useState } from 'react';
+import { ModalImage, Modal, ModalSelect, ModalInput, AddCommentModal } from '@inc/ui';
 import Button from '@mui/material/Button';
 import ReportModal from '@/components/modal/ReportModal';
 import MakeOfferModal from '@/components/modal/MakeOfferModal';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
+import AdvertisementModal from '@/components/marketplace/listing/AdvertisementModal';
+import OnRefreshModal from '@/components/modal/RefreshModal';
 
 const TestModal = () => {
   const report = [
@@ -13,24 +15,26 @@ const TestModal = () => {
     'Canceling on Deal',
     'Mispriced Listings',
   ];
-  const [leftButtonState, setLeftButtonState] = React.useState(false);
-  const [rightButtonState, setRightButtonState] = React.useState(false);
-  const [selectModal, setSelectModal] = React.useState<string>('');
-  const [selectInput, setSelectInput] = React.useState<number>(0);
-  const [open, setOpen] = React.useState(false);
-  const [open2, setOpen2] = React.useState(false);
-  const [open3, setOpen3] = React.useState(false);
-  const [open4, setOpen4] = React.useState(false);
-  const [openReport, setOpenReport] = React.useState(false);
-  const [openOffer, setOpenOffer] = React.useState(false);
-  const [openLeave, setOpenLeave] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState<number>(0);
-
-  const router = useRouter();
-
-  if (leftButtonState === true) {
-    router.back();
-  }
+  const [leftButtonState, setLeftButtonState] = useState(false);
+  const [rightButtonState, setRightButtonState] = useState(false);
+  const [selectModal, setSelectModal] = useState<string>('');
+  const [inputText, setInputText] = useState<string>('');
+  const [selectInput, setSelectInput] = useState<number>(0);
+  const [open, setOpen] = useState(false);
+  const [openComment, setOpenComment] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [open3, setOpen3] = useState(false);
+  const [open4, setOpen4] = useState(false);
+  const [openReport, setOpenReport] = useState(false);
+  const [openOffer, setOpenOffer] = useState(false);
+  const [openLeave, setOpenLeave] = useState(false);
+  const[ openRefresh, setOpenRefresh] = useState(false);
+  const [inputValue, setInputValue] = useState<number>(0);
+  const [rating, setRating] = useState<number | null>(1);
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClose = (val: boolean) => {
+    setIsOpen(false);
+  };
 
   return (
     <>
@@ -47,6 +51,24 @@ const TestModal = () => {
         leftButtonState={leftButtonState} // <= only one button, set as false
         rightButtonState={rightButtonState}
         setLeftButtonState={setLeftButtonState} // <= only one button, set as the rightButtonState
+        setRightButtonState={setRightButtonState}
+      />
+      <Button onClick={() => setOpenComment(true)}>Add Comment</Button>
+      <AddCommentModal
+        open={openComment}
+        setOpen={setOpenComment}
+        buttonColor="#0288D1"
+        userImage="/images/siwma-bg.png"
+        userName="Hi Metal PTE LTD"
+        inputText={inputText}
+        setInputText={setInputText}
+        rating={rating}
+        setRating={setRating}
+        leftButtonText="cancel"
+        rightButtonText="Publish"
+        leftButtonState={leftButtonState}
+        rightButtonState={rightButtonState}
+        setLeftButtonState={setLeftButtonState}
         setRightButtonState={setRightButtonState}
       />
       <Button onClick={() => setOpen2(true)}> Modal Input</Button>
@@ -100,9 +122,17 @@ const TestModal = () => {
         setInputValue={setInputValue}
       />
       <Button onClick={() => setOpenLeave(true)}> On Leave Modal</Button>
-      <OnLeaveModal
-        open={openLeave}
-        setOpen={setOpenLeave}
+      <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
+      <Button onClick={() => setOpenRefresh(true)}> Refresh Modal</Button>
+      <OnRefreshModal open={openRefresh} setOpen={setOpenRefresh} />
+      <Button onClick={() => setIsOpen(true)}> Modal</Button>
+      <AdvertisementModal
+        id={1}
+        companyName="Shi lin Fang Metal Comapany 1"
+        description="Are you looking for high-quality metalwork products that are durable and made to last? Look no further than SHI LI FANG IRONWORKS PTE. Our team of skilled craftsmen and engineers use only the best "
+        onClose={handleClose}
+        open={isOpen}
+        url="https://www.google.com"
       />
     </>
   );

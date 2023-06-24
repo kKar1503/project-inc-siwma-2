@@ -29,23 +29,24 @@ export default apiHandler().get(async (req, res) => {
       owner: id,
       categoryId: queryParams.category ? queryParams.category : undefined,
       negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+      type: queryParams.type ? queryParams.type : undefined,
       price: {
         gte: queryParams.minPrice ? queryParams.minPrice : undefined,
         lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
       },
       name: queryParams.matching
         ? {
-          contains: queryParams.matching,
-          mode: 'insensitive',
-        }
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
         : undefined,
       listingsParametersValues: queryParams.params
         ? {
-          some: {
-            parameterId: Number(queryParams.params.paramId),
-            value: queryParams.params.value,
-          },
-        }
+            some: {
+              parameterId: Number(queryParams.params.paramId),
+              value: queryParams.params.value,
+            },
+          }
         : undefined,
     },
     orderBy,
@@ -53,6 +54,11 @@ export default apiHandler().get(async (req, res) => {
     take: queryParams.limit,
     include: {
       listingsParametersValues: queryParams.includeParameters,
+      listingImages: queryParams.includeImages ?  {
+        orderBy: {
+          order: 'asc',
+        }
+      } : false,
       offersOffersListingTolistings: true,
       users: {
         include: {
@@ -88,7 +94,7 @@ export default apiHandler().get(async (req, res) => {
         reviewCount,
         multiple,
       };
-    }),
+    })
   );
 
   const sortedListings = postSort(listingsWithRatingsAndReviewCount);
@@ -96,10 +102,9 @@ export default apiHandler().get(async (req, res) => {
   // Format the listings
   const formattedListings = await Promise.all(
     sortedListings.map((listing) =>
-      formatSingleListingResponse(listing, queryParams.includeParameters),
-    ),
+      formatSingleListingResponse(listing, queryParams.includeParameters)
+    )
   );
 
   res.status(200).json(formatAPIResponse(formattedListings));
 });
-

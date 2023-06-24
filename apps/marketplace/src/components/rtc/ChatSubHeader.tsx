@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
 import MakeOfferModal from '../modal/MakeOfferModal';
 
 export type ChatSubHeaderProps = {
@@ -23,6 +26,98 @@ const ChatSubHeader = ({
   makeOffer,
   setMakeOffer,
 }: ChatSubHeaderProps) => {
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { spacing, shape, shadows, palette, typography } = useTheme();
+  const { t } = useTranslation();
+
+  const chatSubHeaderStyles = useMemo(() => {
+    if (isSm) {
+      return {
+        productName: {
+          fontSize: typography.subtitle2,
+          fontWeight: '500',
+          marginLeft: spacing(2),
+        },
+        priceTag: {
+          fontSize: typography.subtitle2,
+          fontWeight: '600',
+          marginLeft: spacing(2),
+        },
+        makeOfferBtn: {
+          fontSize: '0.6rem',
+          bgcolor: palette.primary.main,
+          color: palette.common.white,
+          px: spacing(1),
+          marginRight: spacing(1),
+          my: spacing(1),
+          height: 'fit-content',
+          width: 'fit-content',
+        },
+        avatar: {
+          width: 60,
+          height: 60,
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        productName: {
+          fontSize: typography.h6,
+          fontWeight: '500',
+          marginLeft: spacing(3),
+        },
+        priceTag: {
+          fontSize: typography.h6,
+          fontWeight: '600',
+          marginLeft: spacing(3),
+        },
+        makeOfferBtn: {
+          fontSize: typography.subtitle2,
+          bgcolor: palette.primary.main,
+          color: palette.common.white,
+          px: spacing(2),
+          marginRight: spacing(4),
+          my: spacing(1),
+          height: '100%',
+          width: 'fit-content',
+        },
+        avatar: {
+          width: 70,
+          height: 70,
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        productName: {
+          fontSize: typography.h6,
+          fontWeight: '500',
+          marginLeft: spacing(3),
+        },
+        priceTag: {
+          fontSize: typography.h6,
+          fontWeight: '600',
+          marginLeft: spacing(3),
+        },
+        makeOfferBtn: {
+          fontSize: typography.subtitle2,
+          bgcolor: palette.primary.main,
+          color: palette.common.white,
+          px: spacing(2),
+          marginRight: spacing(4),
+          my: spacing(1),
+          height: '100%',
+          width: 'fit-content',
+        },
+        avatar: {
+          width: 70,
+          height: 70,
+        },
+      };
+    }
+    return {};
+  }, [isSm, isMd, isLg]);
+
   const [openOffer, setOpenOffer] = useState(false);
   const [inputValue, setInputValue] = useState<number>(0);
   const handleMakeOffer = () => {
@@ -33,11 +128,11 @@ const ChatSubHeader = ({
   return (
     <Box
       sx={({ spacing, palette }) => ({
-        borderBottom: 1,
+        border: 1,
         padding: spacing(2),
-        borderColor: palette.grey[300],
+        borderColor: palette.grey[200],
         display: 'flex',
-        marginLeft: spacing(1),
+        pr: spacing(1),
       })}
     >
       <IconButton
@@ -57,9 +152,8 @@ const ChatSubHeader = ({
             src={itemPic}
             variant="square"
             sx={{
-              width: 70,
-              height: 70,
               borderRadius: 2,
+              ...chatSubHeaderStyles?.avatar,
             }}
           />
           <Typography
@@ -73,45 +167,20 @@ const ChatSubHeader = ({
               color: 'white',
               padding: '2px',
               borderRadius: 2,
+              fontSize: '0.8rem',
             })}
           >
-            {available ? 'Available' : 'Sold'}
+            {available ? t('Available') : t('Sold')}
           </Typography>
         </Box>
       </IconButton>
       <Box sx={{ flexGrow: 1 }}>
-        <Typography
-          sx={({ spacing, typography }) => ({
-            fontSize: typography.h5,
-            marginLeft: spacing(4),
-          })}
-        >
-          {itemName}
-        </Typography>
-        <Typography
-          sx={({ spacing, typography }) => ({
-            fontSize: typography.h5,
-            marginLeft: spacing(4),
-            fontWeight: 'bold',
-          })}
-        >
-          ${itemPrice.toFixed(2)}
-        </Typography>
+        <Typography sx={chatSubHeaderStyles?.productName}>{itemName}</Typography>
+        <Typography sx={chatSubHeaderStyles?.priceTag}>${itemPrice.toFixed(2)}</Typography>
       </Box>
 
-      <Button
-        onClick={handleMakeOffer}
-        sx={({ palette, spacing, typography }) => ({
-          fontSize: typography.subtitle2,
-          bgcolor: palette.primary.main,
-          color: palette.common.white,
-          px: spacing(2),
-          pt: 0,
-          marginRight: spacing(4),
-          my: spacing(1),
-        })}
-      >
-        Make Offer
+      <Button onClick={handleMakeOffer} sx={chatSubHeaderStyles?.makeOfferBtn}>
+        {t('Make Offer')}
       </Button>
       <MakeOfferModal
         open={openOffer}

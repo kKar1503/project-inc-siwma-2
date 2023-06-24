@@ -6,18 +6,23 @@ import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
 import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import Image from 'next/image';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { useTogglePasswordVisibility } from '@inc/ui';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
-
+  const { showPassword, handleTogglePassword } = useTogglePasswordVisibility();
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -44,7 +49,7 @@ const LoginForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" fill />
+        <Image src="/images/siwma-background.png" alt="logo" fill />
         <Container
           component="main"
           maxWidth="md"
@@ -77,7 +82,7 @@ const LoginForm = () => {
                 mb: spacing(2),
               })}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo" fill  />
+              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
             </Box>
             <Divider flexItem />
             <Box
@@ -124,9 +129,23 @@ const LoginForm = () => {
                 label="Password"
                 placeholder="Your password"
                 value={password}
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 variant="standard"
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        sx={({ palette }) => ({
+                          color: palette.grey[600],
+                        })}
+                        onClick={handleTogglePassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               {errorMessage && (
                 <Typography
@@ -174,4 +193,5 @@ const LoginForm = () => {
   );
 };
 
+LoginForm.includeNavbar = false;
 export default LoginForm;

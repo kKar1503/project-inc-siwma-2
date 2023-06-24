@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
-const path = require('path')
+const path = require('node:path')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -45,6 +45,8 @@ const nextConfig = {
             'www.google.com',
             'www.asiamediajournal.com',
             'via.placeholder.com',
+            'siwma.org.sg',
+            'siwma-marketplace.s3.ap-southeast-1.amazonaws.com',
           ]
         : [],
   },
