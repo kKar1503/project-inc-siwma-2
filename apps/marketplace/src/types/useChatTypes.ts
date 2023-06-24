@@ -5,7 +5,7 @@ import type { MessageSync, ServerRoomMessage } from '@inc/types';
 export interface UseChatParams {
   userId: string;
   currentRoom: string;
-  chatMessagesProgressCallback: (progress: number) => void;
+  chatMessagesProgressCallback?: (progress: number) => void;
   messageCallback?: (message: ServerRoomMessage) => void;
   messageSyncCallback?: (message: MessageSync) => void;
 }
