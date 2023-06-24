@@ -12,13 +12,6 @@ export type ClientSendMessage = {
   time: Date;
 };
 
-export type ServerRoomMessage = {
-  id: MessageId;
-  roomId: RoomId;
-  message: string;
-  time: Date;
-};
-
 export type Room = {
   id: RoomId;
   user: UserId;
@@ -84,7 +77,7 @@ type EventParams = {
   serverCreatedRoom: Room;
   serverDeletedRoom: RoomId;
   // Server Message Events
-  serverRoomMessage: ServerRoomMessage;
+  serverRoomMessage: Messages;
   serverDeletedMessage: MessageId;
   serverReadMessage: MessageId[];
   serverSyncMessage: MessageSync;
