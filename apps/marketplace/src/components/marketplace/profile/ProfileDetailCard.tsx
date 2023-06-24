@@ -75,6 +75,7 @@ const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | unde
 };
 
 const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
+  const user = useSession();
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
@@ -100,13 +101,11 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
     };
   }, [isSm, isMd, isLg]);
 
-  const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const currentUser = useGetUserQuery(loggedUserUuid);
   const profileUserUuid = data?.id as string;
   const bookmarkedUsers = currentUser?.bookmarks?.users;
   const isOwnProfile = loggedUserUuid === profileUserUuid;
-
 
   const router = useRouter();
   const userId = router.query.id as string;
@@ -247,20 +246,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
       </CardContent>
       <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
         <Box sx={{ width: '98%' }}>
-          {/* <Button
-            component={Link}
-            href={`/profile/${data?.id}/edit-profile`}
-            variant="contained"
-            type="submit"
-            sx={({ spacing }) => ({
-              width: '100%',
-              mb: spacing(1),
-              fontWeight: 'bold',
-            })}
-          >
-            Edit profile
-          </Button> */}
-          {isOwnProfile && ( // Add this condition to check if it's the user's own profile
+          {isOwnProfile && (
             <Button
               component={Link}
               href={`/profile/${data?.id}/edit-profile`}

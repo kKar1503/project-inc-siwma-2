@@ -8,7 +8,6 @@ import { Review } from '@/utils/api/client/zod';
 import ReviewMessage from './ReviewMessage';
 import FilterChips from './FilterChips';
 
-
 // pass filter values to select component
 const sortValues = ['recent_newest', 'recent_oldest', 'highest_rating', 'lowest_rating'];
 
@@ -54,7 +53,7 @@ const ReviewsTab = ({
   }, [isSm, isMd, isLg]);
 
   return (
-    <Box sx={{ height: '100vh' }}>
+    <Box sx={{ minHeight: '100vh' }}>
       {/* top portion */}
       <Box sx={stylesReview}>
         {/* left box of rating and total reviews */}
