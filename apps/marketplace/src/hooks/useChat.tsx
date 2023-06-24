@@ -14,6 +14,11 @@ const useChat = (socket: Socket, params: UseChatParams) => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [loading, setLoading] = useState<LoadingState>('idle');
 
+  function onDisconnect() {
+    setIsConnected(false);
+    console.log('Chat server disconnected.');
+  }
+
   // ** Effects **
   useEffect(() => {
     function onConnect() {
@@ -35,16 +40,16 @@ const useChat = (socket: Socket, params: UseChatParams) => {
           setLoading('idle');
 
           // The server ack success, we can start listening to the events
-          let eventsAttached: [eventName: string, callback: (...args: any[]) => any][] = [];
+          const eventsAttached: [eventName: string, callback: (...args: any[]) => any][] = [];
 
           // Iterating over the listeners and attaching them to the socket
-          for (const listener of Object.values(listeners)) {
+          Object.values(listeners).forEach((listener) => {
             const { callback, eventName, type } = listener(socket, params, setLoading);
 
             socket[type](eventName, callback);
 
             eventsAttached.push([eventName, callback]);
-          }
+          });
 
           console.log(
             `Chat event listeners attached (${eventsAttached.length}): ${eventsAttached
@@ -59,11 +64,6 @@ const useChat = (socket: Socket, params: UseChatParams) => {
           socket.disconnect();
         }
       });
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-      console.log('Chat server disconnected.');
     }
 
     if (socket !== undefined) {
