@@ -146,6 +146,23 @@ export default apiHandler().get(async (req, res) => {
     createdAt: chat.createdAt.toISOString(),
   }));
 
+  // Sort the chats by the latest message
+  formattedChats.sort((a, b) => {
+    if (a.latestMessage && b.latestMessage) {
+      return (
+        new Date(b.latestMessage.createdAt).getTime() -
+        new Date(a.latestMessage.createdAt).getTime()
+      );
+    }
+    if (a.latestMessage) {
+      return -1;
+    }
+    if (b.latestMessage) {
+      return 1;
+    }
+    return 0;
+  });
+
   // Return the result
   res.status(200).json(formatAPIResponse(formattedChats));
 });
