@@ -15,6 +15,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import forgetPW from '@/middlewares/forget-password';
+import { validateEmail } from '@/utils/api/validate';
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState<string>('');
@@ -29,25 +30,19 @@ const ForgetPassword = () => {
     },
   });
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const isValidEmail = (value: string): boolean => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(value);
-    };
-
-    if (!email) {
-      setEmailError('Email is required');
-    } else if (!isValidEmail(email)) {
-      setEmailError('Please enter a valid email address');
-    } else {
+    try {
+      await validateEmail(email);
       setEmailError('');
       mutation.mutate(email);
+    } catch (error) {
+      setEmailError('Please enter a valid email address');
     }
   };
 
- const stylesBox = useMemo(() => {
+  const stylesBox = useMemo(() => {
     if (isSm) {
       return {
         boxShadow: shadows[5],
