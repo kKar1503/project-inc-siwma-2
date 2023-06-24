@@ -18,4 +18,5 @@ export default (message: Messages) => {
   }
   localStorage.setItem(room, existingMessages + JSON.stringify(message) + ']');
   localStorage.setItem('lastMessageId', JSON.stringify(message.id));
+  window.dispatchEvent(new Event('local-storage'));
 };
