@@ -48,10 +48,10 @@ client.interceptors.response.use(
       // Clear the user session and redirect the user to the login page
       await signOut();
       window.location.href = '/login';
-
+      return null;
     }
 
-    return null;
+    throw error.response;
   }
 );
 
