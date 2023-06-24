@@ -33,10 +33,10 @@ const createListing = async (listingBody: PostListingsRequestBody | undefined, i
     await apiClient.put(`/v1/listings/${id}/images`, formData);
 
     return true;
-  } catch (error: { data: { errors: { detail: string }[] } }) {
-    const { errors } = error.data;
+  } catch (error: unknown) {
+    const errorBody = error as { data: { errors: { detail: string }[] } };
     const hashset: Record<string, boolean> = {}; // only using keys, values are always true (doesn't matter)
-    errors.forEach((error: { detail: string }) => {
+    errorBody.data.errors.forEach((error: { detail: string }) => {
       hashset[error.detail] = true;
     });
     const errorMessages = Object.keys(hashset);
@@ -44,8 +44,5 @@ const createListing = async (listingBody: PostListingsRequestBody | undefined, i
     return false;
   }
 };
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore (for some reason it says that this file has multiple exports but it doesn't)
+
 export default createListing;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore (apparently the next line is the 'extra' export that it's talking about)
