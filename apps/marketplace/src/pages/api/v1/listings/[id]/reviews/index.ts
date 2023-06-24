@@ -4,9 +4,10 @@ import { NotFoundError, ForbiddenError } from '@inc/errors';
 import PrismaClient, { Prisma } from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
 import { listingSchema } from '@/utils/api/server/zod';
+import { reviewSchemas } from '@/utils/api/client/zod';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
-import { reviewSchemas } from '@/utils/api/client/zod';
+
 
 const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
     const id = parseListingId(req.query.id as string);
