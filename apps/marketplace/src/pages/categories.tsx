@@ -51,7 +51,6 @@ const CategoriesPage = () => {
           spacing={3}
           sx={{
             direction: 'row',
-            alignItems: 'center',
           }}
         >
           {catData?.map(({ id, name, image }) => (
@@ -59,20 +58,6 @@ const CategoriesPage = () => {
               <Card>
                 <CardActionArea>
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    {/* {image ? (
-                      <CardMedia
-                      component="img"
-                      sx={{
-                        height: 'auto',
-                        maxHeight: 250,
-                        width: 'auto',
-                        maxWidth: 250,
-                      }}
-                      image={image}
-                    />
-                    ) : (
-                      <CatImgsPlaceholder />
-                    )} */}
                     <CardMedia
                       component="img"
                       sx={{
