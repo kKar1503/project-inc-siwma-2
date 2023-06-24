@@ -13,15 +13,7 @@ const type = z.nativeEnum(ListingType);
 const multiple = z.boolean();
 const rating = z.number().nullable();
 const reviewCount = z.number();
-const images = z
-  .array(
-    z.object({
-      id: z.string(),
-      filename: z.string(),
-      url: z.string(),
-    })
-  )
-  .optional();
+const images = z.array(z.string()).optional();
 const coverImage = z.string().optional();
 const createdAt = z.string();
 
