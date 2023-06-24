@@ -6,8 +6,9 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useMutation } from 'react-query';
 import createUser from '@/middlewares/createUser';
 import { useRouter } from 'next/router';
-import { validatePassword } from '@/utils/api/validate';
-import { InvalidPasswordError } from '@inc/errors/src';
+import { validatePassword, validatePhone } from '@/utils/api/validate';
+import { InvalidPasswordError, InvalidPhoneNumberError } from '@inc/errors/src';
+import { Console } from 'console';
 
 const Register = () => {
   const [phone, setPhone] = useState('');
@@ -34,8 +35,6 @@ const Register = () => {
     }
   }, [router]);
 
-  const phoneRegex = /^\d{8}$/;
-
   const mutation = useMutation(() => {
     if (token) {
       // Only call createUser if the token is not null
@@ -47,46 +46,103 @@ const Register = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validate phone number format (to have 8 numbers)
-    if (phone.trim() === '' || !phoneRegex.test(phone)) {
-      setPhoneError(true);
-    } else {
-      setPhoneError(false);
-    }
-
     try {
-      validatePassword(password);
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    } catch (error) {
-      if (error instanceof InvalidPasswordError) {
-        setPasswordError(true);
-        setPasswordErrorMessage('Password must be 8 characters or longer');
-      } else {
-        throw error;
+      try {
+        validatePhone(phone);
+        setPhoneError(false);
+      } catch (error) {
+        if (error) {
+          setPhoneError(true);
+        } else {
+          throw error;
+        }
       }
-    }
 
-    if (confirmPassword !== password) {
-      setConfirmPasswordError(true);
-    } else {
-      setConfirmPasswordError(false);
-    }
+      try {
+        validatePassword(password);
+        setPasswordError(false);
+        setPasswordErrorMessage('');
+      } catch (error) {
+        if (error) {
+          setPasswordError(true);
+          setPasswordErrorMessage('Password must be 8 characters or longer');
+        } else {
+          throw error;
+        }
+      }
 
-    if (
-      phone.trim() !== '' &&
-      phoneRegex.test(phone) &&
-      password.trim() !== '' &&
-      !passwordError &&
-      confirmPassword === password
-    ) {
-      setPhone('');
-      setPassword('');
-      setConfirmPassword('');
+      if (confirmPassword !== password) {
+        setConfirmPasswordError(true);
+      } else {
+        setConfirmPasswordError(false);
+      }
 
-      mutation.mutate();
+      if (
+        !phoneError &&
+        !passwordError &&
+        !confirmPasswordError &&
+        phone.trim() !== '' &&
+        password.trim() !== '' &&
+        confirmPassword === password
+      ) {
+        setPhone('');
+        setPassword('');
+        setConfirmPassword('');
+
+        mutation.mutate();
+      }
+    } catch (error) {
+      // Handle the error here
+      console.error('An error occurred:', error);
     }
   };
+
+  // const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+
+  //   let isPhoneValid = true;
+  //   let isPasswordValid = true;
+
+  //   try {
+  //     validatePhone(phone);
+  //     setPhoneError(false);
+  //   } catch (error) {
+  //     if (error instanceof InvalidPhoneNumberError) {
+  //       setPhoneError(true);
+  //       isPhoneValid = false;
+  //     } else {
+  //       throw error;
+  //     }
+  //   }
+
+  //   try {
+  //     validatePassword(password);
+  //     setPasswordError(false);
+  //     setPasswordErrorMessage('');
+  //   } catch (error) {
+  //     if (error instanceof InvalidPasswordError) {
+  //       setPasswordError(true);
+  //       setPasswordErrorMessage('Password must be 8 characters or longer');
+  //       isPasswordValid = false;
+  //     } else {
+  //       throw error;
+  //     }
+  //   }
+
+  //   if (confirmPassword !== password) {
+  //     setConfirmPasswordError(true);
+  //   } else {
+  //     setConfirmPasswordError(false);
+  //   }
+
+  //   if (isPhoneValid && isPasswordValid && confirmPassword === password) {
+  //     setPhone('');
+  //     setPassword('');
+  //     setConfirmPassword('');
+
+  //     mutation.mutate();
+  //   }
+  // };
 
   useEffect(() => {
     if (mutation.isSuccess) {
@@ -99,7 +155,7 @@ const Register = () => {
       return {
         boxShadow: shadows[5],
         px: '2rem',
-        pb: '6rem',
+        pb: '7rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -110,7 +166,7 @@ const Register = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '5rem',
+        pb: '8rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -121,7 +177,7 @@ const Register = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '10rem',
+        pb: '8rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -131,7 +187,7 @@ const Register = () => {
     return {
       boxShadow: shadows[5],
       px: '10rem',
-      pb: '15rem',
+      pb: '10rem',
       pt: spacing(3),
       position: 'relative',
       bgcolor: palette.common.white,
@@ -218,7 +274,7 @@ const Register = () => {
                 margin="normal"
                 onChange={(e) => setPhone(e.target.value)}
                 error={phoneError}
-                helperText={phoneError ? 'Phone number is required to have only 8 numbers' : ''}
+                helperText={phoneError ? 'Please enter a valid Singapore phone number' : ''}
               />
 
               <Grid container spacing={2}>

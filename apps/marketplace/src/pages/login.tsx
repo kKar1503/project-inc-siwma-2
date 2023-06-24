@@ -170,7 +170,7 @@ const LoginForm = () => {
                   />
                 </Grid>
                 <Grid item>
-                  <Link href="/forgotpw">
+                  <Link href="/forgot-password">
                     <Typography
                       sx={({ spacing, palette }) => ({
                         mt: spacing(1),
