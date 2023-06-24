@@ -3,9 +3,11 @@ import { Typography, Button, Box, Container } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
+import { useRouter } from 'next/router';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
-const SuccessRegister = () => {
+const SuccessForgotPassword = () => {
+  const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const { spacing, shape, shadows, palette } = useTheme();
@@ -56,7 +58,7 @@ const SuccessRegister = () => {
   }, [isSm, isMd, isLg]);
 
   const handleBackToLogin = () => {
-    window.location.href = '/login';
+    router.push('/login');
   };
 
   return (
@@ -67,7 +69,7 @@ const SuccessRegister = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-bg.png" alt="logo" fill />
+        <Image src="/images/siwma-background.png" alt="logo" fill />
         <Container
           component="main"
           maxWidth="md"
@@ -109,7 +111,22 @@ const SuccessRegister = () => {
                   fontWeight: 'bold',
                 })}
               >
-                You have successfully registered!
+                A link has been sent to your email account to reset your password.
+              </Typography>
+
+              <Typography
+                align="center"
+                sx={({ spacing, typography }) => ({
+                  position: 'relative',
+                  display: 'flex',
+                  margin: 'auto',
+                  justifyContent: 'center',
+                  fontSize: typography.body2,
+                  mt: spacing(3),
+                })}
+              >
+                Please click on the link that has just been sent to your email account to carry on
+                with resetting your password.
               </Typography>
               <Button
                 type="submit"
@@ -117,7 +134,7 @@ const SuccessRegister = () => {
                 variant="contained"
                 onClick={handleBackToLogin}
                 sx={({ spacing }) => ({
-                  mt: spacing(5),
+                  mt: spacing(3),
                 })}
               >
                 BACK TO LOGIN
@@ -130,5 +147,5 @@ const SuccessRegister = () => {
   );
 };
 
-SuccessRegister.includeNavbar = false;
-export default SuccessRegister;
+SuccessForgotPassword.includeNavbar = false;
+export default SuccessForgotPassword;

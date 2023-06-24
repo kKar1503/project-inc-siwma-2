@@ -101,7 +101,12 @@ const ForgetPassword = () => {
         }}
       >
         <Box sx={{ width: '100%', height: '100%' }}>
-          <Image src="/images/siwma-bg.png" alt="logo" style={{ objectFit: 'cover' }} fill />
+          <Image
+            src="/images/siwma-background.png"
+            alt="logo"
+            style={{ objectFit: 'cover' }}
+            fill
+          />
         </Box>
         <Container
           component="main"
