@@ -95,7 +95,7 @@ const TestChatPage = () => {
     sendMessage(
       socket,
       {
-        roomId: roomId,
+        roomId,
         message: inputRef.current!.value,
         time: new Date(),
       },
