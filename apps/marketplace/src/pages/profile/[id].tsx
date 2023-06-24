@@ -54,18 +54,19 @@ const useGetUser = (userUuid: string) => {
   return data;
 };
 
-const useGetListing = (userUuid: string, matching?: string, filter?: string) => {
+// add one more parameter to fetchProfilesListings to include the filter
+const useGetListing = (userUuid: string, matching?: string, sortBy?: string) => {
   const { data } = useQuery(
-    ['listingdata', userUuid, matching, filter],
+    ['listingdata', userUuid, matching, sortBy],
     async () => {
-      if (matching || filter) {
-        return fetchProfilesListings(userUuid, matching, filter);
+      if (matching || sortBy) {
+        return fetchProfilesListings(userUuid, matching, sortBy);
       }
       return fetchProfilesListings(userUuid);
     },
     {
       // change the enabled to trigger on filter/sort
-      enabled: userUuid !== undefined || filter !== undefined || matching !== undefined,
+      enabled: userUuid !== undefined || sortBy !== undefined || matching !== undefined,
     }
   );
 
@@ -80,11 +81,21 @@ const useGetProfileListingImagesQuery = (listingID: string) => {
   return data;
 };
 
-const useGetReview = (userUuid: string) => {
-  const { data } = useQuery('reviewdata', async () => fetchProfilesReview(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-  // console.log(data);
+// add one more parameter to fetchProfilesReview to include the filter
+const useGetReview = (userUuid: string, sortBy?: string) => {
+  const { data } = useQuery(
+    ['reviewdata', userUuid, sortBy],
+    async () => {
+      if (sortBy) {
+        return fetchProfilesReview(userUuid, sortBy);
+      }
+      return fetchProfilesReview(userUuid);
+    },
+    {
+      enabled: userUuid !== undefined || sortBy !== undefined,
+    }
+  );
+
   return data;
 };
 
@@ -93,9 +104,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
-  // const userListings = useGetListing(id, 's', { sortBy: 'recent_newest' });
   const profileListingImages = useGetProfileListingImagesQuery(id);
-  const userReviews = useGetReview(id);
   // console.log(userDetails);
 
   const theme = useTheme();
@@ -119,12 +128,19 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const userListings = useGetListing(id, searchQuery, sortByListings);
+  const userReviews = useGetReview(id, sortByReviews);
 
   useEffect(() => {
     if (userListings) {
       setListings(userListings);
     }
   }, [userListings]);
+
+  useEffect(() => {
+    if (userReviews) {
+      setReviews(userReviews);
+    }
+  }, [userReviews]);
 
   const handleFilterListings = (filter: string) => {
     setFilterListings(filter);
@@ -260,7 +276,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
                 <ReviewsTab
-                  allReviews={userReviews}
+                  allReviews={reviews}
                   // rmb to add userDetails.rating and userDetails.reviews
                   userRating={userReviews && userReviews.length > 0 ? userReviews[0].rating : 0}
                   // userRating={2}
