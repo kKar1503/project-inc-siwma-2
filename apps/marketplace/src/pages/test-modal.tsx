@@ -164,7 +164,7 @@ const TestModal = () => {
         progress={progress}
         buttonColor="#2962FF"
         title="Syncing Chat Messages"
-        content="Please do not close this tab, closing this tab will cause all syncing progress to be lost!"
+        content="Please do not close or refresh this tab during the message syncing process."
         rightButtonText="close"
         rightButtonState={rightButtonState}
         setRightButtonState={handleClose}
