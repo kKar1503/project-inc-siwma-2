@@ -3,8 +3,9 @@ import useChat from '@/hooks/useChat';
 import type { Messages } from '@inc/types';
 import { sendMessage, joinRoom, partRoom, syncMessage } from '@/chat/emitters';
 import { useEffect, useRef, useState } from 'react';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
-import syncLocalStorage from '@/utils/syncLocalStorage';
+import useLocalStorage from '@/hooks/useLocalStorage';
+import syncLocalStorage, { syncLastMessage, syncLastMessages } from '@/utils/syncLocalStorage';
+import useReadLocalStorage from '@/hooks/useReadLocalStorage';
 
 const socket = io('http://localhost:4000');
 
@@ -14,15 +15,22 @@ const TestChatPage = () => {
   const [progress, setProgress] = useState(0);
   const [roomId, setRoomId] = useState('');
   const [localStorageMessages, setLocalStorageMessages] = useLocalStorage<Messages[]>(roomId, []);
+  const lastMessageId = useReadLocalStorage<number>('lastMessageId');
+  const lastMessagesCache = useRef<Map<string, string>>(new Map());
 
   const { isConnected, loading } = useChat(socket, {
     userId: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     currentRoom: roomId,
     chatMessagesProgressCallback: (progress) => setProgress(progress),
+    messageCallback: (message) => {
+      syncLastMessage(message);
+    },
     messageSyncCallback: (messageSync) => {
       switch (messageSync.status) {
         case 'success': {
           console.log('Sync success');
+          syncLastMessages(lastMessagesCache.current);
+          lastMessagesCache.current.clear();
           break;
         }
         case 'error': {
@@ -33,7 +41,7 @@ const TestChatPage = () => {
           console.log('Sync in progress');
           console.log(messageSync.progress);
           console.log(messageSync.message);
-          syncLocalStorage(messageSync.message);
+          syncLocalStorage(messageSync.message, lastMessagesCache.current);
         }
       }
     },
@@ -52,7 +60,7 @@ const TestChatPage = () => {
   // }, [isConnected]);
 
   const sync = () => {
-    syncMessage(socket, 0, (ack) => {
+    syncMessage(socket, lastMessageId === null ? 0 : lastMessageId, (ack) => {
       if (ack.success) {
         console.log(ack.data);
       } else {
@@ -83,7 +91,14 @@ const TestChatPage = () => {
         message: inputRef.current!.value,
         time: new Date(),
       },
-      (ack) => console.log(ack)
+      (ack) => {
+        if (ack.success) {
+          console.log(ack.data);
+          syncLastMessage(ack.data as Messages);
+        } else {
+          console.log(ack.err);
+        }
+      }
     );
   };
 
