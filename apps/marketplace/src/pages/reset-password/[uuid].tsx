@@ -10,7 +10,7 @@ import {
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
 import { FormEvent, useMemo, useState } from 'react';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useRouter } from 'next/router';
 import apiClient from '@/utils/api/client/apiClient';
 import { validatePassword } from '@/utils/api/validate';
@@ -48,15 +48,14 @@ const ResetForm = () => {
         })
         .catch((error) => {
           if (error && error.status === 403) {
-            alert('Token Expired');
+            setErrorMsg('Token Expired');
           }
           if (error && error.status === 422) {
-            alert('Invalid userId');
+            setErrorMsg('Invalid userId');
           }
         });
       if (response && response.status === 204) {
-        alert('Response went through');
-        router.push('/reset/success');
+        router.push('/reset-password/success');
       }
     }
   };
@@ -67,7 +66,7 @@ const ResetForm = () => {
         boxShadow: shadows[5],
         px: '2rem',
         pb: '5rem',
-        pt: '4rem',
+        pt: '2rem',
         position: 'relative',
         bgcolor: palette.common.white,  
         ...shape,
@@ -78,7 +77,7 @@ const ResetForm = () => {
         boxShadow: shadows[5],
         px: '10rem',
         pb: '5rem',
-        pt: '5rem',
+        pt: '4rem',
         position: 'relative',
         bgcolor: palette.common.white,
         ...shape,

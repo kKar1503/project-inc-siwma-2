@@ -4,7 +4,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 
 const ResetPassword = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -69,7 +69,7 @@ const ResetPassword = () => {
   }, [isSm, isMd, isLg]);
 
   const handleBackToLogin = () => {
-    router.push('/reset/resetcfm');
+    router.push('/login');
   };
 
   return (
