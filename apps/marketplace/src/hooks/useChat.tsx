@@ -6,11 +6,8 @@ import listeners from '@/chat/listeners';
 
 // ** Types Imports **
 import type { Socket } from 'socket.io-client';
-import type { Acknowlegement } from '@inc/types';
+import type { Acknowlegement, LoadingState } from '@inc/types';
 import type { UseChatParams } from '@/types/useChatTypes';
-
-// ** Types Declarations **
-type LoadingState = 'idle' | 'iam';
 
 const useChat = (socket: Socket, params: UseChatParams) => {
   // ** State **
@@ -42,7 +39,7 @@ const useChat = (socket: Socket, params: UseChatParams) => {
 
           // Iterating over the listeners and attaching them to the socket
           for (const listener of Object.values(listeners)) {
-            const { callback, eventName, type } = listener(socket, params);
+            const { callback, eventName, type } = listener(socket, params, setLoading);
 
             socket[type](eventName, callback);
 
