@@ -127,7 +127,7 @@ const CreateListingPage = () => {
 
         switch (detailedParameter.dataType) {
           case 'number':
-            if (Number.isNaN(parameter.value)) {
+            if (Number.isNaN(parameter.value) || parameter.value.includes('!')) {
               newParameterErrors.push({
                 parameterId,
                 error: `${detailedParameter.displayName} must be a number`,
