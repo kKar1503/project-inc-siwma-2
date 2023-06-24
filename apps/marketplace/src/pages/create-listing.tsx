@@ -30,6 +30,7 @@ const usePostListingQuery = (
     {
       enabled:
         listing !== undefined && listing.listingBody !== undefined && listing.images !== undefined,
+      retry: false,
     },
   );
 
