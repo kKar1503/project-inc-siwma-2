@@ -47,6 +47,10 @@ export function readMessage(socket: Socket, roomId: string, ack: (ack: Acknowleg
   socket.emit(EVENTS.CLIENT.MESSAGE.READ, roomId, ack);
 }
 
+export function syncMessage(socket: Socket, messageId: string, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.MESSAGE.SYNC, messageId, ack);
+}
+
 // ** Typing Events **
 export function typingStart(socket: Socket, roomId: string) {
   socket.emit(EVENTS.CLIENT.TYPING.START, roomId);
