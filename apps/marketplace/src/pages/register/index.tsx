@@ -2,7 +2,7 @@ import { FormEvent, useState, useMemo, useEffect } from 'react';
 import { Typography, Button, Divider, TextField, Box, Container, Grid } from '@mui/material';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useMutation } from 'react-query';
 import createUser from '@/middlewares/createUser';
 import { useRouter } from 'next/router';
@@ -105,7 +105,7 @@ const Register = () => {
 
   useEffect(() => {
     if (mutation.isSuccess) {
-      router.push('/success-register');
+      router.push('/register/success');
     }
   }, [mutation.isSuccess, router]);
 

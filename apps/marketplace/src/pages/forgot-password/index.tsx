@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import forgetPW from '@/middlewares/forget-password';
@@ -26,7 +26,7 @@ const ForgetPassword = () => {
 
   const mutation = useMutation((email: string) => forgetPW(email), {
     onSuccess: () => {
-      router.push('forgotpw/success-forgot-password');
+      router.push('/forgot-password/success');
     },
   });
 

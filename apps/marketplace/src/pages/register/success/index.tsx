@@ -3,7 +3,7 @@ import { Typography, Button, Box, Container } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useRouter } from 'next/router';
 
 const SuccessRegister = () => {
