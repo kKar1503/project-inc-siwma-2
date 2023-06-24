@@ -24,7 +24,6 @@ const updateUserDetailsSchema = z
     email: z.string().email(),
     //   company is a number that represents the id of the company
     company: z.string(),
-    profilePicture: z.string(),
     mobileNumber: z.string(),
     whatsappNumber: z.string(),
     telegramUsername: z.string(),
