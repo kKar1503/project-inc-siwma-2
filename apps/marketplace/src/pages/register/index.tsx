@@ -7,8 +7,6 @@ import { useMutation } from 'react-query';
 import createUser from '@/middlewares/createUser';
 import { useRouter } from 'next/router';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
-import { InvalidPasswordError, InvalidPhoneNumberError } from '@inc/errors/src';
-import { Console } from 'console';
 
 const Register = () => {
   const [phone, setPhone] = useState('');
@@ -35,13 +33,21 @@ const Register = () => {
     }
   }, [router]);
 
-  const mutation = useMutation(() => {
-    if (token) {
-      // Only call createUser if the token is not null
-      return createUser(token, phone, password);
+  const mutation = useMutation(
+    () => {
+      if (token) {
+        // Only call createUser if the token is not null
+        return createUser(token, phone, password);
+      }
+      throw new Error('Token not found');
+    },
+    {
+      onError: (error) => {
+        // Handle the error here
+        console.error('An error occurred:', error);
+      },
     }
-    throw new Error('Token not found');
-  });
+  );
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -96,53 +102,6 @@ const Register = () => {
       console.error('An error occurred:', error);
     }
   };
-
-  // const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-
-  //   let isPhoneValid = true;
-  //   let isPasswordValid = true;
-
-  //   try {
-  //     validatePhone(phone);
-  //     setPhoneError(false);
-  //   } catch (error) {
-  //     if (error instanceof InvalidPhoneNumberError) {
-  //       setPhoneError(true);
-  //       isPhoneValid = false;
-  //     } else {
-  //       throw error;
-  //     }
-  //   }
-
-  //   try {
-  //     validatePassword(password);
-  //     setPasswordError(false);
-  //     setPasswordErrorMessage('');
-  //   } catch (error) {
-  //     if (error instanceof InvalidPasswordError) {
-  //       setPasswordError(true);
-  //       setPasswordErrorMessage('Password must be 8 characters or longer');
-  //       isPasswordValid = false;
-  //     } else {
-  //       throw error;
-  //     }
-  //   }
-
-  //   if (confirmPassword !== password) {
-  //     setConfirmPasswordError(true);
-  //   } else {
-  //     setConfirmPasswordError(false);
-  //   }
-
-  //   if (isPhoneValid && isPasswordValid && confirmPassword === password) {
-  //     setPhone('');
-  //     setPassword('');
-  //     setConfirmPassword('');
-
-  //     mutation.mutate();
-  //   }
-  // };
 
   useEffect(() => {
     if (mutation.isSuccess) {
