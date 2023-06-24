@@ -12,10 +12,11 @@ const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional(),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  params: z
-    .preprocess(
-      zodDecodeToJson,
-      z.object({
+  includeImages: z.string().transform(zodParseToBoolean).optional().default('false'),
+  params: z.preprocess(
+    zodDecodeToJson,
+    z
+      .object({
         paramId: z.string().transform(zodParseToInteger),
         value: z.string(),
       })
@@ -26,6 +27,7 @@ const getQueryParameters = z.object({
   minPrice: z.string().transform(zodParseToNumber).optional(),
   maxPrice: z.string().transform(zodParseToNumber).optional(),
   sortBy: z.string().optional(),
+  type: z.nativeEnum(ListingType).optional(),
 });
 
 /**

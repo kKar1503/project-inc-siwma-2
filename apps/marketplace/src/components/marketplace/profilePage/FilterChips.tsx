@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
@@ -11,6 +12,7 @@ type FilterChipsProps = {
 const options = ['ALL', 'FROM BUYERS', 'FROM SELLERS'];
 
 const FilterChips = ({ onData }: FilterChipsProps) => {
+  const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = useState('ALL');
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {

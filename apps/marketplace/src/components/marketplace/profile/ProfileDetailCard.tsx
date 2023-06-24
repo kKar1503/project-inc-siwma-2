@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -78,6 +79,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
   const user = useSession();
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { t } = useTranslation();
 
   const styleProfileCard = useMemo(() => {
     if (isSm || isMd) {
@@ -151,10 +153,11 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
             </IconButton>
           )
         }
-        title="Profile Page"
-        subheader="View profile details here"
+        title={t('Your Profile')}
+        subheader={t('View your profile details here')}
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
+
       <CardContent>
         <Link style={{ textDecoration: 'none' }} href={`/profile/${data?.id}`}>
           <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
@@ -185,15 +188,16 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               ml: spacing(1),
             })}
           >
-            {/* ({reviews} {reviews === 1 ? ' Review' : ' Reviews'}) */}
+            {/* ({reviews} {reviews === 1 ? t('Review') : t('Reviews')}) */}
           </Typography>
         </Box>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>Bio:</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>{t('Bio')}:</Typography>
         <Typography>{data?.bio}</Typography>
       </CardContent>
+
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
@@ -214,7 +218,9 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
           />
           <Typography
             sx={({ spacing }) => ({
-              ml: spacing(1),
+              mt: spacing(1),
+              display: 'flex',
+              alignItems: 'center',
             })}
           >
             {data?.telegramUsername}
@@ -237,14 +243,24 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
           />
           <Typography
             sx={({ spacing }) => ({
-              ml: spacing(1),
+              mt: spacing(1),
+              display: 'flex',
+              alignItems: 'center',
             })}
           >
             +65 {data?.mobileNumber}
           </Typography>
         </Box>
       </CardContent>
-      <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
+
+      <CardActions
+        sx={({ spacing }) => ({
+          display: 'flex',
+          flexDirection: 'column',
+          mt: 'auto',
+          mb: spacing(1),
+        })}
+      >
         <Box sx={{ width: '98%' }}>
           {isOwnProfile && (
             <Button
@@ -266,4 +282,5 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
     </Card>
   );
 };
+
 export default ProfileDetailCard;

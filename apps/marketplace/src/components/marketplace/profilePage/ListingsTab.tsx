@@ -1,9 +1,10 @@
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
 import { SelectComponent, useResponsiveness, SearchBar } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
-import { useMemo, useState } from 'react';
 import { Listing } from '@/utils/api/client/zod';
 
 // pass filter values to select component
@@ -73,6 +74,8 @@ const ListingsTab = ({
     [isSm]
   );
 
+  const { t } = useTranslation();
+
   return (
     <Box>
       {/* top portion */}
@@ -89,7 +92,7 @@ const ListingsTab = ({
             })}
           >
             <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
-              Filter:
+              {t('Filter')}:
             </Typography>
             <SelectComponent
               onData={filterListings}
@@ -99,7 +102,7 @@ const ListingsTab = ({
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography sx={({ spacing }) => ({ mr: spacing(1), fontSize: '12px' })}>
-              Sort By:
+              {t('Sort By')}:
             </Typography>
             <SelectComponent
               onData={sortByListings}

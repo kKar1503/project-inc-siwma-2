@@ -1,4 +1,5 @@
 import Box from '@mui/material/Box';
+import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { SelectComponent, StarsRating, useResponsiveness } from '@inc/ui';
@@ -52,6 +53,8 @@ const ReviewsTab = ({
     };
   }, [isSm, isMd, isLg]);
 
+  const { t } = useTranslation();
+
   return (
     <Box sx={{ minHeight: '100vh' }}>
       {/* top portion */}
@@ -94,7 +97,7 @@ const ReviewsTab = ({
           <Typography
             sx={({ typography, spacing }) => ({ fontSize: typography.body1, mb: spacing(1) })}
           >
-            Filter Reviews:
+            {t('Filter reviews')}:
           </Typography>
           {/* filter chips */}
           <FilterChips onData={filterReviews} />
@@ -104,7 +107,7 @@ const ReviewsTab = ({
           <Typography
             sx={({ typography, spacing }) => ({ pl: spacing(3), fontSize: typography.body1 })}
           >
-            Sort By:
+            {t('Sort By')}:
           </Typography>
           <SelectComponent
             onData={sortByReviews}

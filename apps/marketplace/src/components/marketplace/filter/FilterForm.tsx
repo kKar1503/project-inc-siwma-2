@@ -11,6 +11,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import { useQuery } from 'react-query';
+import { useTranslation } from 'react-i18next';
 
 // middleware
 import fetchCategories from '@/middlewares/fetchCategories';
@@ -65,6 +66,8 @@ const FilterForm = ({
     'Rating - Low to High',
   ];
 
+  const { t } = useTranslation();
+
   const categoriesData = useGetCategoriesQuery();
 
   const resetForm = () => {
@@ -83,7 +86,7 @@ const FilterForm = ({
           fontWeight: typography.fontWeightMedium,
         })}
       >
-        Sort By
+        {t('Sort By')}
       </FormLabel>
       <Select
         sx={{ height: '45px', width: '100%' }}
@@ -92,7 +95,7 @@ const FilterForm = ({
       >
         {sortOptions.map((option) => (
           <MenuItem key={option} value={option}>
-            {option}
+            {t(option)}
           </MenuItem>
         ))}
       </Select>
@@ -103,7 +106,7 @@ const FilterForm = ({
           fontWeight: typography.fontWeightMedium,
         })}
       >
-        Category
+        {t('Category')}
       </FormLabel>
       <Select
         sx={{ height: '45px', width: '100%' }}
@@ -122,10 +125,10 @@ const FilterForm = ({
       </Select>
 
       <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>Negotiability</FormLabel>
+      <FormLabel sx={{ fontWeight: 600 }}>{t('Negotiability')}</FormLabel>
       <RadioGroup onChange={(e) => setNegotiation(e.target.value)} value={negotiation}>
-        <FormControlLabel value="true" control={<Radio />} label="Negotiable" />
-        <FormControlLabel value="false" control={<Radio />} label="Non-Negotiable" />
+        <FormControlLabel value="true" control={<Radio />} label={t('Negotiable')} />
+        <FormControlLabel value="false" control={<Radio />} label={t('Non-Negotiable')} />
       </RadioGroup>
 
       <Divider sx={{ my: 2 }} />
@@ -139,7 +142,7 @@ const FilterForm = ({
       <Box sx={{ display: 'flex', marginBottom: 2 }}>
         <TextField
           id="min"
-          label="Min"
+          label={t('Min')}
           variant="standard"
           type="number"
           sx={{ mr: 2 }}
@@ -148,7 +151,7 @@ const FilterForm = ({
         />
         <TextField
           id="max"
-          label="Max"
+          label={t('Max')}
           type="number"
           variant="standard"
           onChange={(e) => setMaxPrice(e.target.value)}
@@ -158,7 +161,7 @@ const FilterForm = ({
 
       <Divider sx={{ my: 2 }} />
       <Button variant="contained" type="submit" fullWidth>
-        APPLY
+        {t('APPLY')}
       </Button>
       <Button
         onClick={resetForm}
