@@ -47,7 +47,7 @@ export function readMessage(socket: Socket, roomId: string, ack: (ack: Acknowleg
   socket.emit(EVENTS.CLIENT.MESSAGE.READ, roomId, ack);
 }
 
-export function syncMessage(socket: Socket, messageId: string, ack: (ack: Acknowlegement) => void) {
+export function syncMessage(socket: Socket, messageId: number, ack: (ack: Acknowlegement) => void) {
   socket.emit(EVENTS.CLIENT.MESSAGE.SYNC, messageId, ack);
 }
 
