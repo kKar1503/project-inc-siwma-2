@@ -111,42 +111,40 @@ export default apiHandler().get(async (req, res) => {
   const unreadMessageCount = await fetchUreadMessages(chats, userId);
 
   // Format chats
-  const formattedChats = await Promise.all(
-    chats.map(async (chat, index) => ({
-      id: chat.id,
-      seller: {
-        id: chat.usersRoomsSellerTousers.id,
-        name: chat.usersRoomsSellerTousers.name,
-        profilePicture: chat.usersRoomsSellerTousers.profilePicture,
-        enabled: chat.usersRoomsSellerTousers.enabled,
-      },
-      buyer: {
-        id: chat.usersRoomsBuyerTousers.id,
-        name: chat.usersRoomsBuyerTousers.name,
-        profilePicture: chat.usersRoomsBuyerTousers.profilePicture,
-        enabled: chat.usersRoomsBuyerTousers.enabled,
-      },
-      listing: {
-        id: chat.listingRoomsListingTolisting.id.toString(),
-        name: chat.listingRoomsListingTolisting.name,
-        price: chat.listingRoomsListingTolisting.price,
-        unitPrice: chat.listingRoomsListingTolisting.unitPrice,
-        type: chat.listingRoomsListingTolisting.type,
-        // Whether or not the listing is still available for purchase
-        open:
-          chat.listingRoomsListingTolisting.multiple ||
-          chat.listingRoomsListingTolisting.offersOffersListingTolistings.length === 0,
-        // Whether or not the user has purchased the listing
-        purchased:
-          chat.listingRoomsListingTolisting.offersOffersListingTolistings.filter(
-            (e) => e.messages[0].author === userId
-          ).length > 0,
-      },
-      latestMessage: chat.messages.length > 0 ? formatMessageResponse(chat.messages[0]) : null,
-      unreadMessagesCount: unreadMessageCount[index],
-      createdAt: chat.createdAt.toISOString(),
-    }))
-  );
+  const formattedChats = chats.map((chat, index) => ({
+    id: chat.id,
+    seller: {
+      id: chat.usersRoomsSellerTousers.id,
+      name: chat.usersRoomsSellerTousers.name,
+      profilePicture: chat.usersRoomsSellerTousers.profilePicture,
+      enabled: chat.usersRoomsSellerTousers.enabled,
+    },
+    buyer: {
+      id: chat.usersRoomsBuyerTousers.id,
+      name: chat.usersRoomsBuyerTousers.name,
+      profilePicture: chat.usersRoomsBuyerTousers.profilePicture,
+      enabled: chat.usersRoomsBuyerTousers.enabled,
+    },
+    listing: {
+      id: chat.listingRoomsListingTolisting.id.toString(),
+      name: chat.listingRoomsListingTolisting.name,
+      price: chat.listingRoomsListingTolisting.price,
+      unitPrice: chat.listingRoomsListingTolisting.unitPrice,
+      type: chat.listingRoomsListingTolisting.type,
+      // Whether or not the listing is still available for purchase
+      open:
+        chat.listingRoomsListingTolisting.multiple ||
+        chat.listingRoomsListingTolisting.offersOffersListingTolistings.length === 0,
+      // Whether or not the user has purchased the listing
+      purchased:
+        chat.listingRoomsListingTolisting.offersOffersListingTolistings.filter(
+          (e) => e.messages[0].author === userId
+        ).length > 0,
+    },
+    latestMessage: chat.messages.length > 0 ? formatMessageResponse(chat.messages[0]) : null,
+    unreadMessagesCount: unreadMessageCount[index],
+    createdAt: chat.createdAt.toISOString(),
+  }));
 
   // Return the result
   res.status(200).json(formatAPIResponse(formattedChats));
