@@ -73,8 +73,8 @@ jobs:
       - name: Build and save docker images
         id: save-docker-image
         run: |
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:latest -f apps/chat/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" .
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }} -f apps/chat/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" .
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:latest -f apps/chat/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg CHAT_CORS="${{ vars.CHAT_CORS }}" --build-arg CHAT_HOST="${{ vars.CHAT_HOST }}" --build-arg CHAT_LOG_LEVEL="${{ vars.CHAT_LOG_LEVEL }}" --build-arg CHAT_PORT="${{ vars.CHAT_PORT }}" .
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }} -f apps/chat/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg CHAT_CORS="${{ vars.CHAT_CORS }}" --build-arg CHAT_HOST="${{ vars.CHAT_HOST }}" --build-arg CHAT_LOG_LEVEL="${{ vars.CHAT_LOG_LEVEL }}" --build-arg CHAT_PORT="${{ vars.CHAT_PORT }}" .
         # docker save ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }} > chat-${{ github.sha }}.tar
 
       # - uses: actions/upload-artifact@v3
