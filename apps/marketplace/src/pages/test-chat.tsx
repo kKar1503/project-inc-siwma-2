@@ -11,12 +11,12 @@ const socket = io('http://localhost:4000');
 
 const TestChatPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const roomInputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState(0);
   const [roomId, setRoomId] = useState('');
   const [localStorageMessages, setLocalStorageMessages] = useLocalStorage<Messages[]>(roomId, []);
   const lastMessageId = useReadLocalStorage<number>('lastMessageId');
   const lastMessagesCache = useRef<Map<string, string>>(new Map());
+  const [rooms, setRooms] = useLocalStorage<string[]>('rooms', []);
 
   const { isConnected, loading } = useChat(socket, {
     userId: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
@@ -59,6 +59,10 @@ const TestChatPage = () => {
   //   }
   // }, [isConnected]);
 
+  useEffect(() => {
+    console.log(localStorageMessages);
+  }, [localStorageMessages]);
+
   const sync = () => {
     syncMessage(socket, lastMessageId === null ? 0 : lastMessageId, (ack) => {
       if (ack.success) {
@@ -69,9 +73,9 @@ const TestChatPage = () => {
     });
   };
 
-  const room = () => {
-    setRoomId(roomInputRef.current!.value);
-    joinRoom(socket, roomInputRef.current!.value, (ack) => console.log(ack));
+  const join = (newRoomId: string) => {
+    setRoomId(newRoomId);
+    joinRoom(socket, newRoomId, (ack) => console.log(ack));
   };
 
   const part = () => {
@@ -113,16 +117,20 @@ const TestChatPage = () => {
         Emit
       </button>
       <br />
-      <span>Room</span>
-      <input id="room" ref={roomInputRef} />
-      <button id="room-emit-btn" onClick={room}>
-        Join Room
-      </button>
-      <br />
-      <button id="part-btn" onClick={part}>
-        Part
-      </button>
-      <br />
+      {rooms.map((room) => {
+        return (
+          <>
+            <span>{room}</span>
+            <button disabled={roomId !== ''} onClick={() => join(room)}>
+              🚪
+            </button>
+            <button disabled={roomId !== room || roomId === ''} onClick={() => part()}>
+              👋
+            </button>
+            <br />
+          </>
+        );
+      })}
       <button id="sync-btn" onClick={sync}>
         Sync
       </button>
