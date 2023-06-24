@@ -9,9 +9,7 @@ import { useQuery } from 'react-query';
 
 import Carousel from '@/components/marketplace/carousel/AdvertisementCarousel';
 import ListingStream from '@/components/marketplace/listing/ListingStream';
-import ProductListingItem, {
-  ProductListingItemProps,
-} from '@/components/marketplace/listing/ProductListingItem';
+import ProductListingItem from '@/components/marketplace/listing/ProductListingItem';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 
 import fetchCategories from '@/middlewares/fetchCategories';
@@ -22,6 +20,7 @@ import fetchPopularListings from '@/middlewares/fetchPopularListings';
 import { InfiniteScroll, useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 import { useTheme } from '@mui/material';
+import { Listing } from '@/utils/api/client/zod';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -61,7 +60,7 @@ const Marketplace = () => {
   const { typography } = useTheme();
   const scrollRef = useRef<Element>(null);
 
-  const [listings, setListings] = React.useState<Array<ProductListingItemProps>>([]);
+  const [listings, setListings] = React.useState<Array<Listing>>([]);
   const [lastListingId, setLastListingId] = React.useState<number>(9);
   const [maxItems, setMaxItems] = React.useState<boolean>(false);
 
@@ -72,7 +71,7 @@ const Marketplace = () => {
       onSuccess: (data) => {
         const lastItem = data[data.length - 1];
         if (lastItem) {
-          setLastListingId(lastItem.productId);
+          setLastListingId(parseInt(lastItem.id, 10));
         }
 
         if (data.length === 0) {
@@ -97,11 +96,11 @@ const Marketplace = () => {
     let listingsNeededCount = 0;
 
     if (isXl) {
-      listingsNeededCount = 5 - (totalListingsCount % 5)
+      listingsNeededCount = 5 - (totalListingsCount % 5);
     } else if (isLg) {
-      listingsNeededCount = 4 - (totalListingsCount % 5)
+      listingsNeededCount = 4 - (totalListingsCount % 5);
     } else if (isMd) {
-      listingsNeededCount = 3 - (totalListingsCount % 5)
+      listingsNeededCount = 3 - (totalListingsCount % 5);
     }
 
     const listingsNeeded = listings.slice(0, listingsNeededCount);
@@ -225,7 +224,7 @@ const Marketplace = () => {
             }}
           >
             {listings?.map((item) => (
-              <ProductListingItem data={item} key={item.productId} />
+              <ProductListingItem data={item} key={item.id} />
             ))}
           </InfiniteScroll>
         </Box>
