@@ -51,48 +51,53 @@ const useGetParametersQuery = (ids: string, category: CategoryProps | null) => {
   return data;
 };
 const CreateListingPage = () => {
-  const categoriesData = useGetCategoriesQuery();
-
   // modals
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
 
   // form data
+  const [formData, setFormData] = useState<{ listingBody: PostListingsRequestBody, images: Blob[] }>();
+  // form data (parts)
   const [listingType, setListingType] = useState<ListingTypeProps>('BUY');
   const [category, setCategory] = useState<CategoryProps | null>(null);
+  const [images, setImages] = useState<Blob[]>([]);
+  const [parameters, setParameters] = useState<ParameterFormProps[]>([]);
+  const [categoryParameters, setCategoryParameters] = useState<CategoryParametersProps[]>([]);
+  const [price, setPrice] = useState<number>(0);
+  const [negotiable, setNegotiable] = useState<boolean>(false);
+  const [unitPrice, setUnitPrice] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+
+
+  // errors
   const [categoryError, setCategoryError] = useState<string>('');
+  const [parameterErrors, setParameterErrors] = useState<ParameterValidationProps[]>([]);
+  const [listingErrors, setListingErrors] = useState<ListingValidationProps>({
+    nameError: '',
+    descriptionError: '',
+    priceError: '',
+  });
 
-  const resetCategoryErrors = () => {
-    setCategoryError('');
-  };
+  // parameters
+  const parameterIDs = categoryParameters.reduce(
+    (previousValue, currentValue, currentIndex, array) =>
+      `${previousValue}${currentValue.parameterId}${currentIndex === array.length - 1 ? '' : ','}`,
+    '',
+  );
 
+  // Hooks
+  const categoriesData = useGetCategoriesQuery();
+  const postListingData = usePostListingQuery(formData);
+  const parametersData = useGetParametersQuery(parameterIDs, category);
+
+  // validation
   const categoryValidation = () => {
     if (category && category.id) return true;
     setCategoryError('Category is required');
     return false;
   };
 
-  const [images, setImages] = useState<Blob[]>([]);
-
-  const [parameters, setParameters] = useState<ParameterFormProps[]>([]);
-  const [categoryParameters, setCategoryParameters] = useState<CategoryParametersProps[]>([]);
-
-  const [parameterErrors, setParameterErrors] = useState<ParameterValidationProps[]>([]);
-
-  const parameterIDs = categoryParameters.reduce(
-    (previousValue, currentValue, currentIndex, array) =>
-      `${previousValue}${currentValue.parameterId}${currentIndex === array.length - 1 ? '' : ','}`,
-    '',
-  );
-  const parametersData = useGetParametersQuery(parameterIDs, category);
-    const resetParameterErrors = () => {
-    setParameterErrors([]);
-  };
-
-  const updateCategoryParameters = async () => {
-    if (category == null) return;
-    setCategoryParameters(category.parameters || []);
-  };
 
   const parameterValidation = () => {
     let formIsValid = true;
@@ -152,32 +157,6 @@ const CreateListingPage = () => {
     return formIsValid;
   };
 
-  // Use Effects
-
-  useEffect(() => {
-    updateCategoryParameters();
-  }, [category, parameterIDs]);
-
-  const [price, setPrice] = useState<number>(0);
-  const [negotiable, setNegotiable] = useState<boolean>(false);
-  const [unitPrice, setUnitPrice] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-
-  const [listingErrors, setListingErrors] = useState<ListingValidationProps>({
-    nameError: '',
-    descriptionError: '',
-    priceError: '',
-  });
-
-  const resetListingErrors = () => {
-    setListingErrors({
-      nameError: '',
-      descriptionError: '',
-      priceError: '',
-    });
-  };
-
   const listingValidation = () => {
     let formIsValid = true;
     const newErrors: ListingValidationProps = {
@@ -211,9 +190,23 @@ const CreateListingPage = () => {
     return formIsValid;
   };
 
-  const [formData, setFormData] = useState<{ listingBody: PostListingsRequestBody, images: Blob[] }>();
+  // reset errors
+  const resetCategoryErrors = () => {
+    setCategoryError('');
+  };
+  const resetParameterErrors = () => {
+    setParameterErrors([]);
+  };
+  const resetListingErrors = () => {
+    setListingErrors({
+      nameError: '',
+      descriptionError: '',
+      priceError: '',
+    });
+  };
 
 
+  // final validation
   const validateForm = () => {
     resetListingErrors();
     resetCategoryErrors();
@@ -224,6 +217,12 @@ const CreateListingPage = () => {
     const parameterValid = parameterValidation();
 
     return listingValid && categoryValid && parameterValid;
+  };
+
+  // Misc Functions
+  const updateCategoryParameters = async () => {
+    if (category == null) return;
+    setCategoryParameters(category.parameters || []);
   };
 
   const submitForm = (): boolean => {
@@ -248,8 +247,10 @@ const CreateListingPage = () => {
     return true;
   };
 
-  // Hooks
-  const postListingData = usePostListingQuery(formData);
+  // Use Effects
+  useEffect(() => {
+    updateCategoryParameters();
+  }, [updateCategoryParameters,category]);
 
   useEffect(() => setOpenCreateModal(postListingData), [setOpenCreateModal, postListingData]);
 
