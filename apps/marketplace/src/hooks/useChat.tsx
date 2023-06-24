@@ -39,11 +39,7 @@ const useChat = (socket: Socket, params: UseChatParams) => {
 
           // Iterating over the listeners and attaching them to the socket
           for (const listener of Object.values(listeners)) {
-            const { callback, eventName, type } = listener(socket, params, (newLoading) => {
-              if (newLoading !== loading) {
-                setLoading(newLoading);
-              }
-            });
+            const { callback, eventName, type } = listener(socket, params, setLoading);
 
             socket[type](eventName, callback);
 
