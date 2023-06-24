@@ -77,4 +77,4 @@ function useEventListener<
   }, [eventName, element, options]);
 }
 
-export { useEventListener };
+export default useEventListener;
