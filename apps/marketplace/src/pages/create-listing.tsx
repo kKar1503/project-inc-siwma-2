@@ -128,7 +128,7 @@ const CreateListingPage = () => {
 
         switch (detailedParameter.dataType) {
           case 'number':
-            if (Number.isNaN(parameter.value) || parameter.value.includes('!')) {
+            if (Number.isNaN(price) || price.toString().includes('!') || price.toString().includes(' ')) {
               newParameterErrors.push({
                 parameterId,
                 error: `${detailedParameter.displayName} must be a number`,
@@ -179,7 +179,7 @@ const CreateListingPage = () => {
     if (price <= 0) {
       newErrors.priceError = 'Price must be greater than 0';
       formIsValid = false;
-    } else if (Number.isNaN(price)) {
+    } else if (Number.isNaN(price) || price.toString().includes('!') || price.toString().includes(' ')) {
       newErrors.priceError = 'Price must be a number';
       formIsValid = false;
     }
