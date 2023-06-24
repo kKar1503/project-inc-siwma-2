@@ -37,26 +37,28 @@ const TestModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = (val: boolean) => {
     setIsOpen(false);
+  };
+  const handleClick = () => {
     setOpenChatSync(false);
   };
 
+  // Code that increases progress bar goes here
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          clearInterval(timer);
+          return oldProgress;
+        }
+        const diff = Math.random() * 10;
+        return Math.min(oldProgress + diff, 100);
+      });
+    }, 500);
 
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setProgress((oldProgress) => {
-          if (oldProgress === 100) {
-            clearInterval(timer);
-            return oldProgress;
-          }
-          const diff = Math.random() * 10;
-          return Math.min(oldProgress + diff, 100);
-        });
-      }, 500);
-
-      return () => {
-        clearInterval(timer);
-      };
-    }, []);
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   return (
     <>
@@ -158,16 +160,11 @@ const TestModal = () => {
       />
       <Button onClick={() => setOpenChatSync(true)}> Syncing Chat Modal</Button>
       <SyncingChatModal
-        icon="info"
-        open={openChatSync}
-        setOpen={setOpenChatSync}
-        progress={progress}
-        buttonColor="#2962FF"
-        title="Syncing Chat Messages"
-        content="Please do not close or refresh this tab during the message syncing process."
-        rightButtonText="close"
+        open={openChatSync} 
+        setOpen={setOpenChatSync} 
+        progress={progress} 
         rightButtonState={rightButtonState}
-        setRightButtonState={handleClose}
+        setRightButtonState={handleClick}
       />
     </>
   );

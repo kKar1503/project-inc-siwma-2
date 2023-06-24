@@ -5,9 +5,7 @@ import MUIModal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
-import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { LinearProgress } from '@mui/material';
@@ -15,12 +13,7 @@ import { LinearProgress } from '@mui/material';
 export type ComponentProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  buttonColor: `#${string}`;
-  icon: 'success' | 'info' | 'warning';
-  title: string;
-  content: string;
   progress: number;
-  rightButtonText: string;
   rightButtonState: boolean;
   setRightButtonState: (val: boolean) => void;
 };
@@ -28,12 +21,7 @@ export type ComponentProps = {
 const SyncingChatModal = ({
   open,
   setOpen,
-  buttonColor,
-  title,
-  content,
-  icon,
   progress,
-  rightButtonText,
   rightButtonState,
   setRightButtonState,
 }: ComponentProps) => {
@@ -84,34 +72,6 @@ const SyncingChatModal = ({
     };
   }, [isSm, isMd, isLg]);
 
-  let iconType: ReactNode;
-  switch (icon) {
-    case 'success':
-      iconType = (
-        <CheckCircleOutlineOutlined
-          color="success"
-          sx={({ spacing }) => ({ fontSize: { xs: 32, md: 48 }, mr: spacing(2) })}
-        />
-      );
-      break;
-    case 'warning':
-      iconType = (
-        <WarningAmberOutlined
-          color="warning"
-          sx={({ spacing }) => ({ fontSize: { xs: 32, md: 48 }, mr: spacing(2) })}
-        />
-      );
-      break;
-    case 'info':
-    default:
-      iconType = (
-        <InfoOutlined
-          color="info"
-          sx={({ spacing }) => ({ fontSize: { xs: 32, md: 48 }, mr: spacing(2) })}
-        />
-      );
-  }
-
   return (
     <div>
       <MUIModal
@@ -143,7 +103,10 @@ const SyncingChatModal = ({
             }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              {iconType}
+              <InfoOutlined
+                color="info"
+                sx={({ spacing }) => ({ fontSize: { xs: 32, md: 48 }, mr: spacing(2) })}
+              />
               <Box sx={{ justifyContent: 'left' }}>
                 <Typography
                   id="transition-modal-title"
@@ -153,7 +116,7 @@ const SyncingChatModal = ({
                     color: palette.info[800],
                   }}
                 >
-                  {title}
+                  Syncing Chat Messages
                 </Typography>
                 <Box textAlign="center">
                   <Typography
@@ -164,7 +127,7 @@ const SyncingChatModal = ({
                       textAlign: 'left',
                     }}
                   >
-                    {content}
+                    Please do not close or refresh this tab during the message syncing process.
                   </Typography>
                 </Box>
                 <Box sx={{ width: '90%', mt: '32px', mb: '16px' }}>
@@ -178,7 +141,7 @@ const SyncingChatModal = ({
                 variant="contained"
                 disabled={progress !== 100}
                 sx={{
-                  bgcolor: buttonColor,
+                  bgcolor: '#2962FF',
                   width: 1 / 3,
                   marginTop: spacing(2),
                 }}
@@ -191,7 +154,7 @@ const SyncingChatModal = ({
                     ...modalStyles?.buttonTxt,
                   }}
                 >
-                  {rightButtonText}
+                  CLOSE
                 </Typography>
               </Button>
             </Box>
