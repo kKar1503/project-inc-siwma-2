@@ -56,20 +56,19 @@ const sendMessage: EventFile = (io, socket) => ({
           read: isOtherOccupantConnected,
         },
       })
-      .then(({ id, read }) => {
-        eventLog('info', `Created new message (${id}) in database.`);
+      .then((message) => {
+        eventLog('info', `Created new message (${message.id}) in database.`);
 
         eventLog('trace', `Acknowledging message...`);
+        const { id, read } = message;
         if (typeof ack === 'function') ack({ success: true, data: { id, read } });
 
         if (otherOccupantSocketId !== '') {
           eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
-          (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
-            id,
-            message,
-            roomId,
-            time,
-          });
+          (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(
+            EVENTS.SERVER.MESSAGE.ROOM,
+            message
+          );
         }
       })
       .catch(() => {
