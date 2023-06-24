@@ -140,6 +140,5 @@ const ResetPassword = () => {
   );
 };
 
-// Temp solve for the navbar issue by removing it
 ResetPassword.includeNavbar = false;
 export default ResetPassword;
