@@ -10,11 +10,29 @@ import generateThemeOptions from './theme';
 
 export type MuiThemeProps = {
   children: ReactNode;
+  fonts?: string;
 };
 
-const MuiTheme = ({ children }: MuiThemeProps) => {
+const MuiTheme = ({ children, fonts = '' }: MuiThemeProps) => {
   // ** Creates core theme options
   const coreThemeConfig = generateThemeOptions();
+
+  coreThemeConfig.typography = {
+    ...coreThemeConfig.typography,
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      fonts.replace(/[\s']/g, ''),
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+  };
 
   // ** Pass ThemeOptions to CreateTheme Function to create theme
   let theme = createTheme(coreThemeConfig);
