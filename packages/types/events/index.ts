@@ -54,6 +54,9 @@ export type MessageSync =
       err?: string;
     };
 
+// ** Types Declarations **
+export type LoadingState = 'idle' | 'iam' | 'sync';
+
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
   // ** Connections
@@ -117,7 +120,8 @@ type EventFile = (
 
 type ClientEventFile<T> = (
   socket: ClientSocket,
-  hookParams: T
+  hookParams: T,
+  setLoading: (loading: LoadingState) => void
 ) => {
   [K in keyof EventParams]: {
     eventName: K;
