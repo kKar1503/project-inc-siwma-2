@@ -6,15 +6,7 @@ import { APIRequestType } from '@/types/api-types';
 import { listingSchema } from '@/utils/api/server/zod';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
-
-
-/**
- * Fetches all reviews for a listing
- * @param id The listing id
- * @returns An array of reviews for the listing
- */
-// Define the Zod validation schema
-
+import { reviewSchemas } from '@/utils/api/client/zod';
 
 const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
     const id = parseListingId(req.query.id as string);
@@ -43,12 +35,35 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
             break;
     }
 
-    const reviews = await PrismaClient.reviews.findMany({
-        where: {
-            listing: id,
-        },
-        orderBy,
-    });
+    // Add pagination
+    const skip = parseInt(req.query.skip as string, 10) || 0;
+    const take = parseInt(req.query.take as string, 10) || 10;
+
+    // Fetch reviews and aggregate data from database using Prisma
+    const [reviews, count, avgRating] = await Promise.all([
+        PrismaClient.reviews.findMany({
+            where: {
+                listing: id,
+            },
+            orderBy,
+            skip,
+            take,
+        }),
+        PrismaClient.reviews.count({
+            where: {
+                listing: id,
+            },
+        }),
+        PrismaClient.reviews.aggregate({
+            where: {
+                listing: id,
+            },
+            _avg: {
+                rating: true,
+            },
+        }).then(res => res._avg.rating || 0)
+    ]);
+
     // format the response
     const formattedReviews = reviews.map(review => ({
         id: review.id.toString(),
@@ -56,9 +71,17 @@ const getListingReviews = async (req: APIRequestType, res: NextApiResponse) => {
         rating: review.rating,
         userId: review.user,
         listingId: review.listing.toString(),
-        createdAt: review.createdAt,
+        createdAt: review.createdAt.toISOString(),
     }));
-    res.status(200).json(formatAPIResponse(formattedReviews));
+
+    // Use Zod schema to validate and parse the response object
+    const parsedResponse = reviewSchemas.getAll.parse({
+        avgRating,
+        count,
+        reviews: formattedReviews
+    });
+
+    res.status(200).json(formatAPIResponse(parsedResponse));
 };
 
 /**

@@ -89,7 +89,7 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
             _avg: {
                 rating: true,
             },
-        }).then(res => res._avg.rating)
+        }).then(res => res._avg.rating || 0)
     ]);
 
     const formatReviews = reviews.map(review => ({
@@ -98,7 +98,7 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
         listingId: review.listing.toString(),
         createdAt: review.createdAt.toISOString(),
         userId: review.user.toString(),
-        type: review.listingReviewsListingTolisting.type === 'BUY' ? 'seller' : 'buyer' // Add the new key here
+        type: review.listingReviewsListingTolisting.type === 'BUY' ? 'seller' : 'buyer'
     }));
 
     // Format the response object
@@ -108,10 +108,9 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
         reviews: formatReviews
     });
 
-
     res.status(200).json(formatAPIResponse(parsedResponse));
-
 };
+
 
 export default apiHandler()
     .get(getUserReviews)

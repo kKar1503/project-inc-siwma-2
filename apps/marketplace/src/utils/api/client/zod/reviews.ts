@@ -6,7 +6,7 @@ const rating = z.number();
 const userId = z.string();
 const listingId = z.string();
 const createdAt = z.string().datetime();
-const type = z.string();
+const type = z.string().optional();
 const avgRating = z.number();
 const count = z.number();
 
