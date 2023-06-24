@@ -60,8 +60,7 @@ const sendMessage: EventFile = (io, socket) => ({
         eventLog('info', `Created new message (${message.id}) in database.`);
 
         eventLog('trace', `Acknowledging message...`);
-        const { id, read } = message;
-        if (typeof ack === 'function') ack({ success: true, data: { id, read } });
+        if (typeof ack === 'function') ack({ success: true, data: message });
 
         if (otherOccupantSocketId !== '') {
           eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
