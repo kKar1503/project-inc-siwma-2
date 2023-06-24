@@ -134,8 +134,8 @@ export async function formatSingleListingResponse(
       contactMethod: listing.users.contact,
       bio: listing.users.bio,
     },
-    images: listing.listingImages.map((image) => image.image),
-    coverImage: listing.listingImages.length === 0
+    images: listing.listingImages ? listing.listingImages.map((image) => image.image) : [],
+    coverImage: !listing.listingImages || listing.listingImages.length === 0
       ? ''
       : listing.listingImages[0].image,
     open: listing.multiple
@@ -252,7 +252,7 @@ export default apiHandler()
         const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
         const reviewCount = _count && _count.rating;
         const { multiple } = listing;
-        const images = listing.listingImages.map((image) => image.image);
+        const images = queryParams.includeImages ? listing.listingImages.map((image) => image.image) : [];
 
         return {
           ...listing,
