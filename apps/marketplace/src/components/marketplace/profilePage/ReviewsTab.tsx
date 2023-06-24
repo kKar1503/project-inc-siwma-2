@@ -10,7 +10,9 @@ import FilterChips from './FilterChips';
 
 
 // pass filter values to select component
-const sortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
+const sortValues = ['recent_newest', 'recent_oldest', 'highest_rating', 'lowest_rating'];
+
+const displaySortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
 
 export type ReviewsTabProps = {
   allReviews: Review[] | null | undefined;
@@ -105,7 +107,11 @@ const ReviewsTab = ({
           >
             Sort By:
           </Typography>
-          <SelectComponent onData={sortByReviews} values={sortValues} />
+          <SelectComponent
+            onData={sortByReviews}
+            values={sortValues}
+            displayValues={displaySortValues}
+          />
         </Box>
       </Box>
       {/* horizontal divider */}
