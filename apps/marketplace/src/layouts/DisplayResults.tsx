@@ -61,10 +61,16 @@ const DisplayResults = ({
         sortBy = 'price_asc';
         break;
       case 'Rating - High to Low':
-        sortBy = 'highest_rating';
+        sortBy = 'rating_desc';
         break;
       case 'Rating - Low to High':
-        sortBy = 'lowest_rating';
+        sortBy = 'rating_asc';
+        break;
+      case 'Most Popular':
+        sortBy = 'popularity_desc';
+        break;
+      case 'Least Popular':
+        sortBy = 'popularity_asc';
         break;
       default:
         break;
@@ -72,7 +78,7 @@ const DisplayResults = ({
     const filterOptions: FilterOptions = {
       sortBy,
       category,
-      negotiable: negotiation === 'true',
+      negotiable: negotiation && negotiation.trim() !== '' ? negotiation === 'true' : undefined,
       minPrice: parseInt(minPrice, 10),
       maxPrice: parseInt(maxPrice, 10),
     };

@@ -23,6 +23,23 @@ import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
 
+export type ProductListingItemProps = {
+  productId: number;
+  img: string | undefined;
+  profileImg: string;
+  type: string;
+  name: string;
+  rating: number | null;
+  price: number;
+  negotiable: boolean;
+  ownerId: string;
+  ownerFullName: string;
+  createdAt: string;
+  companyName: string;
+  isUnitPrice: boolean;
+  isOwnProfile: boolean;
+};
+
 export type ProductListingItemData = {
   data: Listing;
   showBookmark?: boolean;
