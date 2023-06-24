@@ -38,9 +38,13 @@ const syncLocalStorage = (message: Messages, lastMessagesCache?: Map<string, str
  * status.
  */
 export const syncLastMessages = (lastMessagesCache: Map<string, string>) => {
+  const roomSet = new Set<string>();
   lastMessagesCache.forEach((message, room) => {
     localStorage.setItem(room, message);
+    if (!roomSet.has(room)) roomSet.add(room);
   });
+
+  syncRooms(roomSet);
 
   window.dispatchEvent(new Event('local-storage'));
 };
@@ -48,8 +52,36 @@ export const syncLastMessages = (lastMessagesCache: Map<string, string>) => {
 export const syncLastMessage = (message: Messages) => {
   const { room, ...rest } = message;
   syncLocalStorage(message);
+  syncRooms(room);
   localStorage.setItem(`${room}-last`, JSON.stringify(rest));
   window.dispatchEvent(new Event('local-storage'));
+};
+
+export const syncRooms = (rooms: Set<string> | string) => {
+  const existingRooms = localStorage.getItem('rooms');
+
+  if (existingRooms === null) {
+    localStorage.setItem('rooms', JSON.stringify(rooms));
+    window.dispatchEvent(new Event('local-storage'));
+  } else {
+    const existingRoomsSet = new Set<string>(JSON.parse(existingRooms));
+
+    if (typeof rooms === 'string') {
+      if (!existingRoomsSet.has(rooms)) {
+        localStorage.setItem('rooms', JSON.stringify([...existingRoomsSet, rooms]));
+        window.dispatchEvent(new Event('local-storage'));
+      }
+    } else {
+      rooms.forEach((room) => {
+        if (!existingRoomsSet.has(room)) {
+          existingRoomsSet.add(room);
+        }
+      });
+
+      localStorage.setItem('rooms', JSON.stringify([...existingRoomsSet]));
+      window.dispatchEvent(new Event('local-storage'));
+    }
+  }
 };
 
 export default syncLocalStorage;
