@@ -9,11 +9,19 @@ import { EVENTS } from '@inc/events';
 const eventName = EVENTS.SERVER.MESSAGE.SYNC;
 
 // ** Event File **
-const event: ClientEventFile<UseChatParams> = (_, hookParams) => ({
+const event: ClientEventFile<UseChatParams> = (_, hookParams, setLoading) => ({
   eventName: eventName,
   type: 'on', // 'on' | 'once'
   callback: (messageSync) => {
     const { chatMessagesProgressCallback, messageSyncCallback } = hookParams;
+
+    if (messageSync.status === 'success') {
+      setLoading('idle');
+    }
+
+    if (messageSync.status === 'in_progress') {
+      setLoading('sync');
+    }
 
     if (messageSync.status === 'in_progress' && chatMessagesProgressCallback !== undefined) {
       chatMessagesProgressCallback(messageSync.progress);
