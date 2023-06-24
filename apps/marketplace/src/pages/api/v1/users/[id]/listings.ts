@@ -10,6 +10,9 @@ export default apiHandler().get(async (req, res) => {
 
   const { id } = userSchema.userId.parse(req.query);
 
+  // Obtain the id of the user making the request
+  const requester = req.token?.user?.id;
+
   // Verify that the user exists
   const userExists = await PrismaClient.users.findUnique({
     where: {
@@ -54,12 +57,23 @@ export default apiHandler().get(async (req, res) => {
     take: queryParams.limit,
     include: {
       listingsParametersValues: queryParams.includeParameters,
-      listingImages: queryParams.includeImages ?  {
-        orderBy: {
-          order: 'asc',
-        }
-      } : false,
-      offersOffersListingTolistings: true,
+      listingImages: queryParams.includeImages
+        ? {
+            orderBy: {
+              order: 'asc',
+            },
+          }
+        : false,
+      offersOffersListingTolistings: {
+        select: {
+          accepted: true,
+          messages: {
+            select: {
+              author: true,
+            },
+          },
+        },
+      },
       users: {
         include: {
           companies: true,
@@ -102,7 +116,7 @@ export default apiHandler().get(async (req, res) => {
   // Format the listings
   const formattedListings = await Promise.all(
     sortedListings.map((listing) =>
-      formatSingleListingResponse(listing, queryParams.includeParameters)
+      formatSingleListingResponse(listing, requester, queryParams.includeParameters)
     )
   );
 
