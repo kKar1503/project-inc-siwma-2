@@ -46,6 +46,8 @@ const parameter = z
 
 const open = z.boolean();
 
+const purchased = z.boolean();
+
 // -- Define listing schema -- //
 const listing = z.object({
   id,
@@ -65,6 +67,7 @@ const listing = z.object({
   rating,
   reviewCount,
   createdAt,
+  purchased,
 });
 
 // -- Define review schema -- //

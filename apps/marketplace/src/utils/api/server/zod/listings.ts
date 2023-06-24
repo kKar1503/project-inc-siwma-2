@@ -9,14 +9,14 @@ import {
 
 const getQueryParameters = z.object({
   lastIdPointer: z.string().transform(zodParseToInteger).optional(),
-  limit: z.string().transform(zodParseToInteger).optional(),
+  limit: z.string().transform(zodParseToInteger).optional().default('10'),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
   includeImages: z.string().transform(zodParseToBoolean).optional().default('false'),
-  params: z.preprocess(
-    zodDecodeToJson,
-    z
-      .object({
+  params: z
+    .preprocess(
+      zodDecodeToJson,
+      z.object({
         paramId: z.string().transform(zodParseToInteger),
         value: z.string(),
       })
