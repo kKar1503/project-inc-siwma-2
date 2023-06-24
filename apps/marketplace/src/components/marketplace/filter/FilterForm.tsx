@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -7,84 +7,90 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
 import FormLabel from '@mui/material/FormLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 
-export type SortProps = 'Recent' | 'Price - High to Low' | 'Price - Low to High';
+// middleware
+import fetchCategories from '@/middlewares/fetchCategories';
 
-const sortOptions = ['Recent', 'Price - High to Low', 'Price - Low to High'];
+export type SortProps =
+  | 'Recent'
+  | 'Oldest'
+  | 'Price - High to Low'
+  | 'Price - Low to High'
+  | 'Rating - High to Low'
+  | 'Rating - Low to High';
+
 export type FilterFormProps = {
+  sort: SortProps;
+  category: number;
+  negotiation: string;
+  minPrice: string;
+  maxPrice: string;
   setSort: (sort: SortProps) => void;
-  setCategory: (category: string) => void;
+  setCategory: (category: number) => void;
   setNegotiation: (negotiation: string) => void;
   setMinPrice: (minPrice: string) => void;
   setMaxPrice: (maxPrice: string) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+};
+
+const useGetCategoriesQuery = () => {
+  const { data } = useQuery('categories', () => fetchCategories());
+
+  return data;
 };
 
 const FilterForm = ({
+  sort,
+  category,
+  negotiation,
+  minPrice,
+  maxPrice,
   setSort,
   setCategory,
   setNegotiation,
   setMinPrice,
   setMaxPrice,
+  handleSubmit,
 }: FilterFormProps) => {
-  const { t } = useTranslation();
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-  const [sortOption, setSortOption] = useState<SortProps>('Recent');
-  const [categoryOption, setCategoryOption] = useState<string>('');
-  const [negotiationOption, setNegotiationOption] = useState<string>('');
-  const [minPriceOption, setMinPriceOption] = useState<string>('');
-  const [maxPriceOption, setMaxPriceOption] = useState<string>('');
+  const sortOptions = [
+    'Recent',
+    'Oldest',
+    'Price - High to Low',
+    'Price - Low to High',
+    'Rating - High to Low',
+    'Rating - Low to High',
+  ];
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSort(sortOption);
-    setCategory(categoryOption);
-    setNegotiation(negotiationOption);
-    setMinPrice(minPriceOption);
-    setMaxPrice(maxPriceOption);
+  const categoriesData = useGetCategoriesQuery();
 
-    console.log(`Sort: ${sortOption}`);
-    console.log(`Category: ${categoryOption}`);
-    console.log(`Negotiation: ${negotiationOption}`);
-    console.log(`Min Price: ${minPriceOption}`);
-    console.log(`Max Price: ${maxPriceOption}`);
+  const resetForm = () => {
+    setSort('Recent');
+    setCategory(0);
+    setNegotiation('');
+    setMinPrice('');
+    setMaxPrice('');
   };
 
-  useEffect(() => {
-    // Get categories from backend
-    setCategoryOptions([]);
-  }, []);
-
   return (
-    <form style={{ padding: 1, marginTop: 2, width: '100%' }} onSubmit={handleSubmit}>
-      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-        {t('Search Filter')}
-      </Typography>
+    <form style={{ padding: 1, width: '100%' }} onSubmit={handleSubmit}>
       <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>{t('Sort By')}</FormLabel>
+      <FormLabel
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightMedium,
+        })}
+      >
+        Sort By
+      </FormLabel>
       <Select
         sx={{ height: '45px', width: '100%' }}
-        onChange={(e) => setSortOption(e.target.value as SortProps)}
-        value={sortOption as string}
+        onChange={(e) => setSort(e.target.value as SortProps)}
+        value={sort}
       >
         {sortOptions.map((option) => (
-          <MenuItem key={option} value={option}>
-            {t(option)}
-          </MenuItem>
-        ))}
-      </Select>
-
-      <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>{t('Category')}</FormLabel>
-      <Select
-        sx={{ height: '45px', width: '100%' }}
-        onChange={(e) => setCategoryOption(e.target.value as string)}
-        value={categoryOption as string}
-      >
-        {categoryOptions.map((option) => (
           <MenuItem key={option} value={option}>
             {option}
           </MenuItem>
@@ -92,33 +98,77 @@ const FilterForm = ({
       </Select>
 
       <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>{t('Negotiability')}</FormLabel>
-      <RadioGroup onChange={(e) => setNegotiationOption(e.target.value)}>
-        <FormControlLabel value="negotiable" control={<Radio />} label={t('Negotiable')} />
-        <FormControlLabel value="nonNegotiable" control={<Radio />} label={t('Non-Negotiable')} />
-      </RadioGroup>
+      <FormLabel
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightMedium,
+        })}
+      >
+        Category
+      </FormLabel>
+      <Select
+        sx={{ height: '45px', width: '100%' }}
+        onChange={(e) => setCategory(parseInt(e.target.value, 10))}
+        value={category.toString()}
+      >
+        <MenuItem key={0} value="">
+          No Category
+        </MenuItem>
+        {categoriesData &&
+          categoriesData.map((category) => (
+            <MenuItem key={category.id} value={category.id}>
+              {category.name}
+            </MenuItem>
+          ))}
+      </Select>
 
       <Divider sx={{ my: 2 }} />
-      <FormLabel sx={{ fontWeight: 600 }}>{t('Price')}</FormLabel>
+      <FormLabel sx={{ fontWeight: 600 }}>Negotiability</FormLabel>
+      <RadioGroup onChange={(e) => setNegotiation(e.target.value)} value={negotiation}>
+      <FormControlLabel value="true" control={<Radio />} label="Negotiable" />
+      <FormControlLabel value="false" control={<Radio />} label="Non-Negotiable" />
+    </RadioGroup>
+
+    <Divider sx={{ my: 2 }} />
+    <FormLabel
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightMedium,
+        })}
+      >
+        Price
+      </FormLabel>
       <Box sx={{ display: 'flex', marginBottom: 2 }}>
         <TextField
           id="min"
-          label={t('Min')}
+          label="Min"
           variant="standard"
+          type="number"
           sx={{ mr: 2 }}
-          onChange={(e) => setMinPriceOption(e.target.value)}
+          onChange={(e) => setMinPrice(e.target.value)}
+          value={minPrice}
         />
         <TextField
           id="max"
-          label={t('Max')}
+          label="Max"
+          type="number"
           variant="standard"
-          onChange={(e) => setMaxPriceOption(e.target.value)}
+          onChange={(e) => setMaxPrice(e.target.value)}
+          value={maxPrice}
         />
       </Box>
 
       <Divider sx={{ my: 2 }} />
       <Button variant="contained" type="submit" fullWidth>
-        {t('APPLY')}
+        APPLY
+      </Button>
+      <Button
+        onClick={resetForm}
+        sx={{ my: 2 }}
+        variant="contained"
+        type="button"
+        color="error"
+        fullWidth
+      >
+        RESET
       </Button>
     </form>
   );
