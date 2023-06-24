@@ -29,6 +29,9 @@ const syncMessage: EventFile = (io, socket) => ({
     eventLog('trace', `Attempting to retrieve userId for socket (${socket.id}) from cache...`);
     const [, userId] = SocketUserStore.searchSocketUser('socketId', socket.id);
 
+    eventLog('debug', `UserId retrieved from cache: ${userId}`);
+    eventLog('debug', `Last message id received: ${lastMessageId}`);
+
     eventLog('trace', `Attempting to retrieve roomIds for userId (${userId}) from database...`);
     prisma.rooms
       .findMany({
@@ -47,7 +50,7 @@ const syncMessage: EventFile = (io, socket) => ({
         },
       })
       .then((rooms) => {
-        eventLog('debug', `Rooms fetched from database: ${rooms}`);
+        eventLog('debug', `Rooms fetched from database: ${JSON.stringify(rooms)}`);
 
         eventLog('trace', `Mapping rooms to roomIds...`);
         const roomIds = new Array(rooms.length);
