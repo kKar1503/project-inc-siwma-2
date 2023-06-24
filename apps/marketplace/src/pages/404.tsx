@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Link from 'next/link';
 
 const ErrorPage = () => (
-  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#F5F5F5'}}>
     <Box sx={{ textAlign: 'center' }}>
       <Typography
         sx={({ typography }) => ({
