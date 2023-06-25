@@ -18,6 +18,7 @@
     "@emotion/styled": "^11.10.6",
     "@inc/db": "workspace:*",
     "@inc/errors": "workspace:*",
+    "@inc/events": "workspace:*",
     "@inc/s3-simplified": "workspace:*",
     "@inc/send-in-blue": "workspace:*",
     "@inc/ui": "workspace:*",
