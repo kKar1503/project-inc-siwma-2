@@ -41,7 +41,8 @@ const createRoom: EventFile = (io, socket) => ({
           eventLog('debug', `Room already exists in database. RoomId: ${room.id}`);
 
           eventLog('trace', `Acknowledging room already exists...`);
-          ack({ success: false, err: { message: 'Room already exists.' } });
+          if (typeof ack === 'function')
+            ack({ success: false, err: { message: 'Room already exists.' } });
 
           eventLog('error', `Disconnecting socket... Reason: Room already exists in database.`);
           socket.disconnect(true);
@@ -62,7 +63,7 @@ const createRoom: EventFile = (io, socket) => ({
               eventLog('info', `Created new room (${id}) in database.`);
 
               eventLog('trace', `Acknowledging room created...`);
-              ack({ success: true, data: { id } });
+              if (typeof ack === 'function') ack({ success: true, data: { id } });
 
               eventLog('trace', `Attempting to retrieve seller socketId from cache...`);
               const [sellerSocketId] = SocketUserStore.searchSocketUser('userId', sellerId);
@@ -75,13 +76,13 @@ const createRoom: EventFile = (io, socket) => ({
             })
             .catch(() => {
               eventLog('error', `Failed to create room in database.`);
-              ack({ success: false });
+              if (typeof ack === 'function') ack({ success: false });
             });
         }
       })
       .catch(() => {
         eventLog('error', `Failed to check if room already exists in database.`);
-        ack({ success: false });
+        if (typeof ack === 'function') ack({ success: false });
       });
   },
 });

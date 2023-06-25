@@ -16,7 +16,7 @@ const joinRoom: EventFile = (_, socket) => ({
       eventLog('warn', `Already in ${roomId}.`);
 
       eventLog('trace', `Acknowledging room (${roomId})...`);
-      ack({ success: false, err: { message: 'Already in room.' } });
+      if (typeof ack === 'function') ack({ success: false, err: { message: 'Already in room.' } });
 
       return;
     }
@@ -44,7 +44,8 @@ const joinRoom: EventFile = (_, socket) => ({
             eventLog('warn', `Room (${roomId}) not found in db.`);
 
             eventLog('trace', `Acknowledging room (${roomId})...`);
-            ack({ success: false, err: { message: 'Room not found.' } });
+            if (typeof ack === 'function')
+              ack({ success: false, err: { message: 'Room not found.' } });
 
             return;
           }
@@ -63,7 +64,7 @@ const joinRoom: EventFile = (_, socket) => ({
     eventLog('info', `Joined ${roomId}.`);
 
     eventLog('trace', `Acknowledging room (${roomId}) joining...`);
-    ack({ success: true });
+    if (typeof ack === 'function') ack({ success: true });
   },
 });
 
