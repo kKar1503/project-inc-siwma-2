@@ -34,7 +34,7 @@ import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
-import { PostChatRequestBody, ReviewRequestBody } from '@/utils/api/server/zod';
+import { ReviewRequestBody } from '@/utils/api/server/zod';
 
 const carouselData = [
   {
@@ -142,7 +142,6 @@ const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[]
 const DetailedListingPage = () => {
   const theme = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  // const { spacing } = useTheme();
 
   const router = useRouter();
   const listingId = router.query.id as string;
@@ -158,14 +157,8 @@ const DetailedListingPage = () => {
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
 
   const chatRooms = useChatListQuery(loggedUserUuid);
-  // const buyerId = loggedUserUuid as unknown as string;
-  // const sellerId = listings?.owner.id as string;
-  // const newRoom = useCreateChatQuery(sellerId, buyerId, listingId);
 
   let chatRoomDetailsData: chatRoomDetails = { buyerId: '', sellerId: '', listingId: '' };
-  // const usePostChatRoomQuery = useMutation({
-  //   mutationFn: (data: chatRoomDetails) => chatRoomDetailsData(data),
-  // });
 
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
@@ -173,6 +166,7 @@ const DetailedListingPage = () => {
   const [openComment, setOpenComment] = useState(false);
   const [rating, setRating] = useState<number | null>(0);
   const [isOpen, setIsOpen] = useState(false);
+
   const usePostReviewQuery = useMutation({ mutationFn: (data: reviewDetails) => reviewData(data) });
 
   useEffect(() => {
@@ -186,6 +180,7 @@ const DetailedListingPage = () => {
         reviewData,
       };
       usePostReviewQuery.mutate(review);
+      // setRightButtonState(false)
     }
   }, [rightButtonState, listingId, inputText, rating]);
 
@@ -205,12 +200,6 @@ const DetailedListingPage = () => {
     if (chatRooms) {
       let chatRoomExists = false;
       for (let i = 0; i < chatRooms.length; i++) {
-        console.log(
-          chatRooms[i].buyer.id !== loggedUserUuid,
-          chatRooms[i].seller.id !== loggedUserUuid,
-          chatRooms[i].buyer.id !== listings?.owner.id,
-          chatRooms[i].seller.id !== listings?.owner.id
-        );
         if (
           (chatRooms[i].buyer.id === loggedUserUuid &&
             chatRooms[i].seller.id === listings?.owner.id) ||
@@ -233,12 +222,10 @@ const DetailedListingPage = () => {
               listingId: router.query.id as string,
             };
           }
-          console.log(chatRoomDetailsData);
           return createRoom(chatRoomDetailsData);
         }
       }
     }
-    console.log('bye');
     return null;
   };
 
@@ -538,18 +525,32 @@ const DetailedListingPage = () => {
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      {/* <Link href="/chat"> */}
-                      <Button
-                        variant="contained"
-                        sx={({ palette }) => ({
-                          backgroundColor: palette.primary.main,
-                          width: isMd ? 240 : 340,
-                        })}
-                        onClick={checkChatRoom}
-                      >
-                        Chat Now
-                      </Button>
-                      {/* </Link> */}
+                      {listings?.owner.id !== loggedUserUuid ? (
+                        // <Link href="/chat">
+                          <Button
+                            variant="contained"
+                            sx={({ palette }) => ({
+                              backgroundColor: palette.primary.main,
+                              width: isMd ? 240 : 340,
+                            })}
+                            onClick={checkChatRoom}
+                          >
+                            CHAT NOW
+                          </Button>
+                        // </Link>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          sx={({ palette }) => ({
+                            backgroundColor: palette.primary.main,
+                            width: isMd ? 240 : 340,
+                          })}
+                          onClick={checkChatRoom}
+                          disabled
+                        >
+                          CHAT NOW
+                        </Button>
+                      )}
                     </Box>
                   </CardContent>
                 </Card>
@@ -671,17 +672,30 @@ const DetailedListingPage = () => {
 
               {isSm && (
                 <Box sx={({ spacing }) => ({ pb: spacing(2) })}>
-                  <Link href="/chat">
+                  {listings?.owner.id !== loggedUserUuid ? (
+                    <Link href="/chat">
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        size="large"
+                        onClick={checkChatRoom}
+                        fullWidth
+                      >
+                        CHAT NOW
+                      </Button>
+                    </Link>
+                  ) : (
                     <Button
                       variant="contained"
                       type="submit"
                       size="large"
                       onClick={checkChatRoom}
                       fullWidth
+                      disabled
                     >
                       CHAT NOW
                     </Button>
-                  </Link>
+                  )}
                 </Box>
               )}
             </Grid>
