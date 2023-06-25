@@ -20,6 +20,7 @@ export const EVENTS = {
       SEND: 'clientSendMessage',
       DELETE: 'clientDeleteMessage',
       READ: 'clientReadMessage',
+      SYNC: 'clientSyncMessage',
     },
     TYPING: {
       START: 'clientStartType',
@@ -37,6 +38,7 @@ export const EVENTS = {
       ROOM: 'serverRoomMessage',
       DELETED: 'serverDeletedMessage',
       READ: 'serverReadMessage',
+      SYNC: 'serverSyncMessage',
     },
     TYPING: {
       START: 'serverStartType',

@@ -164,7 +164,6 @@ export default apiHandler()
       throw new NotFoundError('User');
     }
 
-
     const user = await client.users.update({
       where: {
         id,

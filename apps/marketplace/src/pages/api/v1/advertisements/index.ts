@@ -19,15 +19,15 @@ export const where = (isAdmin: boolean, other = {}) =>
   isAdmin
     ? other
     : {
-      endDate: {
-        gte: new Date(),
-      },
-      startDate: {
-        lte: new Date(),
-      },
-      active: true,
-      ...other,
-    };
+        endDate: {
+          gte: new Date(),
+        },
+        startDate: {
+          lte: new Date(),
+        },
+        active: true,
+        ...other,
+      };
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload

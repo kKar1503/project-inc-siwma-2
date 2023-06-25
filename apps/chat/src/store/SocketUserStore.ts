@@ -127,7 +127,7 @@ class SocketUserStore {
 
     const searchSet = searchBy === 'socketId' ? socketSet : userSet;
 
-    logger.debug(`searchSocketUser() | Search via ${searchBy}:${search}`);
+    logger.debug(`searchSocketUser() | Search via ${searchBy}: ${search}`);
 
     logger.trace(`searchSocketUser() | Checking if ${searchBy} (${search}) exist in cache...`);
     if (!searchSet.has(search)) {
@@ -146,7 +146,7 @@ class SocketUserStore {
     logger.debug(`searchSocketUser() | Found ${searchBy} index: ${idx}...`);
 
     const searchFor = [...searchForSet][idx];
-    logger.debug(`searchSocketUser() | Found ${searchForId}: ${idx}...`);
+    logger.debug(`searchSocketUser() | Found ${searchForId} index: ${idx}...`);
 
     return searchBy === 'socketId' ? [search, searchFor] : [searchFor, search];
   };
