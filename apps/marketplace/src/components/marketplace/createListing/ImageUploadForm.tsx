@@ -20,12 +20,13 @@ export type PreviewImageProps = {
   preview: string;
 };
 
-export type SetImageProps = {
+export type Props = {
+  images: Blob[];
   setImages: (parameters: Blob[]) => void;
 };
 
-const ImageUploadForm = ({ setImages }: SetImageProps) => {
-  const [images, setPreviewImages] = useState<PreviewImageProps[]>([]);
+const ImageUploadForm = ({ images, setImages }: Props) => {
+  const [previewImages, setPreviewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
   const [keyCounter, setKeyCounter] = useState(0);
 
@@ -33,7 +34,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
     const selectedImages = Array.from(e.target.files || []);
     setError('');
 
-    if (selectedImages.length + images.length > 10) {
+    if (selectedImages.length + previewImages.length > 10) {
       setError('You can only upload up to 10 images.');
       return;
     }
@@ -47,16 +48,19 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
     // Clear the value of the input element to force the onChange event
     e.target.value = '';
 
-    const previewImages = selectedImages.map((file) => ({
+    const previewImages2 = selectedImages.map((file) => ({
       key: keyCounter + file.name,
       file,
       preview: URL.createObjectURL(file),
     }));
 
-    const updatedImages = [...images, ...previewImages];
+    const updatedPreviewImages = [...previewImages, ...previewImages2];
 
-    setPreviewImages(updatedImages);
-    setImages(imageFiles);
+    setPreviewImages(updatedPreviewImages);
+
+    const updatedImages = [...images, ...imageFiles];
+
+    setImages(updatedImages);
 
     // Increment the key counter
     setKeyCounter((prevCounter) => prevCounter + 1);
@@ -64,6 +68,7 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
 
   const handleImageRemove = (index: number) => {
     setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const openFullImage = (url: string) => {
@@ -71,11 +76,11 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
   };
 
   const renderImages = () => {
-    if (images.length === 0) return null;
+    if (previewImages.length === 0) return null;
 
     return (
       <Grid container spacing={2}>
-        {images.map(({ file, preview, key }, index) => (
+        {previewImages.map(({ file, preview, key }, index) => (
           <Grid item xs={4} md={1} key={key}>
             <Box sx={{ position: 'relative', mt: '1rem', display: 'inline-block' }}>
               <Box

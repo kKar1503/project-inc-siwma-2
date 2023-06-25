@@ -288,7 +288,7 @@ const CreateListingPage = () => {
           {categoriesData && (
             <CategoryForm setCategory={setCategory} data={categoriesData} error={categoryError} />
           )}
-          <ImageUploadForm setImages={setImages} />
+          <ImageUploadForm setImages={setImages} images={images} />
           {category && parametersData && (
             <ParameterForm
               setParameters={setParameters}
