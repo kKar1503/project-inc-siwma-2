@@ -22,7 +22,9 @@ export type SortProps =
   | 'Price - High to Low'
   | 'Price - Low to High'
   | 'Rating - High to Low'
-  | 'Rating - Low to High';
+  | 'Rating - Low to High'
+  | 'Most Popular'
+  | 'Least Popular';
 
 export type FilterFormProps = {
   sort: SortProps;
@@ -60,6 +62,8 @@ const FilterForm = ({
   const sortOptions = [
     'Recent',
     'Oldest',
+    'Most Popular',
+    'Least Popular',
     'Price - High to Low',
     'Price - Low to High',
     'Rating - High to Low',
