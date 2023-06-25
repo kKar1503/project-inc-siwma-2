@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 export type OnCreateModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  listingID: string;
+  listingID: number;
 };
 
 const OnCreateModal = ({ open, setOpen, listingID }: OnCreateModalProps) => {

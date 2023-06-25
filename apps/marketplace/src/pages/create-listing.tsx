@@ -325,7 +325,11 @@ const CreateListingPage = () => {
             </Button>
             {postListingData !== false &&
               (typeof postListingData === 'number' ? (
-                <OnCreateModal open={openCreateModal} setOpen={setOpenCreateModal} listingID={postListingData} />
+                <OnCreateModal
+                  open={openCreateModal}
+                  setOpen={setOpenCreateModal}
+                  listingID={postListingData}
+                />
               ) : (
                 <OnCreateErrorModal
                   open={openCreateErrorModal}
