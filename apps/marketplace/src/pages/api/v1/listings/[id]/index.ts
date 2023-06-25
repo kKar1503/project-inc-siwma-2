@@ -28,12 +28,23 @@ export async function checkListingExists($id: string | number, requireImages = f
         },
       },
       listingsParametersValues: true,
-      listingImages: requireImages ? {
-        orderBy: {
-          order: 'asc',
+      listingImages: requireImages
+        ? {
+            orderBy: {
+              order: 'asc',
+            },
+          }
+        : false,
+      offersOffersListingTolistings: {
+        select: {
+          accepted: true,
+          messages: {
+            select: {
+              author: true,
+            },
+          },
         },
-      } : false,
-      offersOffersListingTolistings: true,
+      },
       reviewsReviewsListingTolistings: true,
     },
   });
@@ -64,6 +75,9 @@ export default apiHandler()
   .get(async (req, res) => {
     const queryParams = listingSchema.get.query.parse(req.query);
 
+    // Obtain the user's id
+    const userId = req.token?.user?.id;
+
     // Retrieve the listing from the database
     const id = parseListingId(req.query.id as string, false);
     const { _avg, _count } = await PrismaClient.reviews.aggregate({
@@ -75,7 +89,7 @@ export default apiHandler()
       },
       where: {
         listing: id,
-      }
+      },
     });
 
     const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
@@ -93,6 +107,7 @@ export default apiHandler()
 
     const response = await formatSingleListingResponse(
       completeListing,
+      userId,
       queryParams.includeParameters
     );
 
@@ -194,11 +209,13 @@ export default apiHandler()
           },
         },
         listingsParametersValues: true,
-        listingImages: queryParams.includeImages ?  {
-          orderBy: {
-            order: 'asc',
-          }
-        } : false,
+        listingImages: queryParams.includeImages
+          ? {
+              orderBy: {
+                order: 'asc',
+              },
+            }
+          : false,
         offersOffersListingTolistings: true,
         reviewsReviewsListingTolistings: true,
       },
@@ -265,6 +282,7 @@ export default apiHandler()
         formatAPIResponse(
           await formatSingleListingResponse(
             listingWithRatingAndReviewCount,
+            userId,
             queryParams.includeParameters
           )
         )

@@ -92,7 +92,7 @@ const Messages: IMessage[] = [
     offer: null,
     contentType: ContentType.offer,
     content: 'OFFER',
-  }
+  },
 ];
 
 export type { IMessage };

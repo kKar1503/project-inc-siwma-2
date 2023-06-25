@@ -42,7 +42,6 @@ const AuthenticationGuard = ({
   // }
 
   // All checks passed
-  children
-
+  children;
 
 export default AuthenticationGuard;

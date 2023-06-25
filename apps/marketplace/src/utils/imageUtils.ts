@@ -2,6 +2,7 @@ import { NextApiRequest } from 'next';
 import { Fields, File, Files, IncomingForm, Options } from 'formidable';
 import fs from 'fs';
 import { Metadata, S3BucketService, S3ObjectBuilder } from '@inc/s3-simplified';
+import { APIRequestType } from '@/types/api-types';
 
 const DefaultOptions: Partial<Options> = {
   multiples: false,
@@ -9,9 +10,12 @@ const DefaultOptions: Partial<Options> = {
   maxFileSize: 8 * 1024 * 1024, // 8MB
 };
 
-export const imageUtils = (req: NextApiRequest, formOptions?: Partial<Options>): Promise<{
+export const imageUtils = (
+  req: NextApiRequest,
+  formOptions?: Partial<Options>
+): Promise<{
   fields?: Fields;
-  files?: Files
+  files?: Files;
 }> =>
   new Promise((resolve, reject) => {
     const form = new IncomingForm({ ...DefaultOptions, ...formOptions });
@@ -26,7 +30,7 @@ const toArrayIfNot = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value :
 
 export const getFilesFromRequest = async (
   req: NextApiRequest,
-  config: { fieldName?: string } & Partial<Options> = {},
+  config: { fieldName?: string } & Partial<Options> = {}
 ): Promise<File[]> => {
   const { fieldName = 'file', ...formOptions } = config;
   const { files } = await imageUtils(req, formOptions);
@@ -44,7 +48,10 @@ export const getAllFilesFromRequest = async (req: NextApiRequest): Promise<File[
     .reduce((acc, val) => acc.concat(val), []);
 };
 
-export const fileToS3Object = (file: File, additionalMetadata: Record<string, string> = {}): S3ObjectBuilder => {
+export const fileToS3Object = (
+  file: File,
+  additionalMetadata: Record<string, string> = {}
+): S3ObjectBuilder => {
   const buffer = fs.readFileSync(file.filepath);
   // Create S3 object
   const metadata = new Metadata({
@@ -59,7 +66,7 @@ export const fileToS3Object = (file: File, additionalMetadata: Record<string, st
 export const loadImage = async <T extends Record<string, unknown>>(
   source: T,
   bucket: S3BucketService,
-  imageKey: string,
+  imageKey: string
 ): Promise<T> => {
   if (typeof source[imageKey] !== 'string') return source;
   try {
@@ -79,7 +86,27 @@ export const loadImage = async <T extends Record<string, unknown>>(
 export const loadImageBuilder =
   <T extends Record<string, unknown>>(
     bucket: S3BucketService,
-    imageKey: string,
+    imageKey: string
   ): ((source: T) => Promise<T>) =>
-    async (source) =>
-      loadImage(source, bucket, imageKey);
+  async (source) =>
+    loadImage(source, bucket, imageKey);
+
+export const updateImage = async (
+  bucket: S3BucketService,
+  OldImage: string,
+  req: NextApiRequest & APIRequestType
+): Promise<string> => {
+  const files = await getFilesFromRequest(req);
+  if (files.length > 0) {
+    const s3ObjectBuilder = fileToS3Object(files[0]);
+    // create new image and delete old image as aws doesn't support update
+    // also do these in parallel for faster response
+    const awaitedPromise = await Promise.all([
+      bucket.createObject(s3ObjectBuilder),
+      OldImage ? bucket.deleteObject(OldImage) : null,
+    ]);
+    const [newS3Object] = awaitedPromise;
+    return newS3Object.Id;
+  }
+  return OldImage;
+};

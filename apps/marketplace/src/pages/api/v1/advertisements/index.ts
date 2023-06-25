@@ -1,12 +1,8 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import s3Connection from '@/utils/s3Connection';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
-import * as process from 'process';
-import { fileToS3Object, getFilesFromRequest, loadImageBuilder } from '@/utils/imageUtils';
-import { ParamError } from '@inc/errors/src';
 import { advertisementSchema } from '@/utils/api/server/zod';
 
 export const select = (isAdmin: boolean) => ({
@@ -23,29 +19,19 @@ export const where = (isAdmin: boolean, other = {}) =>
   isAdmin
     ? other
     : {
-      endDate: {
-        gte: new Date(),
-      },
-      startDate: {
-        lte: new Date(),
-      },
-      active: true,
-      ...other,
-    };
-
-export const AdvertisementBucketName = process.env.AWS_ADVERTISEMENT_BUCKET_NAME as string;
+        endDate: {
+          gte: new Date(),
+        },
+        startDate: {
+          lte: new Date(),
+        },
+        active: true,
+        ...other,
+      };
 
 const POST = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
   const payload = advertisementSchema.post.body.parse(req.body);
-
-  const files = await getFilesFromRequest(req);
-  if (files.length === 0) {
-    throw new ParamError(`advertisement image`);
-  }
-
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-  const s3Object = await AdvertisementBucket.createObject(fileToS3Object(files[0]));
 
   // Create advertisement
   const advertisementId = (
@@ -55,7 +41,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         companyId: payload.companyId,
-        image: s3Object.Id,
+        image: '',
         endDate: new Date(payload.endDate),
         startDate: new Date(payload.startDate),
         active: payload.active,
@@ -75,7 +61,7 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const { limit, lastIdPointer } = advertisementSchema.get.query.parse(req.query);
 
   // Get advertisements
-  const advertisementsNoLink = await PrismaClient.advertisements.findMany({
+  const advertisements = await PrismaClient.advertisements.findMany({
     select: select(isAdmin),
     where: where(isAdmin, {
       id: {
@@ -85,20 +71,16 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     take: limit,
   });
 
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-  const loadImage = loadImageBuilder(AdvertisementBucket, 'image');
-  const advertisements = await Promise.all(advertisementsNoLink.map(advertisement => {
+  const mappedAdvertisements = advertisements.map((advertisement) => {
     const { companyId, ...advertisementContent } = advertisement;
-
-    return loadImage({
+    return {
       ...advertisementContent,
       companyId: companyId.toString(),
-    });
-  }));
-
+    };
+  });
 
   // Return advertisements
-  res.status(200).json(formatAPIResponse(advertisements));
+  res.status(200).json(formatAPIResponse(mappedAdvertisements));
 };
 
 export default apiHandler()
