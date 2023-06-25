@@ -215,8 +215,6 @@ const CreateListingPage = () => {
   };
 
   const submitForm = (): boolean => {
-    setFormData(undefined);
-
     const listingBody: PostListingsRequestBody = {
       name: title,
       description,
