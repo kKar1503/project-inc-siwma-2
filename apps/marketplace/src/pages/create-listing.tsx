@@ -324,8 +324,8 @@ const CreateListingPage = () => {
               CREATE LISTING
             </Button>
             {postListingData !== false &&
-              (typeof postListingData === 'boolean' ? (
-                <OnCreateModal open={openCreateModal} setOpen={setOpenCreateModal} />
+              (typeof postListingData === 'number' ? (
+                <OnCreateModal open={openCreateModal} setOpen={setOpenCreateModal} listingID={postListingData} />
               ) : (
                 <OnCreateErrorModal
                   open={openCreateErrorModal}

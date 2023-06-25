@@ -35,7 +35,7 @@ const createListing = async (
     // post images
     await apiClient.put(`/v1/listings/${id}/images`, formData);
 
-    return true;
+    return id;
   } catch (error: unknown) {
     const errorBody = error as { data: { errors: { detail: string }[] } };
     const hashset: Record<string, boolean> = {}; // only using keys, values are always true (doesn't matter)
