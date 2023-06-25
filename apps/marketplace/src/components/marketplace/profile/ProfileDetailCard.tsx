@@ -31,7 +31,7 @@ export type ProfileDetailCardProps =
       enabled: boolean;
       createdAt: string;
       profilePic: string | null;
-      company: string;
+      companyName: string;
       mobileNumber: string;
       whatsappNumber: string | null;
       telegramUsername: string | null;
@@ -163,9 +163,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
           <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
         </Link>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography variant="body2">{data?.company}</Typography>
-        {/* <Typography>@{username}</Typography> */}
-        <Typography>@{data?.name}</Typography>
+        <Typography variant="body2">{data?.companyName}</Typography>
         <Typography>{data?.email}</Typography>
 
         <Box
@@ -201,56 +199,56 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
         <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
-        <Box
-          sx={({ spacing }) => ({
-            mt: spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-          })}
-        >
-          <TelegramIcon
-            sx={({ spacing, palette }) => ({
-              borderRadius: spacing(2),
-              pr: '2px',
-              color: palette.common.white,
-              backgroundColor: '#229ED9',
-            })}
-          />
-          <Typography
+        {data?.contactMethod === 'telegram' && (
+          <Box
             sx={({ spacing }) => ({
               mt: spacing(1),
               display: 'flex',
               alignItems: 'center',
             })}
           >
-            {data?.telegramUsername}
-          </Typography>
-        </Box>
-        <Box
-          sx={({ spacing }) => ({
-            mt: spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-          })}
-        >
-          <WhatsAppIcon
-            sx={({ spacing, palette }) => ({
-              borderRadius: spacing(2),
-              p: '1px',
-              color: palette.common.white,
-              backgroundColor: palette.secondary.main,
-            })}
-          />
-          <Typography
+            <TelegramIcon
+              sx={({ spacing, palette }) => ({
+                borderRadius: spacing(2),
+                pr: '2px',
+                color: palette.common.white,
+                backgroundColor: palette.primary[500],
+              })}
+            />
+            <Typography
+              sx={({ spacing }) => ({
+                ml: spacing(1),
+              })}
+            >
+              {data?.telegramUsername}
+            </Typography>
+          </Box>
+        )}
+        {data?.contactMethod === 'whatsapp' && (
+          <Box
             sx={({ spacing }) => ({
               mt: spacing(1),
               display: 'flex',
               alignItems: 'center',
             })}
           >
-            +65 {data?.mobileNumber}
-          </Typography>
-        </Box>
+            <WhatsAppIcon
+              sx={({ spacing, palette }) => ({
+                borderRadius: spacing(2),
+                p: '1px',
+                color: palette.common.white,
+                backgroundColor: palette.secondary.main,
+              })}
+            />
+            <Typography
+              sx={({ spacing }) => ({
+                ml: spacing(1),
+              })}
+            >
+              +65 {data?.mobileNumber}
+            </Typography>
+          </Box>
+        )}
       </CardContent>
 
       <CardActions
@@ -261,8 +259,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
           mb: spacing(1),
         })}
       >
-        <Box sx={{ width: '98%' }}>
-
+        {/* <Box sx={{ width: '98%' }}>
           {isOwnProfile && (
             <Button
               component={Link}
@@ -278,7 +275,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               Edit profile
             </Button>
           )}
-        </Box>
+        </Box> */}
       </CardActions>
     </Card>
   );
