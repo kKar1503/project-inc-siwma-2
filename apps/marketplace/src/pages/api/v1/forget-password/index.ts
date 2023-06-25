@@ -64,7 +64,7 @@ const userForgetPassword = async (req: APIRequestType, res: NextApiResponse) => 
         params: {
           name: user.name,
           // add tokenHash as query parameter
-          resetUrl: `${process.env.FRONTEND_URL}/reset/${user.id}?token=${tokenHash}`,
+          resetUrl: `${process.env.FRONTEND_URL}/reset-password/${user.id}?token=${tokenHash}`,
         },
       },
     ],
