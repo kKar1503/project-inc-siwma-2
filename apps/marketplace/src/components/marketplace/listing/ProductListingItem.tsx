@@ -93,7 +93,6 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
         <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
-
       </Link>
       <CardContent
         sx={({ spacing }) => ({

@@ -31,7 +31,7 @@ const ChangeLanguageButton = () => {
 
     // Update the selected language in local storage
     localStorage.setItem('i18nextLng', newLanguage === 'English' ? 'en' : 'cn');
-    console.log(newLanguage);
+    // console.log(newLanguage);
     // Change the language using i18next
     i18next.changeLanguage(newLanguage === 'English' ? 'en' : 'cn');
   };

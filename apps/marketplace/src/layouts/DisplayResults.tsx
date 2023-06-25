@@ -26,6 +26,7 @@ export type DisplayResultsProps = {
   subHeader: boolean;
   setFilterOptions?: (filter: FilterOptions) => void;
   isLoading?: boolean;
+  forCategory?: boolean;
 };
 
 const DisplayResults = ({
@@ -35,6 +36,7 @@ const DisplayResults = ({
   subHeader,
   setFilterOptions,
   isLoading,
+  forCategory,
 }: DisplayResultsProps) => {
   const [isMd, isSm] = useResponsiveness(['md', 'sm']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -102,19 +104,33 @@ const DisplayResults = ({
             mr: spacing(3),
           })}
         >
-          <FilterForm
-            sort={sort}
-            category={category}
-            negotiation={negotiation}
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            setSort={setSort}
-            setCategory={setCategory}
-            setNegotiation={setNegotiation}
-            setMinPrice={setMinPrice}
-            setMaxPrice={setMaxPrice}
-            handleSubmit={handleSubmit}
-          />
+          {forCategory ? (
+            <FilterForm
+              sort={sort}
+              negotiation={negotiation}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              setSort={setSort}
+              setNegotiation={setNegotiation}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+              handleSubmit={handleSubmit}
+            />
+          ) : (
+            <FilterForm
+              sort={sort}
+              category={category}
+              negotiation={negotiation}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              setSort={setSort}
+              setCategory={setCategory}
+              setNegotiation={setNegotiation}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+              handleSubmit={handleSubmit}
+            />
+          )}
         </Grid>
       )}
 
@@ -167,19 +183,33 @@ const DisplayResults = ({
                     m: spacing(2),
                   })}
                 >
-                  <FilterForm
-                    sort={sort}
-                    category={category}
-                    negotiation={negotiation}
-                    minPrice={minPrice}
-                    maxPrice={maxPrice}
-                    setSort={setSort}
-                    setCategory={setCategory}
-                    setNegotiation={setNegotiation}
-                    setMinPrice={setMinPrice}
-                    setMaxPrice={setMaxPrice}
-                    handleSubmit={handleSubmit}
-                  />
+                  {forCategory ? (
+                    <FilterForm
+                      sort={sort}
+                      negotiation={negotiation}
+                      minPrice={minPrice}
+                      maxPrice={maxPrice}
+                      setSort={setSort}
+                      setNegotiation={setNegotiation}
+                      setMinPrice={setMinPrice}
+                      setMaxPrice={setMaxPrice}
+                      handleSubmit={handleSubmit}
+                    />
+                  ) : (
+                    <FilterForm
+                      sort={sort}
+                      category={category}
+                      negotiation={negotiation}
+                      minPrice={minPrice}
+                      maxPrice={maxPrice}
+                      setSort={setSort}
+                      setCategory={setCategory}
+                      setNegotiation={setNegotiation}
+                      setMinPrice={setMinPrice}
+                      setMaxPrice={setMaxPrice}
+                      handleSubmit={handleSubmit}
+                    />
+                  )}
                   <Button
                     sx={{ width: '100%' }}
                     size="large"

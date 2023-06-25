@@ -28,12 +28,12 @@ export type SortProps =
 
 export type FilterFormProps = {
   sort: SortProps;
-  category: number;
+  category?: number;
   negotiation: string;
   minPrice: string;
   maxPrice: string;
   setSort: (sort: SortProps) => void;
-  setCategory: (category: number) => void;
+  setCategory?: (category: number) => void;
   setNegotiation: (negotiation: string) => void;
   setMinPrice: (minPrice: string) => void;
   setMaxPrice: (maxPrice: string) => void;
@@ -76,10 +76,13 @@ const FilterForm = ({
 
   const resetForm = () => {
     setSort('Recent');
-    setCategory(0);
+
     setNegotiation('');
     setMinPrice('');
     setMaxPrice('');
+    if (typeof setCategory === 'function') {
+      setCategory(0);
+    }
   };
 
   return (
@@ -105,30 +108,36 @@ const FilterForm = ({
       </Select>
 
       <Divider sx={{ my: 2 }} />
-      <FormLabel
-        sx={({ typography }) => ({
-          fontWeight: typography.fontWeightMedium,
-        })}
-      >
-        {t('Category')}
-      </FormLabel>
-      <Select
-        sx={{ height: '45px', width: '100%' }}
-        onChange={(e) => setCategory(parseInt(e.target.value, 10))}
-        value={category.toString()}
-      >
-        <MenuItem key={0} value="">
-          No Category
-        </MenuItem>
-        {categoriesData &&
-          categoriesData.map((category) => (
-            <MenuItem key={category.id} value={category.id}>
-              {category.name}
+      {typeof setCategory === 'function' && (
+        <>
+          <FormLabel
+            sx={({ typography }) => ({
+              fontWeight: typography.fontWeightMedium,
+            })}
+          >
+            {t('Category')}
+          </FormLabel>
+          <Select
+            sx={{ height: '45px', width: '100%' }}
+            onChange={(e) => {
+              if (typeof setCategory === 'function') setCategory(parseInt(e.target.value, 10));
+            }}
+            value={category?.toString()}
+          >
+            <MenuItem key={0} value="">
+              No Category
             </MenuItem>
-          ))}
-      </Select>
+            {categoriesData &&
+              categoriesData.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+          </Select>
+          <Divider sx={{ my: 2 }} />
+        </>
+      )}
 
-      <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>{t('Negotiability')}</FormLabel>
       <RadioGroup onChange={(e) => setNegotiation(e.target.value)} value={negotiation}>
         <FormControlLabel value="true" control={<Radio />} label={t('Negotiable')} />
@@ -141,7 +150,7 @@ const FilterForm = ({
           fontWeight: typography.fontWeightMedium,
         })}
       >
-        Price
+        {t('Price')}
       </FormLabel>
       <Box sx={{ display: 'flex', marginBottom: 2 }}>
         <TextField
@@ -175,7 +184,7 @@ const FilterForm = ({
         color="error"
         fullWidth
       >
-        RESET
+        {t('RESET')}
       </Button>
     </form>
   );
