@@ -1,1 +1,13 @@
 node_modules
+*.env
+*.env.local
+.vscode/*
+.idea/*
+dist
+packages/db/prisma/scripts/casingFix.js
+tmp/**/*
+
+#macOS
+.DS_Store
+
+v8-compile-cache*

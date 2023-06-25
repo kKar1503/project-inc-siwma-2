@@ -4,7 +4,8 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["next", "airbnb", "prettier"],
+  "extends": ["next", "airbnb", "prettier", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
@@ -12,49 +13,57 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
+  "root": true,
+  "plugins": ["@typescript-eslint"],
   "globals": {
     "JSX": true
   },
   "settings": {
     "next": {
       "rootDir": ["."]
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "apps/marketplace"
+      } // this loads <rootdir>/tsconfig.json to eslint
     }
   },
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/require-default-props": "off",
-    "react/function-component-definition": [
-      2,
-      { "namedComponents": "arrow-function" }
-    ],
+    "react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
     "react/button-has-type": "off",
-    "indent": ["error", 2, { "SwitchCase": 1 }],
-    "quotes": [
-      "error",
-      "single",
-      { "allowTemplateLiterals": true, "avoidEscape": true }
-    ],
+    "indent": "off",
+    "quotes": ["error", "single", { "allowTemplateLiterals": true, "avoidEscape": true }],
     "object-curly-newline": "off",
-    "operator-linebreak": [
-      "error",
-      "after",
-      { "overrides": { "?": "before", ":": "before" } }
-    ],
-    "no-unused-vars": [
+    "operator-linebreak": ["error", "after", { "overrides": { "?": "before", ":": "before" } }],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
       "warn",
       {
-        "vars": "all",
-        "args": "after-used",
         "ignoreRestSiblings": true
       }
     ],
     "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }],
     "react/jsx-props-no-spreading": "off",
-    "react/jsx-filename-extension": [
-      2,
-      { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
+    "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "no-plusplus": "off",
+    "import/extensions": [
+      "error",
+      {
+        "tsx": "never",
+        "ts": "never"
+      }
     ],
-    "no-plusplus": "off"
+    "no-shadow": "off",
+    "lines-between-class-members": [
+      "error",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ],
+    "max-classes-per-file": "off"
   },
   "overrides": [
     {
@@ -72,11 +81,5 @@
       "plugins": ["cypress"]
     }
   ],
-  "ignorePatterns": [
-    "**/*.json",
-    "node_modules",
-    ".next",
-    "public",
-    "**/*.d.ts"
-  ]
+  "ignorePatterns": ["**/*.json", "node_modules", ".next", "public", "**/*.d.ts"]
 }
