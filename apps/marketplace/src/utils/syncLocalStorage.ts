@@ -8,7 +8,7 @@ import type { Messages } from '@inc/types';
  *
  * This will not account for messages that were deleted or edited.
  */
-const syncLocalStorage = (
+export const syncLocalStorage = (
   userId: string,
   message: Messages,
   lastMessagesCache?: Map<string, string>
@@ -86,5 +86,3 @@ export const syncLastMessage = (userId: string, message: Messages) => {
   localStorage.setItem(`${room}-last`, JSON.stringify(rest));
   window.dispatchEvent(new Event('local-storage'));
 };
-
-export default syncLocalStorage;
