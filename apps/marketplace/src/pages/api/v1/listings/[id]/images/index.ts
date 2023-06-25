@@ -168,8 +168,7 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const newImages =
     typeof index === 'number'
       ? await insert(listing, objects, index)
-      : // default action when no index is provided
-        await append(listing, objects);
+      : await append(listing, objects); // default action when no index is provided
 
   await PrismaClient.listingImages.createMany({
     data: newImages.map((image) => ({
