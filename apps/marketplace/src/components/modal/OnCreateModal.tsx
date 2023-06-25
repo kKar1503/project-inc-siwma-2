@@ -2,17 +2,18 @@ import { Modal } from '@inc/ui';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-export type ReportModalProps = {
+export type OnCreateModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
+  listingID: string;
 };
 
-const OnCreateModal = ({ open, setOpen }: ReportModalProps) => {
+const OnCreateModal = ({ open, setOpen, listingID }: OnCreateModalProps) => {
   const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
 
   if (rightButtonState === true) {
-    router.back();
+    router.push(`/listing/${listingID}`);
   }
 
   return (
