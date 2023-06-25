@@ -259,7 +259,7 @@ const CreateListingPage = () => {
       if (Array.isArray(postListingData)) {
         setOpenCreateErrorModal(true);
       } else {
-        setOpenCreateModal(postListingData);
+        setOpenCreateModal(true);
       }
     }
   };
