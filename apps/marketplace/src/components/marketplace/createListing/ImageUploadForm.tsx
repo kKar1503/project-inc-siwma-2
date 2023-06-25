@@ -22,7 +22,7 @@ export type PreviewImageProps = {
 
 export type Props = {
   images: Blob[];
-  setImages: (parameters: Blob[]) => void;
+  setImages: React.Dispatch<React.SetStateAction<Blob[]>>;
 };
 
 const ImageUploadForm = ({ images, setImages }: Props) => {
