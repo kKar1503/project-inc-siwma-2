@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { PostListingsRequestBody } from '@/utils/api/server/zod/listings';
-import { useQuery } from 'react-query';
+import { useQueries, useQuery } from 'react-query';
 import createListing from '@/middlewares/createListing';
 import fetchCategories from '@/middlewares/fetchCategories';
 import OnCreateModal from '@/components/modal/OnCreateModal';
@@ -37,16 +37,6 @@ const usePostListingQuery = (
 
   if (data === undefined) return false;
 
-  return data;
-};
-
-const useGetCategoriesQuery = () => {
-  const { data } = useQuery('categories', () => fetchCategories());
-  return data;
-};
-
-const useGetParametersQuery = () => {
-  const { data } = useQuery(['parameters'], () => fetchParameters());
   return data;
 };
 
@@ -85,8 +75,12 @@ const CreateListingPage = () => {
 
   // Hooks
   const postListingData = usePostListingQuery(formData);
-  const categoriesData = useGetCategoriesQuery();
-  const allParametersData = useGetParametersQuery();
+  const queries = useQueries([
+    { queryKey: 'categories', queryFn: () => fetchCategories() },
+    { queryKey: 'parameters', queryFn: () => fetchParameters() },
+  ]);
+  const categoriesData = queries[0].data;
+  const allParametersData = queries[1].data;
   const parametersData = useMemo(() => {
       if (!allParametersData) return undefined;
       return categoryParameters.map((categoryParameter) => allParametersData[categoryParameter.parameterId]);
