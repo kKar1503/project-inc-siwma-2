@@ -1,6 +1,6 @@
 // ** Type Import
 import type { PaletteOptions } from '@mui/material';
-import { alpha } from '@mui/material/styles'
+import { alpha } from '@mui/material/styles';
 
 const mainColor = '#2962ff';
 

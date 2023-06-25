@@ -6,7 +6,7 @@ const fetchPopularListings = async () => {
   const response = await apiClient.get(`/v1/listings?limit=13&sortBy=highest_rating`);
   const listingsArr: Array<ProductListingItemProps> = [];
 
-  console.log(response)
+  console.log(response);
   // parse data through zod to ensure that data is correct
   const listingsData = listings.getAll.parse(response.data.data[0].listings);
 

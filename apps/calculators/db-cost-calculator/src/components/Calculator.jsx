@@ -27,7 +27,7 @@ function App() {
       inputs.numRooms,
       inputs.numMessages,
       inputs.numCategories,
-      inputs.numParams,
+      inputs.numParams
     );
     setResult(calculatedResult);
     setShowResults(true);
@@ -161,9 +161,7 @@ function App() {
   return (
     <div>
       <h1 style={headerStyle}>Database Calculator</h1>
-      <h2 style={subheaderStyle}>
-        Determine how much the database would cost as per your needs
-      </h2>
+      <h2 style={subheaderStyle}>Determine how much the database would cost as per your needs</h2>
       <div style={styles}>
         <form onSubmit={(event) => handleFormSubmit(event)}>
           <table style={tableStyles}>
@@ -178,7 +176,8 @@ function App() {
                 {
                   label: 'Number of companies',
                   defaultValue: 200,
-                  tooltip: 'The estimated number of companies which will be participating in the usage of the marketplace.',
+                  tooltip:
+                    'The estimated number of companies which will be participating in the usage of the marketplace.',
                   inputName: 'numCompany',
                 },
                 {
@@ -190,7 +189,8 @@ function App() {
                 {
                   label: 'Percentage of active users',
                   defaultValue: 80,
-                  tooltip: 'An estimate of 80% has been set to default to estimate the percentage of total users created who are actively using the marketplace.',
+                  tooltip:
+                    'An estimate of 80% has been set to default to estimate the percentage of total users created who are actively using the marketplace.',
                   inputName: 'numUsersActive',
                 },
                 {
@@ -227,14 +227,8 @@ function App() {
                 <tr key={label}>
                   <td style={tdStyles}>
                     {label}
-                    <Tippy
-                      content={tooltip}
-                      theme="custom-white-box"
-                    >
-                      <span
-                        className="tooltip-icon"
-                        style={tooltipStyle}
-                      >
+                    <Tippy content={tooltip} theme="custom-white-box">
+                      <span className="tooltip-icon" style={tooltipStyle}>
                         i
                       </span>
                     </Tippy>
@@ -252,15 +246,8 @@ function App() {
               ))}
               {/* submit and reset buttons */}
               <tr>
-                <td
-                  colSpan="2"
-                  style={{ textAlign: 'right' }}
-                >
-                  <button
-                    type="submit"
-                    onClick={handleFormSubmit}
-                    style={buttonStyles}
-                  >
+                <td colSpan="2" style={{ textAlign: 'right' }}>
+                  <button type="submit" onClick={handleFormSubmit} style={buttonStyles}>
                     Calculate
                   </button>
                   <button
@@ -278,9 +265,7 @@ function App() {
             </tbody>
             <tbody>
               <tr>
-                <td colSpan="2">
-                  {showResults ? <Results result={result} /> : null}
-                </td>
+                <td colSpan="2">{showResults ? <Results result={result} /> : null}</td>
               </tr>
             </tbody>
           </table>
