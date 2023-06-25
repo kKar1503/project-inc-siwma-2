@@ -88,7 +88,7 @@ const syncMessage: EventFile = (io, socket) => ({
                 'info',
                 `Informing socket (${socket.id}) that there are no messages to sync...`
               );
-              (io.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC, {
+              (socket.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC, {
                 status: 'error',
                 err: 'No messages to sync.',
               });
@@ -99,7 +99,7 @@ const syncMessage: EventFile = (io, socket) => ({
             eventLog('trace', `Sending messages to socket (${socket.id})...`);
             messages.forEach((message, idx) => {
               eventLog('trace', `Sending message (${message.id}) to socket (${socket.id})...`);
-              (io.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC, {
+              (socket.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC, {
                 status: 'in_progress',
                 progress: Math.floor(((idx + 1) / messages.length) * 100),
                 message: message,
@@ -107,7 +107,7 @@ const syncMessage: EventFile = (io, socket) => ({
             });
 
             eventLog('trace', `Informing socket (${socket.id}) that all messages have been sent.`);
-            (io.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC, {
+            (socket.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC, {
               status: 'success',
             });
           })
