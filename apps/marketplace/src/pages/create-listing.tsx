@@ -6,7 +6,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { PostListingsRequestBody } from '@/utils/api/server/zod/listings';
 import { useQueries, useQuery } from 'react-query';
-import createListing from '@/middlewares/createListing';
+import createListing, { ReturnType } from '@/middlewares/createListing';
 import fetchCategories from '@/middlewares/fetchCategories';
 import OnCreateModal from '@/components/modal/OnCreateModal';
 import OnCreateErrorModal from '@/components/modal/OnCreateErrorModal';
@@ -18,16 +18,13 @@ import ParameterForm, {
   ParameterFormProps,
   ParameterValidationProps,
 } from '@/components/marketplace/createListing/ParameterForm';
-import ListingTypeForm, {
-  ListingTypeProps,
-} from '@/components/marketplace/createListing/ListingTypeForm';
-import ListingForm, {
-  ListingValidationProps,
-} from '@/components/marketplace/createListing/ListingForm';
+import ListingTypeForm, { ListingTypeProps } from '@/components/marketplace/createListing/ListingTypeForm';
+import ListingForm, { ListingValidationProps } from '@/components/marketplace/createListing/ListingForm';
 import ImageUploadForm from '@/components/marketplace/createListing/ImageUploadForm';
 
 const usePostListingQuery = (
-  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined
+  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
+  onSucessCallback: (data: ReturnType) => void,
 ) => {
   const { data } = useQuery(
     ['postListing', listing],
@@ -36,7 +33,8 @@ const usePostListingQuery = (
       enabled:
         listing !== undefined && listing.listingBody !== undefined && listing.images !== undefined,
       retry: false,
-    }
+      onSuccess: (data) => onSucessCallback(data),
+    },
   );
 
   if (data === undefined) return false;
@@ -78,7 +76,12 @@ const CreateListingPage = () => {
   });
 
   // Hooks
-  const postListingData = usePostListingQuery(formData);
+  const postListingData = usePostListingQuery(formData, (data) => {
+    if (data === false) return;
+    setOpenCreateErrorModal(!data.success);
+    setOpenCreateModal(data.success);
+  });
+
   const queries = useQueries([
     { queryKey: 'categories', queryFn: () => fetchCategories() },
     { queryKey: 'parameters', queryFn: () => fetchParameters() },
@@ -88,7 +91,7 @@ const CreateListingPage = () => {
   const parametersData = useMemo(() => {
     if (!allParametersData) return undefined;
     return categoryParameters.map(
-      (categoryParameter) => allParametersData[categoryParameter.parameterId]
+      (categoryParameter) => allParametersData[categoryParameter.parameterId],
     );
   }, [allParametersData, categoryParameters]);
 
@@ -253,15 +256,7 @@ const CreateListingPage = () => {
   // Handle Submit/Cancel
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const validated = submitForm();
-
-    if (validated) {
-      if (Array.isArray(postListingData)) {
-        setOpenCreateErrorModal(true);
-      } else {
-        setOpenCreateModal(true);
-      }
-    }
+    submitForm();
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -324,17 +319,17 @@ const CreateListingPage = () => {
               CREATE LISTING
             </Button>
             {postListingData !== false &&
-              (Array.isArray(postListingData) ? (
-                <OnCreateErrorModal
-                  open={openCreateErrorModal}
-                  setOpen={setOpenCreateErrorModal}
-                  content={postListingData}
-                />
-              ) : (
+              (postListingData.success ? (
                 <OnCreateModal
                   open={openCreateModal}
                   setOpen={setOpenCreateModal}
-                  listingID={postListingData}
+                  listingID={postListingData.id}
+                />
+              ) : (
+                <OnCreateErrorModal
+                  open={openCreateErrorModal}
+                  setOpen={setOpenCreateErrorModal}
+                  content={postListingData.errorMessages}
                 />
               ))}
           </Grid>
