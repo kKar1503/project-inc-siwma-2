@@ -203,7 +203,14 @@ const Marketplace = () => {
             loadingComponent={<CircularProgress />}
             parent={Grid}
             endMessage={
-              <Typography variant="h6" textAlign="center" sx={{ marginTop: '2em' }}>
+              <Typography
+                variant="h6"
+                sx={({ spacing }) => ({
+                  my: spacing(5),
+                  textAlign: 'center',
+                  textTransform: 'uppercase',
+                })}
+              >
                 No more listings available
               </Typography>
             }

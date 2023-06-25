@@ -18,12 +18,16 @@ import ParameterForm, {
   ParameterFormProps,
   ParameterValidationProps,
 } from '@/components/marketplace/createListing/ParameterForm';
-import ListingTypeForm, { ListingTypeProps } from '@/components/marketplace/createListing/ListingTypeForm';
-import ListingForm, { ListingValidationProps } from '@/components/marketplace/createListing/ListingForm';
+import ListingTypeForm, {
+  ListingTypeProps,
+} from '@/components/marketplace/createListing/ListingTypeForm';
+import ListingForm, {
+  ListingValidationProps,
+} from '@/components/marketplace/createListing/ListingForm';
 import ImageUploadForm from '@/components/marketplace/createListing/ImageUploadForm';
 
 const usePostListingQuery = (
-  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
+  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined
 ) => {
   const { data } = useQuery(
     ['postListing', listing],
@@ -82,11 +86,11 @@ const CreateListingPage = () => {
   const categoriesData = queries[0].data;
   const allParametersData = queries[1].data;
   const parametersData = useMemo(() => {
-      if (!allParametersData) return undefined;
-      return categoryParameters.map((categoryParameter) => allParametersData[categoryParameter.parameterId]);
-    },
-    [allParametersData, categoryParameters]);
-
+    if (!allParametersData) return undefined;
+    return categoryParameters.map(
+      (categoryParameter) => allParametersData[categoryParameter.parameterId]
+    );
+  }, [allParametersData, categoryParameters]);
 
   // validation
   const categoryValidation = () => {
@@ -123,7 +127,11 @@ const CreateListingPage = () => {
 
         switch (detailedParameter.dataType) {
           case 'number':
-            if (typeof parseFloat(parameter.value) !== 'number' || parameter.value.includes('!') || parameter.value.includes(' ')) {
+            if (
+              typeof parseFloat(parameter.value) !== 'number' ||
+              parameter.value.includes('!') ||
+              parameter.value.includes(' ')
+            ) {
               newParameterErrors.push({
                 parameterId,
                 error: `${detailedParameter.displayName} must be a number`,
