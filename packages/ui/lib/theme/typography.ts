@@ -4,18 +4,6 @@ import type { ThemeOptions } from '@mui/material';
 type TypographyOptions = ThemeOptions['typography'];
 
 const Typography: TypographyOptions = (palette) => ({
-  fontFamily: [
-    '-apple-system',
-    'BlinkMacSystemFont',
-    '"Segoe UI"',
-    'Roboto',
-    '"Helvetica Neue"',
-    'Arial',
-    'sans-serif',
-    '"Apple Color Emoji"',
-    '"Segoe UI Emoji"',
-    '"Segoe UI Symbol"',
-  ].join(','),
   h1: {
     fontWeight: 500,
     letterSpacing: '-1.5px',
