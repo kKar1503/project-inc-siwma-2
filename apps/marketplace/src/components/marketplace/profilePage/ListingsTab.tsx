@@ -13,8 +13,8 @@ const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
 
 export type ListingsTabProps = {
   allListings: ProductListingItemProps[];
-  filterListings: (newData: (typeof filterValues)[number]) => void;
-  sortByListings: (newData: (typeof sortValues)[number]) => void;
+  filterListings: (newData: typeof filterValues[number]) => void;
+  sortByListings: (newData: typeof sortValues[number]) => void;
 };
 
 const ListingsTab = ({ allListings, filterListings, sortByListings }: ListingsTabProps) => {
