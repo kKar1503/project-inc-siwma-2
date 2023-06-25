@@ -9,6 +9,7 @@ import { useQuery } from 'react-query';
 import createListing from '@/middlewares/createListing';
 import fetchCategories from '@/middlewares/fetchCategories';
 import OnCreateModal from '@/components/modal/OnCreateModal';
+import OnCreateErrorModal from '@/components/modal/OnCreateErrorModal';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import CategoryForm, { CategoryProps } from '@/components/marketplace/createListing/CategoryForm';
 import fetchParameters from '@/middlewares/fetchParameters';
@@ -42,6 +43,7 @@ const usePostListingQuery = (
 
   return data;
 };
+
 const useGetCategoriesQuery = () => {
   const { data } = useQuery('categories', () => fetchCategories());
 
@@ -58,6 +60,7 @@ const useGetParametersQuery = (ids: string, category: CategoryProps | null) => {
 const CreateListingPage = () => {
   // modals
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
+  const [openCreateErrorModal, setOpenCreateErrorModal] = useState<boolean>(false);
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
 
   // form data
@@ -65,6 +68,7 @@ const CreateListingPage = () => {
     listingBody: PostListingsRequestBody;
     images: Blob[];
   }>();
+
   // form data (parts)
   const [listingType, setListingType] = useState<ListingTypeProps>('BUY');
   const [category, setCategory] = useState<CategoryProps | null>(null);
@@ -225,7 +229,8 @@ const CreateListingPage = () => {
   };
 
   const submitForm = (): boolean => {
-    // backend api currently have conflicts
+    setFormData(undefined);
+
     const listingBody: PostListingsRequestBody = {
       name: title,
       description,
@@ -239,6 +244,7 @@ const CreateListingPage = () => {
     };
 
     if (!validateForm()) return false;
+
     setFormData({
       listingBody,
       images,
@@ -252,13 +258,18 @@ const CreateListingPage = () => {
     setCategoryParameters(category.parameters || []);
   }, [category]);
 
-  useEffect(() => setOpenCreateModal(postListingData), [setOpenCreateModal, postListingData]);
-
   // Handle Submit/Cancel
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    submitForm();
+    const validated = submitForm();
+
+    if (validated) {
+      if (typeof postListingData === 'boolean') {
+        setOpenCreateModal(postListingData);
+      } else {
+        setOpenCreateErrorModal(true);
+      }
+    }
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -320,7 +331,16 @@ const CreateListingPage = () => {
             <Button variant="contained" type="submit" size="large" fullWidth>
               CREATE LISTING
             </Button>
-            <OnCreateModal open={openCreateModal} setOpen={setOpenCreateModal} />
+            {postListingData !== false &&
+              (typeof postListingData === 'boolean' ? (
+                <OnCreateModal open={openCreateModal} setOpen={setOpenCreateModal} />
+              ) : (
+                <OnCreateErrorModal
+                  open={openCreateErrorModal}
+                  setOpen={setOpenCreateErrorModal}
+                  content={postListingData}
+                />
+              ))}
           </Grid>
         </Grid>
       </form>
