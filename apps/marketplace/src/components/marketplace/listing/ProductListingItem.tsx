@@ -57,7 +57,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
     [data.createdAt]
   );
 
-  console.log(data);
+  const listingname = data.name.replace(/\s+/g, '-').toLowerCase();
 
   const theme = useTheme();
   const [isSm] = useResponsiveness(['sm']);
@@ -93,7 +93,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           }}
         />
       </Link>
-      <Link style={{ textDecoration: 'none' }} href={`/listing/${data.name}-${data.id}`}>
+      <Link style={{ textDecoration: 'none' }} href={`/listing/${listingname}-${data.id}`}>
         <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
       </Link>
       <CardContent
@@ -150,7 +150,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
             )}
           </Box>
         </Box>
-        <Link style={{ textDecoration: 'none' }} href={`/listing/${data.name}-${data.id}`}>
+        <Link style={{ textDecoration: 'none' }} href={`/listing/${listingname}-${data.id}`}>
           <Box
             sx={({ spacing }) => ({
               pb: spacing(1),
