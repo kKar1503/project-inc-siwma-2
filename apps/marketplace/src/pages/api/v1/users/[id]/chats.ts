@@ -128,7 +128,7 @@ export default apiHandler().get(async (req, res) => {
     listing: {
       id: chat.listingRoomsListingTolisting.id.toString(),
       name: chat.listingRoomsListingTolisting.name,
-      price: chat.listingRoomsListingTolisting.price,
+      price: chat.listingRoomsListingTolisting.price.toNumber(),
       unitPrice: chat.listingRoomsListingTolisting.unitPrice,
       type: chat.listingRoomsListingTolisting.type,
       // Whether or not the listing is still available for purchase
