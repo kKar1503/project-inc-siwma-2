@@ -34,7 +34,7 @@ import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
-import { ReviewRequestBody } from '@/utils/api/server/zod';
+import { PostChatRequestBody, ReviewRequestBody } from '@/utils/api/server/zod';
 
 const carouselData = [
   {
@@ -105,10 +105,11 @@ const useChatListQuery = (userUuid: string) => {
   return data;
 };
 
-const useCreateChatQuery = (sellerId: string, buyerId: string, listingId: string) => {
-  const { data } = useQuery('createChat', async () => createRoom(sellerId, buyerId, listingId));
-  return data;
-};
+interface chatRoomDetails {
+  chatRoomData: PostChatRequestBody;
+}
+
+let chatRoomData = (data: chatRoomDetails) => createRoom(data.chatRoomData);
 
 interface reviewDetails {
   listingId: string;
@@ -141,7 +142,7 @@ const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[]
 const DetailedListingPage = () => {
   const theme = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing } = useTheme();
+  // const { spacing } = useTheme();
 
   const router = useRouter();
   const listingId = router.query.id as string;
@@ -157,9 +158,12 @@ const DetailedListingPage = () => {
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
 
   const chatRooms = useChatListQuery(loggedUserUuid);
-  const buyerId = loggedUserUuid as unknown as string;
-  const sellerId = listings?.owner.id as string;
-  const newRoom = useCreateChatQuery(sellerId, buyerId, listingId);
+  // const buyerId = loggedUserUuid as unknown as string;
+  // const sellerId = listings?.owner.id as string;
+  // const newRoom = useCreateChatQuery(sellerId, buyerId, listingId);
+  const usePostChatRoomQuery = useMutation({
+    mutationFn: (data: chatRoomDetails) => chatRoomData(data),
+  });
 
   // const postReview = usePostReviewQuery();
   const [leftButtonState, setLeftButtonState] = useState(false);
@@ -168,7 +172,6 @@ const DetailedListingPage = () => {
   const [openComment, setOpenComment] = useState(false);
   const [rating, setRating] = useState<number | null>(0);
   const [isOpen, setIsOpen] = useState(false);
-
   const usePostReviewQuery = useMutation({ mutationFn: (data: reviewDetails) => reviewData(data) });
 
   useEffect(() => {
@@ -206,7 +209,24 @@ const DetailedListingPage = () => {
           chatRooms[i].buyer.id !== listings?.owner.id &&
           chatRooms[i].seller?.id !== listings?.owner.id
         ) {
-          return newRoom;
+          if (listings?.type === 'SELL' && loggedUserUuid) {
+            chatRoomData = {
+              buyerId: loggedUserUuid,
+              sellerId: listings?.owner.id as string,
+              listingId: router.query.id,
+            };
+          } else {
+            chatRoomData = {
+              buyerId: listings?.owner.id as string,
+              sellerId: loggedUserUuid,
+              listingId: router.query.id,
+            };
+          }
+
+          const chatRoom = {
+            chatRoomData,
+          };
+          return usePostChatRoomQuery;
         }
       }
     }
@@ -509,18 +529,18 @@ const DetailedListingPage = () => {
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <Link href="/chat">
-                        <Button
-                          variant="contained"
-                          sx={({ palette }) => ({
-                            backgroundColor: palette.primary.main,
-                            width: isMd ? 240 : 340,
-                          })}
-                          onClick={checkChatRoom}
-                        >
-                          Chat Now
-                        </Button>
-                      </Link>
+                      {/* <Link href="/chat"> */}
+                      <Button
+                        variant="contained"
+                        sx={({ palette }) => ({
+                          backgroundColor: palette.primary.main,
+                          width: isMd ? 240 : 340,
+                        })}
+                        onClick={checkChatRoom}
+                      >
+                        Chat Now
+                      </Button>
+                      {/* </Link> */}
                     </Box>
                   </CardContent>
                 </Card>
@@ -544,32 +564,46 @@ const DetailedListingPage = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={4} md={2.75}>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    sx={({ palette }) => ({ backgroundColor: palette.primary.main })}
-                    onClick={() => setOpenComment(true)}
-                  >
-                    ADD A REVIEW
-                  </Button>
-                  <AddCommentModal
-                    open={openComment}
-                    setOpen={setOpenComment}
-                    buttonColor="#0288D1"
-                    // image api not up, so img not displayed
-                    userImage={loggedInUser?.profilePic as string}
-                    userName={loggedInUser?.name as string}
-                    inputText={inputText}
-                    setInputText={setInputText}
-                    rating={rating}
-                    setRating={setRating}
-                    leftButtonText="cancel"
-                    rightButtonText="Publish"
-                    leftButtonState={leftButtonState}
-                    rightButtonState={rightButtonState}
-                    setLeftButtonState={setLeftButtonState}
-                    setRightButtonState={setRightButtonState}
-                  />
+                  {listings?.purchased ? (
+                    <>
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        sx={({ palette }) => ({ backgroundColor: palette.primary.main })}
+                        onClick={() => setOpenComment(true)}
+                      >
+                        ADD A REVIEW
+                      </Button>
+                      <AddCommentModal
+                        open={openComment}
+                        setOpen={setOpenComment}
+                        buttonColor="#0288D1"
+                        // image api not up, so img not displayed
+                        userImage={loggedInUser?.profilePic as string}
+                        userName={loggedInUser?.name as string}
+                        inputText={inputText}
+                        setInputText={setInputText}
+                        rating={rating}
+                        setRating={setRating}
+                        leftButtonText="cancel"
+                        rightButtonText="Publish"
+                        leftButtonState={leftButtonState}
+                        rightButtonState={rightButtonState}
+                        setLeftButtonState={setLeftButtonState}
+                        setRightButtonState={setRightButtonState}
+                      />
+                    </>
+                  ) : (
+                    <Button
+                      disabled
+                      fullWidth
+                      variant="contained"
+                      sx={({ palette }) => ({ backgroundColor: palette.grey[400] })}
+                      onClick={() => setOpenComment(false)}
+                    >
+                      ADD A REVIEW
+                    </Button>
+                  )}
                 </Grid>
                 <Grid item xs={6} md={0.25} />
                 {reviews?.length ? (
