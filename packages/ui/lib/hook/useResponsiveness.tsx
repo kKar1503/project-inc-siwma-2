@@ -2,7 +2,7 @@ import { useMediaQuery, useTheme } from '@mui/material';
 import type { Breakpoint } from '@mui/material';
 
 export default function useResponsiveness(breakpoints: Breakpoint[]) {
-  const { sm, md, lg, xl } = useTheme().breakpoints.values;
+  const { xs, sm, md, lg, xl } = useTheme().breakpoints.values;
 
   const isXs: boolean = useMediaQuery(`(max-width: ${sm - 1}px)`);
   const isSm: boolean = useMediaQuery(`(max-width: ${md - 1}px)`);

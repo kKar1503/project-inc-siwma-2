@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Box, styled } from '@mui/material';
-import ProductListingItem, { ProductListingItemProps } from './ProductListingItem';
+import { Listing } from '@/utils/api/client/zod';
+import ProductListingItem from './ProductListingItem';
 
 type Props = {
-  listingItemsData: Array<ProductListingItemProps> | undefined;
+  listingItemsData: Array<Listing> | undefined;
 };
 
 const Scroll = styled('div')({
@@ -28,7 +29,7 @@ const ListingStream: React.FC<Props> = ({ listingItemsData }) => (
         }}
       >
         {listingItemsData?.map((item) => (
-          <Box sx={{ width: '288px', margin: '0 24px' }} key={item.productId}>
+          <Box sx={{ width: '288px', margin: '0 24px' }} key={item.id}>
             <ProductListingItem data={item} />
           </Box>
         ))}
