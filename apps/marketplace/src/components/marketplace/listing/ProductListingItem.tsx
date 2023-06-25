@@ -94,7 +94,14 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
         />
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}>
-        <CardMedia component="img" height="288" image={img || 'https://www.bloomberglinea.com/resizer/cCYxWuUthcqd7ML4NfAFhu8x1Zg=/1440x0/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/bloomberglinea/V22IOSYMMFDQDMMN2WK7U5Y6S4.png'} />
+        <CardMedia
+          component="img"
+          height="288"
+          image={
+            img ||
+            'https://www.bloomberglinea.com/resizer/cCYxWuUthcqd7ML4NfAFhu8x1Zg=/1440x0/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/bloomberglinea/V22IOSYMMFDQDMMN2WK7U5Y6S4.png'
+          }
+        />
       </Link>
       <CardContent
         sx={({ spacing }) => ({

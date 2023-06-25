@@ -8,7 +8,7 @@ import forgetPassword from './ForgetPasswordTemplate.html';
 export enum EmailTemplate {
   INVITE,
   NOTIFICATION,
-  FORGETPASSWORD
+  FORGETPASSWORD,
 }
 
 export function getContentFor(template: EmailTemplate): string {

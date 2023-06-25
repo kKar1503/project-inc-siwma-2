@@ -30,7 +30,7 @@ const LoginForm = () => {
     if (!authResult?.ok) {
       setErrorMessage(true);
     } else {
-      return router.push('/'); 
+      return router.push('/');
     }
 
     return authResult;
@@ -77,7 +77,7 @@ const LoginForm = () => {
                 mb: spacing(2),
               })}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo" fill  />
+              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
             </Box>
             <Divider flexItem />
             <Box

@@ -17,18 +17,16 @@ if (!i18n.isInitialized) {
   } as const;
 
   // console.log('initI18n');
-  i18n
-    .use(initReactI18next)
-    .init({
-      lng: defaultLang, // Set the default language
-      fallbackLng: 'en', // Fallback language if translation is not available for the current language
-      debug: true, // Set to true for development mode
-      resources,
-      interpolation: {
-        escapeValue: false, // React handles escaping by default
-      },
-      ns: ['translation'], // Namespaces for your translations
-      defaultNS: 'translation', // Default namespace
-    });
+  i18n.use(initReactI18next).init({
+    lng: defaultLang, // Set the default language
+    fallbackLng: 'en', // Fallback language if translation is not available for the current language
+    debug: true, // Set to true for development mode
+    resources,
+    interpolation: {
+      escapeValue: false, // React handles escaping by default
+    },
+    ns: ['translation'], // Namespaces for your translations
+    defaultNS: 'translation', // Default namespace
+  });
 }
 export default i18n;

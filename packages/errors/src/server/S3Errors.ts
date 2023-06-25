@@ -77,15 +77,15 @@ export class InvalidBucketName extends S3ApiError {
 }
 
 export class MissingUUID extends S3ApiError {
-    public static readonly status = 500;
-    public static readonly code = S3ApiError.code + 300; // 3300
+  public static readonly status = 500;
+  public static readonly code = S3ApiError.code + 300; // 3300
 
-    constructor() {
-        super();
-        this.message = 'Something went wrong';
-        this.status = MissingUUID.status;
-        this.code = MissingUUID.code;
-    }
+  constructor() {
+    super();
+    this.message = 'Something went wrong';
+    this.status = MissingUUID.status;
+    this.code = MissingUUID.code;
+  }
 }
 
 export class ObjectNotFound extends S3ApiError {

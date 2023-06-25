@@ -87,7 +87,7 @@ export class InvalidCompanyNameError extends InputError {
   }
 }
 /**
- * Same password 
+ * Same password
  */
 export class WrongPasswordError extends InputError {
   public static readonly status = 422;
