@@ -160,9 +160,9 @@ const TestModal = () => {
       />
       <Button onClick={() => setOpenChatSync(true)}> Syncing Chat Modal</Button>
       <SyncingChatModal
-        open={openChatSync} 
-        setOpen={setOpenChatSync} 
-        progress={progress} 
+        open={openChatSync}
+        setOpen={setOpenChatSync}
+        progress={progress}
         rightButtonState={rightButtonState}
         setRightButtonState={handleClick}
       />

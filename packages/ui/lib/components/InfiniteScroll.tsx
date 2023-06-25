@@ -42,9 +42,9 @@ const InfiniteScroll = <TParent, TChild>({
   child: Child,
   parentProps = {},
   childProps = {},
-  // scrollThreshold = 1,
-  // inverse = false,
-}: InfiniteScrollProps<TParent, TChild>) => {
+}: // scrollThreshold = 1,
+// inverse = false,
+InfiniteScrollProps<TParent, TChild>) => {
   const parentRef = useRef<Element>(null);
   const childRef = useRef<Element>(null);
 
@@ -52,7 +52,7 @@ const InfiniteScroll = <TParent, TChild>({
     if (
       e.target.documentElement.scrollTop + window.innerHeight <=
         e.target.documentElement.scrollHeight - childRef.current.clientHeight * 2 ||
-      (loading)
+      loading
     )
       return;
 
@@ -68,24 +68,24 @@ const InfiniteScroll = <TParent, TChild>({
     <>
       {loading && loadingComponent}
 
-        <Parent {...parentProps} ref={parentRef}>
-          {children !== null &&
-            children !== undefined &&
-            Children.map(children, (child, index) => {
-              if (index === children.length - 1) {
-                return (
-                  <Child {...childProps} key={index}>
-                    {child}
-                  </Child>
-                );
-              }
+      <Parent {...parentProps} ref={parentRef}>
+        {children !== null &&
+          children !== undefined &&
+          Children.map(children, (child, index) => {
+            if (index === children.length - 1) {
               return (
-                <Child {...childProps} key={index} ref={childRef}>
+                <Child {...childProps} key={index}>
                   {child}
                 </Child>
               );
-            })}
-        </Parent>
+            }
+            return (
+              <Child {...childProps} key={index} ref={childRef}>
+                {child}
+              </Child>
+            );
+          })}
+      </Parent>
 
       {reachedMaxItems && endMessage}
     </>

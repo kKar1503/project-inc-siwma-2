@@ -12,4 +12,4 @@ export { default as ModalInput } from './components/ModalInput';
 export { default as AddCommentModal } from './components/AddCommentModal';
 export { default as InfiniteScroll } from './components/InfiniteScroll';
 export { default as useResponsiveness } from './hook/useResponsiveness';
-export { default as useTogglePasswordVisibility} from './hook/useTogglePasswordVisibility';
+export { default as useTogglePasswordVisibility } from './hook/useTogglePasswordVisibility';
