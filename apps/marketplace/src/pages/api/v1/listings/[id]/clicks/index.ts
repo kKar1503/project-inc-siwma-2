@@ -29,6 +29,4 @@ const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) 
   res.status(204).end();
 };
 
-
-export default apiHandler()
-  .post(POST);
+export default apiHandler().post(POST);

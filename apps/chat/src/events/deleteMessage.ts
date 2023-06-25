@@ -27,7 +27,7 @@ const deleteMessage: EventFile = (io, socket) => ({
         eventLog('info', `Deleted message (${messageId}) from database.`);
 
         eventLog('trace', `Acknowledging message delete...`);
-        ack({ success: true, data: { messageId } });
+        if (typeof ack === 'function') ack({ success: true, data: { messageId } });
 
         eventLog('trace', `Attempting to retrieve other occupant from cache...`);
         const [, occupants] = RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
@@ -44,7 +44,7 @@ const deleteMessage: EventFile = (io, socket) => ({
       })
       .catch(() => {
         eventLog('error', `Failed to delete messages from database.`);
-        ack({ success: false });
+        if (typeof ack === 'function') ack({ success: false });
       });
   },
 });

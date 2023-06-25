@@ -1,32 +1,54 @@
 import type { Socket, Server, DisconnectReason } from 'socket.io';
+import type { Socket as ClientSocket } from 'socket.io-client';
 
 type UserId = string;
 type RoomId = string;
 type MessageId = number;
 type ListingId = number;
 
-type ClientSendMessage = {
+export type ClientSendMessage = {
   roomId: RoomId;
   message: string;
   time: Date;
 };
 
-type ServerRoomMessage = {
-  id: MessageId;
-  roomId: RoomId;
-  message: string;
-  time: Date;
-};
-
-type Room = {
+export type Room = {
   id: RoomId;
   user: UserId;
 };
 
-type ClientCreateRoom = {
+export type ClientCreateRoom = {
   sellerId: UserId;
   listingId: ListingId;
 };
+
+export type Messages = {
+  id: number;
+  author: string;
+  room: string;
+  read: boolean;
+  createdAt: Date;
+  contentType: 'text' | 'file' | 'image' | 'offer';
+  offer: number | null;
+  content: string;
+};
+
+export type MessageSync =
+  | {
+      status: 'in_progress';
+      progress: number;
+      message: Messages;
+    }
+  | {
+      status: 'success';
+    }
+  | {
+      status: 'error';
+      err?: string;
+    };
+
+// ** Types Declarations **
+export type LoadingState = 'idle' | 'iam' | 'sync';
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
@@ -37,14 +59,15 @@ type EventParams = {
 
   // ** Client Events
   // Client Room Events
-  clientJoinRoom: RoomId;
-  clientPartRoom: RoomId;
-  clientCreateRoom: ClientCreateRoom;
-  clientDeleteRoom: RoomId;
+  clientJoinRoom: RoomId; // Has Ack
+  clientPartRoom: RoomId; // Has Ack
+  clientCreateRoom: ClientCreateRoom; // Has Ack
+  clientDeleteRoom: RoomId; // Has Ack
   // Client Message Events
-  clientSendMessage: ClientSendMessage;
-  clientDeleteMessage: MessageId;
-  clientReadMessage: RoomId;
+  clientSendMessage: ClientSendMessage; // Has Ack
+  clientDeleteMessage: MessageId; // Has Ack
+  clientReadMessage: RoomId; // Has Ack
+  clientSyncMessage: MessageId; // Has Ack
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
@@ -54,9 +77,10 @@ type EventParams = {
   serverCreatedRoom: Room;
   serverDeletedRoom: RoomId;
   // Server Message Events
-  serverRoomMessage: ServerRoomMessage;
+  serverRoomMessage: Messages;
   serverDeletedMessage: MessageId;
   serverReadMessage: MessageId[];
+  serverSyncMessage: MessageSync;
   // Server Typing Events
   serverStartType: UserId;
   serverStopType: UserId;
@@ -64,7 +88,7 @@ type EventParams = {
 
 type Event = keyof EventParams;
 
-type Acknowlegement =
+export type Acknowlegement =
   | {
       success: true;
       data?: any;
@@ -87,6 +111,18 @@ type EventFile = (
   };
 }[keyof EventParams];
 
+type ClientEventFile<T> = (
+  socket: ClientSocket,
+  hookParams: T,
+  setLoading: (loading: LoadingState) => void
+) => {
+  [K in keyof EventParams]: {
+    eventName: K;
+    callback: (param: EventParams[K]) => void;
+    type: 'on' | 'once';
+  };
+}[keyof EventParams];
+
 type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(event: E, param: P) => void;
 
-export type { Event, EventFile, TypedSocketEmitter };
+export type { Event, ClientEventFile, EventFile, TypedSocketEmitter };

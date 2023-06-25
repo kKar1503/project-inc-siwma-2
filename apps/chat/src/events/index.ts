@@ -8,6 +8,7 @@ export { default as deleteRoom } from './deleteRoom';
 export { default as sendMessage } from './sendMessage';
 export { default as deleteMessage } from './deleteMessage';
 export { default as readMessage } from './readMessage';
+export { default as syncMessage } from './syncMessage';
 
 // ** Typing Events
 export { default as startType } from './startType';
