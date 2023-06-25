@@ -172,7 +172,7 @@ const TestModal = () => {
       <ShareModal
         open={open5}
         setOpen={setOpen5}
-        title="Share"
+        title="Share this listing!"
         content="Share this link with anyone!"
         link="sussy baka 123"
       />

@@ -101,7 +101,7 @@ const ShareModal = ({ open, setOpen, title, content, link = '' }: ShareModalProp
                   component="h2"
                   sx={({ palette }) => ({
                     color: palette.info[800],
-                    fontSize: { xs: 'subtitle2', sm: 'h5' },
+                    fontSize: '24px',
                   })}
                 >
                   {title}
