@@ -1,5 +1,5 @@
 const fetchS3Image = async (imgKey: string) => {
-  const imgSrc = `https://s3.ap-southeast-1.amazonaws.com/s3.karlok.dev/${imgKey}`;
+  const imgSrc = `https://s3.karlok.dev/${imgKey}`;
   try {
     const response = await fetch(imgSrc, {
       headers: {
