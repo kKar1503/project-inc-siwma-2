@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
@@ -44,17 +45,19 @@ const AddListing = () => {
   }, [isSm, isMd, isLg]);
 
   return (
-    <Button
-      variant="contained"
-      sx={{
-        backgroundColor: palette.primary.main,
-        textTransform: 'capitalize',
-      }}
-    >
-      <Typography noWrap sx={addListingStyles?.textBtn}>
-        {t('ADD LISTINGS')}
-      </Typography>
-    </Button>
+    <Link href="/create-listing" underline="none">
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: palette.primary.main,
+          textTransform: 'capitalize',
+        }}
+      >
+        <Typography noWrap sx={addListingStyles?.textBtn}>
+          {t('ADD LISTINGS')}
+        </Typography>
+      </Button>
+    </Link>
   );
 };
 export default AddListing;
