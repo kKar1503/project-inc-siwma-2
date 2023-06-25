@@ -61,6 +61,10 @@ ARG SIB_SENDER_EMAIL
 ENV SIB_API_KEY=$SIB_API_KEY
 ENV SIB_SENDER_EMAIL=$SIB_SENDER_EMAIL
 
+# Frontend URL
+ARG FRONTEND_URL
+ENV FRONTEND_URL=$FRONTEND_URL
+
 # Adding user & usergroup for NextJS's node server
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
