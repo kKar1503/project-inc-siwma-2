@@ -115,7 +115,7 @@ export class S3BucketInternal {
         Bucket: this.bucketName,
         Key: key,
       }),
-      { expiresIn: signedUrlConfig.expiration },
+      { expiresIn: signedUrlConfig.expiration }
     );
   }
 
@@ -126,7 +126,7 @@ export class S3BucketInternal {
   // eslint-disable-next-line class-methods-use-this
   public async getS3ObjectId(
     s3ObjectBuilder: S3ObjectBuilder,
-    objectConfig: ObjectCreationConfig,
+    objectConfig: ObjectCreationConfig
   ): Promise<string> {
     const metadata = s3ObjectBuilder.Metadata.asRecord();
     if (metadata.identifier) return metadata.identifier;
@@ -139,7 +139,7 @@ export class S3BucketInternal {
 
   public async createObject_Single(
     s3ObjectBuilder: S3ObjectBuilder,
-    config: Config,
+    config: Config
   ): Promise<IS3Object> {
     const objectConfig = config.objectCreation;
     const id = await this.getS3ObjectId(s3ObjectBuilder, objectConfig);
@@ -156,7 +156,7 @@ export class S3BucketInternal {
 
   public async createObject_Multipart(
     s3ObjectBuilder: S3ObjectBuilder,
-    config: Config,
+    config: Config
   ): Promise<IS3Object> {
     const objectConfig = config.objectCreation;
     const id = await this.getS3ObjectId(s3ObjectBuilder, objectConfig);

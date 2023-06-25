@@ -1,7 +1,5 @@
 function calculateUserBits(numCompany, numUsersperCompany, percentUsers) {
-  const numofUsers = Math.round(
-    (numCompany * numUsersperCompany * percentUsers) / 100,
-  );
+  const numofUsers = Math.round((numCompany * numUsersperCompany * percentUsers) / 100);
   return numofUsers * 1134;
 }
 
@@ -64,18 +62,19 @@ export const mathLogic = (
   numRooms,
   numMessages,
   numCategories,
-  numParams,
+  numParams
 ) => {
-  const totalBits = calculateUserBits(numCompany, numUsersperCompany, percentUsers)
-    + listingBits(numListings)
-    + roomsBits(numRooms)
-    + messagesBits(numMessages)
-    + categoriestoBits(numCategories)
-    + paramsToBits(numParams)
-    + advertisementsToBits(4)
-    + listingBookmarkToBits(4)
-    + companyBookmarkToBits(4)
-    + companyCommentsToBits(2);
+  const totalBits =
+    calculateUserBits(numCompany, numUsersperCompany, percentUsers) +
+    listingBits(numListings) +
+    roomsBits(numRooms) +
+    messagesBits(numMessages) +
+    categoriestoBits(numCategories) +
+    paramsToBits(numParams) +
+    advertisementsToBits(4) +
+    listingBookmarkToBits(4) +
+    companyBookmarkToBits(4) +
+    companyCommentsToBits(2);
   const totalGB = bitsToGiB(totalBits);
   const totalCosts = totalCost(totalGB);
   return totalCosts;

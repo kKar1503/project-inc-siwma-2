@@ -217,7 +217,7 @@ const LoginForm = () => {
                   />
                 </Grid>
                 <Grid item>
-                  <Link href="/forgot-your-password">
+                  <Link href="/forgot-password">
                     <Typography
                       sx={({ spacing, palette }) => ({
                         mt: spacing(1),

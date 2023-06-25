@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
-const path = require('node:path')
+const path = require('node:path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // TODO: To change back to true when all socket server is done
+  reactStrictMode: false,
   transpilePackages: ['@inc/db'],
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
@@ -50,11 +51,11 @@ const nextConfig = {
           ]
         : [],
   },
-  resolve:{
+  resolve: {
     alias: {
-        'aws-crt': path.resolve(__dirname, '../../node_modules/.pnpm/aws-crt'),
+      'aws-crt': path.resolve(__dirname, '../../node_modules/.pnpm/aws-crt'),
     },
-  }
+  },
 };
 
 module.exports = nextConfig;

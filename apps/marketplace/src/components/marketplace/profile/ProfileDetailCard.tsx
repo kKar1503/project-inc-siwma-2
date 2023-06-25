@@ -262,6 +262,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
         })}
       >
         <Box sx={{ width: '98%' }}>
+
           {isOwnProfile && (
             <Button
               component={Link}
