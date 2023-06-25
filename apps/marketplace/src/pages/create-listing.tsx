@@ -256,10 +256,10 @@ const CreateListingPage = () => {
     const validated = submitForm();
 
     if (validated) {
-      if (typeof postListingData === 'boolean') {
-        setOpenCreateModal(postListingData);
-      } else {
+      if (Array.isArray(postListingData)) {
         setOpenCreateErrorModal(true);
+      } else {
+        setOpenCreateModal(postListingData);
       }
     }
   };
@@ -324,17 +324,17 @@ const CreateListingPage = () => {
               CREATE LISTING
             </Button>
             {postListingData !== false &&
-              (typeof postListingData === 'number' ? (
-                <OnCreateModal
-                  open={openCreateModal}
-                  setOpen={setOpenCreateModal}
-                  listingID={postListingData}
-                />
-              ) : (
+              (Array.isArray(postListingData) ? (
                 <OnCreateErrorModal
                   open={openCreateErrorModal}
                   setOpen={setOpenCreateErrorModal}
                   content={postListingData}
+                />
+              ) : (
+                <OnCreateModal
+                  open={openCreateModal}
+                  setOpen={setOpenCreateModal}
+                  listingID={postListingData}
                 />
               ))}
           </Grid>
