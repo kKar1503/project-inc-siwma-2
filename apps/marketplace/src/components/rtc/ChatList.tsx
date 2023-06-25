@@ -252,6 +252,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
           <Typography variant="h5" sx={chatListStyles?.listTitle}>
             {t('Conversations')}
           </Typography>
+          {/* Commented out just in case we want this feature back LOL */}
           {/* <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
             {filteredChats.length} {t('ACTIVE')}
             {filteredChats.length !== 1 ? t('CHATS') : t('CHAT')}
@@ -305,7 +306,6 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
           fullWidth
           sx={{
             '& .MuiFilledInput-root': {
-              background: grey,
               borderRadius: '4px',
               '&:hover': {
                 background: grey,
