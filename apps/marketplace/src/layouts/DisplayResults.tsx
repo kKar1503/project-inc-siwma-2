@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
-import FilterCatForm from '@/components/marketplace/filter/filterCatListings';
 import { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
@@ -27,7 +26,6 @@ export type DisplayResultsProps = {
   subHeader: boolean;
   setFilterOptions?: (filter: FilterOptions) => void;
   isLoading?: boolean;
-  forCategory?: boolean;
 };
 
 const DisplayResults = ({
@@ -37,7 +35,6 @@ const DisplayResults = ({
   subHeader,
   setFilterOptions,
   isLoading,
-  forCategory,
 }: DisplayResultsProps) => {
   const [isMd, isSm] = useResponsiveness(['md', 'sm']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -64,10 +61,16 @@ const DisplayResults = ({
         sortBy = 'price_asc';
         break;
       case 'Rating - High to Low':
-        sortBy = 'highest_rating';
+        sortBy = 'rating_desc';
         break;
       case 'Rating - Low to High':
-        sortBy = 'lowest_rating';
+        sortBy = 'rating_asc';
+        break;
+      case 'Most Popular':
+        sortBy = 'popularity_desc';
+        break;
+      case 'Least Popular':
+        sortBy = 'popularity_asc';
         break;
       default:
         break;
@@ -75,7 +78,7 @@ const DisplayResults = ({
     const filterOptions: FilterOptions = {
       sortBy,
       category,
-      negotiable: negotiation === 'true',
+      negotiable: negotiation && negotiation.trim() !== '' ? negotiation === 'true' : undefined,
       minPrice: parseInt(minPrice, 10),
       maxPrice: parseInt(maxPrice, 10),
     };
@@ -99,33 +102,19 @@ const DisplayResults = ({
             mr: spacing(3),
           })}
         >
-          {forCategory ? (
-            <FilterCatForm
-              sort={sort}
-              negotiation={negotiation}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              setSort={setSort}
-              setNegotiation={setNegotiation}
-              setMinPrice={setMinPrice}
-              setMaxPrice={setMaxPrice}
-              handleSubmit={handleSubmit}
-            />
-          ) : (
-            <FilterForm
-              sort={sort}
-              category={category}
-              negotiation={negotiation}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              setSort={setSort}
-              setCategory={setCategory}
-              setNegotiation={setNegotiation}
-              setMinPrice={setMinPrice}
-              setMaxPrice={setMaxPrice}
-              handleSubmit={handleSubmit}
-            />
-          )}
+          <FilterForm
+            sort={sort}
+            category={category}
+            negotiation={negotiation}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            setSort={setSort}
+            setCategory={setCategory}
+            setNegotiation={setNegotiation}
+            setMinPrice={setMinPrice}
+            setMaxPrice={setMaxPrice}
+            handleSubmit={handleSubmit}
+          />
         </Grid>
       )}
 
