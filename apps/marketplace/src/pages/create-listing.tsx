@@ -17,12 +17,16 @@ import ParameterForm, {
   ParameterFormProps,
   ParameterValidationProps,
 } from '@/components/marketplace/createListing/ParameterForm';
-import ListingTypeForm, { ListingTypeProps } from '@/components/marketplace/createListing/ListingTypeForm';
-import ListingForm, { ListingValidationProps } from '@/components/marketplace/createListing/ListingForm';
+import ListingTypeForm, {
+  ListingTypeProps,
+} from '@/components/marketplace/createListing/ListingTypeForm';
+import ListingForm, {
+  ListingValidationProps,
+} from '@/components/marketplace/createListing/ListingForm';
 import ImageUploadForm from '@/components/marketplace/createListing/ImageUploadForm';
 
 const usePostListingQuery = (
-  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
+  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined
 ) => {
   const { data } = useQuery(
     ['postListing', listing],
@@ -31,7 +35,7 @@ const usePostListingQuery = (
       enabled:
         listing !== undefined && listing.listingBody !== undefined && listing.images !== undefined,
       retry: false,
-    },
+    }
   );
 
   if (data === undefined) return false;
@@ -57,7 +61,10 @@ const CreateListingPage = () => {
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
 
   // form data
-  const [formData, setFormData] = useState<{ listingBody: PostListingsRequestBody, images: Blob[] }>();
+  const [formData, setFormData] = useState<{
+    listingBody: PostListingsRequestBody;
+    images: Blob[];
+  }>();
   // form data (parts)
   const [listingType, setListingType] = useState<ListingTypeProps>('BUY');
   const [category, setCategory] = useState<CategoryProps | null>(null);
@@ -69,7 +76,6 @@ const CreateListingPage = () => {
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-
 
   // errors
   const [categoryError, setCategoryError] = useState<string>('');
@@ -84,7 +90,7 @@ const CreateListingPage = () => {
   const parameterIDs = categoryParameters.reduce(
     (previousValue, currentValue, currentIndex, array) =>
       `${previousValue}${currentValue.parameterId}${currentIndex === array.length - 1 ? '' : ','}`,
-    '',
+    ''
   );
 
   // Hooks
@@ -98,7 +104,6 @@ const CreateListingPage = () => {
     setCategoryError('Category is required');
     return false;
   };
-
 
   const parameterValidation = () => {
     let formIsValid = true;
@@ -128,7 +133,7 @@ const CreateListingPage = () => {
 
         switch (detailedParameter.dataType) {
           case 'number':
-            if (Number.isNaN(price) || price.toString().includes('!') || price.toString().includes(' ')) {
+            if (typeof parameter.value !== 'number') {
               newParameterErrors.push({
                 parameterId,
                 error: `${detailedParameter.displayName} must be a number`,
@@ -179,7 +184,7 @@ const CreateListingPage = () => {
     if (price <= 0) {
       newErrors.priceError = 'Price must be greater than 0';
       formIsValid = false;
-    } else if (Number.isNaN(price) || price.toString().includes('!') || price.toString().includes(' ')) {
+    } else if (typeof price !== 'number') {
       newErrors.priceError = 'Price must be a number';
       formIsValid = false;
     }
@@ -206,7 +211,6 @@ const CreateListingPage = () => {
     });
   };
 
-
   // final validation
   const validateForm = () => {
     resetListingErrors();
@@ -218,12 +222,6 @@ const CreateListingPage = () => {
     const parameterValid = parameterValidation();
 
     return listingValid && categoryValid && parameterValid;
-  };
-
-  // Misc Functions
-  const updateCategoryParameters = async () => {
-    if (category == null) return;
-    setCategoryParameters(category.parameters || []);
   };
 
   const submitForm = (): boolean => {
@@ -250,8 +248,9 @@ const CreateListingPage = () => {
 
   // Use Effects
   useEffect(() => {
-    updateCategoryParameters();
-  }, [updateCategoryParameters,category]);
+    if (category == null) return;
+    setCategoryParameters(category.parameters || []);
+  }, [category]);
 
   useEffect(() => setOpenCreateModal(postListingData), [setOpenCreateModal, postListingData]);
 
@@ -272,10 +271,10 @@ const CreateListingPage = () => {
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12} sx={{ width: '100%' }}>
-            <Typography variant='h6' sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               Create Listing
             </Typography>
-            <Typography variant='body1'>
+            <Typography variant="body1">
               Create a buy or a sell listing to be shared on your profile.
             </Typography>
           </Grid>
@@ -283,10 +282,17 @@ const CreateListingPage = () => {
             <Divider />
           </Grid>
           <ListingTypeForm setListingType={setListingType} />
-          {categoriesData && <CategoryForm setCategory={setCategory} data={categoriesData} error={categoryError} />}
+          {categoriesData && (
+            <CategoryForm setCategory={setCategory} data={categoriesData} error={categoryError} />
+          )}
           <ImageUploadForm setImages={setImages} />
-          {category && parametersData &&
-            <ParameterForm setParameters={setParameters} data={parametersData} errors={parameterErrors} />}
+          {category && parametersData && (
+            <ParameterForm
+              setParameters={setParameters}
+              data={parametersData}
+              errors={parameterErrors}
+            />
+          )}
           <ListingForm
             setTitle={setTitle}
             setPrice={setPrice}
@@ -297,9 +303,9 @@ const CreateListingPage = () => {
           />
           <Grid item xs={6} sx={{ width: '100%' }}>
             <Button
-              variant='contained'
-              type='submit'
-              size='large'
+              variant="contained"
+              type="submit"
+              size="large"
               onClick={handleCancel}
               sx={({ palette }) => ({
                 backgroundColor: palette.error.main,
@@ -311,7 +317,7 @@ const CreateListingPage = () => {
             <OnLeaveModal open={openCancelModal} setOpen={setOpenCancelModal} />
           </Grid>
           <Grid item xs={6} sx={{ width: '100%' }}>
-            <Button variant='contained' type='submit' size='large' fullWidth>
+            <Button variant="contained" type="submit" size="large" fullWidth>
               CREATE LISTING
             </Button>
             <OnCreateModal open={openCreateModal} setOpen={setOpenCreateModal} />
