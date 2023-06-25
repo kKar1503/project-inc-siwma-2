@@ -2,7 +2,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import { useQuery } from 'react-query';
 import { Box, Typography, CardMedia, CardContent, Card, Grid, useTheme } from '@mui/material';
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
-import fetchCats from '@/middlewares/fetchCat';
+import fetchCategories from '@/middlewares/fetchCategories';
 import Link from 'next/link';
 
 export type CategoryPageType = {
@@ -10,7 +10,7 @@ export type CategoryPageType = {
 };
 
 const useCategoryPageQuery = () => {
-  const { data } = useQuery('cat', async () => fetchCats());
+  const { data } = useQuery('cat', async () => fetchCategories());
   return data;
 };
 

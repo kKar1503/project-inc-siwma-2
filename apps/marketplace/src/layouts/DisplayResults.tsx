@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
+import FilterCatForm from '@/components/marketplace/filter/filterCatListings';
 import { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
@@ -26,6 +27,7 @@ export type DisplayResultsProps = {
   subHeader: boolean;
   setFilterOptions?: (filter: FilterOptions) => void;
   isLoading?: boolean;
+  forCategory?: boolean;
 };
 
 const DisplayResults = ({
@@ -35,6 +37,7 @@ const DisplayResults = ({
   subHeader,
   setFilterOptions,
   isLoading,
+  forCategory,
 }: DisplayResultsProps) => {
   const [isMd, isSm] = useResponsiveness(['md', 'sm']);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -96,19 +99,33 @@ const DisplayResults = ({
             mr: spacing(3),
           })}
         >
-          <FilterForm
-            sort={sort}
-            category={category}
-            negotiation={negotiation}
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            setSort={setSort}
-            setCategory={setCategory}
-            setNegotiation={setNegotiation}
-            setMinPrice={setMinPrice}
-            setMaxPrice={setMaxPrice}
-            handleSubmit={handleSubmit}
-          />
+          {forCategory ? (
+            <FilterCatForm
+              sort={sort}
+              negotiation={negotiation}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              setSort={setSort}
+              setNegotiation={setNegotiation}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+              handleSubmit={handleSubmit}
+            />
+          ) : (
+            <FilterForm
+              sort={sort}
+              category={category}
+              negotiation={negotiation}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              setSort={setSort}
+              setCategory={setCategory}
+              setNegotiation={setNegotiation}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+              handleSubmit={handleSubmit}
+            />
+          )}
         </Grid>
       )}
 

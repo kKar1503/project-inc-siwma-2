@@ -5,53 +5,41 @@ import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Box, CircularProgress, Container } from '@mui/material';
+import categoryListings from '@/middlewares/categoryListings';
+import fetchCatById from '@/middlewares/fetchCatById';
 import searchListings, { FilterOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
 import fetchListings from '@/middlewares/fetchListingsWithCatId';
+import { InfiniteScroll } from '@inc/ui';
 
-
-const useSearchListings = (matching: string, filter?: FilterOptions) => {
-  const data = useQuery(
-    ['listings', filter, matching],
-    async () => searchListings(matching, filter),
-    {
-      enabled: matching !== undefined,
-    }
-  );
+const useCatListings = (id: string | string[] | undefined, filter?: FilterOptions) => {
+  const data = useQuery(['CatListings', filter, id], async () => categoryListings(id, filter), {
+    enabled: id !== undefined,
+  });
 
   return data;
 };
 
-const useGetListingsQuery = () => {
-    const { data } = useQuery('listing', async () => fetchListings());
-    return data;
-  };
+const useFetchCatById = (id: string | string[] | undefined) => {
+  const data = useQuery(['CatIdListing', id], async () => fetchCatById(id), {
+    enabled: id !== undefined,
+  });
+
+  return data;
+};
 
 const IndividualCategoryPg = () => {
   const router = useRouter();
-  const { search } = router.query;
+  const { id } = router.query;
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
-  const catId = router.query.id as string;
-  const listings = useGetListingsQuery();
 
-  const listingsByCatData = [] as [];
-
-  // push all listings for the corresponding cat into an array
-  const sortListings = () => {
-    for (let i = 0; i < listings?.length; i++) {
-        if (listings?[i].categoryId == catId) {
-            listingsByCatData.push
-    }
-    }
-    
-  }
-
-  const { data: listingData, isLoading } = useSearchListings(search as string, filterOptions);
+  const { data: listingData, isLoading } = useCatListings(id, filterOptions);
+  const { data: catData } = useFetchCatById(id);
 
   const Header: HeaderProps = {
     title: {
-      single: `Displaying search result for: "${catId}"`,
-      plural: `Displaying search results for: "${catId}"`,
+      single: `Displaying ${catData?.name} listing`,
+      plural: `Displaying ${catData?.name} listings`,
     },
     noOfItems: listingData ? listingData.length : 0,
   };
@@ -59,6 +47,7 @@ const IndividualCategoryPg = () => {
   return (
     <Container maxWidth="xl" sx={{ mt: 2 }}>
       <DisplayResults
+        forCategory
         filter
         data={Header}
         setFilterOptions={setFilterOptions}
