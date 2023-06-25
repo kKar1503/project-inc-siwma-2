@@ -196,7 +196,6 @@ const Marketplace = () => {
       </Box>
       <Box marginTop="2em" display="flex" flexDirection="column" justifyContent="center">
         <Box marginX="2rem">
-          {listings.length}
           <InfiniteScroll
             onLoadMore={refetch}
             loading={isLoading}
