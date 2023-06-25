@@ -14,19 +14,19 @@ const createListing = async (
      * 1. Post listing
      */
 
-    // Post listing
+      // Post listing
     const result = await apiClient.post('/v1/listings', listingBody);
 
     // if you're not posting images then just ignore the rest of the code and just return true
+
+    // get listing id
+    const { listingId: id } = result.data.data[0];
 
     /**
      * 2. Post images
      */
     // Post images
-    if (images.length === 0) return true; // no images to post
-
-    // get listing id
-    const { listingId: id } = result.data.data[0];
+    if (images.length === 0) return id; // no images to post
 
     // form data to store images
     const formData = new FormData();
