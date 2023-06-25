@@ -83,7 +83,7 @@ const CreateListingPage = () => {
   });
 
   const queries = useQueries([
-    { queryKey: 'categories', queryFn: () => fetchCategories() },
+    { queryKey: 'categories', queryFn: () => fetchCategories(true) },
     { queryKey: 'parameters', queryFn: () => fetchParameters() },
   ]);
   const categoriesData = queries[0].data;
