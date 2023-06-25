@@ -252,10 +252,10 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
           <Typography variant="h5" sx={chatListStyles?.listTitle}>
             {t('Conversations')}
           </Typography>
-          <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
+          {/* <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
             {filteredChats.length} {t('ACTIVE')}
             {filteredChats.length !== 1 ? t('CHATS') : t('CHAT')}
-          </Typography>
+          </Typography> */}
         </Box>
         <FormControl
           variant="outlined"
