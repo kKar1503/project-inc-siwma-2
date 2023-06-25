@@ -1,11 +1,11 @@
 import {
-  UpdateType,
   apiHandler,
   formatAPIResponse,
   handleBookmarks,
   parseToNumber,
+  UpdateType,
 } from '@/utils/api';
-import PrismaClient, { Companies, Listing, Prisma, Users } from '@inc/db';
+import PrismaClient, { Companies, Listing, Messages, Prisma, Users } from '@inc/db';
 import { ParamError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
@@ -17,6 +17,10 @@ export type ListingWithParameters = Listing & {
   }>;
   offersOffersListingTolistings: Array<{
     accepted: boolean;
+    messages?: Array<Pick<Messages, 'author'>>;
+  }>;
+  listingImages: Array<{
+    image: string;
   }>;
   users: Users & {
     companies: Companies;
@@ -35,18 +39,14 @@ export function parseListingId($id: string, strict = true) {
   // Check if strict mode is set
   if (strict) {
     // Attempt to parse the listing id
-    const id = parseToNumber($id, 'id');
-
-    return id;
+    return parseToNumber($id, 'id');
   }
 
   // Attempt to retrieve the listing id and name from the url
   const id = $id.split('-').pop() || '';
 
   // Parse and validate listing id provided
-  const listingId = parseToNumber(id, 'id');
-
-  return listingId;
+  return parseToNumber(id, 'id');
 }
 
 /**
@@ -113,6 +113,7 @@ export function sortOptions(sortByStr: string | undefined) {
 // -- Helper functions -- //
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
+  userId: string,
   includeParameters: boolean
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
@@ -148,7 +149,17 @@ export async function formatSingleListingResponse(
     createdAt: listing.createdAt.toISOString(),
     rating: listing.rating,
     reviewCount: listing.reviewCount,
+    // Whether or not the user has purchased the listing
+    purchased: listing.offersOffersListingTolistings.some(
+      (offer) => offer.accepted && offer.messages?.some((message) => message.author === userId)
+    ),
   };
+
+  if (listing.listingImages) {
+    formattedListing.images = listing.listingImages.map((image) => image.image);
+    formattedListing.coverImage =
+      listing.listingImages.length === 0 ? '' : listing.listingImages[0].image;
+  }
 
   if (includeParameters && listing.listingsParametersValues) {
     formattedListing.parameters = listing.listingsParametersValues.map((parameter) => ({
@@ -167,6 +178,9 @@ export default apiHandler()
 
     const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
+    // Obtain the user's ID
+    const userId = req.token?.user.id;
+
     // Get total count ignoring pagination
     const totalCount = await PrismaClient.listing.count({
       where: {
@@ -178,17 +192,17 @@ export default apiHandler()
         },
         name: queryParams.matching
           ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-            some: {
-              parameterId: queryParams.params.paramId,
-              value: queryParams.params.value,
-            },
-          }
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
           : undefined,
       },
     });
@@ -197,32 +211,48 @@ export default apiHandler()
     const listings = await PrismaClient.listing.findMany({
       where: {
         categoryId: queryParams.category ? queryParams.category : undefined,
-        negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+        negotiable: queryParams.negotiable != null ? queryParams.negotiable : undefined,
         price: {
           gte: queryParams.minPrice ? queryParams.minPrice : undefined,
           lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
         },
         name: queryParams.matching
           ? {
-            contains: queryParams.matching,
-            mode: 'insensitive',
-          }
+              contains: queryParams.matching,
+              mode: 'insensitive',
+            }
           : undefined,
         listingsParametersValues: queryParams.params
           ? {
-            some: {
-              parameterId: queryParams.params.paramId,
-              value: queryParams.params.value,
-            },
-          }
+              some: {
+                parameterId: queryParams.params.paramId,
+                value: queryParams.params.value,
+              },
+            }
           : undefined,
       },
       orderBy,
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,
       include: {
+        listingImages: queryParams.includeImages
+          ? {
+              orderBy: {
+                order: 'asc',
+              },
+            }
+          : false,
         listingsParametersValues: queryParams.includeParameters,
-        offersOffersListingTolistings: true,
+        offersOffersListingTolistings: {
+          select: {
+            accepted: true,
+            messages: {
+              select: {
+                author: true,
+              },
+            },
+          },
+        },
         users: {
           include: {
             companies: true,
@@ -265,7 +295,7 @@ export default apiHandler()
     // Format the listings
     const formattedListings = await Promise.all(
       sortedListings.map((listing) =>
-        formatSingleListingResponse(listing, queryParams.includeParameters)
+        formatSingleListingResponse(listing, userId, queryParams.includeParameters)
       )
     );
 
@@ -309,15 +339,15 @@ export default apiHandler()
         owner: userId,
         listingsParametersValues: data.parameters
           ? {
-            create: data.parameters.map((parameter) => ({
-              value: parameter.value.toString(),
-              parameter: {
-                connect: {
-                  id: parameter.paramId,
+              create: data.parameters.map((parameter) => ({
+                value: parameter.value.toString(),
+                parameter: {
+                  connect: {
+                    id: parameter.paramId,
+                  },
                 },
-              },
-            })),
-          }
+              })),
+            }
           : undefined,
       },
       include: {

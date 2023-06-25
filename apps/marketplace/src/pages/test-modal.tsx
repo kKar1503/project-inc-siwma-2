@@ -1,11 +1,13 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ModalImage, Modal, ModalSelect, ModalInput, AddCommentModal } from '@inc/ui';
 import Button from '@mui/material/Button';
 import ReportModal from '@/components/modal/ReportModal';
 import MakeOfferModal from '@/components/modal/MakeOfferModal';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import AdvertisementModal from '@/components/marketplace/listing/AdvertisementModal';
+import OnRefreshModal from '@/components/modal/RefreshModal';
+import SyncingChatModal from '@/components/modal/SyncingChatModal';
 
 const TestModal = () => {
   const report = [
@@ -27,12 +29,36 @@ const TestModal = () => {
   const [openReport, setOpenReport] = useState(false);
   const [openOffer, setOpenOffer] = useState(false);
   const [openLeave, setOpenLeave] = useState(false);
+  const [openRefresh, setOpenRefresh] = useState(false);
+  const [openChatSync, setOpenChatSync] = useState(false);
   const [inputValue, setInputValue] = useState<number>(0);
   const [rating, setRating] = useState<number | null>(1);
+  const [progress, setProgress] = useState<number>(0);
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = (val: boolean) => {
     setIsOpen(false);
   };
+  const handleClick = () => {
+    setOpenChatSync(false);
+  };
+
+  // Code that increases progress bar goes here
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          clearInterval(timer);
+          return oldProgress;
+        }
+        const diff = Math.random() * 10;
+        return Math.min(oldProgress + diff, 100);
+      });
+    }, 500);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   return (
     <>
@@ -121,6 +147,8 @@ const TestModal = () => {
       />
       <Button onClick={() => setOpenLeave(true)}> On Leave Modal</Button>
       <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
+      <Button onClick={() => setOpenRefresh(true)}> Refresh Modal</Button>
+      <OnRefreshModal open={openRefresh} setOpen={setOpenRefresh} />
       <Button onClick={() => setIsOpen(true)}> Modal</Button>
       <AdvertisementModal
         id={1}
@@ -129,6 +157,14 @@ const TestModal = () => {
         onClose={handleClose}
         open={isOpen}
         url="https://www.google.com"
+      />
+      <Button onClick={() => setOpenChatSync(true)}> Syncing Chat Modal</Button>
+      <SyncingChatModal
+        open={openChatSync}
+        setOpen={setOpenChatSync}
+        progress={progress}
+        rightButtonState={rightButtonState}
+        setRightButtonState={handleClick}
       />
     </>
   );
