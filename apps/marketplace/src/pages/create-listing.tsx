@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
@@ -18,16 +18,12 @@ import ParameterForm, {
   ParameterFormProps,
   ParameterValidationProps,
 } from '@/components/marketplace/createListing/ParameterForm';
-import ListingTypeForm, {
-  ListingTypeProps,
-} from '@/components/marketplace/createListing/ListingTypeForm';
-import ListingForm, {
-  ListingValidationProps,
-} from '@/components/marketplace/createListing/ListingForm';
+import ListingTypeForm, { ListingTypeProps } from '@/components/marketplace/createListing/ListingTypeForm';
+import ListingForm, { ListingValidationProps } from '@/components/marketplace/createListing/ListingForm';
 import ImageUploadForm from '@/components/marketplace/createListing/ImageUploadForm';
 
 const usePostListingQuery = (
-  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined
+  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
 ) => {
   const { data } = useQuery(
     ['postListing', listing],
@@ -46,17 +42,14 @@ const usePostListingQuery = (
 
 const useGetCategoriesQuery = () => {
   const { data } = useQuery('categories', () => fetchCategories());
-
   return data;
 };
 
-const useGetParametersQuery = (ids: string, category: CategoryProps | null) => {
-  const { data } = useQuery(['parameters', ids, category], () => fetchParameters(ids), {
-    enabled: ids !== '' || category !== null,
-  });
-
+const useGetParametersQuery = () => {
+  const { data } = useQuery(['parameters'], () => fetchParameters());
   return data;
 };
+
 const CreateListingPage = () => {
   // modals
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
@@ -90,17 +83,16 @@ const CreateListingPage = () => {
     priceError: '',
   });
 
-  // parameters
-  const parameterIDs = categoryParameters.reduce(
-    (previousValue, currentValue, currentIndex, array) =>
-      `${previousValue}${currentValue.parameterId}${currentIndex === array.length - 1 ? '' : ','}`,
-    ''
-  );
-
   // Hooks
-  const categoriesData = useGetCategoriesQuery();
   const postListingData = usePostListingQuery(formData);
-  const parametersData = useGetParametersQuery(parameterIDs, category);
+  const categoriesData = useGetCategoriesQuery();
+  const allParametersData = useGetParametersQuery();
+  const parametersData = useMemo(() => {
+      if (!allParametersData) return undefined;
+      return categoryParameters.map((categoryParameter) => allParametersData[categoryParameter.parameterId]);
+    },
+    [allParametersData, categoryParameters]);
+
 
   // validation
   const categoryValidation = () => {
