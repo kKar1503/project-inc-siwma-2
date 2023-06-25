@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,6 +15,7 @@ export type ImageProps = {
 };
 
 export type PreviewImageProps = {
+  key: string;
   file: File;
   preview: string;
 };
@@ -26,12 +27,11 @@ export type SetImageProps = {
 const ImageUploadForm = ({ setImages }: SetImageProps) => {
   const [images, setPreviewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
+  const [keyCounter, setKeyCounter] = useState(0);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPreviewImages([]);
-    setError('');
-
     const selectedImages = Array.from(e.target.files || []);
+    setError('');
 
     if (selectedImages.length + images.length > 10) {
       setError('You can only upload up to 10 images.');
@@ -44,15 +44,22 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
       return;
     }
 
+    // Clear the value of the input element to force the onChange event
+    e.target.value = '';
+
     const previewImages = selectedImages.map((file) => ({
+      key: keyCounter + file.name,
       file,
       preview: URL.createObjectURL(file),
     }));
-    setPreviewImages((prevImages) => [...prevImages, ...previewImages].slice(0, 10));
 
+    const updatedImages = [...images, ...previewImages];
+
+    setPreviewImages(updatedImages);
     setImages(imageFiles);
 
-    setError('');
+    // Increment the key counter
+    setKeyCounter((prevCounter) => prevCounter + 1);
   };
 
   const handleImageRemove = (index: number) => {
@@ -68,8 +75,8 @@ const ImageUploadForm = ({ setImages }: SetImageProps) => {
 
     return (
       <Grid container spacing={2}>
-        {images.map(({ file, preview }, index) => (
-          <Grid item xs={4} md={1} key={file.name}>
+        {images.map(({ file, preview, key }, index) => (
+          <Grid item xs={4} md={1} key={key}>
             <Box sx={{ position: 'relative', mt: '1rem', display: 'inline-block' }}>
               <Box
                 sx={{
