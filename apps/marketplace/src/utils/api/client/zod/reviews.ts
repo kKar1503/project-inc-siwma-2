@@ -11,13 +11,13 @@ const avgRating = z.number();
 const count = z.number();
 
 const reviewSchema = z.object({
-  id,
-  review,
-  rating,
-  userId,
-  listingId,
-  createdAt,
-  type,
+    id,
+    review,
+    rating,
+    userId,
+    listingId,
+    createdAt,
+    type,
 });
 
 const responseSchema = z.object({
@@ -30,9 +30,5 @@ export type ReviewResponseBody = z.infer<typeof responseSchema>;
 export type Review = z.infer<typeof reviewSchema>;
 
 export default {
-<<<<<<< HEAD
     getAll: responseSchema,
-=======
-  getAll: getReviews,
->>>>>>> dev
 };
