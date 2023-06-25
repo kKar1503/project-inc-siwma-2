@@ -106,7 +106,7 @@ function handleZodError(error: ZodError) {
       // Return a param error
       return new ParamTypeError(
         zodPathToString(err.path),
-        acceptedTypes.length > 0 ? acceptedTypes : 'unknown',
+        acceptedTypes.length > 0 ? acceptedTypes : 'unknown'
       ).toJSON();
     }
 

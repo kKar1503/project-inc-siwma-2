@@ -30,12 +30,12 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const { companyId, ...advertisementContent } = advertisement;
 
   // Return advertisement
-  res
-    .status(200)
-    .json(formatAPIResponse({
+  res.status(200).json(
+    formatAPIResponse({
       ...advertisementContent,
       companyId: companyId.toString(),
-    }));
+    })
+  );
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {

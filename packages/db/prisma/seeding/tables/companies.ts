@@ -15,7 +15,7 @@ const Companies: ICompanies[] = [
     bio: 'AIK LIAN METAL & GLAZING PTE. LTD. (the "Company") is a Exempt Private Company Limited by Shares, incorporated on 28 July 2011 (Thursday) in Singapore . The address of the Company\'s registered office is at the E9 PREMIUM building. The Company current operating status is live and has been operating for 11 years. This Company\'s principal activity is other construction installation n.e.c. with metal product services n.e.c. as the secondary activity.',
     website: 'https://www.sgpbusiness.com/company/Aik-Lian-Metal-Glazing-Pte-Ltd',
     comments:
-      'The SIWMA website has really automated some of our company\'s processes. We now spend less time doing manual work. It\'s making advertising and selling our metals very easy for us.',
+      "The SIWMA website has really automated some of our company's processes. We now spend less time doing manual work. It's making advertising and selling our metals very easy for us.",
   },
   {
     name: 'BOON CHANG STRUCTURE PTE.LTD.',

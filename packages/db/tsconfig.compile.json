@@ -1,9 +1,7 @@
 {
-	"compilerOptions": {
-		"typeRoots": ["node_modules/@types"],
-		"outDir": "prisma/scripts"
-	},
-	"files": [
-		"prisma/scripts/casingFix.ts"
-	],
+  "compilerOptions": {
+    "typeRoots": ["node_modules/@types"],
+    "outDir": "prisma/scripts"
+  },
+  "files": ["prisma/scripts/casingFix.ts"]
 }

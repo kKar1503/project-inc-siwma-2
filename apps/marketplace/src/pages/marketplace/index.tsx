@@ -97,11 +97,11 @@ const Marketplace = () => {
     let listingsNeededCount = 0;
 
     if (isXl) {
-      listingsNeededCount = 5 - (totalListingsCount % 5)
+      listingsNeededCount = 5 - (totalListingsCount % 5);
     } else if (isLg) {
-      listingsNeededCount = 4 - (totalListingsCount % 5)
+      listingsNeededCount = 4 - (totalListingsCount % 5);
     } else if (isMd) {
-      listingsNeededCount = 3 - (totalListingsCount % 5)
+      listingsNeededCount = 3 - (totalListingsCount % 5);
     }
 
     const listingsNeeded = listings.slice(0, listingsNeededCount);
