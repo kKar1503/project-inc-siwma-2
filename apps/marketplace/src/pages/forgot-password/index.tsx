@@ -47,7 +47,7 @@ const ForgetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '2rem',
-        pb: '7rem',
+        pb: '5.5rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -58,7 +58,7 @@ const ForgetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '8rem',
+        pb: '5.5rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
@@ -69,7 +69,7 @@ const ForgetPassword = () => {
       return {
         boxShadow: shadows[5],
         px: '10rem',
-        pb: '8rem',
+        pb: '5.5rem',
         pt: spacing(3),
         position: 'relative',
         bgcolor: palette.common.white,
