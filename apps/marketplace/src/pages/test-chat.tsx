@@ -7,7 +7,7 @@ import useLocalStorage from '@/hooks/useLocalStorage';
 import syncLocalStorage, { syncLastMessage, syncLastMessages } from '@/utils/syncLocalStorage';
 import useReadLocalStorage from '@/hooks/useReadLocalStorage';
 
-const socket = io('http://localhost:4000');
+const socket = io(process.env.NEXT_PUBLIC_CHAT_SERVER_URL, { transports: ['websocket'] });
 
 const TestChatPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
