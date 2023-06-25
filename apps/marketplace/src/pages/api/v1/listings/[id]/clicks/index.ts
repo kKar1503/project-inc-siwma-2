@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { APIRequestType } from '@/types/api-types';
 import { z } from 'zod';
+import { parseListingId } from '../..';
 
 const ParamSchema = z.object({
   id: z.string().transform(zodParseToInteger),
@@ -16,7 +17,7 @@ const BodySchema = z.object({
 
 const POST = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
-  const listing = ParamSchema.parse(req.query).id;
+  const listing = parseListingId(req.query.id as string);
   const user = BodySchema.parse(req.token).user.id;
 
   PrismaClient.listingClicks.create({
