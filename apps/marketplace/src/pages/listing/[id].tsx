@@ -526,7 +526,7 @@ const DetailedListingPage = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       {listings?.owner.id !== loggedUserUuid ? (
-                        // <Link href="/chat">
+                        <Link href="/chat">
                           <Button
                             variant="contained"
                             sx={({ palette }) => ({
@@ -537,7 +537,7 @@ const DetailedListingPage = () => {
                           >
                             CHAT NOW
                           </Button>
-                        // </Link>
+                        </Link>
                       ) : (
                         <Button
                           variant="contained"
@@ -545,7 +545,6 @@ const DetailedListingPage = () => {
                             backgroundColor: palette.primary.main,
                             width: isMd ? 240 : 340,
                           })}
-                          onClick={checkChatRoom}
                           disabled
                         >
                           CHAT NOW
@@ -689,7 +688,6 @@ const DetailedListingPage = () => {
                       variant="contained"
                       type="submit"
                       size="large"
-                      onClick={checkChatRoom}
                       fullWidth
                       disabled
                     >
