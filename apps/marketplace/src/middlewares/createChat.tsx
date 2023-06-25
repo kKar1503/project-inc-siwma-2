@@ -4,7 +4,6 @@ import { PostChatRequestBody } from '@/utils/api/server/zod';
 
 const createRoom = async (requestBody: PostChatRequestBody) => {
   const response = await apiClient.post(`v1/chat/`, requestBody);
-  console.log(response);
   const newRoom = chat.room.create.parse(response.data.data);
 
   return newRoom;

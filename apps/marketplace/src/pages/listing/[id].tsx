@@ -106,10 +106,10 @@ const useChatListQuery = (userUuid: string) => {
 };
 
 interface chatRoomDetails {
-  chatRoomData: PostChatRequestBody;
+  buyerId: string,
+  sellerId: string,
+  listingId: string
 }
-
-let chatRoomData = (data: chatRoomDetails) => createRoom(data.chatRoomData);
 
 interface reviewDetails {
   listingId: string;
@@ -161,9 +161,11 @@ const DetailedListingPage = () => {
   // const buyerId = loggedUserUuid as unknown as string;
   // const sellerId = listings?.owner.id as string;
   // const newRoom = useCreateChatQuery(sellerId, buyerId, listingId);
-  const usePostChatRoomQuery = useMutation({
-    mutationFn: (data: chatRoomDetails) => chatRoomData(data),
-  });
+
+  let chatRoomDetailsData : chatRoomDetails = {buyerId: '', sellerId: '', listingId: ''}
+  // const usePostChatRoomQuery = useMutation({
+  //   mutationFn: (data: chatRoomDetails) => chatRoomDetailsData(data),
+  // });
 
   // const postReview = usePostReviewQuery();
   const [leftButtonState, setLeftButtonState] = useState(false);
@@ -201,6 +203,7 @@ const DetailedListingPage = () => {
 
   // check if room exists btwn buyer and seller
   const checkChatRoom = () => {
+    
     if (chatRooms) {
       for (let i = 0; i < chatRooms.length; i++) {
         if (
@@ -210,23 +213,20 @@ const DetailedListingPage = () => {
           chatRooms[i].seller?.id !== listings?.owner.id
         ) {
           if (listings?.type === 'SELL' && loggedUserUuid) {
-            chatRoomData = {
+            chatRoomDetailsData = {
               buyerId: loggedUserUuid,
               sellerId: listings?.owner.id as string,
-              listingId: router.query.id,
+              listingId: router.query.id as string,
             };
           } else {
-            chatRoomData = {
+            chatRoomDetailsData = {
               buyerId: listings?.owner.id as string,
               sellerId: loggedUserUuid,
-              listingId: router.query.id,
+              listingId: router.query.id as string,
             };
           }
 
-          const chatRoom = {
-            chatRoomData,
-          };
-          return usePostChatRoomQuery;
+          return createRoom(chatRoomDetailsData)
         }
       }
     }
