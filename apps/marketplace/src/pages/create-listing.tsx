@@ -123,7 +123,7 @@ const CreateListingPage = () => {
 
         switch (detailedParameter.dataType) {
           case 'number':
-            if (typeof parseFloat(parameter.value) !== 'number') {
+            if (typeof parseFloat(parameter.value) !== 'number' || parameter.value.includes('!') || parameter.value.includes(' ')) {
               newParameterErrors.push({
                 parameterId,
                 error: `${detailedParameter.displayName} must be a number`,
