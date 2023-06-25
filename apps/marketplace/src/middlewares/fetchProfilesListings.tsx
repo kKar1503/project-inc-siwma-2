@@ -6,6 +6,7 @@ const fetchProfilesListings = async (uuid: string, matching?: string, filter?: s
   if (filter) query += `&sortBy=${filter}`;
   // parse data through zod to ensure data is correct
   const response = await apiClient.get(query);
+  console.log(response);
 
   const listingData = listing.getAll.parse(response.data.data);
   return listingData;

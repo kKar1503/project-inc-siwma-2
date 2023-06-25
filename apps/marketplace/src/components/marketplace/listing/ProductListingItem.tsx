@@ -57,6 +57,8 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
     [data.createdAt]
   );
 
+  console.log(data);
+
   const theme = useTheme();
   const [isSm] = useResponsiveness(['sm']);
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id, updateBookmarkData);
@@ -91,7 +93,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           }}
         />
       </Link>
-      <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
+      <Link style={{ textDecoration: 'none' }} href={`/listing/${data.name}-${data.id}`}>
         <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
       </Link>
       <CardContent
@@ -148,7 +150,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
             )}
           </Box>
         </Box>
-        <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
+        <Link style={{ textDecoration: 'none' }} href={`/listing/${data.name}-${data.id}`}>
           <Box
             sx={({ spacing }) => ({
               pb: spacing(1),
