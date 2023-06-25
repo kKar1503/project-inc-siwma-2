@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 import FormHelperText from '@mui/material/FormHelperText';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 
 export type ImageProps = {
   fileName: string;
@@ -29,6 +30,7 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
   const [previewImages, setPreviewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
   const [keyCounter, setKeyCounter] = useState(0);
+  const [isXs, isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImages = Array.from(e.target.files || []);
@@ -81,7 +83,7 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
     return (
       <Grid container spacing={2}>
         {previewImages.map(({ file, preview, key }, index) => (
-          <Grid item xs={4} md={1} key={key}>
+          <Grid item xs={4} sm={2.4} md={2.4} key={key}>
             <Box sx={{ position: 'relative', mt: '1rem', display: 'inline-block' }}>
               <Box
                 sx={{
@@ -109,8 +111,8 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
               <Image
                 src={preview}
                 alt={file.name}
-                width={100}
-                height={100}
+                width={((isLg || isMd) && 200) || (isSm && 150) || 100}
+                height={((isLg || isMd) && 200) || (isSm && 150) || 100}
                 style={{ paddingRight: '1rem', objectFit: 'cover' }}
                 onClick={() => openFullImage(preview)}
               />
@@ -136,7 +138,14 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
         onChange={handleImageSelect}
       />
       <label htmlFor="upload-btn">
-        <Button variant="contained" component="span" sx={{ mt: '1rem' }}>
+        <Button
+          variant="contained"
+          component="span"
+          size={((isLg || isMd) && 'large') || (isSm && 'medium') || 'small'}
+          sx={({ spacing }) => ({
+            mt: spacing(2),
+          })}
+        >
           Upload a Photo
         </Button>
       </label>
