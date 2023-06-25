@@ -56,6 +56,7 @@ const ListingForm = ({
         fullWidth
         error={Boolean(errors.priceError)}
         helperText={errors.priceError}
+        type="number"
         InputProps={{
           startAdornment: <InputAdornment position="start">S$</InputAdornment>,
         }}
