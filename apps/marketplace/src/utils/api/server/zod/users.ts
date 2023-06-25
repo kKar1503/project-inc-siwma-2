@@ -49,8 +49,6 @@ const forgetPasswordSchema = z.object({
   email: z.string(),
 });
 
-
-
 export type GetUsersQueryParameter = z.infer<typeof getUsersQuery>;
 export type PostUserRequestBody = z.infer<typeof userCreationRequestBody>;
 export type PutUserRequestBody = z.infer<typeof updateUserDetailsSchema>;
@@ -83,5 +81,5 @@ export default {
     post: {
       query: forgetPasswordSchema,
     },
-  }
+  },
 };

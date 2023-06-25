@@ -74,6 +74,5 @@ export default apiHandler()
       take: limit,
     });
 
-
     res.status(200).json(formatAPIResponse(formatResponse(response)));
   });
