@@ -73,7 +73,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         },
       }}
     >
-      <Link style={{ textDecoration: 'none' }} href={`/profile/${data.owner.id}`}>
+      <Link style={{ textDecoration: 'none', color: 'inherit' }} href={`/profile/${data.owner.id}`}>
         <CardHeader
           style={{ marginLeft: '-10px' }}
           avatar={
