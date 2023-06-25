@@ -10,7 +10,7 @@ import { useQuery } from 'react-query';
 import Carousel from '@/components/marketplace/carousel/AdvertisementCarousel';
 import ListingStream from '@/components/marketplace/listing/ListingStream';
 import ProductListingItem, {
-  ProductListingItemProps,
+  ProductListingItemData,
 } from '@/components/marketplace/listing/ProductListingItem';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 
@@ -61,7 +61,7 @@ const Marketplace = () => {
   const { typography } = useTheme();
   const scrollRef = useRef<Element>(null);
 
-  const [listings, setListings] = React.useState<Array<ProductListingItemProps>>([]);
+  const [listings, setListings] = React.useState<Array<ProductListingItemData>>([]);
   const [lastListingId, setLastListingId] = React.useState<number>(9);
   const [maxItems, setMaxItems] = React.useState<boolean>(false);
 
