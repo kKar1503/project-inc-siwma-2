@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, formatMessageResponse } from '@/utils/api';
 import { chatSchema } from '@/utils/api/server/zod';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, InvalidRangeError } from '@inc/errors';
@@ -53,6 +53,12 @@ async function getUserChats(userId: string, lastIdPointer: string | undefined, l
           },
         },
       },
+      messages: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: 1,
+      },
     },
     orderBy: {
       id: 'asc',
@@ -61,6 +67,25 @@ async function getUserChats(userId: string, lastIdPointer: string | undefined, l
   });
 
   return chats;
+}
+
+// Fetch the number of unread messages
+async function fetchUreadMessages(chats: Awaited<ReturnType<typeof getUserChats>>, userId: string) {
+  const result = await PrismaClient.$transaction(
+    chats.map((chat) =>
+      PrismaClient.messages.count({
+        where: {
+          room: chat.id,
+          author: {
+            not: userId,
+          },
+          read: false,
+        },
+      })
+    )
+  );
+
+  return result;
 }
 
 export default apiHandler().get(async (req, res) => {
@@ -82,8 +107,11 @@ export default apiHandler().get(async (req, res) => {
   // Fetch chats
   const chats = await getUserChats(userId, lastIdPointer, limit);
 
+  // Fetch unread messages
+  const unreadMessageCount = await fetchUreadMessages(chats, userId);
+
   // Format chats
-  const formattedChats = chats.map((chat) => ({
+  const formattedChats = chats.map((chat, index) => ({
     id: chat.id,
     seller: {
       id: chat.usersRoomsSellerTousers.id,
@@ -100,7 +128,7 @@ export default apiHandler().get(async (req, res) => {
     listing: {
       id: chat.listingRoomsListingTolisting.id.toString(),
       name: chat.listingRoomsListingTolisting.name,
-      price: chat.listingRoomsListingTolisting.price,
+      price: chat.listingRoomsListingTolisting.price.toNumber(),
       unitPrice: chat.listingRoomsListingTolisting.unitPrice,
       type: chat.listingRoomsListingTolisting.type,
       // Whether or not the listing is still available for purchase
@@ -113,8 +141,27 @@ export default apiHandler().get(async (req, res) => {
           (e) => e.messages[0].author === userId
         ).length > 0,
     },
+    latestMessage: chat.messages.length > 0 ? formatMessageResponse(chat.messages[0]) : null,
+    unreadMessagesCount: unreadMessageCount[index],
     createdAt: chat.createdAt.toISOString(),
   }));
+
+  // Sort the chats by the latest message
+  formattedChats.sort((a, b) => {
+    if (a.latestMessage && b.latestMessage) {
+      return (
+        new Date(b.latestMessage.createdAt).getTime() -
+        new Date(a.latestMessage.createdAt).getTime()
+      );
+    }
+    if (a.latestMessage) {
+      return -1;
+    }
+    if (b.latestMessage) {
+      return 1;
+    }
+    return 0;
+  });
 
   // Return the result
   res.status(200).json(formatAPIResponse(formattedChats));

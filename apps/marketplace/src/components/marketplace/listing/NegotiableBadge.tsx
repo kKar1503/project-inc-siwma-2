@@ -1,3 +1,4 @@
+import React from 'react';
 import { Chip } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
@@ -6,13 +7,12 @@ const NegotiableBadge = () => {
 
   return (
     <Chip
-      sx={({ spacing, palette }) => ({
-        mr: spacing(1),
+      sx={({ palette }) => ({
         bgcolor: palette.info[600],
         fontWeight: 500,
         color: palette.common.white,
       })}
-      label={t('Negotiable')}
+      label={t('Negotiate')}
     />
   );
 };
