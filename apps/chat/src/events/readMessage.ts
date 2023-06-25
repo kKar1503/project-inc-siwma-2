@@ -52,7 +52,7 @@ const readMessage: EventFile = (_, socket) => ({
             eventLog('info', `Retrieved ${messages.length} messages from database.`);
             eventLog('debug', `Retrieved messages: ${JSON.stringify(messages)}`);
 
-            let messageIds: number[] = [];
+            let messageIds = new Array<number>(messages.length);
 
             eventLog('trace', `Mapping messages to messageIds...`);
             for (const message of messages) {
@@ -62,7 +62,7 @@ const readMessage: EventFile = (_, socket) => ({
             eventLog('debug', `Mapped messageIds: ${messageIds}`);
 
             eventLog('trace', `Acknowledging message read...`);
-            ack({ success: true, data: { count, messageIds } });
+            if (typeof ack === 'function') ack({ success: true, data: { count, messageIds } });
 
             eventLog('trace', `Attempting to retrieve other occupant from cache...`);
             const [, occupants] = RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
@@ -82,12 +82,12 @@ const readMessage: EventFile = (_, socket) => ({
           })
           .catch(() => {
             eventLog('error', `Failed to retrieve messages from database.`);
-            ack({ success: false });
+            if (typeof ack === 'function') ack({ success: false });
           });
       })
       .catch(() => {
         eventLog('error', `Failed to update messages in database.`);
-        ack({ success: false });
+        if (typeof ack === 'function') ack({ success: false });
       });
   },
 });

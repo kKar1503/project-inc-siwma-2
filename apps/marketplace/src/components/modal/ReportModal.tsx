@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TReasonType } from '@inc/db';
 
-
 export type ReportModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
