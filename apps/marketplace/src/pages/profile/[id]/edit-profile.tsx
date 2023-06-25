@@ -1,6 +1,8 @@
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
-import ProfileDetailCard, { ProfileDetailCardProps } from '@/components/marketplace/profile/ProfileDetailCard';
+import ProfileDetailCard, {
+  ProfileDetailCardProps,
+} from '@/components/marketplace/profile/ProfileDetailCard';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
@@ -17,6 +19,7 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
+import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
@@ -43,7 +46,9 @@ const useGetUserQuery = (userUuid: string) => {
 };
 
 const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
-  useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid, profilePicture));
+  useMutation((updatedUserData: PutUserRequestBody) =>
+    updateUser(updatedUserData, userUuid, profilePicture)
+  );
 
 const EditProfile = () => {
   const user = useSession();
@@ -66,14 +71,13 @@ const EditProfile = () => {
   const [bio, setBio] = useState<string>(userDetails?.bio || '');
   const [bioError, setBioError] = useState('');
   const [telegramUsername, setTelegramUsername] = useState<string>(
-    userDetails?.telegramUsername || '',
+    userDetails?.telegramUsername || ''
   );
   const [telegramError, setTelegramError] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.whatsappNumber || '');
   const [whatsappError, setWhatsappError] = useState('');
   const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
   const [openLeave, setOpenLeave] = useState<boolean>(false);
-
 
   const mutation = useUpdateUserMutation(loggedUserUuid, image);
 
@@ -375,7 +379,12 @@ const EditProfile = () => {
                     <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
                       <Button variant="contained" component="label">
                         Upload Profile Photo
-                        <input accept="image/*" type="file" hidden onChange={handleFileSelect} />
+                        <Input
+                          type="file"
+                          onChange={handleFileSelect}
+                          inputProps={{ accept: 'image/*' }}
+                          sx={{ display: 'none' }}
+                        />
                       </Button>
                     </Box>
                   </Box>

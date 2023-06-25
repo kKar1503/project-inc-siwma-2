@@ -4,7 +4,7 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
+import S3Image from '@/components/S3Image';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -23,7 +23,7 @@ export type ProfileDetailCardProps =
       name: string;
       enabled: boolean;
       createdAt: string;
-      profilePicture: string | null;
+      profilePic: string | null;
       companyName: string;
       mobileNumber: string;
       whatsappNumber: string | null;
@@ -81,7 +81,13 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
       <Divider variant="middle" sx={{ height: '1px' }} />
 
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePicture}</Avatar>
+        <S3Image
+          style={{ borderRadius: '100%' }}
+          src={`${data?.profilePic}`}
+          alt="Profile Picture"
+          width={70}
+          height={70}
+        />
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography>{data?.companyName}</Typography>
         <Typography
