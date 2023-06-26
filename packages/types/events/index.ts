@@ -17,6 +17,20 @@ export type Room = {
   user: UserId;
 };
 
+export type DataSync<T> =
+  | {
+      status: 'in_progress';
+      progress: number;
+      data: T;
+    }
+  | {
+      status: 'success';
+    }
+  | {
+      status: 'error';
+      err?: string;
+    };
+
 export type ClientCreateRoom = {
   sellerId: UserId;
   listingId: ListingId;
@@ -33,19 +47,8 @@ export type Messages = {
   content: string;
 };
 
-export type MessageSync =
-  | {
-      status: 'in_progress';
-      progress: number;
-      message: Messages;
-    }
-  | {
-      status: 'success';
-    }
-  | {
-      status: 'error';
-      err?: string;
-    };
+export type MessageSync = DataSync<Messages>;
+export type RoomSync = DataSync<Room>;
 
 // ** Types Declarations **
 export type LoadingState = 'idle' | 'iam' | 'sync';
@@ -78,7 +81,7 @@ type EventParams = {
   // Server Room Events
   serverCreatedRoom: Room;
   serverDeletedRoom: RoomId;
-  serverSyncRooms: Room;
+  serverSyncRooms: RoomSync;
   // Server Message Events
   serverRoomMessage: Messages;
   serverDeletedMessage: MessageId;
