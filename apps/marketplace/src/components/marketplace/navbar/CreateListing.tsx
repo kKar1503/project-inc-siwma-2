@@ -54,7 +54,7 @@ const AddListing = () => {
         }}
       >
         <Typography noWrap sx={addListingStyles?.textBtn}>
-          {t('ADD LISTINGS')}
+          {t('CREATE LISTING')}
         </Typography>
       </Button>
     </Link>
