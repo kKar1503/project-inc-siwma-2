@@ -92,8 +92,8 @@ const ChatRoom = () => {
         case 'in_progress': {
           console.log('Sync in progress');
           console.log(messageSync.progress);
-          console.log(messageSync.message);
-          syncLocalStorage(userId, messageSync.message, lastMessagesCache.current);
+          console.log(messageSync.data);
+          syncLocalStorage(userId, messageSync.data, lastMessagesCache.current);
           break;
         }
         default: {
@@ -170,7 +170,7 @@ const ChatRoom = () => {
           latestMessage,
           itemName: 'Item',
           inProgress: true,
-          date: parsedMessage.createdAt.toString(),
+          time: parsedMessage.createdAt.toString(),
           unreadMessages: 0,
         };
 
@@ -219,7 +219,7 @@ const ChatRoom = () => {
           latestMessage,
           itemName: 'Item',
           inProgress: true,
-          date: parsedMessage.createdAt.toString(),
+          time: parsedMessage.createdAt.toString(),
           userImage: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
           unreadMessages: 0,
         };
