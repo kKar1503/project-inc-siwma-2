@@ -10,39 +10,6 @@ const AddListing = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { palette } = useTheme();
 
-  const addListingStyles = useMemo(() => {
-    if (isSm) {
-      return {
-        textBtn: {
-          fontSize: '0.5rem',
-          color: palette.common.white,
-        },
-      };
-    }
-    if (isMd) {
-      return {
-        textBtn: {
-          fontSize: '0.6rem',
-          color: palette.common.white,
-        },
-      };
-    }
-    if (isLg) {
-      return {
-        textBtn: {
-          fontSize: '0.8rem',
-          color: palette.common.white,
-        },
-      };
-    }
-    return {
-      textBtn: {
-        fontSize: '0.8rem',
-        color: palette.common.white,
-      },
-    };
-  }, [isSm, isMd, isLg]);
-
   return (
     <Button
       variant="contained"
@@ -51,7 +18,7 @@ const AddListing = () => {
         textTransform: 'capitalize',
       }}
     >
-      <Typography noWrap sx={addListingStyles?.textBtn}>
+      <Typography noWrap sx={{ color: palette.common.white, fontSize: '1em' }}>
         {t('ADD LISTINGS')}
       </Typography>
     </Button>
