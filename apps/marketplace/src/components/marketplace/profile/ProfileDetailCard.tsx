@@ -22,8 +22,6 @@ import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
 import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
-// import { Review } from '@/utils/api/client/zod';
 import { ReviewResponseBody } from '@/utils/api/client/zod/reviews';
 
 export type ProfileDetailCardProps =
@@ -48,30 +46,13 @@ export type ProfileDetailCardProps =
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
   reviewData: ReviewResponseBody | undefined;
-
+  visibleEditButton?: boolean;
 };
 
 const useGetUserQuery = (userUuid: string) => {
   const { data } = useQuery('user', async () => fetchUser(userUuid), {
     enabled: userUuid !== undefined,
   });
-
-  return data;
-};
-
-const useGetReview = (userUuid: string, sortBy?: string) => {
-  const { data } = useQuery(
-    ['reviewdata', userUuid, sortBy],
-    async () => {
-      if (sortBy) {
-        return fetchProfilesReview(userUuid, sortBy);
-      }
-      return fetchProfilesReview(userUuid);
-    },
-    {
-      enabled: userUuid !== undefined || sortBy !== undefined,
-    }
-  );
 
   return data;
 };
@@ -97,7 +78,7 @@ const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | unde
   };
 };
 
-const ProfileDetailCard = ({ data, reviewData }: ProfileDetailCardData) => {
+const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetailCardData) => {
   const user = useSession();
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -284,8 +265,8 @@ const ProfileDetailCard = ({ data, reviewData }: ProfileDetailCardData) => {
           mb: spacing(1),
         })}
       >
-        {/* <Box sx={{ width: '98%' }}>
-          {isOwnProfile && (
+        <Box sx={{ width: '98%' }}>
+          {visibleEditButton && isOwnProfile && (
             <Button
               component={Link}
               href={`/profile/${data?.id}/edit-profile`}
@@ -300,7 +281,7 @@ const ProfileDetailCard = ({ data, reviewData }: ProfileDetailCardData) => {
               Edit profile
             </Button>
           )}
-        </Box> */}
+        </Box>
       </CardActions>
     </Card>
   );
