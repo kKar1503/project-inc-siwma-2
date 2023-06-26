@@ -63,7 +63,7 @@ export type Messages = {
   room: string;
   read: boolean;
   createdAt: string;
-  message?: MessageContent;
+  message: MessageContent;
 };
 
 export type MessageSync = DataSync<Messages>;
