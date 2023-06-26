@@ -18,13 +18,17 @@ import ParameterForm, {
   ParameterFormProps,
   ParameterValidationProps,
 } from '@/components/marketplace/createListing/ParameterForm';
-import ListingTypeForm, { ListingTypeProps } from '@/components/marketplace/createListing/ListingTypeForm';
-import ListingForm, { ListingValidationProps } from '@/components/marketplace/createListing/ListingForm';
+import ListingTypeForm, {
+  ListingTypeProps,
+} from '@/components/marketplace/createListing/ListingTypeForm';
+import ListingForm, {
+  ListingValidationProps,
+} from '@/components/marketplace/createListing/ListingForm';
 import ImageUploadForm from '@/components/marketplace/createListing/ImageUploadForm';
 
 const usePostListingQuery = (
   listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
-  onSucessCallback: (data: ReturnType) => void,
+  onSucessCallback: (data: ReturnType) => void
 ) => {
   const { data } = useQuery(
     ['postListing', listing],
@@ -34,7 +38,7 @@ const usePostListingQuery = (
         listing !== undefined && listing.listingBody !== undefined && listing.images !== undefined,
       retry: false,
       onSuccess: (data) => onSucessCallback(data),
-    },
+    }
   );
 
   if (data === undefined) return false;
@@ -91,7 +95,7 @@ const CreateListingPage = () => {
   const parametersData = useMemo(() => {
     if (!allParametersData) return undefined;
     return categoryParameters.map(
-      (categoryParameter) => allParametersData[categoryParameter.parameterId],
+      (categoryParameter) => allParametersData[categoryParameter.parameterId]
     );
   }, [allParametersData, categoryParameters]);
 
@@ -273,7 +277,7 @@ const CreateListingPage = () => {
               Create Listing
             </Typography>
             <Typography variant="body1">
-              Create a buy or a sell listing to be shared on your profile.
+              Create a new listing to be shared on your profile.
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ width: '100%' }}>
