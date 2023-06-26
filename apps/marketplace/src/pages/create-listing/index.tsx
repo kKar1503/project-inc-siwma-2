@@ -52,6 +52,7 @@ const CreateListingPage = () => {
   const [openCreateErrorModal, setOpenCreateErrorModal] = useState<boolean>(false);
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
 
+  // ** TODO: optimise in the future to use useReducer hook
   // form data
   const [formData, setFormData] = useState<{
     listingBody: PostListingsRequestBody;
