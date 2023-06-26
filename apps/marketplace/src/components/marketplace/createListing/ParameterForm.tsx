@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -11,6 +13,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import MenuItem from '@mui/material/MenuItem';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
@@ -57,7 +60,7 @@ const dataTypeToInputType = (dataType: dataTypeProps) => {
     default:
       return 'text';
   }
-}
+};
 
 const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
@@ -92,9 +95,14 @@ const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <Grid item xs={12} md={12} mb={2} sx={{ width: '100%' }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          Category Parameters
-        </Typography>
+        <Box display="flex" alignItems="center">
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            Category Parameters
+          </Typography>
+          <Tooltip title="test">
+            <InfoOutlinedIcon sx={{ ml: 1 }} />
+          </Tooltip>
+        </Box>
         <Typography variant="body1">
           Enter the parameters specific to the chosen category
         </Typography>
