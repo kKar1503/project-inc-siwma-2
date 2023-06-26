@@ -236,12 +236,14 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
 
   return (
     <Box
+      id="chat-list"
       sx={{
         backgroundColor: palette.common.white,
         height: '100%',
+        borderRight: '1px solid rgba(0, 0, 0, 0.12)',
       }}
     >
-      <Box sx={chatListStyles?.listHeader}>
+      <Box id="list-header" sx={chatListStyles?.listHeader}>
         <Box
           sx={{
             display: 'flex',
