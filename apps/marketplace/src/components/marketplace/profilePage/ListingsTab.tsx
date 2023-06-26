@@ -9,7 +9,7 @@ import { Listing } from '@/utils/api/client/zod';
 
 // pass filter values to select component
 const filterValues = ['All Listings', 'Buy Listings', 'Sell Listings'];
-const filterEndpointValues = ['all', 'buy', 'sell'];
+const filterEndpointValues = ['all', 'BUY', 'SELL'];
 const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
 const sortEndpointValues = ['recent_newest', 'price_desc', 'price_asc'];
 
