@@ -39,11 +39,20 @@ const LoginForm = () => {
     if (!authResult?.ok) {
       setErrorMessage(true);
     } else {
-      return router.push('/');
+      // Check if there is a callbackUrl parameter in the router's query object
+      const callbackUrl = router.query.callbackUrl as string;
+      console.log('callbackUrl', callbackUrl);
+      // If it exists, redirect the user to that URL
+      if (callbackUrl) {
+        return router.push(callbackUrl);
+      }
+      // Otherwise, redirect the user to the root page
+      // return router.push('/');
     }
 
     return authResult;
   };
+
 
   const stylesLogin = useMemo(() => {
     if (isSm) {
