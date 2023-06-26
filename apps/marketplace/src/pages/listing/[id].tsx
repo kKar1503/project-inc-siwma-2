@@ -35,6 +35,8 @@ import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
+import placeholder from 'public/images/listing-placeholder.png';
+import Image from 'next/image';
 
 const carouselData = [
   {
@@ -252,12 +254,14 @@ const DetailedListingPage = () => {
         })}
       >
         <Container maxWidth="lg">
-          {/* {listingImgs?.length ? (
-            <DetailedListingCarousel data={listingImgs} />
+          {listingImgs?.length ? (
+            <DetailedListingCarousel data={carouselData} />
           ) : (
-            <ListingImgsPlaceholder />
-          )} */}
-          <DetailedListingCarousel data={carouselData} />
+            <div style={{ height: '100%', width: '100%' }}>
+              <Image src={placeholder} alt="placeholder" />
+            </div>
+          )}
+          {/* <DetailedListingCarousel data={carouselData} /> */}
           <Grid container columns={12} sx={{ direction: 'row' }}>
             <Grid item xs={12} md={8} pt={2}>
               <Grid
@@ -684,13 +688,7 @@ const DetailedListingPage = () => {
                       </Button>
                     </Link>
                   ) : (
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      size="large"
-                      fullWidth
-                      disabled
-                    >
+                    <Button variant="contained" type="submit" size="large" fullWidth disabled>
                       CHAT NOW
                     </Button>
                   )}
