@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 import FormHelperText from '@mui/material/FormHelperText';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 
 export type ImageProps = {
   fileName: string;
@@ -30,7 +30,7 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
   const [previewImages, setPreviewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
   const [keyCounter, setKeyCounter] = useState(0);
-  const [isXs, isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImages = Array.from(e.target.files || []);
