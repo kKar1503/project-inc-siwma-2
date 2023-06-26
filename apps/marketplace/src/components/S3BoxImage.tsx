@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useQuery } from 'react-query';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import Box, { BoxProps } from '@mui/material/Box';
@@ -26,7 +27,7 @@ const S3BoxImage = ({ src, children, ...others }: S3BoxImageProps) => {
 
 
   return image ? (
-    <a href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
+    <Link href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
       <Box
         component='img'
         {...others}
@@ -34,7 +35,7 @@ const S3BoxImage = ({ src, children, ...others }: S3BoxImageProps) => {
       >
         {children}
       </Box>
-    </a>
+    </Link>
   ) : null;
 };
 

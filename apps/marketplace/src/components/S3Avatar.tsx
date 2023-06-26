@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useQuery } from 'react-query';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import Avatar, { AvatarProps } from '@mui/material/Avatar';
@@ -25,11 +26,11 @@ const S3Avatar = ({ src, alt, children, ...others }: S3AvatarProps) => {
   }, [alt, data]);
 
   return image ? (
-    <a href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
+    <Link href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
       <Avatar src={image.url}  {...others} >
         {children}
       </Avatar>
-    </a>
+    </Link>
   ) : null;
 };
 

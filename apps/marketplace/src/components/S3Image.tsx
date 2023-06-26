@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Image, { ImageProps } from 'next/image';
+import Link from 'next/link';
 import { useQuery } from 'react-query';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 
@@ -25,9 +26,9 @@ const S3Image = ({ src, alt, ...others }: S3ImageProps) => {
   }, [alt, data]);
 
   return image ? (
-    <a href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
+    <Link  href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
       <Image src={image.url} alt={alt} title={image.name} {...others} />
-    </a>
+    </Link>
   ) : null;
 };
 
