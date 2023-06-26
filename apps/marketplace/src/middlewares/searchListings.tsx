@@ -20,7 +20,7 @@ export type FilterOptions = {
 };
 
 const searchListings = async (matching?: string, filter?: FilterOptions) => {
-  let query = `/v1/listings?matching=${matching}`;
+  let query = `/v1/listings?matching=${matching}&includeImages=true`;
   if (filter?.sortBy) query += `&sortBy=${filter.sortBy}`;
   if (filter?.category) query += `&category=${filter.category}`;
   if (typeof filter?.negotiable === 'boolean') query += `&negotiable=${filter.negotiable}`;
