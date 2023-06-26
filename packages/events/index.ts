@@ -15,6 +15,7 @@ export const EVENTS = {
       PART: 'clientPartRoom',
       CREATE: 'clientCreateRoom',
       DELETE: 'clientDeleteRoom',
+      GET: 'clientGetRooms',
     },
     MESSAGE: {
       SEND: 'clientSendMessage',
@@ -34,6 +35,7 @@ export const EVENTS = {
     ROOM: {
       CREATED: 'serverCreatedRoom',
       DELETED: 'serverDeletedRoom',
+      SYNC: 'serverSyncRooms',
     },
     MESSAGE: {
       ROOM: 'serverRoomMessage',

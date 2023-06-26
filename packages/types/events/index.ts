@@ -63,6 +63,7 @@ type EventParams = {
   clientPartRoom: RoomId; // Has Ack
   clientCreateRoom: ClientCreateRoom; // Has Ack
   clientDeleteRoom: RoomId; // Has Ack
+  clientGetRooms: UserId; // Has Ack
   // Client Message Events
   clientSendMessage: ClientSendMessage; // Has Ack
   clientDeleteMessage: MessageId; // Has Ack
@@ -77,6 +78,7 @@ type EventParams = {
   // Server Room Events
   serverCreatedRoom: Room;
   serverDeletedRoom: RoomId;
+  serverSyncRooms: Room;
   // Server Message Events
   serverRoomMessage: Messages;
   serverDeletedMessage: MessageId;
