@@ -53,9 +53,15 @@ const NavBar = () => {
       }}
     >
       <Toolbar>
-        {/* <Box sx={{ ml: isLg ? spacing(0) : spacing(2) }}> */}
-        <Image src="/images/favicons/SIWMA-icon.png" alt="logo" width={60} height={40} />
-        {/* </Box> */}
+        {isLg && (
+          <Image
+            src="/images/favicons/SIWMA-icon.png"
+            alt="logo"
+            width={60}
+            height={40}
+            style={{ marginRight: spacing(2) }}
+          />
+        )}
 
         {!isSm && (
           <Box onClick={() => handleUrl('/')}>
@@ -64,7 +70,7 @@ const NavBar = () => {
               sx={{
                 color: palette.primary.main,
                 fontSize: typography.subtitle2,
-                ml: isLg ? spacing(3) : spacing(2),
+                mx: isLg ? spacing(3) : spacing(2),
                 cursor: 'pointer',
               }}
             >
@@ -77,9 +83,8 @@ const NavBar = () => {
             <Typography
               noWrap
               sx={{
-                fontSize: typography.subtitle2,
-                ml: isLg ? spacing(3) : spacing(2),
-                mr: isLg ? spacing(3) : spacing(2),
+                fontSize: '1em',
+                mx: isLg ? spacing(3) : spacing(2),
               }}
             >
               {t('All Categories')}
@@ -99,9 +104,7 @@ const NavBar = () => {
             <IconButton
               size="medium"
               sx={({ spacing }) => ({
-                ml: isMd ? spacing(1) : spacing(2),
-                // TODO: Not sure why this is being pushed down, fix it later
-                mt: '5px',
+                mx: isMd ? spacing(1) : spacing(2),
               })}
             >
               <Badge>
