@@ -65,7 +65,7 @@ const event: EventFile = (io, socket) => ({
           (socket.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC2, {
             status: 'in_progress',
             progress: Math.floor(((idx + 1) / messages.length) * 100),
-            data: { ...restMessage, createdAt: JSON.stringify(createdAt) },
+            data: { ...restMessage, createdAt: createdAt.toISOString() },
           });
         });
 

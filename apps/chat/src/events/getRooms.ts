@@ -181,8 +181,7 @@ const event: EventFile = (io, socket) => ({
             latestMessage,
             itemName: room.listingRoomsListingTolisting.name,
             inProgress: isListingInProgress,
-            time:
-              room.messages.length === 0 ? undefined : JSON.stringify(room.messages[0].createdAt),
+            time: room.messages.length === 0 ? undefined : room.messages[0].createdAt.toISOString(),
             userImage: otherUser.profilePicture ?? '',
             unreadMessages: unreads[idx],
           };

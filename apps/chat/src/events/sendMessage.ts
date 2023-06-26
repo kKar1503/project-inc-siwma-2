@@ -66,7 +66,7 @@ const sendMessage: EventFile = (io, socket) => ({
           eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
           (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
             ...message,
-            createdAt: JSON.stringify(createdAt),
+            createdAt: createdAt.toISOString(),
           });
         }
       })
