@@ -255,6 +255,7 @@ const ChatRoom = () => {
     }
     if (isSm) {
       return {
+        height: 'calc(100vh - 56px)',
         minWidth: '0px',
         px: '0px',
       };
@@ -274,7 +275,6 @@ const ChatRoom = () => {
         <Box
           sx={{
             width: isSm ? 1 / 1 : 1 / 3,
-            height: isSm? 'calc(100vh - 32px)' : '100%',
             overflow: 'hidden',
           }}
         >
