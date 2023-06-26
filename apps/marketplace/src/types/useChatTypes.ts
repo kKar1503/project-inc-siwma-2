@@ -10,8 +10,8 @@ export interface UseChatParams {
   roomDeleteCallback?: (roomId: string) => void;
   // ** Message Events Callbacks **
   messageCallback?: (message: Messages) => void;
-  messageDeleteCallback?: (messageId: string) => void;
-  messageReadCallback?: (messageIds: string[]) => void;
+  messageDeleteCallback?: (messageId: number) => void;
+  messageReadCallback?: (messageIds: number[]) => void;
   messageSyncCallback?: (message: MessageSync) => void;
   chatMessagesProgressCallback?: (progress: number) => void;
   // ** Typing Events Callbacks **
