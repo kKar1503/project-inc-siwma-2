@@ -8,7 +8,6 @@ import { EVENTS } from '@inc/events';
 import eventLogHelper from '@/utils/logger';
 
 // ** Store Imports **
-import RoomOccupantsStore from '@/store/RoomOccupantsStore';
 import SocketUserStore from '@/store/SocketUserStore';
 
 // ** Prisma Imports **
@@ -66,7 +65,7 @@ const event: EventFile = (io, socket) => ({
           (socket.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC2, {
             status: 'in_progress',
             progress: Math.floor(((idx + 1) / messages.length) * 100),
-            message: message,
+            data: message,
           });
         });
 
