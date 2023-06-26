@@ -60,12 +60,12 @@ const event: EventFile = (io, socket) => ({
         }
 
         eventLog('trace', `Sending messages to socket (${socket.id})...`);
-        messages.forEach((message, idx) => {
-          eventLog('trace', `Sending message (${message.id}) to socket (${socket.id})...`);
+        messages.forEach(({ createdAt, ...restMessage }, idx) => {
+          eventLog('trace', `Sending message (${restMessage.id}) to socket (${socket.id})...`);
           (socket.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC2, {
             status: 'in_progress',
             progress: Math.floor(((idx + 1) / messages.length) * 100),
-            data: message,
+            data: { ...restMessage, createdAt: JSON.stringify(createdAt) },
           });
         });
 
