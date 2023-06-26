@@ -6,6 +6,20 @@ type RoomId = string;
 type MessageId = number;
 type ListingId = number;
 
+type LastMessage = (
+  | {
+      contentType: 'text' | 'file' | 'image';
+    }
+  | {
+      contentType: 'offer';
+      multiple: boolean;
+      offerAccepted: boolean;
+      amount: number;
+    }
+) & {
+  content: string;
+};
+
 export type ClientSendMessage = {
   roomId: RoomId;
   message: string;
@@ -14,7 +28,14 @@ export type ClientSendMessage = {
 
 export type Room = {
   id: RoomId;
-  user: UserId;
+  username: string;
+  category: 'BUY' | 'SELL';
+  latestMessage: LastMessage;
+  itemName: string;
+  inProgress: boolean;
+  time: Date;
+  userImage: string;
+  unreadMessages: number;
 };
 
 export type DataSync<T> =
