@@ -27,11 +27,12 @@ export type ChatBoxProps = {
   roomData: ChatData[];
   loginId: string;
   ChatText: JSX.Element;
-  acceptOffer: boolean;
-  setAcceptOffer: React.Dispatch<React.SetStateAction<boolean>>;
+  acceptOffer: boolean | null;
+  setAcceptOffer: React.Dispatch<React.SetStateAction<boolean | null>>;
+  setDeleteOffer: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ChatBox = ({ loginId, roomData, ChatText, acceptOffer, setAcceptOffer }: ChatBoxProps) => {
+const ChatBox = ({ loginId, roomData, ChatText, acceptOffer, setAcceptOffer, setDeleteOffer }: ChatBoxProps) => {
   const { t } = useTranslation();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
@@ -200,7 +201,7 @@ const ChatBox = ({ loginId, roomData, ChatText, acceptOffer, setAcceptOffer }: C
                             backgroundColor: palette.error[300],
                             width: '100%',
                           })}
-                          onClick={() => setAcceptOffer(true)}
+                          onClick={() => setDeleteOffer(true)}
                         >
                           Cancel
                         </Button>
