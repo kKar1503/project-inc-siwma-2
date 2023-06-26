@@ -95,7 +95,12 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         />
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
-        <CardMediaX src={data.coverImage || placeholder} alt="listing image" height={200} />
+        <CardMediaX
+          src={data.coverImage || placeholder}
+          alt="listing image"
+          height={200}
+          placeholder=""
+        />
       </Link>
       <CardContent
         sx={({ spacing }) => ({

@@ -8,6 +8,7 @@ const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetc
 
 type CardMediaXProps = CardMediaProps & {
   src: string;
+  placeholder: string;
   alt: string;
   height: number;
 };
@@ -15,7 +16,7 @@ type CardMediaXProps = CardMediaProps & {
 /**
  * Extends the CardMedia component from material UI
  */
-const CardMediaX = ({ src, alt, height }: CardMediaXProps) => {
+const CardMediaX = ({ src, alt, placeholder, height }: CardMediaXProps) => {
   const { data } = useImageQuery(src);
   const [image, setImage] = useState<{ url: string; name: string } | undefined>();
 
@@ -31,7 +32,7 @@ const CardMediaX = ({ src, alt, height }: CardMediaXProps) => {
 
   return (
     <CardMedia component="div" style={{ position: 'relative', width: '100%', height }}>
-      <Image src={image?.url || ''} alt={alt} fill />
+      <Image src={image?.url || placeholder} alt={alt} fill />
     </CardMedia>
   );
 };
