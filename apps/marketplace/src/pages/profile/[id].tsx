@@ -106,7 +106,6 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
   const profileListingImages = useGetProfileListingImagesQuery(id);
-  // console.log(userDetails);
 
   const theme = useTheme();
   const { spacing } = theme;
@@ -116,7 +115,6 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    console.log(searchQuery);
   };
 
   // when filter/sorts are called use set states to set the new listings/reviews again

@@ -84,8 +84,6 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { t } = useTranslation();
 
-  // console.log('review is'  + reviewData?.avgRating)
-
   const styleProfileCard = useMemo(() => {
     if (isSm || isMd) {
       return {

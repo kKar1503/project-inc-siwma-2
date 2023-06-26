@@ -12,7 +12,6 @@ type StarRatingProps = {
 
 const StarsRating = ({ rating, precision, size, readOnly }: StarRatingProps) => {
   const theme = useTheme();
-  console.log(rating)
 
   return (
     <Rating
