@@ -6,21 +6,12 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
+import { Advertisment } from '@/utils/api/client/zod/advertisements';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-export interface Image {
-  link: string;
-  image: string | null;
-  companyId: string;
-  description: string;
-  active?: boolean | undefined;
-  startDate?: string | undefined;
-  endDate?: string | undefined;
-}
-
 export type AdvertisementCarouselProps = {
-  data: Image[];
+  data: Advertisment[];
 };
 
 const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
@@ -66,7 +57,8 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                     width: '100%',
                     opacity: '30%',
                   }}
-                  src={step.image!}
+                  // step.image is coinsidered as string|null but src requires string|undefined
+                  src={step.image as string}
                 />
                 <Box
                   component="img"
@@ -82,7 +74,8 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                     marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
-                  src={step.image!}
+                  // step.image is coinsidered as string|null but src requires string|undefined
+                  src={step.image as string}
                 />
               </Box>
             ) : null}
@@ -96,7 +89,6 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
           backgroundColor: 'transparent',
         }}
         steps={maxSteps}
-        // position="static"
         activeStep={activeStep}
         nextButton={
           <Button

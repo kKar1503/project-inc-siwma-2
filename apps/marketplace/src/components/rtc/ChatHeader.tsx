@@ -123,6 +123,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
             bgcolor: available ? palette.info.main : palette.success.main,
             color: palette.common.white,
             px: available ? spacing(3) : spacing(4),
+            width: '100px'
           },
         },
         profilePic: {

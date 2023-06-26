@@ -9,12 +9,19 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-// import { StarsRating } from '@inc/ui';
+import { StarsRating, useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import fetchUser from '@/middlewares/fetchUser';
+import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
+import { useQuery } from 'react-query';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 export type ProfileDetailCardProps =
   | {
@@ -23,7 +30,7 @@ export type ProfileDetailCardProps =
       name: string;
       enabled: boolean;
       createdAt: string;
-      profilePicture: string | null;
+      profilePic: string | null;
       companyName: string;
       mobileNumber: string;
       whatsappNumber: string | null;
@@ -39,10 +46,40 @@ export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
 };
 
-const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode?: boolean }) => {
-  const { t } = useTranslation();
+const useGetUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+
+  return data;
+};
+
+const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | undefined) => {
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+
+  const handleBookmarkUser = async () => {
+    await bookmarkUser(userUuid);
+    setIsBookmarked((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (bookmarkedUsers) {
+      const bookmarked = bookmarkedUsers.includes(userUuid);
+      setIsBookmarked(bookmarked);
+    }
+  }, [bookmarkedUsers, userUuid]);
+
+  return {
+    isBookmarked,
+    handleBookmarkUser,
+  };
+};
+
+const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
+  const user = useSession();
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { t } = useTranslation();
 
   const styleProfileCard = useMemo(() => {
     if (isSm || isMd) {
@@ -66,6 +103,20 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
     };
   }, [isSm, isMd, isLg]);
 
+  const loggedUserUuid = user.data?.user.id as string;
+  const currentUser = useGetUserQuery(loggedUserUuid);
+  const profileUserUuid = data?.id as string;
+  const bookmarkedUsers = currentUser?.bookmarks?.users;
+  const isOwnProfile = loggedUserUuid === profileUserUuid;
+
+  const router = useRouter();
+  const userId = router.query.id as string;
+
+  const { isBookmarked, handleBookmarkUser } = useBookmarkUserQuery(
+    profileUserUuid,
+    bookmarkedUsers
+  );
+
   return (
     <Card sx={styleProfileCard}>
       <CardHeader
@@ -75,22 +126,45 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
         subheaderTypographyProps={{
           fontSize: 16,
         }}
+        action={
+          loggedUserUuid !== userId && (
+            <IconButton
+              aria-label="bookmark"
+              onClick={handleBookmarkUser}
+              sx={({ spacing }) => ({
+                p: spacing(0),
+              })}
+            >
+              {isBookmarked ? (
+                <BookmarkIcon
+                  fontSize="large"
+                  sx={({ palette }) => ({
+                    color: palette.warning[100],
+                  })}
+                />
+              ) : (
+                <BookmarkBorderIcon
+                  sx={({ palette }) => ({
+                    color: palette.common.black,
+                  })}
+                  fontSize="large"
+                />
+              )}
+            </IconButton>
+          )
+        }
         title={t('Your Profile')}
         subheader={t('View your profile details here')}
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
 
       <CardContent>
-        <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePicture}</Avatar>
+        <Link style={{ textDecoration: 'none' }} href={`/profile/${data?.id}`}>
+          <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
+        </Link>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography>{data?.companyName}</Typography>
-        <Typography
-          sx={{
-            wordWrap: 'break-word',
-          }}
-        >
-          {data?.email}
-        </Typography>
+        <Typography variant="body2">{data?.companyName}</Typography>
+        <Typography>{data?.email}</Typography>
 
         <Box
           sx={({ spacing }) => ({
@@ -124,7 +198,7 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
 
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>{t('Linked accounts')}:</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
         {data?.contactMethod === 'telegram' && (
           <Box
             sx={({ spacing }) => ({
@@ -150,7 +224,6 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
             </Typography>
           </Box>
         )}
-
         {data?.contactMethod === 'whatsapp' && (
           <Box
             sx={({ spacing }) => ({
@@ -186,8 +259,8 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
           mb: spacing(1),
         })}
       >
-        <Box sx={{ width: '98%' }}>
-          {isEditMode && (
+        {/* <Box sx={{ width: '98%' }}>
+          {isOwnProfile && (
             <Button
               component={Link}
               href={`/profile/${data?.id}/edit-profile`}
@@ -195,15 +268,14 @@ const ProfileDetailCard = ({ data, isEditMode = false }: { data: any; isEditMode
               type="submit"
               sx={({ spacing }) => ({
                 width: '100%',
-                mb: spacing(2),
-                mt: spacing(2),
+                mb: spacing(1),
                 fontWeight: 'bold',
               })}
             >
-              {t('Edit profile')}
+              Edit profile
             </Button>
           )}
-        </Box>
+        </Box> */}
       </CardActions>
     </Card>
   );
