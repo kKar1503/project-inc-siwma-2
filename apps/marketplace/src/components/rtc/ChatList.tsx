@@ -22,15 +22,14 @@ type CategoryType = 'All' | 'Buying' | 'Selling';
 
 export interface ChatListProps {
   id: string;
-  company: string;
+  username: string;
   category: CategoryType;
   latestMessage: string;
-  price: number;
   itemName: string;
   inProgress: boolean;
-  date: string;
-  imageUrl: string;
-  badgeContent: number;
+  time?: Date;
+  userImage: string;
+  unreadMessages: number;
 }
 
 export type ChatListPageProps = {
@@ -55,12 +54,9 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
 
   const filteredChats = useMemo(() => {
     if (category === 'All') {
-      return chats.filter((chat) => chat.inProgress);
+      return chats;
     }
-    const filteredItems = chats.filter(
-      (chat) => chat.category.toLowerCase() === category.toLowerCase() && chat.inProgress
-    );
-    return filteredItems;
+    return chats.filter((chat) => chat.category === category);
   }, [chats, category]);
 
   const chatListStyles = useMemo(() => {
@@ -349,10 +345,14 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
               }}
             >
               <ListItemAvatar>
-                <Badge overlap="circular" color="error" badgeContent={chat.badgeContent}>
+                <Badge overlap="circular" color="error" badgeContent={chat.unreadMessages}>
                   <Image
                     style={{ borderRadius: '100%' }}
-                    src={chat.imageUrl}
+                    src={
+                      chat.userImage === ''
+                        ? '/images/placeholder.png'
+                        : `https://s3.karlok.dev/${chat.userImage}`
+                    }
                     width={chatListStyles?.listImage?.width}
                     height={chatListStyles?.listImage?.height}
                     alt="pic"
@@ -371,10 +371,10 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                       ...chatListStyles?.companyText,
                     }}
                   >
-                    {chat.company}
+                    {chat.username}
                   </Typography>
                   <Typography variant="body2" sx={chatListStyles?.dateTime}>
-                    {DateTime.fromISO(chat.date).setLocale('en').toFormat('f')}
+                    {chat.time ? DateTime.fromJSDate(chat.time).setLocale('en').toFormat('f') : ''}
                   </Typography>
                 </Box>
                 <Typography
@@ -412,7 +412,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     mt: spacing(1),
                   }}
                 >
-                  {chat.inProgress ? t('In progress') : `${t('Offered price')}: ${chat.price}`}
+                  {chat.inProgress ? t('In progress') : ''}
                 </Typography>
               </ListItemText>
             </ListItem>
