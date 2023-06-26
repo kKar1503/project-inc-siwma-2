@@ -6,25 +6,39 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { InfiniteScroll } from '@inc/ui';
 // middleware
-import searchListings, { FilterOptions } from '@/middlewares/searchListings';
+import searchListings, { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { CircularProgress, Container, Typography } from '@mui/material';
+import { ParsedUrlQuery } from 'querystring';
+
+const stringToBoolean = (stringValue: string | string[] | undefined) => {
+  if (stringValue === 'true') {
+    return true;
+  }
+  if (stringValue === 'false') {
+    return false;
+  }
+  return undefined;
+};
 
 const Searchresult = () => {
   const router = useRouter();
+  const { pathname, query } = router;
   const { search } = router.query;
   const scrollRef = useRef<Element>(null);
 
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>();
   const [listings, setListings] = useState<Array<Listing>>([]);
   const [lastListingId, setLastListingId] = useState<number>(0);
   const [maxItems, setMaxItems] = useState<boolean>(false);
+  const [queryParameters, setQueryParameters] = useState<ParsedUrlQuery>();
 
   const { isLoading, refetch } = useQuery(
     ['listings', search, filterOptions, lastListingId],
     async () => searchListings(search as string, lastListingId, filterOptions),
     {
-      enabled: search !== undefined,
+      enabled: search !== undefined && (search as string).trim() !== '',
+      cacheTime: 0,
       onSuccess: (data) => {
         setLastListingId(lastListingId + data.length);
 
@@ -44,7 +58,48 @@ const Searchresult = () => {
   useEffect(() => {
     setLastListingId(0);
     setListings([]);
+    setMaxItems(false);
+  }, [filterOptions, search]);
+
+  useEffect(() => {
+    const storedParams = localStorage.getItem('queryParams');
+
+    if (storedParams) {
+      const queryParams = JSON.parse(storedParams);
+      router.query = queryParams;
+      setQueryParameters(queryParams);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!queryParameters) return;
+    const options: FilterOptions = {
+      sortBy: (query.sortBy as SortingOptions) || 'recent_newest',
+      category: parseInt(query.category as string, 10) || 0,
+      negotiable: stringToBoolean(query.negotiable),
+      minPrice: parseInt(query.minPrice as string, 10) || undefined,
+      maxPrice: parseInt(query.maxPrice as string, 10) || undefined,
+    };
+    setFilterOptions(options);
+  }, [queryParameters]);
+
+  useEffect(() => {
+    if (!filterOptions) return;
+    const updatedQuery = {
+      ...query,
+      search,
+      sortBy: filterOptions.sortBy,
+      category: filterOptions.category,
+      negotiable: filterOptions.negotiable,
+      minPrice: filterOptions.minPrice,
+      maxPrice: filterOptions.maxPrice,
+    };
+    router.push({ pathname, query: updatedQuery });
   }, [filterOptions]);
+
+  useEffect(() => {
+    localStorage.setItem('queryParams', JSON.stringify(query));
+  }, [query]);
 
   const Header: HeaderProps = {
     title: {
@@ -59,6 +114,7 @@ const Searchresult = () => {
       <DisplayResults
         filter
         data={Header}
+        filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
         subHeader={false}
         isLoading={isLoading}
