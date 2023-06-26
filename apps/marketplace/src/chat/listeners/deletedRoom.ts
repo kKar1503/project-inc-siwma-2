@@ -7,13 +7,13 @@ import { EVENTS } from '@inc/events';
 
 // ** Event File **
 const event: ClientEventFile<UseChatParams> = (_, hookParams) => ({
-  eventName: EVENTS.SERVER.ROOM.CREATED,
+  eventName: EVENTS.SERVER.ROOM.DELETED,
   type: 'on', // 'on' | 'once'
-  callback: (room) => {
-    const { roomCreateCallback } = hookParams;
+  callback: (roomId) => {
+    const { roomDeleteCallback } = hookParams;
 
-    if (roomCreateCallback !== undefined) {
-      roomCreateCallback(room);
+    if (roomDeleteCallback !== undefined) {
+      roomDeleteCallback(roomId);
     }
   },
 });
