@@ -51,11 +51,13 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
         },
         statusButton: {
           '&.Mui-disabled': {
-            fontSize: '0.6rem',
+            fontSize: '0.7rem',
             bgcolor: available ? palette.info.main : palette.success.main,
             color: palette.common.white,
             px: available ? spacing(0) : spacing(1),
             py: spacing(0),
+            width: '80px',
+            height: '32px'
           },
         },
         profilePic: {
