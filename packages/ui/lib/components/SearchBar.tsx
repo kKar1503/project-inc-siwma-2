@@ -54,7 +54,7 @@ const SearchBar = ({ handleSearch, onChange }: SearchBarProps) => {
         search: {
           width: '100%',
           mr: spacing(1),
-          ml: spacing(3),
+          ml: spacing(0),
         },
         searchPlaceholder: {
           fontSize: '0.2rem',

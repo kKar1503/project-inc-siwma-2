@@ -28,6 +28,12 @@ export default function useReadLocalStorage<T>(key: string): Value<T> {
   // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState<Value<T>>(readValue);
 
+  // Refresh value whenever key changes
+  useEffect(() => {
+    setStoredValue(readValue());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
   // Listen if localStorage changes
   useEffect(() => {
     setStoredValue(readValue());
