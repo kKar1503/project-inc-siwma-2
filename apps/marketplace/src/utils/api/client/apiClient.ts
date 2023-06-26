@@ -44,8 +44,8 @@ client.interceptors.response.use(
         currRetries = 0;
         return res;
       }
-      var previousUrl = window.location.href;
-      var encodedPreviousUrl = encodeURIComponent(previousUrl);
+      const previousUrl = window.location.href;
+      const encodedPreviousUrl = encodeURIComponent(previousUrl);
 
 
       // We have already hit the max number of retries, the user is no longer authenticated
