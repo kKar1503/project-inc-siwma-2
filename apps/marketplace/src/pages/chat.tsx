@@ -9,12 +9,15 @@ import ChatBox from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
 import ChatList from '@/components/rtc/ChatList';
 
-// ** Socket.io Imports **
+// ** Chat Related Imports **
 import { io } from 'socket.io-client';
+import { syncMessage } from '@/chat/emitters';
+import { syncLocalStorage, syncLastMessage, syncLastMessages } from '@/utils/syncLocalStorage';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import { SxProps, Theme, useTheme } from '@mui/material/styles';
 
 // ** Types Imports **
 import type { Messages } from '@inc/types';
@@ -26,11 +29,6 @@ import useReadLocalStorage from '@/hooks/useReadLocalStorage';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import useChat from '@/hooks/useChat';
 import { useRouter } from 'next/router';
-
-// ** Utils Imports **
-import { syncLocalStorage, syncLastMessage, syncLastMessages } from '@/utils/syncLocalStorage';
-import Button from '@mui/material/Button';
-import { syncMessage } from '@/chat/emitters';
 
 const ChatRoom = () => {
   // ** Socket Initialization
@@ -263,16 +261,33 @@ const ChatRoom = () => {
     [isSm]
   );
 
-  return (
-    <Box
-      display="flex"
-      sx={{
+  const chatPageSx: SxProps<Theme> = useMemo(() => {
+    if (isLg) {
+      return {
         height: 'calc(100vh - 64px)',
         minWidth: '992px',
-        px: isLg ? 'calc(50vw - 656px)' : '64px',
+        px: 'calc(50vw - 656px)',
         pagePadding,
-      }}
-    >
+      };
+    }
+    if (isSm) {
+      return {
+        height: 'calc(100vh - 64px)',
+        minWidth: '0px',
+        px: '0px',
+        pagePadding,
+      };
+    }
+    return {
+      height: 'calc(100vh - 64px)',
+      minWidth: '0px',
+      px: '64px',
+      pagePadding,
+    };
+  }, [isLg, isSm]);
+
+  return (
+    <Box id="chat-page" display="flex" sx={chatPageSx}>
       {/* render if isMd and isLg */}
       {/* if isSm, display chat list if roomId is '' (room not selected) */}
       {(isMd || isLg || (isSm && roomId === '')) && (
@@ -296,16 +311,21 @@ const ChatRoom = () => {
         </Box>
       )}
       {/* if isSm, display  */}
-      <Box
-        sx={{
-          width: isSm ? 1 / 1 : 2 / 3,
-          height: '100%',
-          overflow: 'hidden',
-          bgcolor: palette.common.white,
-        }}
-      >
-        {roomId !== '' && (
-          <>
+      {roomId !== '' && (
+        <Box
+          id="chat-right-side-wrapper"
+          sx={{
+            width: isSm ? 1 / 1 : 2 / 3,
+            height: '100%',
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            id="chat-right-side"
+            sx={{
+              height: '100%',
+            }}
+          >
             <ChatHeader
               profilePic=""
               companyName="Hi Metals PTE LTD"
@@ -320,25 +340,23 @@ const ChatRoom = () => {
               makeOffer={makeOffer}
               setMakeOffer={setMakeOffer}
             />
-            <Box sx={{ height: '100%' }}>
-              <ChatBox
-                roomData={messages}
-                loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
-                ChatText={
-                  <ChatTextBox
-                    selectedFile={selectedFile}
-                    setSelectedFile={setSelectedFile}
-                    inputText={inputText}
-                    setInputText={setInputText}
-                    onSend={onSend}
-                    setOnSend={setOnSend}
-                  />
-                }
-              />
-            </Box>
-          </>
-        )}
-      </Box>
+            <ChatBox
+              roomData={messages}
+              loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
+              ChatText={
+                <ChatTextBox
+                  selectedFile={selectedFile}
+                  setSelectedFile={setSelectedFile}
+                  inputText={inputText}
+                  setInputText={setInputText}
+                  onSend={onSend}
+                  setOnSend={setOnSend}
+                />
+              }
+            />
+          </Box>
+        </Box>
+      )}
       <Button
         sx={{
           position: 'fixed',
