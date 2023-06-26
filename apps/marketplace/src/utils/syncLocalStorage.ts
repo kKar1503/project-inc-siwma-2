@@ -8,7 +8,11 @@ import type { Messages } from '@inc/types';
  *
  * This will not account for messages that were deleted or edited.
  */
-const syncLocalStorage = (message: Messages, lastMessagesCache?: Map<string, string>) => {
+export const syncLocalStorage = (
+  userId: string,
+  message: Messages,
+  lastMessagesCache?: Map<string, string>
+) => {
   const { room, ...messageNoRoom } = message;
 
   let existingMessages = localStorage.getItem(room);
@@ -23,16 +27,16 @@ const syncLocalStorage = (message: Messages, lastMessagesCache?: Map<string, str
 
   if (lastMessagesCache !== undefined) lastMessagesCache.set(room, strMessage);
   localStorage.setItem(room, `${existingMessages}${strMessage}]`);
-  localStorage.setItem('lastMessageId', JSON.stringify(message.id));
+  localStorage.setItem(`${userId}-lastMessageId`, JSON.stringify(message.id));
   window.dispatchEvent(new Event('local-storage'));
 };
 
-export const syncRooms = (rooms: Set<string> | string) => {
-  const existingRooms = localStorage.getItem('rooms');
+export const syncRooms = (userId: string, rooms: Set<string> | string) => {
+  const existingRooms = localStorage.getItem(`${userId}-rooms`);
 
   if (existingRooms === null) {
     localStorage.setItem(
-      'rooms',
+      `${userId}-rooms`,
       typeof rooms === 'string' ? JSON.stringify([rooms]) : JSON.stringify([...rooms])
     );
     window.dispatchEvent(new Event('local-storage'));
@@ -41,7 +45,7 @@ export const syncRooms = (rooms: Set<string> | string) => {
 
     if (typeof rooms === 'string') {
       if (!existingRoomsSet.has(rooms)) {
-        localStorage.setItem('rooms', JSON.stringify([...existingRoomsSet, rooms]));
+        localStorage.setItem(`${userId}-rooms`, JSON.stringify([...existingRoomsSet, rooms]));
         window.dispatchEvent(new Event('local-storage'));
       }
     } else {
@@ -51,7 +55,7 @@ export const syncRooms = (rooms: Set<string> | string) => {
         }
       });
 
-      localStorage.setItem('rooms', JSON.stringify([...existingRoomsSet]));
+      localStorage.setItem(`${userId}-rooms`, JSON.stringify([...existingRoomsSet]));
       window.dispatchEvent(new Event('local-storage'));
     }
   }
@@ -63,24 +67,22 @@ export const syncRooms = (rooms: Set<string> | string) => {
  * Use this function after all the messages have been synced on the "success"
  * status.
  */
-export const syncLastMessages = (lastMessagesCache: Map<string, string>) => {
+export const syncLastMessages = (userId: string, lastMessagesCache: Map<string, string>) => {
   const roomSet = new Set<string>();
   lastMessagesCache.forEach((message, room) => {
     localStorage.setItem(`${room}-last`, message);
     if (!roomSet.has(room)) roomSet.add(room);
   });
 
-  syncRooms(roomSet);
+  syncRooms(userId, roomSet);
 
   window.dispatchEvent(new Event('local-storage'));
 };
 
-export const syncLastMessage = (message: Messages) => {
+export const syncLastMessage = (userId: string, message: Messages) => {
   const { room, ...rest } = message;
-  syncLocalStorage(message);
-  syncRooms(room);
+  syncLocalStorage(userId, message);
+  syncRooms(userId, room);
   localStorage.setItem(`${room}-last`, JSON.stringify(rest));
   window.dispatchEvent(new Event('local-storage'));
 };
-
-export default syncLocalStorage;
