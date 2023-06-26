@@ -56,16 +56,17 @@ const IndividualCategoryPg = () => {
   );
 
   useEffect(() => {
-   refetch()
-  }, [filterOptions, lastListingId]);
+   setLastListingId(0)
+   setListings([])
+  }, [filterOptions]);
 
   // const { data: listingData, isLoading } = useCatListings(id, filterOptions);
   const { data: catData } = useFetchCatById(id);
 
   const Header: HeaderProps = {
     title: {
-      single: `Displaying ${catData?.name} listing`,
-      plural: `Displaying ${catData?.name} listings`,
+      single: catData ? `${catData.name} listing` : '',
+      plural: catData ? `${catData.name} listings` : '',
     },
     noOfItems: listings ? listings.length : 0,
   };

@@ -13,11 +13,7 @@ const CategoryListings = async (
   if (filter?.minPrice) query += `&minPrice=${filter.minPrice}`;
   if (filter?.maxPrice) query += `&maxPrice=${filter.maxPrice}`;
 
-  console.log(query)
-
   const response = await apiClient.get(query);
-
-  console.log(response.data.data[0].listings);
 
   const parsedListings = listings.getAll.parse(response.data.data[0].listings);
 
