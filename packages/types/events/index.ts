@@ -1,75 +1,128 @@
-import { Socket, Server } from 'socket.io';
-import * as buffer from 'buffer';
+import type { Socket, Server, DisconnectReason } from 'socket.io';
+import type { Socket as ClientSocket } from 'socket.io-client';
 
-type Room = {
-  id: string;
-  name: string;
-  activeUsers: number;
-};
+type UserId = string;
+type RoomId = string;
+type MessageId = number;
+type ListingId = number;
 
-type RoomMessage = {
-  roomId: string;
+export type ClientSendMessage = {
+  roomId: RoomId;
   message: string;
-  username: string;
-  contentType: string;
-  file:undefined| Buffer;
   time: Date;
 };
 
-type StartStopType = {
-  sender: string;
-  roomId: string;
+export type Room = {
+  id: RoomId;
+  user: UserId;
 };
 
-type Read = {
-  room: string;
-  messageId: number;
-}
-
-type DeleteMessage = {
-  room: string;
-  messageId: number;
+export type ClientCreateRoom = {
+  sellerId: UserId;
+  listingId: ListingId;
 };
+
+export type Messages = {
+  id: number;
+  author: string;
+  room: string;
+  read: boolean;
+  createdAt: Date;
+  contentType: 'text' | 'file' | 'image' | 'offer';
+  offer: number | null;
+  content: string;
+};
+
+export type MessageSync =
+  | {
+      status: 'in_progress';
+      progress: number;
+      message: Messages;
+    }
+  | {
+      status: 'success';
+    }
+  | {
+      status: 'error';
+      err?: string;
+    };
+
+// ** Types Declarations **
+export type LoadingState = 'idle' | 'iam' | 'sync';
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
-  // Connections
+  // ** Connections
   connect: Socket;
-  disconnect: string;
+  disconnect: DisconnectReason;
+  iam: UserId;
 
-  // Client Events
-  createRoom: { roomName: string };
-  sendMessage: RoomMessage;
-  clientPing: string;
-  clientDeleteMessage: DeleteMessage;
-  clientStartType: StartStopType;
-  clientStopType: StartStopType;
-  clientRead: Read;
+  // ** Client Events
+  // Client Room Events
+  clientJoinRoom: RoomId; // Has Ack
+  clientPartRoom: RoomId; // Has Ack
+  clientCreateRoom: ClientCreateRoom; // Has Ack
+  clientDeleteRoom: RoomId; // Has Ack
+  // Client Message Events
+  clientSendMessage: ClientSendMessage; // Has Ack
+  clientDeleteMessage: MessageId; // Has Ack
+  clientReadMessage: RoomId; // Has Ack
+  clientSyncMessage: MessageId; // Has Ack
+  // Client Typing Events
+  clientStartType: RoomId;
+  clientStopType: RoomId;
 
-  // Server Events
-  rooms: Record<string, Room>;
-  joinedRoom: Room;
-  roomMessage: RoomMessage;
-  serverDeleteMessage: DeleteMessage;
-  serverPing: string;
-  serverStartType: StartStopType;
-  serverStopType: StartStopType;
-  serverRead: Read;
+  // ** Server Events
+  // Server Room Events
+  serverCreatedRoom: Room;
+  serverDeletedRoom: RoomId;
+  // Server Message Events
+  serverRoomMessage: Messages;
+  serverDeletedMessage: MessageId;
+  serverReadMessage: MessageId[];
+  serverSyncMessage: MessageSync;
+  // Server Typing Events
+  serverStartType: UserId;
+  serverStopType: UserId;
 };
 
 type Event = keyof EventParams;
 
+export type Acknowlegement =
+  | {
+      success: true;
+      data?: any;
+    }
+  | {
+      success: false;
+      err?: {
+        message: string;
+      };
+    };
+
 type EventFile = (
   io: Server,
-  socket?: Socket
+  socket: Socket
 ) => {
   [K in keyof EventParams]: {
     eventName: K;
-    callback: (param: EventParams[K], callback?: (...args: any[]) => void) => void;
+    callback: (param: EventParams[K], ack: (acknowledgement: Acknowlegement) => void) => void;
+    type: 'on' | 'once';
+  };
+}[keyof EventParams];
+
+type ClientEventFile<T> = (
+  socket: ClientSocket,
+  hookParams: T,
+  setLoading: (loading: LoadingState) => void
+) => {
+  [K in keyof EventParams]: {
+    eventName: K;
+    callback: (param: EventParams[K]) => void;
     type: 'on' | 'once';
   };
 }[keyof EventParams];
 
 type TypedSocketEmitter = <E extends Event, P extends EventParams[E]>(event: E, param: P) => void;
 
-export type { Event, EventFile, TypedSocketEmitter };
+export type { Event, ClientEventFile, EventFile, TypedSocketEmitter };

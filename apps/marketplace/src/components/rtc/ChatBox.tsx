@@ -10,15 +10,16 @@ import Button from '@mui/material/Button';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 type ChatData = {
-  id: string;
-  content_type: TContentType;
+  id: number;
+  contentType: TContentType;
   read: boolean;
   content?: string;
-  offer?: number;
+  offer: number | null;
   author: string;
-  createdAt: string;
+  createdAt: Date;
 };
 
 export type ChatBoxProps = {
@@ -28,6 +29,7 @@ export type ChatBoxProps = {
 };
 
 const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
+  const { t } = useTranslation();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
 
@@ -107,11 +109,11 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                       message.author === loginId ? '12px 12px 0 12px' : '12px 12px 12px 0',
                   })}
                 >
-                  {message.content_type === 'image' && (
+                  {message.contentType === 'image' && (
                     <CardMedia component="img" height="250" image={message.content} />
                   )}
 
-                  {message.content_type === 'text' && (
+                  {message.contentType === 'text' && (
                     <Typography
                       sx={({ palette }) => ({
                         color:
@@ -123,7 +125,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                       {message.content}
                     </Typography>
                   )}
-                  {message.content_type === 'offer' && (
+                  {message.contentType === 'offer' && (
                     <Box>
                       <Typography
                         sx={({ palette }) => ({
@@ -136,7 +138,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                           letterSpacing: '0.15px',
                         })}
                       >
-                        Make Offer
+                        {t('Make Offer')}
                       </Typography>
                       <Typography
                         sx={({ palette }) => ({
@@ -152,7 +154,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                       </Typography>
                     </Box>
                   )}
-                  {message.content_type === 'file' && message.content !== undefined && (
+                  {message.contentType === 'file' && message.content !== undefined && (
                     <Box display="flex">
                       <DescriptionOutlinedIcon
                         fontSize="large"
@@ -175,7 +177,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                           })}
                           onClick={() => handleDownload(message.content || '')}
                         >
-                          {filterFileType(message.content)}
+                          {t(filterFileType(message.content))}
                         </Button>
                       </Box>
                     </Box>

@@ -1,15 +1,21 @@
+import React from 'react';
 import { Chip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
-const SellBadge = () => (
-  <Chip
-    sx={({ spacing, palette }) => ({
-      mr: spacing(1),
-      bgcolor: palette.error[500],
-      fontWeight: 'bold',
-      color: palette.common.white,
-    })}
-    label="Selling"
-  />
-);
+const SellBadge = () => {
+  const { t } = useTranslation();
+
+  return (
+    <Chip
+      sx={({ palette }) => ({
+        // mr: spacing(1),
+        bgcolor: palette.error[500],
+        fontWeight: 'bold',
+        color: palette.common.white,
+      })}
+      label={t('Sell')}
+    />
+  );
+};
 
 export default SellBadge;
