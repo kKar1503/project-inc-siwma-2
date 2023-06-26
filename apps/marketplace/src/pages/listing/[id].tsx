@@ -18,7 +18,6 @@ import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import { StarsRating, useResponsiveness, AddCommentModal } from '@inc/ui';
-import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo, useState, useEffect } from 'react';
 import fetchCategories from '@/middlewares/fetchCategories';
 import fetchUsers from '@/middlewares/fetchUsers';
@@ -34,7 +33,6 @@ import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
-// import S3Image from '@/components/S3Image';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import S3Avatar from '@/components/S3Avatar';
 
@@ -60,14 +58,6 @@ const useGetListingQuery = (listingID: string) => {
   const { data } = useQuery('listing', async () => fetchListing(listingID), {
     enabled: listingID !== undefined,
   });
-
-  // if (data?.images) {
-  //   const bucketName = (process.env.AWS_BUCKET as string) || 'siwma-marketplace';
-  //   const region = (process.env.AWS_REGION as string) || 'ap-southeast-1';
-  //   for ( let i = 0; i < data.images.length; i++) {
-  //     data.images[i] = `https://${bucketName}.s3.${region}.amazonaws.com/${data.images[i]}`;
-  //   }
-  // }
   return data;
 };
 
@@ -95,13 +85,6 @@ const useGetCategoryNameQuery = () => {
   const { data } = useQuery('cat', async () => fetchCategories());
   return data;
 };
-
-// const useGetListingImageQuery = (listingID: string) => {
-//   const { data } = useQuery('listingImages', async () => fetchListingImages(listingID), {
-//     enabled: listingID !== undefined,
-//   });
-//   return data;
-// };
 
 const useGetListingImageQuery = (listingID: string) => {
   const { data } = useQuery('listingImages', async () => fetchS3Image(listingID), {
@@ -208,21 +191,6 @@ const DetailedListingPage = () => {
     bookmarkedListings
   );
 
-  // const getImagesArray = () => {
-  //   // const { data } = useQuery('images', async () => fetchS3Image(listings?.images))
-  //   // if ()
-  //   const listingImages = [];
-  //   const bucketName = (process.env.AWS_BUCKET as string) || 'siwma-marketplace';
-  //   const region = (process.env.AWS_REGION as string) || 'ap-southeast-1';
-
-  //   for (let i = 0; i < listings!.images!.length; i++) {
-  //     const imgSrc = `https://${bucketName}.s3.${region}.amazonaws.com/${listings!.images![i]}`;
-  //     listingImages.push(imgSrc);
-  //   }
-
-  //   return listingImages;
-  // };
-
   const datetime = useMemo(
     () =>
       DateTime.fromISO(listings?.createdAt as unknown as string).toRelative({ locale: 'en-SG' }),
@@ -287,12 +255,10 @@ const DetailedListingPage = () => {
       >
         <Container maxWidth="lg">
           {listings?.images?.length ? (
-            // <DetailedListingCarousel data={listings?.images} />
             <DetailedListingCarousel data={listings.images} />
           ) : (
             <ListingImgsPlaceholder />
           )}
-          {/* <DetailedListingCarousel data={carouselData} /> */}
           <Grid container columns={12} sx={{ direction: 'row' }}>
             <Grid item xs={12} md={8} pt={2}>
               <Grid

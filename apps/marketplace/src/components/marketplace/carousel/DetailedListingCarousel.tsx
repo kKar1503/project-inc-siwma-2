@@ -6,19 +6,12 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
-import { Listing } from '@/utils/api/client/zod/listings';
 import S3BoxImage from '@/components/S3BoxImage';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-// export interface Image {
-//   url: string;
-// }
-
 export type DetailedListingCarouselProps = {
-  // data: Listing
   data: string[];
-  // data: Listing[]
 };
 
 const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
