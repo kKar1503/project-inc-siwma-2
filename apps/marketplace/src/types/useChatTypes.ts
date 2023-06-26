@@ -1,5 +1,5 @@
 // ** Types Imports **
-import type { MessageSync, Messages, Room } from '@inc/types';
+import type { MessageSync, Messages, Room, RoomSync } from '@inc/types';
 
 // ** Hooks Params **
 export interface UseChatParams {
@@ -8,6 +8,7 @@ export interface UseChatParams {
   // ** Room Events Callbacks **
   roomCreateCallback?: (room: Room) => void;
   roomDeleteCallback?: (roomId: string) => void;
+  roomSyncCallback?: (room: RoomSync) => void;
   // ** Message Events Callbacks **
   messageCallback?: (message: Messages) => void;
   messageDeleteCallback?: (messageId: number) => void;
