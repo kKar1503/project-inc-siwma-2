@@ -274,7 +274,7 @@ const ChatRoom = () => {
         <Box
           sx={{
             width: isSm ? 1 / 1 : 1 / 3,
-            height: '100%',
+            height: isSm? 'calc(100vh - 32px)' : '100%',
             overflow: 'hidden',
           }}
         >
