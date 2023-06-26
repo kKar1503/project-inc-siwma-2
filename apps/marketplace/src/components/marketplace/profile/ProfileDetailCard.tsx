@@ -22,6 +22,9 @@ import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
 import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
+// import { Review } from '@/utils/api/client/zod';
+import { ReviewResponseBody } from '@/utils/api/client/zod/reviews';
 
 export type ProfileDetailCardProps =
   | {
@@ -44,12 +47,31 @@ export type ProfileDetailCardProps =
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
+  reviewData: ReviewResponseBody | undefined;
+
 };
 
 const useGetUserQuery = (userUuid: string) => {
   const { data } = useQuery('user', async () => fetchUser(userUuid), {
     enabled: userUuid !== undefined,
   });
+
+  return data;
+};
+
+const useGetReview = (userUuid: string, sortBy?: string) => {
+  const { data } = useQuery(
+    ['reviewdata', userUuid, sortBy],
+    async () => {
+      if (sortBy) {
+        return fetchProfilesReview(userUuid, sortBy);
+      }
+      return fetchProfilesReview(userUuid);
+    },
+    {
+      enabled: userUuid !== undefined || sortBy !== undefined,
+    }
+  );
 
   return data;
 };
@@ -75,11 +97,13 @@ const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | unde
   };
 };
 
-const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
+const ProfileDetailCard = ({ data, reviewData }: ProfileDetailCardData) => {
   const user = useSession();
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { t } = useTranslation();
+
+  // console.log('review is'  + reviewData?.avgRating)
 
   const styleProfileCard = useMemo(() => {
     if (isSm || isMd) {
@@ -179,14 +203,15 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
             })}
           >
             {/* {rating.toFixed(1)} */}
+            {reviewData?.avgRating.toFixed(1)}
           </Typography>
-          {/* <StarsRating rating={rating} /> */}
+          <StarsRating rating={reviewData?.avgRating as number} />
           <Typography
             sx={({ spacing }) => ({
               ml: spacing(1),
             })}
           >
-            {/* ({reviews} {reviews === 1 ? t('Review') : t('Reviews')}) */}
+            ({reviewData?.count} {reviewData?.count === 1 ? t('Review') : t('Reviews')})
           </Typography>
         </Box>
       </CardContent>
@@ -212,7 +237,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
                 borderRadius: spacing(2),
                 pr: '2px',
                 color: palette.common.white,
-                backgroundColor: palette.primary[500],
+                backgroundColor: '#229ED9',
               })}
             />
             <Typography

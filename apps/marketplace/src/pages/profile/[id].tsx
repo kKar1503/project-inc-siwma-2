@@ -216,7 +216,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
       </Head>
       <main>
         <Box sx={spaceStyle}>
-          {userDetails && <ProfileDetailCard data={userDetails} />}
+          {userDetails && <ProfileDetailCard data={userDetails} reviewData={userReviews} />}
           <Box
             sx={{
               width: isLg ? '73%' : '100%',
