@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
@@ -11,6 +12,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import MenuItem from '@mui/material/MenuItem';
+import CrossSectionImageToolTip from '@/components/marketplace/createListing/CrossSectionImageTooltip';
 import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
@@ -43,6 +45,7 @@ export interface ParameterProps {
 export interface SetParameterProps {
   parameters?: ParameterFormProps[];
   setParameters: (parameters: ParameterFormProps[]) => void;
+  crossSectionImg: string;
   data: ParameterProps[];
   errors: ParameterValidationProps[];
 }
@@ -60,7 +63,13 @@ const dataTypeToInputType = (dataType: dataTypeProps) => {
   }
 };
 
-const ParameterForm = ({ parameters, setParameters, data, errors }: SetParameterProps) => {
+const ParameterForm = ({
+  parameters,
+  setParameters,
+  crossSectionImg,
+  data,
+  errors,
+}: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
 
   useEffect(() => {
@@ -103,9 +112,12 @@ const ParameterForm = ({ parameters, setParameters, data, errors }: SetParameter
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <Grid item xs={12} md={12} mb={2} sx={{ width: '100%' }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          Category Parameters
-        </Typography>
+        <Box display="flex" alignItems="center">
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            Category Parameters
+          </Typography>
+          <CrossSectionImageToolTip data={crossSectionImg} />
+        </Box>
         <Typography variant="body1">
           Enter the parameters specific to the chosen category
         </Typography>
