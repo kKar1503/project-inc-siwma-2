@@ -20,10 +20,9 @@ export type SetCategoryProps = {
   setCategory: (category: CategoryProps | null) => void;
   data: CategoryProps[];
   error: string;
-  value?: CategoryProps | null;
 };
 
-const CategoryForm = ({ setCategory, data, error, value }: SetCategoryProps) => {
+const CategoryForm = ({ setCategory, data, error }: SetCategoryProps) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryProps | null>(null);
   const [validateError, setValidateError] = useState<boolean>(false);
 
@@ -34,10 +33,6 @@ const CategoryForm = ({ setCategory, data, error, value }: SetCategoryProps) => 
       setValidateError(false);
     }
   }, [error]);
-
-  useEffect(() => {
-    if (value) setSelectedCategory(value);
-  }, [value]);
 
   const handleCategoryChange = (e: SelectChangeEvent<string>) => {
     const categoryName = e.target.value as string;

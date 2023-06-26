@@ -2,10 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "emitDeclarationOnly": true,
     "declaration": true,
     "outDir": "./dist",
@@ -17,12 +14,6 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "."
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "esbuild.config.js"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "esbuild.config.js"]
 }

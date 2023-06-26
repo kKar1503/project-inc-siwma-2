@@ -11,7 +11,7 @@ let tokenRefreshPromise: Promise<Session | null> | null; // Holds the promise fo
 
 // Create axios client
 const client = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: `/api`,
 });
 
 // Attach an error handler as a response interceptor

@@ -12,7 +12,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
 export type MoreProfileIconProps = {
-  productId: number;
+  productId: string;
 };
 
 const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
@@ -50,7 +50,7 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
 
   return (
     <Box>
-      <IconButton onClick={handleClick} size="small" sx={{ ml: 'auto' }}>
+      <IconButton onClick={handleClick} size="small">
         <MoreVertIcon sx={({ palette }) => ({ color: palette.common.black })} />
       </IconButton>
 

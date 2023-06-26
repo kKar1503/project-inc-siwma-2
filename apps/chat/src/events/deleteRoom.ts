@@ -26,7 +26,7 @@ const deleteRoom: EventFile = (io, socket) => ({
         eventLog('info', `Room (${roomId}) deleted from database.`);
 
         eventLog('trace', `Acknowledging room (${roomId}) deleted from database...`);
-        ack({ success: true });
+        if (typeof ack === 'function') ack({ success: true });
 
         eventLog('trace', `Retrieving socketId for other occupant (${userId})...`);
         const otherOccupant = buyer === userId ? seller : buyer;
@@ -42,7 +42,8 @@ const deleteRoom: EventFile = (io, socket) => ({
         eventLog('error', `Failed to delete room (${roomId}) from database.`);
 
         eventLog('trace', `Acknowledging failed to delete room (${roomId}) from database...`);
-        ack({ success: false, err: { message: 'Failed to delete room from database.' } });
+        if (typeof ack === 'function')
+          ack({ success: false, err: { message: 'Failed to delete room from database.' } });
       });
   },
 });

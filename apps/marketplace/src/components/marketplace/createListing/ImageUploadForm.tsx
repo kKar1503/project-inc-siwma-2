@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 import FormHelperText from '@mui/material/FormHelperText';
+import { useResponsiveness } from '@inc/ui';
 
 export type ImageProps = {
   fileName: string;
@@ -15,53 +16,27 @@ export type ImageProps = {
 };
 
 export type PreviewImageProps = {
-  file?: File;
-  id?: string;
+  key: string;
+  file: File;
   preview: string;
 };
 
-export type Order = {
-  [key: string]: number;
+export type Props = {
+  images: Blob[];
+  setImages: React.Dispatch<React.SetStateAction<Blob[]>>;
 };
 
-export type SetImageProps = {
-  setImages: (parameters: Blob[]) => void;
-  imagesData: PreviewImageProps[];
-  setOrder: (parameters: Order) => void;
-  setDeletedImages: React.Dispatch<React.SetStateAction<string[]>>;
-};
-
-const ImageUploadForm = ({ setImages, imagesData, setOrder, setDeletedImages }: SetImageProps) => {
-  const [images, setPreivewImages] = useState<PreviewImageProps[]>([]);
+const ImageUploadForm = ({ images, setImages }: Props) => {
+  const [previewImages, setPreviewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
-
-  const dragItem = useRef<number | null>(null);
-  const dragOverItem = useRef<number | null>(null);
-
-  useEffect(() => {
-    setPreivewImages(imagesData);
-  }, [imagesData]);
-
-  useEffect(() => {
-    const order: Order = {};
-    images.forEach((image, index) => {
-      if (image.file) {
-        order[image.file.name] = index;
-      }
-      if (image.id) {
-        order[image.id] = index;
-      }
-    });
-    setOrder(order);
-  }, [images, setOrder]);
+  const [keyCounter, setKeyCounter] = useState(0);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPreivewImages(images.filter((item) => item.file === undefined));
+    const selectedImages = Array.from(e.target.files || []);
     setError('');
 
-    const selectedImages = Array.from(e.target.files || []);
-
-    if (selectedImages.length + images.length > 10) {
+    if (selectedImages.length + previewImages.length > 10) {
       setError('You can only upload up to 10 images.');
       return;
     }
@@ -72,92 +47,75 @@ const ImageUploadForm = ({ setImages, imagesData, setOrder, setDeletedImages }: 
       return;
     }
 
-    const previewImages = selectedImages.map((file) => ({
+    // Clear the value of the input element to force the onChange event
+    e.target.value = '';
+
+    const previewImages2 = selectedImages.map((file) => ({
+      key: keyCounter + file.name,
       file,
       preview: URL.createObjectURL(file),
     }));
-    setPreivewImages((prevImages) => [...prevImages, ...previewImages].slice(0, 10));
 
-    setImages(imageFiles);
+    const updatedPreviewImages = [...previewImages, ...previewImages2];
 
-    setError('');
+    setPreviewImages(updatedPreviewImages);
+
+    const updatedImages = [...images, ...imageFiles];
+
+    setImages(updatedImages);
+
+    // Increment the key counter
+    setKeyCounter((prevCounter) => prevCounter + 1);
   };
 
   const handleImageRemove = (index: number) => {
-    if (images[index].id !== undefined) {
-      setDeletedImages((prevData: string[]) => [...prevData, index.toString()]);
-    }
-    setPreivewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const openFullImage = (url: string) => {
     window.open(url, '_blank');
   };
 
-  const dragStart = (e: React.DragEvent<HTMLDivElement>, position: number) => {
-    dragItem.current = position;
-    e.dataTransfer.effectAllowed = 'move';
-  };
-
-  const dragEnter = (e: React.DragEvent<HTMLDivElement>, position: number) => {
-    dragOverItem.current = position;
-  };
-
-  const drop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const copyItems = [...images];
-    if (dragItem.current === null) return false;
-    if (dragOverItem.current === null) return false;
-
-    const dragItemContent = copyItems[dragItem.current];
-    copyItems.splice(dragItem.current, 1);
-    copyItems.splice(dragOverItem.current, 0, dragItemContent);
-    dragItem.current = null;
-    dragOverItem.current = null;
-    setPreivewImages(copyItems);
-    return true;
-  };
-
   const renderImages = () => {
-    if (images.length === 0) return null;
+    if (previewImages.length === 0) return null;
 
     return (
-      <Grid container spacing={2} onDrop={drop}>
-        {images.map(({ file, preview, id }, index) => (
-          <Grid
-            draggable
-            onDragStart={(e) => dragStart(e, index)}
-            onDragEnter={(e) => dragEnter(e, index)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={drop}
-            item
-            xs={2}
-            md={1}
-            key={file?.name || id}
-          >
-            <Box position="relative" mt="1rem">
+      <Grid container spacing={2}>
+        {previewImages.map(({ file, preview, key }, index) => (
+          <Grid item xs={4} sm={2.4} md={2.4} key={key}>
+            <Box sx={{ position: 'relative', mt: '1rem', display: 'inline-block' }}>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '-15px',
+                  right: '0px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <IconButton
+                  aria-label="delete"
+                  size="small"
+                  onClick={() => handleImageRemove(index)}
+                >
+                  <CancelIcon
+                    sx={({ palette }) => ({
+                      color: palette.error.main,
+                      backgroundColor: palette.common.white,
+                      borderRadius: 30,
+                    })}
+                  />
+                </IconButton>
+              </Box>
               <Image
                 src={preview}
-                alt={file?.name || preview}
-                width={100}
-                height={100}
-                style={{ paddingRight: '1rem' }}
+                alt={file.name}
+                width={((isLg || isMd) && 200) || (isSm && 150) || 100}
+                height={((isLg || isMd) && 200) || (isSm && 150) || 100}
+                style={{ paddingRight: '1rem', objectFit: 'cover' }}
                 onClick={() => openFullImage(preview)}
               />
-              <IconButton
-                aria-label="delete"
-                size="small"
-                sx={({ palette }) => ({
-                  position: 'absolute',
-                  top: -15,
-                  right: -20,
-                  color: palette.primary.main,
-                  bgcolor: palette.common.white,
-                })}
-                onClick={() => handleImageRemove(index)}
-              >
-                <CancelIcon />
-              </IconButton>
             </Box>
           </Grid>
         ))}
@@ -168,7 +126,7 @@ const ImageUploadForm = ({ setImages, imagesData, setOrder, setDeletedImages }: 
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-        Select Photos (Up to 10 Images)
+        Select Images (Up to 10 Images)
       </Typography>
       <Typography variant="body1">Choose images to display for the listing</Typography>
       <input
@@ -180,8 +138,15 @@ const ImageUploadForm = ({ setImages, imagesData, setOrder, setDeletedImages }: 
         onChange={handleImageSelect}
       />
       <label htmlFor="upload-btn">
-        <Button variant="contained" component="span" sx={{ mt: '1rem' }}>
-          Upload a Photo
+        <Button
+          variant="contained"
+          component="span"
+          size={((isLg || isMd) && 'large') || (isSm && 'medium') || 'small'}
+          sx={({ spacing }) => ({
+            mt: spacing(2),
+          })}
+        >
+          Upload Images
         </Button>
       </label>
       {error && <FormHelperText sx={{ color: 'red' }}>{error}</FormHelperText>}

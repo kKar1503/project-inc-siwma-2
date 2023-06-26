@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -44,10 +44,23 @@ export interface SetParameterProps {
   setParameters: (parameters: ParameterFormProps[]) => void;
   data: ParameterProps[];
   errors: ParameterValidationProps[];
-  value?: ParameterFormProps[];
 }
 
-const ParameterForm = ({ setParameters, data, errors, value }: SetParameterProps) => {
+const dataTypeToInputType = (dataType: dataTypeProps) => {
+  switch (dataType) {
+    case 'string':
+      return 'text';
+    case 'number':
+      return 'number';
+    case 'boolean':
+      return 'checkbox';
+    default:
+      return 'text';
+  }
+}
+
+const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
+
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
 
   const handleFormValueChange = (
@@ -77,16 +90,6 @@ const ParameterForm = ({ setParameters, data, errors, value }: SetParameterProps
     return '';
   };
 
-  useEffect(() => {
-    if (value) {
-      const obj: { [key: string]: ParameterFormProps } = {};
-      value.forEach((v) => {
-        obj[v.paramId] = v;
-      });
-      setFormValues(obj);
-    }
-  }, [value]);
-
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <Grid item xs={12} md={12} mb={2} sx={{ width: '100%' }}>
@@ -107,6 +110,7 @@ const ParameterForm = ({ setParameters, data, errors, value }: SetParameterProps
                     className="outlined-adornment-weight"
                     size="medium"
                     label={parameter.displayName}
+                    type={dataTypeToInputType(parameter.dataType)}
                     InputProps={{
                       endAdornment: <InputAdornment position="end">kg</InputAdornment>,
                     }}
@@ -127,6 +131,7 @@ const ParameterForm = ({ setParameters, data, errors, value }: SetParameterProps
                     size="medium"
                     label={parameter.displayName}
                     fullWidth
+                    type={dataTypeToInputType(parameter.dataType)}
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
                     error={errors.some((error) => error.parameterId === parameter.id)}

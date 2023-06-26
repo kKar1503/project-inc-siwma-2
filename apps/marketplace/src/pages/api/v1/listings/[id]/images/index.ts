@@ -7,14 +7,20 @@ import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import { FileInvalidExtensionError, ForbiddenError, NotFoundError } from '@inc/errors';
 import { IS3Object } from '@inc/s3-simplified';
-
+import { parseListingId } from '../..';
 
 const awsBucket = process.env.AWS_BUCKET as string;
 const acceptedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
 const deleteSchema = z.object({
-  delete: z.array(z.string().transform(zodParseToInteger))
-    .or(z.string().transform(zodParseToInteger).transform((id) => [id]))
+  delete: z
+    .array(z.string().transform(zodParseToInteger))
+    .or(
+      z
+        .string()
+        .transform(zodParseToInteger)
+        .transform((id) => [id])
+    )
     .optional(),
 });
 
@@ -25,7 +31,7 @@ const ParamSchema = z.object({
 const isAdmin = (user: { permissions: number } & APIRequestType) => user.permissions === 1;
 const validateUser = async (user: { id: string }, owner: string) => {
   const userId = user.id;
-  if(userId === owner) return true;
+  if (userId === owner) return true;
   const companyPromise = PrismaClient.companies.findFirst({
     where: {
       users: {
@@ -45,7 +51,7 @@ const validateUser = async (user: { id: string }, owner: string) => {
     },
   });
   const [company, otherCompany] = await Promise.all([companyPromise, otherCompanyPromise]);
-  return (company && otherCompany && company.id === otherCompany.id);
+  return company && otherCompany && company.id === otherCompany.id;
 };
 
 const validateListing = async (id: number) => {
@@ -65,9 +71,13 @@ const validateListing = async (id: number) => {
   return listing;
 };
 
-const append = async (listing: { listingImages: { image: string, order: number }[] }, objects: IS3Object[]) => {
+const append = async (
+  listing: { listingImages: { image: string; order: number }[] },
+  objects: IS3Object[]
+) => {
   const previousImages = listing.listingImages;
-  const offset = listing.listingImages.length === 0 ? 0 : previousImages[previousImages.length - 1].order;
+  const offset =
+    listing.listingImages.length === 0 ? 0 : previousImages[previousImages.length - 1].order;
 
   return objects.map((object, i) => {
     const sortOrder = i * 10000 + offset;
@@ -78,10 +88,12 @@ const append = async (listing: { listingImages: { image: string, order: number }
   });
 };
 
-const prepend = async (listing: { listingImages: { image: string, order: number }[] }, objects: IS3Object[]) => {
-
+const prepend = async (
+  listing: { listingImages: { image: string; order: number }[] },
+  objects: IS3Object[]
+) => {
   const firstImage = listing.listingImages.length === 0 ? 0 : listing.listingImages[0].order;
-  const offset = (-10000 * objects.length) + firstImage;
+  const offset = -10000 * objects.length + firstImage;
 
   return objects.map((object, i) => {
     const sortOrder = i * 10000 + offset;
@@ -92,14 +104,20 @@ const prepend = async (listing: { listingImages: { image: string, order: number 
   });
 };
 
-const insert = async (listing: {
-  listingImages: { image: string, order: number }[]
-}, objects: IS3Object[], insertIndex: number) => {
+const insert = async (
+  listing: {
+    listingImages: { image: string; order: number }[];
+  },
+  objects: IS3Object[],
+  insertIndex: number
+) => {
   if (insertIndex < 0) return prepend(listing, objects);
   if (insertIndex >= listing.listingImages.length) return append(listing, objects);
 
-
-  const [before, after] = [listing.listingImages[insertIndex - 1].order, listing.listingImages[insertIndex].order];
+  const [before, after] = [
+    listing.listingImages[insertIndex - 1].order,
+    listing.listingImages[insertIndex].order,
+  ];
   const sortOffset = (after - before) / (objects.length + 1);
 
   return objects.map((object, i) => {
@@ -113,7 +131,7 @@ const insert = async (listing: {
 
 const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
-  const { id } = ParamSchema.parse(req.query);
+  const id = parseListingId(req.query.id as string);
   // find listing
   const listing = await validateListing(id);
 
@@ -141,14 +159,17 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
     files.map((file) => {
       const object = fileToS3Object(file);
       return bucket.createObject(object);
-    }));
+    })
+  );
 
-  const index = req.query.insertIndex ? parseToNumber(req.query.insertIndex as string, 'insertIndex') : undefined;
+  const index = req.query.insertIndex
+    ? parseToNumber(req.query.insertIndex as string, 'insertIndex')
+    : undefined;
 
-  const newImages = typeof index === 'number'
-    ? await insert(listing, objects, index)
-    // default action when no index is provided
-    : await append(listing, objects);
+  const newImages =
+    typeof index === 'number'
+      ? await insert(listing, objects, index)
+      : await append(listing, objects); // default action when no index is provided
 
   await PrismaClient.listingImages.createMany({
     data: newImages.map((image) => ({
@@ -157,7 +178,6 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
       order: image.order,
     })),
   });
-
 
   // fetch updated listing
   const updatedListing = await validateListing(id);
@@ -170,7 +190,8 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
 const DELETE = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
-  const { id } = ParamSchema.parse(req.query);
+  const id = parseListingId(req.query.id as string);
+
   // find listing
   const listing = await validateListing(id);
 
@@ -178,7 +199,7 @@ const DELETE = async (req: NextApiRequest & APIRequestType, res: NextApiResponse
   const user = req.token?.user;
   if (!isAdmin(user) && !(await validateUser(user, listing.owner))) throw new ForbiddenError();
 
-  const  deleteIds = deleteSchema.parse(req.query).delete;
+  const deleteIds = deleteSchema.parse(req.query).delete;
   const indexesToDelete = deleteIds || [listing.listingImages.length - 1];
 
   const objectsToDelete = listing.listingImages.filter((_, i) => indexesToDelete.includes(i));
@@ -202,10 +223,7 @@ const DELETE = async (req: NextApiRequest & APIRequestType, res: NextApiResponse
   res.status(204).end();
 };
 
-export default apiHandler()
-  .put(PUT)
-  .delete(DELETE);
-
+export default apiHandler().put(PUT).delete(DELETE);
 
 export const config = {
   api: {

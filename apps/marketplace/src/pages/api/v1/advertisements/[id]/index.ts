@@ -4,33 +4,12 @@ import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import s3Connection from '@/utils/s3Connection';
-import { AdvertisementBucketName, select, where } from '@api/v1/advertisements/index';
+import { select, where } from '@api/v1/advertisements';
 import { APIRequestType } from '@/types/api-types';
-import { fileToS3Object, getFilesFromRequest, loadImage } from '@/utils/imageUtils';
 import { advertisementSchema } from '@/utils/api/server/zod';
+import process from 'process';
 
-const updateImage = async (
-  OldImage: string,
-  req: NextApiRequest & APIRequestType,
-): Promise<string> => {
-  const files = await getFilesFromRequest(req);
-  if (files.length > 0) {
-    const s3ObjectBuilder = fileToS3Object(files[0]);
-
-    const bucket = await s3Connection.getBucket(AdvertisementBucketName);
-
-    // create new image and delete old image as aws doesn't support update
-    // also do these in parallel for faster response
-    const awaitedPromise = await Promise.all([
-      bucket.createObject(s3ObjectBuilder),
-      bucket.deleteObject(OldImage),
-    ]);
-    const [newS3Object] = awaitedPromise;
-    return newS3Object.Id;
-  }
-  return OldImage;
-};
-
+const AWS_BUCKET = process.env.AWS_BUCKET as string;
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
   const id = parseToNumber(req.query.id as string, 'id');
@@ -50,15 +29,13 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   if (!advertisement) throw new NotFoundError(`advertisement`);
   const { companyId, ...advertisementContent } = advertisement;
 
-  const AdvertisementBucket = await s3Connection.getBucket(AdvertisementBucketName);
-
   // Return advertisement
-  res
-    .status(200)
-    .json(formatAPIResponse(await loadImage({
+  res.status(200).json(
+    formatAPIResponse({
       ...advertisementContent,
       companyId: companyId.toString(),
-    }, AdvertisementBucket, 'image')));
+    })
+  );
 };
 
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -89,7 +66,6 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
     select: select(isAdmin),
     data: {
       ...validatedPayload,
-      image: await updateImage(advertisement.image, req),
       endDate,
       startDate,
     },
@@ -128,7 +104,7 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Delete image from s3
   const deleteImage = async () => {
-    const bucket = await s3Connection.getBucket(AdvertisementBucketName);
+    const bucket = await s3Connection.getBucket(AWS_BUCKET);
     await bucket.deleteObject(advertisement.image);
   };
 

@@ -51,7 +51,7 @@ const ChatSubHeader = ({
           marginRight: spacing(1),
           my: spacing(1),
           height: 'fit-content',
-          width: 'fit-content',
+          width: '120px',
         },
         avatar: {
           width: 60,
@@ -79,7 +79,7 @@ const ChatSubHeader = ({
           marginRight: spacing(4),
           my: spacing(1),
           height: '100%',
-          width: 'fit-content',
+          width: '170px',
         },
         avatar: {
           width: 70,
@@ -107,7 +107,7 @@ const ChatSubHeader = ({
           marginRight: spacing(4),
           my: spacing(1),
           height: '100%',
-          width: 'fit-content',
+          width: '170px',
         },
         avatar: {
           width: 70,

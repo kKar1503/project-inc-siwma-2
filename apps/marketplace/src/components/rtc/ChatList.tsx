@@ -16,11 +16,14 @@ import Image from 'next/image';
 import { DateTime } from 'luxon';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme, alpha } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
+
+type CategoryType = 'All' | 'Buying' | 'Selling';
 
 export interface ChatListProps {
   id: string;
   company: string;
-  category: string;
+  category: CategoryType;
   latestMessage: string;
   price: number;
   itemName: string;
@@ -29,7 +32,6 @@ export interface ChatListProps {
   imageUrl: string;
   badgeContent: number;
 }
-type CategoryType = 'all' | 'Buying' | 'Selling';
 
 export type ChatListPageProps = {
   chats: ChatListProps[];
@@ -42,9 +44,9 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography } = useTheme();
 
-  const [category, setCategory] = useState<CategoryType>('all');
+  const [category, setCategory] = useState<CategoryType>('All');
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const whiteTransparent = alpha(palette.common.white, 0.04);
+  const greyTransparent = alpha(palette.common.black, 0.06);
   const { t } = useTranslation();
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
@@ -52,7 +54,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
   };
 
   const filteredChats = useMemo(() => {
-    if (category.toLowerCase() === 'all') {
+    if (category === 'All') {
       return chats.filter((chat) => chat.inProgress);
     }
     const filteredItems = chats.filter(
@@ -234,12 +236,14 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
 
   return (
     <Box
+      id="chat-list"
       sx={{
         backgroundColor: palette.common.white,
         height: '100%',
+        borderRight: '1px solid rgba(0, 0, 0, 0.12)',
       }}
     >
-      <Box sx={chatListStyles?.listHeader}>
+      <Box id="list-header" sx={chatListStyles?.listHeader}>
         <Box
           sx={{
             display: 'flex',
@@ -251,10 +255,11 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
           <Typography variant="h5" sx={chatListStyles?.listTitle}>
             {t('Conversations')}
           </Typography>
-          <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
-            {filteredChats.length} {t('ACTIVE')} 
+          {/* Commented out just in case we want this feature back LOL */}
+          {/* <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
+            {filteredChats.length} {t('ACTIVE')}
             {filteredChats.length !== 1 ? t('CHATS') : t('CHAT')}
-          </Typography>
+          </Typography> */}
         </Box>
         <FormControl
           variant="outlined"
@@ -288,7 +293,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
               ...chatListStyles?.searchBar,
             }}
           >
-            <MenuItem value="all">{t('ALL CHATS')}</MenuItem>
+            <MenuItem value="All">{t('ALL CHATS')}</MenuItem>
             <MenuItem value="Buying">{t('BUYING')}</MenuItem>
             <MenuItem value="Selling">{t('SELLING')}</MenuItem>
           </Select>
@@ -304,10 +309,9 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
           fullWidth
           sx={{
             '& .MuiFilledInput-root': {
-              background: whiteTransparent,
               borderRadius: '4px',
               '&:hover': {
-                background: whiteTransparent,
+                background: grey,
               },
             },
             '& .MuiInputBase-input': {
@@ -339,6 +343,9 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
               sx={{
                 background: activeItem === chat.id ? palette.grey[300] : 'none',
                 height: '100%',
+                '&:hover': {
+                  background: greyTransparent,
+                },
               }}
             >
               <ListItemAvatar>
@@ -401,6 +408,8 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                   sx={{
                     fontWeight: 500,
                     ...chatListStyles?.progressText,
+                    textAlign: 'right',
+                    mt: spacing(1),
                   }}
                 >
                   {chat.inProgress ? t('In progress') : `${t('Offered price')}: ${chat.price}`}

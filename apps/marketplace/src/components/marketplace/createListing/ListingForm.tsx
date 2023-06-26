@@ -13,11 +13,6 @@ export interface ListingValidationProps {
 }
 
 export type SetListingProps = {
-  title: string;
-  price: number;
-  negotiable: boolean;
-  unitPrice: boolean;
-  description: string;
   setTitle: (title: string) => void;
   setPrice: (price: number) => void;
   setNegotiable: (negotiable: boolean) => void;
@@ -27,11 +22,6 @@ export type SetListingProps = {
 };
 
 const ListingForm = ({
-  title,
-  price,
-  negotiable,
-  unitPrice,
-  description,
   setTitle,
   setPrice,
   setNegotiable,
@@ -48,7 +38,6 @@ const ListingForm = ({
     </Grid>
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <TextField
-        value={title}
         size="medium"
         variant="outlined"
         label="Listing Title"
@@ -63,7 +52,6 @@ const ListingForm = ({
 
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <TextField
-        value={price}
         className="outlined-adornment-amount"
         fullWidth
         error={Boolean(errors.priceError)}
@@ -80,7 +68,6 @@ const ListingForm = ({
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <FormControlLabel
         value="negotiable"
-        checked={negotiable}
         control={
           <Checkbox
             onChange={(e) => {
@@ -92,7 +79,6 @@ const ListingForm = ({
       />
       <FormControlLabel
         value="unitPrice"
-        checked={unitPrice}
         control={
           <Checkbox
             onChange={(e) => {
@@ -106,7 +92,6 @@ const ListingForm = ({
 
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <TextField
-        value={description}
         rows={6}
         variant="outlined"
         label="Listing Description"

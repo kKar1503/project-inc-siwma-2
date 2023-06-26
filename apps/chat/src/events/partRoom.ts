@@ -16,7 +16,7 @@ const partRoom: EventFile = (io, socket) => ({
       eventLog('warn', `Not in ${roomId}.`);
 
       eventLog('trace', `Acknowledging room (${roomId})...`);
-      ack({ success: false, err: { message: 'Not in room.' } });
+      if (typeof ack === 'function') ack({ success: false, err: { message: 'Not in room.' } });
 
       return;
     }
@@ -87,7 +87,7 @@ const partRoom: EventFile = (io, socket) => ({
     eventLog('info', `Left ${roomId}.`);
 
     eventLog('trace', `Acknowledging room (${roomId})...`);
-    ack({ success: true });
+    if (typeof ack === 'function') ack({ success: true });
   },
 });
 
