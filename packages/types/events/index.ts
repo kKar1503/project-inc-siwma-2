@@ -6,7 +6,7 @@ type RoomId = string;
 type MessageId = number;
 type ListingId = number;
 
-type LastMessage = (
+type MessageContent = (
   | {
       contentType: 'text' | 'file' | 'image';
     }
@@ -30,7 +30,7 @@ export type Room = {
   id: RoomId;
   username: string;
   category: 'BUY' | 'SELL';
-  latestMessage?: LastMessage;
+  latestMessage?: MessageContent;
   itemName: string;
   inProgress: boolean;
   time?: string;
@@ -63,9 +63,7 @@ export type Messages = {
   room: string;
   read: boolean;
   createdAt: string;
-  contentType: 'text' | 'file' | 'image' | 'offer';
-  offer: number | null;
-  content: string;
+  message?: MessageContent;
 };
 
 export type MessageSync = DataSync<Messages>;
