@@ -3,6 +3,7 @@ export { default as joinRoom } from './joinRoom';
 export { default as partRoom } from './partRoom';
 export { default as createRoom } from './createRoom';
 export { default as deleteRoom } from './deleteRoom';
+export { default as getRooms } from './getRooms';
 
 // ** Message Events
 export { default as sendMessage } from './sendMessage';
