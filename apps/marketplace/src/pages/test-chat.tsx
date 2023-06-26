@@ -50,8 +50,8 @@ const TestChatPage = () => {
         case 'in_progress': {
           console.log('Sync in progress');
           console.log(messageSync.progress);
-          console.log(messageSync.message);
-          syncLocalStorage(userId, messageSync.message, lastMessagesCache.current);
+          console.log(messageSync.data);
+          syncLocalStorage(userId, messageSync.data, lastMessagesCache.current);
           break;
         }
         default: {
