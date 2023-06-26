@@ -5,44 +5,48 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import i18next from 'i18next';
 import { useState, MouseEvent, useEffect } from 'react';
 
+type SupportedLanguage = 'en' | 'cn';
+
 const ChangeLanguageButton = () => {
-  const [language, setLanguage] = useState<'English' | 'Chinese' | ''>('');
+  const [language, setLanguage] = useState<SupportedLanguage>('en');
 
   const [isSm] = useResponsiveness(['sm']);
 
-  const initializeLanguage = () => {
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
     const storedLanguage = localStorage.getItem('i18nextLng');
 
     if (storedLanguage) {
       i18next.changeLanguage(storedLanguage);
-      setLanguage(storedLanguage === 'en' ? 'English' : 'Chinese');
+      console.log(`init with stored language ${storedLanguage}`);
+      setLanguage(storedLanguage as SupportedLanguage);
     }
-  };
 
-  useEffect(() => {
-    initializeLanguage();
+    setInitialized(true);
   }, []);
 
   useEffect(() => {
-    // Update the selected language in local storage
-    localStorage.setItem('i18nextLng', language === 'English' ? 'en' : 'cn');
-    console.log(language);
-    // Change the language using i18next
-    i18next.changeLanguage(language === 'English' ? 'en' : 'cn');
+    if (initialized) {
+      if (i18next.language !== language) {
+        // Update the selected language in local storage
+        localStorage.setItem('i18nextLng', language);
+
+        // Change the language using i18next
+        i18next.changeLanguage(language);
+      }
+    }
   }, [language]);
 
   const toggleLanguageChange = () => {
-    if (language === 'English') {
-      setLanguage('Chinese');
+    if (language === 'en') {
+      setLanguage('cn');
     } else {
-      setLanguage('English');
+      setLanguage('en');
     }
   };
 
-  const handleLanguageChange = (
-    event: MouseEvent<HTMLElement>,
-    newLanguage: 'English' | 'Chinese'
-  ) => {
+  const handleLanguageChange = (event: MouseEvent<HTMLElement>, newLanguage: 'en' | 'cn') => {
     if (newLanguage !== null) {
       setLanguage(newLanguage);
     }
@@ -51,19 +55,17 @@ const ChangeLanguageButton = () => {
   if (!isSm) {
     return (
       <Button
-        onClick={() => {
-          toggleLanguageChange();
-        }}
+        onClick={toggleLanguageChange}
         sx={{ color: ({ palette }) => palette.text.primary, fontWeight: 'bold' }}
       >
-        {language === 'English' ? 'EN' : '中'}
+        {language === 'en' ? 'EN' : '中'}
       </Button>
     );
   }
   return (
     <ToggleButtonGroup value={language} exclusive onChange={handleLanguageChange}>
-      <ToggleButton value="English">EN</ToggleButton>
-      <ToggleButton value="Chinese">中</ToggleButton>
+      <ToggleButton value="en">EN</ToggleButton>
+      <ToggleButton value="cn">中</ToggleButton>
     </ToggleButtonGroup>
   );
 };
