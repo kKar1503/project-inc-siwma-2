@@ -18,17 +18,14 @@ import ParameterForm, {
   ParameterFormProps,
   ParameterValidationProps,
 } from '@/components/marketplace/createListing/ParameterForm';
-import ListingTypeForm, {
-  ListingTypeProps,
-} from '@/components/marketplace/createListing/ListingTypeForm';
-import ListingForm, {
-  ListingValidationProps,
-} from '@/components/marketplace/createListing/ListingForm';
+import ListingTypeForm, { ListingTypeProps } from '@/components/marketplace/createListing/ListingTypeForm';
+import ListingForm, { ListingValidationProps } from '@/components/marketplace/createListing/ListingForm';
 import ImageUploadForm from '@/components/marketplace/createListing/ImageUploadForm';
+import S3Image from '@/components/S3Image';
 
 const usePostListingQuery = (
   listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
-  onSucessCallback: (data: ReturnType) => void
+  onSucessCallback: (data: ReturnType) => void,
 ) => {
   const { data } = useQuery(
     ['postListing', listing],
@@ -296,6 +293,7 @@ const CreateListingPage = () => {
               errors={parameterErrors}
             />
           )}
+          {category && <S3Image src={category.crossSectionImage} alt='cross section image' height='100' width='100' />}
           <ListingForm
             setTitle={setTitle}
             setPrice={setPrice}
