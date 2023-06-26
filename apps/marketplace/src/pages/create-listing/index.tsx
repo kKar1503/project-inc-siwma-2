@@ -292,6 +292,7 @@ const CreateListingPage = () => {
           {category && parametersData && (
             <ParameterForm
               setParameters={setParameters}
+              crossSectionImg={category.crossSectionImage}
               data={parametersData}
               errors={parameterErrors}
             />
