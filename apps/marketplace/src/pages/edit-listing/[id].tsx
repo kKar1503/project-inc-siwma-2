@@ -307,8 +307,8 @@ const CreateListingPage = () => {
   useEffect(() => {
     if (!session || !listing) return;
     if (
-      session.user.permissions !== 1 ||
-      session.user.id !== listing.owner.id ||
+      session.user.permissions !== 1 &&
+      session.user.id !== listing.owner.id &&
       session.user.companyId !== listing.owner.company.id
     ) {
       router.push('/404.tsx');
@@ -371,11 +371,9 @@ const CreateListingPage = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              Create Listing
+              Edit Listing
             </Typography>
-            <Typography variant="body1">
-              Create a new listing to be shared on your profile.
-            </Typography>
+            <Typography variant="body1">Edit a listing to be shared on your profile.</Typography>
           </Grid>
           <Grid item xs={12} sx={{ width: '100%' }}>
             <Divider />
@@ -400,6 +398,7 @@ const CreateListingPage = () => {
             <ParameterForm
               parameters={parameters}
               setParameters={setParameters}
+              crossSectionImg={category.crossSectionImage}
               data={parametersData}
               errors={parameterErrors}
             />
@@ -434,7 +433,7 @@ const CreateListingPage = () => {
           </Grid>
           <Grid item xs={6} sx={{ width: '100%' }}>
             <Button variant="contained" type="submit" size="large" fullWidth>
-              CREATE LISTING
+              EDIT LISTING
             </Button>
             {editListingData !== false &&
               (editListingData.success ? (

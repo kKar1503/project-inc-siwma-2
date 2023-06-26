@@ -63,9 +63,17 @@ const editListing = async (
 
     if (images.length === 0) return { success: true, id }; // no images to post
 
-    const formData = new FormData();
-    images.forEach((image) => formData.append('file', image));
-    await apiClient.put(`/v1/listings/${id}/images`, formData);
+    const imagePromises = images.map((image) => {
+      const formData = new FormData();
+      formData.append('file', image);
+      console.log('listing', `/v1/listings/${id}/images?insertIndex=${imagesOrder[image.name]}`);
+      return apiClient.put(
+        `/v1/listings/${id}/images?insertIndex=${imagesOrder[image.name]}`,
+        formData
+      );
+    });
+
+    await Promise.all(imagePromises);
 
     return { success: true, id };
   } catch (error: unknown) {
