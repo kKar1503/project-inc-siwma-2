@@ -7,6 +7,7 @@ import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import s3Connection from '@/utils/s3Connection';
 import { FileInvalidExtensionError, ForbiddenError, NotFoundError } from '@inc/errors';
 import { IS3Object } from '@inc/s3-simplified';
+import { parseListingId } from '../..';
 
 const awsBucket = process.env.AWS_BUCKET as string;
 const acceptedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
@@ -130,7 +131,7 @@ const insert = async (
 
 const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
-  const { id } = ParamSchema.parse(req.query);
+  const id = parseListingId(req.query.id as string);
   // find listing
   const listing = await validateListing(id);
 
@@ -189,7 +190,8 @@ const PUT = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
 const DELETE = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
-  const { id } = ParamSchema.parse(req.query);
+  const id = parseListingId(req.query.id as string);
+
   // find listing
   const listing = await validateListing(id);
 

@@ -13,7 +13,7 @@ import { useState, SyntheticEvent, useMemo, useEffect } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
-import fetchUser from '@/middlewares/fetchUser';
+import fetchCompany from '@/middlewares/fetchCompany';
 import { useRouter } from 'next/router';
 import { Listing, Review } from '@/utils/api/client/zod';
 import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
@@ -47,26 +47,29 @@ export type ProfilePageProps = {
 };
 
 const useGetUser = (userUuid: string) => {
-  const { data } = useQuery('userdata', async () => fetchUser(userUuid), {
+  const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
     enabled: userUuid !== undefined,
   });
   // console.log(data);
   return data;
 };
 
-// add one more parameter to fetchProfilesListings to include the filter
-const useGetListing = (userUuid: string, matching?: string, sortBy?: string) => {
+const useGetListing = (userUuid: string, matching?: string, sortBy?: string, filter?: string) => {
   const { data } = useQuery(
-    ['listingdata', userUuid, matching, sortBy],
+    ['listingdata', userUuid, matching, sortBy, filter],
     async () => {
-      if (matching || sortBy) {
-        return fetchProfilesListings(userUuid, matching, sortBy);
+      if (matching || sortBy || filter) {
+        return fetchProfilesListings(userUuid, matching, sortBy, filter);
       }
       return fetchProfilesListings(userUuid);
     },
     {
       // change the enabled to trigger on filter/sort
-      enabled: userUuid !== undefined || sortBy !== undefined || matching !== undefined,
+      enabled:
+        userUuid !== undefined ||
+        sortBy !== undefined ||
+        matching !== undefined ||
+        filter !== undefined,
     }
   );
 
@@ -127,7 +130,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const [sortByReviews, setSortByReviews] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
-  const userListings = useGetListing(id, searchQuery, sortByListings);
+  const userListings = useGetListing(id, searchQuery, sortByListings, filterListings);
   const userReviews = useGetReview(id, sortByReviews);
 
   useEffect(() => {
@@ -213,7 +216,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
       </Head>
       <main>
         <Box sx={spaceStyle}>
-          <ProfileDetailCard data={userDetails} />
+          {userDetails && <ProfileDetailCard data={userDetails} />}
           <Box
             sx={{
               width: isLg ? '73%' : '100%',

@@ -57,6 +57,8 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
     [data.createdAt]
   );
 
+  const listingName = data.name.replace(/\s+/g, '-').toLowerCase();
+
   const theme = useTheme();
   const [isSm] = useResponsiveness(['sm']);
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id, updateBookmarkData);
@@ -73,7 +75,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         },
       }}
     >
-      <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
+      <Link style={{ textDecoration: 'none', color: 'inherit' }} href={`/profile/${data.owner.id}`}>
         <CardHeader
           style={{ marginLeft: '-10px' }}
           avatar={
@@ -91,7 +93,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           }}
         />
       </Link>
-      <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
+      <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
         <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
       </Link>
       <CardContent
@@ -148,7 +150,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
             )}
           </Box>
         </Box>
-        <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
+        <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
           <Box
             sx={({ spacing }) => ({
               pb: spacing(1),

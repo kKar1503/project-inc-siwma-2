@@ -184,7 +184,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
           onClick={toggleDrawer(true)}
           color="inherit"
           sx={({ spacing }) => ({
-            ml: spacing(2),
+            mx: spacing(1),
           })}
         >
           <MenuIcon />
