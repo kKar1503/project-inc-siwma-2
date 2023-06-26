@@ -23,7 +23,7 @@ type LastMessage = (
 export type ClientSendMessage = {
   roomId: RoomId;
   message: string;
-  time: Date;
+  time: string;
 };
 
 export type Room = {
@@ -33,7 +33,7 @@ export type Room = {
   latestMessage?: LastMessage;
   itemName: string;
   inProgress: boolean;
-  time?: Date;
+  time?: string;
   userImage: string;
   unreadMessages: number;
 };
@@ -62,7 +62,7 @@ export type Messages = {
   author: string;
   room: string;
   read: boolean;
-  createdAt: Date;
+  createdAt: string;
   contentType: 'text' | 'file' | 'image' | 'offer';
   offer: number | null;
   content: string;
