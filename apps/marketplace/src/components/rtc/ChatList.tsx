@@ -351,7 +351,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     src={
                       chat.userImage === ''
                         ? '/images/placeholder.png'
-                        : `https://s3.karlok.dev/${chat.userImage}`
+                        : `https://${process.env.NEXT_PUBLIC_AWS_BUCKET}/${chat.userImage}`
                     }
                     width={chatListStyles?.listImage?.width}
                     height={chatListStyles?.listImage?.height}
