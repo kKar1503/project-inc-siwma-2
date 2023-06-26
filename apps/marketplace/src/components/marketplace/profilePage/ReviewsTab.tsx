@@ -16,8 +16,8 @@ const displaySortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'
 
 export type ReviewsTabProps = {
   allReviews: Review[] | null | undefined;
-  userRating: number;
-  totalReviews: number;
+  userRating: number | undefined;
+  totalReviews: number | undefined;
   filterReviews: (newData: string) => void;
   sortByReviews: (newData: string) => void;
 };
@@ -73,9 +73,9 @@ const ReviewsTab = ({
               fontSize: typography.h1,
             })}
           >
-            {userRating}
+            {userRating?.toFixed(1)}
           </Typography>
-          <StarsRating rating={userRating} />
+          <StarsRating rating={userRating || null} />
           <Typography
             sx={({ typography }) => ({
               fontSize: typography.subtitle1,

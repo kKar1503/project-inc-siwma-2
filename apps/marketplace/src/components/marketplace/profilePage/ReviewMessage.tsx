@@ -9,28 +9,42 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { StarsRating, useResponsiveness } from '@inc/ui';
 import { Review } from '@/utils/api/client/zod';
+import fetchUser from '@/middlewares/fetchUser';
+import { useQuery } from 'react-query';
 
 export type ReviewMessageData = {
   data: Review;
 };
 
+const useGetUser = (userUuid: string) => {
+  const { data } = useQuery('userdata', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  // console.log(data);
+  return data;
+};
+
 const ReviewMessage = ({ data }: ReviewMessageData) => {
   // destructure data
-
+  const user = useGetUser(data.userId);
+  console.log(data)
+  // console.log(user);
+  console.log(data.userId);
   const datetime = useMemo(
     () => DateTime.fromISO(data.createdAt).toRelative({ locale: 'en-SG' }),
     [data.createdAt]
   );
 
   const [isSm] = useResponsiveness(['sm']);
+  
 
   return (
     <List sx={{ m: 2 }}>
       <Box sx={{ m: 1 }}>
         <Stack direction="row" spacing={2} alignItems="center">
-          {/* <Link href={`/profile/${data.id}`}>
-            <Avatar src={data.profilePic} sx={{ width: 45, height: 45 }} />
-          </Link> */}
+          <Link href={`/profile/${data.id}`}>
+            <Avatar src={data.userId} sx={{ width: 45, height: 45 }} />
+          </Link>
           <Stack>
             <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -40,7 +54,7 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                     ...(isSm ? { alignItems: 'flex-start' } : { alignItems: 'center' }),
                   }}
                 >
-                  {/* <Link
+                  <Link
                     href={`/profile/${data.id}`}
                     style={{ textDecoration: 'none', color: 'black' }}
                   >
@@ -53,15 +67,18 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                         '&:hover': { textDecoration: 'underline' },
                       }}
                     >
-                      {username}
+                      {/* {username} */}
+                      {data.userId}
+                      {/* {user?.find((x: { id: string; }) => x.id === data?.userId)?.name} */}
+                      {user?.name}
                     </Typography>
-                  </Link> */}
-                  {/* <Typography
+                  </Link>
+                  <Typography
                     variant={isSm ? 'body2' : 'body1'}
                     sx={{ flexGrow: 1, ml: isSm ? 0 : 1, alignItems: 'center' }}
                   >
-                    review from {buyer ? 'buyer' : 'seller'}
-                  </Typography> */}
+                    {/* review from {data.type} */}
+                  </Typography>
                 </Stack>
               </Box>
               <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
@@ -100,6 +117,7 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
           {/* check if display review of reviews based on number */}
           {/* {noOfReviews}
           {noOfReviews === 1 ? ' Review' : ' Reviews'} */}
+          {data.id}
         </Typography>
       </Box>
       <Box>
