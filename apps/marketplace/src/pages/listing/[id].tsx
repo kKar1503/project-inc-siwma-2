@@ -16,7 +16,6 @@ import { useMutation, useQuery } from 'react-query';
 import CardContent from '@mui/material/CardContent';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
 import Link from '@mui/material/Link';
 import { StarsRating, useResponsiveness, AddCommentModal } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
@@ -37,6 +36,7 @@ import postReview from '@/middlewares/postReview';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
 // import S3Image from '@/components/S3Image';
 import fetchS3Image from '@/middlewares/fetchS3Image';
+import S3Avatar from '@/components/S3Avatar';
 
 const carouselData = [
   {
@@ -172,6 +172,8 @@ const DetailedListingPage = () => {
   const loggedUserUuid = currentUser.data?.user.id as string;
   const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
+
+  const placeholder = '/images/placeholder.png';
 
   const chatRooms = useChatListQuery(loggedUserUuid);
 
@@ -535,15 +537,16 @@ const DetailedListingPage = () => {
                         paddingBottom: 2,
                       }}
                     >
-                      <Avatar
+                      <S3Avatar
                         sx={({ spacing }) => ({
                           mb: spacing(2),
                           height: { sx: 21, md: 35, lg: 42 },
                           width: { sx: 21, md: 35, lg: 42 },
                         })}
+                        src={listings?.owner.profilePic || placeholder}
                       >
                         {listings?.owner.profilePic}
-                      </Avatar>
+                      </S3Avatar>
                       <Box sx={{ pb: { md: 1, lg: 2 }, marginLeft: 2 }}>
                         <Typography
                           variant="body2"
@@ -659,9 +662,14 @@ const DetailedListingPage = () => {
                       >
                         <Grid container>
                           <Grid item xs={2} md={1}>
-                            <Avatar>
+                            <S3Avatar
+                              src={
+                                user?.find((x) => x.id === individualReview?.userId)?.profilePic ||
+                                placeholder
+                              }
+                            >
                               {user?.find((x) => x.id === individualReview?.userId)?.profilePic}
-                            </Avatar>
+                            </S3Avatar>
                           </Grid>
                           <Grid item xs={9} md={8}>
                             <Typography

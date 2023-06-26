@@ -6,29 +6,23 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
-import S3Image from '@/components/S3Image';
+import { Listing } from '@/utils/api/client/zod/listings';
+import S3BoxImage from '@/components/S3BoxImage';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 // export interface Image {
-//   id: string,
-//   fileName: string,
-//   url: string,
+//   url: string;
 // }
-
-export interface Image {
-  // name: string,
-  url: string,
-}
 
 export type DetailedListingCarouselProps = {
   // data: Listing
-  data: string[]
+  data: string[];
+  // data: Listing[]
 };
 
 const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
-  const maxSteps = data.length as number;
-  // const maxSteps = data.length;
+  const maxSteps = data.length;
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -45,7 +39,14 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
   };
 
   return (
-    <Box sx={{ height: { xs: 200, sm: 300, md: 400, lg: 430 }, marginRight: 'auto', marginLeft: 'auto', overflowY: 'hidden' }}>
+    <Box
+      sx={{
+        height: { xs: 200, sm: 300, md: 400, lg: 430 },
+        marginRight: 'auto',
+        marginLeft: 'auto',
+        overflowY: 'hidden',
+      }}
+    >
       <AutoPlaySwipeableViews
         axis="x"
         index={activeStep}
@@ -60,12 +61,11 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
                   position: 'relative',
                 }}
               >
-                <Box
-                  component="img"
+                <S3BoxImage
                   sx={{
                     height: { xs: 200, sm: 300, md: 400, lg: 500 },
                     display: 'block',
-                    width: { xs: 0, sm: 600, md: 800, lg: 1000},
+                    width: { xs: 0, sm: 600, md: 800, lg: 1000 },
                     overflow: 'hidden',
                     opacity: '30%',
                     marginLeft: 'auto',
@@ -73,8 +73,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
                   }}
                   src={step as string}
                 />
-                {/* <Box
-                  component="img"
+                <S3BoxImage
                   sx={{
                     display: 'block',
                     height: { xs: 200, sm: 300, md: 400, lg: 500 },
@@ -87,12 +86,6 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
                     zIndex: 'tooltip',
                   }}
                   src={step as string}
-                /> */}
-                <S3Image
-                  alt='listingImg'
-                  width={500}
-                  height={500}
-                  src={step as string}
                 />
               </Box>
             ) : null}
@@ -102,7 +95,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
       <MobileStepper
         sx={{
           position: 'relative',
-          bottom: { xs: 240, sm: 340, md: 450, lg: 620 } ,
+          bottom: { xs: 240, sm: 340, md: 450, lg: 620 },
           backgroundColor: 'transparent',
         }}
         steps={maxSteps}
