@@ -255,7 +255,6 @@ const ChatRoom = () => {
     }
     if (isSm) {
       return {
-        height: 'calc(100vh - 64px)',
         minWidth: '0px',
         px: '0px',
       };
