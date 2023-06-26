@@ -4,6 +4,7 @@ import { Box, Typography, CardMedia, CardContent, Card, Grid, useTheme } from '@
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCategories from '@/middlewares/fetchCategories';
 import Link from 'next/link';
+import placeholder from 'public/images/category-placeholder.png';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -16,11 +17,7 @@ const useCategoryPageQuery = () => {
 
 const CategoriesPage = () => {
   const catData = useCategoryPageQuery();
-
-
   const theme = useTheme();
-
-  const placeholder = '/images/catPlaceholder.png';
 
   return (
     <Box
@@ -68,8 +65,10 @@ const CategoriesPage = () => {
                         maxHeight: 250,
                         width: 'auto',
                         maxWidth: 250,
+                        paddingTop: 1,
                       }}
-                      image={image || placeholder}
+                      // image={image || placeholder.src}
+                      image={placeholder.src}
                     />
                     
                   </div>
