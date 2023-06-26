@@ -56,7 +56,7 @@ const sendMessage: EventFile = (io, socket) => ({
           read: isOtherOccupantConnected,
         },
       })
-      .then((message) => {
+      .then(({ createdAt, ...message }) => {
         eventLog('info', `Created new message (${message.id}) in database.`);
 
         eventLog('trace', `Acknowledging message...`);
@@ -64,10 +64,10 @@ const sendMessage: EventFile = (io, socket) => ({
 
         if (otherOccupantSocketId !== '') {
           eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
-          (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(
-            EVENTS.SERVER.MESSAGE.ROOM,
-            message
-          );
+          (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
+            ...message,
+            createdAt: JSON.stringify(createdAt),
+          });
         }
       })
       .catch(() => {
