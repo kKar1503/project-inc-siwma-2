@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,22 +15,57 @@ export type ImageProps = {
   url: string;
 };
 
+export type ImageOrder = {
+  [key: string]: number;
+};
+
 export type PreviewImageProps = {
-  key: string;
-  file: File;
+  id?: string;
+  key?: string;
+  file?: File;
   preview: string;
 };
 
 export type Props = {
+  listingImages?: PreviewImageProps[];
   images: Blob[];
   setImages: React.Dispatch<React.SetStateAction<Blob[]>>;
+  setImageOrder?: React.Dispatch<React.SetStateAction<ImageOrder>>;
+  setDeletedImages?: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-const ImageUploadForm = ({ images, setImages }: Props) => {
+const ImageUploadForm = ({
+  listingImages,
+  images,
+  setImages,
+  setImageOrder,
+  setDeletedImages,
+}: Props) => {
   const [previewImages, setPreviewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
   const [keyCounter, setKeyCounter] = useState(0);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (listingImages) setPreviewImages(listingImages);
+  }, [listingImages]);
+
+  useEffect(() => {
+    console.log('here');
+    const order: ImageOrder = {};
+    previewImages.forEach((image, index) => {
+      if (image.file) {
+        order[image.file.name] = index;
+      }
+      if (image.id) {
+        order[image.id] = index;
+      }
+    });
+    if (setImageOrder) setImageOrder(order);
+  }, [previewImages, setImageOrder]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImages = Array.from(e.target.files || []);
@@ -71,19 +106,58 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
   const handleImageRemove = (index: number) => {
     setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    if (previewImages[index].id !== undefined && setDeletedImages) {
+      console.log('hello');
+      setDeletedImages((prevData: string[]) => [...prevData, index.toString()]);
+    }
   };
 
   const openFullImage = (url: string) => {
     window.open(url, '_blank');
   };
 
+  const dragStart = (e: React.DragEvent<HTMLDivElement>, position: number) => {
+    dragItem.current = position;
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const dragEnter = (e: React.DragEvent<HTMLDivElement>, position: number) => {
+    dragOverItem.current = position;
+  };
+
+  const drop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const copyItems = [...previewImages];
+    if (dragItem.current === null) return false;
+    if (dragOverItem.current === null) return false;
+
+    const dragItemContent = copyItems[dragItem.current];
+    copyItems.splice(dragItem.current, 1);
+    copyItems.splice(dragOverItem.current, 0, dragItemContent);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setPreviewImages(copyItems);
+    return true;
+  };
+
   const renderImages = () => {
     if (previewImages.length === 0) return null;
 
     return (
-      <Grid container spacing={2}>
+      <Grid container spacing={2} onDrop={drop}>
         {previewImages.map(({ file, preview, key }, index) => (
-          <Grid item xs={4} sm={2.4} md={2.4} key={key}>
+          <Grid
+            draggable
+            onDragStart={(e) => dragStart(e, index)}
+            onDragEnter={(e) => dragEnter(e, index)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={drop}
+            item
+            xs={4}
+            sm={2.4}
+            md={2.4}
+            key={key}
+          >
             <Box sx={{ position: 'relative', mt: '1rem', display: 'inline-block' }}>
               <Box
                 sx={{
@@ -110,7 +184,7 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
               </Box>
               <Image
                 src={preview}
-                alt={file.name}
+                alt={file ? file.name : ''}
                 width={((isLg || isMd) && 200) || (isSm && 150) || 100}
                 height={((isLg || isMd) && 200) || (isSm && 150) || 100}
                 style={{ paddingRight: '1rem', objectFit: 'cover' }}

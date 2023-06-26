@@ -13,6 +13,11 @@ export interface ListingValidationProps {
 }
 
 export type SetListingProps = {
+  title?: string;
+  price?: number;
+  negotiable?: boolean;
+  unitPrice?: boolean;
+  description?: string;
   setTitle: (title: string) => void;
   setPrice: (price: number) => void;
   setNegotiable: (negotiable: boolean) => void;
@@ -22,6 +27,11 @@ export type SetListingProps = {
 };
 
 const ListingForm = ({
+  title,
+  price,
+  negotiable,
+  unitPrice,
+  description,
   setTitle,
   setPrice,
   setNegotiable,
@@ -41,6 +51,7 @@ const ListingForm = ({
         size="medium"
         variant="outlined"
         label="Listing Title"
+        value={title}
         error={Boolean(errors.nameError)}
         helperText={errors.nameError}
         fullWidth
@@ -53,9 +64,11 @@ const ListingForm = ({
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <TextField
         className="outlined-adornment-amount"
+        value={price}
         fullWidth
         error={Boolean(errors.priceError)}
         helperText={errors.priceError}
+        type="number"
         InputProps={{
           startAdornment: <InputAdornment position="start">S$</InputAdornment>,
         }}
@@ -70,6 +83,7 @@ const ListingForm = ({
         value="negotiable"
         control={
           <Checkbox
+            value={negotiable}
             onChange={(e) => {
               setNegotiable(e.target.checked);
             }}
@@ -81,6 +95,7 @@ const ListingForm = ({
         value="unitPrice"
         control={
           <Checkbox
+            value={unitPrice}
             onChange={(e) => {
               setUnitPrice(e.target.checked);
             }}
@@ -95,6 +110,7 @@ const ListingForm = ({
         rows={6}
         variant="outlined"
         label="Listing Description"
+        value={description}
         fullWidth
         multiline
         error={Boolean(errors.descriptionError)}
