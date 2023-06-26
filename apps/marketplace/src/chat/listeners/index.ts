@@ -10,6 +10,7 @@ import deletedMessage from './deletedMessage';
 import readMessage from './readMessage';
 import syncMessage from './syncMessage';
 import syncMessage2 from './syncMessage2';
+import startType from './startType';
 
 // ** Event Listeners Compilation **
 const listeners: Record<string, ClientEventFile<UseChatParams>> = {
@@ -20,6 +21,7 @@ const listeners: Record<string, ClientEventFile<UseChatParams>> = {
   readMessage,
   syncMessage,
   syncMessage2,
+  startType,
 };
 
 export default listeners;
