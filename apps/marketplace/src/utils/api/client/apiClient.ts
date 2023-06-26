@@ -19,6 +19,7 @@ client.interceptors.response.use(
   (response) => response,
   async (error) => {
     // Check if the error was due to an invalid token
+    console.log(error.response)
     if (error.response.status === AuthError.status) {
       // Refresh the token
       // Check if the token is already being refreshed
@@ -43,11 +44,14 @@ client.interceptors.response.use(
         currRetries = 0;
         return res;
       }
+      var previousUrl = window.location.href;
+      var encodedPreviousUrl = encodeURIComponent(previousUrl);
+
 
       // We have already hit the max number of retries, the user is no longer authenticated
       // Clear the user session and redirect the user to the login page
       await signOut();
-      window.location.href = '/login';
+      window.location.href = `/login?callbackUrl=${encodedPreviousUrl}`;
       return null;
     }
 
