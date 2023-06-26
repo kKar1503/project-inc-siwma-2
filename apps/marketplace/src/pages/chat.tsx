@@ -21,7 +21,7 @@ import type { Messages } from '@inc/types';
 import type { ChatListProps } from '@/components/rtc/ChatList';
 
 // ** Hooks Imports **
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import useReadLocalStorage from '@/hooks/useReadLocalStorage';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import useChat from '@/hooks/useChat';
@@ -29,6 +29,8 @@ import { useRouter } from 'next/router';
 
 // ** Utils Imports **
 import { syncLocalStorage, syncLastMessage, syncLastMessages } from '@/utils/syncLocalStorage';
+import Button from '@mui/material/Button';
+import { syncMessage } from '@/chat/emitters';
 
 const ChatRoom = () => {
   // ** Socket Initialization
@@ -51,7 +53,7 @@ const ChatRoom = () => {
 
   // ** MUI **
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing } = useTheme();
+  const { spacing, palette } = useTheme();
 
   // ** States **
   const [makeOffer, setMakeOffer] = useState(false);
@@ -233,6 +235,18 @@ const ChatRoom = () => {
     setLastMessages(chatList);
   }, [rooms]);
 
+  useEffect(() => {
+    if (isConnected) {
+      syncMessage(socket.current, lastMessageId === null ? 0 : lastMessageId, (ack) => {
+        if (ack.success) {
+          console.log(ack.data);
+        } else {
+          console.log(ack.err);
+        }
+      });
+    }
+  }, [isConnected]);
+
   // ** Responsive Styles **
   const pagePadding = useMemo(
     () =>
@@ -253,8 +267,9 @@ const ChatRoom = () => {
     <Box
       display="flex"
       sx={{
-        height: '100vh',
-        // overflowY: 'hidden',
+        height: 'calc(100vh - 64px)',
+        minWidth: '992px',
+        px: isLg ? 'calc(50vw - 656px)' : '64px',
         pagePadding,
       }}
     >
@@ -265,7 +280,7 @@ const ChatRoom = () => {
           sx={({ shadows }) => ({
             boxShadow: shadows[3],
             width: isSm ? 1 / 1 : 1 / 3,
-            height: isSm ? '100%' : '90%',
+            height: '100%',
             overflow: 'hidden',
           })}
         >
@@ -281,46 +296,68 @@ const ChatRoom = () => {
         </Box>
       )}
       {/* if isSm, display  */}
-      {roomId !== '' && (
-        <Box
-          sx={{
-            width: isSm ? 1 / 1 : 2 / 3,
-            height: isSm ? '100%' : '90%',
-            overflow: 'hidden',
-          }}
-        >
-          <ChatHeader
-            profilePic=""
-            companyName="Hi Metals PTE LTD"
-            available
-            setSelectChat={setRoomId}
-          />
-          <ChatSubHeader
-            itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
-            itemName="Hi Metals PTE LTD"
-            available
-            itemPrice={200.8}
-            makeOffer={makeOffer}
-            setMakeOffer={setMakeOffer}
-          />
-          <Box sx={{ height: '100%' }}>
-            <ChatBox
-              roomData={messages}
-              loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
-              ChatText={
-                <ChatTextBox
-                  selectedFile={selectedFile}
-                  setSelectedFile={setSelectedFile}
-                  inputText={inputText}
-                  setInputText={setInputText}
-                  onSend={onSend}
-                  setOnSend={setOnSend}
-                />
-              }
+      <Box
+        sx={{
+          width: isSm ? 1 / 1 : 2 / 3,
+          height: '100%',
+          overflow: 'hidden',
+          bgcolor: palette.common.white,
+        }}
+      >
+        {roomId !== '' && (
+          <>
+            <ChatHeader
+              profilePic=""
+              companyName="Hi Metals PTE LTD"
+              available
+              setSelectChat={setRoomId}
             />
-          </Box>
-        </Box>
-      )}
+            <ChatSubHeader
+              itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
+              itemName="Hi Metals PTE LTD"
+              available
+              itemPrice={200.8}
+              makeOffer={makeOffer}
+              setMakeOffer={setMakeOffer}
+            />
+            <Box sx={{ height: '100%' }}>
+              <ChatBox
+                roomData={messages}
+                loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
+                ChatText={
+                  <ChatTextBox
+                    selectedFile={selectedFile}
+                    setSelectedFile={setSelectedFile}
+                    inputText={inputText}
+                    setInputText={setInputText}
+                    onSend={onSend}
+                    setOnSend={setOnSend}
+                  />
+                }
+              />
+            </Box>
+          </>
+        )}
+      </Box>
+      <Button
+        sx={{
+          position: 'fixed',
+          bottom: '120px',
+          right: '120px',
+          height: '80px',
+          width: '80px',
+          borderRadius: '50%',
+          backgroundColor: 'red',
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '1em',
+        }}
+        onClick={() => {
+          setConnect(true);
+        }}
+      >
+        Sync
+      </Button>
     </Box>
   );
 };
