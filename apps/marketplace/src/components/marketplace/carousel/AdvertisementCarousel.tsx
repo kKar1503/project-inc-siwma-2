@@ -7,6 +7,7 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
+import placeholder from 'public/images/listing-placeholder.png';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -58,7 +59,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                     opacity: '30%',
                   }}
                   // step.image is coinsidered as string|null but src requires string|undefined
-                  src={step.image as string}
+                  src={step.image ? step.image : placeholder.src}
                 />
                 <Box
                   component="img"
@@ -75,7 +76,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                     zIndex: 'tooltip',
                   }}
                   // step.image is coinsidered as string|null but src requires string|undefined
-                  src={step.image as string}
+                  src={step.image ? step.image : placeholder.src}
                 />
               </Box>
             ) : null}
