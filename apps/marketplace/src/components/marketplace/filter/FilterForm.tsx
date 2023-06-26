@@ -117,7 +117,7 @@ const FilterForm = ({
         onChange={(e) => setCategory(parseInt(e.target.value, 10))}
         value={category.toString()}
       >
-        <MenuItem key={0} value="">
+        <MenuItem key={0} value={0}>
           No Category
         </MenuItem>
         {categoriesData &&
