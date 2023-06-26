@@ -17,6 +17,7 @@ const useCategoryPageQuery = () => {
 const CategoriesPage = () => {
   const catData = useCategoryPageQuery();
 
+
   const theme = useTheme();
 
   const placeholder = '/images/catPlaceholder.png';

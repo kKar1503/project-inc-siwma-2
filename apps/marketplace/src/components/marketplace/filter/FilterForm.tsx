@@ -141,7 +141,7 @@ const FilterForm = ({
       <FormLabel sx={{ fontWeight: 600 }}>{t('Negotiability')}</FormLabel>
       <RadioGroup onChange={(e) => setNegotiation(e.target.value)} value={negotiation}>
         <FormControlLabel value="true" control={<Radio />} label={t('Negotiable')} />
-        <FormControlLabel value="false" control={<Radio />} label={t('Non-Negotiable')} />
+        <FormControlLabel value="false" control={<Radio />} label={t('Non-negotiable')} />
       </RadioGroup>
 
       <Divider sx={{ my: 2 }} />

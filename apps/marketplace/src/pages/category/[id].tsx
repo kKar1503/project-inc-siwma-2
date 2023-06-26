@@ -55,20 +55,9 @@ const IndividualCategoryPg = () => {
     }
   );
 
-  // useEffect(() => {
-  //   const totalListingsCount = listings.length;
-  //   let listingsNeededCount = 0;
-
-  //   if (isXl) {
-  //     listingsNeededCount = 5 - (totalListingsCount % 5);
-  //   } else if (isLg) {
-  //     listingsNeededCount = 4 - (totalListingsCount % 5);
-  //   } else if (isMd) {
-  //     listingsNeededCount = 3 - (totalListingsCount % 5);
-  //   }
-  //   const listingsNeeded = listings.slice(0, listingsNeededCount);
-  //   setListings((prev) => [...prev, ...listingsNeeded]);
-  // }, [maxItems]);
+  useEffect(() => {
+   refetch()
+  }, [filterOptions, lastListingId]);
 
   // const { data: listingData, isLoading } = useCatListings(id, filterOptions);
   const { data: catData } = useFetchCatById(id);
@@ -104,8 +93,7 @@ const IndividualCategoryPg = () => {
           </Box>
         )}
 
-        {listings && listings.length > 0 && (
-          // <Grid container display="flex" spacing={2}>
+        {/* {listings && listings.length > 0 && ( */}
           <InfiniteScroll
             onLoadMore={refetch}
             loading={isLoading}
@@ -132,13 +120,10 @@ const IndividualCategoryPg = () => {
             }}
           >
             {listings.map((item: Listing) => (
-              // <Grid item xs={6} md={4} xl={3} key={item.id}>
               <ProductListingItem data={item} showBookmark />
-              // </Grid>
             ))}
           </InfiniteScroll>
-          // </Grid>
-        )}
+        {/* )} */}
       </DisplayResults>
     </Container>
   );
