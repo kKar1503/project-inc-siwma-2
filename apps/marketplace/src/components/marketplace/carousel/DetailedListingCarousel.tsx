@@ -6,22 +6,25 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
-// import { Listing } from '@/utils/api/client/zod';
+import S3Image from '@/components/S3Image';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
+// export interface Image {
+//   id: string,
+//   fileName: string,
+//   url: string,
+// }
+
 export interface Image {
-  id: string,
-  fileName: string,
+  // name: string,
   url: string,
 }
 
 export type DetailedListingCarouselProps = {
   // data: Listing
-  data: Image[]
+  data: string[]
 };
-
-// type ImageTypes = Pick<Listing, 'images'>
 
 const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
   const maxSteps = data.length as number;
@@ -68,9 +71,9 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
                     marginLeft: 'auto',
                     marginRight: 'auto',
                   }}
-                  src={step.url as string}
+                  src={step as string}
                 />
-                <Box
+                {/* <Box
                   component="img"
                   sx={{
                     display: 'block',
@@ -83,7 +86,13 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
                     marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
-                  src={step.url as string}
+                  src={step as string}
+                /> */}
+                <S3Image
+                  alt='listingImg'
+                  width={500}
+                  height={500}
+                  src={step as string}
                 />
               </Box>
             ) : null}

@@ -28,13 +28,15 @@ import fetchParams from '@/middlewares/fetchParamNames';
 import fetchUser from '@/middlewares/fetchUser';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { DateTime } from 'luxon';
-// import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
+import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
 import fetchChatList from '@/middlewares/fetchChatList';
 import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
+// import S3Image from '@/components/S3Image';
+import fetchS3Image from '@/middlewares/fetchS3Image';
 
 const carouselData = [
   {
@@ -58,6 +60,14 @@ const useGetListingQuery = (listingID: string) => {
   const { data } = useQuery('listing', async () => fetchListing(listingID), {
     enabled: listingID !== undefined,
   });
+
+  // if (data?.images) {
+  //   const bucketName = (process.env.AWS_BUCKET as string) || 'siwma-marketplace';
+  //   const region = (process.env.AWS_REGION as string) || 'ap-southeast-1';
+  //   for ( let i = 0; i < data.images.length; i++) {
+  //     data.images[i] = `https://${bucketName}.s3.${region}.amazonaws.com/${data.images[i]}`;
+  //   }
+  // }
   return data;
 };
 
@@ -86,8 +96,15 @@ const useGetCategoryNameQuery = () => {
   return data;
 };
 
-const useGetListingImagesQuery = (listingID: string) => {
-  const { data } = useQuery('listingImages', async () => fetchListingImages(listingID), {
+// const useGetListingImageQuery = (listingID: string) => {
+//   const { data } = useQuery('listingImages', async () => fetchListingImages(listingID), {
+//     enabled: listingID !== undefined,
+//   });
+//   return data;
+// };
+
+const useGetListingImageQuery = (listingID: string) => {
+  const { data } = useQuery('listingImages', async () => fetchS3Image(listingID), {
     enabled: listingID !== undefined,
   });
   return data;
@@ -147,7 +164,7 @@ const DetailedListingPage = () => {
   const listingId = router.query.id as string;
   const listings = useGetListingQuery(listingId);
   const reviews = useGetReviewsQuery(listingId);
-  const listingImgs = useGetListingImagesQuery(listingId);
+  const listingImg = useGetListingImageQuery(listingId);
   const cats = useGetCategoryNameQuery();
   const user = useGetUserQuery();
   const currentUser = useSession();
@@ -188,6 +205,21 @@ const DetailedListingPage = () => {
     listingId,
     bookmarkedListings
   );
+
+  // const getImagesArray = () => {
+  //   // const { data } = useQuery('images', async () => fetchS3Image(listings?.images))
+  //   // if ()
+  //   const listingImages = [];
+  //   const bucketName = (process.env.AWS_BUCKET as string) || 'siwma-marketplace';
+  //   const region = (process.env.AWS_REGION as string) || 'ap-southeast-1';
+
+  //   for (let i = 0; i < listings!.images!.length; i++) {
+  //     const imgSrc = `https://${bucketName}.s3.${region}.amazonaws.com/${listings!.images![i]}`;
+  //     listingImages.push(imgSrc);
+  //   }
+
+  //   return listingImages;
+  // };
 
   const datetime = useMemo(
     () =>
@@ -252,12 +284,13 @@ const DetailedListingPage = () => {
         })}
       >
         <Container maxWidth="lg">
-          {/* {listingImgs?.length ? (
-            <DetailedListingCarousel data={listingImgs} />
+          {listings?.images?.length ? (
+            // <DetailedListingCarousel data={listings?.images} />
+            <DetailedListingCarousel data={listings.images} />
           ) : (
             <ListingImgsPlaceholder />
-          )} */}
-          <DetailedListingCarousel data={carouselData} />
+          )}
+          {/* <DetailedListingCarousel data={carouselData} /> */}
           <Grid container columns={12} sx={{ direction: 'row' }}>
             <Grid item xs={12} md={8} pt={2}>
               <Grid
@@ -684,13 +717,7 @@ const DetailedListingPage = () => {
                       </Button>
                     </Link>
                   ) : (
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      size="large"
-                      fullWidth
-                      disabled
-                    >
+                    <Button variant="contained" type="submit" size="large" fullWidth disabled>
                       CHAT NOW
                     </Button>
                   )}
