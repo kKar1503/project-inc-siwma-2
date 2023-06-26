@@ -59,7 +59,7 @@ const CategoriesPage = () => {
             <Grid key={id} item xl={2} lg={3} md={4} sm={6} xs={12}>
               <Card>
                 <CardActionArea>
-                  <Link href={`/category/${id}`}>
+                  <Link href={`/category/${id}`} style={{ textDecoration: 'none'}}>
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <CardMedia
                       component="img"
@@ -79,6 +79,7 @@ const CategoriesPage = () => {
                       variant="body1"
                       sx={{
                         fontWeight: theme.typography.h6,
+                        color: theme.palette.common.black
                       }}
                     >
                       {name}
