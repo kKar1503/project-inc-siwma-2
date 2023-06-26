@@ -27,6 +27,7 @@ import ImageUploadForm, {
 } from '@/components/marketplace/createListing/ImageUploadForm';
 import fetchListing from '@/middlewares/fetchListing';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 const useGetListingQuery = (id: string) => {
   const { data } = useQuery(['listing', id], async () => fetchListing(id), {
@@ -78,6 +79,7 @@ const CreateListingPage = () => {
   //
   const router = useRouter();
   const { id } = router.query;
+  const { data: session } = useSession();
 
   // form data (parts)
   const [listingType, setListingType] = useState<ListingTypeProps>('BUY');
@@ -90,6 +92,7 @@ const CreateListingPage = () => {
   const [unitPrice, setUnitPrice] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+
   const [listingImages, setListingImages] = useState<PreviewImageProps[]>([]);
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const [imageOrder, setImageOrder] = useState<ImageOrder>({});
@@ -300,6 +303,19 @@ const CreateListingPage = () => {
     setCategoryParameters(category.parameters || []);
   }, [category]);
 
+  // check if the user is admin or owner of the listing or from the same company
+  useEffect(() => {
+    if (!session || !listing) return;
+    if (
+      session.user.permissions !== 1 ||
+      session.user.id !== listing.owner.id ||
+      session.user.companyId !== listing.owner.company.id
+    ) {
+      router.push('/404.tsx');
+    }
+  }, [session, listing]);
+
+  // fill the form with data
   useEffect(() => {
     if (listing) {
       setListingType(listing.type);
@@ -426,12 +442,14 @@ const CreateListingPage = () => {
                   open={openCreateModal}
                   setOpen={setOpenCreateModal}
                   listingID={editListingData.id}
+                  title="Successfully edited listing!"
                 />
               ) : (
                 <OnCreateErrorModal
                   open={openCreateErrorModal}
                   setOpen={setOpenCreateErrorModal}
                   content={editListingData.errorMessages}
+                  title="Error occured when editing listing."
                 />
               ))}
           </Grid>

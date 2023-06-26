@@ -4,7 +4,6 @@ import categories from '@/utils/api/client/zod/categories';
 import { PutListingsRequestBody } from '@/utils/api/server/zod/listings';
 import { ReturnType } from './createListing';
 
-// backend not confirmed yet, backend stuff still in progress...
 const editListing = async (
   id: string,
   listingBody: PutListingsRequestBody | undefined,
