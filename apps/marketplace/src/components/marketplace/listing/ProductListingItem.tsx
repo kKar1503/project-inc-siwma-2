@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
+import S3Avatar from '@/components/S3Avatar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -80,9 +80,9 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         <CardHeader
           style={{ marginLeft: '-10px' }}
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
+            <S3Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
               {data.owner.name.charAt(0)}
-            </Avatar>
+            </S3Avatar>
           }
           title={data.owner.name}
           titleTypographyProps={{
