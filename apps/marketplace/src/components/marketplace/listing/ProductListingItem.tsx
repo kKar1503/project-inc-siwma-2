@@ -11,6 +11,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Link from 'next/link';
 import { red } from '@mui/material/colors';
 import { StarsRating, useResponsiveness } from '@inc/ui';
+import S3Image from '@/components/S3Image';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -79,9 +80,13 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         <CardHeader
           style={{ marginLeft: '-10px' }}
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
-              {data.owner.name.charAt(0)}
-            </Avatar>
+            <S3Image
+              style={{ borderRadius: '100%' }}
+              src={`${data.owner.profilePic}` || placeholder}
+              alt="Profile Picture"
+              width={50}
+              height={50}
+            />
           }
           title={data.owner.name}
           titleTypographyProps={{
