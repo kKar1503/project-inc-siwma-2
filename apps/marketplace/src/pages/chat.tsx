@@ -63,6 +63,8 @@ const ChatRoom = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [connect, setConnect] = useState(false);
   const [lastMessages, setLastMessages] = useState<ChatListProps[]>([]);
+  const [acceptOffer, setAcceptOffer] = useState<boolean>();
+  const [deleteOffer, setDeleteOffer] = useState<boolean>(false);
 
   // ** LocalStorage Values **
   const lastMessageId = useReadLocalStorage<number>(lastMessageIdKey);

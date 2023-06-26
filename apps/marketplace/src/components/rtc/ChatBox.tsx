@@ -20,15 +20,18 @@ type ChatData = {
   offer: number | null;
   author: string;
   createdAt: Date;
+  offerState?: 'pending' | 'accepted' | 'rejected';
 };
 
 export type ChatBoxProps = {
   roomData: ChatData[];
   loginId: string;
   ChatText: JSX.Element;
+  acceptOffer: boolean;
+  setAcceptOffer: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
+const ChatBox = ({ loginId, roomData, ChatText, acceptOffer, setAcceptOffer }: ChatBoxProps) => {
   const { t } = useTranslation();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
@@ -78,7 +81,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
 
   return (
     <Box>
-      <Box sx={{}}>
+      <Box>
         <Paper
           sx={{
             p: 2,
@@ -125,7 +128,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                       {message.content}
                     </Typography>
                   )}
-                  {message.contentType === 'offer' && (
+                  {/* {message.contentType === 'offer' && (
                     <Box>
                       <Typography
                         sx={({ palette }) => ({
@@ -152,6 +155,90 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                       >
                         {message.offer?.toFixed(2)}
                       </Typography>
+                    </Box>
+                  )} */}
+                  {message.contentType === 'offer' && (
+                    <Box>
+                      <Box display="flex" sx={({ spacing }) => ({ mb: spacing(2) })}>
+                        <Typography
+                          sx={({ palette, spacing }) => ({
+                            color:
+                              message.author === loginId
+                                ? palette.common.white
+                                : palette.text.primary,
+                            fontSize: 'subtitle1',
+                            fontWeight: 'bold',
+                            letterSpacing: '0.15px',
+                            mr: spacing(3),
+                          })}
+                        >
+                          {t('Make Offer')}:
+                        </Typography>
+                        <Typography
+                          sx={({ palette, spacing }) => ({
+                            color:
+                              message.author === loginId
+                                ? palette.common.white
+                                : palette.text.primary,
+                            fontSize: 'subtitle1',
+                            fontWeight: 'bold',
+                            letterSpacing: '0.15px',
+                            mr: spacing(3),
+                          })}
+                        >
+                          ${message.offer}
+                        </Typography>
+                      </Box>
+                      {/* if the offer belongs to the logged in user, he can cancel the offer, else the buyer will get to choose "Decline"/"Accept" it */}
+                      {message.author === loginId ? (
+                        <Button
+                          variant="contained"
+                          sx={({ palette }) => ({
+                            color: palette.common.white,
+                            fontSize: 'body1',
+                            letterSpacing: '0.15px',
+                            backgroundColor: palette.error[300],
+                            width: '100%',
+                          })}
+                          onClick={() => setAcceptOffer(true)}
+                        >
+                          Cancel
+                        </Button>
+                      ) : (
+                        <Box>
+                          <Button
+                            variant="outlined"
+                            sx={({ palette, spacing }) => ({
+                              color:
+                                message.author === loginId
+                                  ? palette.common.white
+                                  : palette.error.main,
+                              fontSize: 'body1',
+                              letterSpacing: '0.15px',
+                              mr: spacing(2),
+                              borderColor: palette.error[300],
+                            })}
+                            onClick={() => setAcceptOffer(false)}
+                          >
+                            Decline
+                          </Button>
+                          <Button
+                            variant="contained"
+                            sx={({ palette }) => ({
+                              color:
+                                message.author === loginId
+                                  ? palette.common.white
+                                  : palette.common.white,
+                              fontSize: 'body1',
+                              letterSpacing: '0.15px',
+                              backgroundColor: palette.primary.main,
+                            })}
+                            onClick={() => setAcceptOffer(true)}
+                          >
+                            Accept
+                          </Button>
+                        </Box>
+                      )}
                     </Box>
                   )}
                   {message.contentType === 'file' && message.content !== undefined && (
