@@ -9,6 +9,7 @@ export { default as sendMessage } from './sendMessage';
 export { default as deleteMessage } from './deleteMessage';
 export { default as readMessage } from './readMessage';
 export { default as syncMessage } from './syncMessage';
+export { default as getMessages } from './getMessages';
 
 // ** Typing Events
 export { default as startType } from './startType';
