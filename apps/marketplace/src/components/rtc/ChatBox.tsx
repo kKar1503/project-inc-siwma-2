@@ -82,7 +82,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
         <Paper
           sx={{
             p: 2,
-            height: isSm ? 'calc(100vh - 200px)' : 'calc(100vh - 290px)',
+            height: 'calc(100vh - 290px)',
             overflow: 'auto',
           }}
         >
