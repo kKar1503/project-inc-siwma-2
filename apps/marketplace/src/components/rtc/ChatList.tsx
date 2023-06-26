@@ -17,10 +17,12 @@ import { DateTime } from 'luxon';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme, alpha } from '@mui/material/styles';
 
+type CategoryType = 'all' | 'Buying' | 'Selling';
+
 export interface ChatListProps {
   id: string;
   company: string;
-  category: string;
+  category: CategoryType;
   latestMessage: string;
   price: number;
   itemName: string;
@@ -29,7 +31,6 @@ export interface ChatListProps {
   imageUrl: string;
   badgeContent: number;
 }
-type CategoryType = 'all' | 'Buying' | 'Selling';
 
 export type ChatListPageProps = {
   chats: ChatListProps[];
