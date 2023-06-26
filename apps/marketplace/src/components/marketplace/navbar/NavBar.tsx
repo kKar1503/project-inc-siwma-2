@@ -35,6 +35,12 @@ const NavBar = () => {
     }
   };
 
+  const handleUrl = (url: string) => {
+    if (router.pathname !== url) {
+      router.push(url);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -52,17 +58,19 @@ const NavBar = () => {
         {/* </Box> */}
 
         {!isSm && (
-          <Link href="/" underline="none">
+          <Box onClick={() => handleUrl('/')}>
             <Typography
               noWrap
               sx={{
+                color: palette.primary.main,
                 fontSize: typography.subtitle2,
                 ml: isLg ? spacing(3) : spacing(2),
+                cursor: 'pointer',
               }}
             >
               {t('Home')}
             </Typography>
-          </Link>
+          </Box>
         )}
         {!isSm && (
           <Link href="/categories" underline="none">
@@ -87,7 +95,7 @@ const NavBar = () => {
             <ChangeLanguageButton />
           </Grid>
 
-          <Link href="/chat" underline="none">
+          <Box onClick={() => handleUrl('/chat')}>
             <IconButton
               size="medium"
               sx={({ spacing }) => ({
@@ -105,7 +113,7 @@ const NavBar = () => {
                 />
               </Badge>
             </IconButton>
-          </Link>
+          </Box>
 
           <Profile userName={userName} userId={userId} />
         </Box>
