@@ -1,75 +1,72 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Link from 'next/link';
 import { red } from '@mui/material/colors';
-import { StarsRating } from '@inc/ui';
+import { StarsRating, useResponsiveness } from '@inc/ui';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
+import { Listing } from '@/utils/api/client/zod';
+import { useSession } from 'next-auth/react';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
 
-export type ProductListingItemProps = {
-  productId: number;
-  img: string | undefined;
-  profileImg: string;
-  type: string;
-  name: string;
-  rating: number | null;
-  price: number;
-  negotiable: boolean;
-  ownerId: string;
-  ownerFullName: string;
-  createdAt: string;
-  companyName: string;
-  isUnitPrice: boolean;
-  isOwnProfile: boolean;
-};
-
 export type ProductListingItemData = {
-  data: ProductListingItemProps;
+  data: Listing;
+  showBookmark?: boolean;
+  updateBookmarkData?: () => void;
 };
 
-const ProductListingItem = ({ data }: ProductListingItemData) => {
-  // destructure data
-  const {
-    productId,
-    img,
-    profileImg,
-    type,
-    name,
-    rating,
-    price,
-    negotiable,
-    ownerId,
-    ownerFullName,
-    createdAt,
-    companyName,
-    isUnitPrice,
-    isOwnProfile,
-  } = data;
+const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) | undefined) => {
+  const [isBookmarked, setIsBookmarked] = useState(true);
+
+  const handleBookmarkListing = async () => {
+    if (isBookmarked && updateBookmarkData) {
+      await bookmarkListing(listingID);
+      setIsBookmarked(false);
+      updateBookmarkData();
+    }
+  };
+
+  return {
+    isBookmarked,
+    handleBookmarkListing,
+  };
+};
+
+const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductListingItemData) => {
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
+  const placeholder = '/images/placeholder.png';
 
   // save computation power to avoid multiple calculations on each render
   const datetime = useMemo(
-    () => DateTime.fromISO(createdAt).toRelative({ locale: 'en-SG' }),
-    [createdAt]
+    () => DateTime.fromISO(data.createdAt).toRelative({ locale: 'en-SG' }),
+    [data.createdAt]
   );
 
+  const listingName = data.name.replace(/\s+/g, '-').toLowerCase();
+
   const theme = useTheme();
+  const [isSm] = useResponsiveness(['sm']);
+  const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id, updateBookmarkData);
 
   return (
     <Card
       sx={{
-        width: 288,
-        ml: 'auto',
-        mr: 'auto',
+        maxWidth: 500,
         height: '100%',
         border: `1px solid ${theme.palette.grey[400]}`,
         transition: 'transform .2s',
@@ -78,100 +75,131 @@ const ProductListingItem = ({ data }: ProductListingItemData) => {
         },
       }}
     >
-      <Link style={{ textDecoration: 'none' }} href={`/profile/${ownerId}`}>
+      <Link style={{ textDecoration: 'none', color: 'inherit' }} href={`/profile/${data.owner.id}`}>
         <CardHeader
+          style={{ marginLeft: '-10px' }}
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }} src={profileImg}>
-              {ownerFullName?.charAt(0)}
+            <Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
+              {data.owner.name.charAt(0)}
             </Avatar>
           }
-          title={ownerFullName}
+          title={data.owner.name}
           titleTypographyProps={{
-            fontSize: 16,
-            fontWeight: 'bold',
+            variant: isSm ? 'subtitle2' : 'subtitle1',
           }}
-          subheader={companyName}
+          subheader={data.owner.company.name}
+          subheaderTypographyProps={{
+            fontSize: isSm ? 12 : 14,
+          }}
         />
       </Link>
-      <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}>
-        <CardMedia
-          component="img"
-          height="288"
-          image={
-            img ||
-            'https://www.bloomberglinea.com/resizer/cCYxWuUthcqd7ML4NfAFhu8x1Zg=/1440x0/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/bloomberglinea/V22IOSYMMFDQDMMN2WK7U5Y6S4.png'
-          }
-        />
+      <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
+        <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
       </Link>
       <CardContent
         sx={({ spacing }) => ({
-          pl: spacing(2),
+          pl: isSm ? spacing(1) : spacing(2),
         })}
       >
-        <Link style={{ textDecoration: 'none' }} href={`/product/${productId}`}>
-          <Box
-            sx={({ spacing }) => ({
-              display: 'flex',
-              pb: spacing(2),
-            })}
-          >
-            {type === 'Buy' && <BuyBadge />}
-            {type === 'Sell' && <SellBadge />}
-            {negotiable && <NegotiableBadge />}
-
-            <Box sx={{ ml: 'auto' }}>
-              {isOwnProfile && <MoreProfileIcon productId={productId} />}
-            </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            pb: 1,
+          }}
+        >
+          <Grid container alignItems={isSm ? 'flex-start' : 'center'} spacing={1}>
+            {data.type === 'BUY' && (
+              <Grid item>
+                <BuyBadge />
+              </Grid>
+            )}
+            {data.type === 'SELL' && (
+              <Grid item>
+                <SellBadge />
+              </Grid>
+            )}
+            {data.negotiable && (
+              <Grid item>
+                <NegotiableBadge />
+              </Grid>
+            )}
+          </Grid>
+          <Box>
+            {showBookmark && (
+              <IconButton
+                aria-label="bookmark"
+                onClick={handleBookmarkListing}
+                sx={({ spacing }) => ({
+                  p: spacing(0),
+                })}
+              >
+                {isBookmarked ? (
+                  <BookmarkIcon
+                    fontSize="large"
+                    sx={({ palette }) => ({
+                      color: palette.warning[100],
+                    })}
+                  />
+                ) : (
+                  <BookmarkBorderIcon fontSize="large" />
+                )}
+              </IconButton>
+            )}
           </Box>
+        </Box>
+        <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
             <Typography
               sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-              variant="body2"
+              variant="body1"
               color={theme.palette.text.primary}
-              fontWeight={400}
-              fontSize={20}
             >
-              {name}
+              {data.name}
             </Typography>
           </Box>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
-            <Typography
-              variant="subtitle2"
-              color={theme.palette.text.primary}
-              fontWeight="bold"
-              fontSize={24}
-            >
+            <Typography variant="h5" color={theme.palette.text.primary}>
               {new Intl.NumberFormat('en-SG', {
                 style: 'currency',
                 currency: 'SGD',
-              }).format(price)}
-              {isUnitPrice && '/unit'}
+              }).format(data.price)}
+              {data.unitPrice && '/unit'}
             </Typography>
           </Box>
           <Box
             sx={({ spacing }) => ({
-              pb: spacing(2),
+              pb: spacing(1),
             })}
           >
-            <StarsRating rating={rating!} />
+            <StarsRating rating={data.rating} />
           </Box>
         </Link>
         <Box
           sx={({ spacing }) => ({
-            pb: spacing(2),
+            pb: spacing(1),
+            display: 'flex',
+            justifyContent: 'space-between',
           })}
         >
-          <Typography variant="subtitle1" color={theme.palette.text.secondary} fontSize={16}>
+          <Typography variant="subtitle1" color={theme.palette.text.secondary}>
             {datetime}
           </Typography>
+          {data.owner.id === loggedUserUuid && (
+            <Box>
+              <MoreProfileIcon productId={data.id} />
+            </Box>
+          )}
         </Box>
       </CardContent>
     </Card>

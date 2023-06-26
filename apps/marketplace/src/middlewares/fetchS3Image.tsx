@@ -1,9 +1,5 @@
-const bucketName = (process.env.AWS_BUCKET as string) || 'siwma-marketplace';
-const region = (process.env.AWS_REGION as string) || 'ap-southeast-1';
-
 const fetchS3Image = async (imgKey: string) => {
-  const imgSrc = `https://${bucketName}.s3.${region}.amazonaws.com/${imgKey}`;
-
+  const imgSrc = `https://s3.karlok.dev/${imgKey}`;
   try {
     const response = await fetch(imgSrc, {
       headers: {
