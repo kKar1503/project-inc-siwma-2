@@ -11,32 +11,37 @@ import { StarsRating, useResponsiveness } from '@inc/ui';
 import { Review } from '@/utils/api/client/zod';
 import fetchUser from '@/middlewares/fetchUser';
 import { useQuery } from 'react-query';
+import fetchProfileCompany from '@/middlewares/fetchProfileCompany';
 
 export type ReviewMessageData = {
   data: Review;
 };
 
 const useGetUser = (userUuid: string) => {
-  const { data } = useQuery('userdata', async () => fetchUser(userUuid), {
+  const { data } = useQuery(['userdata', userUuid], async () => fetchUser(userUuid), {
     enabled: userUuid !== undefined,
   });
-  // console.log(data);
+  return data;
+};
+
+const useUserCompany = (companyId: string | undefined) => {
+  const { data } = useQuery(['userdata', companyId], async () => fetchProfileCompany(companyId), {
+    enabled: companyId !== undefined,
+  });
   return data;
 };
 
 const ReviewMessage = ({ data }: ReviewMessageData) => {
   // destructure data
   const user = useGetUser(data.userId);
-  console.log(data)
-  // console.log(user);
-  console.log(data.userId);
+  const company = useUserCompany(user?.company);
+
   const datetime = useMemo(
     () => DateTime.fromISO(data.createdAt).toRelative({ locale: 'en-SG' }),
     [data.createdAt]
   );
 
   const [isSm] = useResponsiveness(['sm']);
-  
 
   return (
     <List sx={{ m: 2 }}>
@@ -67,9 +72,6 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                         '&:hover': { textDecoration: 'underline' },
                       }}
                     >
-                      {/* {username} */}
-                      {data.userId}
-                      {/* {user?.find((x: { id: string; }) => x.id === data?.userId)?.name} */}
                       {user?.name}
                     </Typography>
                   </Link>
@@ -77,7 +79,7 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                     variant={isSm ? 'body2' : 'body1'}
                     sx={{ flexGrow: 1, ml: isSm ? 0 : 1, alignItems: 'center' }}
                   >
-                    {/* review from {data.type} */}
+                    Review from {data.type}
                   </Typography>
                 </Stack>
               </Box>
@@ -88,15 +90,15 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                 {datetime}
               </Typography>
             </Stack>
-            {/* <Link href="/#" style={{ textDecoration: 'none' }}>
+            <Link href="/#" style={{ textDecoration: 'none' }}>
               <Typography
                 variant={isSm ? 'body2' : 'body1'}
                 component="div"
                 sx={{ flexGrow: 1, color: 'grey', '&:hover': { textDecoration: 'underline' } }}
               >
-                {companyName}
+                {company?.name}
               </Typography>
-            </Link> */}
+            </Link>
           </Stack>
         </Stack>
       </Box>
@@ -114,9 +116,6 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
           component="div"
           sx={{ flexGrow: 1, color: 'grey', mx: 2, my: 1 }}
         >
-          {/* check if display review of reviews based on number */}
-          {/* {noOfReviews}
-          {noOfReviews === 1 ? ' Review' : ' Reviews'} */}
           {data.id}
         </Typography>
       </Box>
