@@ -5,6 +5,7 @@ import type { ClientEventFile } from '@inc/types';
 // ** Event Listeners Imports **
 import createdRoom from './createdRoom';
 import deletedRoom from './deletedRoom';
+import syncRooms from './syncRooms';
 import roomMessage from './roomMessage';
 import deletedMessage from './deletedMessage';
 import readMessage from './readMessage';
@@ -17,6 +18,7 @@ import stopType from './stopType';
 const listeners: Record<string, ClientEventFile<UseChatParams>> = {
   createdRoom,
   deletedRoom,
+  syncRooms,
   roomMessage,
   deletedMessage,
   readMessage,
