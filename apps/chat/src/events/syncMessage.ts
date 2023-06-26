@@ -102,7 +102,7 @@ const syncMessage: EventFile = (io, socket) => ({
               (socket.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC, {
                 status: 'in_progress',
                 progress: Math.floor(((idx + 1) / messages.length) * 100),
-                message: message,
+                data: message,
               });
             });
 
