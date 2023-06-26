@@ -68,6 +68,7 @@ type EventParams = {
   clientDeleteMessage: MessageId; // Has Ack
   clientReadMessage: RoomId; // Has Ack
   clientSyncMessage: MessageId; // Has Ack
+  clientGetMessages: RoomId; // Has Ack
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
@@ -81,6 +82,7 @@ type EventParams = {
   serverDeletedMessage: MessageId;
   serverReadMessage: MessageId[];
   serverSyncMessage: MessageSync;
+  serverSyncMessage2: MessageSync;
   // Server Typing Events
   serverStartType: UserId;
   serverStopType: UserId;
