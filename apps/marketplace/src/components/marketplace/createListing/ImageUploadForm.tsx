@@ -126,7 +126,7 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-        Select Photos (Up to 10 Images)
+        Select Images (Up to 10 Images)
       </Typography>
       <Typography variant="body1">Choose images to display for the listing</Typography>
       <input
@@ -146,7 +146,7 @@ const ImageUploadForm = ({ images, setImages }: Props) => {
             mt: spacing(2),
           })}
         >
-          Upload a Photo
+          Upload Images
         </Button>
       </label>
       {error && <FormHelperText sx={{ color: 'red' }}>{error}</FormHelperText>}
