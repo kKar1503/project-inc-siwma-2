@@ -161,8 +161,6 @@ const DetailedListingPage = () => {
   const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
 
-  const placeholder = '/images/placeholder.png';
-
   const chatRooms = useChatListQuery(loggedUserUuid);
 
   let chatRoomDetailsData: chatRoomDetails = { buyerId: '', sellerId: '', listingId: '' };
@@ -392,7 +390,7 @@ const DetailedListingPage = () => {
                 >
                   Dimensions
                 </Typography>
-                <CrossSectionImageTooltip data={cats?.find((x) => x.id === listings?.categoryId)?.crossSectionImage as string || placeholder} />
+                <CrossSectionImageTooltip data={cats?.find((x) => x.id === listings?.categoryId)?.crossSectionImage as string} />
               </Stack>
 
               <Box
