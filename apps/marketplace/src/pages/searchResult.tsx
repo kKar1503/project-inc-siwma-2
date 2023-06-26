@@ -2,13 +2,18 @@ import ProductListingItem from '@/components/marketplace/listing/ProductListingI
 import DisplayResults, { HeaderProps } from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
 import { useQuery } from 'react-query';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { InfiniteScroll } from '@inc/ui';
 // middleware
 import searchListings, { FilterOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { CircularProgress, Container, Typography } from '@mui/material';
+
+function getLargestId(data: Listing[]) {
+  const ids = data.map((listing) => parseInt(listing.id, 10));
+  return Math.max(...ids).toString();
+}
 
 const Searchresult = () => {
   const router = useRouter();
@@ -26,7 +31,8 @@ const Searchresult = () => {
     {
       enabled: search !== undefined,
       onSuccess: (data) => {
-        const lastItem = data[data.length - 1];
+        const largestId = getLargestId(data);
+        const lastItem = data.find((data) => data.id === largestId);
         if (lastItem) {
           setLastListingId(parseInt(lastItem.id, 10));
         }
@@ -43,6 +49,11 @@ const Searchresult = () => {
       },
     }
   );
+
+  useEffect(() => {
+    setLastListingId(0);
+    setListings([]);
+  }, [filterOptions]);
 
   const Header: HeaderProps = {
     title: {
