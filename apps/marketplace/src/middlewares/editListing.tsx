@@ -41,7 +41,7 @@ const editListing = async (
      * 2. Edit listing info
      */
 
-    const editResult = await apiClient.put(`/v1/listings/${id}`, putData);
+    await apiClient.put(`/v1/listings/${id}`, putData);
 
     /**
      * 3. Delete images
@@ -55,7 +55,7 @@ const editListing = async (
         api += `delete=${image}`;
       });
 
-      const deleteResult = await apiClient.delete(api);
+      await apiClient.delete(api);
     }
 
     /**
@@ -64,14 +64,9 @@ const editListing = async (
 
     if (images.length === 0) return { success: true, id }; // no images to post
 
-    images.forEach(async (image) => {
-      const formData = new FormData();
-      formData.append('file', image);
-      await apiClient.put(
-        `/v1/listings/${id}/images?insertIndex=${imagesOrder[image.name]}`,
-        formData
-      );
-    });
+    const formData = new FormData();
+    images.forEach((image) => formData.append('file', image));
+    await apiClient.put(`/v1/listings/${id}/images`, formData);
 
     return { success: true, id };
   } catch (error: unknown) {

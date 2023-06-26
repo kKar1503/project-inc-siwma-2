@@ -94,6 +94,9 @@ const CreateListingPage = () => {
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const [imageOrder, setImageOrder] = useState<ImageOrder>({});
 
+  // to keep track of original order of image
+  const [originalOrder, setOriginalOrder] = useState<ImageOrder>({});
+
   // errors
   const [categoryError, setCategoryError] = useState<string>('');
   const [parameterErrors, setParameterErrors] = useState<ParameterValidationProps[]>([]);
@@ -121,14 +124,13 @@ const CreateListingPage = () => {
     { queryKey: 'parameters', queryFn: () => fetchParameters() },
     {
       queryKey: 'listing',
-      queryFn: () => fetchListing(id as string),
+      queryFn: () => fetchListing(id as string, true),
       enabled: id !== undefined && (id as string).trim() !== '',
     },
   ]);
   const categoriesData = queries[0].data;
   const allParametersData = queries[1].data;
   const listing = queries[2].data;
-  console.log(listing);
   const parametersData = useMemo(() => {
     if (!allParametersData) return undefined;
     return categoryParameters.map(
@@ -288,6 +290,10 @@ const CreateListingPage = () => {
     return true;
   };
 
+  const deleteImage = (id: string) => {
+    setDeletedImages((prev) => [...prev, originalOrder[id].toString()]);
+  };
+
   // Use Effects
   useEffect(() => {
     if (category == null) return;
@@ -316,14 +322,17 @@ const CreateListingPage = () => {
 
       // Set Image Data
       if (listing.images) {
+        const order: ImageOrder = {};
         const previewImages: PreviewImageProps[] = [];
-        listing.images.forEach((image) => {
+        listing.images.forEach((image, index) => {
+          order[image] = index;
           previewImages.push({
             key: image,
             id: image,
             preview: `https://siwma-marketplace.s3.ap-southeast-1.amazonaws.com/${image}`,
           });
         });
+        setOriginalOrder(order);
         setListingImages(previewImages);
       }
     }
@@ -369,7 +378,7 @@ const CreateListingPage = () => {
             setImages={setImages}
             images={images}
             setImageOrder={setImageOrder}
-            setDeletedImages={setDeletedImages}
+            deleteImage={deleteImage}
           />
           {category && parametersData && (
             <ParameterForm

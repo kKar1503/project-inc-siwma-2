@@ -31,7 +31,7 @@ export type Props = {
   images: Blob[];
   setImages: React.Dispatch<React.SetStateAction<Blob[]>>;
   setImageOrder?: React.Dispatch<React.SetStateAction<ImageOrder>>;
-  setDeletedImages?: React.Dispatch<React.SetStateAction<string[]>>;
+  deleteImage?: (id: string) => void;
 };
 
 const ImageUploadForm = ({
@@ -39,7 +39,7 @@ const ImageUploadForm = ({
   images,
   setImages,
   setImageOrder,
-  setDeletedImages,
+  deleteImage,
 }: Props) => {
   const [previewImages, setPreviewImages] = useState<PreviewImageProps[]>([]);
   const [error, setError] = useState('');
@@ -54,7 +54,6 @@ const ImageUploadForm = ({
   }, [listingImages]);
 
   useEffect(() => {
-    console.log('here');
     const order: ImageOrder = {};
     previewImages.forEach((image, index) => {
       if (image.file) {
@@ -104,12 +103,11 @@ const ImageUploadForm = ({
   };
 
   const handleImageRemove = (index: number) => {
+    if (previewImages[index].id !== undefined && deleteImage) {
+      deleteImage(previewImages[index].id as string);
+    }
     setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-    if (previewImages[index].id !== undefined && setDeletedImages) {
-      console.log('hello');
-      setDeletedImages((prevData: string[]) => [...prevData, index.toString()]);
-    }
   };
 
   const openFullImage = (url: string) => {
