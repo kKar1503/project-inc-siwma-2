@@ -83,7 +83,7 @@ const ListingForm = ({
         value="negotiable"
         control={
           <Checkbox
-            value={negotiable}
+            checked={negotiable}
             onChange={(e) => {
               setNegotiable(e.target.checked);
             }}
@@ -95,7 +95,7 @@ const ListingForm = ({
         value="unitPrice"
         control={
           <Checkbox
-            value={unitPrice}
+            checked={unitPrice}
             onChange={(e) => {
               setUnitPrice(e.target.checked);
             }}
