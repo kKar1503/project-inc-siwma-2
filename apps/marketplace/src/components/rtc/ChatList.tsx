@@ -291,7 +291,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
               ...chatListStyles?.searchBar,
             }}
           >
-            <MenuItem value="all">{t('ALL CHATS')}</MenuItem>
+            <MenuItem value="All">{t('ALL CHATS')}</MenuItem>
             <MenuItem value="Buying">{t('BUYING')}</MenuItem>
             <MenuItem value="Selling">{t('SELLING')}</MenuItem>
           </Select>
