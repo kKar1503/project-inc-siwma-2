@@ -18,7 +18,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme, alpha } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
-type CategoryType = 'all' | 'Buying' | 'Selling';
+type CategoryType = 'All' | 'Buying' | 'Selling';
 
 export interface ChatListProps {
   id: string;
@@ -44,7 +44,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography } = useTheme();
 
-  const [category, setCategory] = useState<CategoryType>('all');
+  const [category, setCategory] = useState<CategoryType>('All');
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const greyTransparent = alpha(palette.common.black, 0.06);
   const { t } = useTranslation();
@@ -54,7 +54,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
   };
 
   const filteredChats = useMemo(() => {
-    if (category.toLowerCase() === 'all') {
+    if (category === 'All') {
       return chats.filter((chat) => chat.inProgress);
     }
     const filteredItems = chats.filter(
