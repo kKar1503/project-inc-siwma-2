@@ -2,38 +2,54 @@ import ProductListingItem from '@/components/marketplace/listing/ProductListingI
 import DisplayResults, { HeaderProps } from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
 import { useQuery } from 'react-query';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import { InfiniteScroll } from '@inc/ui';
 // middleware
 import searchListings, { FilterOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
-import { Box, CircularProgress, Container } from '@mui/material';
-
-const useSearchListings = (matching: string, filter?: FilterOptions) => {
-  const data = useQuery(
-    ['listings', filter, matching],
-    async () => searchListings(matching, filter),
-    {
-      enabled: matching !== undefined,
-    }
-  );
-
-  return data;
-};
+import { CircularProgress, Container, Typography } from '@mui/material';
 
 const Searchresult = () => {
   const router = useRouter();
   const { search } = router.query;
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
+  const scrollRef = useRef<Element>(null);
 
-  const { data: listingData, isLoading } = useSearchListings(search as string, filterOptions);
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({});
+  const [listings, setListings] = useState<Array<Listing>>([]);
+  const [lastListingId, setLastListingId] = useState<number>(0);
+  const [maxItems, setMaxItems] = useState<boolean>(false);
+
+  const { isLoading, refetch } = useQuery(
+    ['listings', search, filterOptions, lastListingId],
+    async () => searchListings(search as string, lastListingId, filterOptions),
+    {
+      enabled: search !== undefined,
+      onSuccess: (data) => {
+        const lastItem = data[data.length - 1];
+        if (lastItem) {
+          setLastListingId(parseInt(lastItem.id, 10));
+        }
+
+        if (data.length === 0) {
+          setMaxItems(true);
+        } else {
+          setListings((prev) => [...prev, ...data]);
+        }
+
+        if (scrollRef.current && scrollRef.current.scrollHeight > window.screen.height) {
+          scrollRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+        }
+      },
+    }
+  );
 
   const Header: HeaderProps = {
     title: {
       single: `Displaying search result for: "${search}"`,
       plural: `Displaying search results for: "${search}"`,
     },
-    noOfItems: listingData ? listingData.length : 0,
+    noOfItems: listings.length,
   };
 
   return (
@@ -45,27 +61,34 @@ const Searchresult = () => {
         subHeader={false}
         isLoading={isLoading}
       >
-        {isLoading && (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100vh',
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        )}
-        {listingData && listingData.length > 0 && (
-          <Grid container display="flex" spacing={2}>
-            {listingData.map((item: Listing) => (
-              <Grid item xs={6} md={4} xl={3} key={item.id}>
-                <ProductListingItem data={item} showBookmark />
-              </Grid>
-            ))}
-          </Grid>
-        )}
+        <InfiniteScroll
+          onLoadMore={refetch}
+          loading={isLoading}
+          reachedMaxItems={maxItems}
+          loadingComponent={<CircularProgress />}
+          parent={Grid}
+          endMessage={
+            <Typography variant="h6" textAlign="center" sx={{ my: '2em' }}>
+              No more listings available
+            </Typography>
+          }
+          parentProps={{
+            container: true,
+            display: 'flex',
+            spacing: 2,
+          }}
+          child={Grid}
+          childProps={{
+            item: true,
+            xl: 3,
+            md: 4,
+            xs: 6,
+          }}
+        >
+          {listings?.map((item) => (
+            <ProductListingItem data={item} key={item.id} />
+          ))}
+        </InfiniteScroll>
       </DisplayResults>
     </Container>
   );
