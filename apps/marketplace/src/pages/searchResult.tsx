@@ -10,11 +10,6 @@ import searchListings, { FilterOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { CircularProgress, Container, Typography } from '@mui/material';
 
-function getLargestId(data: Listing[]) {
-  const ids = data.map((listing) => parseInt(listing.id, 10));
-  return Math.max(...ids).toString();
-}
-
 const Searchresult = () => {
   const router = useRouter();
   const { search } = router.query;
@@ -31,11 +26,7 @@ const Searchresult = () => {
     {
       enabled: search !== undefined,
       onSuccess: (data) => {
-        const largestId = getLargestId(data);
-        const lastItem = data.find((data) => data.id === largestId);
-        if (lastItem) {
-          setLastListingId(parseInt(lastItem.id, 10));
-        }
+        setLastListingId(lastListingId + data.length);
 
         if (data.length === 0) {
           setMaxItems(true);
