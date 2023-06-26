@@ -11,6 +11,7 @@ import readMessage from './readMessage';
 import syncMessage from './syncMessage';
 import syncMessage2 from './syncMessage2';
 import startType from './startType';
+import stopType from './stopType';
 
 // ** Event Listeners Compilation **
 const listeners: Record<string, ClientEventFile<UseChatParams>> = {
@@ -22,6 +23,7 @@ const listeners: Record<string, ClientEventFile<UseChatParams>> = {
   syncMessage,
   syncMessage2,
   startType,
+  stopType,
 };
 
 export default listeners;
