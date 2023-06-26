@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -13,7 +12,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import MenuItem from '@mui/material/MenuItem';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import CrossSectionImageToolTip from '@/components/marketplace/createListing/CrossSectionImageTooltip';
 import { ParameterType } from '@prisma/client';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
@@ -45,6 +44,7 @@ export interface ParameterProps {
 
 export interface SetParameterProps {
   setParameters: (parameters: ParameterFormProps[]) => void;
+  crossSectionImg: string;
   data: ParameterProps[];
   errors: ParameterValidationProps[];
 }
@@ -62,7 +62,7 @@ const dataTypeToInputType = (dataType: dataTypeProps) => {
   }
 };
 
-const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
+const ParameterForm = ({ setParameters, crossSectionImg, data, errors }: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
 
   const handleFormValueChange = (
@@ -99,9 +99,7 @@ const ParameterForm = ({ setParameters, data, errors }: SetParameterProps) => {
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
             Category Parameters
           </Typography>
-          <Tooltip title="test">
-            <InfoOutlinedIcon sx={{ ml: 1 }} />
-          </Tooltip>
+          <CrossSectionImageToolTip data={crossSectionImg} />
         </Box>
         <Typography variant="body1">
           Enter the parameters specific to the chosen category
