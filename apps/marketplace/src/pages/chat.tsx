@@ -176,6 +176,8 @@ const ChatRoom = () => {
         };
 
         chatList.push(chatListProps);
+
+        return;
       }
 
       const roomMessages = localStorage.getItem(room);
