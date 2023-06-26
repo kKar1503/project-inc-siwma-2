@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import S3Avatar from '@/components/S3Avatar';
 import Typography from '@mui/material/Typography';
@@ -18,10 +17,12 @@ import { useTheme } from '@mui/material/styles';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { Listing } from '@/utils/api/client/zod';
 import { useSession } from 'next-auth/react';
+import S3Image from '@/components/S3Image';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
+import CardMediaX from './CardMediaX';
 
 export type ProductListingItemData = {
   data: Listing;
@@ -94,7 +95,12 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         />
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
-        <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
+        <CardMediaX
+          src={data.coverImage || placeholder}
+          alt="listing image"
+          height={200}
+          placeholder=""
+        />
       </Link>
       <CardContent
         sx={({ spacing }) => ({
