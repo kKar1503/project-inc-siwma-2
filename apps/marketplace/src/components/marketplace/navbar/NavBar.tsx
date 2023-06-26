@@ -14,7 +14,7 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import AddListing from './AddListing';
+import CreateListing from './CreateListing';
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
 import ChangeLanguageButton from './ChangeLanguageButton';
@@ -93,7 +93,7 @@ const NavBar = () => {
         )}
         <SearchBar handleSearch={handleSearch} />
 
-        {!isSm && <AddListing />}
+        {!isSm && <CreateListing />}
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <Grid component="label" container alignItems="center">
