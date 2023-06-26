@@ -26,6 +26,10 @@ export function deleteRoom(socket: Socket, roomId: string, ack: (ack: Acknowlege
   socket.emit(EVENTS.CLIENT.ROOM.DELETE, roomId, ack);
 }
 
+export function getRooms(socket: Socket, userId: string, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.ROOM.GET, userId, ack);
+}
+
 // ** Message Events **
 export function sendMessage(
   socket: Socket,
