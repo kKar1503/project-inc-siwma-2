@@ -1,35 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import Image, { ImageProps } from 'next/image';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
 import fetchS3Image from '@/middlewares/fetchS3Image';
+import Box, { BoxProps } from '@mui/material/Box';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));
 
-export type S3ImageProps = ImageProps & { src: string };
+export type S3BoxImageProps = BoxProps & { src: string };
 
 const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   e.preventDefault();
   e.stopPropagation();
 };
 
-const S3Image = ({ src, alt, ...others }: S3ImageProps) => {
+const S3BoxImage = ({ src, children, ...others }: S3BoxImageProps) => {
   const { data } = useImageQuery(src);
-  const [image, setImage] = useState<{ url: string; name: string } | undefined>();
+  const [image, setImage] = useState<{ url: string; name: string | undefined | null } | undefined>();
 
   useEffect(() => {
     if (!data) return;
     const { url, name } = data;
-    setImage({ url, name: name || alt });
+    setImage({ url, name });
     // eslint-disable-next-line consistent-return
     return () => URL.revokeObjectURL(url);
-  }, [alt, data]);
+  }, [data]);
+
 
   return image ? (
-    <Link  href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
-      <Image src={image.url} alt={alt} title={image.name} {...others} />
+    <Link href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
+      <Box
+        component='img'
+        {...others}
+        src={image.url}
+      >
+        {children}
+      </Box>
     </Link>
   ) : null;
 };
 
-export default S3Image;
+export default S3BoxImage;
