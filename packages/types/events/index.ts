@@ -30,10 +30,10 @@ export type Room = {
   id: RoomId;
   username: string;
   category: 'BUY' | 'SELL';
-  latestMessage: LastMessage;
+  latestMessage?: LastMessage;
   itemName: string;
   inProgress: boolean;
-  time: Date;
+  time?: Date;
   userImage: string;
   unreadMessages: number;
 };
