@@ -4,9 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-# Installing Dependencies
-RUN npm install -g pnpm && pnpm run ci
-
 # DATABASE_URL for Prisma
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
@@ -27,8 +24,16 @@ ARG NEXT_ESLINT_OPTION
 ENV NEXT_BUILD_OPTION=$NEXT_BUILD_OPTION
 ENV NEXT_ESLINT_OPTION=$NEXT_ESLINT_OPTION
 
+# Installing Dependencies
+RUN npm install -g pnpm
+RUN npm pkg set scripts.postinstall="echo 'Postinstall script is disabled'"
+RUN pnpm install --frozen-lockfile
+
+# Generate Prisma Client
+RUN pnpm --filter db prisma:generate
+
 # Building NextJS
-RUN npx nx run @inc/marketplace:build:prod
+RUN pnpx nx run @inc/marketplace:build:prod
 
 # ===================================================================
 
@@ -47,13 +52,15 @@ ARG NEXTAUTH_URL
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
-# Challenge for Notifications
-ARG CHALLENGE_API_KEY
-ENV CHALLENGE_API_KEY=$CHALLENGE_API_KEY
-
-# Chat Server URL
-ARG CHAT_SERVER_URL
-ENV NEXT_PUBLIC_CHAT_SERVER_URL=$CHAT_SERVER_URL
+# S3
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_REGION
+ARG AWS_BUCKET
+ENV AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+ENV AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+ENV AWS_REGION=$AWS_REGION
+ENV AWS_BUCKET=$AWS_BUCKET
 
 # SIB
 ARG SIB_API_KEY
@@ -64,13 +71,22 @@ ENV SIB_SENDER_EMAIL=$SIB_SENDER_EMAIL
 # Frontend URL
 ARG FRONTEND_URL
 ENV FRONTEND_URL=$FRONTEND_URL
+ENV NEXT_PUBLIC_FRONTEND_URL=$FRONTEND_URL
+
+# Challenge for Notifications
+ARG CHALLENGE_API_KEY
+ENV CHALLENGE_API_KEY=$CHALLENGE_API_KEY
+
+# Chat Server URL
+ARG CHAT_SERVER_URL
+ENV NEXT_PUBLIC_CHAT_SERVER_URL=$CHAT_SERVER_URL
 
 # Adding user & usergroup for NextJS's node server
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copying the standalone files & changing owners
-COPY --from=depsbuilder /app/apps/marketplace/public ./public
+COPY --from=depsbuilder /app/apps/marketplace/public ./apps/marketplace/public
 COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/marketplace/.next/standalone ./
 COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/marketplace/.next/static ./apps/marketplace/.next/static
 
