@@ -158,7 +158,9 @@ const event: EventFile = (io, socket) => ({
 
           eventLog('trace', `Computing for latest message...`);
           const latestMessage: Room['latestMessage'] =
-            room.messages[0].contentType === 'offer'
+            room.messages.length === 0
+              ? undefined
+              : room.messages[0].contentType === 'offer'
               ? {
                   contentType: 'offer',
                   amount: room.messages[0].offers!.amount.toNumber(),
@@ -179,7 +181,8 @@ const event: EventFile = (io, socket) => ({
             latestMessage,
             itemName: room.listingRoomsListingTolisting.name,
             inProgress: isListingInProgress,
-            time: room.messages[0].createdAt,
+            time:
+              room.messages.length === 0 ? undefined : JSON.stringify(room.messages[0].createdAt),
             userImage: otherUser.profilePicture ?? '',
             unreadMessages: unreads[idx],
           };
