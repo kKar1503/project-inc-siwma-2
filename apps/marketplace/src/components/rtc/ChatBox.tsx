@@ -12,7 +12,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 
-type ChatData = {
+export type ChatData = {
   id: number;
   contentType: TContentType;
   read: boolean;
