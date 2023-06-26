@@ -18,6 +18,7 @@ import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { Listing } from '@/utils/api/client/zod';
 import { useSession } from 'next-auth/react';
 import S3Image from '@/components/S3Image';
+import placeholder from 'public/images/category-placeholder.png';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
@@ -50,7 +51,6 @@ const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) 
 const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductListingItemData) => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
-  const placeholder = '/images/placeholder.png';
 
   // save computation power to avoid multiple calculations on each render
   const datetime = useMemo(
@@ -63,6 +63,8 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
   const theme = useTheme();
   const [isSm] = useResponsiveness(['sm']);
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id, updateBookmarkData);
+
+  console.log(data.coverImage);
 
   return (
     <Card
@@ -80,7 +82,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         <CardHeader
           style={{ marginLeft: '-10px' }}
           avatar={
-            <S3Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
+            <S3Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder.src}>
               {data.owner.name.charAt(0)}
             </S3Avatar>
           }
@@ -96,10 +98,10 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
         <CardMediaX
-          src={data.coverImage || placeholder}
+          src={(data.coverImage && data.coverImage.trim() !== '') ? data.coverImage : placeholder.src}
           alt="listing image"
           height={200}
-          placeholder=""
+          placeholder={placeholder.src}
         />
       </Link>
       <CardContent
