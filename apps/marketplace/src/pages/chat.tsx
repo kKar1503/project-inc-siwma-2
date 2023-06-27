@@ -367,7 +367,7 @@ const ChatRoom = () => {
               profilePic=""
               companyName="Hi Metals PTE LTD"
               available
-              setSelectChat={setRoomId}
+              handleBack={() => setRoomId('')}
             />
             <ChatSubHeader
               itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"

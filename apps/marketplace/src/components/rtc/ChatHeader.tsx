@@ -19,12 +19,12 @@ export type ChatHeaderProps = {
   profilePic: string;
   companyName: string;
   available: boolean;
-  setSelectChat: React.Dispatch<React.SetStateAction<string>>;
+  handleBack: () => void;
 };
 
-const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatHeaderProps) => {
+const ChatHeader = ({ profilePic, companyName, available, handleBack }: ChatHeaderProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
+  const { spacing, palette, typography } = useTheme();
   const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState<null | HTMLElement>(null);
   const [openReport, setOpenReport] = useState(false);
@@ -57,7 +57,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
             px: available ? spacing(0) : spacing(1),
             py: spacing(0),
             width: '80px',
-            height: '32px'
+            height: '32px',
           },
         },
         profilePic: {
@@ -125,7 +125,7 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
             bgcolor: available ? palette.info.main : palette.success.main,
             color: palette.common.white,
             px: available ? spacing(3) : spacing(4),
-            width: '100px'
+            width: '100px',
           },
         },
         profilePic: {
@@ -174,10 +174,6 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
 
   const handleClose = () => {
     setOpenMenu(null);
-  };
-
-  const handleBack = () => {
-    setSelectChat('');
   };
 
   return (
