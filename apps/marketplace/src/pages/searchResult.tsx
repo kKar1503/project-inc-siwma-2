@@ -31,7 +31,6 @@ const Searchresult = () => {
   const [listings, setListings] = useState<Array<Listing>>([]);
   const [lastListingId, setLastListingId] = useState<number>(0);
   const [maxItems, setMaxItems] = useState<boolean>(false);
-  const [queryParameters, setQueryParameters] = useState<ParsedUrlQuery>();
   const [listingCount, setListingCount] = useState<number>(0);
 
   const { isLoading, refetch } = useQuery(
@@ -58,24 +57,7 @@ const Searchresult = () => {
   );
 
   useEffect(() => {
-    setLastListingId(0);
-    setListingCount(0);
-    setListings([]);
-    setMaxItems(false);
-  }, [filterOptions, search]);
-
-  useEffect(() => {
-    const storedParams = localStorage.getItem('queryParams');
-
-    if (storedParams) {
-      const queryParams = JSON.parse(storedParams);
-      router.query = queryParams;
-      setQueryParameters(queryParams);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!queryParameters) return;
+    // Parse filter optins from the query
     const options: FilterOptions = {
       sortBy: (query.sortBy as SortingOptions) || 'recent_newest',
       category: parseInt(query.category as string, 10) || 0,
@@ -83,26 +65,36 @@ const Searchresult = () => {
       minPrice: parseInt(query.minPrice as string, 10) || undefined,
       maxPrice: parseInt(query.maxPrice as string, 10) || undefined,
     };
+
+    // Clear states
+    setLastListingId(0);
+    setListingCount(0);
+    setListings([]);
+    setMaxItems(false);
+
+    // Update the filter options state
     setFilterOptions(options);
-  }, [queryParameters]);
-
-  useEffect(() => {
-    if (!filterOptions) return;
-    const updatedQuery = {
-      ...query,
-      search,
-      sortBy: filterOptions.sortBy,
-      category: filterOptions.category,
-      negotiable: filterOptions.negotiable,
-      minPrice: filterOptions.minPrice,
-      maxPrice: filterOptions.maxPrice,
-    };
-    router.push({ pathname, query: updatedQuery });
-  }, [filterOptions]);
-
-  useEffect(() => {
-    localStorage.setItem('queryParams', JSON.stringify(query));
   }, [query]);
+
+  const updateFilterOptions = (newFilterOptions: FilterOptions) => {
+    // Update the router
+    if (newFilterOptions) {
+      const updatedQuery = {
+        ...query,
+        search,
+        sortBy: newFilterOptions.sortBy,
+        category: newFilterOptions.category,
+        negotiable: newFilterOptions.negotiable,
+        minPrice: newFilterOptions.minPrice,
+        maxPrice: newFilterOptions.maxPrice,
+      };
+
+      router.push({ pathname, query: updatedQuery });
+    }
+
+    // Update the state
+    setFilterOptions(newFilterOptions);
+  }
 
   const Header: HeaderProps = {
     title: {
@@ -118,7 +110,7 @@ const Searchresult = () => {
         filter
         data={Header}
         filterOptions={filterOptions}
-        setFilterOptions={setFilterOptions}
+        setFilterOptions={updateFilterOptions}
         subHeader={false}
         isLoading={isLoading}
       >
