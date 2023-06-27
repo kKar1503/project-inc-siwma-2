@@ -19,6 +19,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
   const maxSteps = data.length;
 
   const [activeStep, setActiveStep] = useState(0);
+  const [scrollStatus, setScrollStatus] = useState(true);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -29,7 +30,9 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
   };
 
   const handleStepChange = (step: number) => {
-    setActiveStep(step);
+    if (scrollStatus) {
+      setActiveStep(step);
+    }
   };
 
   return (
@@ -47,6 +50,8 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                 sx={{
                   position: 'relative',
                 }}
+                onMouseEnter={() => setScrollStatus(false)}
+                onMouseLeave={() => setScrollStatus(true)}
               >
                 <S3BoxImage
                   sx={{
