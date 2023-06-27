@@ -604,4 +604,7 @@ const EditProfile = () => {
     </>
   );
 };
+
+EditProfile.renderSearchBar = false;
+
 export default EditProfile;
