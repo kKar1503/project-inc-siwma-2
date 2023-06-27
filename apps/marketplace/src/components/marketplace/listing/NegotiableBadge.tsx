@@ -13,7 +13,7 @@ const NegotiableBadge = () => {
         color: palette.common.white,
         width: '96px',
       })}
-      label={t('Negotiate')}
+      label={t('Negotiable')}
     />
   );
 };

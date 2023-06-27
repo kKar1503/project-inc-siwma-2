@@ -59,7 +59,7 @@ const Marketplace = () => {
   const { data: session } = useSession();
   const [isSm, isMd, isLg, isXl] = useResponsiveness(['sm', 'md', 'lg', 'xl']);
   const { typography } = useTheme();
-   const { t } = useTranslation();
+  const { t } = useTranslation();
   const scrollRef = useRef<Element>(null);
 
   const [listings, setListings] = React.useState<Array<Listing>>([]);
