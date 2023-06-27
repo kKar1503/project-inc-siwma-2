@@ -185,59 +185,56 @@ const Marketplace = () => {
         <Typography sx={headerStyles?.switchTxt}>Popular</Typography>
       </Box>
       <ListingStream listingItemsData={popularListingsData} />
-      <Box display="flex" justifyContent="center" marginTop="2em">
-        <Box width="80%">
+
+      <Box width={isSm ? '90%' : '80%'} margin="auto">
+        <Box marginTop="2em">
           <Typography sx={headerStyles?.switchTxt}>Recommended</Typography>
         </Box>
-      </Box>
-      <Box
-        margin="auto"
-        marginTop="2em"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        width="80%"
-      >
-        <Box>
-          <InfiniteScroll
-            onLoadMore={refetch}
-            loading={isLoading}
-            reachedMaxItems={maxItems}
-            loadingComponent={<CircularProgress />}
-            parent={Grid}
-            endMessage={
-              <Typography
-                variant="h6"
-                textAlign="center"
-                sx={({ spacing }) => ({
-                  my: spacing(5),
-                  textAlign: 'center',
-                  textTransform: 'uppercase',
-                })}
-              >
-                No more listings available
-              </Typography>
-            }
-            parentProps={{
-              container: true,
-              display: 'flex',
-              gap: 2,
-              justifyContent: 'space-between',
-            }}
-            child={Grid}
-            childProps={{
-              item: true,
-              xl: 2,
-              lg: 2.5,
-              md: 3.5,
-              sm: 5,
-              xs: 12,
-            }}
-          >
-            {listings?.map((item) => (
-              <ProductListingItem data={item} key={item.id} />
-            ))}
-          </InfiniteScroll>
+        <Box
+          margin="auto"
+          marginTop="2em"
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+        >
+          <Box>
+            <InfiniteScroll
+              onLoadMore={refetch}
+              loading={isLoading}
+              reachedMaxItems={maxItems}
+              loadingComponent={<CircularProgress />}
+              parent={Grid}
+              endMessage={
+                <Typography
+                  variant="h6"
+                  textAlign="center"
+                  sx={({ spacing }) => ({
+                    my: spacing(5),
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                  })}
+                >
+                  No more listings available
+                </Typography>
+              }
+              parentProps={{
+                container: true,
+                display: 'flex',
+                spacing: 2,
+              }}
+              child={Grid}
+              childProps={{
+                item: true,
+                xl: 3,
+                md: 4,
+                xs: 6,
+              }}
+            >
+              {listings?.map((item) => (
+                <ProductListingItem data={item} key={item.id} />
+              ))}
+            </InfiniteScroll>
+          </Box>
         </Box>
       </Box>
     </>
