@@ -198,7 +198,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
 
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>{t('Linked accounts')}:</Typography>
         {data?.contactMethod === 'telegram' && (
           <Box
             sx={({ spacing }) => ({

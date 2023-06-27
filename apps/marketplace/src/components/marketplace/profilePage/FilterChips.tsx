@@ -46,7 +46,7 @@ const FilterChips = ({ onData }: FilterChipsProps) => {
                 ...(isSm ? { mb: spacing(1) } : { mr: spacing(1) }),
               })}
               variant="outlined"
-              label={option}
+              label={t(option)}
               onClick={handleClick}
             />
           </Grid>

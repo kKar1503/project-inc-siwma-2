@@ -81,7 +81,7 @@ const ReviewsTab = ({
               fontSize: typography.subtitle1,
             })}
           >
-            ({totalReviews} {totalReviews === 1 ? ' Review' : ' Reviews'})
+            ({totalReviews} {totalReviews === 1 ? `${t('Review')}` : `${t('Reviews')}`})
           </Typography>
         </Box>
         {isSm ? (

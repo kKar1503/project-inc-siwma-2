@@ -20,6 +20,7 @@ import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
 import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useResponsiveness } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
+import { useTranslation } from 'react-i18next';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: 60,
@@ -108,7 +109,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
   const profileListingImages = useGetProfileListingImagesQuery(id);
-  // console.log(userDetails);
+  const { t } = useTranslation();
 
   const theme = useTheme();
   const { spacing } = theme;
@@ -237,7 +238,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               }}
             >
               <StyledTab
-                label="Listings"
+                label={t('Listings')}
                 sx={{
                   // added in-line styling here because styled() doesn't want to work
                   border: 1,
@@ -253,7 +254,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
                 }}
               />
               <StyledTab
-                label="Reviews"
+                label={t('Reviews')}
                 sx={{
                   border: 1,
                   borderColor: theme.palette.primary[400],
