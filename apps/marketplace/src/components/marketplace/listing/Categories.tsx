@@ -19,8 +19,9 @@ const CategoryCard: React.FC<TCategory> = ({
     return { height: '260px' };
   }, [isSm]);
   return (
-    <Card sx={categoryHeight}>
+    <Card>
       <CardActionArea
+        sx={categoryHeight}
         href={`/searchResult?search=&sortBy=recent_newest&category=${id}&negotiable=&minPrice=&maxPrice=`}
       >
         <S3CardImage height={140} src={image} title={name} alt={name} placeholder="" />

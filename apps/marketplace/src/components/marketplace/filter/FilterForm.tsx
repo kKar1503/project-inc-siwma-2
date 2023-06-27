@@ -29,12 +29,12 @@ export type SortProps =
 
 export type FilterFormProps = {
   sort: SortProps;
-  category?: number;
+  category: number;
   negotiation: string;
   minPrice: string;
   maxPrice: string;
   setSort: (sort: SortProps) => void;
-  setCategory?: (category: number) => void;
+  setCategory: (category: number) => void;
   setNegotiation: (negotiation: string) => void;
   setMinPrice: (minPrice: string) => void;
   setMaxPrice: (maxPrice: string) => void;
