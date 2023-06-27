@@ -1,5 +1,4 @@
-import React, { useRef } from 'react';
-import type { TContentType } from '@inc/db';
+import React, { useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -11,15 +10,14 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import type { MessageContent } from '@inc/types';
 
 export type ChatData = {
   id: number;
-  contentType: TContentType;
-  read: boolean;
-  content?: string;
-  offer: number | null;
   author: string;
+  read: boolean;
   createdAt: Date;
+  messageContent: MessageContent;
 };
 
 export type ChatBoxProps = {
@@ -109,11 +107,15 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                       message.author === loginId ? '12px 12px 0 12px' : '12px 12px 12px 0',
                   })}
                 >
-                  {message.contentType === 'image' && (
-                    <CardMedia component="img" height="250" image={message.content} />
+                  {message.messageContent.contentType === 'image' && (
+                    <CardMedia
+                      component="img"
+                      height="250"
+                      image={message.messageContent.content}
+                    />
                   )}
 
-                  {message.contentType === 'text' && (
+                  {message.messageContent.contentType === 'text' && (
                     <Typography
                       sx={({ palette }) => ({
                         color:
@@ -122,10 +124,10 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                         letterSpacing: '0.15px',
                       })}
                     >
-                      {message.content}
+                      {message.messageContent.content}
                     </Typography>
                   )}
-                  {message.contentType === 'offer' && (
+                  {message.messageContent.contentType === 'offer' && (
                     <Box>
                       <Typography
                         sx={({ palette }) => ({
@@ -150,38 +152,39 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                           letterSpacing: '0.15px',
                         })}
                       >
-                        {message.offer?.toFixed(2)}
+                        {message.messageContent.amount.toFixed(2)}
                       </Typography>
                     </Box>
                   )}
-                  {message.contentType === 'file' && message.content !== undefined && (
-                    <Box display="flex">
-                      <DescriptionOutlinedIcon
-                        fontSize="large"
-                        sx={({ palette }) => ({
-                          color:
-                            message.author === loginId
-                              ? palette.common.white
-                              : palette.text.primary,
-                        })}
-                      />
-                      <Box>
-                        <Button
+                  {message.messageContent.contentType === 'file' &&
+                    message.messageContent.content !== undefined && (
+                      <Box display="flex">
+                        <DescriptionOutlinedIcon
+                          fontSize="large"
                           sx={({ palette }) => ({
                             color:
                               message.author === loginId
                                 ? palette.common.white
                                 : palette.text.primary,
-                            fontSize: 'body1',
-                            letterSpacing: '0.15px',
                           })}
-                          onClick={() => handleDownload(message.content || '')}
-                        >
-                          {t(filterFileType(message.content))}
-                        </Button>
+                        />
+                        <Box>
+                          <Button
+                            sx={({ palette }) => ({
+                              color:
+                                message.author === loginId
+                                  ? palette.common.white
+                                  : palette.text.primary,
+                              fontSize: 'body1',
+                              letterSpacing: '0.15px',
+                            })}
+                            onClick={() => handleDownload(message.messageContent.content || '')}
+                          >
+                            {t(filterFileType(message.messageContent.content))}
+                          </Button>
+                        </Box>
                       </Box>
-                    </Box>
-                  )}
+                    )}
                 </Paper>
               </ListItem>
             ))}
