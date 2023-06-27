@@ -63,8 +63,6 @@ const ChatRoom = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [connect, setConnect] = useState(false);
   const [lastMessages, setLastMessages] = useState<ChatListProps[]>([]);
-  const [acceptOffer, setAcceptOffer] = useState<'pending' | 'accepted' | 'rejected'>('pending');
-  const [deleteOffer, setDeleteOffer] = useState<boolean>(false);
 
   // ** LocalStorage Values **
   const lastMessageId = useReadLocalStorage<number>(lastMessageIdKey);
@@ -324,9 +322,6 @@ const ChatRoom = () => {
             <ChatBox
               roomData={messages}
               loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
-              acceptOffer={acceptOffer}
-              setAcceptOffer={setAcceptOffer}
-              setDeleteOffer={setDeleteOffer}
               ChatText={
                 <ChatTextBox
                   selectedFile={selectedFile}
