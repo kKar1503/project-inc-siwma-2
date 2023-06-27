@@ -102,6 +102,7 @@
   "Profile": "个人档案",
   "Bookmarks": "收藏",
   "Recent": "近期",
+  "Recommended": "推荐",
   "Report": "举报",
   "Report User": "举报用户",
   "Review": "评论",
@@ -132,5 +133,17 @@
   "Users": "用户",
   "USERS": "用户",
   "View your profile details here": "在此查看您的个人主页详情",
-  "Zip File": "压缩文件"
+  "View All Categories": "所有分类",
+  "Zip File": "压缩文件",
+
+  "Hollow Sections": "中空型材",
+  "Beams": "横梁",
+  "Sheet Piles": "板桩",
+  "Channels": "金属槽",
+  "Purlins": "檩条",
+  "Angles": "角钢",
+  "Plates": "板材",
+  "Round Bar": "圆钢",
+  "Square Bar": "方形杆",
+  "Gratings": "金属格栅"
 }

@@ -102,6 +102,7 @@
   "Profile": "Profile",
   "Bookmarks": "Bookmarks",
   "Recent": "Recent",
+  "Recommended": "Recommended",
   "Report": "Report",
   "Report User": "Report User",
   "Review": "Review",
@@ -132,5 +133,17 @@
   "Users": "Users",
   "USERS": "USERS",
   "View your profile details here": "View your profile details here",
-  "Zip File": "Zip File"
+  "View All Categories": "View All Categories",
+  "Zip File": "Zip File",
+
+  "Hollow Sections": "Hollow Sections",
+  "Beams": "Beams",
+  "Sheet Piles": "Sheet Piles",
+  "Channels": "Channels",
+  "Purlins": "Purlins",
+  "Angles": "Angles",
+  "Plates": "Plates",
+  "Round Bar": "Round Bar",
+  "Square Bar": "Square Bar",
+  "Gratings": "Gratings"
 }
