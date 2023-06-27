@@ -416,7 +416,7 @@ const DetailedListingPage = () => {
                         })}
                       >
                         <Typography sx={{ color: theme.palette.grey[500] }}>
-                          {param?.find((x) => x.id === parameter?.paramId)?.name}
+                          {param?.find((x) => x.id === parameter?.paramId)?.displayName}
                         </Typography>
                         <Typography
                           variant="body1"
@@ -443,9 +443,10 @@ const DetailedListingPage = () => {
               >
                 <Grid
                   container
-                  sx={{
+                  sx={({ spacing }) => ({
                     direction: 'row',
-                  }}
+                    columnGap: spacing(1),
+                  })}
                 >
                   <Box
                     sx={({ spacing }) => ({
