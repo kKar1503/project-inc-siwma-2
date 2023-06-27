@@ -127,7 +127,7 @@ const CreateListingPage = () => {
     { queryKey: 'parameters', queryFn: () => fetchParameters() },
     {
       queryKey: 'listing',
-      queryFn: () => fetchListing(id as string, true),
+      queryFn: () => fetchListing(id as string),
       enabled: id !== undefined && (id as string).trim() !== '',
     },
   ]);
