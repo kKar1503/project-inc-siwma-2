@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
@@ -151,16 +151,18 @@ const ChatSubHeader = ({
             position: 'relative',
             display: 'inline-block',
             boxShadow: shadows[2],
+            borderRadius: '8px',
+            ...chatSubHeaderStyles?.avatar,
           })}
         >
-          <Avatar
+          <Image
             alt="company profile picture"
-            src={itemPic}
-            variant="square"
-            sx={{
-              borderRadius: 2,
-              ...chatSubHeaderStyles?.avatar,
+            src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}/${itemPic}`}
+            // variant="square"
+            style={{
+              borderRadius: 8,
             }}
+            {...chatSubHeaderStyles?.avatar}
           />
           <Typography
             variant="subtitle1"
