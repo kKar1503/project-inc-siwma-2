@@ -8,13 +8,13 @@ import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
-import SearchBar from '@inc/ui/lib/components/SearchBar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import CreateListing from './CreateListing';
+import SearchBar from './SearchBar';
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
 import ChangeLanguageButton from './ChangeLanguageButton';
@@ -46,14 +46,21 @@ const NavBar = () => {
       sx={{
         flexGrow: 1,
         backgroundColor: 'white',
-        boxShadow: 1,
+        borderBottom: 1,
+        borderColor: (theme) => theme.palette.divider,
         position: 'sticky',
         top: 0,
-        height: 64,
+        // height: 64,
         zIndex: zIndex.appBar,
       }}
     >
-      <Toolbar>
+      <Toolbar
+        sx={{
+          // make a border with translucent color
+          borderBottom: 1,
+          borderColor: (theme) => theme.palette.divider,
+        }}
+      >
         {isLg && (
           <Image
             src="/images/favicons/SIWMA-icon.png"
@@ -75,6 +82,7 @@ const NavBar = () => {
                 justifyContent: 'center',
                 mx: isLg ? spacing(2) : spacing(0),
                 width: isMd ? '90px' : '100px',
+                cursor: 'pointer',
               }}
             >
               {t('Home')}
@@ -97,7 +105,7 @@ const NavBar = () => {
             </Typography>
           </Link>
         )}
-        <SearchBar handleSearch={handleSearch} />
+        {isSm && <SearchBar handleSearch={handleSearch} />}
 
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -133,6 +141,13 @@ const NavBar = () => {
         </Box>
         {/* end of mobile drawer icon */}
       </Toolbar>
+      {!isSm && (
+        <Toolbar>
+          <Box sx={{ width: '1000px' }}>
+            <SearchBar handleSearch={handleSearch} />
+          </Box>
+        </Toolbar>
+      )}
     </Box>
   );
 };
