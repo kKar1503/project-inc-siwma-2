@@ -154,51 +154,51 @@ const Marketplace = () => {
       ) : (
         <AdvertisementsPlaceholder />
       )}
-      <Box display="flex" justifyContent="center" paddingTop="2em">
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '80%',
-          }}
-        >
-          <Typography sx={headerStyles?.switchTxt}>Categories</Typography>
-          <Link href="/categories" sx={headerStyles?.switchTxt}>
-            View All Categories
-          </Link>
+      <Box width={isSm ? '90%' : '80%'} margin="auto">
+        <Box display="flex" justifyContent="space-between" paddingTop="2em">
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <Typography sx={headerStyles?.switchTxt}>Categories</Typography>
+            <Link href="/categories" sx={headerStyles?.switchTxt}>
+              View All Categories
+            </Link>
+          </Box>
+        </Box>
+        <Box display="flex" justifyContent="center" paddingTop="2em">
+          <Grid container spacing={2}>
+            {categories?.map((category) => (
+              <Grid item xl={2} lg={3} md={4} sm={6} xs={6} key={category.name}>
+                <CategoryCard {...category} />
+              </Grid>
+            ))}
+          </Grid>
         </Box>
       </Box>
-      <Box display="flex" justifyContent="center" paddingTop="2em">
-        <Grid container spacing={2} width="95%">
-          {categories?.map((category) => (
-            <Grid item xl={2} lg={3} md={4} sm={6} xs={6} key={category.name}>
-              <CategoryCard {...category} />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-      <Box display="flex" justifyContent="center" paddingTop="4em">
-        <Box
-          sx={{
-            width: '80%',
-          }}
-        >
-          <Typography sx={headerStyles?.switchTxt}>Popular</Typography>
-        </Box>
+
+      <Box display="flex" paddingTop="4em" width={isSm ? '90%' : '80%'} margin="auto">
+        <Typography sx={headerStyles?.switchTxt}>Popular</Typography>
       </Box>
       <ListingStream listingItemsData={popularListingsData} />
       <Box display="flex" justifyContent="center" marginTop="2em">
-        <Box
-          sx={{
-            width: '80%',
-          }}
-        >
+        <Box width="80%">
           <Typography sx={headerStyles?.switchTxt}>Recommended</Typography>
         </Box>
       </Box>
-      <Box marginTop="2em" display="flex" flexDirection="column" justifyContent="center">
-        <Box marginX="2rem">
+      <Box
+        margin="auto"
+        marginTop="2em"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        width="80%"
+      >
+        <Box>
           <InfiniteScroll
             onLoadMore={refetch}
             loading={isLoading}
@@ -222,7 +222,7 @@ const Marketplace = () => {
               container: true,
               display: 'flex',
               gap: 2,
-              justifyContent: 'space-evenly',
+              justifyContent: 'space-between',
             }}
             child={Grid}
             childProps={{
