@@ -179,7 +179,7 @@ const DisplayResults = ({
                   fontSize: isSm ? typography.h6 : typography.h5,
                 })}
               >
-                {data?.noOfItems > 1 && data?.noOfItems !== 0
+                {data?.noOfItems > 1 || data?.noOfItems === 0
                   ? `${subHeader ? data?.noOfItems : ''} ${data.title.plural}`
                   : `${subHeader ? data?.noOfItems : ''} ${data.title.single}`}
               </Typography>

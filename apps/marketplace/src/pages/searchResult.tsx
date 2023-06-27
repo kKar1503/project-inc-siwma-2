@@ -98,8 +98,8 @@ const Searchresult = () => {
 
   const Header: HeaderProps = {
     title: {
-      single: `Displaying ${listingCount} search result for: "${search || ''}"`,
-      plural: `Displaying ${listingCount} search results for: "${search || ''}"`,
+      single: `Displaying ${listingCount} search result${search ? ` for: "${search}"` : ':'}`,
+      plural: `Displaying ${listingCount} search results${search ? ` for: "${search}"` : ':'}`,
     },
     noOfItems: listings.length,
   };
