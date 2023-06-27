@@ -1,4 +1,4 @@
-import { ContentType } from '../../../index';
+import { ContentType, Prisma } from '../../../index';
 
 interface IMessage {
   id?: number;
@@ -15,7 +15,7 @@ const Messages: IMessage[] = [
   {
     id: 1,
     author: '1965b49b-3e55-4493-bc69-5701cabf8baa',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.text,
@@ -24,7 +24,7 @@ const Messages: IMessage[] = [
   {
     id: 2,
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.text,
@@ -33,7 +33,7 @@ const Messages: IMessage[] = [
   {
     id: 3,
     author: '1965b49b-3e55-4493-bc69-5701cabf8baa',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.text,
@@ -42,7 +42,7 @@ const Messages: IMessage[] = [
   {
     id: 4,
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.text,
@@ -51,7 +51,7 @@ const Messages: IMessage[] = [
   {
     id: 5,
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.file,
@@ -60,7 +60,7 @@ const Messages: IMessage[] = [
   {
     id: 6,
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.image,
@@ -69,7 +69,7 @@ const Messages: IMessage[] = [
   {
     id: 7,
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.image,
@@ -78,7 +78,7 @@ const Messages: IMessage[] = [
   {
     id: 8,
     author: '1965b49b-3e55-4493-bc69-5701cabf8baa',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.text,
@@ -87,7 +87,7 @@ const Messages: IMessage[] = [
   {
     id: 9,
     author: '1965b49b-3e55-4493-bc69-5701cabf8baa',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
     offer: null,
     contentType: ContentType.offer,
@@ -116,7 +116,7 @@ const Messages: IMessage[] = [
     author: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     room: 'd1a05616-3815-4c35-a6cf-31bdaa9fa29d',
     read: true,
-    offer: 220,
+    offer: 2,
     contentType: ContentType.offer,
     content: 'OFFER',
   },
@@ -161,14 +161,14 @@ const Messages: IMessage[] = [
     author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     room: '503d45ba-377a-467e-b53f-caebdd389138',
     read: true,
-    offer: 30,
+    offer: 3,
     contentType: ContentType.offer,
     content: 'OFFER',
   },
   {
     id: 18,
     author: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
-    room: '20fc42eb-53ce-4935-a187-16a1292b3270',
+    room: '503d45ba-377a-467e-b53f-caebdd389138',
     read: true,
     offer: null,
     contentType: ContentType.text,
@@ -224,7 +224,7 @@ const Messages: IMessage[] = [
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
     room: 'bd73f357-a882-4c4d-8c36-c1eaa625d2cc',
     read: true,
-    offer: 120.5,
+    offer: 4,
     contentType: ContentType.offer,
     content: 'OFFER',
   },
@@ -260,7 +260,7 @@ const Messages: IMessage[] = [
     author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     room: 'a4cae7fc-5cd3-4263-ae1b-4396f3f4c0a7',
     read: true,
-    offer: 69.42,
+    offer: 5,
     contentType: ContentType.offer,
     content: 'OFFER',
   },
@@ -314,7 +314,7 @@ const Messages: IMessage[] = [
     author: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     room: '7b9fa71d-efa8-462a-ac50-fe4ce959b205',
     read: true,
-    offer: 50,
+    offer: 6,
     contentType: ContentType.offer,
     content: 'OFFER',
   },
@@ -350,7 +350,7 @@ const Messages: IMessage[] = [
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
     room: 'f674c06e-287b-491e-83b8-e31bd440f699',
     read: true,
-    offer: 110,
+    offer: 7,
     contentType: ContentType.offer,
     content: 'OFFER',
   },

@@ -773,11 +773,20 @@ const Listings: IListings[] = [
     multiple: false,
   },
   {
-    name: 'Aluminium Safety Grips Offer',
+    name: 'Aluminum Safety Grips Offer',
     description: 'Buying aluminium safety grips for metal',
     price: new Prisma.Decimal(122.4),
     categoryId: 10,
     type: ListingType.BUY,
+    owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
+    multiple: false,
+  },
+  {
+    name: 'Steel square tubes for sale',
+    description: 'Selling steel square tubes for cheap pls buy',
+    price: new Prisma.Decimal(12),
+    categoryId: 1,
+    type: ListingType.SELL,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
   },
@@ -791,7 +800,6 @@ const Listings: IListings[] = [
     owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
     multiple: true,
   },
-
   {
     name: 'Zinc round bars',
     description:

@@ -112,13 +112,6 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${roomsCount} rows into public.rooms`);
-  console.log('Seeding public.messages...');
-
-  const { count: messagesCount } = await prismaClient.messages.createMany({
-    data: Messages,
-  });
-
-  console.log(`Seeded ${messagesCount} rows into public.messages`);
   console.log('Seeding public.offers...');
 
   const { count: offersCount } = await prismaClient.offers.createMany({
@@ -126,14 +119,13 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${offersCount} rows into public.offers`);
-  console.log('Adding an offer to a message...');
+  console.log('Seeding public.messages...');
 
-  await prismaClient.messages.update({
-    where: { id: 9 },
-    data: { offer: 1 },
+  const { count: messagesCount } = await prismaClient.messages.createMany({
+    data: Messages,
   });
 
-  console.log('Added an offer to a message');
+  console.log(`Seeded ${messagesCount} rows into public.messages`);
   console.log('Seeding public.parameter...');
 
   const { count: parameterCount } = await prismaClient.parameter.createMany({
