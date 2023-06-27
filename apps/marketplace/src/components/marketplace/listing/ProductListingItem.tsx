@@ -63,8 +63,6 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
   const [isSm] = useResponsiveness(['sm']);
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id, updateBookmarkData);
 
-  console.log(data.coverImage);
-
   return (
     <Card
       sx={{
