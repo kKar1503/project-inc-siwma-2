@@ -11,6 +11,7 @@ const NegotiableBadge = () => {
         bgcolor: palette.info[600],
         fontWeight: 500,
         color: palette.common.white,
+        width: '96px',
       })}
       label={t('Negotiate')}
     />

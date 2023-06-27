@@ -12,6 +12,7 @@ const BuyBadge = () => {
         bgcolor: palette.secondary[500],
         fontWeight: 'bold',
         color: palette.common.white,
+        width: '48px'
       })}
       label={t('Buy')}
     />
