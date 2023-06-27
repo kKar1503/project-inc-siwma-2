@@ -6,9 +6,10 @@ export type OnCreateModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   listingID: string;
+  title?: string;
 };
 
-const OnCreateModal = ({ open, setOpen, listingID }: OnCreateModalProps) => {
+const OnCreateModal = ({ open, setOpen, listingID, title }: OnCreateModalProps) => {
   const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
 
@@ -22,7 +23,7 @@ const OnCreateModal = ({ open, setOpen, listingID }: OnCreateModalProps) => {
       setOpen={setOpen}
       buttonColor="#00C853"
       icon="success"
-      title="Successfully created listing!"
+      title={title || 'Successfully created listing!'}
       content="Your listing is now updated on the marketplace."
       leftButtonText={null}
       rightButtonText="return"

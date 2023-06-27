@@ -17,13 +17,12 @@ import { useTheme } from '@mui/material/styles';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { Listing } from '@/utils/api/client/zod';
 import { useSession } from 'next-auth/react';
-import S3Image from '@/components/S3Image';
 import placeholder from 'public/images/category-placeholder.png';
+import S3CardImage from '@/components/S3CardImage';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
-import CardMediaX from './CardMediaX';
 
 export type ProductListingItemData = {
   data: Listing;
@@ -97,8 +96,8 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         />
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
-        <CardMediaX
-          src={(data.coverImage && data.coverImage.trim() !== '') ? data.coverImage : placeholder.src}
+        <S3CardImage
+          src={data.coverImage || placeholder.src}
           alt="listing image"
           height={200}
           placeholder={placeholder.src}

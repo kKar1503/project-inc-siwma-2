@@ -4,7 +4,7 @@ import { Box, Typography, CardMedia, CardContent, Card, Grid, useTheme } from '@
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCategories from '@/middlewares/fetchCategories';
 import Link from 'next/link';
-import placeholder from 'public/images/category-placeholder.png';
+import CategoryCard from '@/components/marketplace/listing/Categories';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -47,45 +47,14 @@ const CategoriesPage = () => {
       <Grid>
         <Grid
           container
-          spacing={3}
+          spacing={2}
           sx={{
             direction: 'row',
           }}
         >
-          {catData?.map(({ id, name, image }) => (
-            <Grid key={id} item xl={2} lg={3} md={4} sm={6} xs={12}>
-              <Card>
-                <CardActionArea>
-                  <Link href={`/category/${id}`}>
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <CardMedia
-                      component="img"
-                      sx={{
-                        height: 'auto',
-                        maxHeight: 250,
-                        width: 'auto',
-                        maxWidth: 250,
-                        paddingTop: 1,
-                      }}
-                      // image={image || placeholder.src}
-                      image={placeholder.src}
-                    />
-                    
-                  </div>
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="body1"
-                      sx={{
-                        fontWeight: theme.typography.h6,
-                      }}
-                    >
-                      {name}
-                    </Typography>
-                  </CardContent>
-                  </Link>
-                </CardActionArea>
-              </Card>
+          {catData?.map((category) => (
+            <Grid item xl={2} lg={3} md={4} sm={6} xs={6} key={category.name}>
+              <CategoryCard {...category} />
             </Grid>
           ))}
         </Grid>

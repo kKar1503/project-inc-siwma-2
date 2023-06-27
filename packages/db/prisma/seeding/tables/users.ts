@@ -19,6 +19,8 @@ interface IUsers {
   createdAt?: Date;
   bio?: string;
   comments?: string;
+  whatsappNumber?: string;
+  telegramUsername?: string;
 }
 
 const Users: IUsers[] = [
@@ -140,6 +142,16 @@ const Users: IUsers[] = [
     contact: UserContacts.whatsapp,
     permissions: 1,
     companyId: 1,
+  },
+  {
+    id: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
+    email: 'test@ksapps.com',
+    name: 'karan',
+    phone: '87970222',
+    password: '$2a$12$vfgcD1Z5Vv2LGXh7w1drB.5hDSOruaQerutW59MieYUPgLqwSGl',
+    contact: UserContacts.whatsapp,
+    permissions: 1,
+    companyId: 2,
   },
 ];
 

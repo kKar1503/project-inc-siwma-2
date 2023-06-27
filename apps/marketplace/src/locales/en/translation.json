@@ -1,5 +1,7 @@
 {
   "!": "!",
+  "(Accepted)": "(Accepted)",
+  "(Rejected)": "(Rejected)",
   "Add Listing": "Add Listing",
   "ADD LISTINGS": "ADD LISTINGS",
   "ALL": "ALL",
@@ -68,6 +70,7 @@
   "Non-negotiable": "Non-negotiable",
   "Non-Negotiable": "Non-negotiable",
   "Not signed in ": "Not signed in ",
+  "Offer: ": "Offer: ",
   "Offered price": "Offered price",
   "Once you leave the page, your listing details will be removed and the listing will not be created.": "Once you leave the page, your listing details will be removed and the listing will not be created.",
   "PDF File": "PDF File",
@@ -105,5 +108,13 @@
   "Type your message here": "Type your message here",
   "Uh oh! Looks like this page does not exist or you cannot access this page.": "Uh oh! Looks like this page does not exist or you cannot access this page.",
   "View your profile details here": "View your profile details here",
-  "Zip File": "Zip File"
+  "Zip File": "Zip File",
+  "No items found.": "No items found.",
+  "Close": "Close",
+  "Any Category": "Any Category",
+  "Displaying": "Displaying",
+  "search result": "search result",
+  "search results": "search results",
+  "for": "for", 
+  "No more listings available": "No more listings available"
 }

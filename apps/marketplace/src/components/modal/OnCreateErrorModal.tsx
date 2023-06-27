@@ -5,9 +5,10 @@ export type OnCreateErrorModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   content: string[];
+  title?: string;
 };
 
-const OnCreateErrorModal = ({ open, setOpen, content }: OnCreateErrorModalProps) => {
+const OnCreateErrorModal = ({ open, setOpen, content, title }: OnCreateErrorModalProps) => {
   const [rightButtonState, setRightButtonState] = useState(false);
   const message = `${content.join('\n')}.`;
 
@@ -24,7 +25,7 @@ const OnCreateErrorModal = ({ open, setOpen, content }: OnCreateErrorModalProps)
       setOpen={setOpen}
       buttonColor="#00C853"
       icon="warning"
-      title="Error occured when creating listing."
+      title={title || 'Error occured when creating listing.'}
       content={message}
       leftButtonText={null}
       rightButtonText="retry"

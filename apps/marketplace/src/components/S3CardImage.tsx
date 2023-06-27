@@ -1,15 +1,38 @@
-import React from 'react';
+import fetchS3Image from '@/middlewares/fetchS3Image';
 import CardMedia, { CardMediaProps } from '@mui/material/CardMedia';
-import S3Image from '@/components/S3Image';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 
+const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));
 
-export type S3CardMediaProps = CardMediaProps & { image: string };
+type CardMediaXProps = CardMediaProps & {
+  src: string;
+  placeholder: string;
+  alt: string;
+  height: number;
+};
 
-const S3CardImage = ({ image, title, ...others }: S3CardMediaProps) =>
-  (
-    <CardMedia component='div'  {...others}>
-      <S3Image src={image} alt={title || ''} fill />
+/**
+ * Extends the CardMedia component from material UI
+ */
+const CardMediaX = ({ src, alt, placeholder, height }: CardMediaXProps) => {
+  const { data } = useImageQuery(src);
+  const [image, setImage] = useState<{ url: string; name: string } | undefined>();
+
+  useEffect(() => {
+    if (!data) return;
+    const { url, name } = data;
+    setImage({ url, name: name || alt });
+    // eslint-disable-next-line consistent-return
+    return () => URL.revokeObjectURL(url);
+  }, [alt, data]);
+
+  return (
+    <CardMedia component="div" style={{ position: 'relative', width: '100%', height }}>
+      <Image src={image?.url || placeholder} alt={alt} fill style={{ objectFit: 'cover' }} />
     </CardMedia>
   );
+};
 
-export default S3CardImage;
+export default CardMediaX;
