@@ -72,7 +72,6 @@ const ChatRoom = () => {
   const [acceptOffer, setAcceptOffer] = useState<'pending' | 'accepted' | 'rejected'>('pending');
   const [deleteOffer, setDeleteOffer] = useState<boolean>(false);
 
-
   // ** Update Chat List **
   const updateChatList = (message: Messages) => {
     setRooms((prev) =>
@@ -109,7 +108,7 @@ const ChatRoom = () => {
   };
 
   // ** useChat **
-  const { isConnected, loading } = useChat(socket.current, connect, {
+  const { isConnected, loading, setLoading } = useChat(socket.current, connect, {
     userId,
     currentRoom: roomIdRef,
     roomSyncCallback: (roomSync) => {
@@ -201,7 +200,7 @@ const ChatRoom = () => {
       return;
     }
 
-    userIdRef.current = 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af';
+    userIdRef.current = 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26';
     setConnect(true);
     setDomLoaded(true);
     // TODO, to change back to following
@@ -244,9 +243,11 @@ const ChatRoom = () => {
             }
           });
         } else {
+          setLoading('part');
           partRoom(socket.current, messageSynced, (ack) => {
             if (ack.success) {
               joinRoom(socket.current, roomId, (ack) => {
+                setLoading('idle');
                 if (ack.success) {
                   setMessageSynced(roomId);
                   setMessages([]);
