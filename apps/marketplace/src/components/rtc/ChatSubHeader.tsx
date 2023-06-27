@@ -13,6 +13,7 @@ export type ChatSubHeaderProps = {
   itemPic: string;
   itemName: string;
   itemPrice: number;
+  itemPriceIsUnit: boolean;
   available: boolean;
   makeOffer: boolean;
   setMakeOffer: (val: boolean) => void;
@@ -22,6 +23,7 @@ const ChatSubHeader = ({
   itemPic,
   itemName,
   itemPrice,
+  itemPriceIsUnit,
   available,
   makeOffer,
   setMakeOffer,
@@ -184,7 +186,9 @@ const ChatSubHeader = ({
       </IconButton>
       <Box sx={{ flexGrow: 1 }}>
         <Typography sx={chatSubHeaderStyles?.productName}>{itemName}</Typography>
-        <Typography sx={chatSubHeaderStyles?.priceTag}>${itemPrice.toFixed(2)}</Typography>
+        <Typography sx={chatSubHeaderStyles?.priceTag}>{`$${itemPrice.toFixed(2)}${
+          itemPriceIsUnit ? '/unit' : ''
+        }`}</Typography>
       </Box>
 
       <Button onClick={handleMakeOffer} sx={chatSubHeaderStyles?.makeOfferBtn}>
