@@ -37,10 +37,14 @@ const useGetCategoriesQuery = () => {
 };
 
 const useGetAdvertisementsQuery = (permissions: number | undefined) => {
-  const { data } = useQuery('advertisements', async () => fetchAdvertisements(permissions!), {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  const { data } = useQuery(
+    ['advertisements', permissions],
+    async () => fetchAdvertisements(permissions!),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
   return data;
 };
@@ -88,6 +92,8 @@ const Marketplace = () => {
   );
 
   const categories = useGetCategoriesQuery();
+  console.log('LOOK HERE');
+  console.log(session);
   const advertisementsData = useGetAdvertisementsQuery(session?.user.permissions);
   const popularListingsData = useGetPopularListingsQuery();
 
