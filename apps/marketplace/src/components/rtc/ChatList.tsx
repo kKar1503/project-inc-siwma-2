@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -20,17 +20,30 @@ import { grey } from '@mui/material/colors';
 
 type CategoryType = 'All' | 'Buying' | 'Selling';
 
-export interface ChatListProps {
+export type ChatListProps = {
   id: string;
   username: string;
   category: CategoryType;
-  latestMessage: string;
+
   itemName: string;
   inProgress: boolean;
   time?: Date;
   userImage: string;
   unreadMessages: number;
-}
+} & (
+  | {
+      latestMessage: string;
+      contentType: 'text' | 'file' | 'image';
+    }
+  | {
+      latestMessage: {
+        amount: number;
+        accepted: boolean;
+        content: string;
+      };
+      contentType: 'offer';
+    }
+);
 
 export type ChatListPageProps = {
   chats: ChatListProps[];
@@ -401,7 +414,19 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     ...chatListStyles?.latestMessage,
                   }}
                 >
-                  {chat.latestMessage}
+                  {chat.contentType === 'offer' ? (
+                    <>
+                      <Typography component="span">{t('Offer: ')}</Typography>
+                      <Typography component="span">{`$${chat.latestMessage.amount} `}</Typography>
+                      {chat.latestMessage.accepted ? (
+                        <Typography component="span">{t('(Accepted)')}</Typography>
+                      ) : (
+                        <Typography component="span">{t(chat.latestMessage.content)}</Typography>
+                      )}
+                    </>
+                  ) : (
+                    <Typography component="span">{chat.latestMessage}</Typography>
+                  )}
                 </Typography>
                 <Typography
                   variant="body2"
