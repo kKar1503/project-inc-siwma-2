@@ -3,7 +3,6 @@ import listings from '@/utils/api/client/zod/listings';
 
 const fetchListing = async (listingID: string) => {
   const response = await apiClient.get(`/v1/listings/${listingID}/?includeImages=true`);
-  console.log(response)
   const parsedListing = listings.getById.parse(response.data.data[0]);
 
   return parsedListing;
