@@ -147,7 +147,6 @@
   "Round Bar": "Round Bar",
   "Square Bar": "Square Bar",
   "Gratings": "Gratings",
-  "Listings": "Listings",
   "Profile Card": "Profile Card",
   "View profile details here": "View profile details here",
   "Oldest": "Oldest",
@@ -169,5 +168,15 @@
   "Link your messaging accounts here": "Link your messaging accounts here",
   "Number": "Number",
   "Username": "Username",
-  "Contact":"Contact"
+  "Contact":"Contact",
+
+  "Description":"Description",
+  "Dimensions":"Dimensions",
+  "Unit Price":"Unit Price",
+  "Posted On":"Posted On",
+  "Posted By":"Posted By",
+  "Company":"Company",
+  "CHAT NOW":"CHAT NOW",
+  "ADD A REVIEW":"ADD A REVIEW",
+  "No Reviews available for this listing":"No Reviews available for this listing"
 }

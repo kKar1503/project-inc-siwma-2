@@ -135,7 +135,6 @@
   "View your profile details here": "在此查看您的个人主页详情",
   "View All Categories": "所有分类",
   "Zip File": "压缩文件",
-  "Listings": "商品",
   "Profile Card": "我的主页",
   "View profile details here": "在此查看个人资料详情",
   "Oldest": "最旧的",
@@ -167,5 +166,15 @@
   "Plates": "板材",
   "Round Bar": "圆钢",
   "Square Bar": "方形杆",
-  "Gratings": "金属格栅"
+  "Gratings": "金属格栅",
+
+  "Description":"描述",
+  "Dimensions":"尺寸",
+  "Unit Price":"单位价格",
+  "Posted On":"发布于",
+  "Posted By":"发布者",
+  "Company":"公司",
+  "CHAT NOW":"开始聊天",
+  "ADD A REVIEW":"添加评论",
+  "No Reviews available for this listing":"此商品中没有任何评论"
 }
