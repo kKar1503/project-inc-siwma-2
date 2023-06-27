@@ -7,6 +7,7 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
+import S3BoxImage from '@/components/S3BoxImage';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -47,8 +48,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                   position: 'relative',
                 }}
               >
-                <Box
-                  component="img"
+                <S3BoxImage
                   sx={{
                     height: 300,
                     display: 'block',
@@ -60,8 +60,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                   // step.image is coinsidered as string|null but src requires string|undefined
                   src={step.image as string}
                 />
-                <Box
-                  component="img"
+                <S3BoxImage
                   sx={{
                     height: 300,
                     display: 'block',

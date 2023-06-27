@@ -48,7 +48,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
         size="medium"
         onClick={handleProfileMenuOpen}
         sx={({ spacing }) => ({
-          ml: isMd ? spacing(1) : spacing(2),
+          mx: isMd ? spacing(1) : spacing(2),
         })}
       >
         <AccountCircle

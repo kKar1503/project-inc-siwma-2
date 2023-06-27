@@ -16,10 +16,9 @@ import { useMutation, useQuery } from 'react-query';
 import CardContent from '@mui/material/CardContent';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
 import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
 import { StarsRating, useResponsiveness, AddCommentModal } from '@inc/ui';
-import fetchListingImages from '@/middlewares/fetchListingImages';
 import React, { useMemo, useState, useEffect } from 'react';
 import fetchCategories from '@/middlewares/fetchCategories';
 import fetchUsers from '@/middlewares/fetchUsers';
@@ -28,31 +27,16 @@ import fetchParams from '@/middlewares/fetchParamNames';
 import fetchUser from '@/middlewares/fetchUser';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { DateTime } from 'luxon';
-// import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
+import ListingImgsPlaceholder from '@/components/marketplace/carousel/ListingImgsPlaceholder';
 import fetchChatList from '@/middlewares/fetchChatList';
 import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
-
-const carouselData = [
-  {
-    id: '4f18716b-ba33-4a98-9f9c-88df0ce50f51',
-    fileName: 'myimage-20230322T120000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    id: 'f45c0d48-b93e-45aa-8e33-7d9d3f1c4397',
-    fileName: 'myotherimage-20230321T080000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    id: '8b63d6f4-6d58-4f2c-b2f3-33d156ee3c4e',
-    fileName: 'myotherimage2-20230321T080000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
-  },
-];
+import CrossSectionImageTooltip from '@/components/marketplace/createListing/CrossSectionImageTooltip';
+import fetchS3Image from '@/middlewares/fetchS3Image';
+import S3Avatar from '@/components/S3Avatar';
 
 const useGetListingQuery = (listingID: string) => {
   const { data } = useQuery('listing', async () => fetchListing(listingID), {
@@ -86,8 +70,8 @@ const useGetCategoryNameQuery = () => {
   return data;
 };
 
-const useGetListingImagesQuery = (listingID: string) => {
-  const { data } = useQuery('listingImages', async () => fetchListingImages(listingID), {
+const useGetListingImageQuery = (listingID: string) => {
+  const { data } = useQuery('listingImages', async () => fetchS3Image(listingID), {
     enabled: listingID !== undefined,
   });
   return data;
@@ -147,7 +131,6 @@ const DetailedListingPage = () => {
   const listingId = router.query.id as string;
   const listings = useGetListingQuery(listingId);
   const reviews = useGetReviewsQuery(listingId);
-  const listingImgs = useGetListingImagesQuery(listingId);
   const cats = useGetCategoryNameQuery();
   const user = useGetUserQuery();
   const currentUser = useSession();
@@ -155,6 +138,8 @@ const DetailedListingPage = () => {
   const loggedUserUuid = currentUser.data?.user.id as string;
   const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
+
+  const placeholder = '/images/placeholder.png';
 
   const chatRooms = useChatListQuery(loggedUserUuid);
 
@@ -252,12 +237,11 @@ const DetailedListingPage = () => {
         })}
       >
         <Container maxWidth="lg">
-          {/* {listingImgs?.length ? (
-            <DetailedListingCarousel data={listingImgs} />
+          {listings?.images?.length ? (
+            <DetailedListingCarousel data={listings.images} />
           ) : (
             <ListingImgsPlaceholder />
-          )} */}
-          <DetailedListingCarousel data={carouselData} />
+          )}
           <Grid container columns={12} sx={{ direction: 'row' }}>
             <Grid item xs={12} md={8} pt={2}>
               <Grid
@@ -371,16 +355,23 @@ const DetailedListingPage = () => {
               >
                 <Typography variant="body1">{listings?.description}</Typography>
               </Box>
-              <Typography
-                sx={({ spacing }) => ({
-                  pt: spacing(2),
-                  pl: spacing(2),
-                  fontWeight: 600,
-                })}
-                variant="h6"
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap={1}
+                sx={({ spacing }) => ({ pt: spacing(2), pl: spacing(2) })}
               >
-                Dimensions
-              </Typography>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                  }}
+                  variant="h6"
+                >
+                  Dimensions
+                </Typography>
+                <CrossSectionImageTooltip data={cats?.find((x) => x.id === listings?.categoryId)?.crossSectionImage as string} />
+              </Stack>
+
               <Box
                 sx={({ spacing }) => ({
                   pt: spacing(2),
@@ -502,15 +493,16 @@ const DetailedListingPage = () => {
                         paddingBottom: 2,
                       }}
                     >
-                      <Avatar
+                      <S3Avatar
                         sx={({ spacing }) => ({
                           mb: spacing(2),
                           height: { sx: 21, md: 35, lg: 42 },
                           width: { sx: 21, md: 35, lg: 42 },
                         })}
+                        src={listings?.owner.profilePic || placeholder}
                       >
                         {listings?.owner.profilePic}
-                      </Avatar>
+                      </S3Avatar>
                       <Box sx={{ pb: { md: 1, lg: 2 }, marginLeft: 2 }}>
                         <Typography
                           variant="body2"
@@ -626,9 +618,14 @@ const DetailedListingPage = () => {
                       >
                         <Grid container>
                           <Grid item xs={2} md={1}>
-                            <Avatar>
+                            <S3Avatar
+                              src={
+                                user?.find((x) => x.id === individualReview?.userId)?.profilePic ||
+                                placeholder
+                              }
+                            >
                               {user?.find((x) => x.id === individualReview?.userId)?.profilePic}
-                            </Avatar>
+                            </S3Avatar>
                           </Grid>
                           <Grid item xs={9} md={8}>
                             <Typography
@@ -684,13 +681,7 @@ const DetailedListingPage = () => {
                       </Button>
                     </Link>
                   ) : (
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      size="large"
-                      fullWidth
-                      disabled
-                    >
+                    <Button variant="contained" type="submit" size="large" fullWidth disabled>
                       CHAT NOW
                     </Button>
                   )}

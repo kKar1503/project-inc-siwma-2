@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
+import S3Avatar from '@/components/S3Avatar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -19,6 +18,7 @@ import { useTheme } from '@mui/material/styles';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { Listing } from '@/utils/api/client/zod';
 import { useSession } from 'next-auth/react';
+import S3CardImage from '@/components/S3CardImage';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
@@ -80,13 +80,9 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         <CardHeader
           style={{ marginLeft: '-10px' }}
           avatar={
-            <S3Image
-              style={{ borderRadius: '100%' }}
-              src={`${data.owner.profilePic}` || placeholder}
-              alt="Profile Picture"
-              width={50}
-              height={50}
-            />
+            <S3Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
+              {data.owner.name.charAt(0)}
+            </S3Avatar>
           }
           title={data.owner.name}
           titleTypographyProps={{
@@ -99,7 +95,12 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         />
       </Link>
       <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
-        <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
+        <S3CardImage
+          src={data.coverImage || placeholder}
+          alt="listing image"
+          height={200}
+          placeholder=""
+        />
       </Link>
       <CardContent
         sx={({ spacing }) => ({
