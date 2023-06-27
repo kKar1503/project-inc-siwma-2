@@ -49,7 +49,8 @@ InfiniteScrollProps<TParent, TChild>) => {
   const childRef = useRef<Element>(null);
 
   const handleScroll = (e) => {
-    if (childRef.current && e.target.documentElement.scrollTop + window.innerHeight <=
+    if (
+      e.target.documentElement.scrollTop + window.innerHeight <=
         e.target.documentElement.scrollHeight - childRef.current.clientHeight * 2 ||
       loading
     )

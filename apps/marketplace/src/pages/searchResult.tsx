@@ -33,10 +33,9 @@ const Searchresult = () => {
   const [listingCount, setListingCount] = useState<number>(0);
 
   const { isLoading, refetch } = useQuery(
-    ['listings', search, filterOptions, lastListingId],
-    async () => searchListings(search as string, lastListingId, filterOptions),
+    ['listings', search || '', filterOptions],
+    async () => searchListings(search ? search as string : '', lastListingId, filterOptions),
     {
-      cacheTime: 0,
       onSuccess: (data) => {
         setListingCount(data.count);
         setLastListingId(lastListingId + data.data.length);
