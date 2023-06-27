@@ -9,7 +9,6 @@ import { InfiniteScroll } from '@inc/ui';
 import searchListings, { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { CircularProgress, Container, Typography } from '@mui/material';
-import { ParsedUrlQuery } from 'querystring';
 
 const stringToBoolean = (stringValue: string | string[] | undefined) => {
   if (stringValue === 'true') {
@@ -37,7 +36,6 @@ const Searchresult = () => {
     ['listings', search, filterOptions, lastListingId],
     async () => searchListings(search as string, lastListingId, filterOptions),
     {
-      enabled: search !== undefined && (search as string).trim() !== '',
       cacheTime: 0,
       onSuccess: (data) => {
         setListingCount(data.count);
