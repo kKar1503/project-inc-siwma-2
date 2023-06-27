@@ -69,10 +69,10 @@ const createRoom: EventFile = (io, socket) => ({
               const [sellerSocketId] = SocketUserStore.searchSocketUser('userId', sellerId);
 
               eventLog('info', `Emitting ${EVENTS.SERVER.ROOM.CREATED} to ${sellerSocketId}...`);
-              (io.to(sellerSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.ROOM.CREATED, {
-                id,
-                user: userId,
-              });
+              // (io.to(sellerSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.ROOM.CREATED, {
+              //   id,
+              //   user: userId,
+              // });
             })
             .catch(() => {
               eventLog('error', `Failed to create room in database.`);
