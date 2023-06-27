@@ -70,7 +70,7 @@ export type MessageSync = DataSync<Messages>;
 export type RoomSync = DataSync<Room>;
 
 // ** Types Declarations **
-export type LoadingState = 'idle' | 'iam' | 'sync';
+export type LoadingState = 'idle' | 'iam' | 'sync' | 'part';
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
