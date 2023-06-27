@@ -93,10 +93,6 @@ const Messages: IMessage[] = [
     contentType: ContentType.offer,
     content: 'OFFER',
   },
-  // Karan: ba9243d0-8d5e-48bf-b28e-d21cfb9fd126
-  // Xavier: c9f22ccc-0e8e-42bd-9388-7f18a5520c26
-  // Tate: 14f9a310-958c-4273-b4b3-4377804642a5
-  // 1 (Xavier selling to Karan Listing 64)
   {
     id: 10,
     author: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
@@ -142,7 +138,6 @@ const Messages: IMessage[] = [
     contentType: ContentType.text,
     content: 'Thks.',
   },
-  // 2 (Karan sell to Xav Listing 52)
   {
     id: 15,
     author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
@@ -188,7 +183,6 @@ const Messages: IMessage[] = [
     contentType: ContentType.text,
     content: 'No problem, thanks for your time',
   },
-  // 3 (Xav sell to Tate Listing 66)
   {
     id: 20,
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
@@ -234,7 +228,6 @@ const Messages: IMessage[] = [
     contentType: ContentType.offer,
     content: 'OFFER',
   },
-  // 4 59 (tate sell to xav)
   {
     id: 25,
     author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
@@ -280,7 +273,6 @@ const Messages: IMessage[] = [
     contentType: ContentType.text,
     content: 'Thank you bro',
   },
-  // 5 25 (tate sell to karan)
   {
     id: 30,
     author: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
@@ -326,7 +318,6 @@ const Messages: IMessage[] = [
     contentType: ContentType.offer,
     content: 'OFFER',
   },
-  // 6 52 (karan sell to tate)
   {
     id: 35,
     author: '14f9a310-958c-4273-b4b3-4377804642a5',
