@@ -63,8 +63,7 @@ const ChatRoom = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [connect, setConnect] = useState(false);
   const [lastMessages, setLastMessages] = useState<ChatListProps[]>([]);
-  const [acceptOffer, setAcceptOffer] = useState<boolean>(false);
-  const [declineOffer, setDeclineOffer] = useState<boolean>(false);
+  const [acceptOffer, setAcceptOffer] = useState<'pending' | 'accepted' | 'rejected'>('pending');
   const [deleteOffer, setDeleteOffer] = useState<boolean>(false);
 
   // ** LocalStorage Values **
@@ -348,8 +347,6 @@ const ChatRoom = () => {
               loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
               acceptOffer={acceptOffer}
               setAcceptOffer={setAcceptOffer}
-              declineOffer={declineOffer}
-              setDeclineOffer={setDeclineOffer}
               setDeleteOffer={setDeleteOffer}
               ChatText={
                 <ChatTextBox
