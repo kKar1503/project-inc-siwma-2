@@ -3,6 +3,7 @@ import { Card, CardContent, Typography, CardMedia, CardActionArea, SxProps } fro
 import React, { useMemo } from 'react';
 import S3CardImage from '@/components/S3CardImage';
 import { useResponsiveness } from '@inc/ui';
+import placeholder from 'public/images/category-placeholder.png';
 
 const CategoryCard: React.FC<TCategory> = ({
   id,
@@ -24,7 +25,7 @@ const CategoryCard: React.FC<TCategory> = ({
         sx={categoryHeight}
         href={`/searchResult?search=&sortBy=recent_newest&category=${id}&negotiable=&minPrice=&maxPrice=`}
       >
-        <S3CardImage height={140} src={image} title={name} alt={name} placeholder="" />
+        <S3CardImage height={140} src={image} title={name} alt={name} placeholder={placeholder.src} />
         <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
           <Typography sx={{ padding: '0' }} gutterBottom variant="h6" component="div">
             {name}
