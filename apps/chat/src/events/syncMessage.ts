@@ -71,6 +71,27 @@ const syncMessage: EventFile = (io, socket) => ({
                 gt: lastMessageId,
               },
             },
+            select: {
+              id: true,
+              author: true,
+              content: true,
+              createdAt: true,
+              contentType: true,
+              offers: {
+                select: {
+                  id: true,
+                  accepted: true,
+                  listingOffersListingTolisting: {
+                    select: {
+                      multiple: true,
+                    },
+                  },
+                  amount: true,
+                },
+              },
+              read: true,
+              room: true,
+            },
           })
           .then((messages) => {
             eventLog('debug', `Number of messages fetched from database: ${messages.length}`);
@@ -102,7 +123,26 @@ const syncMessage: EventFile = (io, socket) => ({
               (socket.emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.SYNC, {
                 status: 'in_progress',
                 progress: Math.floor(((idx + 1) / messages.length) * 100),
-                message: message,
+                data: {
+                  createdAt: message.createdAt.toISOString(),
+                  id: message.id,
+                  author: message.author,
+                  read: message.read,
+                  room: message.room,
+                  message:
+                    message.contentType === 'offer'
+                      ? {
+                          contentType: message.contentType,
+                          multiple: message.offers!.listingOffersListingTolisting.multiple,
+                          offerAccepted: message.offers!.accepted,
+                          amount: message.offers!.amount.toNumber(),
+                          content: message.content,
+                        }
+                      : {
+                          contentType: message.contentType,
+                          content: message.content,
+                        },
+                },
               });
             });
 

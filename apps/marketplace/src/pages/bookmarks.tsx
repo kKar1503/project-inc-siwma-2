@@ -46,7 +46,7 @@ const Bookmarks = () => {
       return;
     }
 
-    const listings = await Promise.all(listingIDs.map(fetchListing));
+    const listings = await Promise.all(listingIDs.map((id) => fetchListing(id)));
     setListings(listings);
   };
 
