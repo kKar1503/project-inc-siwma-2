@@ -92,8 +92,6 @@ const Marketplace = () => {
   );
 
   const categories = useGetCategoriesQuery();
-  console.log('LOOK HERE');
-  console.log(session);
   const advertisementsData = useGetAdvertisementsQuery(session?.user.permissions);
   const popularListingsData = useGetPopularListingsQuery();
 
