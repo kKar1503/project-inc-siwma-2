@@ -82,6 +82,14 @@ const FilterForm = ({
     setMaxPrice('');
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if ((event.target as HTMLInputElement).value === negotiation) {
+      setNegotiation('');
+    } else {
+      setNegotiation((event.target as HTMLInputElement).value);
+    }
+  };
+
   return (
     <form style={{ padding: 1, width: '100%' }} onSubmit={handleSubmit}>
       <Divider sx={{ my: 2 }} />
@@ -130,9 +138,17 @@ const FilterForm = ({
 
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>{t('Negotiability')}</FormLabel>
-      <RadioGroup onChange={(e) => setNegotiation(e.target.value)} value={negotiation}>
-        <FormControlLabel value="true" control={<Radio />} label={t('Negotiable')} />
-        <FormControlLabel value="false" control={<Radio />} label={t('Non-Negotiable')} />
+      <RadioGroup value={negotiation}>
+        <FormControlLabel
+          value="true"
+          control={<Radio onClick={handleClick} />}
+          label={t('Negotiable')}
+        />
+        <FormControlLabel
+          value="false"
+          control={<Radio onClick={handleClick} />}
+          label={t('Non-Negotiable')}
+        />
       </RadioGroup>
 
       <Divider sx={{ my: 2 }} />
