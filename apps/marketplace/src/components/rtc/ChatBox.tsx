@@ -34,6 +34,8 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
 
   useEffect(() => {
     if (endRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       endRef.current.scrollIntoView({ behavior: 'instant' });
     }
   }, [roomData]);
