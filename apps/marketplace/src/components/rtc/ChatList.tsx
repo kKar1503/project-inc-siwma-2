@@ -24,7 +24,6 @@ export type ChatListProps = {
   id: string;
   username: string;
   category: CategoryType;
-
   itemName: string;
   inProgress: boolean;
   time?: Date;

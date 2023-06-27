@@ -38,6 +38,13 @@ function formatMessage(message: Messages): ChatData {
   };
 }
 
+type RoomData = ChatListProps & {
+  itemId: number;
+  itemPrice: number;
+  itemPriceIsUnit: boolean;
+  itemImage: string;
+};
+
 const ChatRoom = () => {
   // ** Socket Initialization
   const socket = useRef(
@@ -59,7 +66,7 @@ const ChatRoom = () => {
   // ** Socket Related **z
   const [connect, setConnect] = useState(false);
   const [roomId, setRoomId] = useState('');
-  const [rooms, setRooms] = useState<ChatListProps[]>([]);
+  const [rooms, setRooms] = useState<RoomData[]>([]);
   const [messages, setMessages] = useState<ChatData[]>([]);
 
   // ** States **
@@ -152,7 +159,7 @@ const ChatRoom = () => {
             time: time ? new Date(time) : undefined,
             category: category === 'BUY' ? 'Buying' : 'Selling',
             latestMessage: contentType === 'offer' ? latestMessageDataObj : latestMessageDataString,
-          } as ChatListProps;
+          } as RoomData;
           setRooms((curr) => [...curr, roomsData]);
           break;
         }
@@ -273,7 +280,7 @@ const ChatRoom = () => {
   }, [isConnected, loading, domLoaded, roomId]);
 
   // ** Memos **
-  const currentRoom = useMemo<ChatListProps | null>(() => {
+  const currentRoom = useMemo<RoomData | null>(() => {
     if (roomId === '') {
       return null;
     }
@@ -384,10 +391,11 @@ const ChatRoom = () => {
               handleBack={() => setRoomId('')}
             />
             <ChatSubHeader
-              itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
+              itemPic={currentRoom.itemImage}
               itemName={currentRoom.itemName}
               available={currentRoom.inProgress}
-              itemPrice={100.1}
+              itemPrice={currentRoom.itemPrice}
+              itemPriceIsUnit={currentRoom.itemPriceIsUnit}
               makeOffer={makeOffer}
               setMakeOffer={setMakeOffer}
             />
