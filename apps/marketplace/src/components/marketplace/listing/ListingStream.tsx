@@ -18,6 +18,15 @@ const Scroll = styled('div')({
   },
 });
 
+const stopScroll = (event: React.MouseEvent<HTMLInputElement>) => {
+  const box: HTMLInputElement = event.currentTarget;
+  box.style.animationPlayState = 'paused'
+}
+const continueScroll = (event: React.MouseEvent<HTMLInputElement>) => {
+  const box: HTMLInputElement = event.currentTarget;
+  box.style.animationPlayState = 'running'
+}
+
 const ListingStream: React.FC<Props> = ({ listingItemsData }) => (
   <Scroll sx={{ paddingTop: '2rem' }}>
     <Box sx={{ margin: 'auto', overflow: 'hidden', position: 'relative', width: 'auto' }}>
@@ -27,6 +36,7 @@ const ListingStream: React.FC<Props> = ({ listingItemsData }) => (
           display: 'flex',
           width: 'calc(288px * 14 + (48px * 14))',
         }}
+        onMouseOver={stopScroll} onMouseOut={continueScroll}
       >
         {listingItemsData?.map((item) => (
           <Box sx={{ width: '288px', margin: '0 24px' }} key={item.id}>
