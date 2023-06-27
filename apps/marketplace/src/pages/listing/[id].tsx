@@ -11,6 +11,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import SellBadge from '@/components/marketplace/listing/SellBadge';
 import BuyBadge from '@/components/marketplace/listing/BuyBadge';
+import ShareModal from '@/components/modal/ShareModal';
 import fetchListing from '@/middlewares/fetchListing';
 import { useMutation, useQuery } from 'react-query';
 import CardContent from '@mui/material/CardContent';
@@ -34,6 +35,7 @@ import { useSession } from 'next-auth/react';
 import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
+import fetchShare from '@/middlewares/fetchShare';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
 
 const carouselData = [
@@ -105,6 +107,14 @@ const useChatListQuery = (loggedInUser: string) => {
   return data;
 };
 
+const useGetShareQuery = (listingID: string) => {
+  const { data } = useQuery('share', async () => fetchShare(listingID), {
+    enabled: listingID !== undefined,
+  });
+
+  return data;
+};
+
 interface chatRoomDetails {
   buyerId: string;
   sellerId: string;
@@ -114,6 +124,11 @@ interface chatRoomDetails {
 interface reviewDetails {
   listingId: string;
   reviewData: ReviewRequestBody;
+}
+
+interface Share {
+  hash: string;
+  shortUrl: string;
 }
 
 const reviewData = (data: reviewDetails) => postReview(data.reviewData, data.listingId);
@@ -144,7 +159,7 @@ const DetailedListingPage = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const router = useRouter();
-  const listingId = router.query.id as string;
+  const listingId = (router.query.id as string)?.split('-').pop() as string;
   const listings = useGetListingQuery(listingId);
   const reviews = useGetReviewsQuery(listingId);
   const listingImgs = useGetListingImagesQuery(listingId);
@@ -155,6 +170,7 @@ const DetailedListingPage = () => {
   const loggedUserUuid = currentUser.data?.user.id as string;
   const loggedInUser = useGetCurrentUserQuery(loggedUserUuid);
   const bookmarkedListings = loggedInUser?.bookmarks?.listings;
+  const share: Share = useGetShareQuery(listingId);
 
   const chatRooms = useChatListQuery(loggedUserUuid);
 
@@ -165,7 +181,8 @@ const DetailedListingPage = () => {
   const [inputText, setInputText] = useState<string>('');
   const [openComment, setOpenComment] = useState(false);
   const [rating, setRating] = useState<number | null>(0);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isShareOpen, setIsShareOpen] = useState<boolean>(false);
 
   const usePostReviewQuery = useMutation({ mutationFn: (data: reviewDetails) => reviewData(data) });
 
@@ -318,8 +335,16 @@ const DetailedListingPage = () => {
                           p: spacing(0),
                           color: palette.common.black,
                         })}
+                        onClick={() => setIsShareOpen(true)}
                       >
                         <IosShareIcon fontSize={isSm ? 'medium' : 'large'} />
+                        <ShareModal
+                          open={isShareOpen}
+                          setOpen={setIsShareOpen}
+                          title="Share this listing!"
+                          content="Share this link with anyone!"
+                          link={share ? share.shortUrl : ''}
+                        />
                       </IconButton>
                     </Grid>
                     {listings?.owner.id !== loggedUserUuid && (
@@ -684,13 +709,7 @@ const DetailedListingPage = () => {
                       </Button>
                     </Link>
                   ) : (
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      size="large"
-                      fullWidth
-                      disabled
-                    >
+                    <Button variant="contained" type="submit" size="large" fullWidth disabled>
                       CHAT NOW
                     </Button>
                   )}
