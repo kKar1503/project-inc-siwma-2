@@ -258,7 +258,7 @@ const Listings: IListings[] = [
     price: new Prisma.Decimal(299),
     categoryId: 7,
     type: ListingType.SELL,
-    owner: '14f9a310-958c-4273-b4b3-4377804642a5',
+    owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
   },
   {
@@ -508,7 +508,7 @@ const Listings: IListings[] = [
     price: new Prisma.Decimal(696),
     categoryId: 10,
     type: ListingType.BUY,
-    owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
+    owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
   },
   {
