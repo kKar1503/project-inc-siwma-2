@@ -381,7 +381,6 @@ const ChatRoom = () => {
             <ChatHeader
               profilePic={currentRoom.userImage}
               username={currentRoom.username}
-              available={currentRoom.inProgress}
               handleBack={() => setRoomId('')}
             />
             <ChatSubHeader
