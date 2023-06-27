@@ -13,8 +13,9 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import { SearchBar } from '@inc/ui';
 import CreateListing from './CreateListing';
-import SearchBar from './SearchBar';
+
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
 import ChangeLanguageButton from './ChangeLanguageButton';
@@ -56,6 +57,8 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
         top: 0,
         // height: 114,
         zIndex: zIndex.appBar,
+        minWidth: isSm ? '0px' : '900px',
+        px: isSm ? '0px' : 'calc(50vw - 656px)',
       }}
     >
       <Toolbar
