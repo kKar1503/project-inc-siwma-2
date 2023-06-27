@@ -6,7 +6,7 @@ type RoomId = string;
 type MessageId = number;
 type ListingId = number;
 
-type MessageContent = (
+export type MessageContent = (
   | {
       contentType: 'text' | 'file' | 'image';
     }
