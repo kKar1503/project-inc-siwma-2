@@ -77,7 +77,7 @@ const FilterForm = ({
 
   const resetForm = () => {
     setSort('Recent');
-    setCategory(0);
+
     setNegotiation('');
     setMinPrice('');
     setMaxPrice('');
@@ -127,7 +127,7 @@ const FilterForm = ({
         value={category.toString()}
       >
         <MenuItem key={0} value={0}>
-          Any Category
+          {t('Any Category')}
         </MenuItem>
         {categoriesData &&
           categoriesData.map((category) => (
@@ -170,7 +170,7 @@ const FilterForm = ({
           fontWeight: typography.fontWeightMedium,
         })}
       >
-        Price
+        {t('Price')}
       </FormLabel>
       <Box sx={{ display: 'flex', marginBottom: 2 }}>
         <TextField
@@ -204,7 +204,7 @@ const FilterForm = ({
         color="error"
         fullWidth
       >
-        RESET
+        {t('RESET')}
       </Button>
     </form>
   );

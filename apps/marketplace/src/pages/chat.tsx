@@ -69,6 +69,9 @@ const ChatRoom = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [roomSynced, setRoomSynced] = useState(false);
   const [messageSynced, setMessageSynced] = useState('');
+  const [acceptOffer, setAcceptOffer] = useState<'pending' | 'accepted' | 'rejected'>('pending');
+  const [deleteOffer, setDeleteOffer] = useState<boolean>(false);
+
 
   // ** Update Chat List **
   const updateChatList = (message: Messages) => {
@@ -272,7 +275,14 @@ const ChatRoom = () => {
     if (isLg) {
       return {
         height: 'calc(100vh - 64px)',
-        minWidth: '992px',
+        minWidth: '900px',
+        px: 'calc(50vw - 656px)',
+      };
+    }
+    if (isMd) {
+      return {
+        height: 'calc(100vh - 64px)',
+        minWidth: '900px',
         px: 'calc(50vw - 656px)',
       };
     }
@@ -288,7 +298,7 @@ const ChatRoom = () => {
       minWidth: '0px',
       px: '64px',
     };
-  }, [isLg, isSm]);
+  }, [isLg, isMd, isSm]);
 
   const onClickSend: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
@@ -369,6 +379,8 @@ const ChatRoom = () => {
             <ChatBox
               roomData={messages}
               loginId={userId}
+              setAcceptOffer={setAcceptOffer}
+              setDeleteOffer={setDeleteOffer}
               ChatText={
                 <ChatTextBox
                   selectedFile={selectedFile}

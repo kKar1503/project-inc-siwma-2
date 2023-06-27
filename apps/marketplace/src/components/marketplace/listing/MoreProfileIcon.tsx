@@ -9,7 +9,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
 
 export type MoreProfileIconProps = {
   productId: string;
@@ -17,11 +16,10 @@ export type MoreProfileIconProps = {
 
 const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
   const router = useRouter();
-  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = anchorEl !== null;
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    // stops click from propagating through to Link tag
+    // stops click from propogating through to Link tag
     event.preventDefault();
     // anchors menu to where "More" VertIcon was clicked
     setAnchorEl(event.currentTarget);
@@ -34,7 +32,7 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
 
   const handleEditClick = () => {
     // send user to page to edit listing
-    router.push(`${productId}/edit-listing`);
+    router.push(`/edit-listing/${productId}`);
     setAnchorEl(null);
   };
 
@@ -68,23 +66,22 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
           <ListItemIcon>
             <EditIcon fontSize="small" />
           </ListItemIcon>
-          {t('Edit Listing')}
+          Edit Listing
         </MenuItem>
-        <MenuItem onClick={handleArchiveClick}>
+        {/* <MenuItem onClick={handleArchiveClick}>
           <ListItemIcon>
             <ArchiveIcon fontSize="small" />
           </ListItemIcon>
-          {t('Archive Listing')}
-        </MenuItem>
+          Archive Listing
+        </MenuItem> */}
         <MenuItem onClick={handleDeleteClick}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
-          {t('Delete Listing')}
+          Delete Listing
         </MenuItem>
       </Menu>
     </Box>
   );
 };
-
 export default MoreProfileIcon;

@@ -25,6 +25,7 @@ interface PageType extends React.FunctionComponent<any> {
   allowNonAuthenticated: boolean;
   auth?: boolean;
   includeNavbar?: boolean;
+  renderSearchBar?: boolean;
 }
 
 // App prop type
@@ -74,7 +75,12 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
-  const { allowAuthenticated, allowNonAuthenticated, includeNavbar = true } = Component;
+  const {
+    allowAuthenticated,
+    allowNonAuthenticated,
+    includeNavbar = true,
+    renderSearchBar,
+  } = Component;
   // Stying snackbar responsiveness
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const alertStyle: SnackbarOrigin | undefined = useMemo(() => {
@@ -111,7 +117,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
               {getLayout(
                 <Box>
                   <I18nextProvider i18n={i18n}>
-                    {includeNavbar && <NavBar />}
+                    {includeNavbar && <NavBar renderSearchBar={renderSearchBar} />}
                     <Component {...pageProps} />
                   </I18nextProvider>
                 </Box>
