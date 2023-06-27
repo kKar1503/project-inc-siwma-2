@@ -32,6 +32,7 @@ const Searchresult = () => {
   const [lastListingId, setLastListingId] = useState<number>(0);
   const [maxItems, setMaxItems] = useState<boolean>(false);
   const [queryParameters, setQueryParameters] = useState<ParsedUrlQuery>();
+  const [listingCount, setListingCount] = useState<number>(0);
 
   const { isLoading, refetch } = useQuery(
     ['listings', search, filterOptions, lastListingId],
@@ -40,12 +41,13 @@ const Searchresult = () => {
       enabled: search !== undefined && (search as string).trim() !== '',
       cacheTime: 0,
       onSuccess: (data) => {
-        setLastListingId(lastListingId + data.length);
+        setListingCount(data.count);
+        setLastListingId(lastListingId + data.data.length);
 
-        if (data.length === 0) {
+        if (data.data.length === 0) {
           setMaxItems(true);
         } else {
-          setListings((prev) => [...prev, ...data]);
+          setListings((prev) => [...prev, ...data.data]);
         }
 
         if (scrollRef.current && scrollRef.current.scrollHeight > window.screen.height) {
@@ -57,6 +59,7 @@ const Searchresult = () => {
 
   useEffect(() => {
     setLastListingId(0);
+    setListingCount(0);
     setListings([]);
     setMaxItems(false);
   }, [filterOptions, search]);
@@ -103,8 +106,8 @@ const Searchresult = () => {
 
   const Header: HeaderProps = {
     title: {
-      single: `Displaying search result for: "${search || ''}"`,
-      plural: `Displaying search results for: "${search || ''}"`,
+      single: `Displaying ${listingCount} search result for: "${search || ''}"`,
+      plural: `Displaying ${listingCount} search results for: "${search || ''}"`,
     },
     noOfItems: listings.length,
   };

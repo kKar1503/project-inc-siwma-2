@@ -4,7 +4,7 @@ import { NotFoundError, ParamError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { categorySchema } from '@/utils/api/server/zod';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
-import { QueryResult, formatParamters } from '../index';
+import { QueryResult, formatParamters, parseCategoryId } from '../index';
 
 function parseId(id: string | undefined): number {
   if (!id) {
@@ -44,7 +44,7 @@ export default apiHandler()
 
     const response: QueryResult | null = await PrismaClient.category.findFirst({
       where: {
-        id: parseId(id as string),
+        id: parseCategoryId(id as string, false),
       },
       select: {
         id: true,

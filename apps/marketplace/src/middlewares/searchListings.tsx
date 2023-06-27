@@ -31,7 +31,7 @@ const searchListings = async (matching: string, lastIdPointer: number, filter?: 
 
   const parsedListings = listings.getAll.parse(response.data.data[0].listings);
 
-  return parsedListings;
+  return { count: response.data.data[0].totalCount, data: parsedListings };
 };
 
 export default searchListings;
