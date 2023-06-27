@@ -274,7 +274,7 @@ const ChatRoom = () => {
   const chatPageSx: SxProps<Theme> = useMemo(() => {
     if (isLg) {
       return {
-        height: 'calc(100vh - 64px)',
+        height: 'calc(100vh - 113px)',
         minWidth: '900px',
         px: 'calc(50vw - 656px)',
       };
@@ -288,7 +288,7 @@ const ChatRoom = () => {
     }
     if (isSm) {
       return {
-        height: 'calc(100vh - 56px)',
+        height: 'calc(100vh - 64px)',
         minWidth: '0px',
         px: '0px',
       };
