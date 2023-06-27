@@ -7,7 +7,7 @@ const fetchProfilesListings = async (
   sortBy?: string,
   filter?: string
 ) => {
-  let query = `v1/users/${uuid}/listings?matching=${matching || ''}`;
+  let query = `v1/users/${uuid}/listings?includeImages=true&matching=${matching || ''}`;
   if (sortBy) query += `&sortBy=${sortBy}`;
   if (filter === 'BUY' || filter === 'SELL') query += `&type=${filter}`;
   // parse data through zod to ensure data is correct

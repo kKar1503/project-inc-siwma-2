@@ -87,7 +87,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
         <Paper
           sx={{
             p: 2,
-            height: isSm ? 'calc(100vh - 200px)' : 'calc(100vh - 350px)',
+            height: 'calc(100vh - 280px)',
             overflow: 'auto',
           }}
         >
@@ -104,8 +104,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                 <Paper
                   variant="outlined"
                   sx={({ spacing, palette, shadows }) => ({
-                    p: spacing(2),
-                    m: spacing(2),
+                    p: spacing(1),
                     backgroundColor:
                       message.author === loginId ? palette.primary[100] : palette.common.white,
                     maxWidth: '400px',

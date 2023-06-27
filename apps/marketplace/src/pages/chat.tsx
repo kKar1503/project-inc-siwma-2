@@ -195,44 +195,25 @@ const ChatRoom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, loading, domLoaded, roomId]);
 
-  // ** Responsive Styles **
-  const pagePadding = useMemo(
-    () =>
-      isSm
-        ? {
-            mx: spacing(0),
-            mt: spacing(0),
-          }
-        : {
-            mx: spacing(5),
-            mt: spacing(3),
-          },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isSm]
-  );
-
   const chatPageSx: SxProps<Theme> = useMemo(() => {
     if (isLg) {
       return {
         height: 'calc(100vh - 64px)',
         minWidth: '992px',
         px: 'calc(50vw - 656px)',
-        pagePadding,
       };
     }
     if (isSm) {
       return {
-        height: 'calc(100vh - 64px)',
+        height: 'calc(100vh - 56px)',
         minWidth: '0px',
         px: '0px',
-        pagePadding,
       };
     }
     return {
       height: 'calc(100vh - 64px)',
       minWidth: '0px',
       px: '64px',
-      pagePadding,
     };
   }, [isLg, isSm]);
 
@@ -242,12 +223,10 @@ const ChatRoom = () => {
       {/* if isSm, display chat list if roomId is '' (room not selected) */}
       {(isMd || isLg || (isSm && roomId === '')) && (
         <Box
-          sx={({ shadows }) => ({
-            boxShadow: shadows[3],
+          sx={{
             width: isSm ? 1 / 1 : 1 / 3,
-            height: '100%',
             overflow: 'hidden',
-          })}
+          }}
         >
           <ChatList
             chats={rooms}
