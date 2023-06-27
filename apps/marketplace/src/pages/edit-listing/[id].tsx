@@ -1,12 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import { PostListingsRequestBody } from '@/utils/api/server/zod/listings';
+import { Typography, Container, Divider, Grid, Button } from '@mui/material';
+import { PutListingsRequestBody } from '@/utils/api/server/zod/listings';
 import { useQueries, useQuery } from 'react-query';
-import createListing, { ReturnType } from '@/middlewares/createListing';
+import { ReturnType } from '@/middlewares/createListing';
+import editListing from '@/middlewares/editListing';
 import fetchCategories from '@/middlewares/fetchCategories';
 import OnCreateModal from '@/components/modal/OnCreateModal';
 import OnCreateErrorModal from '@/components/modal/OnCreateErrorModal';
@@ -24,19 +21,31 @@ import ListingTypeForm, {
 import ListingForm, {
   ListingValidationProps,
 } from '@/components/marketplace/createListing/ListingForm';
-import ImageUploadForm from '@/components/marketplace/createListing/ImageUploadForm';
+import ImageUploadForm, {
+  ImageOrder,
+  PreviewImageProps,
+} from '@/components/marketplace/createListing/ImageUploadForm';
+import fetchListing from '@/middlewares/fetchListing';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
-const usePostListingQuery = (
-  listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
+const usePutListingQuery = (
+  id: string,
+  listing: { listingBody: PutListingsRequestBody; images: Blob[] } | undefined,
+  imagesOrder: ImageOrder,
+  deletedImages: string[],
   onSucessCallback: (data: ReturnType) => void
 ) => {
   const { data } = useQuery(
-    ['postListing', listing],
-    () => createListing(listing?.listingBody, listing?.images),
+    ['editListing', listing],
+    () => editListing(id, listing?.listingBody, listing?.images, imagesOrder, deletedImages),
     {
       enabled:
-        listing !== undefined && listing.listingBody !== undefined && listing.images !== undefined,
-      retry: false,
+        id !== undefined &&
+        id.trim() !== '' &&
+        listing !== undefined &&
+        listing.listingBody !== undefined &&
+        listing.images !== undefined,
       onSuccess: (data) => onSucessCallback(data),
     }
   );
@@ -55,9 +64,14 @@ const CreateListingPage = () => {
   // ** TODO: optimise in the future to use useReducer hook
   // form data
   const [formData, setFormData] = useState<{
-    listingBody: PostListingsRequestBody;
+    listingBody: PutListingsRequestBody;
     images: Blob[];
   }>();
+
+  //
+  const router = useRouter();
+  const { id } = router.query;
+  const { data: session } = useSession();
 
   // form data (parts)
   const [listingType, setListingType] = useState<ListingTypeProps>('BUY');
@@ -71,6 +85,13 @@ const CreateListingPage = () => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
+  const [listingImages, setListingImages] = useState<PreviewImageProps[]>([]);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
+  const [imageOrder, setImageOrder] = useState<ImageOrder>({});
+
+  // to keep track of original order of image
+  const [originalOrder, setOriginalOrder] = useState<ImageOrder>({});
+
   // errors
   const [categoryError, setCategoryError] = useState<string>('');
   const [parameterErrors, setParameterErrors] = useState<ParameterValidationProps[]>([]);
@@ -81,18 +102,30 @@ const CreateListingPage = () => {
   });
 
   // Hooks
-  const postListingData = usePostListingQuery(formData, (data) => {
-    if (data === false) return;
-    setOpenCreateErrorModal(!data.success);
-    setOpenCreateModal(data.success);
-  });
+  const editListingData = usePutListingQuery(
+    id as string,
+    formData,
+    imageOrder,
+    deletedImages,
+    (data) => {
+      if (data === false) return;
+      setOpenCreateErrorModal(!data.success);
+      setOpenCreateModal(data.success);
+    }
+  );
 
   const queries = useQueries([
     { queryKey: 'categories', queryFn: () => fetchCategories(true) },
     { queryKey: 'parameters', queryFn: () => fetchParameters() },
+    {
+      queryKey: 'listing',
+      queryFn: () => fetchListing(id as string),
+      enabled: id !== undefined && (id as string).trim() !== '',
+    },
   ]);
   const categoriesData = queries[0].data;
   const allParametersData = queries[1].data;
+  const listing = queries[2].data;
   const parametersData = useMemo(() => {
     if (!allParametersData) return undefined;
     return categoryParameters.map(
@@ -231,7 +264,7 @@ const CreateListingPage = () => {
   };
 
   const submitForm = (): boolean => {
-    const listingBody: PostListingsRequestBody = {
+    const listingBody: PutListingsRequestBody = {
       name: title,
       description,
       price,
@@ -252,11 +285,66 @@ const CreateListingPage = () => {
     return true;
   };
 
+  const deleteImage = (id: string) => {
+    setDeletedImages((prev) => [...prev, originalOrder[id].toString()]);
+  };
+
   // Use Effects
   useEffect(() => {
     if (category == null) return;
     setCategoryParameters(category.parameters || []);
   }, [category]);
+
+  // check if the user is admin or owner of the listing or from the same company
+  useEffect(() => {
+    if (!session || !listing) return;
+    if (
+      session.user.permissions !== 1 &&
+      session.user.id !== listing.owner.id &&
+      session.user.companyId !== listing.owner.company.id
+    ) {
+      router.push('/404.tsx');
+    }
+  }, [session, listing]);
+
+  // fill the form with data
+  useEffect(() => {
+    if (listing) {
+      setListingType(listing.type);
+
+      categoriesData?.forEach((category) => {
+        if (category.id === listing.categoryId) {
+          setCategory(category);
+        }
+      });
+
+      if (listing.parameters) {
+        setParameters(listing.parameters);
+      }
+
+      setTitle(listing.name);
+      setPrice(listing.price);
+      setNegotiable(listing.negotiable || false);
+      setUnitPrice(listing.unitPrice || false);
+      setDescription(listing.description);
+
+      // Set Image Data
+      if (listing.images) {
+        const order: ImageOrder = {};
+        const previewImages: PreviewImageProps[] = [];
+        listing.images.forEach((image, index) => {
+          order[image] = index;
+          previewImages.push({
+            key: image,
+            id: image,
+            preview: `https://s3.karlok.dev/${image}`,
+          });
+        });
+        setOriginalOrder(order);
+        setListingImages(previewImages);
+      }
+    }
+  }, [listing]);
 
   // Handle Submit/Cancel
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -275,22 +363,32 @@ const CreateListingPage = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              Create Listing
+              Edit Listing
             </Typography>
-            <Typography variant="body1">
-              Create a new listing to be shared on your profile.
-            </Typography>
+            <Typography variant="body1">Edit a listing to be shared on your profile.</Typography>
           </Grid>
           <Grid item xs={12} sx={{ width: '100%' }}>
             <Divider />
           </Grid>
-          <ListingTypeForm setListingType={setListingType} />
+          <ListingTypeForm listingType={listingType} setListingType={setListingType} disabled />
           {categoriesData && (
-            <CategoryForm setCategory={setCategory} data={categoriesData} error={categoryError} />
+            <CategoryForm
+              category={category}
+              setCategory={setCategory}
+              data={categoriesData}
+              error={categoryError}
+            />
           )}
-          <ImageUploadForm setImages={setImages} images={images} />
+          <ImageUploadForm
+            listingImages={listingImages}
+            setImages={setImages}
+            images={images}
+            setImageOrder={setImageOrder}
+            deleteImage={deleteImage}
+          />
           {category && parametersData && (
             <ParameterForm
+              parameters={parameters}
               setParameters={setParameters}
               crossSectionImg={category.crossSectionImage}
               data={parametersData}
@@ -298,6 +396,11 @@ const CreateListingPage = () => {
             />
           )}
           <ListingForm
+            title={title}
+            price={price}
+            negotiable={negotiable}
+            unitPrice={unitPrice}
+            description={description}
             setTitle={setTitle}
             setPrice={setPrice}
             setNegotiable={setNegotiable}
@@ -322,20 +425,22 @@ const CreateListingPage = () => {
           </Grid>
           <Grid item xs={6} sx={{ width: '100%' }}>
             <Button variant="contained" type="submit" size="large" fullWidth>
-              CREATE LISTING
+              EDIT LISTING
             </Button>
-            {postListingData !== false &&
-              (postListingData.success ? (
+            {editListingData !== false &&
+              (editListingData.success ? (
                 <OnCreateModal
                   open={openCreateModal}
                   setOpen={setOpenCreateModal}
-                  listingID={postListingData.id}
+                  listingID={editListingData.id}
+                  title="Successfully edited listing!"
                 />
               ) : (
                 <OnCreateErrorModal
                   open={openCreateErrorModal}
                   setOpen={setOpenCreateErrorModal}
-                  content={postListingData.errorMessages}
+                  content={editListingData.errorMessages}
+                  title="Error occured when editing listing."
                 />
               ))}
           </Grid>

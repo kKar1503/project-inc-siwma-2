@@ -30,14 +30,14 @@ const postShareURL = async (req: NextApiRequest, res: NextApiResponse): Promise<
       });
 
       // Construct the complete URL with the hashed URL appended to the base URL
-      const shortUrl = `${process.env.FRONTEND_URL}/${hashedUrl}`;
+      const shortUrl = `${process.env.FRONTEND_URL}/share/${hashedUrl}`;
       // Return the shortened URL value in the response
       res.status(200).json(formatAPIResponse({ hash: hashedUrl, shortUrl }));
       return;
     }
 
     // If hashed URL is already present, construct the complete URL with the hashed URL appended to the base URL
-    const shortUrl = `${process.env.FRONTEND_URL}/${listing.hashedUrl}`;
+    const shortUrl = `${process.env.FRONTEND_URL}/share/${listing.hashedUrl}`;
     // Return the hash and the shortened URL in the response
     res.status(200).json(formatAPIResponse({ hash: listing.hashedUrl, shortUrl }));
     return;
