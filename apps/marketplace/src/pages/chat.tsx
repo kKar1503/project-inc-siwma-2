@@ -11,7 +11,7 @@ import ChatList from '@/components/rtc/ChatList';
 
 // ** Chat Related Imports **
 import { io } from 'socket.io-client';
-import { getMessage, getRooms, joinRoom, sendMessage } from '@/chat/emitters';
+import { getMessage, getRooms, joinRoom, partRoom, sendMessage } from '@/chat/emitters';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
@@ -224,21 +224,45 @@ const ChatRoom = () => {
   useEffect(() => {
     if (isConnected && loading === 'idle' && domLoaded && roomId !== '') {
       if (messageSynced !== roomId) {
-        joinRoom(socket.current, roomId, (ack) => {
-          if (ack.success) {
-            setMessageSynced(roomId);
-            setMessages([]);
-            getMessage(socket.current, roomId, (ack) => {
-              if (ack.success) {
-                console.log('getMessage', ack.data);
-              } else {
-                console.log('getMessage', ack.err);
-              }
-            });
-          } else {
-            console.log('joinRoom', ack.err);
-          }
-        });
+        if (messageSynced === '') {
+          joinRoom(socket.current, roomId, (ack) => {
+            if (ack.success) {
+              setMessageSynced(roomId);
+              setMessages([]);
+              getMessage(socket.current, roomId, (ack) => {
+                if (ack.success) {
+                  console.log('getMessage', ack.data);
+                } else {
+                  console.log('getMessage', ack.err);
+                }
+              });
+            } else {
+              console.log('joinRoom', ack.err);
+            }
+          });
+        } else {
+          partRoom(socket.current, messageSynced, (ack) => {
+            if (ack.success) {
+              joinRoom(socket.current, roomId, (ack) => {
+                if (ack.success) {
+                  setMessageSynced(roomId);
+                  setMessages([]);
+                  getMessage(socket.current, roomId, (ack) => {
+                    if (ack.success) {
+                      console.log('getMessage', ack.data);
+                    } else {
+                      console.log('getMessage', ack.err);
+                    }
+                  });
+                } else {
+                  console.log('joinRoom', ack.err);
+                }
+              });
+            } else {
+              console.log('partRoom', ack.err);
+            }
+          });
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
