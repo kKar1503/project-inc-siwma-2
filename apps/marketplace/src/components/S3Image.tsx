@@ -26,7 +26,8 @@ const S3Image = ({ src, alt, ...others }: S3ImageProps) => {
   }, [alt, data]);
 
   return image ? (
-    <Link  href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
+    <Link href={image.url} download={image.name} onClick={onClick}
+          style={{ cursor: 'default', textDecoration: 'none' }}>
       <Image src={image.url} alt={alt} title={image.name} {...others} />
     </Link>
   ) : null;

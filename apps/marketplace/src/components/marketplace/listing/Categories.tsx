@@ -15,9 +15,11 @@ const CategoryCard: React.FC<TCategory> = ({
   <Card>
     <CardActionArea href={`/categories/${id}`}>
       <S3CardImage
-        sx={{ height: 140 }}
-        image={image}
+        height={140}
+        src={image}
         title={name}
+        alt={name}
+        placeholder=''
         />
       <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
         <Typography sx={{ padding: '0' }} gutterBottom variant="h6" component="div">
