@@ -32,7 +32,7 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
 
   const handleEditClick = () => {
     // send user to page to edit listing
-    router.push(`${productId}/edit-listing`);
+    router.push(`/edit-listing/${productId}`);
     setAnchorEl(null);
   };
 
