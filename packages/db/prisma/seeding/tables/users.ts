@@ -19,6 +19,8 @@ interface IUsers {
   createdAt?: Date;
   bio?: string;
   comments?: string;
+  whatsappNumber?: string;
+  telegramUsername?: string;
 }
 
 const Users: IUsers[] = [
