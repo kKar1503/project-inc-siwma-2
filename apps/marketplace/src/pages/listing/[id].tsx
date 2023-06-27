@@ -34,29 +34,9 @@ import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
-import { InfoOutlined } from '@mui/icons-material';
-import S3Image from '@/components/S3Image';
 import CrossSectionImageTooltip from '@/components/marketplace/createListing/CrossSectionImageTooltip';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import S3Avatar from '@/components/S3Avatar';
-
-const carouselData = [
-  {
-    id: '4f18716b-ba33-4a98-9f9c-88df0ce50f51',
-    fileName: 'myimage-20230322T120000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    id: 'f45c0d48-b93e-45aa-8e33-7d9d3f1c4397',
-    fileName: 'myotherimage-20230321T080000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    id: '8b63d6f4-6d58-4f2c-b2f3-33d156ee3c4e',
-    fileName: 'myotherimage2-20230321T080000Z.jpg',
-    url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
-  },
-];
 
 const useGetListingQuery = (listingID: string) => {
   const { data } = useQuery('listing', async () => fetchListing(listingID), {
@@ -151,7 +131,6 @@ const DetailedListingPage = () => {
   const listingId = router.query.id as string;
   const listings = useGetListingQuery(listingId);
   const reviews = useGetReviewsQuery(listingId);
-  const listingImg = useGetListingImageQuery(listingId);
   const cats = useGetCategoryNameQuery();
   const user = useGetUserQuery();
   const currentUser = useSession();
