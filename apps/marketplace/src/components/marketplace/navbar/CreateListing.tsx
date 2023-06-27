@@ -51,6 +51,7 @@ const AddListing = () => {
         sx={{
           backgroundColor: palette.primary.main,
           textTransform: 'capitalize',
+          width: isMd ? '150px' : '125px',
         }}
       >
         <Typography noWrap sx={addListingStyles?.textBtn}>
