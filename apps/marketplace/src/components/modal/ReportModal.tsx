@@ -1,5 +1,6 @@
 import { ModalSelect } from '@inc/ui';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { TReasonType } from '@inc/db';
 
 export type ReportModalProps = {
@@ -11,6 +12,7 @@ const ReportModal = ({ open, setOpen }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const [selectInput, setSelectInput] = useState<string>('');
+  const { t } = useTranslation();
 
   // Get the report reasons
   const reasonTypes: TReasonType[] = [
@@ -28,9 +30,9 @@ const ReportModal = ({ open, setOpen }: ReportModalProps) => {
       open={open}
       setOpen={setOpen}
       buttonColor="#D32F2F"
-      title="Report User"
-      leftButtonText="cancel"
-      rightButtonText="Report"
+      title={t('Report User')}
+      leftButtonText={t('cancel')}
+      rightButtonText={t('Report')}
       selectData={updatedReasonTypes}
       selectInput={selectInput}
       setselectInput={setSelectInput}

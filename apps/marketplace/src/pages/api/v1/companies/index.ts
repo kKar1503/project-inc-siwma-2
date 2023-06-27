@@ -24,7 +24,7 @@ function formatResponse(response: Companies[]): CompanyResponseBody[] {
 
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, website, comments, image } = companySchema.post.body.parse(req.body);
+    const { name, website, comments } = companySchema.post.body.parse(req.body);
 
     if (!name || name.trim().length === 0) {
       throw new ParamError('name');
@@ -41,7 +41,6 @@ export default apiHandler()
       data: {
         name,
         website,
-        logo: image,
         comments,
       },
     });

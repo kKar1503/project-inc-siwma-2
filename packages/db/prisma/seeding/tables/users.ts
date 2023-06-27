@@ -142,7 +142,7 @@ const Users: IUsers[] = [
     contact: UserContacts.whatsapp,
     permissions: 1,
     companyId: 1,
-  }
+  },
 ];
 
 export type { IUsers };

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -27,6 +28,7 @@ const ChatSubHeader = ({
 }: ChatSubHeaderProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
+  const { t } = useTranslation();
 
   const chatSubHeaderStyles = useMemo(() => {
     if (isSm) {
@@ -49,7 +51,7 @@ const ChatSubHeader = ({
           marginRight: spacing(1),
           my: spacing(1),
           height: 'fit-content',
-          width: 'fit-content',
+          width: '120px',
         },
         avatar: {
           width: 60,
@@ -77,7 +79,7 @@ const ChatSubHeader = ({
           marginRight: spacing(4),
           my: spacing(1),
           height: '100%',
-          width: 'fit-content',
+          width: '170px',
         },
         avatar: {
           width: 70,
@@ -105,7 +107,7 @@ const ChatSubHeader = ({
           marginRight: spacing(4),
           my: spacing(1),
           height: '100%',
-          width: 'fit-content',
+          width: '170px',
         },
         avatar: {
           width: 70,
@@ -168,7 +170,7 @@ const ChatSubHeader = ({
               fontSize: '0.8rem',
             })}
           >
-            {available ? 'Available' : 'Sold'}
+            {available ? t('Available') : t('Sold')}
           </Typography>
         </Box>
       </IconButton>
@@ -178,7 +180,7 @@ const ChatSubHeader = ({
       </Box>
 
       <Button onClick={handleMakeOffer} sx={chatSubHeaderStyles?.makeOfferBtn}>
-        Make Offer
+        {t('Make Offer')}
       </Button>
       <MakeOfferModal
         open={openOffer}

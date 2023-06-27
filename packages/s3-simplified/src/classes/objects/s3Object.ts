@@ -15,7 +15,7 @@ export class S3Object implements IS3Object {
     private metadata: IMetadata,
     private bucketSource: BucketMethods,
     private config: Config,
-    private body?: Readable,
+    private body?: Readable
   ) {
     const editableMetadata = this.metadata.asRecord();
     const type = this.Type;

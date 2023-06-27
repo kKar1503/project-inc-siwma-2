@@ -13,15 +13,7 @@ const type = z.nativeEnum(ListingType);
 const multiple = z.boolean();
 const rating = z.number().nullable();
 const reviewCount = z.number();
-const images = z
-  .array(
-    z.object({
-      id: z.string(),
-      filename: z.string(),
-      url: z.string(),
-    })
-  )
-  .optional();
+const images = z.array(z.string()).optional();
 const coverImage = z.string().optional();
 const createdAt = z.string();
 
@@ -45,14 +37,14 @@ const owner = z.object({
   bio: z.string().nullable(),
 });
 
-const parameter = z
-  .object({
-    paramId: z.string(),
-    value: z.string(),
-  })
-  .optional();
+const parameter = z.object({
+  paramId: z.string(),
+  value: z.string(),
+});
 
 const open = z.boolean();
+
+const purchased = z.boolean();
 
 // -- Define listing schema -- //
 const listing = z.object({
@@ -73,6 +65,7 @@ const listing = z.object({
   rating,
   reviewCount,
   createdAt,
+  purchased,
 });
 
 // -- Define review schema -- //
