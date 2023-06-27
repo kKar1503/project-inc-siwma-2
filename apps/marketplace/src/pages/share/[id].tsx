@@ -16,9 +16,11 @@ const getServerSideProps: GetServerSideProps = async (context: GetServerSideProp
     };
   }
 
+  const listingName = listing.name.replace(/\s+/g, '-').toLowerCase();
+
   return {
     redirect: {
-      destination: `/listing/${listing.id}`,
+      destination: `/listing/${listingName}-${listing.id}`,
       permanent: true,
     },
   };
