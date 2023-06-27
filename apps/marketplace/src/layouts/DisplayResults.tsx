@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -24,8 +24,32 @@ export type DisplayResultsProps = {
   filter: boolean;
   data: HeaderProps;
   subHeader: boolean;
+  filterOptions?: FilterOptions;
   setFilterOptions?: (filter: FilterOptions) => void;
   isLoading?: boolean;
+};
+
+const getSort = (sort: SortingOptions | undefined): SortProps => {
+  switch (sort) {
+    case 'recent_newest':
+      return 'Recent';
+    case 'recent_oldest':
+      return 'Oldest';
+    case 'price_desc':
+      return 'Price - High to Low';
+    case 'price_asc':
+      return 'Price - Low to High';
+    case 'rating_desc':
+      return 'Rating - High to Low';
+    case 'rating_asc':
+      return 'Rating - Low to High';
+    case 'popularity_desc':
+      return 'Most Popular';
+    case 'popularity_asc':
+      return 'Least Popular';
+    default:
+      return 'Recent';
+  }
 };
 
 const DisplayResults = ({
@@ -33,6 +57,7 @@ const DisplayResults = ({
   filter,
   data,
   subHeader,
+  filterOptions,
   setFilterOptions,
   isLoading,
 }: DisplayResultsProps) => {
@@ -91,6 +116,16 @@ const DisplayResults = ({
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  useEffect(() => {
+    if (filterOptions) {
+      setSort(getSort(filterOptions.sortBy) || 'Recent');
+      setCategory(filterOptions.category || 0);
+      setNegotiation(filterOptions.negotiable?.toString() || '');
+      setMinPrice(filterOptions.minPrice?.toString() || '');
+      setMaxPrice(filterOptions.maxPrice?.toString() || '');
+    }
+  }, [filterOptions]);
+
   return (
     <Grid item xs={12} md={12} display="flex">
       {filter && !isMd && !isSm && (
@@ -144,7 +179,7 @@ const DisplayResults = ({
                   fontSize: isSm ? typography.h6 : typography.h5,
                 })}
               >
-                {data?.noOfItems > 1 && data?.noOfItems !== 0
+                {data?.noOfItems > 1 || data?.noOfItems === 0
                   ? `${subHeader ? data?.noOfItems : ''} ${data.title.plural}`
                   : `${subHeader ? data?.noOfItems : ''} ${data.title.single}`}
               </Typography>

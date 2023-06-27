@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
+import Checkbox from '@mui/material/Checkbox';
 
 // middleware
 import fetchCategories from '@/middlewares/fetchCategories';
@@ -82,6 +83,14 @@ const FilterForm = ({
     setMaxPrice('');
   };
 
+  const handleNegotiationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === negotiation) {
+      setNegotiation('');
+      return;
+    }
+    setNegotiation(event.target.value);
+  };
+
   return (
     <form style={{ padding: 1, width: '100%' }} onSubmit={handleSubmit}>
       <Divider sx={{ my: 2 }} />
@@ -117,8 +126,8 @@ const FilterForm = ({
         onChange={(e) => setCategory(parseInt(e.target.value, 10))}
         value={category.toString()}
       >
-        <MenuItem key={0} value="">
-          No Category
+        <MenuItem key={0} value={0}>
+          Any Category
         </MenuItem>
         {categoriesData &&
           categoriesData.map((category) => (
@@ -130,11 +139,31 @@ const FilterForm = ({
 
       <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>{t('Negotiability')}</FormLabel>
-      <RadioGroup onChange={(e) => setNegotiation(e.target.value)} value={negotiation}>
-        <FormControlLabel value="true" control={<Radio />} label={t('Negotiable')} />
-        <FormControlLabel value="false" control={<Radio />} label={t('Non-Negotiable')} />
-      </RadioGroup>
+      <Box>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={negotiation === 'true'}
+              onChange={handleNegotiationChange}
+              name="negotiable"
+              value="true"
+            />
+          }
+          label={t('Negotiable')}
+        />
 
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={negotiation === 'false'}
+              onChange={handleNegotiationChange}
+              name="nonNegotiable"
+              value="false"
+            />
+          }
+          label={t('Non-Negotiable')}
+        />
+      </Box>
       <Divider sx={{ my: 2 }} />
       <FormLabel
         sx={({ typography }) => ({

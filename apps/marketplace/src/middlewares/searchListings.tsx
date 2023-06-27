@@ -19,8 +19,8 @@ export type FilterOptions = {
   maxPrice?: number;
 };
 
-const searchListings = async (matching?: string, filter?: FilterOptions) => {
-  let query = `/v1/listings?matching=${matching}&includeImages=true`;
+const searchListings = async (matching: string, lastIdPointer: number, filter?: FilterOptions) => {
+  let query = `/v1/listings?matching=${matching}&includeImages=true&lastIdPointer=${lastIdPointer}`;
   if (filter?.sortBy) query += `&sortBy=${filter.sortBy}`;
   if (filter?.category) query += `&category=${filter.category}`;
   if (typeof filter?.negotiable === 'boolean') query += `&negotiable=${filter.negotiable}`;
@@ -31,7 +31,7 @@ const searchListings = async (matching?: string, filter?: FilterOptions) => {
 
   const parsedListings = listings.getAll.parse(response.data.data[0].listings);
 
-  return parsedListings;
+  return { count: response.data.data[0].totalCount, data: parsedListings };
 };
 
 export default searchListings;
