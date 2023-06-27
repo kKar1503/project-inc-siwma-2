@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { ReactNode, Children, useEffect, ComponentType, useRef } from 'react';
 
 // TODO: fix typing for props of parent and child
@@ -66,7 +67,16 @@ InfiniteScrollProps<TParent, TChild>) => {
 
   return (
     <>
-      {loading && loadingComponent}
+      <Box
+        sx={{
+          position: 'fixed',
+          left: '50%',
+          top: '50%',
+          transform: 'translateX(-50%) translateY(-50%)',
+        }}
+      >
+        {loading && loadingComponent}
+      </Box>
 
       <Parent {...parentProps} ref={parentRef}>
         {children !== null &&
