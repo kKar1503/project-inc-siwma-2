@@ -97,10 +97,11 @@ const syncMessage: EventFile = (io, socket) => ({
             eventLog('debug', `Number of messages fetched from database: ${messages.length}`);
 
             eventLog('trace', `Acknowledging message length to socket (${socket.id})...`);
-            ack({
-              success: true,
-              data: messages.length,
-            });
+            if (typeof ack === 'function')
+              ack({
+                success: true,
+                data: messages.length,
+              });
 
             if (messages.length === 0) {
               eventLog('debug', `No messages to sync.`);
@@ -155,24 +156,26 @@ const syncMessage: EventFile = (io, socket) => ({
             eventLog('error', `Failed to retrieve messages from database.`);
 
             eventLog('trace', `Acknowledging failure to socket (${socket.id})...`);
-            ack({
-              success: false,
-              err: {
-                message: 'Failed to retrieve messages from database.',
-              },
-            });
+            if (typeof ack === 'function')
+              ack({
+                success: false,
+                err: {
+                  message: 'Failed to retrieve messages from database.',
+                },
+              });
           });
       })
       .catch(() => {
         eventLog('error', `Failed to retrieve rooms from database.`);
 
         eventLog('trace', `Acknowledging failure to socket (${socket.id})...`);
-        ack({
-          success: false,
-          err: {
-            message: 'Failed to retrieve rooms from database.',
-          },
-        });
+        if (typeof ack === 'function')
+          ack({
+            success: false,
+            err: {
+              message: 'Failed to retrieve rooms from database.',
+            },
+          });
       });
   },
 });

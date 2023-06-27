@@ -92,10 +92,11 @@ const event: EventFile = (io, socket) => ({
         eventLog('debug', `Number of rooms fetched from database: ${rooms.length}`);
 
         eventLog('trace', `Acknowledging message length to socket (${socket.id})...`);
-        ack({
-          success: true,
-          data: rooms.length,
-        });
+        if (typeof ack === 'function')
+          ack({
+            success: true,
+            data: rooms.length,
+          });
 
         if (rooms.length === 0) {
           eventLog('debug', `No rooms to sync.`);
@@ -203,12 +204,13 @@ const event: EventFile = (io, socket) => ({
         eventLog('error', `Failed to retrieve rooms from database.`);
 
         eventLog('trace', `Acknowledging failure to socket (${socket.id})...`);
-        ack({
-          success: false,
-          err: {
-            message: 'Failed to retrieve rooms from database.',
-          },
-        });
+        if (typeof ack === 'function')
+          ack({
+            success: false,
+            err: {
+              message: 'Failed to retrieve rooms from database.',
+            },
+          });
       });
   },
 });
