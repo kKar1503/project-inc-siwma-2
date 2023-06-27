@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { InfiniteScroll } from '@inc/ui';
+import { useTranslation } from 'react-i18next';
 // middleware
 import searchListings, { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
 import { Listing } from '@/utils/api/client/zod/listings';
@@ -25,6 +26,7 @@ const Searchresult = () => {
   const { pathname, query } = router;
   const { search } = router.query;
   const scrollRef = useRef<Element>(null);
+  const { t } = useTranslation();
 
   const [filterOptions, setFilterOptions] = useState<FilterOptions>();
   const [listings, setListings] = useState<Array<Listing>>([]);
@@ -105,8 +107,12 @@ const Searchresult = () => {
 
   const Header: HeaderProps = {
     title: {
-      single: `Displaying ${listingCount} search result${search ? ` for: "${search}"` : ':'}`,
-      plural: `Displaying ${listingCount} search results${search ? ` for: "${search}"` : ':'}`,
+      single: `${t('Displaying')} ${listingCount} ${t('search result')} ${
+        search ? ` ${t('for')}: "${search}"` : ':'
+      }`,
+      plural: `${t('Displaying')} ${listingCount} ${t('search result')} ${
+        search ? ` ${t('for')}: "${search}"` : ':'
+      }`,
     },
     noOfItems: listings.length,
   };
@@ -129,7 +135,7 @@ const Searchresult = () => {
           parent={Grid}
           endMessage={
             <Typography variant="h6" textAlign="center" sx={{ my: '2em' }}>
-              No more listings available
+              {t('No more listings available')}
             </Typography>
           }
           parentProps={{

@@ -8,7 +8,7 @@
   "All Categories": "所有分类",
   "ALL CHATS": "所有对话",
   "All Listings": "添加帖子",
-  "APPLY": "应用",
+  "APPLY": "筛选",
   "RESET": "重置",
   "Archive Listing": "存档帖子",
   "Are you sure you want to delete chat?": "您确定要删除聊天记录吗？",
@@ -108,5 +108,13 @@
   "Type your message here": "在此输入您的信息",
   "Uh oh! Looks like this page does not exist or you cannot access this page.": "看起来这个页面不存在或者你不能访问这个页面。",
   "View your profile details here": "在此查看您的个人主页详情",
-  "Zip File": "压缩文件"
+  "Zip File": "压缩文件",
+  "No items found.": "没有找到物品。",
+  "Close": "关闭",
+  "Any Category": "任何类别",
+  "Displaying": "显示",
+  "search result": "个搜索",
+  "search results": "个搜索",
+  "for": "结果",
+  "No more listings available": "没有更多的帖子了"
 }

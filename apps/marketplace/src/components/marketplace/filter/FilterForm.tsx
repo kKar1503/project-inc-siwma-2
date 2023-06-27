@@ -127,7 +127,7 @@ const FilterForm = ({
         value={category.toString()}
       >
         <MenuItem key={0} value={0}>
-          Any Category
+          {t('Any Category')}
         </MenuItem>
         {categoriesData &&
           categoriesData.map((category) => (
