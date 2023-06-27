@@ -386,4 +386,6 @@ const ChatRoom = () => {
   );
 };
 
+ChatRoom.renderSearchBar = false;
+
 export default ChatRoom;

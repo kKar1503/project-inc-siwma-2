@@ -178,7 +178,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
 
   return (
     <div>
-      <Fragment key="right">
+      <Fragment key="left">
         <IconButton
           size="medium"
           onClick={toggleDrawer(true)}
@@ -190,7 +190,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
           <MenuIcon />
         </IconButton>
         <SwipeableDrawer
-          anchor="right"
+          anchor="left"
           open={openDrawer}
           onClose={toggleDrawer(false)}
           onOpen={toggleDrawer(true)}
