@@ -55,7 +55,7 @@
   "Excel File": "Excel File",
   "File": "File",
   "Filter": "Filter",
-  "Filter reviews:": "Filter reviews",
+  "Filter reviews": "Filter reviews",
   "FROM BUYERS": "FROM BUYERS",
   "FROM SELLERS": "FROM SELLERS",
   "General Information": "General Information",
@@ -128,5 +128,11 @@
   "Users": "Users",
   "USERS": "USERS",
   "View your profile details here": "View your profile details here",
-  "Zip File": "Zip File"
+  "Zip File": "Zip File",
+  "Listings": "Listings",
+  "Profile Card": "Profile Card",
+  "View profile details here": "View profile details here",
+  "Oldest":"Oldest",
+  "Highest Rating":"Highest Rating",
+  "Lowest Rating":"Lowest Rating"
 }

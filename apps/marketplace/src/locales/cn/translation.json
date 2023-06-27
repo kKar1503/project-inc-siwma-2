@@ -55,7 +55,7 @@
   "Excel File": "Excel 文件",
   "File": "文件",
   "Filter": "筛选",
-  "Filter reviews:": "筛选评论",
+  "Filter reviews": "筛选评论",
   "FROM BUYERS": "来自买家",
   "FROM SELLERS": "来自卖家",
   "General Information": "基本信息",
@@ -128,5 +128,11 @@
   "Users": "用户",
   "USERS": "用户",
   "View your profile details here": "在此查看您的个人主页详情",
-  "Zip File": "压缩文件"
+  "Zip File": "压缩文件",
+  "Listings": "商品",
+  "Profile Card": "我的主页",
+  "View profile details here": "在此查看个人资料详情",
+  "Oldest": "最旧的",
+  "Highest Rating": "最高评分的",
+  "Lowest Rating": "最低评分的"
 }

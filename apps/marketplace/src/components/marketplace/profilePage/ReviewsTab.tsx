@@ -13,6 +13,7 @@ import FilterChips from './FilterChips';
 const sortValues = ['recent_newest', 'recent_oldest', 'highest_rating', 'lowest_rating'];
 
 const displaySortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
+const displaySortValuesCn = ['最新的', '最旧的', '最高评分的', '最低评分的'];
 
 export type ReviewsTabProps = {
   allReviews: Review[] | null | undefined;
@@ -31,6 +32,9 @@ const ReviewsTab = ({
 }: ReviewsTabProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
+  const { i18n , t } = useTranslation();
+
+  const tDisplaySortValues = i18n.language === 'en' ? displaySortValues : displaySortValuesCn;
 
   const stylesReview = useMemo(() => {
     if (isSm) {
@@ -52,8 +56,6 @@ const ReviewsTab = ({
       alignItems: 'center',
     };
   }, [isSm, isMd, isLg]);
-
-  const { t } = useTranslation();
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
@@ -84,14 +86,14 @@ const ReviewsTab = ({
             ({totalReviews} {totalReviews === 1 ? `${t('Review')}` : `${t('Reviews')}`})
           </Typography>
         </Box>
-          {isSm ? (
-            <Divider sx={{ height: '10%', my: spacing(2) }} />
-          ) : (
-            <Divider
-              orientation="vertical"
-              sx={({ spacing }) => ({ height: 150, mt: spacing(2), ml: 2 })}
-            />
-          )}
+        {isSm ? (
+          <Divider sx={{ height: '10%', my: spacing(2) }} />
+        ) : (
+          <Divider
+            orientation="vertical"
+            sx={({ spacing }) => ({ height: 150, mt: spacing(2), ml: 2 })}
+          />
+        )}
         {/* right box with filter chips */}
         <Box sx={({ spacing }) => ({ pl: spacing(3), display: 'flex', flexDirection: 'column' })}>
           <Typography
@@ -112,7 +114,7 @@ const ReviewsTab = ({
           <SelectComponent
             onData={sortByReviews}
             values={sortValues}
-            displayValues={displaySortValues}
+            displayValues={tDisplaySortValues}
           />
         </Box>
       </Box>
