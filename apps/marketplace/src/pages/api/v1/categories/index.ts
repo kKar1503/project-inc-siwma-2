@@ -1,4 +1,4 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { CategoriesParameters } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamError } from '@inc/errors';
@@ -14,6 +14,20 @@ export type QueryResult = {
   active: boolean;
   categoriesParameters?: CategoriesParameters[];
 };
+
+export function parseCategoryId($id: string, strict = true) {
+  // Check if strict mode is set
+  if (strict) {
+    // Attempt to parse the category id
+    return parseToNumber($id, 'id');
+  }
+
+  // Attempt to retrieve the category id and name from the url
+  const id = $id.split('-').pop() || '';
+
+  // Parse and validate category id provided
+  return parseToNumber(id, 'id');
+}
 
 export function formatParamters(
   parameters: CategoriesParameters[] | undefined
