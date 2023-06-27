@@ -20,7 +20,9 @@ const CategoryCard: React.FC<TCategory> = ({
   }, [isSm]);
   return (
     <Card sx={categoryHeight}>
-      <CardActionArea href={`/categories/${id}`}>
+      <CardActionArea
+        href={`/searchResult?search=&sortBy=recent_newest&category=${id}&negotiable=&minPrice=&maxPrice=`}
+      >
         <S3CardImage height={140} src={image} title={name} alt={name} placeholder="" />
         <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
           <Typography sx={{ padding: '0' }} gutterBottom variant="h6" component="div">

@@ -31,13 +31,15 @@ const Searchresult = () => {
   const [lastListingId, setLastListingId] = useState<number>(0);
   const [maxItems, setMaxItems] = useState<boolean>(false);
   const [listingCount, setListingCount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { isLoading, refetch } = useQuery(
+  const { refetch } = useQuery(
     ['listings', search, filterOptions, lastListingId],
     async () => searchListings(search as string, lastListingId, filterOptions),
     {
       cacheTime: 0,
       onSuccess: (data) => {
+        setIsLoading(false);
         setListingCount(data.count);
         setLastListingId(lastListingId + data.data.length);
 
@@ -53,6 +55,14 @@ const Searchresult = () => {
       },
     }
   );
+
+  useEffect(() => {
+    console.log('isLoading', isLoading);
+  }, [isLoading]);
+
+  useEffect(() => {
+    console.log('data fetched', listings);
+  }, [listings]);
 
   useEffect(() => {
     // Parse filter optins from the query
@@ -92,7 +102,7 @@ const Searchresult = () => {
 
     // Update the state
     setFilterOptions(newFilterOptions);
-  }
+  };
 
   const Header: HeaderProps = {
     title: {
