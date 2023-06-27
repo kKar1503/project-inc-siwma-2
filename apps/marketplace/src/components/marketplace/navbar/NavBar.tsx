@@ -8,18 +8,23 @@ import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
-import SearchBar from '@inc/ui/lib/components/SearchBar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import { SearchBar } from '@inc/ui';
 import CreateListing from './CreateListing';
+
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
 import ChangeLanguageButton from './ChangeLanguageButton';
 
-const NavBar = () => {
+interface NavBarProps {
+  renderSearchBar?: boolean;
+}
+
+const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
   const user = useSession();
   const router = useRouter();
   const { t } = useTranslation();
@@ -46,13 +51,24 @@ const NavBar = () => {
       sx={{
         flexGrow: 1,
         backgroundColor: 'white',
-        boxShadow: 1,
+        borderBottom: 1,
+        borderColor: (theme) => theme.palette.divider,
         position: 'sticky',
         top: 0,
+        // height: 114,
         zIndex: zIndex.appBar,
+        minWidth: isSm ? '0px' : '900px',
+        px: isSm ? '0px' : 'calc(50vw - 656px)',
       }}
     >
-      <Toolbar>
+      <Toolbar
+        sx={{
+          // make a border with custom translucent color
+          borderBottom: 1,
+          borderColor: '#dbdbdb',
+          height: 64,
+        }}
+      >
         {isLg && (
           <Image
             src="/images/favicons/SIWMA-icon.png"
@@ -63,6 +79,12 @@ const NavBar = () => {
           />
         )}
 
+        {/* mobile drawer icon here */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+          <MobileDrawer userId={userId} />
+        </Box>
+        {/* end of mobile drawer icon */}
+
         {!isSm && (
           <Box onClick={() => handleUrl('/')}>
             <Typography
@@ -70,7 +92,10 @@ const NavBar = () => {
               sx={{
                 color: palette.primary.main,
                 fontSize: typography.subtitle2,
-                mx: isLg ? spacing(3) : spacing(2),
+                display: 'flex',
+                justifyContent: 'center',
+                mx: isLg ? spacing(1) : spacing(0),
+                width: isMd ? '50px' : '60px',
                 cursor: 'pointer',
               }}
             >
@@ -83,50 +108,65 @@ const NavBar = () => {
             <Typography
               noWrap
               sx={{
-                fontSize: '1em',
-                mx: isLg ? spacing(3) : spacing(2),
+                display: 'flex',
+                justifyContent: 'center',
+                width: isMd ? '90px' : '100px',
+                fontSize: typography.subtitle2,
+                mx: isLg ? spacing(1) : spacing(2),
               }}
             >
               {t('All Categories')}
             </Typography>
           </Link>
         )}
-        <SearchBar handleSearch={handleSearch} />
+        {isSm && <SearchBar handleSearch={handleSearch} />}
 
-        {!isSm && <CreateListing />}
         <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <Grid component="label" container alignItems="center">
-            <ChangeLanguageButton />
-          </Grid>
+        {!isSm && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+            }}
+          >
+            <Grid component="label" container alignItems="center">
+              <ChangeLanguageButton />
+            </Grid>
 
-          <Box onClick={() => handleUrl('/chat')}>
-            <IconButton
-              size="medium"
-              sx={({ spacing }) => ({
-                mx: isMd ? spacing(1) : spacing(2),
-              })}
-            >
-              <Badge>
-                <MessageIcon
-                  sx={{
-                    fontSize: typography.h5,
-                    color: palette.text.secondary,
-                  }}
-                />
-              </Badge>
-            </IconButton>
+            <Box onClick={() => handleUrl('/chat')}>
+              <IconButton
+                size="medium"
+                sx={({ spacing }) => ({
+                  mx: isMd ? spacing(1) : spacing(2),
+                })}
+              >
+                <Badge>
+                  <MessageIcon
+                    sx={{
+                      fontSize: typography.h5,
+                      color: palette.text.secondary,
+                    }}
+                  />
+                </Badge>
+              </IconButton>
+            </Box>
+
+            <Box sx={{ mr: spacing(2) }}>
+              <Profile userName={userName} userId={userId} />
+            </Box>
+
+            {!isSm && <CreateListing />}
           </Box>
-
-          <Profile userName={userName} userId={userId} />
-        </Box>
-
-        {/* mobile drawer icon here */}
-        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-          <MobileDrawer userId={userId} />
-        </Box>
-        {/* end of mobile drawer icon */}
+        )}
       </Toolbar>
+      {renderSearchBar && !isSm && (
+        <Toolbar variant="dense" sx={{ minHeight: 20, height: 48 }}>
+          <Box sx={{ width: '100%' }}>
+            <SearchBar handleSearch={handleSearch} />
+          </Box>
+        </Toolbar>
+      )}
     </Box>
   );
 };
