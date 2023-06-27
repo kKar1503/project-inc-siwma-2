@@ -84,6 +84,10 @@ const FilterForm = ({
   };
 
   const handleNegotiationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === negotiation) {
+      setNegotiation('');
+      return;
+    }
     setNegotiation(event.target.value);
   };
 
