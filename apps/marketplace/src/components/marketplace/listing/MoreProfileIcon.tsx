@@ -68,12 +68,12 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
           </ListItemIcon>
           Edit Listing
         </MenuItem>
-        <MenuItem onClick={handleArchiveClick}>
+        {/* <MenuItem onClick={handleArchiveClick}>
           <ListItemIcon>
             <ArchiveIcon fontSize="small" />
           </ListItemIcon>
           Archive Listing
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={handleDeleteClick}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
