@@ -32,7 +32,6 @@ export type ChatBoxProps = {
   setDeleteOffer: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-
 const ChatBox = ({
   loginId,
   roomData,
@@ -137,7 +136,7 @@ const ChatBox = ({
                       {message.content}
                     </Typography>
                   )}
-                  {/* {message.contentType === 'offer' && (
+                  {message.contentType === 'offer' && (
                     <Box>
                       <Typography
                         sx={({ palette }) => ({
@@ -165,7 +164,7 @@ const ChatBox = ({
                         {message.offer?.toFixed(2)}
                       </Typography>
                     </Box>
-                  )} */}
+                  )}
                   {message.offerState === 'pending' && (
                     <Box>
                       <Box display="flex" sx={({ spacing }) => ({ mb: spacing(2) })}>
@@ -201,59 +200,55 @@ const ChatBox = ({
                       {/* if the offer belongs to the logged in user, he can cancel the offer, else the buyer will get to choose "Decline"/"Accept" it */}
                       {message.author === loginId ? (
                         <Box>
-                          {acceptOffer === 'pending' && (
-                            <Button
-                              variant="contained"
-                              sx={({ palette }) => ({
-                                color: palette.common.white,
-                                fontSize: 'body1',
-                                letterSpacing: '0.15px',
-                                backgroundColor: palette.error[300],
-                                width: '100%',
-                              })}
-                              onClick={() => setDeleteOffer(true)}
-                            >
-                              {t('cancel')}
-                            </Button>
-                          )}
+                          <Button
+                            variant="contained"
+                            sx={({ palette }) => ({
+                              color: palette.common.white,
+                              fontSize: 'body1',
+                              letterSpacing: '0.15px',
+                              backgroundColor: palette.error[300],
+                              width: '100%',
+                            })}
+                            onClick={() => setDeleteOffer(true)}
+                          >
+                            {t('cancel')}
+                          </Button>
                         </Box>
                       ) : (
                         <Box>
-                          {acceptOffer === 'pending' && (
-                            <Box>
-                              <Button
-                                variant="outlined"
-                                sx={({ palette, spacing }) => ({
-                                  color:
-                                    message.author === loginId
-                                      ? palette.common.white
-                                      : palette.error.main,
-                                  fontSize: 'body1',
-                                  letterSpacing: '0.15px',
-                                  mr: spacing(2),
-                                  borderColor: palette.error[300],
-                                })}
-                                onClick={() => setAcceptOffer('rejected')}
-                              >
-                                {t('Decline')}
-                              </Button>
-                              <Button
-                                variant="contained"
-                                sx={({ palette }) => ({
-                                  color:
-                                    message.author === loginId
-                                      ? palette.common.white
-                                      : palette.common.white,
-                                  fontSize: 'body1',
-                                  letterSpacing: '0.15px',
-                                  backgroundColor: palette.primary.main,
-                                })}
-                                onClick={() => setAcceptOffer('accepted')}
-                              >
-                                {t('Accept')}
-                              </Button>
-                            </Box>
-                          )}
+                          <Box>
+                            <Button
+                              variant="outlined"
+                              sx={({ palette, spacing }) => ({
+                                color:
+                                  message.author === loginId
+                                    ? palette.common.white
+                                    : palette.error.main,
+                                fontSize: 'body1',
+                                letterSpacing: '0.15px',
+                                mr: spacing(2),
+                                borderColor: palette.error[300],
+                              })}
+                              onClick={() => setAcceptOffer('rejected')}
+                            >
+                              {t('Decline')}
+                            </Button>
+                            <Button
+                              variant="contained"
+                              sx={({ palette }) => ({
+                                color:
+                                  message.author === loginId
+                                    ? palette.common.white
+                                    : palette.common.white,
+                                fontSize: 'body1',
+                                letterSpacing: '0.15px',
+                                backgroundColor: palette.primary.main,
+                              })}
+                              onClick={() => setAcceptOffer('accepted')}
+                            >
+                              {t('Accept')}
+                            </Button>
+                          </Box>
                         </Box>
                       )}
                     </Box>
@@ -292,7 +287,7 @@ const ChatBox = ({
                       </Box>
                       <Typography
                         sx={({ palette }) => ({
-                          color: palette.success[500],
+                          color: palette.success[400],
                           fontSize: 'subtitle1',
                           fontWeight: 'bold',
                           letterSpacing: '0.15px',
@@ -303,7 +298,7 @@ const ChatBox = ({
                       </Typography>
                     </Box>
                   )}
-                  {message.contentType === 'offer' && (
+                  {message.offerState === 'rejected' && (
                     <Box>
                       <Box display="flex" sx={({ spacing }) => ({ mb: spacing(2) })}>
                         <Typography
