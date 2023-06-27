@@ -50,15 +50,16 @@ const NavBar = () => {
         borderColor: (theme) => theme.palette.divider,
         position: 'sticky',
         top: 0,
-        // height: 64,
+        // height: 114,
         zIndex: zIndex.appBar,
       }}
     >
       <Toolbar
         sx={{
-          // make a border with translucent color
+          // make a border with custom translucent color
           borderBottom: 1,
-          borderColor: (theme) => theme.palette.divider,
+          borderColor: '#dbdbdb',
+          height: 64,
         }}
       >
         {isLg && (
@@ -142,8 +143,8 @@ const NavBar = () => {
         {/* end of mobile drawer icon */}
       </Toolbar>
       {!isSm && (
-        <Toolbar>
-          <Box sx={{ width: '1000px' }}>
+        <Toolbar variant="dense" sx={{ minHeight: 20, height: 48 }}>
+          <Box sx={{ width: '100%' }}>
             <SearchBar handleSearch={handleSearch} />
           </Box>
         </Toolbar>
