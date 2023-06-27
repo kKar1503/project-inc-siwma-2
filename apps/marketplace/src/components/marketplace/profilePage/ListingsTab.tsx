@@ -33,8 +33,7 @@ const ListingsTab = ({
   const { i18n, t } = useTranslation();
 
   const tFilterValues = i18n.language === 'en' ? filterValues : filterValuesCn;
-  const tFilterValues2 = t('filter values')
-
+  const tFilterValues2 = t('filter values');
 
   console.log(tFilterValues);
 
@@ -82,8 +81,6 @@ const ListingsTab = ({
     }),
     [isSm]
   );
-
-  const { t } = useTranslation();
 
   return (
     <Box>

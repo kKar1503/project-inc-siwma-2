@@ -220,7 +220,7 @@ const ImageUploadForm = ({
             mt: spacing(2),
           })}
         >
-          Upload Images
+          {t('Upload Images')}
         </Button>
       </label>
       {error && <FormHelperText sx={{ color: 'red' }}>{error}</FormHelperText>}
