@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -43,6 +43,7 @@ export interface ParameterProps {
 }
 
 export interface SetParameterProps {
+  parameters?: ParameterFormProps[];
   setParameters: (parameters: ParameterFormProps[]) => void;
   crossSectionImg: string;
   data: ParameterProps[];
@@ -62,8 +63,24 @@ const dataTypeToInputType = (dataType: dataTypeProps) => {
   }
 };
 
-const ParameterForm = ({ setParameters, crossSectionImg, data, errors }: SetParameterProps) => {
+const ParameterForm = ({
+  parameters,
+  setParameters,
+  crossSectionImg,
+  data,
+  errors,
+}: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
+
+  useEffect(() => {
+    if (parameters) {
+      const obj: { [key: string]: ParameterFormProps } = {};
+      parameters.forEach((v) => {
+        obj[v.paramId] = v;
+      });
+      setFormValues(obj);
+    }
+  }, [parameters]);
 
   const handleFormValueChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>,

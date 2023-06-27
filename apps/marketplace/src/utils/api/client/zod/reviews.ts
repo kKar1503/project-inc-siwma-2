@@ -30,5 +30,6 @@ export type ReviewResponseBody = z.infer<typeof responseSchema>;
 export type Review = z.infer<typeof reviewSchema>;
 
 export default {
+    get: reviewSchema,
     getAll: responseSchema,
 };

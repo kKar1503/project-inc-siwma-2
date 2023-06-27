@@ -37,10 +37,14 @@ const useGetCategoriesQuery = () => {
 };
 
 const useGetAdvertisementsQuery = (permissions: number | undefined) => {
-  const { data } = useQuery('advertisements', async () => fetchAdvertisements(permissions!), {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  const { data } = useQuery(
+    ['advertisements', permissions],
+    async () => fetchAdvertisements(permissions!),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
   return data;
 };
