@@ -49,6 +49,7 @@ const NavBar = () => {
         boxShadow: 1,
         position: 'sticky',
         top: 0,
+        height: 64,
         zIndex: zIndex.appBar,
       }}
     >
@@ -70,8 +71,10 @@ const NavBar = () => {
               sx={{
                 color: palette.primary.main,
                 fontSize: typography.subtitle2,
-                mx: isLg ? spacing(3) : spacing(2),
-                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                mx: isLg ? spacing(2) : spacing(0),
+                width: isMd ? '90px' : '100px',
               }}
             >
               {t('Home')}
@@ -83,8 +86,11 @@ const NavBar = () => {
             <Typography
               noWrap
               sx={{
-                fontSize: '1em',
-                mx: isLg ? spacing(3) : spacing(2),
+                display: 'flex',
+                justifyContent: 'center',
+                width: isMd ? '90px' : '100px',
+                fontSize: typography.subtitle2,
+                mx: isLg ? spacing(2) : spacing(1),
               }}
             >
               {t('All Categories')}
@@ -93,7 +99,6 @@ const NavBar = () => {
         )}
         <SearchBar handleSearch={handleSearch} />
 
-        {!isSm && <CreateListing />}
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <Grid component="label" container alignItems="center">
@@ -119,6 +124,7 @@ const NavBar = () => {
           </Box>
 
           <Profile userName={userName} userId={userId} />
+          {!isSm && <CreateListing />}
         </Box>
 
         {/* mobile drawer icon here */}
