@@ -347,4 +347,6 @@ const CreateListingPage = () => {
   );
 };
 
+CreateListingPage.renderSearchBar = false;
+
 export default CreateListingPage;

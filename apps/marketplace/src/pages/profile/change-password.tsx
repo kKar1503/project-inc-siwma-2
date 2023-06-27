@@ -257,4 +257,7 @@ const ChangePassword = () => {
     </>
   );
 };
+
+ChangePassword.renderSearchBar = false;
+
 export default ChangePassword;

@@ -22,6 +22,7 @@ import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
 import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { ReviewResponseBody } from '@/utils/api/client/zod/reviews';
 
 export type ProfileDetailCardProps =
   | {
@@ -44,6 +45,8 @@ export type ProfileDetailCardProps =
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
+  reviewData: ReviewResponseBody | undefined;
+  visibleEditButton?: boolean;
 };
 
 const useGetUserQuery = (userUuid: string) => {
@@ -75,7 +78,7 @@ const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | unde
   };
 };
 
-const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
+const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetailCardData) => {
   const user = useSession();
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -153,8 +156,8 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
             </IconButton>
           )
         }
-        title={t('Your Profile')}
-        subheader={t('View your profile details here')}
+        title={t('Profile Card')}
+        subheader={t('View profile details here')}
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
 
@@ -163,8 +166,10 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
           <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
         </Link>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography variant="body2">{data?.companyName}</Typography>
-        <Typography>{data?.email}</Typography>
+        <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
+          {data?.companyName}
+        </Typography>
+        <Typography sx={{ wordWrap: 'break-word' }}>{data?.email}</Typography>
 
         <Box
           sx={({ spacing }) => ({
@@ -179,14 +184,15 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
             })}
           >
             {/* {rating.toFixed(1)} */}
+            {reviewData?.avgRating.toFixed(1)}
           </Typography>
-          {/* <StarsRating rating={rating} /> */}
+          <StarsRating rating={reviewData?.avgRating as number} />
           <Typography
             sx={({ spacing }) => ({
               ml: spacing(1),
             })}
           >
-            {/* ({reviews} {reviews === 1 ? t('Review') : t('Reviews')}) */}
+            ({reviewData?.count} {reviewData?.count === 1 ? t('Review') : t('Reviews')})
           </Typography>
         </Box>
       </CardContent>
@@ -212,7 +218,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
                 borderRadius: spacing(2),
                 pr: '2px',
                 color: palette.common.white,
-                backgroundColor: palette.primary[500],
+                backgroundColor: '#229ED9',
               })}
             />
             <Typography
@@ -259,8 +265,8 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
           mb: spacing(1),
         })}
       >
-        {/* <Box sx={{ width: '98%' }}>
-          {isOwnProfile && (
+        <Box sx={{ width: '98%' }}>
+          {visibleEditButton && isOwnProfile && (
             <Button
               component={Link}
               href={`/profile/${data?.id}/edit-profile`}
@@ -275,7 +281,7 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
               Edit profile
             </Button>
           )}
-        </Box> */}
+        </Box>
       </CardActions>
     </Card>
   );

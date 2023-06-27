@@ -16,8 +16,8 @@ const displaySortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'
 
 export type ReviewsTabProps = {
   allReviews: Review[] | null | undefined;
-  userRating: number;
-  totalReviews: number;
+  userRating: number | undefined;
+  totalReviews: number | undefined;
   filterReviews: (newData: string) => void;
   sortByReviews: (newData: string) => void;
 };
@@ -73,9 +73,9 @@ const ReviewsTab = ({
               fontSize: typography.h1,
             })}
           >
-            {userRating}
+            {userRating?.toFixed(1)}
           </Typography>
-          <StarsRating rating={userRating} />
+          <StarsRating rating={userRating || null} />
           <Typography
             sx={({ typography }) => ({
               fontSize: typography.subtitle1,
@@ -84,14 +84,14 @@ const ReviewsTab = ({
             ({totalReviews} {totalReviews === 1 ? `${t('Review')}` : `${t('Reviews')}`})
           </Typography>
         </Box>
-        {isSm ? (
-          <Divider sx={{ height: '10%', my: spacing(2) }} />
-        ) : (
-          <Divider
-            orientation="vertical"
-            sx={({ spacing }) => ({ height: '100%', mt: spacing(2), ml: 2 })}
-          />
-        )}
+          {isSm ? (
+            <Divider sx={{ height: '10%', my: spacing(2) }} />
+          ) : (
+            <Divider
+              orientation="vertical"
+              sx={({ spacing }) => ({ height: 150, mt: spacing(2), ml: 2 })}
+            />
+          )}
         {/* right box with filter chips */}
         <Box sx={({ spacing }) => ({ pl: spacing(3), display: 'flex', flexDirection: 'column' })}>
           <Typography

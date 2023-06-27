@@ -9,13 +9,32 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { StarsRating, useResponsiveness } from '@inc/ui';
 import { Review } from '@/utils/api/client/zod';
+import fetchUser from '@/middlewares/fetchUser';
+import { useQuery } from 'react-query';
+import fetchProfileCompany from '@/middlewares/fetchProfileCompany';
 
 export type ReviewMessageData = {
   data: Review;
 };
 
+const useGetUser = (userUuid: string) => {
+  const { data } = useQuery(['userdata', userUuid], async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  return data;
+};
+
+const useUserCompany = (companyId: string | undefined) => {
+  const { data } = useQuery(['userdata', companyId], async () => fetchProfileCompany(companyId), {
+    enabled: companyId !== undefined,
+  });
+  return data;
+};
+
 const ReviewMessage = ({ data }: ReviewMessageData) => {
   // destructure data
+  const user = useGetUser(data.userId);
+  const company = useUserCompany(user?.company);
 
   const datetime = useMemo(
     () => DateTime.fromISO(data.createdAt).toRelative({ locale: 'en-SG' }),
@@ -28,9 +47,9 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
     <List sx={{ m: 2 }}>
       <Box sx={{ m: 1 }}>
         <Stack direction="row" spacing={2} alignItems="center">
-          {/* <Link href={`/profile/${data.id}`}>
-            <Avatar src={data.profilePic} sx={{ width: 45, height: 45 }} />
-          </Link> */}
+          <Link href={`/profile/${data.userId}`}>
+            <Avatar src={data.userId} sx={{ width: 45, height: 45 }} />
+          </Link>
           <Stack>
             <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -40,70 +59,63 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                     ...(isSm ? { alignItems: 'flex-start' } : { alignItems: 'center' }),
                   }}
                 >
-                  {/* <Link
-                    href={`/profile/${data.id}`}
+                  <Link
+                    href={`/profile/${data.userId}`}
                     style={{ textDecoration: 'none', color: 'black' }}
                   >
                     <Typography
-                      variant={isSm ? 'body1' : 'h6'}
                       component="div"
-                      sx={{
+                      sx={({ typography }) => ({
+                        fontSize: isSm ? typography.body1 : typography.h6,
                         flexGrow: 1,
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                         '&:hover': { textDecoration: 'underline' },
-                      }}
+                      })}
                     >
-                      {username}
+                      {user?.name}
                     </Typography>
-                  </Link> */}
-                  {/* <Typography
+                  </Link>
+                  <Typography
                     variant={isSm ? 'body2' : 'body1'}
                     sx={{ flexGrow: 1, ml: isSm ? 0 : 1, alignItems: 'center' }}
                   >
-                    review from {buyer ? 'buyer' : 'seller'}
-                  </Typography> */}
+                    Review from {data.type}
+                  </Typography>
                 </Stack>
               </Box>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+              <Typography
+                sx={({ typography }) => ({ fontSize: typography.body1, fontWeight: 800 })}
+              >
                 &#183;
               </Typography>
               <Typography variant={isSm ? 'body2' : 'body1'} sx={{ flexGrow: 1 }}>
                 {datetime}
               </Typography>
             </Stack>
-            {/* <Link href="/#" style={{ textDecoration: 'none' }}>
+            <Link href="/#" style={{ textDecoration: 'none' }}>
               <Typography
                 variant={isSm ? 'body2' : 'body1'}
                 component="div"
                 sx={{ flexGrow: 1, color: 'grey', '&:hover': { textDecoration: 'underline' } }}
               >
-                {companyName}
+                {company?.name}
               </Typography>
-            </Link> */}
+            </Link>
           </Stack>
         </Stack>
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Stack direction="row" spacing={1}>
-          <Typography variant="body1" sx={{ ml: 2, fontWeight: 'bold' }}>
+          <Typography
+            sx={({ typography }) => ({ fontSize: typography.body1, ml: 2, fontWeight: 500 })}
+          >
             {data.rating.toFixed(1)}
           </Typography>
           <StarsRating rating={data.rating} />
         </Stack>
       </Box>
       <Box>
-        <Typography
-          variant="body1"
-          component="div"
-          sx={{ flexGrow: 1, color: 'grey', mx: 2, my: 1 }}
-        >
-          {/* check if display review of reviews based on number */}
-          {/* {noOfReviews}
-          {noOfReviews === 1 ? ' Review' : ' Reviews'} */}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb: 3 }}>
+        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb: 3, mt:1, wordWrap: 'break-word' }}>
           {data.review}
         </Typography>
       </Box>

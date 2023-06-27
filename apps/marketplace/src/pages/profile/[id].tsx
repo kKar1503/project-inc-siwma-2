@@ -51,7 +51,6 @@ const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
     enabled: userUuid !== undefined,
   });
-  // console.log(data);
   return data;
 };
 
@@ -74,7 +73,6 @@ const useGetListing = (userUuid: string, matching?: string, sortBy?: string, fil
     }
   );
 
-  // console.log(data);
   return data;
 };
 
@@ -119,7 +117,6 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    console.log(searchQuery);
   };
 
   // when filter/sorts are called use set states to set the new listings/reviews again
@@ -142,7 +139,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
 
   useEffect(() => {
     if (userReviews) {
-      setReviews(userReviews);
+      setReviews(userReviews.reviews);
     }
   }, [userReviews]);
 
@@ -217,7 +214,9 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
       </Head>
       <main>
         <Box sx={spaceStyle}>
-          {userDetails && <ProfileDetailCard data={userDetails} />}
+          {userDetails && (
+            <ProfileDetailCard data={userDetails} reviewData={userReviews} visibleEditButton/>
+          )}
           <Box
             sx={{
               width: isLg ? '73%' : '100%',
@@ -282,9 +281,8 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
                 <ReviewsTab
                   allReviews={reviews}
                   // rmb to add userDetails.rating and userDetails.reviews
-                  userRating={userReviews && userReviews.length > 0 ? userReviews[0].rating : 0}
-                  // userRating={2}
-                  totalReviews={userReviews && userReviews.length > 0 ? userReviews.length : 0}
+                  userRating={userReviews?.avgRating}
+                  totalReviews={userReviews?.count}
                   filterReviews={handleFilterReviews}
                   sortByReviews={handleSortByReviews}
                 />
