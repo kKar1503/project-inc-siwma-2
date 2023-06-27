@@ -23,7 +23,7 @@ const AddListing = () => {
           height: '100%',
         }}
       >
-        <Typography noWrap sx={{ fontSize: typography.subtitle2, color: palette.common.white }}>
+        <Typography variant="subtitle2" noWrap sx={{ fontSize: 14, color: palette.common.white }}>
           {t('ADD LISTINGS')}
         </Typography>
       </Button>
