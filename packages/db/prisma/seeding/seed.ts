@@ -25,6 +25,8 @@ const main = async (): Promise<void> => {
   console.log('\nClearing database...');
 
   await Promise.allSettled([
+    prismaClient.logs.deleteMany({}),
+    prismaClient.reviews.deleteMany({}),
     prismaClient.category.deleteMany({}),
     prismaClient.companies.deleteMany({}),
     prismaClient.users.deleteMany({}),
@@ -64,10 +66,12 @@ const main = async (): Promise<void> => {
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_bookmarks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_images_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.logs_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.messages_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.offers_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.parameter_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.refresh_tokens_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.reviews_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.user_bookmarks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.password_reset_seq RESTART WITH 1;`,
   ]);

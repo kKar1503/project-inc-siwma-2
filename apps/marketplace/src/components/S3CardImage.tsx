@@ -30,7 +30,7 @@ const CardMediaX = ({ src, alt, placeholder, height }: CardMediaXProps) => {
 
   return (
     <CardMedia component="div" style={{ position: 'relative', width: '100%', height }}>
-      <Image src={image?.url || placeholder} alt={alt} fill />
+      <Image src={image?.url || placeholder} alt={alt} fill style={{ objectFit: 'cover' }} />
     </CardMedia>
   );
 };
