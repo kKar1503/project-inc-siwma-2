@@ -47,7 +47,7 @@ const LoginForm = () => {
         return router.push(callbackUrl);
       }
       // Otherwise, redirect the user to the root page
-      // return router.push('/');
+       return router.push('/');
     }
 
     return authResult;
