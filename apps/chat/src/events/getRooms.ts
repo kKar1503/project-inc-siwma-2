@@ -7,9 +7,6 @@ import { EVENTS } from '@inc/events';
 // ** Logger Imports **
 import eventLogHelper from '@/utils/logger';
 
-// ** Store Imports **
-import SocketUserStore from '@/store/SocketUserStore';
-
 // ** Prisma Imports **
 import prisma from '@/db';
 
@@ -60,6 +57,17 @@ const event: EventFile = (io, socket) => ({
               name: true,
               type: true,
               multiple: true,
+              price: true,
+              unitPrice: true,
+              listingImages: {
+                select: {
+                  image: true,
+                },
+                orderBy: {
+                  order: 'asc',
+                },
+                take: 1,
+              },
               offersOffersListingTolistings: {
                 select: {
                   accepted: true,
@@ -180,7 +188,11 @@ const event: EventFile = (io, socket) => ({
             username: otherUser.name,
             category: room.listingRoomsListingTolisting.type,
             latestMessage,
+            itemId: room.listingRoomsListingTolisting.id,
             itemName: room.listingRoomsListingTolisting.name,
+            itemPrice: room.listingRoomsListingTolisting.price.toNumber(),
+            itemPriceIsUnit: room.listingRoomsListingTolisting.unitPrice,
+            itemImage: room.listingRoomsListingTolisting.listingImages[0]?.image ?? '',
             inProgress: isListingInProgress,
             time: room.messages.length === 0 ? undefined : room.messages[0].createdAt.toISOString(),
             userImage: otherUser.profilePicture ?? '',

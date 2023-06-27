@@ -31,7 +31,11 @@ export type Room = {
   username: string;
   category: 'BUY' | 'SELL';
   latestMessage?: MessageContent;
+  itemId: ListingId;
   itemName: string;
+  itemPrice: number;
+  itemPriceIsUnit: boolean;
+  itemImage: string;
   inProgress: boolean;
   time?: string;
   userImage: string;
