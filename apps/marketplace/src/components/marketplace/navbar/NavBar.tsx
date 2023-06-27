@@ -14,7 +14,7 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import AddListing from './AddListing';
+import CreateListing from './CreateListing';
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
 import ChangeLanguageButton from './ChangeLanguageButton';
@@ -35,6 +35,12 @@ const NavBar = () => {
     }
   };
 
+  const handleUrl = (url: string) => {
+    if (router.pathname !== url) {
+      router.push(url);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -47,31 +53,38 @@ const NavBar = () => {
       }}
     >
       <Toolbar>
-        {/* <Box sx={{ ml: isLg ? spacing(0) : spacing(2) }}> */}
-        <Image src="/images/favicons/SIWMA-icon.png" alt="logo" width={60} height={40} />
-        {/* </Box> */}
+        {isLg && (
+          <Image
+            src="/images/favicons/SIWMA-icon.png"
+            alt="logo"
+            width={60}
+            height={40}
+            style={{ marginRight: spacing(2) }}
+          />
+        )}
 
         {!isSm && (
-          <Link href="/" underline="none">
+          <Box onClick={() => handleUrl('/')}>
             <Typography
               noWrap
               sx={{
+                color: palette.primary.main,
                 fontSize: typography.subtitle2,
-                ml: isLg ? spacing(3) : spacing(2),
+                mx: isLg ? spacing(3) : spacing(2),
+                cursor: 'pointer',
               }}
             >
               {t('Home')}
             </Typography>
-          </Link>
+          </Box>
         )}
         {!isSm && (
           <Link href="/categories" underline="none">
             <Typography
               noWrap
               sx={{
-                fontSize: typography.subtitle2,
-                ml: isLg ? spacing(3) : spacing(2),
-                mr: isLg ? spacing(3) : spacing(2),
+                fontSize: '1em',
+                mx: isLg ? spacing(3) : spacing(2),
               }}
             >
               {t('All Categories')}
@@ -80,20 +93,18 @@ const NavBar = () => {
         )}
         <SearchBar handleSearch={handleSearch} />
 
-        {!isSm && <AddListing />}
+        {!isSm && <CreateListing />}
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <Grid component="label" container alignItems="center">
             <ChangeLanguageButton />
           </Grid>
 
-          <Link href="/chat" underline="none">
+          <Box onClick={() => handleUrl('/chat')}>
             <IconButton
               size="medium"
               sx={({ spacing }) => ({
-                ml: isMd ? spacing(1) : spacing(2),
-                // TODO: Not sure why this is being pushed down, fix it later
-                mt: '5px',
+                mx: isMd ? spacing(1) : spacing(2),
               })}
             >
               <Badge>
@@ -105,7 +116,7 @@ const NavBar = () => {
                 />
               </Badge>
             </IconButton>
-          </Link>
+          </Box>
 
           <Profile userName={userName} userId={userId} />
         </Box>

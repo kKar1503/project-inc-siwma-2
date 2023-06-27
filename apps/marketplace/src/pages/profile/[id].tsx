@@ -54,19 +54,22 @@ const useGetUser = (userUuid: string) => {
   return data;
 };
 
-// add one more parameter to fetchProfilesListings to include the filter
-const useGetListing = (userUuid: string, matching?: string, sortBy?: string) => {
+const useGetListing = (userUuid: string, matching?: string, sortBy?: string, filter?: string) => {
   const { data } = useQuery(
-    ['listingdata', userUuid, matching, sortBy],
+    ['listingdata', userUuid, matching, sortBy, filter],
     async () => {
-      if (matching || sortBy) {
-        return fetchProfilesListings(userUuid, matching, sortBy);
+      if (matching || sortBy || filter) {
+        return fetchProfilesListings(userUuid, matching, sortBy, filter);
       }
       return fetchProfilesListings(userUuid);
     },
     {
       // change the enabled to trigger on filter/sort
-      enabled: userUuid !== undefined || sortBy !== undefined || matching !== undefined,
+      enabled:
+        userUuid !== undefined ||
+        sortBy !== undefined ||
+        matching !== undefined ||
+        filter !== undefined,
     }
   );
 
@@ -127,7 +130,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const [sortByReviews, setSortByReviews] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
-  const userListings = useGetListing(id, searchQuery, sortByListings);
+  const userListings = useGetListing(id, searchQuery, sortByListings, filterListings);
   const userReviews = useGetReview(id, sortByReviews);
 
   useEffect(() => {

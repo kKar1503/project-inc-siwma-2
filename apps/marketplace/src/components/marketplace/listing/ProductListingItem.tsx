@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
+import S3Avatar from '@/components/S3Avatar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -18,10 +17,12 @@ import { useTheme } from '@mui/material/styles';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { Listing } from '@/utils/api/client/zod';
 import { useSession } from 'next-auth/react';
+import S3Image from '@/components/S3Image';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
 import NegotiableBadge from './NegotiableBadge';
+import CardMediaX from './CardMediaX';
 
 export type ProductListingItemData = {
   data: Listing;
@@ -57,6 +58,8 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
     [data.createdAt]
   );
 
+  const listingName = data.name.replace(/\s+/g, '-').toLowerCase();
+
   const theme = useTheme();
   const [isSm] = useResponsiveness(['sm']);
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(data.id, updateBookmarkData);
@@ -73,13 +76,13 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         },
       }}
     >
-      <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
+      <Link style={{ textDecoration: 'none', color: 'inherit' }} href={`/profile/${data.owner.id}`}>
         <CardHeader
           style={{ marginLeft: '-10px' }}
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
+            <S3Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder}>
               {data.owner.name.charAt(0)}
-            </Avatar>
+            </S3Avatar>
           }
           title={data.owner.name}
           titleTypographyProps={{
@@ -91,9 +94,13 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           }}
         />
       </Link>
-      <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
-        <CardMedia component="img" height="200" image={data.owner.company.image || placeholder} />
-
+      <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
+        <CardMediaX
+          src={data.coverImage || placeholder}
+          alt="listing image"
+          height={200}
+          placeholder=""
+        />
       </Link>
       <CardContent
         sx={({ spacing }) => ({
@@ -149,7 +156,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
             )}
           </Box>
         </Box>
-        <Link style={{ textDecoration: 'none' }} href={`/listing/${data.id}`}>
+        <Link style={{ textDecoration: 'none' }} href={`/listing/${listingName}-${data.id}`}>
           <Box
             sx={({ spacing }) => ({
               pb: spacing(1),
