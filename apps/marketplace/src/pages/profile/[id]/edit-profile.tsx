@@ -32,6 +32,7 @@ import fetchCompany from '@/middlewares/fetchCompany';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
+import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 
 export type ProfilePageProps = {
   data: ProfileDetailCardProps;
@@ -44,6 +45,23 @@ const useGetUserQuery = (userUuid: string) => {
   return data;
 };
 
+const useGetReview = (userUuid: string, sortBy?: string) => {
+  const { data } = useQuery(
+    ['reviewdata', userUuid, sortBy],
+    async () => {
+      if (sortBy) {
+        return fetchProfilesReview(userUuid, sortBy);
+      }
+      return fetchProfilesReview(userUuid);
+    },
+    {
+      enabled: userUuid !== undefined || sortBy !== undefined,
+    }
+  );
+
+  return data;
+};
+
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
 
@@ -52,6 +70,7 @@ const EditProfile = () => {
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
+  const userReviews = useGetReview(id);
   const mutation = useUpdateUserMutation(loggedUserUuid);
   const theme = useTheme();
   const { spacing } = theme;
@@ -293,7 +312,7 @@ const EditProfile = () => {
       </Head>
 
       <Grid sx={gridCols}>
-        {userDetails && <ProfileDetailCard data={userDetails} />}
+        {userDetails && <ProfileDetailCard data={userDetails} reviewData={userReviews} />}
         <Box
           sx={{
             display: 'flex',
