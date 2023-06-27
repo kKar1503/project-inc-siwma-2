@@ -170,9 +170,9 @@ const Marketplace = () => {
         </Box>
       </Box>
       <Box display="flex" justifyContent="center" paddingTop="2em">
-        <Grid container spacing={2} width="80%">
+        <Grid container spacing={2} width="95%">
           {categories?.map((category) => (
-            <Grid item xl={2} lg={3} md={4} sm={6} xs={12} key={category.name}>
+            <Grid item xl={2} lg={3} md={4} sm={6} xs={6} key={category.name}>
               <CategoryCard {...category} />
             </Grid>
           ))}
