@@ -337,7 +337,7 @@ const CreateListingPage = () => {
           previewImages.push({
             key: image,
             id: image,
-            preview: `https://siwma-marketplace.s3.ap-southeast-1.amazonaws.com/${image}`,
+            preview: `https://s3.karlok.dev/${image}`,
           });
         });
         setOriginalOrder(order);
