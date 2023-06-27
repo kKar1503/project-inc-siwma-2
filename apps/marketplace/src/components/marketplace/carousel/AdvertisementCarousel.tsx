@@ -7,7 +7,7 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
-import placeholder from 'public/images/listing-placeholder.png';
+import placeholder from 'public/images/listing-placeholder.svg';
 import S3BoxImage from '@/components/S3BoxImage';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);

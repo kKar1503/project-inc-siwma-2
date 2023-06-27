@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import placeholder from 'public/images/category-placeholder.png';
+import placeholder from 'public/images/listing-placeholder.svg';
 import Image from 'next/image';
 
 const ListingImgsPlaceholder = () => (

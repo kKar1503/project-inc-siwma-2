@@ -38,7 +38,6 @@ import fetchShare from '@/middlewares/fetchShare';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
 import CrossSectionImageTooltip from '@/components/marketplace/createListing/CrossSectionImageTooltip';
 import fetchS3Image from '@/middlewares/fetchS3Image';
-import placeholder from 'public/images/listing-placeholder.png';
 import S3Avatar from '@/components/S3Avatar';
 
 const useGetListingQuery = (listingID: string) => {

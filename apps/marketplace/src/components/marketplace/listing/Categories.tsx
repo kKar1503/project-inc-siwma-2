@@ -3,7 +3,7 @@ import { Card, CardContent, Typography, CardMedia, CardActionArea, SxProps } fro
 import React, { useMemo } from 'react';
 import S3CardImage from '@/components/S3CardImage';
 import { useResponsiveness } from '@inc/ui';
-import placeholder from 'public/images/category-placeholder.png';
+import placeholder from 'public/images/category-placeholder.svg';
 
 const CategoryCard: React.FC<TCategory> = ({
   id,

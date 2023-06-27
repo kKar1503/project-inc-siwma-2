@@ -17,7 +17,7 @@ import { useTheme } from '@mui/material/styles';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 import { Listing } from '@/utils/api/client/zod';
 import { useSession } from 'next-auth/react';
-import placeholder from 'public/images/category-placeholder.png';
+import placeholder from 'public/images/listing-placeholder.svg';
 import S3CardImage from '@/components/S3CardImage';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
