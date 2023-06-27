@@ -318,13 +318,13 @@ const CreateListingPage = () => {
               })}
               fullWidth
             >
-              Cancel Listing
+              {t('Cancel Listing')}
             </Button>
             <OnLeaveModal open={openCancelModal} setOpen={setOpenCancelModal} />
           </Grid>
           <Grid item xs={6} sx={{ width: '100%' }}>
             <Button variant="contained" type="submit" size="large" fullWidth>
-              CREATE LISTING
+              {t('CREATE LISTING')}
             </Button>
             {postListingData !== false &&
               (postListingData.success ? (
