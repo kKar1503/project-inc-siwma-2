@@ -37,7 +37,6 @@ const Searchresult = () => {
     ['listings', search, filterOptions, lastListingId],
     async () => searchListings(search as string, lastListingId, filterOptions),
     {
-      cacheTime: 0,
       onSuccess: (data) => {
         setIsLoading(false);
         setListingCount(data.count);

@@ -26,6 +26,10 @@ export function deleteRoom(socket: Socket, roomId: string, ack: (ack: Acknowlege
   socket.emit(EVENTS.CLIENT.ROOM.DELETE, roomId, ack);
 }
 
+export function getRooms(socket: Socket, userId: string, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.ROOM.GET, userId, ack);
+}
+
 // ** Message Events **
 export function sendMessage(
   socket: Socket,
@@ -49,6 +53,10 @@ export function readMessage(socket: Socket, roomId: string, ack: (ack: Acknowleg
 
 export function syncMessage(socket: Socket, messageId: number, ack: (ack: Acknowlegement) => void) {
   socket.emit(EVENTS.CLIENT.MESSAGE.SYNC, messageId, ack);
+}
+
+export function getMessage(socket: Socket, roomId: string, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.MESSAGE.GET, roomId, ack);
 }
 
 // ** Typing Events **
