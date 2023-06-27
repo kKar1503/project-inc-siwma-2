@@ -1,5 +1,7 @@
 {
   "!": "!",
+  "(Accepted)": "(已接受)",
+  "(Rejected)": "(已拒绝)",
   "Add Listing": "添加帖子",
   "ADD LISTINGS": "添加帖子",
   "ALL": "全部",
@@ -63,7 +65,7 @@
   "Negotiable": "可协商",
   "Non-negotiable": "不可协商",
   "Not signed in ": "未登录",
-  "Offer": "报价",
+  "Offer: ": "报价：",
   "Offered price": "报价",
   "Once you leave the page, your listing details will be removed and the listing will not be created.": "一旦你离开该页面，你的帖子信息将被删除，帖子将不会被创建。",
   "PDF File": "PDF 文件",
