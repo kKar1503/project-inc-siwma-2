@@ -29,14 +29,6 @@ import fetchListing from '@/middlewares/fetchListing';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
-const useGetListingQuery = (id: string) => {
-  const { data } = useQuery(['listing', id], async () => fetchListing(id), {
-    enabled: id !== undefined && id.trim() !== '',
-  });
-
-  return data;
-};
-
 const usePutListingQuery = (
   id: string,
   listing: { listingBody: PutListingsRequestBody; images: Blob[] } | undefined,
