@@ -8,6 +8,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
 import { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTranslation } from 'react-i18next';
 
 export interface titleProps {
   single: string;
@@ -43,6 +44,7 @@ const DisplayResults = ({
   const [negotiation, setNegotiation] = useState<string>('');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
+  const { i18n, t } = useTranslation();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -129,14 +131,14 @@ const DisplayResults = ({
                 mb: spacing(2),
               })}
             >
-              {subHeader && (
+              {subHeader && ( 
                 <Typography
                   sx={({ typography }) => ({
                     fontSize: isSm ? typography.h5 : typography.h4,
                     fontWeight: typography.fontWeightBold,
                   })}
                 >
-                  {data.title.single} Bookmarks
+                  {data.title.single} {t('Bookmarks')}
                 </Typography>
               )}
               <Typography

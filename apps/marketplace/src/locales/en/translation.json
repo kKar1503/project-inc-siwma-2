@@ -122,6 +122,9 @@
   "Uh oh! Looks like this page does not exist or you cannot access this page.": "Uh oh! Looks like this page does not exist or you cannot access this page.",
   "/unit": "/unit",
   "Upload Images": "Upload Images",
+  "User": "User",
+  "Users": "Users",
+  "USERS": "USERS",
   "View your profile details here": "View your profile details here",
   "View All Categories": "View All Categories",
   "Zip File": "Zip File",
@@ -137,6 +140,8 @@
   "Square Bar": "Square Bar",
   "Gratings": "Gratings",
 
+  "Listing": "Listing",
   "Listings": "Listings",
+  "LISTINGS": "LISTINGS",
   "Your Profile": "Your Profile"
 }

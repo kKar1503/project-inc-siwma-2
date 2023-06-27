@@ -122,6 +122,9 @@
   "Uh oh! Looks like this page does not exist or you cannot access this page.": "看起来这个页面不存在或者你不能访问这个页面。",
   "/unit": "/单位",
   "Upload Images": "上传图片",
+  "User": "用户",
+  "Users": "用户",
+  "USERS": "用户",
   "View your profile details here": "在此查看您的个人主页详情",
   "View All Categories": "游览所有分类",
   "Zip File": "压缩文件",
@@ -137,6 +140,8 @@
   "Square Bar": "方形杆",
   "Gratings": "金属格栅",
 
+  "Listing": "帖子",
   "Listings": "帖子",
+  "LISTINGS": "帖子",
   "Your Profile": "您的简介"
 }
