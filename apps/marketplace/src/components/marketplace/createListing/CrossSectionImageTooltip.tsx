@@ -22,8 +22,6 @@ const CrossSectionImageTooltip = ({ data }: CrossSectionImageType) => {
     setOpen(true);
   };
 
-  console.log({ data });
-
   return (
     <ClickAwayListener onClickAway={handleTooltipClose}>
       <Box display="flex">
