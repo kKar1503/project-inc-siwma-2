@@ -178,5 +178,11 @@
   "Company":"Company",
   "CHAT NOW":"CHAT NOW",
   "ADD A REVIEW":"ADD A REVIEW",
-  "No Reviews available for this listing":"No Reviews available for this listing"
+  "No Reviews available for this listing":"No Reviews available for this listing",
+
+  "Offer Accepted":"Offer Accepted",
+  "Offer Declined":"Offer Declined",
+  "Decline":"Decline",
+  "Accept":"Accept",
+  "Image":"Image"
 }
