@@ -84,14 +84,14 @@ const ReviewsTab = ({
             ({totalReviews} {totalReviews === 1 ? ' Review' : ' Reviews'})
           </Typography>
         </Box>
-        {isSm ? (
-          <Divider sx={{ height: '10%', my: spacing(2) }} />
-        ) : (
-          <Divider
-            orientation="vertical"
-            sx={({ spacing }) => ({ height: '100%', mt: spacing(2), ml: 2 })}
-          />
-        )}
+          {isSm ? (
+            <Divider sx={{ height: '10%', my: spacing(2) }} />
+          ) : (
+            <Divider
+              orientation="vertical"
+              sx={({ spacing }) => ({ height: 150, mt: spacing(2), ml: 2 })}
+            />
+          )}
         {/* right box with filter chips */}
         <Box sx={({ spacing }) => ({ pl: spacing(3), display: 'flex', flexDirection: 'column' })}>
           <Typography

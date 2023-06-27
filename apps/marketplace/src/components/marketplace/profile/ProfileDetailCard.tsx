@@ -156,8 +156,8 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
             </IconButton>
           )
         }
-        title={t('Your Profile')}
-        subheader={t('View your profile details here')}
+        title={t('Profile Card')}
+        subheader={t('View profile details here')}
       />
       <Divider variant="middle" sx={{ height: '1px' }} />
 
@@ -166,8 +166,10 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
           <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
         </Link>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography variant="body2">{data?.companyName}</Typography>
-        <Typography>{data?.email}</Typography>
+        <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
+          {data?.companyName}
+        </Typography>
+        <Typography sx={{ wordWrap: 'break-word' }}>{data?.email}</Typography>
 
         <Box
           sx={({ spacing }) => ({

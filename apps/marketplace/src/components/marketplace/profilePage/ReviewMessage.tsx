@@ -47,7 +47,7 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
     <List sx={{ m: 2 }}>
       <Box sx={{ m: 1 }}>
         <Stack direction="row" spacing={2} alignItems="center">
-          <Link href={`/profile/${data.id}`}>
+          <Link href={`/profile/${data.userId}`}>
             <Avatar src={data.userId} sx={{ width: 45, height: 45 }} />
           </Link>
           <Stack>
@@ -60,17 +60,17 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                   }}
                 >
                   <Link
-                    href={`/profile/${data.id}`}
+                    href={`/profile/${data.userId}`}
                     style={{ textDecoration: 'none', color: 'black' }}
                   >
                     <Typography
-                      variant={isSm ? 'body1' : 'h6'}
                       component="div"
-                      sx={{
+                      sx={({ typography }) => ({
+                        fontSize: isSm ? typography.body1 : typography.h6,
                         flexGrow: 1,
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                         '&:hover': { textDecoration: 'underline' },
-                      }}
+                      })}
                     >
                       {user?.name}
                     </Typography>
@@ -83,7 +83,9 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
                   </Typography>
                 </Stack>
               </Box>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+              <Typography
+                sx={({ typography }) => ({ fontSize: typography.body1, fontWeight: 800 })}
+              >
                 &#183;
               </Typography>
               <Typography variant={isSm ? 'body2' : 'body1'} sx={{ flexGrow: 1 }}>
@@ -104,14 +106,16 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Stack direction="row" spacing={1}>
-          <Typography variant="body1" sx={{ ml: 2, fontWeight: 'bold' }}>
+          <Typography
+            sx={({ typography }) => ({ fontSize: typography.body1, ml: 2, fontWeight: 500 })}
+          >
             {data.rating.toFixed(1)}
           </Typography>
           <StarsRating rating={data.rating} />
         </Stack>
       </Box>
       <Box>
-        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb: 3 }}>
+        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb: 3, mt:1, wordWrap: 'break-word' }}>
           {data.review}
         </Typography>
       </Box>
