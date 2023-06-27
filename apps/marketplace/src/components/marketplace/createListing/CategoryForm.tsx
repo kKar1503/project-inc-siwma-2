@@ -4,6 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import { FormControl, InputLabel } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { useTranslation } from 'react-i18next';
 import { CategoryParametersProps } from './ParameterForm';
 
 export interface CategoryProps {
@@ -26,6 +27,7 @@ export type SetCategoryProps = {
 const CategoryForm = ({ category, setCategory, data, error }: SetCategoryProps) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryProps | null>(null);
   const [validateError, setValidateError] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (error) {
@@ -49,10 +51,14 @@ const CategoryForm = ({ category, setCategory, data, error }: SetCategoryProps) 
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <FormControl variant="outlined" error={validateError} fullWidth>
-        {error ? <InputLabel>{error}</InputLabel> : <InputLabel>Select a category...</InputLabel>}
+        {error ? (
+          <InputLabel>{error}</InputLabel>
+        ) : (
+          <InputLabel>{t('Select a category...')}</InputLabel>
+        )}
         <Select
           value={selectedCategory ? selectedCategory.name : ''}
-          label="Select a category..."
+          label={t('Select a category...')}
           onChange={handleCategoryChange}
           size="medium"
           fullWidth

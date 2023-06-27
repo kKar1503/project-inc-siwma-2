@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 import FormHelperText from '@mui/material/FormHelperText';
 import { useResponsiveness } from '@inc/ui';
+import { useTranslation } from 'react-i18next';
 
 export type ImageProps = {
   fileName: string;
@@ -45,6 +46,7 @@ const ImageUploadForm = ({
   const [error, setError] = useState('');
   const [keyCounter, setKeyCounter] = useState(0);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { t } = useTranslation();
 
   const dragItem = useRef<number | null>(null);
   const dragOverItem = useRef<number | null>(null);
@@ -198,9 +200,9 @@ const ImageUploadForm = ({
   return (
     <Grid item xs={12} md={12} sx={{ width: '100%' }}>
       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-        Select Images (Up to 10 Images)
+        {t('Select Images (Up to 10 Images)')}
       </Typography>
-      <Typography variant="body1">Choose images to display for the listing</Typography>
+      <Typography variant="body1">{t('Choose images to display for the listing')}</Typography>
       <input
         type="file"
         accept="image/*"

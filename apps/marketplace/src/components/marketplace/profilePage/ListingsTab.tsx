@@ -9,6 +9,7 @@ import { Listing } from '@/utils/api/client/zod';
 
 // pass filter values to select component
 const filterValues = ['All Listings', 'Buy Listings', 'Sell Listings'];
+const filterValuesCn = ['All Listings 1', 'Buy Listings 2', 'Sell Listings 3'];
 const filterEndpointValues = ['all', 'BUY', 'SELL'];
 const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
 const sortEndpointValues = ['recent_newest', 'price_desc', 'price_asc'];
@@ -28,6 +29,14 @@ const ListingsTab = ({
 }: ListingsTabProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
+
+  const { i18n, t } = useTranslation();
+
+  const tFilterValues = i18n.language === 'en' ? filterValues : filterValuesCn;
+  const tFilterValues2 = t('filter values')
+
+
+  console.log(tFilterValues);
 
   const stylesListing = useMemo(() => {
     if (isSm) {
