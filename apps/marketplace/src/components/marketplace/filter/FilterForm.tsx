@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
+import Checkbox from '@mui/material/Checkbox';
 
 // middleware
 import fetchCategories from '@/middlewares/fetchCategories';
@@ -80,9 +81,14 @@ const FilterForm = ({
     setNegotiation('');
     setMinPrice('');
     setMaxPrice('');
-    if (typeof setCategory === 'function') {
-      setCategory(0);
+  };
+
+  const handleNegotiationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === negotiation) {
+      setNegotiation('');
+      return;
     }
+    setNegotiation(event.target.value);
   };
 
   return (
@@ -108,42 +114,56 @@ const FilterForm = ({
       </Select>
 
       <Divider sx={{ my: 2 }} />
-      {typeof setCategory === 'function' && (
-        <>
-          <FormLabel
-            sx={({ typography }) => ({
-              fontWeight: typography.fontWeightMedium,
-            })}
-          >
-            {t('Category')}
-          </FormLabel>
-          <Select
-            sx={{ height: '45px', width: '100%' }}
-            onChange={(e) => {
-              if (typeof setCategory === 'function') setCategory(parseInt(e.target.value, 10));
-            }}
-            value={category?.toString()}
-          >
-            <MenuItem key={0} value="">
-              No Category
+      <FormLabel
+        sx={({ typography }) => ({
+          fontWeight: typography.fontWeightMedium,
+        })}
+      >
+        {t('Category')}
+      </FormLabel>
+      <Select
+        sx={{ height: '45px', width: '100%' }}
+        onChange={(e) => setCategory(parseInt(e.target.value, 10))}
+        value={category.toString()}
+      >
+        <MenuItem key={0} value={0}>
+          No Category
+        </MenuItem>
+        {categoriesData &&
+          categoriesData.map((category) => (
+            <MenuItem key={category.id} value={category.id}>
+              {category.name}
             </MenuItem>
-            {categoriesData &&
-              categoriesData.map((category) => (
-                <MenuItem key={category.id} value={category.id}>
-                  {category.name}
-                </MenuItem>
-              ))}
-          </Select>
-          <Divider sx={{ my: 2 }} />
-        </>
-      )}
+          ))}
+      </Select>
 
+      <Divider sx={{ my: 2 }} />
       <FormLabel sx={{ fontWeight: 600 }}>{t('Negotiability')}</FormLabel>
-      <RadioGroup onChange={(e) => setNegotiation(e.target.value)} value={negotiation}>
-        <FormControlLabel value="true" control={<Radio />} label={t('Negotiable')} />
-        <FormControlLabel value="false" control={<Radio />} label={t('Non-negotiable')} />
-      </RadioGroup>
+      <Box>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={negotiation === 'true'}
+              onChange={handleNegotiationChange}
+              name="negotiable"
+              value="true"
+            />
+          }
+          label={t('Negotiable')}
+        />
 
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={negotiation === 'false'}
+              onChange={handleNegotiationChange}
+              name="nonNegotiable"
+              value="false"
+            />
+          }
+          label={t('Non-Negotiable')}
+        />
+      </Box>
       <Divider sx={{ my: 2 }} />
       <FormLabel
         sx={({ typography }) => ({
