@@ -18,6 +18,7 @@ import updateUser from '@/middlewares/updateUser';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
+import { useTranslation } from 'react-i18next';
 
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
@@ -42,6 +43,8 @@ const ChangePassword = () => {
 
   const [isSm] = useResponsiveness(['sm']);
   const { palette } = useTheme();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (newPassword !== confirmNewPassword) {
@@ -91,7 +94,7 @@ const ChangePassword = () => {
   return (
     <>
       <Head>
-        <title>Change Password</title>
+        <title>{t('Change Password')}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
@@ -115,7 +118,7 @@ const ChangePassword = () => {
                     titleTypographyProps={{
                       fontSize: isSm ? 16 : 24,
                     }}
-                    title="Change Password"
+                    title={t('Change Password')}
                   />
                   <Box
                     sx={({ spacing }) => ({
@@ -133,7 +136,7 @@ const ChangePassword = () => {
                         fontSize: isSm ? 10 : 'auto',
                       })}
                     >
-                      Cancel Edit
+                      {t('Cancel Edit')}
                     </Button>
                     <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
                   </Box>
@@ -143,12 +146,14 @@ const ChangePassword = () => {
                   sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
                 />
                 <CardContent>
-                  <Typography sx={{ fontWeight: 'bold' }}>Change your password here</Typography>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    {t('Change your password here')}
+                  </Typography>
 
                   <FormControl fullWidth variant="outlined">
                     <TextField
                       type="password"
-                      label="Current Password"
+                      label={t('Current Password')}
                       InputLabelProps={{ shrink: true }}
                       sx={({ spacing }) => ({
                         mt: spacing(2),
@@ -163,7 +168,7 @@ const ChangePassword = () => {
                   <FormControl fullWidth variant="outlined">
                     <TextField
                       type="password"
-                      label="New Password"
+                      label={t('New Password')}
                       InputLabelProps={{ shrink: true }}
                       sx={({ spacing }) => ({
                         mt: spacing(2),
@@ -178,7 +183,7 @@ const ChangePassword = () => {
                   <FormControl fullWidth variant="outlined">
                     <TextField
                       type="password"
-                      label="Confirm New Password"
+                      label={t('Confirm New Password')}
                       InputLabelProps={{ shrink: true }}
                       sx={({ spacing }) => ({
                         mt: spacing(2),
@@ -218,7 +223,7 @@ const ChangePassword = () => {
                         textAlign: 'center',
                       }}
                     >
-                      Password changed successfully!
+                      {t('Password changed successfully!')}
                     </Typography>
                   )
                 }
@@ -240,7 +245,7 @@ const ChangePassword = () => {
                         mb: spacing(1),
                       })}
                     >
-                      Save Changes
+                      {t('Save Changes')}
                     </Button>
                   </Box>
                 </CardActions>
