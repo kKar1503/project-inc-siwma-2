@@ -80,6 +80,9 @@ const ChatSubHeader = ({
           my: spacing(1),
           height: '100%',
           width: '170px',
+          '&:hover': {
+            bgcolor: palette.primary[500],
+          },
         },
         avatar: {
           width: 70,
@@ -108,6 +111,9 @@ const ChatSubHeader = ({
           my: spacing(1),
           height: '100%',
           width: '170px',
+          '&:hover': {
+            bgcolor: palette.primary[500],
+          },
         },
         avatar: {
           width: 70,
