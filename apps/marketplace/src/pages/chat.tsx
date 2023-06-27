@@ -69,6 +69,8 @@ const ChatRoom = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [roomSynced, setRoomSynced] = useState(false);
   const [messageSynced, setMessageSynced] = useState('');
+  const [acceptOffer, setAcceptOffer] = useState<'pending' | 'accepted' | 'rejected'>('pending');
+
 
   // ** Update Chat List **
   const updateChatList = (message: Messages) => {
@@ -369,6 +371,8 @@ const ChatRoom = () => {
             <ChatBox
               roomData={messages}
               loginId={userId}
+              acceptOffer={acceptOffer}
+              setAcceptOffer={setAcceptOffer}
               ChatText={
                 <ChatTextBox
                   selectedFile={selectedFile}
