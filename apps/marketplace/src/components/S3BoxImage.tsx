@@ -27,7 +27,8 @@ const S3BoxImage = ({ src, children, ...others }: S3BoxImageProps) => {
 
 
   return image ? (
-    <Link href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
+    <Link href={image.url} download={image.name} onClick={onClick}
+          style={{ cursor: 'default', textDecoration: 'none' }}>
       <Box
         component='img'
         {...others}
