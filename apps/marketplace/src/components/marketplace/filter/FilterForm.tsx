@@ -83,17 +83,7 @@ const FilterForm = ({
     setMaxPrice('');
   };
 
-  // const handleNegotiationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, checked } = event.target;
-  //   const value = checked ? 'true' : 'false';
-  //   setNegotiation((prevNegotiation: string) => ({
-  //     ...prevNegotiation,
-  //     [name]: value,
-  //   }));
-  // };
-
   const handleNegotiationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
     setNegotiation(event.target.value);
   };
 
