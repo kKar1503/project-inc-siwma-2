@@ -30,6 +30,13 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
   const { t } = useTranslation();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, shape, shadows, palette, typography } = useTheme();
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (endRef.current) {
+      endRef.current.scrollIntoView({ behavior: 'instant' });
+    }
+  }, [roomData]);
 
   const filterFileType = (fileURL: string) => {
     const extension = fileURL.split('.').pop()?.toLowerCase() || '';
@@ -188,6 +195,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                 </Paper>
               </ListItem>
             ))}
+            <Box ref={endRef} />
           </List>
         </Paper>
       </Box>
