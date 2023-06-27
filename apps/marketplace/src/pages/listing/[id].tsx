@@ -17,6 +17,7 @@ import CardContent from '@mui/material/CardContent';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
 import { StarsRating, useResponsiveness, AddCommentModal } from '@inc/ui';
 import React, { useMemo, useState, useEffect } from 'react';
 import fetchCategories from '@/middlewares/fetchCategories';
@@ -33,6 +34,9 @@ import createRoom from '@/middlewares/createChat';
 import { useRouter } from 'next/router';
 import postReview from '@/middlewares/postReview';
 import { ReviewRequestBody } from '@/utils/api/server/zod';
+import { InfoOutlined } from '@mui/icons-material';
+import S3Image from '@/components/S3Image';
+import CrossSectionImageTooltip from '@/components/marketplace/createListing/CrossSectionImageTooltip';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import S3Avatar from '@/components/S3Avatar';
 
@@ -372,16 +376,23 @@ const DetailedListingPage = () => {
               >
                 <Typography variant="body1">{listings?.description}</Typography>
               </Box>
-              <Typography
-                sx={({ spacing }) => ({
-                  pt: spacing(2),
-                  pl: spacing(2),
-                  fontWeight: 600,
-                })}
-                variant="h6"
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap={1}
+                sx={({ spacing }) => ({ pt: spacing(2), pl: spacing(2) })}
               >
-                Dimensions
-              </Typography>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                  }}
+                  variant="h6"
+                >
+                  Dimensions
+                </Typography>
+                <CrossSectionImageTooltip data={cats?.find((x) => x.id === listings?.categoryId)?.crossSectionImage as string} />
+              </Stack>
+
               <Box
                 sx={({ spacing }) => ({
                   pt: spacing(2),
