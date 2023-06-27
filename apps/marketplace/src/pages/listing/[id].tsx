@@ -338,14 +338,14 @@ const DetailedListingPage = () => {
                         onClick={() => setIsShareOpen(true)}
                       >
                         <IosShareIcon fontSize={isSm ? 'medium' : 'large'} />
-                        <ShareModal
-                          open={isShareOpen}
-                          setOpen={setIsShareOpen}
-                          title="Share this listing!"
-                          content="Share this link with anyone!"
-                          link={share ? share.shortUrl : ''}
-                        />
                       </IconButton>
+                      <ShareModal
+                        open={isShareOpen}
+                        setOpen={() => setIsShareOpen(false)}
+                        title="Share this listing!"
+                        content="Share this link with anyone!"
+                        link={share ? share.shortUrl : ''}
+                      />
                     </Grid>
                     {listings?.owner.id !== loggedUserUuid && (
                       <Grid item xs={4}>
