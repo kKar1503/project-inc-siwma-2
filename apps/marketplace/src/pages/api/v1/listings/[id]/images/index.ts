@@ -80,7 +80,8 @@ const append = async (
     listing.listingImages.length === 0 ? 0 : previousImages[previousImages.length - 1].order;
 
   return objects.map((object, i) => {
-    const sortOrder = i * 10000 + offset;
+    const sortOrder = (i + 1) * 10000 + offset;
+
     return {
       image: object.Id,
       order: sortOrder,
@@ -111,7 +112,7 @@ const insert = async (
   objects: IS3Object[],
   insertIndex: number
 ) => {
-  if (insertIndex < 0) return prepend(listing, objects);
+  if (insertIndex <= 0) return prepend(listing, objects);
   if (insertIndex >= listing.listingImages.length) return append(listing, objects);
 
   const [before, after] = [
