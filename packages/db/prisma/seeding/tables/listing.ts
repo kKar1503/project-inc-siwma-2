@@ -401,7 +401,8 @@ const Listings: IListings[] = [
   },
   {
     name: 'Mild Steel Angle',
-    description: 'Mild Steel Angle is a length of steel or iron that is bent at a right angle, commonly used for making frames, racks and for construction purposes. We stock Equal Angles or Unequal Angles, ranging in a variety of sizes. Angle sections are stocked in either 1.5m lengths, 3m lengths or 6m lengths - but all can be cut exactly to your requirements.',
+    description:
+      'Mild Steel Angle is a length of steel or iron that is bent at a right angle, commonly used for making frames, racks and for construction purposes. We stock Equal Angles or Unequal Angles, ranging in a variety of sizes. Angle sections are stocked in either 1.5m lengths, 3m lengths or 6m lengths - but all can be cut exactly to your requirements.',
     price: new Prisma.Decimal(7.77),
     categoryId: 6,
     type: ListingType.SELL,
@@ -428,7 +429,8 @@ const Listings: IListings[] = [
   },
   {
     name: 'Buying Ground Shafting Alloy Steel',
-    description: 'Ground Shafting Alloy Steel is a high strength, low alloy steel that finds its best application where there is need for more strength per unit of weight. Less of this material is needed to fulfill given strength requirements than is necessary with regular carbon steels. Grade 4140 is used for applications requiring good mechanical properties and involving moderate to heavy machining, such as forging, upsetting, boring, and reaming. While it is true that many other grades contain chromium, 4140 stands out for its versatility, machinability, and high fatigue strength. It can be heat treated to high strength levels while maintaining good toughness, wear resistance, and fatigue strength levels, combined with good atmospheric corrosion resistance, and strength.',
+    description:
+      'Ground Shafting Alloy Steel is a high strength, low alloy steel that finds its best application where there is need for more strength per unit of weight. Less of this material is needed to fulfill given strength requirements than is necessary with regular carbon steels. Grade 4140 is used for applications requiring good mechanical properties and involving moderate to heavy machining, such as forging, upsetting, boring, and reaming. While it is true that many other grades contain chromium, 4140 stands out for its versatility, machinability, and high fatigue strength. It can be heat treated to high strength levels while maintaining good toughness, wear resistance, and fatigue strength levels, combined with good atmospheric corrosion resistance, and strength.',
     price: new Prisma.Decimal(100),
     categoryId: 8,
     type: ListingType.BUY,
@@ -437,7 +439,8 @@ const Listings: IListings[] = [
   },
   {
     name: 'Buying Mild Steel Plate',
-    description: 'Mild Steel Plate is a structural quality steel plate used for a large variety of general construction and industrial applications. Mild Steel Plates can come in various sizes and grades. Thicknesses available range from 3mm up to as thick as 150mm. Stock sizes range from 2000 x 1000mm up to 4000 x 2000mm, however we can profile any size of plate you may require. Grades available are S275, S355, Hardox. Larger area plate is also available on request such as 6000 x 2000mm upto 12000 x 3000mm. Please contact us for further information on any of our products.',
+    description:
+      'Mild Steel Plate is a structural quality steel plate used for a large variety of general construction and industrial applications. Mild Steel Plates can come in various sizes and grades. Thicknesses available range from 3mm up to as thick as 150mm. Stock sizes range from 2000 x 1000mm up to 4000 x 2000mm, however we can profile any size of plate you may require. Grades available are S275, S355, Hardox. Larger area plate is also available on request such as 6000 x 2000mm upto 12000 x 3000mm. Please contact us for further information on any of our products.',
     price: new Prisma.Decimal(134),
     categoryId: 7,
     type: ListingType.BUY,
@@ -455,7 +458,8 @@ const Listings: IListings[] = [
   },
   {
     name: 'Hexagonal bars alloy steel buying urgent',
-    description: 'Hexagonal bars alloy steel will be used for applications requiring good mechanical properties and involving moderate to heavy machining, such as forging, upsetting, boring, and reaming. While it is true that many other grades contain chromium, 4140 stands out for its versatility, machinability, and high fatigue strength. It can be heat treated to high strength levels while maintaining good toughness, wear resistance, and fatigue strength levels, combined with good atmospheric corrosion resistance, and strength.',
+    description:
+      'Hexagonal bars alloy steel will be used for applications requiring good mechanical properties and involving moderate to heavy machining, such as forging, upsetting, boring, and reaming. While it is true that many other grades contain chromium, 4140 stands out for its versatility, machinability, and high fatigue strength. It can be heat treated to high strength levels while maintaining good toughness, wear resistance, and fatigue strength levels, combined with good atmospheric corrosion resistance, and strength.',
     price: new Prisma.Decimal(236.23),
     categoryId: 8,
     type: ListingType.BUY,
@@ -645,7 +649,7 @@ const Listings: IListings[] = [
   {
     name: 'Mild steel tread plate (1x)',
     description: 'Selling mild steel tread plate for a house wiith a 1x',
-    price: new Prisma.Decimal(430.20),
+    price: new Prisma.Decimal(430.2),
     categoryId: 7,
     type: ListingType.SELL,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
@@ -776,7 +780,170 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
-  }
+  },
+  {
+    name: 'Brass plates (x2331)',
+    description:
+      'Please note that this listing includes a total of 2,331 brass plates, offering ample quantity for various uses.',
+    price: new Prisma.Decimal(122.4),
+    categoryId: 7,
+    type: ListingType.SELL,
+    owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
+    multiple: true,
+  },
+
+  {
+    name: 'Zinc round bars',
+    description:
+      'For sale: Zinc round bars, perfect for various industrial applications and crafting projects.',
+    price: new Prisma.Decimal(140.8),
+    categoryId: 8,
+    type: ListingType.SELL,
+    owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
+    multiple: true,
+  },
+  {
+    name: 'WTS Alloy steel sheets',
+    description:
+      'Selling alloy steel sheets, offering exceptional strength and versatility for a wide range of applications in construction, manufacturing, and more.',
+    price: new Prisma.Decimal(40.8),
+    categoryId: 3,
+    type: ListingType.SELL,
+    owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
+    multiple: false,
+  },
+  {
+    name: 'Want [x315] Copper plates',
+    description: 'Want 315 Copper plates, price negotiable.',
+    price: new Prisma.Decimal(100.0),
+    categoryId: 7,
+    type: ListingType.BUY,
+    owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
+    multiple: true,
+  },
+  {
+    name: 'Tool steel ground plate stocks selling in bulk!',
+    description: 'Available in bulk, up to 100 pcs per person',
+    price: new Prisma.Decimal(420.1),
+    categoryId: 7,
+    type: ListingType.SELL,
+    owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
+    multiple: false,
+  },
+  {
+    name: 'Buying Expanded sheets made out of Aluminum',
+    description: 'Looking to buy expanded sheets made from aluminum, contact me.',
+    price: new Prisma.Decimal(23.0),
+    categoryId: 3,
+    type: ListingType.BUY,
+    owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
+    multiple: false,
+  },
+  {
+    name: 'WTB Stainless steel channel',
+    description:
+      'Looking to buy stainless steel channel for construction projects, in need of durable and corrosion-resistant material.',
+    price: new Prisma.Decimal(40.3),
+    categoryId: 4,
+    type: ListingType.BUY,
+    owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
+    multiple: false,
+  },
+  {
+    name: 'Square bars alloy steel up for sale',
+    description: 'Selling square bars made from alloy steel, quite new batch.',
+    price: new Prisma.Decimal(530.0),
+    categoryId: 8,
+    type: ListingType.SELL,
+    owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
+    multiple: false,
+  },
+  {
+    name: 'Selling for mild steel bars - Only 231 left!',
+    description: 'Selling good quality mild steel bars, only 231 left in stock.',
+    price: new Prisma.Decimal(300.1),
+    categoryId: 8,
+    type: ListingType.SELL,
+    owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
+    multiple: true,
+  },
+  {
+    name: 'Aluminum Perforated Sheet purchase in bulk for discounts',
+    description:
+      'Seeking to buy aluminum perforated sheets in bulk? Take advantage of our discounted prices and enhance your projects with these versatile and durable sheets. ',
+    price: new Prisma.Decimal(122.4),
+    categoryId: 3,
+    type: ListingType.SELL,
+    owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
+    multiple: true,
+  },
+  {
+    name: '[Warehouse Clearance] Stainless Steel Square Bars',
+    description:
+      'Do not miss out on our warehouse clearance sale! We are offering stainless steel square bars at unbeatable prices. Limited stock available.',
+    price: new Prisma.Decimal(12.3),
+    categoryId: 9,
+    type: ListingType.SELL,
+    owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
+    multiple: false,
+  },
+  {
+    name: 'Round bars: Aluminum [WTB]',
+    description: 'Looking for high quality bars, price is negotiable.',
+    price: new Prisma.Decimal(15.0),
+    categoryId: 8,
+    type: ListingType.BUY,
+    owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
+    multiple: false,
+  },
+  {
+    name: '(WTS) Mild steel grating',
+    description:
+      'For sale: Mild steel grating, a durable and reliable option for industrial and commercial applications.',
+    price: new Prisma.Decimal(31.5),
+    categoryId: 8,
+    type: ListingType.SELL,
+    owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
+    multiple: false,
+  },
+  {
+    name: 'Grating: Aluminum FOR SALE',
+    description: 'Selling Durable Aluminum Gratings while stocks last, rates are per pc.',
+    price: new Prisma.Decimal(50.5),
+    categoryId: 2,
+    type: ListingType.SELL,
+    owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
+    multiple: false,
+  },
+  {
+    name: 'High Quality Rectangular Steel Tubing',
+    description:
+      'High-quality rectangular steel tubing, known for its versatility and sturdy construction. Perfect for structural projects, fabrication, and more. ',
+    price: new Prisma.Decimal(800.2),
+    categoryId: 8,
+    type: ListingType.SELL,
+    owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
+    multiple: true,
+  },
+  {
+    name: 'Selling Zinc sheets for cheap',
+    description: 'Selling zinc sheets at a discounted price, non-negotiable price.',
+    price: new Prisma.Decimal(10.2),
+    categoryId: 3,
+    type: ListingType.SELL,
+    owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
+    multiple: false,
+  },
+  {
+    name: '(WTS) Aluminum beams',
+    description:
+      'Grab your high-quality alumnium beams here! Available while stocks last. Price is non-negotiable.',
+    price: new Prisma.Decimal(15.5),
+    categoryId: 2,
+    type: ListingType.SELL,
+    owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
+    multiple: false,
+  },
 ];
 
 export type { IListings };
