@@ -1,5 +1,5 @@
 // ** React / Next Imports **
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
 // ** Components Imports **
@@ -11,7 +11,7 @@ import ChatList from '@/components/rtc/ChatList';
 
 // ** Chat Related Imports **
 import { io } from 'socket.io-client';
-import { getMessage, getRooms, syncMessage } from '@/chat/emitters';
+import { getMessage, getRooms, joinRoom, sendMessage } from '@/chat/emitters';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
@@ -21,11 +21,22 @@ import { SxProps, Theme, useTheme } from '@mui/material/styles';
 // ** Types Imports **
 import type { ChatListProps } from '@/components/rtc/ChatList';
 import type { ChatData } from '@/components/rtc/ChatBox';
+import type { Messages } from '@inc/types';
 
 // ** Hooks Imports **
 import { useResponsiveness } from '@inc/ui';
 import useChat from '@/hooks/useChat';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
+
+function formatMessage(message: Messages): ChatData {
+  const { createdAt, message: messageContent, ...rest } = message;
+  return {
+    ...rest,
+    messageContent,
+    createdAt: new Date(createdAt),
+  };
+}
 
 const ChatRoom = () => {
   // ** Socket Initialization
@@ -39,11 +50,11 @@ const ChatRoom = () => {
 
   // ** Refs **
   const userIdRef = useRef<string>('');
+  const roomIdRef = useRef('');
   const userId = userIdRef.current;
 
   // ** MUI **
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing } = useTheme();
 
   // ** Socket Related **z
   const [connect, setConnect] = useState(false);
@@ -55,15 +66,49 @@ const ChatRoom = () => {
   const [makeOffer, setMakeOffer] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState('');
-  const [onSend, setOnSend] = useState(false);
   const [domLoaded, setDomLoaded] = useState(false);
   const [roomSynced, setRoomSynced] = useState(false);
   const [messageSynced, setMessageSynced] = useState('');
 
+  // ** Update Chat List **
+  const updateChatList = (message: Messages) => {
+    setRooms((prev) =>
+      prev.map((room) => {
+        console.log('iterating rooms', room);
+        if (room.id !== message.room) {
+          return room;
+        }
+        const newRoom = { ...room };
+
+        let latestMessageDataString = '';
+        const latestMessageDataObj = {
+          amount: 0,
+          accepted: false,
+          content: '',
+        };
+
+        if (message.message.contentType === 'offer') {
+          latestMessageDataObj.amount = message.message.amount;
+          latestMessageDataObj.accepted = message.message.offerAccepted;
+          latestMessageDataObj.content = message.message.content;
+        } else {
+          latestMessageDataString = message.message.content;
+        }
+
+        newRoom.time = new Date(message.createdAt);
+        newRoom.latestMessage =
+          message.message.contentType === 'offer' ? latestMessageDataObj : latestMessageDataString;
+        newRoom.contentType = message.message.contentType;
+
+        return newRoom;
+      })
+    );
+  };
+
   // ** useChat **
   const { isConnected, loading } = useChat(socket.current, connect, {
     userId,
-    currentRoom: roomId,
+    currentRoom: roomIdRef,
     roomSyncCallback: (roomSync) => {
       switch (roomSync.status) {
         case 'success': {
@@ -80,24 +125,32 @@ const ChatRoom = () => {
           console.log(roomSync.data);
           const { time, latestMessage, category, ...rest } = roomSync.data;
 
-          let latestMessageData = '';
+          let latestMessageDataString = '';
+          const latestMessageDataObj = {
+            amount: 0,
+            accepted: false,
+            content: '',
+          };
 
           if (latestMessage !== undefined) {
             if (latestMessage.contentType === 'offer') {
-              latestMessageData = `Offer: ${latestMessage.amount} (${
-                latestMessage.offerAccepted ? 'Accepted' : latestMessage.content
-              })`;
+              latestMessageDataObj.amount = latestMessage.amount;
+              latestMessageDataObj.accepted = latestMessage.offerAccepted;
+              latestMessageDataObj.content = latestMessage.content;
             } else {
-              latestMessageData = latestMessage.content;
+              latestMessageDataString = latestMessage.content;
             }
           }
 
-          const roomsData: ChatListProps = {
+          const contentType = latestMessage?.contentType ?? 'text';
+
+          const roomsData = {
             ...rest,
+            contentType,
             time: time ? new Date(time) : undefined,
             category: category === 'BUY' ? 'Buying' : 'Selling',
-            latestMessage: latestMessageData,
-          };
+            latestMessage: contentType === 'offer' ? latestMessageDataObj : latestMessageDataString,
+          } as ChatListProps;
           setRooms((curr) => [...curr, roomsData]);
           break;
         }
@@ -107,13 +160,11 @@ const ChatRoom = () => {
       }
     },
     messageCallback: (message) => {
-      if (message.room === roomId) {
-        const { createdAt, message: messageContent, ...rest } = message;
-        setMessages((curr) => [
-          ...curr,
-          { ...rest, messageContent, createdAt: new Date(createdAt) },
-        ]);
-      }
+      setMessages((curr) => [...curr, formatMessage(message)]);
+      updateChatList(message);
+    },
+    messageUnreadCallback: (messageUnread) => {
+      updateChatList(messageUnread);
     },
     messageSyncCallback: (messageSync) => {
       switch (messageSync.status) {
@@ -127,15 +178,7 @@ const ChatRoom = () => {
         }
         case 'in_progress': {
           console.log('Sync in progress');
-          const { createdAt, message: messageContent, ...rest } = messageSync.data;
-          setMessages((curr) => [
-            ...curr,
-            {
-              ...rest,
-              messageContent,
-              createdAt: new Date(createdAt),
-            },
-          ]);
+          setMessages((curr) => [...curr, formatMessage(messageSync.data)]);
           break;
         }
         default: {
@@ -181,13 +224,19 @@ const ChatRoom = () => {
   useEffect(() => {
     if (isConnected && loading === 'idle' && domLoaded && roomId !== '') {
       if (messageSynced !== roomId) {
-        setMessageSynced(roomId);
-        setMessages([]);
-        getMessage(socket.current, roomId, (ack) => {
+        joinRoom(socket.current, roomId, (ack) => {
           if (ack.success) {
-            console.log('getMessage', ack.data);
+            setMessageSynced(roomId);
+            setMessages([]);
+            getMessage(socket.current, roomId, (ack) => {
+              if (ack.success) {
+                console.log('getMessage', ack.data);
+              } else {
+                console.log('getMessage', ack.err);
+              }
+            });
           } else {
-            console.log('getMessage', ack.err);
+            console.log('joinRoom', ack.err);
           }
         });
       }
@@ -217,6 +266,27 @@ const ChatRoom = () => {
     };
   }, [isLg, isSm]);
 
+  const onClickSend: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    if (inputText !== '') {
+      console.log('onClickSend', inputText);
+      sendMessage(
+        socket.current,
+        { message: inputText, roomId, time: new Date().toISOString() },
+        (ack) => {
+          if (ack.success) {
+            console.log('sendMessage', ack.data);
+            setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
+            updateChatList(ack.data as Messages);
+            setInputText('');
+          } else {
+            console.log('sendMessage', ack.err);
+          }
+        }
+      );
+    }
+  };
+
   return (
     <Box id="chat-page" display="flex" sx={chatPageSx}>
       {/* render if isMd and isLg */}
@@ -231,7 +301,10 @@ const ChatRoom = () => {
           <ChatList
             chats={rooms}
             selectChat={roomId}
-            setSelectChat={setRoomId}
+            setSelectChat={(roomId) => {
+              setRoomId(roomId);
+              roomIdRef.current = roomId;
+            }}
             onChange={(e) => {
               const element = e.currentTarget as HTMLInputElement;
               const { value } = element;
@@ -271,15 +344,14 @@ const ChatRoom = () => {
             />
             <ChatBox
               roomData={messages}
-              loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
+              loginId={userId}
               ChatText={
                 <ChatTextBox
                   selectedFile={selectedFile}
                   setSelectedFile={setSelectedFile}
                   inputText={inputText}
                   setInputText={setInputText}
-                  onSend={onSend}
-                  setOnSend={setOnSend}
+                  onClickSend={onClickSend}
                 />
               }
             />

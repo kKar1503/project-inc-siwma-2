@@ -348,7 +348,7 @@ const ChatRoom = () => {
                   inputText={inputText}
                   setInputText={setInputText}
                   onSend={onSend}
-                  setOnSend={setOnSend}
+                  onClickSend={setOnSend}
                 />
               }
             />
