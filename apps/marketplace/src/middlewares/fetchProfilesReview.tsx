@@ -1,4 +1,3 @@
-// import listing from '@/utils/api/client/zod/listings';
 import reviews from '@/utils/api/client/zod/reviews';
 import apiClient from '@/utils/api/client/apiClient';
 

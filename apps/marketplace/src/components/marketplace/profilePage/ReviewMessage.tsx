@@ -111,15 +111,6 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
         </Stack>
       </Box>
       <Box>
-        <Typography
-          variant="body1"
-          component="div"
-          sx={{ flexGrow: 1, color: 'grey', mx: 2, my: 1 }}
-        >
-          {data.id}
-        </Typography>
-      </Box>
-      <Box>
         <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb: 3 }}>
           {data.review}
         </Typography>
