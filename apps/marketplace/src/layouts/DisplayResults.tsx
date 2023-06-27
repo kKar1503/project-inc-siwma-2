@@ -8,6 +8,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
 import { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTranslation } from 'react-i18next';
 
 export interface titleProps {
   single: string;
@@ -68,6 +69,7 @@ const DisplayResults = ({
   const [negotiation, setNegotiation] = useState<string>('');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
+  const { t } = useTranslation();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -193,7 +195,7 @@ const DisplayResults = ({
                 onClick={toggleDrawer}
                 endIcon={<FilterAltIcon />}
               >
-                FILTER
+                {t('Filter')}
               </Button>
               <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
                 <Box
@@ -222,7 +224,7 @@ const DisplayResults = ({
                     variant="contained"
                     onClick={toggleDrawer}
                   >
-                    Close
+                    {t('Close')}
                   </Button>
                 </Box>
               </Drawer>
@@ -232,7 +234,7 @@ const DisplayResults = ({
         {children}
         {!isLoading && data && data.noOfItems === 0 && (
           <Grid container justifyContent="center">
-            <Typography>No items found.</Typography>
+            <Typography>{t('No items found.')}</Typography>
           </Grid>
         )}
       </Grid>
