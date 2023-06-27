@@ -213,6 +213,52 @@ const ChatBox = ({ loginId, roomData, ChatText, acceptOffer, setAcceptOffer }: C
                         </Typography>
                       </Box>
                     )}
+                  {message.offerState === 'rejected' &&
+                    message.messageContent.contentType === 'offer' && (
+                      <Box>
+                        <Box display="flex" sx={({ spacing }) => ({ mb: spacing(2) })}>
+                          <Typography
+                            sx={({ palette, spacing }) => ({
+                              color:
+                                message.author === loginId
+                                  ? palette.common.white
+                                  : palette.text.primary,
+                              fontSize: 'subtitle1',
+                              fontWeight: 'bold',
+                              letterSpacing: '0.15px',
+                              mr: spacing(3),
+                            })}
+                          >
+                            {t('Make Offer')} :
+                          </Typography>
+                          <Typography
+                            sx={({ palette, spacing }) => ({
+                              color:
+                                message.author === loginId
+                                  ? palette.common.white
+                                  : palette.text.primary,
+                              fontSize: 'subtitle1',
+                              fontWeight: 'bold',
+                              letterSpacing: '0.15px',
+                              mr: spacing(3),
+                            })}
+                          >
+                            ${message.messageContent.amount.toFixed(2)}
+                          </Typography>
+                        </Box>
+                        <Typography
+                          sx={({ palette }) => ({
+                            color: palette.error[400],
+                            fontSize: 'subtitle1',
+                            fontWeight: 'bold',
+                            letterSpacing: '0.15px',
+                            textAlign: 'center',
+                          })}
+                        >
+                          {t('Offer Declined')}
+                        </Typography>
+                      </Box>
+                    )}
                   {message.messageContent.contentType === 'file' &&
                     message.messageContent.content !== undefined && (
                       <Box display="flex">
