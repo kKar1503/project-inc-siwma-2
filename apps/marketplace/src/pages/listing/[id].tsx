@@ -9,8 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import IosShareIcon from '@mui/icons-material/IosShare';
-import SellBadge from '@/components/marketplace/listing/SellBadge';
-import BuyBadge from '@/components/marketplace/listing/BuyBadge';
+import ListingBadge from '@/components/marketplace/listing/ListingBadge';
 import ShareModal from '@/components/modal/ShareModal';
 import fetchListing from '@/middlewares/fetchListing';
 import { useMutation, useQuery } from 'react-query';
@@ -279,8 +278,8 @@ const DetailedListingPage = () => {
                   >
                     <Grid item>
                       <Box>
-                        {listings?.type === 'BUY' && <BuyBadge />}
-                        {listings?.type === 'SELL' && <SellBadge />}
+                        {listings?.type === 'BUY' && <ListingBadge type="buy" />}
+                        {listings?.type === 'SELL' && <ListingBadge type="sell" />}
                       </Box>
                     </Grid>
                     <Grid item>
@@ -394,7 +393,11 @@ const DetailedListingPage = () => {
                 >
                   Dimensions
                 </Typography>
-                <CrossSectionImageTooltip data={cats?.find((x) => x.id === listings?.categoryId)?.crossSectionImage as string} />
+                <CrossSectionImageTooltip
+                  data={
+                    cats?.find((x) => x.id === listings?.categoryId)?.crossSectionImage as string
+                  }
+                />
               </Stack>
 
               <Box
