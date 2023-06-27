@@ -54,6 +54,7 @@ const Advertisements: IAdvertisement[] = [
     image: 'link-to-image.jpg',
     description:
       'Teck Leong Industries will be have a clearance sale of Circular Hollow Sections at 10% off.',
+    active: false,
     startDate: new Date('2021-01-01'),
     endDate: new Date('2024-01-31'),
   },
@@ -63,7 +64,6 @@ const Advertisements: IAdvertisement[] = [
     description:
       'Join our Grand Opening ceremony with 15% all metals for the first two weeks of New Years!',
     link: 'http://teckleong.com.sg/',
-    active: false,
     startDate: new Date('2021-01-01'),
     endDate: new Date('2024-01-31'),
   },
@@ -83,7 +83,6 @@ const Advertisements: IAdvertisement[] = [
     description:
       'To celebrate our 30th anniversary, Teck Leong Structure will have a 10% discount on all metal sheet products!\nFor more information, please visit our website.',
     link: 'https://www.teckleongmetals.com.sg',
-    active: false,
     startDate: new Date('2021-01-01'),
     endDate: new Date('2024-01-31'),
   },
