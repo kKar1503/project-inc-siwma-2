@@ -10,7 +10,6 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Link from 'next/link';
 import { red } from '@mui/material/colors';
 import { StarsRating, useResponsiveness } from '@inc/ui';
-import S3Image from '@/components/S3Image';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';

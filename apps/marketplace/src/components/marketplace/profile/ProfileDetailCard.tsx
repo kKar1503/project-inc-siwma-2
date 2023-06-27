@@ -4,7 +4,8 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import S3Image from '@/components/S3Image';
+import S3Avatar from '@/components/S3Avatar';
+import { red } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -159,13 +160,12 @@ const ProfileDetailCard = ({ data }: ProfileDetailCardData) => {
       <Divider variant="middle" sx={{ height: '1px' }} />
 
       <CardContent>
-        <S3Image
-          style={{ borderRadius: '100%' }}
+        <S3Avatar
+          sx={({ spacing }) => ({ mb: spacing(1), bgcolor: red[500] })}
           src={`${data?.profilePic}`}
-          alt="Profile Picture"
-          width={70}
-          height={70}
-        />
+        >
+          {data?.name.charAt(0)}
+        </S3Avatar>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography variant="body2">{data?.companyName}</Typography>
         <Typography>{data?.email}</Typography>
