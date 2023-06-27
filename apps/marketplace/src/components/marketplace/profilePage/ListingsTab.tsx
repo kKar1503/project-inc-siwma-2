@@ -82,7 +82,9 @@ const ListingsTab = ({
       <Box sx={{ display: 'flex', justifyContent: isSm ? 'center' : 'flex-start' }}>
         {/* Select Components */}
         <Box sx={styleFilter}>
-          <SearchBar onChange={handleSearch} />
+          <Box sx={{ width: '250px' }}>
+            <SearchBar onChange={handleSearch} />
+          </Box>
           <Box
             sx={({ spacing }) => ({
               display: 'flex',

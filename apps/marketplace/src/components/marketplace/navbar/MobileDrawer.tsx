@@ -67,7 +67,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
               <ListItemIcon>
                 <HomeIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary={t('Home')} />
+              <ListItemText sx={{ color: palette.common.black }} primary={t('Home')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -78,7 +78,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
               <ListItemIcon>
                 <CategoryIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary={t('All Categories')} />
+              <ListItemText sx={{ color: palette.common.black }} primary={t('All Categories')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -89,7 +89,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
               <ListItemIcon>
                 <AddCircleIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary={t('Add Listing')} />
+              <ListItemText sx={{ color: palette.common.black }} primary={t('Add Listing')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -112,7 +112,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <PersonOutlineIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
-                <ListItemText primary={t('My Profile')} />
+                <ListItemText sx={{ color: palette.common.black }} primary={t('My Profile')} />
               </ListItemButton>
             </Link>
 
@@ -121,7 +121,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <EditIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
-                <ListItemText primary={t('Edit Profile')} />
+                <ListItemText sx={{ color: palette.common.black }} primary={t('Edit Profile')} />
               </ListItemButton>
             </Link>
 
@@ -130,7 +130,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
                 <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                   <LockIcon sx={{ color: palette.grey[600] }} />
                 </ListItemIcon>
-                <ListItemText primary={t('Change Password')} />
+                <ListItemText sx={{ color: palette.common.black }} primary={t('Change Password')} />
               </ListItemButton>
             </Link>
           </List>
@@ -140,7 +140,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
               <ListItemIcon sx={({ spacing }) => ({ pl: spacing(2) })}>
                 <BookmarksIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary={t('Bookmarks')} />
+              <ListItemText sx={{ color: palette.common.black }} primary={t('Bookmarks')} />
             </ListItemButton>
           </Link>
         </Collapse>
@@ -151,7 +151,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
               <ListItemIcon>
                 <ChatIcon sx={{ color: palette.grey[600] }} />
               </ListItemIcon>
-              <ListItemText primary={t('Chat')} />
+              <ListItemText sx={{ color: palette.common.black }} primary={t('Chat')} />
             </ListItemButton>
           </ListItem>
         </Link>
@@ -178,7 +178,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
 
   return (
     <div>
-      <Fragment key="right">
+      <Fragment key="left">
         <IconButton
           size="medium"
           onClick={toggleDrawer(true)}
@@ -190,7 +190,7 @@ const MobileDrawer = ({ userId }: MobileDrawerProps) => {
           <MenuIcon />
         </IconButton>
         <SwipeableDrawer
-          anchor="right"
+          anchor="left"
           open={openDrawer}
           onClose={toggleDrawer(false)}
           onOpen={toggleDrawer(true)}
