@@ -17,12 +17,12 @@ import DeleteChat from '../modal/DeleteChat';
 
 export type ChatHeaderProps = {
   profilePic: string;
-  companyName: string;
+  username: string;
   available: boolean;
   handleBack: () => void;
 };
 
-const ChatHeader = ({ profilePic, companyName, available, handleBack }: ChatHeaderProps) => {
+const ChatHeader = ({ profilePic, username, available, handleBack }: ChatHeaderProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography } = useTheme();
   const { t } = useTranslation();
@@ -187,7 +187,7 @@ const ChatHeader = ({ profilePic, companyName, available, handleBack }: ChatHead
         {/* <Avatar alt="company profile picture" src={profilePic} sx={chatHeaderStyles?.profilePic} /> */}
         {!isSm && <Avatar alt={t('company profile picture').toString()} src={profilePic} />}
       </IconButton>
-      <Typography sx={chatHeaderStyles?.companyName}>{companyName}</Typography>
+      <Typography sx={chatHeaderStyles?.companyName}>{username}</Typography>
       <Button sx={chatHeaderStyles?.statusButton} disabled>
         {available ? t('Available') : t('Sold')}
       </Button>

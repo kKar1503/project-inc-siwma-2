@@ -272,6 +272,21 @@ const ChatRoom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, loading, domLoaded, roomId]);
 
+  // ** Memos **
+  const currentRoom = useMemo<ChatListProps | null>(() => {
+    if (roomId === '') {
+      return null;
+    }
+
+    for (let i = 0; i < rooms.length; i++) {
+      if (rooms[i].id === roomId) {
+        return rooms[i];
+      }
+    }
+
+    return null;
+  }, [roomId, rooms]);
+
   const chatPageSx: SxProps<Theme> = useMemo(() => {
     if (isLg) {
       return {
@@ -348,7 +363,7 @@ const ChatRoom = () => {
         </Box>
       )}
       {/* if isSm, display  */}
-      {roomId !== '' && (
+      {roomId !== '' && currentRoom !== null && (
         <Box
           id="chat-right-side-wrapper"
           sx={{
@@ -364,16 +379,16 @@ const ChatRoom = () => {
             }}
           >
             <ChatHeader
-              profilePic=""
-              companyName="Hi Metals PTE LTD"
-              available
+              profilePic={currentRoom.userImage}
+              username={currentRoom.username}
+              available={currentRoom.inProgress}
               handleBack={() => setRoomId('')}
             />
             <ChatSubHeader
               itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
-              itemName="Hi Metals PTE LTD"
-              available
-              itemPrice={200.8}
+              itemName={currentRoom.itemName}
+              available={currentRoom.inProgress}
+              itemPrice={100.1}
               makeOffer={makeOffer}
               setMakeOffer={setMakeOffer}
             />
