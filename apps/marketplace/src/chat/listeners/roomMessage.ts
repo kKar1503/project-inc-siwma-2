@@ -10,13 +10,19 @@ const event: ClientEventFile<UseChatParams> = (io, hookParams) => ({
   eventName: EVENTS.SERVER.MESSAGE.ROOM,
   type: 'on', // 'on' | 'once'
   callback: (roomMessage) => {
-    const { currentRoom, messageCallback } = hookParams;
+    const { currentRoom, messageCallback, messageUnreadCallback } = hookParams;
 
-    if (messageCallback !== undefined) {
+    console.log('current', currentRoom);
+
+    if (messageCallback !== undefined && currentRoom.current === roomMessage.room) {
       messageCallback(roomMessage);
     }
 
-    if (currentRoom === roomMessage.room) {
+    if (messageUnreadCallback !== undefined && currentRoom.current !== roomMessage.room) {
+      messageUnreadCallback(roomMessage);
+    }
+
+    if (currentRoom.current === roomMessage.room) {
       (io.emit as TypedSocketEmitter)(EVENTS.CLIENT.MESSAGE.READ, roomMessage.room);
     }
   },
