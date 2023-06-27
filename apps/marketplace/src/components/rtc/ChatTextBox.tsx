@@ -84,6 +84,7 @@ const ChatTextBox = ({
 
   return (
     <Box
+      id="chat-text-box"
       sx={({ spacing, palette }) => ({
         display: 'flex',
         alignItems: 'center',

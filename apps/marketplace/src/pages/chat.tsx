@@ -11,8 +11,7 @@ import ChatList from '@/components/rtc/ChatList';
 
 // ** Chat Related Imports **
 import { io } from 'socket.io-client';
-import { syncMessage } from '@/chat/emitters';
-import { syncLocalStorage, syncLastMessage, syncLastMessages } from '@/utils/syncLocalStorage';
+import { getMessage, getRooms, syncMessage } from '@/chat/emitters';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
@@ -20,13 +19,11 @@ import Button from '@mui/material/Button';
 import { SxProps, Theme, useTheme } from '@mui/material/styles';
 
 // ** Types Imports **
-import type { Messages } from '@inc/types';
 import type { ChatListProps } from '@/components/rtc/ChatList';
+import type { ChatData } from '@/components/rtc/ChatBox';
 
 // ** Hooks Imports **
 import { useResponsiveness } from '@inc/ui';
-import useReadLocalStorage from '@/hooks/useReadLocalStorage';
-import useLocalStorage from '@/hooks/useLocalStorage';
 import useChat from '@/hooks/useChat';
 import { useRouter } from 'next/router';
 
@@ -41,48 +38,87 @@ const ChatRoom = () => {
   const router = useRouter();
 
   // ** Refs **
-  const lastMessagesCache = useRef<Map<string, string>>(new Map());
   const userIdRef = useRef<string>('');
   const userId = userIdRef.current;
 
-  // ** LocalStorage Keys **
-  const lastMessageIdKey = `${userId}-lastMessageId`;
-  const roomKey = `${userId}-rooms`;
-
   // ** MUI **
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, palette } = useTheme();
+  const { spacing } = useTheme();
+
+  // ** Socket Related **z
+  const [connect, setConnect] = useState(false);
+  const [roomId, setRoomId] = useState('');
+  const [rooms, setRooms] = useState<ChatListProps[]>([]);
+  const [messages, setMessages] = useState<ChatData[]>([]);
 
   // ** States **
   const [makeOffer, setMakeOffer] = useState(false);
-  const [roomId, setRoomId] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState('');
   const [onSend, setOnSend] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [domLoaded, setDomLoaded] = useState(false);
-  const [connect, setConnect] = useState(false);
-  const [lastMessages, setLastMessages] = useState<ChatListProps[]>([]);
-
-  // ** LocalStorage Values **
-  const lastMessageId = useReadLocalStorage<number>(lastMessageIdKey);
-  const [rooms, setRooms] = useLocalStorage<string[]>(roomKey, []);
-  const [messages, setMessages] = useLocalStorage<Messages[]>(roomId, []);
+  const [roomSynced, setRoomSynced] = useState(false);
+  const [messageSynced, setMessageSynced] = useState('');
 
   // ** useChat **
   const { isConnected, loading } = useChat(socket.current, connect, {
     userId,
     currentRoom: roomId,
-    chatMessagesProgressCallback: (progress) => setProgress(progress),
+    roomSyncCallback: (roomSync) => {
+      switch (roomSync.status) {
+        case 'success': {
+          console.log('Sync success');
+          break;
+        }
+        case 'error': {
+          console.log(`Sync error: ${roomSync.err}`);
+          break;
+        }
+        case 'in_progress': {
+          console.log('Sync in progress');
+          console.log(roomSync.progress);
+          console.log(roomSync.data);
+          const { time, latestMessage, category, ...rest } = roomSync.data;
+
+          let latestMessageData = '';
+
+          if (latestMessage !== undefined) {
+            if (latestMessage.contentType === 'offer') {
+              latestMessageData = `Offer: ${latestMessage.amount} (${
+                latestMessage.offerAccepted ? 'Accepted' : latestMessage.content
+              })`;
+            } else {
+              latestMessageData = latestMessage.content;
+            }
+          }
+
+          const roomsData: ChatListProps = {
+            ...rest,
+            time: time ? new Date(time) : undefined,
+            category: category === 'BUY' ? 'Buying' : 'Selling',
+            latestMessage: latestMessageData,
+          };
+          setRooms((curr) => [...curr, roomsData]);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
     messageCallback: (message) => {
-      syncLastMessage(userId, message);
+      if (message.room === roomId) {
+        const { createdAt, message: messageContent, ...rest } = message;
+        setMessages((curr) => [
+          ...curr,
+          { ...rest, messageContent, createdAt: new Date(createdAt) },
+        ]);
+      }
     },
     messageSyncCallback: (messageSync) => {
       switch (messageSync.status) {
         case 'success': {
           console.log('Sync success');
-          syncLastMessages(userId, lastMessagesCache.current);
-          lastMessagesCache.current.clear();
           break;
         }
         case 'error': {
@@ -91,9 +127,15 @@ const ChatRoom = () => {
         }
         case 'in_progress': {
           console.log('Sync in progress');
-          console.log(messageSync.progress);
-          console.log(messageSync.message);
-          syncLocalStorage(userId, messageSync.message, lastMessagesCache.current);
+          const { createdAt, message: messageContent, ...rest } = messageSync.data;
+          setMessages((curr) => [
+            ...curr,
+            {
+              ...rest,
+              messageContent,
+              createdAt: new Date(createdAt),
+            },
+          ]);
           break;
         }
         default: {
@@ -109,17 +151,13 @@ const ChatRoom = () => {
       console.log('userId acquired from user session');
       userIdRef.current = data.user.id;
       setDomLoaded(true);
-      return;
-    }
-    const lastLoggedInUserId = localStorage.getItem('lastLoggedIn');
-    if (lastLoggedInUserId !== null) {
-      console.log('userId acquired from localStorage');
-      userIdRef.current = lastLoggedInUserId;
-      setDomLoaded(true);
+      setConnect(true);
       return;
     }
 
     userIdRef.current = 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af';
+    setConnect(true);
+    setDomLoaded(true);
     // TODO, to change back to following
     // console.log('userId cannot be found, redirecting to signin page');
     // router.push('/login');
@@ -127,123 +165,35 @@ const ChatRoom = () => {
   }, []);
 
   useEffect(() => {
-    const chatList: ChatListProps[] = [];
-
-    rooms.forEach((room) => {
-      const lastMessage = localStorage.getItem(`${room}-last`);
-
-      if (lastMessage !== null) {
-        const parsedMessage = JSON.parse(lastMessage) as Messages;
-
-        let latestMessage: string;
-
-        switch (parsedMessage.contentType) {
-          case 'text': {
-            latestMessage = parsedMessage.content;
-            break;
-          }
-          case 'image': {
-            latestMessage = parsedMessage.author === userId ? 'You sent an image' : 'Sent an image';
-            break;
-          }
-          case 'file': {
-            latestMessage = parsedMessage.author === userId ? 'You sent a file' : 'Sent a file';
-            break;
-          }
-          case 'offer': {
-            latestMessage =
-              parsedMessage.author === userId
-                ? `You offered $${parsedMessage.offer}`
-                : `Sent an offer $${parsedMessage.offer}`;
-            break;
-          }
-          default: {
-            latestMessage = '';
-          }
-        }
-
-        const chatListProps: ChatListProps = {
-          id: room,
-          company: 'Company',
-          category: 'Selling',
-          latestMessage,
-          price: 0,
-          itemName: 'Item',
-          inProgress: true,
-          date: parsedMessage.createdAt.toString(),
-          imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-          badgeContent: 0,
-        };
-
-        chatList.push(chatListProps);
-
-        return;
-      }
-
-      const roomMessages = localStorage.getItem(room);
-
-      if (roomMessages !== null) {
-        const parsedMessages = JSON.parse(roomMessages) as Messages[];
-        const parsedMessage = parsedMessages[parsedMessages.length - 1];
-
-        let latestMessage: string;
-
-        switch (parsedMessage.contentType) {
-          case 'text': {
-            latestMessage = parsedMessage.content;
-            break;
-          }
-          case 'image': {
-            latestMessage = parsedMessage.author === userId ? 'You sent an image' : 'Sent an image';
-            break;
-          }
-          case 'file': {
-            latestMessage = parsedMessage.author === userId ? 'You sent a file' : 'Sent a file';
-            break;
-          }
-          case 'offer': {
-            latestMessage =
-              parsedMessage.author === userId
-                ? `You offered $${parsedMessage.offer}`
-                : `Sent an offer $${parsedMessage.offer}`;
-            break;
-          }
-          default: {
-            latestMessage = '';
-          }
-        }
-
-        const chatListProps: ChatListProps = {
-          id: room,
-          company: 'Company',
-          category: 'Selling',
-          latestMessage,
-          price: 0,
-          itemName: 'Item',
-          inProgress: true,
-          date: parsedMessage.createdAt.toString(),
-          imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-          badgeContent: 0,
-        };
-
-        chatList.push(chatListProps);
-      }
-    });
-
-    setLastMessages(chatList);
-  }, [rooms]);
-
-  useEffect(() => {
-    if (isConnected) {
-      syncMessage(socket.current, lastMessageId === null ? 0 : lastMessageId, (ack) => {
+    if (isConnected && loading === 'idle' && domLoaded && !roomSynced) {
+      setRoomSynced(true);
+      getRooms(socket.current, userId, (ack) => {
         if (ack.success) {
-          console.log(ack.data);
+          console.log('getRooms', ack.data);
         } else {
-          console.log(ack.err);
+          console.log('getRooms', ack.err);
         }
       });
     }
-  }, [isConnected]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, loading, domLoaded, roomSynced]);
+
+  useEffect(() => {
+    if (isConnected && loading === 'idle' && domLoaded && roomId !== '') {
+      if (messageSynced !== roomId) {
+        setMessageSynced(roomId);
+        setMessages([]);
+        getMessage(socket.current, roomId, (ack) => {
+          if (ack.success) {
+            console.log('getMessage', ack.data);
+          } else {
+            console.log('getMessage', ack.err);
+          }
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, loading, domLoaded, roomId]);
 
   // ** Responsive Styles **
   const pagePadding = useMemo(
@@ -300,7 +250,7 @@ const ChatRoom = () => {
           })}
         >
           <ChatList
-            chats={lastMessages}
+            chats={rooms}
             selectChat={roomId}
             setSelectChat={setRoomId}
             onChange={(e) => {
@@ -357,25 +307,6 @@ const ChatRoom = () => {
           </Box>
         </Box>
       )}
-      <Button
-        sx={{
-          position: 'fixed',
-          bottom: '120px',
-          right: '120px',
-          height: '80px',
-          width: '80px',
-          borderRadius: '50%',
-          backgroundColor: 'red',
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: '1em',
-        }}
-        onClick={() => {
-          setConnect(true);
-        }}
-      >
-        Sync
-      </Button>
     </Box>
   );
 };
