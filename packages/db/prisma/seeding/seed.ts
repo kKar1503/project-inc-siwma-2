@@ -20,6 +20,7 @@ import { ListingsParametersValue } from './tables/listings_parameters_value';
 import { UserBookmarks } from './tables/user_bookmarks';
 import { SibKeys } from './tables/sibkeys';
 import { PasswordReset } from './tables/password_reset';
+import { Reviews } from './tables/reviews';
 
 const main = async (): Promise<void> => {
   console.log('\nClearing database...');
@@ -218,6 +219,13 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${passwordResetCount} rows into public.password_reset`);
+  console.log('Seeding public.reviews...');
+
+  const { count: reviewsCount } = await prismaClient.reviews.createMany({
+    data: Reviews,
+  });
+
+  console.log(`Seeded ${reviewsCount} rows into public.reviews`);
 };
 
 main()

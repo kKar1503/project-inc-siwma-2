@@ -89,9 +89,9 @@ const Messages: IMessage[] = [
     author: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     room: 'f3655a94-6a3f-4887-95f0-c5fce30d728d',
     read: true,
-    offer: null,
+    offer: 1,
     contentType: ContentType.offer,
-    content: 'OFFER',
+    content: '(Rejected)',
   },
   {
     id: 10,
@@ -118,7 +118,7 @@ const Messages: IMessage[] = [
     read: true,
     offer: 2,
     contentType: ContentType.offer,
-    content: 'OFFER',
+    content: '(Accepted)',
   },
   {
     id: 13,
@@ -163,7 +163,7 @@ const Messages: IMessage[] = [
     read: true,
     offer: 3,
     contentType: ContentType.offer,
-    content: 'OFFER',
+    content: '(Rejected)',
   },
   {
     id: 18,
@@ -226,7 +226,7 @@ const Messages: IMessage[] = [
     read: true,
     offer: 4,
     contentType: ContentType.offer,
-    content: 'OFFER',
+    content: '(Accepted)',
   },
   {
     id: 25,
@@ -262,7 +262,7 @@ const Messages: IMessage[] = [
     read: true,
     offer: 5,
     contentType: ContentType.offer,
-    content: 'OFFER',
+    content: '(Accepted)',
   },
   {
     id: 29,
@@ -316,7 +316,7 @@ const Messages: IMessage[] = [
     read: true,
     offer: 6,
     contentType: ContentType.offer,
-    content: 'OFFER',
+    content: '(Accepted)',
   },
   {
     id: 35,
@@ -352,7 +352,7 @@ const Messages: IMessage[] = [
     read: true,
     offer: 7,
     contentType: ContentType.offer,
-    content: 'OFFER',
+    content: '(Accepted)',
   },
   {
     id: 39,
