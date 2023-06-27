@@ -55,8 +55,29 @@ const sendMessage: EventFile = (io, socket) => ({
           createdAt: time,
           read: isOtherOccupantConnected,
         },
+        select: {
+          id: true,
+          author: true,
+          content: true,
+          createdAt: true,
+          contentType: true,
+          offers: {
+            select: {
+              id: true,
+              accepted: true,
+              listingOffersListingTolisting: {
+                select: {
+                  multiple: true,
+                },
+              },
+              amount: true,
+            },
+          },
+          read: true,
+          room: true,
+        },
       })
-      .then(({ createdAt, ...message }) => {
+      .then((message) => {
         eventLog('info', `Created new message (${message.id}) in database.`);
 
         eventLog('trace', `Acknowledging message...`);
@@ -65,8 +86,24 @@ const sendMessage: EventFile = (io, socket) => ({
         if (otherOccupantSocketId !== '') {
           eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
           (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
-            ...message,
-            createdAt: createdAt.toISOString(),
+            createdAt: message.createdAt.toISOString(),
+            id: message.id,
+            author: message.author,
+            read: message.read,
+            room: message.room,
+            message:
+              message.contentType === 'offer'
+                ? {
+                    contentType: message.contentType,
+                    multiple: message.offers!.listingOffersListingTolisting.multiple,
+                    offerAccepted: message.offers!.accepted,
+                    amount: message.offers!.amount.toNumber(),
+                    content: message.content,
+                  }
+                : {
+                    contentType: message.contentType,
+                    content: message.content,
+                  },
           });
         }
       })
