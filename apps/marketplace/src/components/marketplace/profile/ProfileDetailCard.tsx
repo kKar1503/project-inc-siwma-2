@@ -4,7 +4,8 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
+import S3Avatar from '@/components/S3Avatar';
+import { red } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -162,9 +163,12 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
       <Divider variant="middle" sx={{ height: '1px' }} />
 
       <CardContent>
-        <Link style={{ textDecoration: 'none' }} href={`/profile/${data?.id}`}>
-          <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
-        </Link>
+        <S3Avatar
+          sx={({ spacing }) => ({ mb: spacing(1), bgcolor: red[500] })}
+          src={`${data?.profilePic}`}
+        >
+          {data?.name.charAt(0)}
+        </S3Avatar>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
           {data?.companyName}
