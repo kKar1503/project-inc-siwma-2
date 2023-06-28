@@ -9,8 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import IosShareIcon from '@mui/icons-material/IosShare';
-import SellBadge from '@/components/marketplace/listing/SellBadge';
-import BuyBadge from '@/components/marketplace/listing/BuyBadge';
+import ListingBadge from '@/components/marketplace/listing/ListingBadge';
 import ShareModal from '@/components/modal/ShareModal';
 import fetchListing from '@/middlewares/fetchListing';
 import { useMutation, useQuery } from 'react-query';
@@ -281,8 +280,8 @@ const DetailedListingPage = () => {
                   >
                     <Grid item>
                       <Box>
-                        {listings?.type === 'BUY' && <BuyBadge />}
-                        {listings?.type === 'SELL' && <SellBadge />}
+                        {listings?.type === 'BUY' && <ListingBadge type="buy" />}
+                        {listings?.type === 'SELL' && <ListingBadge type="sell" />}
                       </Box>
                     </Grid>
                     <Grid item>
@@ -419,7 +418,7 @@ const DetailedListingPage = () => {
                         })}
                       >
                         <Typography sx={{ color: theme.palette.grey[500] }}>
-                          {param?.find((x) => x.id === parameter?.paramId)?.name}
+                          {param?.find((x) => x.id === parameter?.paramId)?.displayName}
                         </Typography>
                         <Typography
                           variant="body1"
@@ -446,9 +445,10 @@ const DetailedListingPage = () => {
               >
                 <Grid
                   container
-                  sx={{
+                  sx={({ spacing }) => ({
                     direction: 'row',
-                  }}
+                    columnGap: spacing(1),
+                  })}
                 >
                   <Box
                     sx={({ spacing }) => ({

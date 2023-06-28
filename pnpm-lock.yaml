@@ -415,6 +415,9 @@ importers:
       react-responsive:
         specifier: ^9.0.2
         version: 9.0.2(react@18.2.0)
+      react-router-dom:
+        specifier: 6.14.0
+        version: 6.14.0(react-dom@18.2.0)(react@18.2.0)
       react-swipeable-views:
         specifier: ^0.14.0
         version: 0.14.0(react@18.2.0)
@@ -458,6 +461,9 @@ importers:
       '@types/react-dom':
         specifier: 18.0.11
         version: 18.0.11
+      '@types/react-router-dom':
+        specifier: 5.3.3
+        version: 5.3.3
       '@types/react-swipeable-views-utils':
         specifier: ^0.13.4
         version: 0.13.4
@@ -2807,6 +2813,11 @@ packages:
     resolution: {integrity: sha512-PgpN/WdYrZdUn076oHB1CxMyqk0xJOn/KmDuyXfApic0GG+1+nr3TlvtnY84Cv0Rt0I7e1u7CqouwwcnKt21Bg==}
     dev: false
 
+  /@remix-run/router@1.7.0:
+    resolution: {integrity: sha512-Eu1V3kz3mV0wUpVTiFHuaT8UD1gj/0VnoFHQYX35xlslQUpe8CuYoKFn9d4WZFHm3yDywz6ALZuGdnUPKrNeAw==}
+    engines: {node: '>=14'}
+    dev: false
+
   /@rushstack/eslint-patch@1.2.0:
     resolution: {integrity: sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==}
     dev: true
@@ -2940,6 +2951,10 @@ packages:
       '@types/node': 20.2.1
     dev: true
 
+  /@types/history@4.7.11:
+    resolution: {integrity: sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==}
+    dev: true
+
   /@types/hoist-non-react-statics@3.3.1:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
     dependencies:
@@ -3022,6 +3037,21 @@ packages:
     dependencies:
       '@types/react': 17.0.59
     dev: false
+
+  /@types/react-router-dom@5.3.3:
+    resolution: {integrity: sha512-kpqnYK4wcdm5UaWI3fLcELopqLrHgLqNsdpHauzlQktfkHL3npOSwtj1Uz9oKBAzs7lFtVkV8j83voAz2D8fhw==}
+    dependencies:
+      '@types/history': 4.7.11
+      '@types/react': 18.0.28
+      '@types/react-router': 5.1.20
+    dev: true
+
+  /@types/react-router@5.1.20:
+    resolution: {integrity: sha512-jGjmu/ZqS7FjSH6owMcD5qpq19+1RS9DeVRqfl1FeBMxTDQAGwlMWOcs52NDoXaNKyG3d1cYQFMs9rCrb88o9Q==}
+    dependencies:
+      '@types/history': 4.7.11
+      '@types/react': 18.0.28
+    dev: true
 
   /@types/react-swipeable-views-utils@0.13.4:
     resolution: {integrity: sha512-v0nDk6mMIPAu/kaEnqQpDz2Z7O8ewqy2in7xwobcAAkUKKsdw3MSWFW1BkQ+dPgTrBnj/KXUzx3ZIS6UYviwyA==}
@@ -7376,6 +7406,29 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       shallow-equal: 1.2.1
+    dev: false
+
+  /react-router-dom@6.14.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-YEwlApKwzMMMbGbhh+Q7MsloTldcwMgHxUY/1g0uA62+B1hZo2jsybCWIDCL8zvIDB1FA0pBKY9chHbZHt+2dQ==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    dependencies:
+      '@remix-run/router': 1.7.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-router: 6.14.0(react@18.2.0)
+    dev: false
+
+  /react-router@6.14.0(react@18.2.0):
+    resolution: {integrity: sha512-OD+vkrcGbvlwkspUFDgMzsu1RXwdjNh83YgG/28lBnDzgslhCgxIqoExLlxsfTpIygp7fc+Hd3esloNwzkm2xA==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@remix-run/router': 1.7.0
+      react: 18.2.0
     dev: false
 
   /react-swipeable-views-core@0.14.0:

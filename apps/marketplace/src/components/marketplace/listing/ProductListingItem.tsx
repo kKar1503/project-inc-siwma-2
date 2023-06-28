@@ -22,14 +22,13 @@ import S3CardImage from '@/components/S3CardImage';
 import { useTranslation } from 'react-i18next';
 import translateRelativeTime from '@/utils/translationUtils';
 import MoreProfileIcon from './MoreProfileIcon';
-import BuyBadge from './BuyBadge';
-import SellBadge from './SellBadge';
-import NegotiableBadge from './NegotiableBadge';
+import ListingBadge from './ListingBadge';
 
 export type ProductListingItemData = {
   data: Listing;
   showBookmark?: boolean;
   updateBookmarkData?: () => void;
+  setDel?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) | undefined) => {
@@ -49,7 +48,12 @@ const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) 
   };
 };
 
-const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductListingItemData) => {
+const ProductListingItem = ({
+  data,
+  showBookmark,
+  updateBookmarkData,
+  setDel,
+}: ProductListingItemData) => {
   const user = useSession();
   const { t } = useTranslation();
   const loggedUserUuid = user.data?.user.id as string;
@@ -80,19 +84,29 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
     >
       <Link style={{ textDecoration: 'none', color: 'inherit' }} href={`/profile/${data.owner.id}`}>
         <CardHeader
-          style={{ marginLeft: '-10px' }}
           avatar={
-            <S3Avatar sx={{ bgcolor: red[500] }} src={data.owner.profilePic || placeholder.src}>
+            <S3Avatar
+              sx={{
+                bgcolor: red[500],
+                height: isSm ? 28 : undefined,
+                width: isSm ? 28 : undefined,
+                fontSize: isSm ? 14 : undefined,
+              }}
+              src={data.owner.profilePic || placeholder}
+            >
               {data.owner.name.charAt(0)}
             </S3Avatar>
           }
+          sx={({ spacing }) => ({
+            padding: isSm ? spacing(1) : undefined,
+          })}
           title={data.owner.name}
           titleTypographyProps={{
             variant: isSm ? 'subtitle2' : 'subtitle1',
           }}
           subheader={data.owner.company.name}
           subheaderTypographyProps={{
-            fontSize: isSm ? 12 : 14,
+            fontSize: isSm ? 10 : 14,
           }}
         />
       </Link>
@@ -100,7 +114,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
         <S3CardImage
           src={data.coverImage || placeholder.src}
           alt="listing image"
-          height={200}
+          height={isSm ? 140 : 200}
           placeholder={placeholder.src}
         />
       </Link>
@@ -115,23 +129,23 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            pb: 1,
+            mb: 1,
           }}
         >
           <Grid container alignItems={isSm ? 'flex-start' : 'center'} spacing={1}>
             {data.type === 'BUY' && (
               <Grid item>
-                <BuyBadge />
+                <ListingBadge type="buy" />
               </Grid>
             )}
             {data.type === 'SELL' && (
               <Grid item>
-                <SellBadge />
+                <ListingBadge type="sell" />
               </Grid>
             )}
             {data.negotiable && (
               <Grid item>
-                <NegotiableBadge />
+                <ListingBadge type="negotiable" />
               </Grid>
             )}
           </Grid>
@@ -177,7 +191,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
               pb: spacing(1),
             })}
           >
-            <Typography variant="h5" color={theme.palette.text.primary}>
+            <Typography variant={isSm ? 'h6' : 'h5'} color={theme.palette.text.primary}>
               {new Intl.NumberFormat('en-SG', {
                 style: 'currency',
                 currency: 'SGD',
@@ -185,17 +199,12 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
               {data.unitPrice && '/unit'}
             </Typography>
           </Box>
-          <Box
-            sx={({ spacing }) => ({
-              pb: spacing(1),
-            })}
-          >
+          <Box>
             <StarsRating rating={data.rating} />
           </Box>
         </Link>
         <Box
-          sx={({ spacing }) => ({
-            pb: spacing(1),
+          sx={() => ({
             display: 'flex',
             justifyContent: 'space-between',
           })}
@@ -205,7 +214,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           </Typography>
           {data.owner.id === loggedUserUuid && (
             <Box>
-              <MoreProfileIcon productId={data.id} />
+              <MoreProfileIcon setDel={setDel} productId={data.id} />
             </Box>
           )}
         </Box>
