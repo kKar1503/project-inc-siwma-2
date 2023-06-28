@@ -37,6 +37,7 @@ export default apiHandler().get(async (req, res) => {
         gte: queryParams.minPrice ? queryParams.minPrice : undefined,
         lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
       },
+      deletedAt: null,
       name: queryParams.matching
         ? {
             contains: queryParams.matching,

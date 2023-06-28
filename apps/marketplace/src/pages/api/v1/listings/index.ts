@@ -7,7 +7,7 @@ import {
 } from '@/utils/api';
 import PrismaClient, { Companies, Listing, Messages, Prisma, Users } from '@inc/db';
 import { ParamError } from '@inc/errors';
-import { listingSchema } from '@/utils/api/server/zod';
+import { GetListingsQueryParameter, listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
 
 export type ListingWithParameters = Listing & {
@@ -171,6 +171,32 @@ export async function formatSingleListingResponse(
   return formattedListing;
 }
 
+const getListingWhere = (queryParams: GetListingsQueryParameter): Prisma.ListingWhereInput => ({
+  categoryId: queryParams.category ? queryParams.category : undefined,
+  negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+  price: {
+    gte: queryParams.minPrice ? queryParams.minPrice : undefined,
+    lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
+  },
+  name: queryParams.matching
+    ? {
+        contains: queryParams.matching,
+        mode: 'insensitive',
+      }
+    : undefined,
+  listingsParametersValues: queryParams.params
+    ? {
+        some: {
+          parameterId: queryParams.params.paramId,
+          value: queryParams.params.value,
+        },
+      }
+    : undefined,
+  deletedAt: {
+    equals: null,
+  },
+});
+
 export default apiHandler()
   .get(async (req, res) => {
     // Parse the query parameters
@@ -183,54 +209,12 @@ export default apiHandler()
 
     // Get total count ignoring pagination
     const totalCount = await PrismaClient.listing.count({
-      where: {
-        categoryId: queryParams.category ? queryParams.category : undefined,
-        negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
-        price: {
-          gte: queryParams.minPrice ? queryParams.minPrice : undefined,
-          lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
-        },
-        name: queryParams.matching
-          ? {
-              contains: queryParams.matching,
-              mode: 'insensitive',
-            }
-          : undefined,
-        listingsParametersValues: queryParams.params
-          ? {
-              some: {
-                parameterId: queryParams.params.paramId,
-                value: queryParams.params.value,
-              },
-            }
-          : undefined,
-      },
+      where: getListingWhere(queryParams),
     });
 
     // Retrieve filtered and sorted listings from the database
     const listings = await PrismaClient.listing.findMany({
-      where: {
-        categoryId: queryParams.category ? queryParams.category : undefined,
-        negotiable: queryParams.negotiable != null ? queryParams.negotiable : undefined,
-        price: {
-          gte: queryParams.minPrice ? queryParams.minPrice : undefined,
-          lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
-        },
-        name: queryParams.matching
-          ? {
-              contains: queryParams.matching,
-              mode: 'insensitive',
-            }
-          : undefined,
-        listingsParametersValues: queryParams.params
-          ? {
-              some: {
-                parameterId: queryParams.params.paramId,
-                value: queryParams.params.value,
-              },
-            }
-          : undefined,
-      },
+      where: getListingWhere(queryParams),
       orderBy,
       skip: queryParams.lastIdPointer,
       take: queryParams.limit,

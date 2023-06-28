@@ -92,7 +92,7 @@ const ChatBox = ({ loginId, roomData, ChatText, setAcceptOffer, setDeleteOffer }
         <Paper
           sx={{
             p: 2,
-            height: 'calc(100vh - 280px)',
+            height: isLg ? 'calc(100vh - 347px)' : 'calc(100vh - 280px)',
             overflow: 'auto',
           }}
         >
