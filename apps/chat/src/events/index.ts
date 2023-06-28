@@ -14,6 +14,9 @@ export { default as getMessages } from './getMessages';
 
 // ** Offer Events
 export { default as makeOffer } from './makeOffer';
+export { default as acceptOffer } from './acceptOffer';
+export { default as rejectOffer } from './rejectOffer';
+export { default as cancelOffer } from './cancelOffer';
 
 // ** Typing Events
 export { default as startType } from './startType';

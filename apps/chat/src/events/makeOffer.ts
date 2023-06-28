@@ -120,7 +120,6 @@ const event: EventFile = (io, socket) => ({
 
         eventLog('debug', `Other occupant socket id: ${otherOccupantSocketId}`);
 
-        eventLog('trace', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${roomId}...`);
         if (otherOccupantSocketId !== '') {
           eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
           (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(
