@@ -83,17 +83,17 @@ const useGetProfileListingImagesQuery = (listingID: string) => {
 };
 
 // add one more parameter to fetchProfilesReview to include the filter
-const useGetReview = (userUuid: string, sortBy?: string) => {
+const useGetReview = (userUuid: string, sortBy?: string, reviewFrom?: string) => {
   const { data } = useQuery(
-    ['reviewdata', userUuid, sortBy],
+    ['reviewdata', userUuid, sortBy, reviewFrom],
     async () => {
-      if (sortBy) {
-        return fetchProfilesReview(userUuid, sortBy);
+      if (sortBy || reviewFrom) {
+        return fetchProfilesReview(userUuid, sortBy, reviewFrom);
       }
       return fetchProfilesReview(userUuid);
     },
     {
-      enabled: userUuid !== undefined || sortBy !== undefined,
+      enabled: userUuid !== undefined || sortBy !== undefined || reviewFrom !== undefined,
     }
   );
 
@@ -127,7 +127,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const userListings = useGetListing(id, searchQuery, sortByListings, filterListings);
-  const userReviews = useGetReview(id, sortByReviews);
+  const userReviews = useGetReview(id, sortByReviews, filterReviews);
 
   useEffect(() => {
     if (userListings) {
@@ -213,7 +213,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
       <main>
         <Box sx={spaceStyle}>
           {userDetails && (
-            <ProfileDetailCard data={userDetails} reviewData={userReviews} visibleEditButton/>
+            <ProfileDetailCard data={userDetails} reviewData={userReviews} visibleEditButton />
           )}
           <Box
             sx={{
