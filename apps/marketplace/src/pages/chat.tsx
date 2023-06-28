@@ -344,6 +344,10 @@ const ChatRoom = () => {
     }
   };
 
+  const onCreateOffer = (val: number) => {
+    console.log(val);
+  };
+
   return (
     <Box id="chat-page" display="flex" sx={chatPageSx}>
       {/* render if isMd and isLg */}
@@ -396,8 +400,7 @@ const ChatRoom = () => {
               available={currentRoom.inProgress}
               itemPrice={currentRoom.itemPrice}
               itemPriceIsUnit={currentRoom.itemPriceIsUnit}
-              makeOffer={makeOffer}
-              setMakeOffer={setMakeOffer}
+              onCreateOffer={onCreateOffer}
             />
             <ChatBox
               roomData={messages}

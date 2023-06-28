@@ -15,8 +15,7 @@ export type ChatSubHeaderProps = {
   itemPrice: number;
   itemPriceIsUnit: boolean;
   available: boolean;
-  makeOffer: boolean;
-  setMakeOffer: (val: boolean) => void;
+  onCreateOffer: (val: number) => void;
 };
 
 const ChatSubHeader = ({
@@ -25,11 +24,10 @@ const ChatSubHeader = ({
   itemPrice,
   itemPriceIsUnit,
   available,
-  makeOffer,
-  setMakeOffer,
+  onCreateOffer,
 }: ChatSubHeaderProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
+  const { spacing, palette, typography } = useTheme();
   const { t } = useTranslation();
 
   const chatSubHeaderStyles = useMemo(() => {
@@ -127,9 +125,7 @@ const ChatSubHeader = ({
   }, [isSm, isMd, isLg]);
 
   const [openOffer, setOpenOffer] = useState(false);
-  const [inputValue, setInputValue] = useState<number>(0);
   const handleMakeOffer = () => {
-    setMakeOffer(true);
     setOpenOffer(true);
   };
 
@@ -194,12 +190,7 @@ const ChatSubHeader = ({
       <Button onClick={handleMakeOffer} sx={chatSubHeaderStyles?.makeOfferBtn}>
         {t('Make Offer')}
       </Button>
-      <MakeOfferModal
-        open={openOffer}
-        setOpen={setOpenOffer}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-      />
+      <MakeOfferModal open={openOffer} setOpen={setOpenOffer} onCreateOffer={onCreateOffer} />
     </Box>
   );
 };
