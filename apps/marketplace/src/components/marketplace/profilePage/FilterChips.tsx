@@ -21,9 +21,17 @@ const FilterChips = ({ onData }: FilterChipsProps) => {
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const label = event.currentTarget.textContent;
+    let filterParam = '';
+    if (label === options[0] || label === optionsCn[0]) {
+      filterParam = '';
+    } else if (label === options[1] || label === optionsCn[1]) {
+      filterParam = 'buyer';
+    } else if (label === options[2] || label === optionsCn[2]) {
+      filterParam = 'seller';
+    }
     setSelected(!selected);
     setSelectedValue(label || '');
-    onData(label || '');
+    onData(filterParam || '');
   };
 
   const [isSm] = useResponsiveness(['sm']);
