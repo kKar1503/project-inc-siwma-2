@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
+import S3Avatar from '@/components/S3Avatar';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import MakeOfferModal from '../modal/MakeOfferModal';
@@ -153,7 +154,7 @@ const ChatSubHeader = ({
             ...chatSubHeaderStyles?.avatar,
           })}
         >
-          <Image
+          <S3Avatar
             alt="company profile picture"
             src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}/${itemPic}`}
             // variant="square"

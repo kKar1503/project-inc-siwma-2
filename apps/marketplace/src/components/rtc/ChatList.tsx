@@ -12,7 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Divider from '@mui/material/Divider';
 import Badge from '@mui/material/Badge';
-import Image from 'next/image';
+import S3Avatar from '@/components/S3Avatar';
 import { DateTime } from 'luxon';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme, alpha } from '@mui/material/styles';
@@ -359,7 +359,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
             >
               <ListItemAvatar>
                 <Badge overlap="circular" color="error" badgeContent={chat.unreadMessages}>
-                  <Image
+                  <S3Avatar
                     style={{ borderRadius: '100%' }}
                     src={
                       chat.userImage === ''
