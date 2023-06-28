@@ -68,16 +68,16 @@ export function makeOffer(
   socket.emit(EVENTS.CLIENT.OFFER.MAKE, offerData, ack);
 }
 
-export function acceptOffer(socket: Socket, offerId: number, ack: (ack: Acknowlegement) => void) {
-  socket.emit(EVENTS.CLIENT.OFFER.ACCEPT, offerId, ack);
+export function acceptOffer(socket: Socket, messageId: number, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.OFFER.ACCEPT, messageId, ack);
 }
 
-export function rejectOffer(socket: Socket, offerId: number, ack: (ack: Acknowlegement) => void) {
-  socket.emit(EVENTS.CLIENT.OFFER.REJECT, offerId, ack);
+export function rejectOffer(socket: Socket, messageId: number, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.OFFER.REJECT, messageId, ack);
 }
 
-export function cancelOffer(socket: Socket, offerId: number, ack: (ack: Acknowlegement) => void) {
-  socket.emit(EVENTS.CLIENT.OFFER.CANCEL, offerId, ack);
+export function cancelOffer(socket: Socket, messageId: number, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.OFFER.CANCEL, messageId, ack);
 }
 
 // ** Typing Events **
