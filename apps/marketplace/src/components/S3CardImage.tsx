@@ -1,5 +1,4 @@
 import CardMedia, { CardMediaProps } from '@mui/material/CardMedia';
-import S3Image from '@/components/S3Image';
 import S3BoxImage  from '@/components/S3BoxImage';
 
 type CardMediaXProps = CardMediaProps & {
