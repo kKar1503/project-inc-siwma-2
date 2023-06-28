@@ -11,7 +11,7 @@ import ChatList from '@/components/rtc/ChatList';
 
 // ** Chat Related Imports **
 import { io } from 'socket.io-client';
-import { getMessage, getRooms, joinRoom, partRoom, sendMessage } from '@/chat/emitters';
+import { getMessage, getRooms, joinRoom, makeOffer, partRoom, sendMessage } from '@/chat/emitters';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
@@ -70,7 +70,6 @@ const ChatRoom = () => {
   const [messages, setMessages] = useState<ChatData[]>([]);
 
   // ** States **
-  const [makeOffer, setMakeOffer] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState('');
   const [domLoaded, setDomLoaded] = useState(false);
@@ -345,7 +344,22 @@ const ChatRoom = () => {
   };
 
   const onCreateOffer = (val: number) => {
-    console.log(val);
+    // TODO: need to have a better way to assert the dp to 2
+    const amount = parseFloat(val.toFixed(2));
+
+    if (currentRoom !== null) {
+      const { itemId: listingId, id: roomId } = currentRoom;
+
+      makeOffer(socket.current, { amount, userId, roomId, listingId }, (ack) => {
+        if (ack.success) {
+          console.log('makeOffer', ack.data);
+          setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
+          updateChatList(ack.data as Messages);
+        } else {
+          console.log('makeOffer', ack.err);
+        }
+      });
+    }
   };
 
   return (
