@@ -9,8 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import IosShareIcon from '@mui/icons-material/IosShare';
-import SellBadge from '@/components/marketplace/listing/SellBadge';
-import BuyBadge from '@/components/marketplace/listing/BuyBadge';
+import ListingBadge from '@/components/marketplace/listing/ListingBadge';
 import ShareModal from '@/components/modal/ShareModal';
 import fetchListing from '@/middlewares/fetchListing';
 import { useMutation, useQuery } from 'react-query';
@@ -159,10 +158,6 @@ const DetailedListingPage = () => {
 
   const placeholder = '/images/placeholder.png';
 
-  const chatRooms = useChatListQuery(loggedUserUuid);
-
-  let chatRoomDetailsData: chatRoomDetails = { buyerId: '', sellerId: '', listingId: '' };
-
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const [inputText, setInputText] = useState<string>('');
@@ -201,36 +196,11 @@ const DetailedListingPage = () => {
 
   // check if room exists btwn buyer and seller
   const checkChatRoom = () => {
-    if (chatRooms) {
-      let chatRoomExists = false;
-      for (let i = 0; i < chatRooms.length; i++) {
-        if (
-          (chatRooms[i].buyer.id === loggedUserUuid &&
-            chatRooms[i].seller.id === listings?.owner.id) ||
-          (chatRooms[i].buyer.id === listings?.owner.id &&
-            chatRooms[i].seller.id === loggedUserUuid)
-        ) {
-          chatRoomExists = true;
-        }
-        if (!chatRoomExists) {
-          if (listings?.type === 'SELL') {
-            chatRoomDetailsData = {
-              buyerId: loggedUserUuid,
-              sellerId: listings?.owner.id as string,
-              listingId: router.query.id as string,
-            };
-          } else {
-            chatRoomDetailsData = {
-              buyerId: listings?.owner.id as string,
-              sellerId: loggedUserUuid,
-              listingId: router.query.id as string,
-            };
-          }
-          return createRoom(chatRoomDetailsData);
-        }
-      }
+    if (listings?.type === 'SELL') {
+      router.push(`/chat?listing=${listings?.id as string}&seller=${listings?.owner.id as string}`);
+    } else {
+      router.push(`/chat?listing=${listings?.id as string}&buyer=${listings?.owner.id as string}`);
     }
-    return null;
   };
 
   listings?.parameters?.sort((a, b) => {
@@ -281,8 +251,8 @@ const DetailedListingPage = () => {
                   >
                     <Grid item>
                       <Box>
-                        {listings?.type === 'BUY' && <BuyBadge />}
-                        {listings?.type === 'SELL' && <SellBadge />}
+                        {listings?.type === 'BUY' && <ListingBadge type="buy" />}
+                        {listings?.type === 'SELL' && <ListingBadge type="sell" />}
                       </Box>
                     </Grid>
                     <Grid item>
@@ -419,7 +389,7 @@ const DetailedListingPage = () => {
                         })}
                       >
                         <Typography sx={{ color: theme.palette.grey[500] }}>
-                          {param?.find((x) => x.id === parameter?.paramId)?.name}
+                          {param?.find((x) => x.id === parameter?.paramId)?.displayName}
                         </Typography>
                         <Typography
                           variant="body1"
@@ -446,9 +416,10 @@ const DetailedListingPage = () => {
               >
                 <Grid
                   container
-                  sx={{
+                  sx={({ spacing }) => ({
                     direction: 'row',
-                  }}
+                    columnGap: spacing(1),
+                  })}
                 >
                   <Box
                     sx={({ spacing }) => ({
@@ -557,18 +528,16 @@ const DetailedListingPage = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       {listings?.owner.id !== loggedUserUuid ? (
-                        <Link href="/chat">
-                          <Button
-                            variant="contained"
-                            sx={({ palette }) => ({
-                              backgroundColor: palette.primary.main,
-                              width: isMd ? 240 : 340,
-                            })}
-                            onClick={checkChatRoom}
-                          >
-                            {t('CHAT NOW')}
-                          </Button>
-                        </Link>
+                        <Button
+                          variant="contained"
+                          sx={({ palette }) => ({
+                            backgroundColor: palette.primary.main,
+                            width: isMd ? 240 : 340,
+                          })}
+                          onClick={checkChatRoom}
+                        >
+                          {t('CHAT NOW')}
+                        </Button>
                       ) : (
                         <Button
                           variant="contained"

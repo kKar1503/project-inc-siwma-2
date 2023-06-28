@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
@@ -13,21 +13,21 @@ export type ChatSubHeaderProps = {
   itemPic: string;
   itemName: string;
   itemPrice: number;
+  itemPriceIsUnit: boolean;
   available: boolean;
-  makeOffer: boolean;
-  setMakeOffer: (val: boolean) => void;
+  onCreateOffer: (val: number) => void;
 };
 
 const ChatSubHeader = ({
   itemPic,
   itemName,
   itemPrice,
+  itemPriceIsUnit,
   available,
-  makeOffer,
-  setMakeOffer,
+  onCreateOffer,
 }: ChatSubHeaderProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
+  const { spacing, palette, typography } = useTheme();
   const { t } = useTranslation();
 
   const chatSubHeaderStyles = useMemo(() => {
@@ -125,9 +125,7 @@ const ChatSubHeader = ({
   }, [isSm, isMd, isLg]);
 
   const [openOffer, setOpenOffer] = useState(false);
-  const [inputValue, setInputValue] = useState<number>(0);
   const handleMakeOffer = () => {
-    setMakeOffer(true);
     setOpenOffer(true);
   };
 
@@ -151,16 +149,18 @@ const ChatSubHeader = ({
             position: 'relative',
             display: 'inline-block',
             boxShadow: shadows[2],
+            borderRadius: '8px',
+            ...chatSubHeaderStyles?.avatar,
           })}
         >
-          <Avatar
+          <Image
             alt="company profile picture"
-            src={itemPic}
-            variant="square"
-            sx={{
-              borderRadius: 2,
-              ...chatSubHeaderStyles?.avatar,
+            src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}/${itemPic}`}
+            // variant="square"
+            style={{
+              borderRadius: 8,
             }}
+            {...chatSubHeaderStyles?.avatar}
           />
           <Typography
             variant="subtitle1"
@@ -182,18 +182,15 @@ const ChatSubHeader = ({
       </IconButton>
       <Box sx={{ flexGrow: 1 }}>
         <Typography sx={chatSubHeaderStyles?.productName}>{itemName}</Typography>
-        <Typography sx={chatSubHeaderStyles?.priceTag}>${itemPrice.toFixed(2)}</Typography>
+        <Typography sx={chatSubHeaderStyles?.priceTag}>{`$${itemPrice.toFixed(2)}${
+          itemPriceIsUnit ? '/unit' : ''
+        }`}</Typography>
       </Box>
 
       <Button onClick={handleMakeOffer} sx={chatSubHeaderStyles?.makeOfferBtn}>
         {t('Make Offer')}
       </Button>
-      <MakeOfferModal
-        open={openOffer}
-        setOpen={setOpenOffer}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-      />
+      <MakeOfferModal open={openOffer} setOpen={setOpenOffer} onCreateOffer={onCreateOffer} />
     </Box>
   );
 };

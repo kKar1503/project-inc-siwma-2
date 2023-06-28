@@ -95,7 +95,7 @@ const useChat = (socket: Socket, connect: boolean, params: UseChatParams) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connect]);
 
-  return { isConnected, loading };
+  return { isConnected, loading, setLoading };
 };
 
 export default useChat;
