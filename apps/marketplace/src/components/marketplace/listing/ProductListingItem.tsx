@@ -28,6 +28,7 @@ export type ProductListingItemData = {
   data: Listing;
   showBookmark?: boolean;
   updateBookmarkData?: () => void;
+  setDel?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) | undefined) => {
@@ -47,7 +48,12 @@ const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) 
   };
 };
 
-const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductListingItemData) => {
+const ProductListingItem = ({
+  data,
+  showBookmark,
+  updateBookmarkData,
+  setDel,
+}: ProductListingItemData) => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
 
@@ -202,7 +208,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           </Typography>
           {data.owner.id === loggedUserUuid && (
             <Box>
-              <MoreProfileIcon productId={data.id} />
+              <MoreProfileIcon setDel={setDel} productId={data.id} />
             </Box>
           )}
         </Box>
