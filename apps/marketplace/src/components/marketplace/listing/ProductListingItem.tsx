@@ -19,6 +19,8 @@ import { Listing } from '@/utils/api/client/zod';
 import { useSession } from 'next-auth/react';
 import placeholder from 'public/images/listing-placeholder.svg';
 import S3CardImage from '@/components/S3CardImage';
+import { useTranslation } from 'react-i18next';
+import translateRelativeTime from '@/utils/translationUtils';
 import MoreProfileIcon from './MoreProfileIcon';
 import BuyBadge from './BuyBadge';
 import SellBadge from './SellBadge';
@@ -49,6 +51,7 @@ const useBookmarkListing = (listingID: string, updateBookmarkData: (() => void) 
 
 const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductListingItemData) => {
   const user = useSession();
+  const { t } = useTranslation();
   const loggedUserUuid = user.data?.user.id as string;
 
   // save computation power to avoid multiple calculations on each render
@@ -198,7 +201,7 @@ const ProductListingItem = ({ data, showBookmark, updateBookmarkData }: ProductL
           })}
         >
           <Typography variant="subtitle1" color={theme.palette.text.secondary}>
-            {datetime}
+            {translateRelativeTime(datetime, t)}
           </Typography>
           {data.owner.id === loggedUserUuid && (
             <Box>

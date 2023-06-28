@@ -196,5 +196,12 @@
   "Displaying": "Displaying",
   "search result": "search result",
   "for": "for",
-  "No more listings available":"没有更多的商品了"
+  "No more listings available": "没有更多的商品了",
+
+  "months ago": "months ago",
+  "weeks ago": "weeks ago",
+  "days ago": "days ago",
+  "hours ago": "hours ago",
+  "minutes ago": "minutes ago",
+  "seconds ago": "seconds ago"
 }
