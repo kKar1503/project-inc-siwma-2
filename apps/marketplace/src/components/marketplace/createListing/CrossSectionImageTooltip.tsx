@@ -16,15 +16,15 @@ const CrossSectionImageTooltip = ({ data }: CrossSectionImageType) => {
     <Tooltip
       title={
         data === '' ? (
-          <S3Image
-            src={data}
+          <Image
+            src="/images/placeholder.png"
             alt="cross section image"
             height={((isLg || isMd) && '200') || (isSm && '150') || '100'}
             width={((isLg || isMd) && '200') || (isSm && '150') || '100'}
           />
         ) : (
-          <Image
-            src="/images/placeholder.png"
+          <S3Image
+            src={data}
             alt="cross section image"
             height={((isLg || isMd) && '200') || (isSm && '150') || '100'}
             width={((isLg || isMd) && '200') || (isSm && '150') || '100'}
