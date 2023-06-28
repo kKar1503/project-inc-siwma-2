@@ -13,7 +13,6 @@ const fetchAdvertisements = async (permissions: number) => {
     const filteredArr = advertisementsData.filter((item) => {
       const startDate = new Date(item.startDate as string);
       const endDate = new Date(item.endDate as string);
-
       return currentDate >= startDate && currentDate <= endDate && item.active;
     });
     return filteredArr;

@@ -48,6 +48,7 @@ const nextConfig = {
           'via.placeholder.com',
           'siwma.org.sg',
           's3.karlok.dev',
+          'siwma-marketplace.s3.ap-southeast-1.amazonaws.com'
         ]
         : [],
   },

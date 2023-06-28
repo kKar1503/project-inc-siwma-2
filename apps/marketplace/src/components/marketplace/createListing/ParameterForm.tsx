@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -43,6 +43,7 @@ export interface ParameterProps {
 }
 
 export interface SetParameterProps {
+  parameters?: ParameterFormProps[];
   setParameters: (parameters: ParameterFormProps[]) => void;
   crossSectionImg: string;
   data: ParameterProps[];
@@ -62,8 +63,24 @@ const dataTypeToInputType = (dataType: dataTypeProps) => {
   }
 };
 
-const ParameterForm = ({ setParameters, crossSectionImg, data, errors }: SetParameterProps) => {
+const ParameterForm = ({
+  parameters,
+  setParameters,
+  crossSectionImg,
+  data,
+  errors,
+}: SetParameterProps) => {
   const [formValues, setFormValues] = useState<{ [key: string]: ParameterFormProps }>({});
+
+  useEffect(() => {
+    if (parameters) {
+      const obj: { [key: string]: ParameterFormProps } = {};
+      parameters.forEach((v) => {
+        obj[v.paramId] = v;
+      });
+      setFormValues(obj);
+    }
+  }, [parameters]);
 
   const handleFormValueChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>,
@@ -107,17 +124,25 @@ const ParameterForm = ({ setParameters, crossSectionImg, data, errors }: SetPara
       </Grid>
       <Grid container item xs={12} md={12} spacing={2} sx={{ width: '100%' }}>
         {data.map((parameter: ParameterProps) => {
-          switch (parameter.type) {
+          const inputType = dataTypeToInputType(parameter.dataType);
+          let paramType = parameter.type;
+
+          // Edge Cases
+          // Issue #276 if dataType is boolean and type is not two_choices, set type to two_choices
+          if (parameter.dataType === 'boolean') paramType = ParameterType.TWO_CHOICES
+
+
+          switch (paramType) {
             case ParameterType.WEIGHT:
               return (
                 <Grid item xs={4} md={4} sx={{ width: '100%' }} key={parameter.id}>
                   <TextField
-                    className="outlined-adornment-weight"
-                    size="medium"
+                    className='outlined-adornment-weight'
+                    size='medium'
                     label={parameter.displayName}
-                    type={dataTypeToInputType(parameter.dataType)}
+                    type={inputType}
                     InputProps={{
-                      endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+                      endAdornment: <InputAdornment position='end'>kg</InputAdornment>,
                     }}
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
@@ -136,7 +161,7 @@ const ParameterForm = ({ setParameters, crossSectionImg, data, errors }: SetPara
                     size="medium"
                     label={parameter.displayName}
                     fullWidth
-                    type={dataTypeToInputType(parameter.dataType)}
+                    type={inputType}
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
                     error={errors.some((error) => error.parameterId === parameter.id)}

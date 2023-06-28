@@ -17,12 +17,13 @@ export interface CategoryProps {
 }
 
 export type SetCategoryProps = {
+  category?: CategoryProps | null;
   setCategory: (category: CategoryProps | null) => void;
   data: CategoryProps[];
   error: string;
 };
 
-const CategoryForm = ({ setCategory, data, error }: SetCategoryProps) => {
+const CategoryForm = ({ category, setCategory, data, error }: SetCategoryProps) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryProps | null>(null);
   const [validateError, setValidateError] = useState<boolean>(false);
 
@@ -33,6 +34,10 @@ const CategoryForm = ({ setCategory, data, error }: SetCategoryProps) => {
       setValidateError(false);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (category) setSelectedCategory(category);
+  }, [category]);
 
   const handleCategoryChange = (e: SelectChangeEvent<string>) => {
     const categoryName = e.target.value as string;

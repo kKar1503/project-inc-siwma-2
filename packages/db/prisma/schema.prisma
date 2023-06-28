@@ -151,7 +151,7 @@ model Listing {
   createdAt                                   DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                                   DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
   archived                                    Boolean                   @default(false)
-  deletedAt                                   DateTime                  @default(now()) @map("deleted_at") @db.Timestamptz(6)
+  deletedAt                                   DateTime?                 @map("deleted_at") @db.Timestamptz(6)
   multiple                                    Boolean                   @default(false)
   hashedUrl                                   String?                   @unique(map: "listing_un") @map("hashed_url")
   category                                    Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")

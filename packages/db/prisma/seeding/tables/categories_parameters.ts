@@ -12,6 +12,10 @@ const CategoriesParameters: ICategoriesParameters[] = [
     parameterId: 2,
   },
   {
+    categoryId: 1,
+    parameterId: 9,
+  },
+  {
     categoryId: 3,
     parameterId: 2,
   },
@@ -138,10 +142,6 @@ const CategoriesParameters: ICategoriesParameters[] = [
   {
     categoryId: 2,
     parameterId: 31,
-  },
-  {
-    categoryId: 2,
-    parameterId: 4,
   },
 ];
 
