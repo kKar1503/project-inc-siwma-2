@@ -124,17 +124,25 @@ const ParameterForm = ({
       </Grid>
       <Grid container item xs={12} md={12} spacing={2} sx={{ width: '100%' }}>
         {data.map((parameter: ParameterProps) => {
-          switch (parameter.type) {
+          const inputType = dataTypeToInputType(parameter.dataType);
+          let paramType = parameter.type;
+
+          // Edge Cases
+          // Issue #276 if dataType is boolean and type is not two_choices, set type to two_choices
+          if (parameter.dataType === 'boolean') paramType = ParameterType.TWO_CHOICES
+
+
+          switch (paramType) {
             case ParameterType.WEIGHT:
               return (
                 <Grid item xs={4} md={4} sx={{ width: '100%' }} key={parameter.id}>
                   <TextField
-                    className="outlined-adornment-weight"
-                    size="medium"
+                    className='outlined-adornment-weight'
+                    size='medium'
                     label={parameter.displayName}
-                    type={dataTypeToInputType(parameter.dataType)}
+                    type={inputType}
                     InputProps={{
-                      endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+                      endAdornment: <InputAdornment position='end'>kg</InputAdornment>,
                     }}
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
@@ -153,7 +161,7 @@ const ParameterForm = ({
                     size="medium"
                     label={parameter.displayName}
                     fullWidth
-                    type={dataTypeToInputType(parameter.dataType)}
+                    type={inputType}
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
                     error={errors.some((error) => error.parameterId === parameter.id)}
