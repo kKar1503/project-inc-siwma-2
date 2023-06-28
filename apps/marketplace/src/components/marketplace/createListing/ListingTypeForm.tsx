@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import { useTranslation } from 'react-i18next';
 
 export type ListingTypeProps = 'BUY' | 'SELL';
 
@@ -12,6 +13,7 @@ export type ListingTypeFormProps = {
 
 const ListingTypeForm = ({ listingType, setListingType, disabled }: ListingTypeFormProps) => {
   const [selectedButton, setSelectedButton] = useState<ListingTypeProps>('BUY');
+  const { t } = useTranslation();
 
   const handleButtonClick = (type: ListingTypeProps) => {
     setListingType(type);
@@ -33,7 +35,7 @@ const ListingTypeForm = ({ listingType, setListingType, disabled }: ListingTypeF
             fullWidth
             disabled={disabled}
           >
-            BUYING
+            {t('BUYING')}
           </Button>
         </Grid>
         <Grid item xs={6} md={6} sx={{ width: '100%', pl: 1 }}>
@@ -44,7 +46,7 @@ const ListingTypeForm = ({ listingType, setListingType, disabled }: ListingTypeF
             fullWidth
             disabled={disabled}
           >
-            SELLING
+            {t('SELLING')}
           </Button>
         </Grid>
       </div>

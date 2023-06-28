@@ -21,6 +21,7 @@ import { InfiniteScroll, useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 import { useTheme } from '@mui/material';
 import { Listing } from '@/utils/api/client/zod';
+import { useTranslation } from 'react-i18next';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -62,6 +63,7 @@ const Marketplace = () => {
   const { data: session } = useSession();
   const [isSm, isMd, isLg, isXl] = useResponsiveness(['sm', 'md', 'lg', 'xl']);
   const { typography } = useTheme();
+  const { t } = useTranslation();
   const scrollRef = useRef<Element>(null);
 
   const [listings, setListings] = React.useState<Array<Listing>>([]);
@@ -163,9 +165,9 @@ const Marketplace = () => {
             width: '80%',
           }}
         >
-          <Typography sx={headerStyles?.switchTxt}>Categories</Typography>
+          <Typography sx={headerStyles?.switchTxt}>{t('Categories')}</Typography>
           <Link href="/categories" sx={headerStyles?.switchTxt}>
-            View All Categories
+            {t('View All Categories')}
           </Link>
         </Box>
       </Box>
@@ -184,7 +186,7 @@ const Marketplace = () => {
             width: '80%',
           }}
         >
-          <Typography sx={headerStyles?.switchTxt}>Popular</Typography>
+          <Typography sx={headerStyles?.switchTxt}>{t('Popular')}</Typography>
         </Box>
       </Box>
       <ListingStream listingItemsData={popularListingsData} />
@@ -194,7 +196,7 @@ const Marketplace = () => {
             width: '80%',
           }}
         >
-          <Typography sx={headerStyles?.switchTxt}>Recommended</Typography>
+          <Typography sx={headerStyles?.switchTxt}>{t('Recommended')}</Typography>
         </Box>
       </Box>
       <Box marginTop="2em" display="flex" flexDirection="column" justifyContent="center">

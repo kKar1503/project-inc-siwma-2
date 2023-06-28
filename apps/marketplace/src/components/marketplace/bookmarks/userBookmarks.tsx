@@ -2,6 +2,7 @@ import DisplayResults, { HeaderProps } from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
 import UserItem from '@/components/marketplace/user/UserItem';
 import { User } from '@/utils/api/client/zod/users';
+import { useTranslation } from 'react-i18next';
 
 export type UserBookmarksProps = {
   data: User[];
@@ -9,10 +10,12 @@ export type UserBookmarksProps = {
 };
 
 const UserBookmarks = ({ data, updateBookmarkData }: UserBookmarksProps) => {
+  const { t } = useTranslation();
+
   const Header: HeaderProps = {
     title: {
-      single: 'User',
-      plural: 'Users',
+      single: t('User'),
+      plural: t('Users'),
     },
     noOfItems: data ? data.length : 0,
   };

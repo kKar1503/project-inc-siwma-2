@@ -12,6 +12,7 @@ const SellBadge = () => {
         bgcolor: palette.error[500],
         fontWeight: 'bold',
         color: palette.common.white,
+        width: '64px',
       })}
       label={t('Sell')}
     />

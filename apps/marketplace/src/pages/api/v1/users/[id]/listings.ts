@@ -31,12 +31,13 @@ export default apiHandler().get(async (req, res) => {
     where: {
       owner: id,
       categoryId: queryParams.category ? queryParams.category : undefined,
-      negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+      negotiable: queryParams.negotiable != null ? queryParams.negotiable : undefined,
       type: queryParams.type ? queryParams.type : undefined,
       price: {
         gte: queryParams.minPrice ? queryParams.minPrice : undefined,
         lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
       },
+      deletedAt: null,
       name: queryParams.matching
         ? {
             contains: queryParams.matching,

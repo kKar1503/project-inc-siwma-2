@@ -28,11 +28,11 @@ const CardMediaX = ({ src, alt, placeholder, height }: CardMediaXProps) => {
     return () => URL.revokeObjectURL(url);
   }, [alt, data]);
 
-  return (
+  return image ? (
     <CardMedia component="div" style={{ position: 'relative', width: '100%', height }}>
       <Image src={image?.url || placeholder} alt={alt} fill style={{ objectFit: 'cover' }} />
     </CardMedia>
-  );
+  ) : null;
 };
 
 export default CardMediaX;
