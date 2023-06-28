@@ -46,6 +46,7 @@ export type Room = {
 export type MakeOffer = {
   userId: UserId;
   roomId: RoomId;
+  listingId: ListingId;
   amount: number;
 };
 
