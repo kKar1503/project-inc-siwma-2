@@ -12,6 +12,9 @@ export { default as readMessage } from './readMessage';
 export { default as syncMessage } from './syncMessage';
 export { default as getMessages } from './getMessages';
 
+// ** Offer Events
+export { default as makeOffer } from './makeOffer';
+
 // ** Typing Events
 export { default as startType } from './startType';
 export { default as stopType } from './stopType';
