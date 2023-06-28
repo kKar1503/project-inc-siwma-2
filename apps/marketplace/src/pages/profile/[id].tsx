@@ -20,6 +20,7 @@ import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
 import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useResponsiveness } from '@inc/ui';
 import fetchListingImages from '@/middlewares/fetchListingImages';
+import { useTranslation } from 'react-i18next';
 
 const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: 60,
@@ -53,9 +54,15 @@ const useGetUser = (userUuid: string) => {
   return data;
 };
 
-const useGetListing = (userUuid: string, matching?: string, sortBy?: string, filter?: string) => {
+const useGetListing = (
+  userUuid: string,
+  matching?: string,
+  sortBy?: string,
+  filter?: string,
+  del?: string
+) => {
   const { data } = useQuery(
-    ['listingdata', userUuid, matching, sortBy, filter],
+    ['listingdata', userUuid, matching, sortBy, filter, del],
     async () => {
       if (matching || sortBy || filter) {
         return fetchProfilesListings(userUuid, matching, sortBy, filter);
@@ -68,7 +75,8 @@ const useGetListing = (userUuid: string, matching?: string, sortBy?: string, fil
         userUuid !== undefined ||
         sortBy !== undefined ||
         matching !== undefined ||
-        filter !== undefined,
+        filter !== undefined ||
+        del !== undefined,
     }
   );
 
@@ -83,17 +91,17 @@ const useGetProfileListingImagesQuery = (listingID: string) => {
 };
 
 // add one more parameter to fetchProfilesReview to include the filter
-const useGetReview = (userUuid: string, sortBy?: string) => {
+const useGetReview = (userUuid: string, sortBy?: string, reviewFrom?: string) => {
   const { data } = useQuery(
-    ['reviewdata', userUuid, sortBy],
+    ['reviewdata', userUuid, sortBy, reviewFrom],
     async () => {
-      if (sortBy) {
-        return fetchProfilesReview(userUuid, sortBy);
+      if (sortBy || reviewFrom) {
+        return fetchProfilesReview(userUuid, sortBy, reviewFrom);
       }
       return fetchProfilesReview(userUuid);
     },
     {
-      enabled: userUuid !== undefined || sortBy !== undefined,
+      enabled: userUuid !== undefined || sortBy !== undefined || reviewFrom !== undefined,
     }
   );
 
@@ -106,6 +114,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
   const profileListingImages = useGetProfileListingImagesQuery(id);
+  const { t } = useTranslation();
 
   const theme = useTheme();
   const { spacing } = theme;
@@ -125,9 +134,10 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const [filterReviews, setFilterReviews] = useState('');
   const [sortByReviews, setSortByReviews] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [del, setDel] = useState('');
 
-  const userListings = useGetListing(id, searchQuery, sortByListings, filterListings);
-  const userReviews = useGetReview(id, sortByReviews);
+  const userListings = useGetListing(id, searchQuery, sortByListings, filterListings, del);
+  const userReviews = useGetReview(id, sortByReviews, filterReviews);
 
   useEffect(() => {
     if (userListings) {
@@ -213,7 +223,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
       <main>
         <Box sx={spaceStyle}>
           {userDetails && (
-            <ProfileDetailCard data={userDetails} reviewData={userReviews} visibleEditButton/>
+            <ProfileDetailCard data={userDetails} reviewData={userReviews} visibleEditButton />
           )}
           <Box
             sx={{
@@ -235,7 +245,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
               }}
             >
               <StyledTab
-                label="Listings"
+                label={t('Listings')}
                 sx={{
                   // added in-line styling here because styled() doesn't want to work
                   border: 1,
@@ -251,7 +261,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
                 }}
               />
               <StyledTab
-                label="Reviews"
+                label={t('Reviews')}
                 sx={{
                   border: 1,
                   borderColor: theme.palette.primary[400],
@@ -273,6 +283,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
                   handleSearch={handleSearch}
                   filterListings={handleFilterListings}
                   sortByListings={handleSortByListings}
+                  setDel={setDel}
                 />
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="100vh">

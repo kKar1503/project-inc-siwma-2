@@ -127,7 +127,7 @@ const ChatTextBox = ({
         </MenuItem>
         <MenuItem onClick={handleFileClick} disabled={fileName !== ''}>
           <InsertDriveFileOutlinedIcon sx={({ spacing }) => ({ mr: spacing(2) })} />
-          File
+          {t('File')}
           <input hidden ref={fileRef} type="file" onChange={handleFileSelect} />
         </MenuItem>
       </Menu>

@@ -9,8 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import IosShareIcon from '@mui/icons-material/IosShare';
-import SellBadge from '@/components/marketplace/listing/SellBadge';
-import BuyBadge from '@/components/marketplace/listing/BuyBadge';
+import ListingBadge from '@/components/marketplace/listing/ListingBadge';
 import ShareModal from '@/components/modal/ShareModal';
 import fetchListing from '@/middlewares/fetchListing';
 import { useMutation, useQuery } from 'react-query';
@@ -39,6 +38,7 @@ import { ReviewRequestBody } from '@/utils/api/server/zod';
 import CrossSectionImageTooltip from '@/components/marketplace/createListing/CrossSectionImageTooltip';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import S3Avatar from '@/components/S3Avatar';
+import { useTranslation } from 'react-i18next';
 
 const useGetListingQuery = (listingID: string) => {
   const { data } = useQuery('listing', async () => fetchListing(listingID), {
@@ -141,6 +141,7 @@ const useBookmarkListingQuery = (listingId: string, bookmarkedListings: string[]
 const DetailedListingPage = () => {
   const theme = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { t } = useTranslation();
 
   const router = useRouter();
   const listingId = (router.query.id as string)?.split('-').pop() as string;
@@ -279,8 +280,8 @@ const DetailedListingPage = () => {
                   >
                     <Grid item>
                       <Box>
-                        {listings?.type === 'BUY' && <BuyBadge />}
-                        {listings?.type === 'SELL' && <SellBadge />}
+                        {listings?.type === 'BUY' && <ListingBadge type="buy" />}
+                        {listings?.type === 'SELL' && <ListingBadge type="sell" />}
                       </Box>
                     </Grid>
                     <Grid item>
@@ -368,7 +369,7 @@ const DetailedListingPage = () => {
                 })}
                 variant="h6"
               >
-                Description
+                {t('Description')}
               </Typography>
               <Box
                 sx={({ spacing }) => ({
@@ -392,9 +393,13 @@ const DetailedListingPage = () => {
                   }}
                   variant="h6"
                 >
-                  Dimensions
+                  {t('Dimensions')}
                 </Typography>
-                <CrossSectionImageTooltip data={cats?.find((x) => x.id === listings?.categoryId)?.crossSectionImage as string} />
+                <CrossSectionImageTooltip
+                  data={
+                    cats?.find((x) => x.id === listings?.categoryId)?.crossSectionImage as string
+                  }
+                />
               </Stack>
 
               <Box
@@ -413,7 +418,7 @@ const DetailedListingPage = () => {
                         })}
                       >
                         <Typography sx={{ color: theme.palette.grey[500] }}>
-                          {param?.find((x) => x.id === parameter?.paramId)?.name}
+                          {param?.find((x) => x.id === parameter?.paramId)?.displayName}
                         </Typography>
                         <Typography
                           variant="body1"
@@ -440,16 +445,19 @@ const DetailedListingPage = () => {
               >
                 <Grid
                   container
-                  sx={{
+                  sx={({ spacing }) => ({
                     direction: 'row',
-                  }}
+                    columnGap: spacing(1),
+                  })}
                 >
                   <Box
                     sx={({ spacing }) => ({
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Negotiable</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>
+                      {t('Negotiable')}
+                    </Typography>
                     <Typography>{listings?.negotiable ? 'Yes' : 'No'}</Typography>
                   </Box>
                   <Box
@@ -457,7 +465,9 @@ const DetailedListingPage = () => {
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Unit Price</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>
+                      {t('Unit Price')}
+                    </Typography>
                     <Typography>{listings?.unitPrice ? 'Yes' : 'No'}</Typography>
                   </Box>
                   <Box
@@ -465,7 +475,7 @@ const DetailedListingPage = () => {
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Category</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>{t('Category')}</Typography>
                     <Typography>
                       {cats?.find((x) => x.id === listings?.categoryId)?.name}
                     </Typography>
@@ -475,7 +485,9 @@ const DetailedListingPage = () => {
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted On</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>
+                      {t('Posted On')}
+                    </Typography>
                     <Typography>{datetime}</Typography>
                   </Box>
 
@@ -484,7 +496,9 @@ const DetailedListingPage = () => {
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Posted By</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>
+                      {t('Posted By')}
+                    </Typography>
                     <Typography>{listings?.owner.name}</Typography>
                   </Box>
                   <Box
@@ -492,7 +506,7 @@ const DetailedListingPage = () => {
                       pr: spacing(2),
                     })}
                   >
-                    <Typography sx={{ color: theme.palette.grey[500] }}>Company</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }}>{t('Company')}</Typography>
                     <Typography>{listings?.owner.company.name}</Typography>
                   </Box>
                 </Grid>
@@ -552,7 +566,7 @@ const DetailedListingPage = () => {
                             })}
                             onClick={checkChatRoom}
                           >
-                            CHAT NOW
+                            {t('CHAT NOW')}
                           </Button>
                         </Link>
                       ) : (
@@ -564,7 +578,7 @@ const DetailedListingPage = () => {
                           })}
                           disabled
                         >
-                          CHAT NOW
+                          {t('CHAT NOW')}
                         </Button>
                       )}
                     </Box>
@@ -586,7 +600,7 @@ const DetailedListingPage = () => {
               >
                 <Grid item xs={8} md={9}>
                   <Typography sx={{ fontWeight: 600 }} variant="h5">
-                    Reviews
+                    {t('Reviews')}
                   </Typography>
                 </Grid>
                 <Grid item xs={4} md={2.75}>
@@ -598,7 +612,7 @@ const DetailedListingPage = () => {
                         sx={({ palette }) => ({ backgroundColor: palette.primary.main })}
                         onClick={() => setOpenComment(true)}
                       >
-                        ADD A REVIEW
+                        {t('ADD A REVIEW')}
                       </Button>
                       <AddCommentModal
                         open={openComment}
@@ -627,7 +641,7 @@ const DetailedListingPage = () => {
                       sx={({ palette }) => ({ backgroundColor: palette.grey[400] })}
                       onClick={() => setOpenComment(false)}
                     >
-                      ADD A REVIEW
+                      {t('ADD A REVIEW')}
                     </Button>
                   )}
                 </Grid>
@@ -685,7 +699,7 @@ const DetailedListingPage = () => {
                     })}
                   >
                     <Typography sx={{ fontWeight: 500 }}>
-                      No Reviews available for this listing
+                      {t('No Reviews available for this listing')}
                     </Typography>
                   </Box>
                 )}
@@ -702,12 +716,12 @@ const DetailedListingPage = () => {
                         onClick={checkChatRoom}
                         fullWidth
                       >
-                        CHAT NOW
+                        {t('CHAT NOW')}
                       </Button>
                     </Link>
                   ) : (
                     <Button variant="contained" type="submit" size="large" fullWidth disabled>
-                      CHAT NOW
+                      {t('CHAT NOW')}
                     </Button>
                   )}
                 </Box>

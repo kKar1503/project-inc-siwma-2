@@ -34,6 +34,7 @@ import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
+import { useTranslation } from 'react-i18next';
 
 export type ProfilePageProps = {
   data: ProfileDetailCardProps;
@@ -97,6 +98,7 @@ const EditProfile = () => {
   const [whatsappError, setWhatsappError] = useState('');
   const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
   const [openLeave, setOpenLeave] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   const mutation = useUpdateUserMutation(loggedUserUuid, image);
 
@@ -314,7 +316,7 @@ const EditProfile = () => {
   return (
     <>
       <Head>
-        <title>Edit Profile</title>
+        <title>{t('Edit Profile')}</title>
       </Head>
 
       <Grid sx={gridCols}>
@@ -342,8 +344,8 @@ const EditProfile = () => {
                   subheaderTypographyProps={{
                     fontSize: 16,
                   }}
-                  title="Edit Profile"
-                  subheader="Edit your profile details here"
+                  title={t('Edit Profile')}
+                  subheader={t('Edit your profile details here')}
                 />
                 <Box
                   sx={({ spacing }) => ({
@@ -358,7 +360,7 @@ const EditProfile = () => {
                     sx={({ palette }) => ({ bgcolor: palette.error[400] })}
                     onClick={handleCancel}
                   >
-                    Cancel Edit
+                    {t('Cancel Edit')}
                   </Button>
                   <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
                 </Box>
@@ -368,9 +370,9 @@ const EditProfile = () => {
                 sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
               />
               <CardContent>
-                <Typography sx={{ fontWeight: 'bold' }}>Profile Photo</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>{t('Profile Photo')}</Typography>
                 <Typography>
-                  Choose an image for other users to recognise you on the marketplace
+                  {t('Choose an image for other users to recognise you on the marketplace')}
                 </Typography>
                 <Box
                   sx={({ spacing }) => ({
@@ -392,7 +394,7 @@ const EditProfile = () => {
                         alignItems: 'center',
                       }}
                     >
-                      <Typography>Maximum upload size: &nbsp;</Typography>
+                      <Typography>{t('Maximum upload size')}: &nbsp;</Typography>
                       <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
                     </Box>
                     <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
@@ -415,8 +417,8 @@ const EditProfile = () => {
                 sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
               />
               <CardContent>
-                <Typography sx={{ fontWeight: 'bold' }}>Personal Details</Typography>
-                <Typography>Change your personal details here</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>{t('Personal Details')}</Typography>
+                <Typography>{t('Change your personal details here')}</Typography>
                 <Box
                   sx={({ spacing }) => ({
                     mt: spacing(2),
@@ -426,7 +428,7 @@ const EditProfile = () => {
                   })}
                 >
                   <TextField
-                    label="Full Name"
+                    label={t('Full Name')}
                     placeholder="Your Full Name"
                     InputLabelProps={{ shrink: true }}
                     value={name}
@@ -439,7 +441,7 @@ const EditProfile = () => {
                     })}
                   />
                   <TextField
-                    label="Phone"
+                    label={t('Phone')}
                     placeholder="91234567"
                     InputLabelProps={{ shrink: true }}
                     value={mobileNumber}
@@ -456,7 +458,7 @@ const EditProfile = () => {
                   />
                 </Box>
                 <TextField
-                  label="Email"
+                  label={t('Email')}
                   placeholder="user@gmail.com"
                   InputLabelProps={{ shrink: true }}
                   sx={({ spacing }) => ({
@@ -471,7 +473,7 @@ const EditProfile = () => {
                 <TextField
                   multiline
                   rows={5}
-                  label="Bio"
+                  label={t('Bio')}
                   placeholder="Bio Description"
                   InputLabelProps={{ shrink: true }}
                   sx={({ spacing }) => ({
@@ -490,8 +492,8 @@ const EditProfile = () => {
                 sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
               />
               <CardContent>
-                <Typography sx={{ fontWeight: 'bold' }}>Connections</Typography>
-                <Typography>Link your messaging accounts here</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>{t('Connections')}</Typography>
+                <Typography>{t('Link your messaging accounts here')}</Typography>
                 <Box
                   sx={({ spacing }) => ({
                     mt: spacing(2),
@@ -500,8 +502,12 @@ const EditProfile = () => {
                   })}
                 >
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
-                    <InputLabel>Contact</InputLabel>
-                    <Select label="contact" value={contactMethod} onChange={handleContactChange}>
+                    <InputLabel>{t('Contact')}</InputLabel>
+                    <Select
+                      label={t('Contact')}
+                      value={contactMethod}
+                      onChange={handleContactChange}
+                    >
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="whatsapp">Whatsapp</MenuItem>
                     </Select>
@@ -509,7 +515,7 @@ const EditProfile = () => {
 
                   {contactMethod === 'whatsapp' && (
                     <TextField
-                      label="Whatsapp Number"
+                      label={`Whatsapp ${t('Number')}`}
                       placeholder="8123 4567"
                       InputProps={{
                         startAdornment: (
@@ -544,7 +550,7 @@ const EditProfile = () => {
 
                   {contactMethod === 'telegram' && (
                     <TextField
-                      label="Telegram Username"
+                      label={`Telegram ${t('Username')}`}
                       placeholder="account_username"
                       InputProps={{
                         startAdornment: (
@@ -604,7 +610,7 @@ const EditProfile = () => {
                       (contactMethod === 'telegram' && telegramUsername.trim() === '')
                     }
                   >
-                    Save Changes
+                    {t('Save Changes')}
                   </Button>
                 </Box>
               </CardActions>
