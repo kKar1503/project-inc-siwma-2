@@ -14,9 +14,10 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 
 export type MoreProfileIconProps = {
   productId: string;
+  setDel?: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
+const MoreProfileIcon = ({ productId, setDel }: MoreProfileIconProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -51,6 +52,10 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
     try {
       await deleteListingMutation.mutateAsync(productId);
       queryClient.invalidateQueries('listingImages');
+
+      if (setDel) {
+        setDel(productId);
+      }
     } catch (error) {
       console.error('Error deleting listing:', error);
     } finally {

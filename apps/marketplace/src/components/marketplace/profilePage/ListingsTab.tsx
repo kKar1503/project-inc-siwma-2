@@ -20,6 +20,7 @@ export type ListingsTabProps = {
   handleSearch: (query: string) => void;
   filterListings: (newData: (typeof filterValues)[number]) => void;
   sortByListings: (newData: (typeof sortValues)[number]) => void;
+  setDel: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const ListingsTab = ({
@@ -27,6 +28,7 @@ const ListingsTab = ({
   handleSearch,
   filterListings,
   sortByListings,
+  setDel,
 }: ListingsTabProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
@@ -35,7 +37,6 @@ const ListingsTab = ({
 
   const tFilterValues = i18n.language === 'en' ? filterValues : filterValuesCn;
   const tsortValues = i18n.language === 'en' ? sortValues : sortValuesCn;
-
 
   const stylesListing = useMemo(() => {
     if (isSm) {
@@ -124,7 +125,7 @@ const ListingsTab = ({
 
       <Box sx={stylesListing}>
         {allListings?.map((listing) => (
-          <ProductListingItem data={listing} key={listing.id} />
+          <ProductListingItem data={listing} key={listing.id} setDel={setDel} />
         ))}
       </Box>
     </Box>

@@ -54,9 +54,15 @@ const useGetUser = (userUuid: string) => {
   return data;
 };
 
-const useGetListing = (userUuid: string, matching?: string, sortBy?: string, filter?: string) => {
+const useGetListing = (
+  userUuid: string,
+  matching?: string,
+  sortBy?: string,
+  filter?: string,
+  del?: string
+) => {
   const { data } = useQuery(
-    ['listingdata', userUuid, matching, sortBy, filter],
+    ['listingdata', userUuid, matching, sortBy, filter, del],
     async () => {
       if (matching || sortBy || filter) {
         return fetchProfilesListings(userUuid, matching, sortBy, filter);
@@ -69,7 +75,8 @@ const useGetListing = (userUuid: string, matching?: string, sortBy?: string, fil
         userUuid !== undefined ||
         sortBy !== undefined ||
         matching !== undefined ||
-        filter !== undefined,
+        filter !== undefined ||
+        del !== undefined,
     }
   );
 
@@ -127,8 +134,9 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
   const [filterReviews, setFilterReviews] = useState('');
   const [sortByReviews, setSortByReviews] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [del, setDel] = useState('');
 
-  const userListings = useGetListing(id, searchQuery, sortByListings, filterListings);
+  const userListings = useGetListing(id, searchQuery, sortByListings, filterListings, del);
   const userReviews = useGetReview(id, sortByReviews, filterReviews);
 
   useEffect(() => {
@@ -275,6 +283,7 @@ const ProfilePage = ({ data, serverSideListings, serverSideReviews }: ProfilePag
                   handleSearch={handleSearch}
                   filterListings={handleFilterListings}
                   sortByListings={handleSortByListings}
+                  setDel={setDel}
                 />
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
