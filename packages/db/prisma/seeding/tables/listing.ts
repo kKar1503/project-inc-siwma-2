@@ -92,7 +92,7 @@ const Listings: IListings[] = [
   {
     name: 'BRAND NEW Stainless Steel Square Bar (FAST DEAL)',
     description:
-      'Legally sourced, fast deal\nCompletely brand new, never used before\nNo refund/takebacks\nCash payment only',
+      'Legally sourced, fast deal\nCompletely brand new, never used before\nNo refund and takebacks\nCash payment only',
     price: new Prisma.Decimal(30),
     categoryId: 9,
     type: ListingType.SELL,
@@ -110,7 +110,7 @@ const Listings: IListings[] = [
     multiple: false,
   },
   {
-    name: 'Copper Square Bars (Grade CW103C / Cu Co1 Ni1 Be)',
+    name: 'Copper Square Bars (Grade CW103C Cu Co1 Ni1 Be)',
     description: 'WYSWYG.',
     price: new Prisma.Decimal(10),
     categoryId: 9,
@@ -139,7 +139,7 @@ const Listings: IListings[] = [
     multiple: false,
   },
   {
-    name: '90 Degree Grade 304/304L Stainless Steel Angle Bar',
+    name: '90 Degree Grade 304 OR 304L Stainless Steel Angle Bar',
     description: 'Angle Bar. 90 degrees. WYSWYG.',
     price: new Prisma.Decimal(100),
     categoryId: 6,
