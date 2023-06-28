@@ -286,8 +286,8 @@ const ChatRoom = () => {
           createRoom(
             socket.current,
             {
-              buyerId: userId,
-              sellerId: seller as string,
+              buyerId: buyer as string,
+              sellerId: userId,
               listingId: parseInt(listing as string, 10),
             },
             (ack) => {
@@ -304,8 +304,8 @@ const ChatRoom = () => {
           createRoom(
             socket.current,
             {
-              buyerId: seller as string,
-              sellerId: userId,
+              buyerId: userId,
+              sellerId: seller as string,
               listingId: parseInt(listing as string, 10),
             },
             (ack) => {
