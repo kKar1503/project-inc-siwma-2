@@ -31,11 +31,22 @@ export type Room = {
   username: string;
   category: 'BUY' | 'SELL';
   latestMessage?: MessageContent;
+  itemId: ListingId;
   itemName: string;
+  itemPrice: number;
+  itemPriceIsUnit: boolean;
+  itemImage: string;
   inProgress: boolean;
   time?: string;
   userImage: string;
   unreadMessages: number;
+};
+
+export type MakeOffer = {
+  userId: UserId;
+  roomId: RoomId;
+  listingId: ListingId;
+  amount: number;
 };
 
 export type DataSync<T> =
@@ -54,6 +65,7 @@ export type DataSync<T> =
 
 export type ClientCreateRoom = {
   sellerId: UserId;
+  buyerId: UserId;
   listingId: ListingId;
 };
 
@@ -70,7 +82,7 @@ export type MessageSync = DataSync<Messages>;
 export type RoomSync = DataSync<Room>;
 
 // ** Types Declarations **
-export type LoadingState = 'idle' | 'iam' | 'sync';
+export type LoadingState = 'idle' | 'iam' | 'sync' | 'part';
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
@@ -92,6 +104,11 @@ type EventParams = {
   clientReadMessage: RoomId; // Has Ack
   clientSyncMessage: MessageId; // Has Ack
   clientGetMessages: RoomId; // Has Ack
+  // Client Offer Events
+  clientMakeOffer: MakeOffer; // Has Ack
+  clientAcceptOffer: MessageId; // Has Ack
+  clientRejectOffer: MessageId; // Has Ack
+  clientCancelOffer: MessageId; // Has Ack
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
@@ -107,6 +124,11 @@ type EventParams = {
   serverReadMessage: MessageId[];
   serverSyncMessage: MessageSync;
   serverSyncMessage2: MessageSync;
+  // Server Offer Events
+  serverMakeOffer: MakeOffer;
+  serverAcceptOffer: MessageId;
+  serverRejectOffer: MessageId;
+  serverCancelOffer: MessageId;
   // Server Typing Events
   serverStartType: UserId;
   serverStopType: UserId;

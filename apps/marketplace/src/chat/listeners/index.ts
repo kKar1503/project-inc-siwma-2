@@ -11,6 +11,8 @@ import deletedMessage from './deletedMessage';
 import readMessage from './readMessage';
 import syncMessage from './syncMessage';
 import syncMessage2 from './syncMessage2';
+import acceptOffer from './acceptOffer';
+import rejectOffer from './rejectOffer';
 import startType from './startType';
 import stopType from './stopType';
 
@@ -24,6 +26,8 @@ const listeners: Record<string, ClientEventFile<UseChatParams>> = {
   readMessage,
   syncMessage,
   syncMessage2,
+  acceptOffer,
+  rejectOffer,
   startType,
   stopType,
 };

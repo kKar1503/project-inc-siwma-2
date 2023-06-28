@@ -75,17 +75,23 @@ class SocketUserStore {
     logger.trace(`addSocketUser() | Checking if userId (${userId}) already exist in cache...`);
     if (userSet.has(userId)) {
       logger.warn(`userId (${userId}) already exist in cache.`);
-      return -1;
+      logger.warn(`Overriding socketId (${socketId}) into userId (${userId})...`);
+      const userIndex = [...userSet].findIndex((user) => user === userId);
+      const tempSockets = [...socketSet];
+      tempSockets[userIndex] = socketId;
+      socketSet.clear();
+      tempSockets.forEach((socket) => socketSet.add(socket));
+      return userIndex;
+    } else {
+      logger.trace(`addSocketUser() | Adding socketId (${socketId}) to socketSet...`);
+      socketSet.add(socketId);
+      logger.trace(`addSocketUser() | Adding userId (${userId}) to userSet...`);
+      userSet.add(userId);
+
+      logger.debug(`addSocketUser() | Index Pos in socketSet: ${socketSet.size - 1}.`);
+      logger.debug(`addSocketUser() | Index Pos in userSet: ${userSet.size - 1}.`);
+      return socketSet.size - 1;
     }
-
-    logger.trace(`addSocketUser() | Adding socketId (${socketId}) to socketSet...`);
-    socketSet.add(socketId);
-    logger.trace(`addSocketUser() | Adding userId (${userId}) to userSet...`);
-    userSet.add(userId);
-
-    logger.debug(`addSocketUser() | Index Pos in socketSet: ${socketSet.size - 1}.`);
-    logger.debug(`addSocketUser() | Index Pos in userSet: ${userSet.size - 1}.`);
-    return socketSet.size - 1;
   };
 
   /**

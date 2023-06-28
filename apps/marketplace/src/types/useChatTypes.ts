@@ -17,6 +17,8 @@ export interface UseChatParams {
   messageReadCallback?: (messageIds: number[]) => void;
   messageSyncCallback?: (message: MessageSync) => void;
   chatMessagesProgressCallback?: (progress: number) => void;
+  // ** Offer Events Callbacks **
+  offerCallback?: (messageId: number, offerState: 'accept' | 'reject') => void;
   // ** Typing Events Callbacks **
   typingCallback?: (userId: string, typing: 'start' | 'stop') => void;
 }

@@ -24,7 +24,6 @@ export type ChatListProps = {
   id: string;
   username: string;
   category: CategoryType;
-
   itemName: string;
   inProgress: boolean;
   time?: Date;
@@ -350,6 +349,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                 setSelectChat(chat.id);
               }}
               sx={{
+                cursor: 'pointer',
                 background: activeItem === chat.id ? palette.grey[300] : 'none',
                 height: '100%',
                 '&:hover': {
@@ -381,12 +381,19 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                       maxWidth: '55%',
+                      userSelect: 'none',
                       ...chatListStyles?.companyText,
                     }}
                   >
                     {chat.username}
                   </Typography>
-                  <Typography variant="body2" sx={chatListStyles?.dateTime}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      userSelect: 'none',
+                      ...chatListStyles?.dateTime,
+                    }}
+                  >
                     {chat.time ? DateTime.fromJSDate(chat.time).setLocale('en').toFormat('f') : ''}
                   </Typography>
                 </Box>
@@ -398,6 +405,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '95%',
+                    userSelect: 'none',
                     ...chatListStyles?.productText,
                   }}
                 >
@@ -411,30 +419,65 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '95%',
+                    userSelect: 'none',
                     ...chatListStyles?.latestMessage,
                   }}
                 >
                   {chat.contentType === 'offer' ? (
                     <>
-                      <Typography component="span">{t('Offer: ')}</Typography>
-                      <Typography component="span">{`$${chat.latestMessage.amount} `}</Typography>
+                      <Typography
+                        component="span"
+                        sx={{
+                          userSelect: 'none',
+                        }}
+                      >
+                        {t('Offer: ')}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        sx={{
+                          userSelect: 'none',
+                        }}
+                      >{`$${chat.latestMessage.amount} `}</Typography>
                       {chat.latestMessage.accepted ? (
-                        <Typography component="span">{t('(Accepted)')}</Typography>
+                        <Typography
+                          component="span"
+                          sx={{
+                            userSelect: 'none',
+                          }}
+                        >
+                          {t('(Accepted)')}
+                        </Typography>
                       ) : (
-                        <Typography component="span">{t(chat.latestMessage.content)}</Typography>
+                        <Typography
+                          component="span"
+                          sx={{
+                            userSelect: 'none',
+                          }}
+                        >
+                          {t(chat.latestMessage.content)}
+                        </Typography>
                       )}
                     </>
                   ) : (
-                    <Typography component="span">{chat.latestMessage}</Typography>
+                    <Typography
+                      component="span"
+                      sx={{
+                        userSelect: 'none',
+                      }}
+                    >
+                      {chat.latestMessage}
+                    </Typography>
                   )}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{
                     fontWeight: 500,
-                    ...chatListStyles?.progressText,
                     textAlign: 'right',
                     mt: spacing(1),
+                    userSelect: 'none',
+                    ...chatListStyles?.progressText,
                   }}
                 >
                   {chat.inProgress ? t('In progress') : ''}

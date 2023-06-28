@@ -1,18 +1,26 @@
 import { useTranslation } from 'react-i18next';
 import { ModalInput } from '@inc/ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type MakeOfferModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  inputValue: number;
-  setInputValue: (val: number) => void;
+  onCreateOffer: (val: number) => void;
 };
 
-const MakeOfferModal = ({ open, setOpen, inputValue, setInputValue }: MakeOfferModalProps) => {
+const MakeOfferModal = ({ open, setOpen, onCreateOffer }: MakeOfferModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
+  const [inputValue, setInputValue] = useState(0);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (rightButtonState) {
+      onCreateOffer(inputValue);
+      setRightButtonState(false);
+      setOpen(false);
+    }
+  }, [rightButtonState]);
 
   return (
     <ModalInput
