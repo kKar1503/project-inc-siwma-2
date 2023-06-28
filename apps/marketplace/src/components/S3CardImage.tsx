@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));
 
-type CardMediaXProps = CardMediaProps & {
+type S3CardImageProps = CardMediaProps & {
   src: string;
   placeholder: string;
   alt: string;
@@ -16,7 +16,7 @@ type CardMediaXProps = CardMediaProps & {
 /**
  * Extends the CardMedia component from material UI
  */
-const CardMediaX = ({ src, alt, placeholder, height }: CardMediaXProps) => {
+const S3CardImage = ({ src, alt, placeholder, height }: S3CardImageProps) => {
   const { data } = useImageQuery(src);
   const [image, setImage] = useState<{ url: string; name: string } | undefined>();
 
@@ -35,4 +35,4 @@ const CardMediaX = ({ src, alt, placeholder, height }: CardMediaXProps) => {
   ) : null;
 };
 
-export default CardMediaX;
+export default S3CardImage;
