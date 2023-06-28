@@ -338,7 +338,7 @@ const ChatBox = ({
                                     borderColor: palette.error[500],
                                   },
                                 })}
-                                onClick={() => onAcceptOffer(message.id)}
+                                onClick={() => onRejectOffer(message.id)}
                               >
                                 {t('Decline')}
                               </Button>
@@ -356,7 +356,7 @@ const ChatBox = ({
                                     backgroundColor: palette.primary[500],
                                   },
                                 })}
-                                onClick={() => onRejectOffer(message.id)}
+                                onClick={() => onAcceptOffer(message.id)}
                               >
                                 {t('Accept')}
                               </Button>

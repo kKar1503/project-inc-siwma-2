@@ -133,11 +133,11 @@ const ChatRoom = () => {
   };
 
   // ** Update Message List **
-  const updateOffer = (id: number, newContent: string, accepted: boolean) => {
+  const updateOffer = (messageId: number, newContent: string, accepted: boolean) => {
     setMessages((prev) =>
       prev.map((message) => {
         console.log('iterating rooms', message);
-        if (message.id !== id) {
+        if (message.id !== messageId) {
           return message;
         }
         const newMessage = { ...message };
@@ -227,6 +227,21 @@ const ChatRoom = () => {
         case 'in_progress': {
           console.log('Sync in progress');
           setMessages((curr) => [...curr, formatMessage(messageSync.data)]);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
+    offerCallback: (messageId, offerState) => {
+      switch (offerState) {
+        case 'accept': {
+          updateOffer(messageId, '(Accepted)', true);
+          break;
+        }
+        case 'reject': {
+          updateOffer(messageId, '(Rejected)', false);
           break;
         }
         default: {
@@ -430,8 +445,63 @@ const ChatRoom = () => {
     cancelOffer(socket.current, id, (ack) => {
       if (ack.success) {
         console.log('cancelOffer', ack.data);
-        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
-        updateChatList(ack.data as Messages);
+        const indexToRemove = messages.findIndex((room) => room.id === ack.data);
+
+        if (indexToRemove !== -1) {
+          let removedMessage: ChatData[];
+          setMessages((curr) => {
+            const newMessages = [...curr];
+            removedMessage = newMessages.splice(indexToRemove, 1);
+            return newMessages;
+          });
+
+          if (indexToRemove === messages.length - 1) {
+            const newLatestMessage = messages[indexToRemove - 1];
+            setRooms((curr) =>
+              curr.map((room) => {
+                console.log('iterating rooms', room);
+
+                if (room.contentType === 'offer') {
+                  if (room.latestMessage.content !== removedMessage[0].messageContent.content) {
+                    return room;
+                  }
+                } else {
+                  return room;
+                }
+
+                console.log('updating room', room);
+
+                const newRoom = {
+                  ...room,
+                  contentType: newLatestMessage.messageContent.contentType,
+                } as RoomData;
+
+                let latestMessageDataString = '';
+                const latestMessageDataObj = {
+                  amount: 0,
+                  accepted: false,
+                  content: '',
+                };
+
+                if (newLatestMessage.messageContent.contentType === 'offer') {
+                  latestMessageDataObj.amount = newLatestMessage.messageContent.amount;
+                  latestMessageDataObj.accepted = newLatestMessage.messageContent.offerAccepted;
+                  latestMessageDataObj.content = newLatestMessage.messageContent.content;
+                } else {
+                  latestMessageDataString = newLatestMessage.messageContent.content;
+                }
+
+                newRoom.time = new Date(newLatestMessage.createdAt);
+                newRoom.latestMessage =
+                  newLatestMessage.messageContent.contentType === 'offer'
+                    ? latestMessageDataObj
+                    : latestMessageDataString;
+
+                return newRoom;
+              })
+            );
+          }
+        }
       } else {
         console.log('cancelOffer', ack.err);
       }
