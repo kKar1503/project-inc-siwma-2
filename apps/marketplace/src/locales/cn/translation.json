@@ -182,5 +182,17 @@
   "Offer Declined": "拒绝报价",
   "Decline": "拒绝",
   "Accept": "接受",
-  "Image": "图片"
+  "Image": "图片",
+
+  "Most Popular": "最受欢迎的",
+  "Least Popular": "比较不受欢迎的",
+  "Rating - High to Low": "评价 - 从高到低",
+  "Rating - Low to High": "评价 - 从低到高",
+  "Price - Low to High": "价格 - 从低到高",
+  "Price - High to Low": "价格 - 从高到低",
+
+  "Displaying":"显示",
+  "search result":"个搜索",
+  "for":"结果",
+  "No more listings available":"No more listings available"
 }

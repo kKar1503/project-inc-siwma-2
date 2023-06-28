@@ -65,7 +65,7 @@ const CategoryForm = ({ category, setCategory, data, error }: SetCategoryProps) 
         >
           {data.map(({ id, name }) => (
             <MenuItem key={id} value={name}>
-              {name}
+              {t(name)}
             </MenuItem>
           ))}
         </Select>
