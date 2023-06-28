@@ -12,7 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Divider from '@mui/material/Divider';
 import Badge from '@mui/material/Badge';
-import S3Avatar from '@/components/S3Avatar';
+import Image from 'next/image';
 import { DateTime } from 'luxon';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme, alpha } from '@mui/material/styles';
@@ -31,18 +31,18 @@ export type ChatListProps = {
   unreadMessages: number;
 } & (
   | {
-      latestMessage: string;
-      contentType: 'text' | 'file' | 'image';
-    }
+  latestMessage: string;
+  contentType: 'text' | 'file' | 'image';
+}
   | {
-      latestMessage: {
-        amount: number;
-        accepted: boolean;
-        content: string;
-      };
-      contentType: 'offer';
-    }
-);
+  latestMessage: {
+    amount: number;
+    accepted: boolean;
+    content: string;
+  };
+  contentType: 'offer';
+}
+  );
 
 export type ChatListPageProps = {
   chats: ChatListProps[];
@@ -359,7 +359,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
             >
               <ListItemAvatar>
                 <Badge overlap="circular" color="error" badgeContent={chat.unreadMessages}>
-                  <S3Avatar
+                  <Image
                     style={{ borderRadius: '100%' }}
                     src={
                       chat.userImage === ''
