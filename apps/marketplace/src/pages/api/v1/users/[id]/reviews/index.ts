@@ -71,9 +71,6 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
       where: {
         listingReviewsListingTolisting: {
           owner: id,
-          ...(reviewType && {
-            type: reviewType,
-          }),
         },
       },
     }),
@@ -82,9 +79,6 @@ const getUserReviews = async (req: APIRequestType, res: NextApiResponse) => {
         where: {
           listingReviewsListingTolisting: {
             owner: id,
-            ...(reviewType && {
-              type: reviewType,
-            }),
           },
         },
         _avg: {
