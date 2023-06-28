@@ -51,7 +51,7 @@ const event: EventFile = (io, socket) => ({
         );
 
         eventLog('trace', `Acknowledging offer...`);
-        if (typeof ack === 'function') ack({ success: true });
+        if (typeof ack === 'function') ack({ success: true, data: message.id });
 
         eventLog('trace', `Deriving other occupant user id...`);
         const otherOccupantUserId =

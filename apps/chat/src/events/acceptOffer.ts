@@ -29,9 +29,12 @@ const event: EventFile = (io, socket) => ({
 
     eventLog('trace', `Attempting to find message (${messageId}) in database...`);
     prisma.messages
-      .findFirst({
+      .update({
         where: {
           id: messageId,
+        },
+        data: {
+          content: '(Accepted)',
         },
         select: {
           offer: true,
@@ -67,16 +70,6 @@ const event: EventFile = (io, socket) => ({
             },
             data: {
               accepted: true,
-              messages: {
-                update: {
-                  where: {
-                    id: message.offer,
-                  },
-                  data: {
-                    content: '(Accepted)',
-                  },
-                },
-              },
             },
             select: {
               id: true,
