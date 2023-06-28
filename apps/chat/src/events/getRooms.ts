@@ -127,6 +127,9 @@ const event: EventFile = (io, socket) => ({
                 in: roomIds,
               },
               read: false,
+              author: {
+                not: userId,
+              },
             },
             select: {
               room: true,
