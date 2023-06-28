@@ -21,6 +21,7 @@ import { InfiniteScroll, useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 import { useTheme } from '@mui/material';
 import { Listing } from '@/utils/api/client/zod';
+import { useTranslation } from 'react-i18next';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -62,6 +63,7 @@ const Marketplace = () => {
   const { data: session } = useSession();
   const [isSm, isMd, isLg, isXl] = useResponsiveness(['sm', 'md', 'lg', 'xl']);
   const { typography } = useTheme();
+  const { t } = useTranslation();
   const scrollRef = useRef<Element>(null);
 
   const [listings, setListings] = React.useState<Array<Listing>>([]);
@@ -164,9 +166,9 @@ const Marketplace = () => {
               width: '100%',
             }}
           >
-            <Typography sx={headerStyles?.switchTxt}>Categories</Typography>
+            <Typography sx={headerStyles?.switchTxt}>{t('Categories')}</Typography>
             <Link href="/categories" sx={headerStyles?.switchTxt}>
-              View All Categories
+              {t('View All Categories')}
             </Link>
           </Box>
         </Box>
@@ -182,13 +184,13 @@ const Marketplace = () => {
       </Box>
 
       <Box display="flex" paddingTop="4em" width={isSm ? '90%' : '80%'} margin="auto">
-        <Typography sx={headerStyles?.switchTxt}>Popular</Typography>
+        <Typography sx={headerStyles?.switchTxt}>{t('Popular')}</Typography>
       </Box>
       <ListingStream listingItemsData={popularListingsData} />
 
       <Box width={isSm ? '90%' : '80%'} margin="auto">
         <Box marginTop="2em">
-          <Typography sx={headerStyles?.switchTxt}>Recommended</Typography>
+          <Typography sx={headerStyles?.switchTxt}>{t('Recommended')}</Typography>
         </Box>
         <Box
           margin="auto"
@@ -214,7 +216,7 @@ const Marketplace = () => {
                     textTransform: 'uppercase',
                   })}
                 >
-                  No more listings available
+                  {t('No more listings available')}
                 </Typography>
               }
               parentProps={{

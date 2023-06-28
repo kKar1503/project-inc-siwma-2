@@ -8,13 +8,16 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import deleteListing from '@/middlewares/deleteListing';
 import { useRouter } from 'next/router';
+import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query';
 
 export type MoreProfileIconProps = {
   productId: string;
 };
 
 const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = anchorEl !== null;
@@ -32,7 +35,7 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
 
   const handleEditClick = () => {
     // send user to page to edit listing
-    router.push(`${productId}/edit-listing`);
+    router.push(`/edit-listing/${productId}`);
     setAnchorEl(null);
   };
 
@@ -41,9 +44,18 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
     setAnchorEl(null);
   };
 
-  const handleDeleteClick = () => {
+  const deleteListingMutation = useMutation(deleteListing);
+
+  const handleDeleteClick = async () => {
     // delete listing endpoint
-    setAnchorEl(null);
+    try {
+      await deleteListingMutation.mutateAsync(productId);
+      queryClient.invalidateQueries('listingImages');
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+    } finally {
+      setAnchorEl(null);
+    }
   };
 
   return (
@@ -68,18 +80,18 @@ const MoreProfileIcon = ({ productId }: MoreProfileIconProps) => {
           </ListItemIcon>
           Edit Listing
         </MenuItem>
-        <MenuItem onClick={handleArchiveClick}>
+        {/* <MenuItem onClick={handleArchiveClick}>
           <ListItemIcon>
             <ArchiveIcon fontSize="small" />
           </ListItemIcon>
           Archive Listing
-        </MenuItem>
-        <MenuItem onClick={handleDeleteClick}>
+        </MenuItem> */}
+        {/* <MenuItem onClick={handleDeleteClick}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
           Delete Listing
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
     </Box>
   );
