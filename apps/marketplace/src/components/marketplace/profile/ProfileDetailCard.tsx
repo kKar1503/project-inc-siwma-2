@@ -204,7 +204,7 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
 
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>Linked accounts:</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>{t('Linked accounts')}:</Typography>
         {data?.contactMethod === 'telegram' && (
           <Box
             sx={({ spacing }) => ({
@@ -251,7 +251,7 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
                 ml: spacing(1),
               })}
             >
-              +65 {data?.mobileNumber}
+              +65 {data?.whatsappNumber}
             </Typography>
           </Box>
         )}

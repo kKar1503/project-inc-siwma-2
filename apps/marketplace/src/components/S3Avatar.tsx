@@ -26,9 +26,13 @@ const S3Avatar = ({ src, alt, children, ...others }: S3AvatarProps) => {
   }, [alt, data]);
 
   return image ? (
-    <Link href={image.url} download={image.name} onClick={onClick}
-          style={{ cursor: 'default', textDecoration: 'none' }}>
-      <Avatar src={image.url}  {...others} >
+    <Link
+      href={image.url}
+      download={image.name}
+      onClick={onClick}
+      style={{ cursor: 'default', textDecoration: 'none' }}
+    >
+      <Avatar src={image.url} {...others}>
         {children}
       </Avatar>
     </Link>

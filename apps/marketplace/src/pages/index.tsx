@@ -21,6 +21,7 @@ import { InfiniteScroll, useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 import { useTheme } from '@mui/material';
 import { Listing } from '@/utils/api/client/zod';
+import { useTranslation } from 'react-i18next';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -62,6 +63,7 @@ const Marketplace = () => {
   const { data: session } = useSession();
   const [isSm, isMd, isLg, isXl] = useResponsiveness(['sm', 'md', 'lg', 'xl']);
   const { typography } = useTheme();
+  const { t } = useTranslation();
   const scrollRef = useRef<Element>(null);
 
   const [listings, setListings] = React.useState<Array<Listing>>([]);
@@ -154,90 +156,87 @@ const Marketplace = () => {
       ) : (
         <AdvertisementsPlaceholder />
       )}
-      <Box display="flex" justifyContent="center" paddingTop="2em">
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '80%',
-          }}
-        >
-          <Typography sx={headerStyles?.switchTxt}>Categories</Typography>
-          <Link href="/categories" sx={headerStyles?.switchTxt}>
-            View All Categories
-          </Link>
-        </Box>
-      </Box>
-      <Box display="flex" justifyContent="center" paddingTop="2em">
-        <Grid container spacing={2} width="95%">
-          {categories?.map((category) => (
-            <Grid item xl={2} lg={3} md={4} sm={6} xs={6} key={category.name}>
-              <CategoryCard {...category} />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-      <Box display="flex" justifyContent="center" paddingTop="4em">
-        <Box
-          sx={{
-            width: '80%',
-          }}
-        >
-          <Typography sx={headerStyles?.switchTxt}>Popular</Typography>
-        </Box>
-      </Box>
-      <ListingStream listingItemsData={popularListingsData} />
-      <Box display="flex" justifyContent="center" marginTop="2em">
-        <Box
-          sx={{
-            width: '80%',
-          }}
-        >
-          <Typography sx={headerStyles?.switchTxt}>Recommended</Typography>
-        </Box>
-      </Box>
-      <Box marginTop="2em" display="flex" flexDirection="column" justifyContent="center">
-        <Box marginX="2rem">
-          <InfiniteScroll
-            onLoadMore={refetch}
-            loading={isLoading}
-            reachedMaxItems={maxItems}
-            loadingComponent={<CircularProgress />}
-            parent={Grid}
-            endMessage={
-              <Typography
-                variant="h6"
-                textAlign="center"
-                sx={({ spacing }) => ({
-                  my: spacing(5),
-                  textAlign: 'center',
-                  textTransform: 'uppercase',
-                })}
-              >
-                No more listings available
-              </Typography>
-            }
-            parentProps={{
-              container: true,
+      <Box width={isSm ? '90%' : '80%'} margin="auto">
+        <Box display="flex" justifyContent="space-between" paddingTop="2em">
+          <Box
+            sx={{
               display: 'flex',
-              gap: 2,
-              justifyContent: 'space-evenly',
-            }}
-            child={Grid}
-            childProps={{
-              item: true,
-              xl: 2,
-              lg: 2.5,
-              md: 3.5,
-              sm: 5,
-              xs: 12,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
             }}
           >
-            {listings?.map((item) => (
-              <ProductListingItem data={item} key={item.id} />
+            <Typography sx={headerStyles?.switchTxt}>{t('Categories')}</Typography>
+            <Link href="/categories" sx={headerStyles?.switchTxt}>
+              {t('View All Categories')}
+            </Link>
+          </Box>
+        </Box>
+        <Box display="flex" justifyContent="center" paddingTop="2em">
+          <Grid container spacing={2}>
+            {categories?.map((category) => (
+              <Grid item xl={2} lg={3} md={4} xs={6} key={category.name}>
+                <CategoryCard {...category} />
+              </Grid>
             ))}
-          </InfiniteScroll>
+          </Grid>
+        </Box>
+      </Box>
+
+      <Box display="flex" paddingTop="4em" width={isSm ? '90%' : '80%'} margin="auto">
+        <Typography sx={headerStyles?.switchTxt}>{t('Popular')}</Typography>
+      </Box>
+      <ListingStream listingItemsData={popularListingsData} />
+
+      <Box width={isSm ? '90%' : '80%'} margin="auto">
+        <Box marginTop="2em">
+          <Typography sx={headerStyles?.switchTxt}>{t('Recommended')}</Typography>
+        </Box>
+        <Box
+          margin="auto"
+          marginTop="2em"
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+        >
+          <Box>
+            <InfiniteScroll
+              onLoadMore={refetch}
+              loading={isLoading}
+              reachedMaxItems={maxItems}
+              loadingComponent={<CircularProgress />}
+              parent={Grid}
+              endMessage={
+                <Typography
+                  variant="h6"
+                  textAlign="center"
+                  sx={({ spacing }) => ({
+                    my: spacing(5),
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                  })}
+                >
+                  {t('No more listings available')}
+                </Typography>
+              }
+              parentProps={{
+                container: true,
+                display: 'flex',
+                spacing: 2,
+              }}
+              child={Grid}
+              childProps={{
+                item: true,
+                xl: 3,
+                md: 4,
+                xs: 6,
+              }}
+            >
+              {listings?.map((item) => (
+                <ProductListingItem data={item} key={item.id} />
+              ))}
+            </InfiniteScroll>
+          </Box>
         </Box>
       </Box>
     </>

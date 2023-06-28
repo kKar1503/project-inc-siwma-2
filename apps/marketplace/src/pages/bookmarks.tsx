@@ -15,6 +15,8 @@ import { User } from '@/utils/api/client/zod/users';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 
+import { useTranslation } from 'react-i18next';
+
 export type BookmarkTypeProps = 'LISTINGS' | 'USERS';
 
 export type RawUserProps = {
@@ -35,6 +37,8 @@ const Bookmarks = () => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const userDetails = useGetUserQuery(loggedUserUuid);
+
+  const { t } = useTranslation();
 
   const handleButtonClick = useCallback((type: BookmarkTypeProps) => {
     setSelectedButton(type);
@@ -91,7 +95,7 @@ const Bookmarks = () => {
                 onClick={() => handleButtonClick(type as BookmarkTypeProps)}
                 fullWidth
               >
-                {type}
+                {t([type])}
               </Button>
             </Grid>
           ))}

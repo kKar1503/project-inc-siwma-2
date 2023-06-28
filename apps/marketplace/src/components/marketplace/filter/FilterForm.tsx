@@ -132,7 +132,7 @@ const FilterForm = ({
         {categoriesData &&
           categoriesData.map((category) => (
             <MenuItem key={category.id} value={category.id}>
-              {category.name}
+              {t(category.name)}
             </MenuItem>
           ))}
       </Select>
@@ -161,7 +161,7 @@ const FilterForm = ({
               value="false"
             />
           }
-          label={t('Non-Negotiable')}
+          label={t('Non Negotiable')}
         />
       </Box>
       <Divider sx={{ my: 2 }} />

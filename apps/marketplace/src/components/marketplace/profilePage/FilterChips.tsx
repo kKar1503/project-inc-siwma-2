@@ -10,15 +10,28 @@ type FilterChipsProps = {
 };
 
 const options = ['ALL', 'FROM BUYERS', 'FROM SELLERS'];
+const optionsCn = ['全部', '来自买家', '来自卖家'];
 
 const FilterChips = ({ onData }: FilterChipsProps) => {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [selectedValue, setSelectedValue] = useState('ALL');
+  const [selected, setSelected] = useState(false);
+
+  const tOptions = i18n.language === 'en' ? options : optionsCn;
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const label = event.currentTarget.textContent;
+    let filterParam = '';
+    if (label === options[0] || label === optionsCn[0]) {
+      filterParam = '';
+    } else if (label === options[1] || label === optionsCn[1]) {
+      filterParam = 'buyer';
+    } else if (label === options[2] || label === optionsCn[2]) {
+      filterParam = 'seller';
+    }
+    setSelected(!selected);
     setSelectedValue(label || '');
-    onData(label || '');
+    onData(filterParam || '');
   };
 
   const [isSm] = useResponsiveness(['sm']);
@@ -26,7 +39,7 @@ const FilterChips = ({ onData }: FilterChipsProps) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <Grid container spacing={1}>
-        {options.map((option) => (
+        {tOptions.map((option) => (
           <Grid item key={option}>
             <Chip
               sx={({ typography, spacing, palette }) => ({

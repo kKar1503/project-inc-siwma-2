@@ -15,7 +15,7 @@ const StarsRating = ({ rating, precision, size, readOnly }: StarRatingProps) => 
 
   return (
     <Rating
-      defaultValue={rating}
+      value={rating}
       readOnly={readOnly}
       size={size}
       precision={precision}
