@@ -166,14 +166,14 @@ const DisplayResults = ({
                 mb: spacing(2),
               })}
             >
-              {subHeader && (
+              {subHeader && ( 
                 <Typography
                   sx={({ typography }) => ({
                     fontSize: isSm ? typography.h5 : typography.h4,
                     fontWeight: typography.fontWeightBold,
                   })}
                 >
-                  {data.title.single} Bookmarks
+                  {data.title.single} {t('Bookmarks')}
                 </Typography>
               )}
               <Typography

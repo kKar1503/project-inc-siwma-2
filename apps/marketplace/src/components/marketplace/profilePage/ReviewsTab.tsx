@@ -13,6 +13,7 @@ import FilterChips from './FilterChips';
 const sortValues = ['recent_newest', 'recent_oldest', 'highest_rating', 'lowest_rating'];
 
 const displaySortValues = ['Newest', 'Oldest', 'Highest Rating', 'Lowest Rating'];
+const displaySortValuesCn = ['最新的', '最旧的', '最高评分的', '最低评分的'];
 
 export type ReviewsTabProps = {
   allReviews: Review[] | null | undefined;
@@ -31,6 +32,9 @@ const ReviewsTab = ({
 }: ReviewsTabProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
+  const { i18n , t } = useTranslation();
+
+  const tDisplaySortValues = i18n.language === 'en' ? displaySortValues : displaySortValuesCn;
 
   const stylesReview = useMemo(() => {
     if (isSm) {
@@ -52,8 +56,6 @@ const ReviewsTab = ({
       alignItems: 'center',
     };
   }, [isSm, isMd, isLg]);
-
-  const { t } = useTranslation();
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
@@ -81,7 +83,7 @@ const ReviewsTab = ({
               fontSize: typography.subtitle1,
             })}
           >
-            ({totalReviews} {totalReviews === 1 ? ' Review' : ' Reviews'})
+            ({totalReviews} {totalReviews === 1 ? `${t('Review')}` : `${t('Reviews')}`})
           </Typography>
         </Box>
         {isSm ? (
@@ -112,7 +114,7 @@ const ReviewsTab = ({
           <SelectComponent
             onData={sortByReviews}
             values={sortValues}
-            displayValues={displaySortValues}
+            displayValues={tDisplaySortValues}
           />
         </Box>
       </Box>

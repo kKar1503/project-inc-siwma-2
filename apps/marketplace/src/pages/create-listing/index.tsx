@@ -25,6 +25,7 @@ import ListingForm, {
   ListingValidationProps,
 } from '@/components/marketplace/createListing/ListingForm';
 import ImageUploadForm from '@/components/marketplace/createListing/ImageUploadForm';
+import { useTranslation } from 'react-i18next';
 
 const usePostListingQuery = (
   listing: { listingBody: PostListingsRequestBody; images: Blob[] } | undefined,
@@ -51,6 +52,7 @@ const CreateListingPage = () => {
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [openCreateErrorModal, setOpenCreateErrorModal] = useState<boolean>(false);
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   // ** TODO: optimise in the future to use useReducer hook
   // form data
@@ -275,10 +277,10 @@ const CreateListingPage = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              Create Listing
+              {t('Create Listing')}
             </Typography>
             <Typography variant="body1">
-              Create a new listing to be shared on your profile.
+              {t('Create a new listing to be shared on your profile.')}
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ width: '100%' }}>
@@ -316,13 +318,13 @@ const CreateListingPage = () => {
               })}
               fullWidth
             >
-              Cancel Listing
+              {t('Cancel Listing')}
             </Button>
             <OnLeaveModal open={openCancelModal} setOpen={setOpenCancelModal} />
           </Grid>
           <Grid item xs={6} sx={{ width: '100%' }}>
             <Button variant="contained" type="submit" size="large" fullWidth>
-              CREATE LISTING
+              {t('CREATE LISTING')}
             </Button>
             {postListingData !== false &&
               (postListingData.success ? (
