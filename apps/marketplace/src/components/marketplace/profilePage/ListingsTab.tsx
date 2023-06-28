@@ -9,8 +9,10 @@ import { Listing } from '@/utils/api/client/zod';
 
 // pass filter values to select component
 const filterValues = ['All Listings', 'Buy Listings', 'Sell Listings'];
+const filterValuesCn = ['全部商品', '商品（购买）', '商品（出售）'];
 const filterEndpointValues = ['all', 'BUY', 'SELL'];
 const sortValues = ['Recent', 'Price - High to Low', 'Price - Low to High'];
+const sortValuesCn = ['近期', '价格（从高到低）', '价格（从低到高）'];
 const sortEndpointValues = ['recent_newest', 'price_desc', 'price_asc'];
 
 export type ListingsTabProps = {
@@ -28,6 +30,12 @@ const ListingsTab = ({
 }: ListingsTabProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing } = useTheme();
+
+  const { i18n, t } = useTranslation();
+
+  const tFilterValues = i18n.language === 'en' ? filterValues : filterValuesCn;
+  const tsortValues = i18n.language === 'en' ? sortValues : sortValuesCn;
+
 
   const stylesListing = useMemo(() => {
     if (isSm) {
@@ -74,8 +82,6 @@ const ListingsTab = ({
     [isSm]
   );
 
-  const { t } = useTranslation();
-
   return (
     <Box>
       {/* top portion */}
@@ -98,7 +104,7 @@ const ListingsTab = ({
             </Typography>
             <SelectComponent
               onData={filterListings}
-              displayValues={filterValues}
+              displayValues={tFilterValues}
               values={filterEndpointValues}
             />
           </Box>
@@ -108,7 +114,7 @@ const ListingsTab = ({
             </Typography>
             <SelectComponent
               onData={sortByListings}
-              displayValues={sortValues}
+              displayValues={tsortValues}
               values={sortEndpointValues}
             />
           </Box>
