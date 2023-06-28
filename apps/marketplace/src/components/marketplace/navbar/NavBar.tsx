@@ -57,115 +57,137 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
         top: 0,
         // height: 114,
         zIndex: zIndex.appBar,
-        minWidth: isSm ? '0px' : '900px',
-        px: isSm ? '0px' : 'calc(50vw - 656px)',
       }}
     >
-      <Toolbar
+      <Box
+        id="top-navbar-fulllength"
         sx={{
           // make a border with custom translucent color
           borderBottom: 1,
           borderColor: '#dbdbdb',
-          height: 64,
         }}
       >
-        {isLg && (
-          <Image
-            src="/images/favicons/SIWMA-icon.png"
-            alt="logo"
-            width={60}
-            height={40}
-            style={{ marginRight: spacing(2) }}
-          />
-        )}
-
-        {/* mobile drawer icon here */}
-        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-          <MobileDrawer userId={userId} />
-        </Box>
-        {/* end of mobile drawer icon */}
-
-        {!isSm && (
-          <Box onClick={() => handleUrl('/')}>
-            <Typography
-              noWrap
-              sx={{
-                color: palette.primary.main,
-                fontSize: typography.subtitle2,
-                display: 'flex',
-                justifyContent: 'center',
-                mx: isLg ? spacing(1) : spacing(0),
-                width: isMd ? '50px' : '60px',
-                cursor: 'pointer',
-              }}
-            >
-              {t('Home')}
-            </Typography>
-          </Box>
-        )}
-        {!isSm && (
-          <Link href="/categories" underline="none">
-            <Typography
-              noWrap
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                width: isMd ? '90px' : '100px',
-                fontSize: typography.subtitle2,
-                mx: isLg ? spacing(1) : spacing(2),
-              }}
-            >
-              {t('All Categories')}
-            </Typography>
-          </Link>
-        )}
-        {isSm && <SearchBar handleSearch={handleSearch} />}
-
-        <Box sx={{ flexGrow: 1 }} />
-        {!isSm && (
-          <Box
+        <Box
+          id="top-navbar-scaled"
+          sx={{
+            minWidth: isSm ? '0px' : '900px',
+            px: isSm ? '0px' : 'calc(50vw - 656px)',
+          }}
+        >
+          <Toolbar
+            id="tool-bar-1"
             sx={{
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
+              height: 64,
             }}
           >
-            <Grid component="label" container alignItems="center">
-              <ChangeLanguageButton />
-            </Grid>
+            {isLg && (
+              <Image
+                src="/images/favicons/SIWMA-icon.png"
+                alt="logo"
+                width={60}
+                height={40}
+                style={{ marginRight: spacing(2) }}
+              />
+            )}
 
-            <Box onClick={() => handleUrl('/chat')}>
-              <IconButton
-                size="medium"
-                sx={({ spacing }) => ({
-                  mx: isMd ? spacing(1) : spacing(2),
-                })}
+            {/* mobile drawer icon here */}
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <MobileDrawer userId={userId} />
+            </Box>
+            {/* end of mobile drawer icon */}
+
+            {!isSm && (
+              <Box onClick={() => handleUrl('/')}>
+                <Typography
+                  noWrap
+                  sx={{
+                    color: palette.primary.main,
+                    fontSize: typography.subtitle2,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    mx: isLg ? spacing(1) : spacing(0),
+                    width: isMd ? '50px' : '60px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {t('Home')}
+                </Typography>
+              </Box>
+            )}
+            {!isSm && (
+              <Link href="/categories" underline="none">
+                <Typography
+                  noWrap
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: isMd ? '90px' : '100px',
+                    fontSize: typography.subtitle2,
+                    mx: isLg ? spacing(1) : spacing(2),
+                  }}
+                >
+                  {t('All Categories')}
+                </Typography>
+              </Link>
+            )}
+            {isSm && <SearchBar handleSearch={handleSearch} />}
+
+            <Box sx={{ flexGrow: 1 }} />
+            {!isSm && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-evenly',
+                  alignItems: 'center',
+                }}
               >
-                <Badge>
-                  <MessageIcon
-                    sx={{
-                      fontSize: typography.h5,
-                      color: palette.text.secondary,
-                    }}
-                  />
-                </Badge>
-              </IconButton>
-            </Box>
+                <Grid component="label" container alignItems="center">
+                  <ChangeLanguageButton />
+                </Grid>
 
-            <Box sx={{ mr: spacing(2) }}>
-              <Profile userName={userName} userId={userId} />
-            </Box>
+                <Box onClick={() => handleUrl('/chat')}>
+                  <IconButton
+                    size="medium"
+                    sx={({ spacing }) => ({
+                      mx: isMd ? spacing(1) : spacing(2),
+                    })}
+                  >
+                    <Badge>
+                      <MessageIcon
+                        sx={{
+                          fontSize: typography.h5,
+                          color: palette.text.secondary,
+                        }}
+                      />
+                    </Badge>
+                  </IconButton>
+                </Box>
 
-            {!isSm && <CreateListing />}
-          </Box>
-        )}
-      </Toolbar>
+                <Box sx={{ mr: spacing(2) }}>
+                  <Profile userName={userName} userId={userId} />
+                </Box>
+
+                {!isSm && <CreateListing />}
+              </Box>
+            )}
+          </Toolbar>
+        </Box>
+      </Box>
+
       {renderSearchBar && !isSm && (
-        <Toolbar variant="dense" sx={{ minHeight: 20, height: 48 }}>
-          <Box sx={{ width: '100%' }}>
-            <SearchBar handleSearch={handleSearch} />
-          </Box>
-        </Toolbar>
+        <Box
+          id="bottom-navbar-scaled"
+          sx={{
+            minWidth: isSm ? '0px' : '900px',
+            px: isSm ? '0px' : 'calc(50vw - 656px)',
+          }}
+        >
+          <Toolbar variant="dense" sx={{ minHeight: 20, height: 48 }}>
+            <Box sx={{ width: '100%' }}>
+              <SearchBar handleSearch={handleSearch} />
+            </Box>
+          </Toolbar>
+        </Box>
       )}
     </Box>
   );

@@ -158,10 +158,6 @@ const DetailedListingPage = () => {
 
   const placeholder = '/images/placeholder.png';
 
-  const chatRooms = useChatListQuery(loggedUserUuid);
-
-  let chatRoomDetailsData: chatRoomDetails = { buyerId: '', sellerId: '', listingId: '' };
-
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
   const [inputText, setInputText] = useState<string>('');
@@ -200,36 +196,11 @@ const DetailedListingPage = () => {
 
   // check if room exists btwn buyer and seller
   const checkChatRoom = () => {
-    if (chatRooms) {
-      let chatRoomExists = false;
-      for (let i = 0; i < chatRooms.length; i++) {
-        if (
-          (chatRooms[i].buyer.id === loggedUserUuid &&
-            chatRooms[i].seller.id === listings?.owner.id) ||
-          (chatRooms[i].buyer.id === listings?.owner.id &&
-            chatRooms[i].seller.id === loggedUserUuid)
-        ) {
-          chatRoomExists = true;
-        }
-        if (!chatRoomExists) {
-          if (listings?.type === 'SELL') {
-            chatRoomDetailsData = {
-              buyerId: loggedUserUuid,
-              sellerId: listings?.owner.id as string,
-              listingId: router.query.id as string,
-            };
-          } else {
-            chatRoomDetailsData = {
-              buyerId: listings?.owner.id as string,
-              sellerId: loggedUserUuid,
-              listingId: router.query.id as string,
-            };
-          }
-          return createRoom(chatRoomDetailsData);
-        }
-      }
+    if (listings?.type === 'SELL') {
+      router.push(`/chat?listing=${listings?.id as string}&seller=${listings?.owner.id as string}`);
+    } else {
+      router.push(`/chat?listing=${listings?.id as string}&buyer=${listings?.owner.id as string}`);
     }
-    return null;
   };
 
   listings?.parameters?.sort((a, b) => {
@@ -557,18 +528,16 @@ const DetailedListingPage = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       {listings?.owner.id !== loggedUserUuid ? (
-                        <Link href="/chat">
-                          <Button
-                            variant="contained"
-                            sx={({ palette }) => ({
-                              backgroundColor: palette.primary.main,
-                              width: isMd ? 240 : 340,
-                            })}
-                            onClick={checkChatRoom}
-                          >
-                            {t('CHAT NOW')}
-                          </Button>
-                        </Link>
+                        <Button
+                          variant="contained"
+                          sx={({ palette }) => ({
+                            backgroundColor: palette.primary.main,
+                            width: isMd ? 240 : 340,
+                          })}
+                          onClick={checkChatRoom}
+                        >
+                          {t('CHAT NOW')}
+                        </Button>
                       ) : (
                         <Button
                           variant="contained"

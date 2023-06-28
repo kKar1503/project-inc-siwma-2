@@ -24,6 +24,12 @@ export const EVENTS = {
       SYNC: 'clientSyncMessage',
       GET: 'clientGetMessages',
     },
+    OFFER: {
+      MAKE: 'clientMakeOffer',
+      ACCEPT: 'clientAcceptOffer',
+      REJECT: 'clientRejectOffer',
+      CANCEL: 'clientCancelOffer',
+    },
     TYPING: {
       START: 'clientStartType',
       STOP: 'clientStopType',
@@ -43,6 +49,12 @@ export const EVENTS = {
       READ: 'serverReadMessage',
       SYNC: 'serverSyncMessage',
       SYNC2: 'serverSyncMessage2',
+    },
+    OFFER: {
+      MAKE: 'serverMakeOffer',
+      ACCEPT: 'serverAcceptOffer',
+      REJECT: 'serverRejectOffer',
+      CANCEL: 'serverCancelOffer',
     },
     TYPING: {
       START: 'serverStartType',
