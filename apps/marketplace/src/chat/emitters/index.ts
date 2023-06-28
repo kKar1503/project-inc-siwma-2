@@ -3,7 +3,7 @@ import { EVENTS } from '@inc/events';
 
 // ** Types Imports **
 import { Socket } from 'socket.io-client';
-import type { Acknowlegement, ClientCreateRoom, ClientSendMessage } from '@inc/types';
+import type { Acknowlegement, ClientCreateRoom, ClientSendMessage, MakeOffer } from '@inc/types';
 
 // ** Room Events **
 export function joinRoom(socket: Socket, roomId: string, ack: (ack: Acknowlegement) => void) {
@@ -57,6 +57,27 @@ export function syncMessage(socket: Socket, messageId: number, ack: (ack: Acknow
 
 export function getMessage(socket: Socket, roomId: string, ack: (ack: Acknowlegement) => void) {
   socket.emit(EVENTS.CLIENT.MESSAGE.GET, roomId, ack);
+}
+
+// ** Offers Events **
+export function makeOffer(
+  socket: Socket,
+  offerData: MakeOffer,
+  ack: (ack: Acknowlegement) => void
+) {
+  socket.emit(EVENTS.CLIENT.OFFER.MAKE, offerData, ack);
+}
+
+export function acceptOffer(socket: Socket, offerId: number, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.OFFER.ACCEPT, offerId, ack);
+}
+
+export function rejectOffer(socket: Socket, offerId: number, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.OFFER.REJECT, offerId, ack);
+}
+
+export function cancelOffer(socket: Socket, offerId: number, ack: (ack: Acknowlegement) => void) {
+  socket.emit(EVENTS.CLIENT.OFFER.CANCEL, offerId, ack);
 }
 
 // ** Typing Events **
