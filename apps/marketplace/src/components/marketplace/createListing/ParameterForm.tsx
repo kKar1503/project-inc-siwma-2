@@ -125,7 +125,13 @@ const ParameterForm = ({
       <Grid container item xs={12} md={12} spacing={2} sx={{ width: '100%' }}>
         {data.map((parameter: ParameterProps) => {
           const inputType = dataTypeToInputType(parameter.dataType);
-          const paramType = parameter.type;
+          let paramType = parameter.type;
+
+          // Edge Cases
+          // Issue #276 if dataType is boolean and type is not two_choices, set type to two_choices
+          if (parameter.dataType === 'boolean') paramType = ParameterType.TWO_CHOICES
+
+
           switch (paramType) {
             case ParameterType.WEIGHT:
               return (
