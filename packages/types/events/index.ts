@@ -65,6 +65,7 @@ export type DataSync<T> =
 
 export type ClientCreateRoom = {
   sellerId: UserId;
+  buyerId: UserId;
   listingId: ListingId;
 };
 
