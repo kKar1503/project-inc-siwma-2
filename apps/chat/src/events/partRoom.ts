@@ -23,8 +23,9 @@ const partRoom: EventFile = (io, socket) => ({
 
     // Checking if room is in cache. If not, then fetch it from db.
     eventLog('trace', `Attempting to check if room (${roomId}) is in cache...`);
-    const [roomIdFromCache, [occupant1, occupant2]] =
-      RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
+    const roomOccupantStoreData = RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
+    eventLog('debug', `Room (${roomId}) store data: ${JSON.stringify(roomOccupantStoreData)}}`);
+    const [roomIdFromCache, [occupant1, occupant2]] = roomOccupantStoreData;
 
     if (roomIdFromCache !== '') {
       eventLog('warn', `Room (${roomId}) cannot be found in cache.`);
