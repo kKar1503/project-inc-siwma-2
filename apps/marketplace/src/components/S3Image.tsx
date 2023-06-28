@@ -6,20 +6,26 @@ import fetchS3Image from '@/middlewares/fetchS3Image';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));
 
-export type S3ImageProps = ImageProps & { src: string };
-
+export type S3ImageProps = ImageProps & {
+  src: string
+  placeholderImg?: string;
+}
 const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   e.preventDefault();
   e.stopPropagation();
 };
 
-const S3Image = ({ src, alt, ...others }: S3ImageProps) => {
+const S3Image = ({ src, alt, placeholderImg, ...others }: S3ImageProps) => {
   const { data } = useImageQuery(src);
   const [image, setImage] = useState<{ url: string; name: string } | undefined>();
 
   useEffect(() => {
     if (!data) return;
     const { url, name } = data;
+    if (url === '' && placeholderImg) {
+      setImage({ url: placeholderImg, name: alt });
+      return;
+    }
     setImage({ url, name: name || alt });
     // eslint-disable-next-line consistent-return
     return () => URL.revokeObjectURL(url);
