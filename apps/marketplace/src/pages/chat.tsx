@@ -11,7 +11,17 @@ import ChatList from '@/components/rtc/ChatList';
 
 // ** Chat Related Imports **
 import { io } from 'socket.io-client';
-import { getMessage, getRooms, joinRoom, makeOffer, partRoom, sendMessage } from '@/chat/emitters';
+import {
+  acceptOffer,
+  cancelOffer,
+  getMessage,
+  getRooms,
+  joinRoom,
+  makeOffer,
+  partRoom,
+  rejectOffer,
+  sendMessage,
+} from '@/chat/emitters';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
@@ -31,11 +41,22 @@ import { useTranslation } from 'react-i18next';
 
 function formatMessage(message: Messages): ChatData {
   const { createdAt, message: messageContent, ...rest } = message;
-  return {
+  const formatted: ChatData = {
     ...rest,
     messageContent,
     createdAt: new Date(createdAt),
   };
+  if (messageContent.contentType === 'offer') {
+    if (messageContent.offerAccepted) {
+      formatted.offerState = 'accepted';
+    } else if (messageContent.content === '') {
+      formatted.offerState = 'pending';
+    } else {
+      formatted.offerState = 'rejected';
+    }
+  }
+
+  return formatted;
 }
 
 type RoomData = ChatListProps & {
@@ -75,8 +96,6 @@ const ChatRoom = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [roomSynced, setRoomSynced] = useState(false);
   const [messageSynced, setMessageSynced] = useState('');
-  const [acceptOffer, setAcceptOffer] = useState<'pending' | 'accepted' | 'rejected'>('pending');
-  const [deleteOffer, setDeleteOffer] = useState<boolean>(false);
 
   // ** Update Chat List **
   const updateChatList = (message: Messages) => {
@@ -109,6 +128,27 @@ const ChatRoom = () => {
         newRoom.contentType = message.message.contentType;
 
         return newRoom;
+      })
+    );
+  };
+
+  // ** Update Message List **
+  const updateOffer = (id: number, newContent: string, accepted: boolean) => {
+    setMessages((prev) =>
+      prev.map((message) => {
+        console.log('iterating rooms', message);
+        if (message.id !== id) {
+          return message;
+        }
+        const newMessage = { ...message };
+
+        if (newMessage.messageContent.contentType === 'offer') {
+          newMessage.messageContent.content = newContent;
+          newMessage.messageContent.offerAccepted = accepted;
+          newMessage.offerState = accepted ? 'accepted' : 'rejected';
+        }
+
+        return newMessage;
       })
     );
   };
@@ -362,6 +402,42 @@ const ChatRoom = () => {
     }
   };
 
+  const onAcceptOffer = (id: number) => {
+    acceptOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('acceptOffer', ack.data);
+        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
+        updateChatList(ack.data as Messages);
+      } else {
+        console.log('acceptOffer', ack.err);
+      }
+    });
+  };
+
+  const onRejectOffer = (id: number) => {
+    rejectOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('rejectOffer', ack.data);
+        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
+        updateChatList(ack.data as Messages);
+      } else {
+        console.log('rejectOffer', ack.err);
+      }
+    });
+  };
+
+  const onCancelOffer = (id: number) => {
+    cancelOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('cancelOffer', ack.data);
+        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
+        updateChatList(ack.data as Messages);
+      } else {
+        console.log('cancelOffer', ack.err);
+      }
+    });
+  };
+
   return (
     <Box id="chat-page" display="flex" sx={chatPageSx}>
       {/* render if isMd and isLg */}
@@ -419,8 +495,9 @@ const ChatRoom = () => {
             <ChatBox
               roomData={messages}
               loginId={userId}
-              setAcceptOffer={setAcceptOffer}
-              setDeleteOffer={setDeleteOffer}
+              onAcceptOffer={onAcceptOffer}
+              onRejectOffer={onRejectOffer}
+              onCancelOffer={onCancelOffer}
               ChatText={
                 <ChatTextBox
                   selectedFile={selectedFile}
