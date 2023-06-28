@@ -124,17 +124,19 @@ const ParameterForm = ({
       </Grid>
       <Grid container item xs={12} md={12} spacing={2} sx={{ width: '100%' }}>
         {data.map((parameter: ParameterProps) => {
-          switch (parameter.type) {
+          const inputType = dataTypeToInputType(parameter.dataType);
+          const paramType = parameter.type;
+          switch (paramType) {
             case ParameterType.WEIGHT:
               return (
                 <Grid item xs={4} md={4} sx={{ width: '100%' }} key={parameter.id}>
                   <TextField
-                    className="outlined-adornment-weight"
-                    size="medium"
+                    className='outlined-adornment-weight'
+                    size='medium'
                     label={parameter.displayName}
-                    type={dataTypeToInputType(parameter.dataType)}
+                    type={inputType}
                     InputProps={{
-                      endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+                      endAdornment: <InputAdornment position='end'>kg</InputAdornment>,
                     }}
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
@@ -153,7 +155,7 @@ const ParameterForm = ({
                     size="medium"
                     label={parameter.displayName}
                     fullWidth
-                    type={dataTypeToInputType(parameter.dataType)}
+                    type={inputType}
                     value={formValues[parameter.id]?.value || ''}
                     onChange={(event) => handleFormValueChange(event, parameter.id)}
                     error={errors.some((error) => error.parameterId === parameter.id)}
