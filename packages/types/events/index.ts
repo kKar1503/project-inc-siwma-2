@@ -5,7 +5,6 @@ type UserId = string;
 type RoomId = string;
 type MessageId = number;
 type ListingId = number;
-type OfferId = number;
 
 export type MessageContent = (
   | {
@@ -106,9 +105,9 @@ type EventParams = {
   clientGetMessages: RoomId; // Has Ack
   // Client Offer Events
   clientMakeOffer: MakeOffer; // Has Ack
-  clientAcceptOffer: OfferId; // Has Ack
-  clientRejectOffer: OfferId; // Has Ack
-  clientCancelOffer: OfferId; // Has Ack
+  clientAcceptOffer: MessageId; // Has Ack
+  clientRejectOffer: MessageId; // Has Ack
+  clientCancelOffer: MessageId; // Has Ack
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
@@ -126,9 +125,9 @@ type EventParams = {
   serverSyncMessage2: MessageSync;
   // Server Offer Events
   serverMakeOffer: MakeOffer;
-  serverAcceptOffer: OfferId;
-  serverRejectOffer: OfferId;
-  serverCancelOffer: OfferId;
+  serverAcceptOffer: MessageId;
+  serverRejectOffer: MessageId;
+  serverCancelOffer: MessageId;
   // Server Typing Events
   serverStartType: UserId;
   serverStopType: UserId;
