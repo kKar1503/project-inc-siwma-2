@@ -65,7 +65,7 @@ const ListingForm = ({
         />
       </Grid>
 
-      <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+      <Grid item xs={12} sx={{ width: '100%' }}>
         <TextField
           className="outlined-adornment-amount"
           value={price}
@@ -82,7 +82,7 @@ const ListingForm = ({
         />
       </Grid>
 
-      <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+      <Grid item xs={12} sx={{ width: '100%' }}>
         <FormControlLabel
           value="negotiable"
           control={
@@ -109,7 +109,7 @@ const ListingForm = ({
         />
       </Grid>
 
-      <Grid item xs={12} md={12} sx={{ width: '100%' }}>
+      <Grid item xs={12} sx={{ width: '100%' }}>
         <TextField
           rows={6}
           variant="outlined"
