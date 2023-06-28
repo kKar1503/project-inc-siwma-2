@@ -255,7 +255,7 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
                 ml: spacing(1),
               })}
             >
-              +65 {data?.mobileNumber}
+              +65 {data?.whatsappNumber}
             </Typography>
           </Box>
         )}
