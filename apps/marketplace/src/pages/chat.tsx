@@ -14,6 +14,7 @@ import { io } from 'socket.io-client';
 import {
   acceptOffer,
   cancelOffer,
+  createRoom,
   getMessage,
   getRooms,
   joinRoom,
@@ -96,6 +97,7 @@ const ChatRoom = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [roomSynced, setRoomSynced] = useState(false);
   const [messageSynced, setMessageSynced] = useState('');
+  const [queryChecked, setQueryChecked] = useState(false);
 
   // ** Update Chat List **
   const updateChatList = (message: Messages) => {
@@ -262,16 +264,69 @@ const ChatRoom = () => {
     }
 
     userIdRef.current = 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26';
+
     setConnect(true);
     setDomLoaded(true);
     // TODO, to change back to following
     // console.log('userId cannot be found, redirecting to signin page');
     // router.push('/login');
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (isConnected && loading === 'idle' && domLoaded && !roomSynced) {
+    if (isConnected && domLoaded && !queryChecked) {
+      if (
+        router.query.listing !== undefined &&
+        ((router.query.buyer !== undefined && router.query.seller === undefined) ||
+          (router.query.buyer === undefined && router.query.seller !== undefined))
+      ) {
+        const { listing, buyer, seller } = router.query;
+        if (buyer !== undefined) {
+          createRoom(
+            socket.current,
+            {
+              buyerId: userId,
+              sellerId: seller as string,
+              listingId: parseInt(listing as string, 10),
+            },
+            (ack) => {
+              setQueryChecked(true);
+              if (ack.success) {
+                console.log('createRoom', ack.data);
+                setRoomId(ack.data.id);
+              } else {
+                console.log('createRoom', ack.err);
+              }
+            }
+          );
+        } else {
+          createRoom(
+            socket.current,
+            {
+              buyerId: seller as string,
+              sellerId: userId,
+              listingId: parseInt(listing as string, 10),
+            },
+            (ack) => {
+              setQueryChecked(true);
+              if (ack.success) {
+                console.log('createRoom', ack.data);
+                setRoomId(ack.data.id);
+              } else {
+                console.log('createRoom', ack.err);
+              }
+            }
+          );
+        }
+      } else {
+        setQueryChecked(true);
+      }
+    }
+  }, [isConnected, domLoaded]);
+
+  useEffect(() => {
+    if (isConnected && loading === 'idle' && domLoaded && queryChecked && !roomSynced) {
       setRoomSynced(true);
       getRooms(socket.current, userId, (ack) => {
         if (ack.success) {
@@ -282,10 +337,10 @@ const ChatRoom = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, loading, domLoaded, roomSynced]);
+  }, [isConnected, loading, domLoaded, roomSynced, queryChecked]);
 
   useEffect(() => {
-    if (isConnected && loading === 'idle' && domLoaded && roomId !== '') {
+    if (isConnected && loading === 'idle' && domLoaded && queryChecked && roomId !== '') {
       if (messageSynced !== roomId) {
         if (messageSynced === '') {
           joinRoom(socket.current, roomId, (ack) => {
@@ -331,7 +386,7 @@ const ChatRoom = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, loading, domLoaded, roomId]);
+  }, [isConnected, loading, domLoaded, roomId, queryChecked]);
 
   // ** Memos **
   const currentRoom = useMemo<RoomData | null>(() => {
