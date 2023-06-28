@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Tooltip from '@mui/material/Tooltip';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import S3Image from '@/components/S3Image';
+import S3BoxImage from '@/components/S3BoxImage';
 import { useResponsiveness } from '@inc/ui';
 import { Box, ClickAwayListener } from '@mui/material';
 
@@ -36,21 +36,12 @@ const CrossSectionImageTooltip = ({ data }: CrossSectionImageType) => {
           onClose={handleTooltipClose}
           open={open}
           title={
-            data !== '' ? (
-              <S3Image
-                src={data}
-                alt="cross section image"
-                height={((isLg || isMd) && '200') || (isSm && '150') || '100'}
-                width={((isLg || isMd) && '200') || (isSm && '150') || '100'}
-              />
-            ) : (
-              <Image
-                src="/images/placeholder.png"
-                alt="cross section image"
-                height={((isLg || isMd) && '200') || (isSm && '150') || '100'}
-                width={((isLg || isMd) && '200') || (isSm && '150') || '100'}
-              />
-            )
+            <S3BoxImage
+            src={data}
+            placeholderImg="/images/placeholder.png"
+            height={((isLg || isMd) && '200') || (isSm && '150') || '100'}
+            width={((isLg || isMd) && '200') || (isSm && '150') || '100'}
+          />
           }
         >
           <InfoOutlinedIcon sx={{ ml: 1 }} onClick={handleTooltipOpen} />

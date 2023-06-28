@@ -6,20 +6,24 @@ import Box, { BoxProps } from '@mui/material/Box';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));
 
-export type S3BoxImageProps = BoxProps & { src: string };
+export type S3BoxImageProps = BoxProps & { src: string, placeholderImg?: string };
 
 const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   e.preventDefault();
   e.stopPropagation();
 };
 
-const S3BoxImage = ({ src, children, ...others }: S3BoxImageProps) => {
+const S3BoxImage = ({ src, placeholderImg, children, ...others }: S3BoxImageProps) => {
   const { data } = useImageQuery(src);
   const [image, setImage] = useState<{ url: string; name: string | undefined | null } | undefined>();
 
   useEffect(() => {
     if (!data) return;
     const { url, name } = data;
+    if (url === '' && placeholderImg) {
+      setImage({ url: placeholderImg, name });
+      return;
+    }
     setImage({ url, name });
     // eslint-disable-next-line consistent-return
     return () => URL.revokeObjectURL(url);
@@ -31,8 +35,8 @@ const S3BoxImage = ({ src, children, ...others }: S3BoxImageProps) => {
           style={{ cursor: 'default', textDecoration: 'none' }}>
       <Box
         component='img'
-        {...others}
         src={image.url}
+        {...others}
       >
         {children}
       </Box>
