@@ -191,8 +191,15 @@
   "Price - Low to High": "价格 - 从低到高",
   "Price - High to Low": "价格 - 从高到低",
 
-  "Displaying":"显示",
-  "search result":"个搜索",
-  "for":"结果",
-  "No more listings available":"No more listings available"
+  "Displaying": "显示",
+  "search result": "个搜索",
+  "for": "结果",
+  "No more listings available": "No more listings available",
+
+  "months ago": "months ago",
+  "weeks ago": "weeks ago",
+  "days ago": "days ago",
+  "hours ago": "hours ago",
+  "minutes ago": "minutes ago",
+  "seconds ago": "seconds ago"
 }
