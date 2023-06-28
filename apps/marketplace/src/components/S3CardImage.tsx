@@ -1,5 +1,6 @@
 import CardMedia, { CardMediaProps } from '@mui/material/CardMedia';
 import S3Image from '@/components/S3Image';
+import S3BoxImage  from '@/components/S3BoxImage';
 
 type CardMediaXProps = CardMediaProps & {
   src: string;
@@ -13,7 +14,7 @@ type CardMediaXProps = CardMediaProps & {
  */
 const CardMediaX = ({ src, alt, placeholder, height }: CardMediaXProps) => (
   <CardMedia component='div' style={{ position: 'relative', width: '100%', height }}>
-    <S3Image src={src} alt={alt} placeholderImg={placeholder} fill style={{ objectFit: 'cover' }} />
+    <S3BoxImage src={src} placeholderImg={placeholder} maxHeight='100%' maxWidth='100%' style={{ objectFit: 'cover' }} />
   </CardMedia>
 );
 
