@@ -194,12 +194,12 @@
   "Displaying": "显示",
   "search result": "个搜索",
   "for": "结果",
-  "No more listings available": "No more listings available",
+  "No more listings available": "没有更多的商品了",
 
-  "months ago": "months ago",
-  "weeks ago": "weeks ago",
-  "days ago": "days ago",
-  "hours ago": "hours ago",
-  "minutes ago": "minutes ago",
-  "seconds ago": "seconds ago"
+  "months ago": "个月前",
+  "weeks ago": "个周前",
+  "days ago": "天前",
+  "hours ago": "小时前",
+  "minutes ago": "分钟前",
+  "seconds ago": "秒前"
 }
