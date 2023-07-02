@@ -10,7 +10,6 @@ export default async function getAPIKey(numEmails: number): Promise<GetAPIKeyRes
     },
   });
 
-
   if (!key) {
     return {
       success: false,

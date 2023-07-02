@@ -108,6 +108,7 @@ model CompaniesBookmarks {
   companies Companies @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "companies_bookmarks_fk")
   users     Users     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "companies_bookmarks_fk1")
 
+  @@unique([userId, companyId], map: "companies_bookmarks_un")
   @@map("companies_bookmarks")
 }
 
@@ -150,8 +151,9 @@ model Listing {
   createdAt                                   DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                                   DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
   archived                                    Boolean                   @default(false)
-  deletedAt                                   DateTime                  @default(now()) @map("deleted_at") @db.Timestamptz(6)
+  deletedAt                                   DateTime?                 @map("deleted_at") @db.Timestamptz(6)
   multiple                                    Boolean                   @default(false)
+  hashedUrl                                   String?                   @unique(map: "listing_un") @map("hashed_url")
   category                                    Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
   users                                       Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
   listingBookmarks                            ListingBookmarks[]
@@ -174,6 +176,7 @@ model ListingBookmarks {
   users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "listing_bookmarks_fk")
   listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listing_bookmarks_fk_1")
 
+  @@unique([userId, listingId], map: "listing_bookmarks_un")
   @@map("listing_bookmarks")
 }
 
@@ -253,12 +256,11 @@ model Messages {
 model Offers {
   id                            Int        @id(map: "offers_pk") @default(sequence(maxValue: 2147483647))
   listing                       Int
-  amount                        Float      @default(0.0)
+  amount                        Decimal    @default(0.00) @db.Decimal
   accepted                      Boolean    @default(false)
   messages                      Messages[]
   listingOffersListingTolisting Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
 
-  @@unique([id, listing], map: "offers_un")
   @@map("offers")
 }
 
@@ -349,6 +351,7 @@ model UserBookmarks {
   usersUserBookmarksUserIdTousers     Users    @relation("userBookmarksUserIdTousers", fields: [userId], references: [id], onDelete: Cascade, map: "user_bookmarks_fk")
   usersUserBookmarksTargetUserTousers Users    @relation("userBookmarksTargetUserTousers", fields: [targetUser], references: [id], onDelete: Cascade, map: "user_bookmarks_fk1")
 
+  @@unique([userId, targetUser], map: "user_bookmarks_un")
   @@map("user_bookmarks")
 }
 

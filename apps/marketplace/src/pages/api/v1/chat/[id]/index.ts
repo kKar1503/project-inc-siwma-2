@@ -1,5 +1,5 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient, { Rooms, Users } from '@inc/db';
+import { apiHandler, formatAPIResponse, formatMessageResponse } from '@/utils/api';
+import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 
 function parseChatId($uuid: string) {
@@ -65,6 +65,12 @@ export async function checkChatExists(chatId: string) {
           },
         },
       },
+      messages: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: 1,
+      },
     },
   });
 
@@ -74,6 +80,24 @@ export async function checkChatExists(chatId: string) {
   }
 
   return chat;
+}
+
+// Fetch the number of unread messages
+async function fetchUreadMessages(
+  chat: Awaited<ReturnType<typeof checkChatExists>>,
+  userId: string
+) {
+  const result = await PrismaClient.messages.count({
+    where: {
+      room: chat.id,
+      author: {
+        not: userId,
+      },
+      read: false,
+    },
+  });
+
+  return result;
 }
 
 export default apiHandler().get(async (req, res) => {
@@ -112,7 +136,7 @@ export default apiHandler().get(async (req, res) => {
     listing: {
       id: chat.listingRoomsListingTolisting.id.toString(),
       name: chat.listingRoomsListingTolisting.name,
-      price: chat.listingRoomsListingTolisting.price,
+      price: chat.listingRoomsListingTolisting.price.toNumber(),
       unitPrice: chat.listingRoomsListingTolisting.unitPrice,
       type: chat.listingRoomsListingTolisting.type,
       // Whether or not the listing is still available for purchase
@@ -125,6 +149,8 @@ export default apiHandler().get(async (req, res) => {
           (e) => e.messages[0].author === req.token?.user.id
         ).length > 0,
     },
+    latestMessage: chat.messages.length > 0 ? formatMessageResponse(chat.messages[0]) : null,
+    unreadMessagesCount: await fetchUreadMessages(chat, req.token.user.id),
     createdAt: chat.createdAt.toISOString(),
   };
 

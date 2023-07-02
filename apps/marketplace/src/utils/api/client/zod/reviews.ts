@@ -6,7 +6,9 @@ const rating = z.number();
 const userId = z.string();
 const listingId = z.string();
 const createdAt = z.string().datetime();
-const type = z.string();
+const type = z.string().optional();
+const avgRating = z.number();
+const count = z.number();
 
 const reviewSchema = z.object({
     id,
@@ -15,15 +17,19 @@ const reviewSchema = z.object({
     userId,
     listingId,
     createdAt,
-    type
+    type,
 });
 
-export type ReviewResponseBody = z.infer<typeof reviewSchema>;
+const responseSchema = z.object({
+    avgRating,
+    count,
+    reviews: reviewSchema.array()
+});
 
-const getReviews = reviewSchema.array();
-
+export type ReviewResponseBody = z.infer<typeof responseSchema>;
 export type Review = z.infer<typeof reviewSchema>;
 
 export default {
-    getAll: getReviews,
+    get: reviewSchema,
+    getAll: responseSchema,
 };

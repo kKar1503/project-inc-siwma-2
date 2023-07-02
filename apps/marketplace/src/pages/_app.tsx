@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable camelcase */
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
@@ -9,8 +11,11 @@ import { ThemeComponent, useResponsiveness } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import NavBar from '@/components/marketplace/navbar/NavBar';
 import Box from '@mui/material/Box';
-import { SnackbarProvider, MaterialDesignContent, SnackbarOrigin } from 'notistack';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/i18n/i18n';
+import { MaterialDesignContent, SnackbarOrigin, SnackbarProvider } from 'notistack';
 import { styled } from '@mui/material';
+import { Noto_Sans_SC } from 'next/font/google';
 
 // -- Type declarations --//
 // Page type
@@ -20,6 +25,7 @@ interface PageType extends React.FunctionComponent<any> {
   allowNonAuthenticated: boolean;
   auth?: boolean;
   includeNavbar?: boolean;
+  renderSearchBar?: boolean;
 }
 
 // App prop type
@@ -58,11 +64,23 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   },
 }));
 
+// china font
+const notoSansSC = Noto_Sans_SC({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+});
+
 const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppProps) => {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
-  const { allowAuthenticated, allowNonAuthenticated, includeNavbar = true } = Component;
+  const {
+    allowAuthenticated,
+    allowNonAuthenticated,
+    includeNavbar = true,
+    renderSearchBar,
+  } = Component;
   // Stying snackbar responsiveness
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const alertStyle: SnackbarOrigin | undefined = useMemo(() => {
@@ -79,7 +97,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   }, [isSm, isMd, isLg]);
 
   return (
-    <ThemeComponent>
+    <ThemeComponent fonts={notoSansSC.style.fontFamily}>
       <SessionProvider session={session}>
         <AuthenticationGuard
           disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
@@ -97,10 +115,13 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
               }}
             >
               {getLayout(
-              <Box>
-                {includeNavbar && <NavBar />}
-                <Component {...pageProps} />
-              </Box>)}
+                <Box>
+                  <I18nextProvider i18n={i18n}>
+                    {includeNavbar && <NavBar renderSearchBar={renderSearchBar} />}
+                    <Component {...pageProps} />
+                  </I18nextProvider>
+                </Box>
+              )}
             </SnackbarProvider>
           </QueryClientProvider>
         </AuthenticationGuard>

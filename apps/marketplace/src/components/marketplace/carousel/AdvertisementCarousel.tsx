@@ -6,27 +6,21 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
+import { Advertisment } from '@/utils/api/client/zod/advertisements';
+import placeholder from 'public/images/listing-placeholder.svg';
+import S3BoxImage from '@/components/S3BoxImage';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-export interface Image {
-  link: string;
-  image: string | null;
-  companyId: string;
-  description: string;
-  active?: boolean | undefined;
-  startDate?: string | undefined;
-  endDate?: string | undefined;
-}
-
 export type AdvertisementCarouselProps = {
-  data: Image[];
+  data: Advertisment[];
 };
 
 const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
   const maxSteps = data.length;
 
   const [activeStep, setActiveStep] = useState(0);
+  const [scrollStatus, setScrollStatus] = useState(true);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -37,11 +31,13 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
   };
 
   const handleStepChange = (step: number) => {
-    setActiveStep(step);
+    if (scrollStatus) {
+      setActiveStep(step);
+    }
   };
 
   return (
-    <Box sx={{ maxWidth: 'max', maxHeight: 300 }}>
+    <Box sx={{ maxWidth: 'max', maxHeight: 300, overflowY: 'hidden', }}>
       <AutoPlaySwipeableViews
         axis="x"
         index={activeStep}
@@ -55,9 +51,10 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                 sx={{
                   position: 'relative',
                 }}
+                onMouseEnter={() => setScrollStatus(false)}
+                onMouseLeave={() => setScrollStatus(true)}
               >
-                <Box
-                  component="img"
+                <S3BoxImage
                   sx={{
                     height: 300,
                     display: 'block',
@@ -66,10 +63,10 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                     width: '100%',
                     opacity: '30%',
                   }}
-                  src={step.image!}
+                  // step.image is coinsidered as string|null but src requires string|undefined
+                  src={step.image ? step.image : placeholder.src}
                 />
-                <Box
-                  component="img"
+                <S3BoxImage
                   sx={{
                     height: 300,
                     display: 'block',
@@ -82,7 +79,8 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
                     marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
-                  src={step.image!}
+                  // step.image is coinsidered as string|null but src requires string|undefined
+                  src={step.image ? step.image : placeholder.src}
                 />
               </Box>
             ) : null}
@@ -96,7 +94,6 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
           backgroundColor: 'transparent',
         }}
         steps={maxSteps}
-        // position="static"
         activeStep={activeStep}
         nextButton={
           <Button

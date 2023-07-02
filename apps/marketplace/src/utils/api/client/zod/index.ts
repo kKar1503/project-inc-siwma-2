@@ -15,3 +15,4 @@ export * from './categories';
 export * from './companies';
 export * from './listings';
 export * from './parameters';
+export * from './reviews';
