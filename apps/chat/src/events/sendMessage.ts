@@ -35,7 +35,8 @@ const sendMessage: EventFile = (io, socket) => ({
       eventLog('warn', `No connected sockets to room (${roomId}).`);
 
       eventLog('trace', `Acknowledging message...`);
-      ack({ success: false, err: { message: 'No connected sockets to room.' } });
+      if (typeof ack === 'function')
+        ack({ success: false, err: { message: 'No connected sockets to room.' } });
 
       return;
     }
@@ -54,26 +55,69 @@ const sendMessage: EventFile = (io, socket) => ({
           createdAt: time,
           read: isOtherOccupantConnected,
         },
+        select: {
+          id: true,
+          author: true,
+          content: true,
+          createdAt: true,
+          contentType: true,
+          offers: {
+            select: {
+              id: true,
+              accepted: true,
+              listingOffersListingTolisting: {
+                select: {
+                  multiple: true,
+                },
+              },
+              amount: true,
+            },
+          },
+          read: true,
+          room: true,
+        },
       })
-      .then(({ id, read }) => {
-        eventLog('info', `Created new message (${id}) in database.`);
+      .then((message) => {
+        eventLog('info', `Created new message (${message.id}) in database.`);
+
+        eventLog('trace', `Formatting message...`);
+        const data = {
+          createdAt: message.createdAt.toISOString(),
+          id: message.id,
+          author: message.author,
+          read: message.read,
+          room: message.room,
+          message:
+            message.contentType === 'offer'
+              ? {
+                  contentType: message.contentType,
+                  multiple: message.offers!.listingOffersListingTolisting.multiple,
+                  offerAccepted: message.offers!.accepted,
+                  amount: message.offers!.amount.toNumber(),
+                  content: message.content,
+                }
+              : {
+                  contentType: message.contentType,
+                  content: message.content,
+                },
+        };
 
         eventLog('trace', `Acknowledging message...`);
-        ack({ success: true, data: { id, read } });
+        if (typeof ack === 'function') ack({ success: true, data });
 
-        eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
-        (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(EVENTS.SERVER.MESSAGE.ROOM, {
-          id,
-          message,
-          roomId,
-          time,
-        });
+        if (otherOccupantSocketId !== '') {
+          eventLog('info', `Emitting ${EVENTS.SERVER.MESSAGE.ROOM} to ${otherOccupantSocketId}...`);
+          (io.to(otherOccupantSocketId).emit as TypedSocketEmitter)(
+            EVENTS.SERVER.MESSAGE.ROOM,
+            data
+          );
+        }
       })
       .catch(() => {
         eventLog('error', `Failed to insert message into database.`);
 
         eventLog('trace', `Acknowledging message...`);
-        ack({ success: false });
+        if (typeof ack === 'function') ack({ success: false });
       });
   },
 });

@@ -7,91 +7,98 @@ import Typography from '@mui/material/Typography';
 import { DateTime } from 'luxon';
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { StarsRating } from '@inc/ui';
-
-export type ReviewProps = {
-  ownerId: number;
-  noOfReviews: number;
-  profilePic: string;
-  createdAt: string;
-  rating: number;
-  username: string;
-  companyName: string;
-  body: string;
-  buyer: boolean;
-};
+import { StarsRating, useResponsiveness } from '@inc/ui';
+import { Review } from '@/utils/api/client/zod';
+import fetchUser from '@/middlewares/fetchUser';
+import { useQuery } from 'react-query';
+import fetchProfileCompany from '@/middlewares/fetchProfileCompany';
 
 export type ReviewMessageData = {
-  data: ReviewProps;
+  data: Review;
+};
+
+const useGetUser = (userUuid: string) => {
+  const { data } = useQuery(['userdata', userUuid], async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  return data;
+};
+
+const useUserCompany = (companyId: string | undefined) => {
+  const { data } = useQuery(['userdata', companyId], async () => fetchProfileCompany(companyId), {
+    enabled: companyId !== undefined,
+  });
+  return data;
 };
 
 const ReviewMessage = ({ data }: ReviewMessageData) => {
   // destructure data
-  const {
-    ownerId,
-    noOfReviews,
-    profilePic,
-    createdAt,
-    rating,
-    username,
-    companyName,
-    body,
-    buyer,
-  } = data;
+  const user = useGetUser(data.userId);
+  const company = useUserCompany(user?.company);
 
   const datetime = useMemo(
-    () => DateTime.fromISO(createdAt).toRelative({ locale: 'en-SG' }),
-    [createdAt]
+    () => DateTime.fromISO(data.createdAt).toRelative({ locale: 'en-SG' }),
+    [data.createdAt]
   );
+
+  const [isSm] = useResponsiveness(['sm']);
 
   return (
     <List sx={{ m: 2 }}>
       <Box sx={{ m: 1 }}>
         <Stack direction="row" spacing={2} alignItems="center">
-          <Link href={`/profile/${ownerId}`}>
-            <Avatar src={profilePic} sx={{ width: 45, height: 45 }} />
+          <Link href={`/profile/${data.userId}`}>
+            <Avatar src={data.userId} sx={{ width: 45, height: 45 }} />
           </Link>
           <Stack>
             <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Link
-                  href={`/profile/${ownerId}`}
-                  style={{ textDecoration: 'none', color: 'black' }}
+                <Stack
+                  direction={isSm ? 'column' : 'row'}
+                  sx={{
+                    ...(isSm ? { alignItems: 'flex-start' } : { alignItems: 'center' }),
+                  }}
                 >
-                  <Typography
-                    variant="h6"
-                    component="div"
-                    sx={{
-                      flexGrow: 1,
-                      fontWeight: 'bold',
-                      '&:hover': { textDecoration: 'underline' },
-                    }}
+                  <Link
+                    href={`/profile/${data.userId}`}
+                    style={{ textDecoration: 'none', color: 'black' }}
                   >
-                    {username}
+                    <Typography
+                      component="div"
+                      sx={({ typography }) => ({
+                        fontSize: isSm ? typography.body1 : typography.h6,
+                        flexGrow: 1,
+                        fontWeight: 500,
+                        '&:hover': { textDecoration: 'underline' },
+                      })}
+                    >
+                      {user?.name}
+                    </Typography>
+                  </Link>
+                  <Typography
+                    variant={isSm ? 'body2' : 'body1'}
+                    sx={{ flexGrow: 1, ml: isSm ? 0 : 1, alignItems: 'center' }}
+                  >
+                    Review from {data.type}
                   </Typography>
-                </Link>
-                <Typography
-                  variant="subtitle1"
-                  sx={({ typography }) => ({
-                    fontSize: typography.subtitle1,
-                    flexGrow: 1,
-                  })}
-                >
-                  &nbsp;review from {buyer ? 'buyer' : 'seller'}
-                </Typography>
+                </Stack>
               </Box>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>&#183;</Typography>
-              <Typography variant="body1" sx={{ flexGrow: 1 }}>
+              <Typography
+                sx={({ typography }) => ({ fontSize: typography.body1, fontWeight: 800 })}
+              >
+                &#183;
+              </Typography>
+              <Typography variant={isSm ? 'body2' : 'body1'} sx={{ flexGrow: 1 }}>
                 {datetime}
               </Typography>
             </Stack>
             <Link href="/#" style={{ textDecoration: 'none' }}>
               <Typography
-                variant="body2"
+                variant={isSm ? 'body2' : 'body1'}
                 component="div"
                 sx={{ flexGrow: 1, color: 'grey', '&:hover': { textDecoration: 'underline' } }}
               >
-                {companyName}
+                {company?.name}
               </Typography>
             </Link>
           </Stack>
@@ -99,24 +106,21 @@ const ReviewMessage = ({ data }: ReviewMessageData) => {
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Stack direction="row" spacing={1}>
-          <Typography variant='body1' sx={{ ml: 2, fontWeight: 'bold' }}>{rating.toFixed(1)}</Typography>
-          <StarsRating rating={rating} />
+          <Typography
+            sx={({ typography }) => ({ fontSize: typography.body1, ml: 2, fontWeight: 500 })}
+          >
+            {data.rating.toFixed(1)}
+          </Typography>
+          <StarsRating rating={data.rating} />
         </Stack>
       </Box>
       <Box>
         <Typography
           variant="body1"
           component="div"
-          sx={{ flexGrow: 1, color: 'grey', mx: 2, my: 1 }}
+          sx={{ flexGrow: 1, mx: 2, mb: 3, mt: 1, wordWrap: 'break-word' }}
         >
-          {/* check if display review of reviews based on number */}
-          {noOfReviews}
-          {noOfReviews === 1 ? ' Review' : ' Reviews'}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography variant="body1" component="div" sx={{ flexGrow: 1, mx: 2, mb: 3 }}>
-          {body}
+          {data.review}
         </Typography>
       </Box>
       <Divider />

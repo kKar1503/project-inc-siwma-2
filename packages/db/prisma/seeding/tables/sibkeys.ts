@@ -10,7 +10,7 @@ const SibKeys: ISibKeys[] = [
     senderEmail: 'karandeepsingh00@icloud.com',
   },
   {
-    key: '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',
+    key: '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',
     senderEmail: 'garliclaunch@gmail.com',
   },
 ];

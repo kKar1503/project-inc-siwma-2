@@ -1,5 +1,7 @@
 import { BaseError, ParamError, ParamInvalidError, ParamTypeError } from '@inc/errors';
+import { Messages } from '@prisma/client';
 import { z } from 'zod';
+import { ChatMessage } from './client/zod/chat';
 
 /**
  * Parse a string to a number
@@ -161,6 +163,30 @@ const formatAPIResponse = (response: object | object[]) => {
     data: [response],
   };
 };
+
+/**
+ * Formats a message response object
+ * @param message The message to format
+ */
+export function formatMessageResponse(message: Messages) {
+  // Construct base response
+  const response: ChatMessage = {
+    id: message.id.toString(),
+    contentType: message.contentType,
+    read: message.read,
+    author: message.author,
+    createdAt: message.createdAt.toISOString(),
+  };
+
+  // Format the message based on the content type
+  if (message.contentType !== 'offer') {
+    response.content = message.content;
+  } else {
+    response.offer = message.offer;
+  }
+
+  return response;
+}
 
 export {
   parseToNumber,

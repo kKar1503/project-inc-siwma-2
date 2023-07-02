@@ -11,17 +11,21 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTheme } from '@mui/material/styles';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useRouter } from 'next/router';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useTogglePasswordVisibility } from '@inc/ui';
+import { useResponsiveness, useTogglePasswordVisibility } from '@inc/ui';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const { spacing, shape, shadows, palette } = useTheme();
   const { showPassword, handleTogglePassword } = useTogglePasswordVisibility();
   const router = useRouter();
 
@@ -35,11 +39,65 @@ const LoginForm = () => {
     if (!authResult?.ok) {
       setErrorMessage(true);
     } else {
-      return router.push('/');
+      // Check if there is a callbackUrl parameter in the router's query object
+      const callbackUrl = router.query.callbackUrl as string;
+      console.log('callbackUrl', callbackUrl);
+      // If it exists, redirect the user to that URL
+      if (callbackUrl) {
+        return router.push(callbackUrl);
+      }
+      // Otherwise, redirect the user to the root page
+       return router.push('/');
     }
 
     return authResult;
   };
+
+
+  const stylesLogin = useMemo(() => {
+    if (isSm) {
+      return {
+        boxShadow: shadows[5],
+        px: '2rem',
+        pb: '9rem',
+        pt: spacing(3),
+        position: 'relative',
+        bgcolor: palette.common.white,
+        ...shape,
+      };
+    }
+    if (isMd) {
+      return {
+        boxShadow: shadows[5],
+        px: '10rem',
+        pb: '12rem',
+        pt: spacing(3),
+        position: 'relative',
+        bgcolor: palette.common.white,
+        ...shape,
+      };
+    }
+    if (isLg) {
+      return {
+        boxShadow: shadows[5],
+        px: '10rem',
+        pb: '15rem',
+        pt: spacing(3),
+        position: 'relative',
+        bgcolor: palette.common.white,
+        ...shape,
+      };
+    }
+    return {
+      boxShadow: shadows[5],
+      px: '10rem',
+      pb: '15rem',
+      pt: spacing(3),
+      position: 'relative',
+      bgcolor: palette.common.white,
+      ...shape,
+    };
+  }, [isSm, isMd, isLg]);
 
   return (
     <Box>
@@ -49,7 +107,9 @@ const LoginForm = () => {
           backgroundSize: 'cover',
         }}
       >
-        <Image src="/images/siwma-background.png" alt="logo" fill />
+        <Box sx={{ width: '100%', height: '100%' }}>
+          <Image src="/images/siwma-background.png" alt="logo" style={{ objectFit: 'cover' }} fill />
+        </Box>
         <Container
           component="main"
           maxWidth="md"
@@ -60,29 +120,24 @@ const LoginForm = () => {
             height: '100vh',
           }}
         >
-          <Box
-            sx={({ shape, shadows, spacing, palette }) => ({
-              boxShadow: shadows[5],
-              px: '10rem',
-              pb: '15rem',
-              pt: spacing(3),
-              position: 'relative',
-              bgcolor: palette.common.white,
-              ...shape,
-            })}
-          >
+          <Box sx={stylesLogin}>
             <Box
-              sx={({ spacing }) => ({
+              sx={{
                 position: 'relative',
                 margin: 'auto',
                 display: 'flex',
                 justifyContent: 'center',
                 width: '100%',
                 height: '20%',
-                mb: spacing(2),
-              })}
+                objectFit: 'fill',
+              }}
             >
-              <Image src="/images/siwma-logo.jpeg" alt="logo" fill />
+              <Image
+                src="/images/siwma-logo.jpeg"
+                alt="logo"
+                fill
+                style={{ objectFit: 'contain' }}
+              />
             </Box>
             <Divider flexItem />
             <Box
@@ -107,6 +162,7 @@ const LoginForm = () => {
                 Please sign in to your account
               </Typography>
             </Box>
+
             <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 fullWidth
@@ -170,7 +226,7 @@ const LoginForm = () => {
                   />
                 </Grid>
                 <Grid item>
-                  <Link href="/forgot-your-password">
+                  <Link href="/forgot-password">
                     <Typography
                       sx={({ spacing, palette }) => ({
                         mt: spacing(1),

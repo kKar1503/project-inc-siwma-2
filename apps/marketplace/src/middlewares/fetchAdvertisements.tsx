@@ -11,11 +11,10 @@ const fetchAdvertisements = async (permissions: number) => {
   // If user is admin, then you have to check whether the current date is between start and end date and check if active key is true
   if (permissions === 1) {
     const filteredArr = advertisementsData.filter((item) => {
-      const startDate = new Date(item.startDate as string)
-      const endDate = new Date(item.endDate as string)
-
+      const startDate = new Date(item.startDate as string);
+      const endDate = new Date(item.endDate as string);
       return currentDate >= startDate && currentDate <= endDate && item.active;
-    })
+    });
     return filteredArr;
   }
 

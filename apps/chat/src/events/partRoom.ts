@@ -16,15 +16,16 @@ const partRoom: EventFile = (io, socket) => ({
       eventLog('warn', `Not in ${roomId}.`);
 
       eventLog('trace', `Acknowledging room (${roomId})...`);
-      ack({ success: false, err: { message: 'Not in room.' } });
+      if (typeof ack === 'function') ack({ success: false, err: { message: 'Not in room.' } });
 
       return;
     }
 
     // Checking if room is in cache. If not, then fetch it from db.
     eventLog('trace', `Attempting to check if room (${roomId}) is in cache...`);
-    const [roomIdFromCache, [occupant1, occupant2]] =
-      RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
+    const roomOccupantStoreData = RoomOccupantsStore.searchRoomOccupantsByRoomId(roomId);
+    eventLog('debug', `Room (${roomId}) store data: ${JSON.stringify(roomOccupantStoreData)}}`);
+    const [roomIdFromCache, [occupant1, occupant2]] = roomOccupantStoreData;
 
     if (roomIdFromCache !== '') {
       eventLog('warn', `Room (${roomId}) cannot be found in cache.`);
@@ -87,7 +88,7 @@ const partRoom: EventFile = (io, socket) => ({
     eventLog('info', `Left ${roomId}.`);
 
     eventLog('trace', `Acknowledging room (${roomId})...`);
-    ack({ success: true });
+    if (typeof ack === 'function') ack({ success: true });
   },
 });
 

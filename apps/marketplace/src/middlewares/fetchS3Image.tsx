@@ -1,9 +1,8 @@
-const bucketName = process.env.AWS_BUCKET as string || 'siwma-marketplace';
-const region = process.env.AWS_REGION as string || 'ap-southeast-1';
+const DISABLE_RENAME_INTEGRATION = true;
 
-const fetchS3Image = async (imgKey : string) => {
-  const imgSrc = `https://${bucketName}.s3.${region}.amazonaws.com/${imgKey}`
-
+const fetchS3Image = async (imgKey: string) => {
+  const imgSrc = `https://s3.karlok.dev/${imgKey}`;
+  if (DISABLE_RENAME_INTEGRATION) return { url: imgSrc, name: undefined };
   try {
     const response = await fetch(imgSrc, {
       headers: {
@@ -15,12 +14,11 @@ const fetchS3Image = async (imgKey : string) => {
       url: URL.createObjectURL(await response.blob()),
       name: response.headers.get('x-amz-meta-original-name'),
     };
-  }
-  catch (error) {
+  } catch (error) {
     return {
       url: imgSrc,
       name: undefined,
-    }
+    };
   }
-}
+};
 export default fetchS3Image;

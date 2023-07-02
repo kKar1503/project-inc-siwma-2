@@ -19,7 +19,7 @@ export class S3Lib implements IS3 {
     if (!(bucketName.length >= 3 && bucketName.length <= 63))
       throw new InvalidBucketName(
         bucketName,
-        `${bucketName} must be between 3 and 63 characters long`,
+        `${bucketName} must be between 3 and 63 characters long`
       );
     if (!/^[a-z0-9]/.test(bucketName))
       throw new InvalidBucketName(bucketName, `${bucketName} must start with a letter or number`);
@@ -30,12 +30,12 @@ export class S3Lib implements IS3 {
     if (bucketName !== bucketName.toLowerCase())
       throw new InvalidBucketName(
         bucketName,
-        `${bucketName} must not contain any uppercase characters`,
+        `${bucketName} must not contain any uppercase characters`
       );
     if (bucketName.endsWith('-s3alias') || bucketName.endsWith('--ol-s3'))
       throw new InvalidBucketName(
         bucketName,
-        `${bucketName} must not end with be -s3alias or --ol-s3`,
+        `${bucketName} must not end with be -s3alias or --ol-s3`
       );
     if (bucketName.startsWith('xn--'))
       throw new InvalidBucketName(bucketName, `${bucketName} must not start with be xn--`);

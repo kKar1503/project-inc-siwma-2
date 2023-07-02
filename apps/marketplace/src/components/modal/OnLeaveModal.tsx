@@ -15,7 +15,7 @@ const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
   const { t } = useTranslation();
 
   if (leftButtonState === true) {
-    router.back();
+    router.push('/');
   }
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
       icon="info"
       title={t('Confirmation')}
       content={t(
-        'Once you leave the page, your changes will be removed and your changes will not be updated.'
+        'Once you leave the page, your changes will be removed and your changes will not be saved.'
       )}
       leftButtonText={t('leave')}
       rightButtonText={t('stay here')}

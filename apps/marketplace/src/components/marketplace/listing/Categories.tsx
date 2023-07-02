@@ -1,6 +1,10 @@
 import { TCategory } from '@/types/category';
-import { Card, CardContent, Typography, CardMedia, CardActionArea } from '@mui/material';
-import React from 'react';
+import { Card, CardContent, Typography, CardMedia, CardActionArea, SxProps } from '@mui/material';
+import React, { useMemo } from 'react';
+import S3CardImage from '@/components/S3CardImage';
+import { useResponsiveness } from '@inc/ui';
+import placeholder from 'public/images/category-placeholder.svg';
+import { useTranslation } from 'react-i18next';
 
 const CategoryCard: React.FC<TCategory> = ({
   id,
@@ -10,21 +14,30 @@ const CategoryCard: React.FC<TCategory> = ({
   crossSectionImage,
   active,
   parameters,
-}) => (
-  <Card>
-    <CardActionArea href={`/categories/${id}`}>
-      <CardMedia
-        sx={{ height: 140 }}
-        image="https://res.cloudinary.com/coin-nft/image/upload/c_limit,q_auto,w_329/f_auto/v1/cache/1/71/ab/71ab6c19f578fd0805c6ac9e42125ab20c51ba21e0c44ead672a963297acd70f-YzA1Yzc1YTktNDk4MS00YWY0LTgyYzgtOWU0YzcxNzM1ODRj?_a=ATCkFAA0"
-        title={name}
-      />
-      <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Typography sx={{ padding: '0' }} gutterBottom variant="h6" component="div">
-          {name}
-        </Typography>
-      </CardContent>
-    </CardActionArea>
-  </Card>
-);
+}) => {
+  const [isSm] = useResponsiveness(['sm']);
+  const { t } = useTranslation();
+
+  return (
+    <Card>
+      <CardActionArea
+        href={`/searchResult?search=&sortBy=recent_newest&category=${id}&negotiable=&minPrice=&maxPrice=`}
+      >
+        <S3CardImage
+          height={isSm ? 140 : 180}
+          src={image}
+          title={name}
+          alt={name}
+          placeholder={placeholder.src}
+        />
+        <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography sx={{ padding: '0' }} gutterBottom variant="h6" component="div">
+            {t([name])}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
+};
 
 export default CategoryCard;

@@ -75,17 +75,23 @@ class SocketUserStore {
     logger.trace(`addSocketUser() | Checking if userId (${userId}) already exist in cache...`);
     if (userSet.has(userId)) {
       logger.warn(`userId (${userId}) already exist in cache.`);
-      return -1;
+      logger.warn(`Overriding socketId (${socketId}) into userId (${userId})...`);
+      const userIndex = [...userSet].findIndex((user) => user === userId);
+      const tempSockets = [...socketSet];
+      tempSockets[userIndex] = socketId;
+      socketSet.clear();
+      tempSockets.forEach((socket) => socketSet.add(socket));
+      return userIndex;
+    } else {
+      logger.trace(`addSocketUser() | Adding socketId (${socketId}) to socketSet...`);
+      socketSet.add(socketId);
+      logger.trace(`addSocketUser() | Adding userId (${userId}) to userSet...`);
+      userSet.add(userId);
+
+      logger.debug(`addSocketUser() | Index Pos in socketSet: ${socketSet.size - 1}.`);
+      logger.debug(`addSocketUser() | Index Pos in userSet: ${userSet.size - 1}.`);
+      return socketSet.size - 1;
     }
-
-    logger.trace(`addSocketUser() | Adding socketId (${socketId}) to socketSet...`);
-    socketSet.add(socketId);
-    logger.trace(`addSocketUser() | Adding userId (${userId}) to userSet...`);
-    userSet.add(userId);
-
-    logger.debug(`addSocketUser() | Index Pos in socketSet: ${socketSet.size - 1}.`);
-    logger.debug(`addSocketUser() | Index Pos in userSet: ${userSet.size - 1}.`);
-    return socketSet.size - 1;
   };
 
   /**
@@ -127,7 +133,7 @@ class SocketUserStore {
 
     const searchSet = searchBy === 'socketId' ? socketSet : userSet;
 
-    logger.debug(`searchSocketUser() | Search via ${searchBy}:${search}`);
+    logger.debug(`searchSocketUser() | Search via ${searchBy}: ${search}`);
 
     logger.trace(`searchSocketUser() | Checking if ${searchBy} (${search}) exist in cache...`);
     if (!searchSet.has(search)) {
@@ -146,7 +152,7 @@ class SocketUserStore {
     logger.debug(`searchSocketUser() | Found ${searchBy} index: ${idx}...`);
 
     const searchFor = [...searchForSet][idx];
-    logger.debug(`searchSocketUser() | Found ${searchForId}: ${idx}...`);
+    logger.debug(`searchSocketUser() | Found ${searchForId} index: ${idx}...`);
 
     return searchBy === 'socketId' ? [search, searchFor] : [searchFor, search];
   };

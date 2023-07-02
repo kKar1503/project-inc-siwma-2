@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent, FormEvent, useMemo } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import ProfileDetailCard, {
   ProfileDetailCardProps,
@@ -19,6 +19,7 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
+import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
@@ -26,12 +27,14 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import updateUser from '@/middlewares/updateUser';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import { useQuery, useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import fetchCompany from '@/middlewares/fetchCompany';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
+import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
+import { useTranslation } from 'react-i18next';
 
 export type ProfilePageProps = {
   data: ProfileDetailCardProps;
@@ -44,21 +47,41 @@ const useGetUserQuery = (userUuid: string) => {
   return data;
 };
 
-const useUpdateUserMutation = (userUuid: string) =>
-  useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
+const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
+  useMutation((updatedUserData: PutUserRequestBody) =>
+    updateUser(updatedUserData, userUuid, profilePicture)
+  );
+
+const useGetReview = (userUuid: string, sortBy?: string) => {
+  const { data } = useQuery(
+    ['reviewdata', userUuid, sortBy],
+    async () => {
+      if (sortBy) {
+        return fetchProfilesReview(userUuid, sortBy);
+      }
+      return fetchProfilesReview(userUuid);
+    },
+    {
+      enabled: userUuid !== undefined || sortBy !== undefined,
+    }
+  );
+
+  return data;
+};
 
 const EditProfile = () => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
-  const mutation = useUpdateUserMutation(loggedUserUuid);
+  const userReviews = useGetReview(id);
   const theme = useTheme();
   const { spacing } = theme;
   const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [image, setImage] = useState<File | undefined>(undefined);
   const [name, setName] = useState<string>(userDetails?.name || '');
   const [nameError, setNameError] = useState('');
   const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
@@ -75,6 +98,9 @@ const EditProfile = () => {
   const [whatsappError, setWhatsappError] = useState('');
   const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
   const [openLeave, setOpenLeave] = useState<boolean>(false);
+  const { t } = useTranslation();
+
+  const mutation = useUpdateUserMutation(loggedUserUuid, image);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -235,6 +261,7 @@ const EditProfile = () => {
   useEffect(() => {
     if (profilePicture) {
       setImageUrl(URL.createObjectURL(profilePicture));
+      setImage(profilePicture);
     }
   }, [profilePicture]);
 
@@ -289,11 +316,11 @@ const EditProfile = () => {
   return (
     <>
       <Head>
-        <title>Edit Profile</title>
+        <title>{t('Edit Profile')}</title>
       </Head>
 
       <Grid sx={gridCols}>
-        {userDetails && <ProfileDetailCard data={userDetails} />}
+        {userDetails && <ProfileDetailCard data={userDetails} reviewData={userReviews} />}
         <Box
           sx={{
             display: 'flex',
@@ -317,8 +344,8 @@ const EditProfile = () => {
                   subheaderTypographyProps={{
                     fontSize: 16,
                   }}
-                  title="Edit Profile"
-                  subheader="Edit your profile details here"
+                  title={t('Edit Profile')}
+                  subheader={t('Edit your profile details here')}
                 />
                 <Box
                   sx={({ spacing }) => ({
@@ -333,7 +360,7 @@ const EditProfile = () => {
                     sx={({ palette }) => ({ bgcolor: palette.error[400] })}
                     onClick={handleCancel}
                   >
-                    Cancel Edit
+                    {t('Cancel Edit')}
                   </Button>
                   <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
                 </Box>
@@ -343,9 +370,9 @@ const EditProfile = () => {
                 sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
               />
               <CardContent>
-                <Typography sx={{ fontWeight: 'bold' }}>Profile Photo</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>{t('Profile Photo')}</Typography>
                 <Typography>
-                  Choose an image for other users to recognise you on the marketplace
+                  {t('Choose an image for other users to recognise you on the marketplace')}
                 </Typography>
                 <Box
                   sx={({ spacing }) => ({
@@ -367,13 +394,18 @@ const EditProfile = () => {
                         alignItems: 'center',
                       }}
                     >
-                      <Typography>Maximum upload size: &nbsp;</Typography>
+                      <Typography>{t('Maximum upload size')}: &nbsp;</Typography>
                       <Typography sx={{ fontWeight: 'bold' }}> 64MB </Typography>
                     </Box>
                     <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
                       <Button variant="contained" component="label">
                         Upload Profile Photo
-                        <input accept="image/*" type="file" hidden onChange={handleFileSelect} />
+                        <Input
+                          type="file"
+                          onChange={handleFileSelect}
+                          inputProps={{ accept: 'image/*' }}
+                          sx={{ display: 'none' }}
+                        />
                       </Button>
                     </Box>
                   </Box>
@@ -385,8 +417,8 @@ const EditProfile = () => {
                 sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
               />
               <CardContent>
-                <Typography sx={{ fontWeight: 'bold' }}>Personal Details</Typography>
-                <Typography>Change your personal details here</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>{t('Personal Details')}</Typography>
+                <Typography>{t('Change your personal details here')}</Typography>
                 <Box
                   sx={({ spacing }) => ({
                     mt: spacing(2),
@@ -396,7 +428,7 @@ const EditProfile = () => {
                   })}
                 >
                   <TextField
-                    label="Full Name"
+                    label={t('Full Name')}
                     placeholder="Your Full Name"
                     InputLabelProps={{ shrink: true }}
                     value={name}
@@ -409,7 +441,7 @@ const EditProfile = () => {
                     })}
                   />
                   <TextField
-                    label="Phone"
+                    label={t('Phone')}
                     placeholder="91234567"
                     InputLabelProps={{ shrink: true }}
                     value={mobileNumber}
@@ -426,7 +458,7 @@ const EditProfile = () => {
                   />
                 </Box>
                 <TextField
-                  label="Email"
+                  label={t('Email')}
                   placeholder="user@gmail.com"
                   InputLabelProps={{ shrink: true }}
                   sx={({ spacing }) => ({
@@ -441,7 +473,7 @@ const EditProfile = () => {
                 <TextField
                   multiline
                   rows={5}
-                  label="Bio"
+                  label={t('Bio')}
                   placeholder="Bio Description"
                   InputLabelProps={{ shrink: true }}
                   sx={({ spacing }) => ({
@@ -460,8 +492,8 @@ const EditProfile = () => {
                 sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
               />
               <CardContent>
-                <Typography sx={{ fontWeight: 'bold' }}>Connections</Typography>
-                <Typography>Link your messaging accounts here</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>{t('Connections')}</Typography>
+                <Typography>{t('Link your messaging accounts here')}</Typography>
                 <Box
                   sx={({ spacing }) => ({
                     mt: spacing(2),
@@ -470,8 +502,12 @@ const EditProfile = () => {
                   })}
                 >
                   <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
-                    <InputLabel>Contact</InputLabel>
-                    <Select label="contact" value={contactMethod} onChange={handleContactChange}>
+                    <InputLabel>{t('Contact')}</InputLabel>
+                    <Select
+                      label={t('Contact')}
+                      value={contactMethod}
+                      onChange={handleContactChange}
+                    >
                       <MenuItem value="telegram">Telegram</MenuItem>
                       <MenuItem value="whatsapp">Whatsapp</MenuItem>
                     </Select>
@@ -479,7 +515,7 @@ const EditProfile = () => {
 
                   {contactMethod === 'whatsapp' && (
                     <TextField
-                      label="Whatsapp Number"
+                      label={`Whatsapp ${t('Number')}`}
                       placeholder="8123 4567"
                       InputProps={{
                         startAdornment: (
@@ -514,7 +550,7 @@ const EditProfile = () => {
 
                   {contactMethod === 'telegram' && (
                     <TextField
-                      label="Telegram Username"
+                      label={`Telegram ${t('Username')}`}
                       placeholder="account_username"
                       InputProps={{
                         startAdornment: (
@@ -574,7 +610,7 @@ const EditProfile = () => {
                       (contactMethod === 'telegram' && telegramUsername.trim() === '')
                     }
                   >
-                    Save Changes
+                    {t('Save Changes')}
                   </Button>
                 </Box>
               </CardActions>
@@ -585,4 +621,7 @@ const EditProfile = () => {
     </>
   );
 };
+
+EditProfile.renderSearchBar = false;
+
 export default EditProfile;
