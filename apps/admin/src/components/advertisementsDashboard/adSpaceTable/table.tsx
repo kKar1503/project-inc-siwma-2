@@ -12,8 +12,9 @@ import RowHeader from '@/components/advertisementsDashboard/adSpaceTable/rowHead
 import RowBody from '@/components/advertisementsDashboard/adSpaceTable/rowBody';
 import usePagination from '@/components/advertisementsDashboard/adSpaceTable/hooks/usePagination';
 import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/dataLayout';
+import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 
-interface Props {
+export interface Props {
   active: boolean;
   rows: readonly DataType[];
   onDelete: (ids: readonly string[]) => void;
@@ -97,8 +98,7 @@ export default function({
 
 
   return (
-    <Box sx={{ width: '100%'}}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <ModuleBase noFlex>
         <MainHeader
           numSelected={selected.length}
           active={active}
@@ -128,7 +128,7 @@ export default function({
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: 53 * emptyRows,
+                    height: 53.25 * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />
@@ -146,7 +146,6 @@ export default function({
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </Paper>
-    </Box>
+    </ModuleBase>
   );
 }

@@ -1,9 +1,12 @@
 interface Props {
-  children: JSX.Element | string;
+  children: unknown;
 }
+
 
 const Debug = ({ children }:Props) => (
     <div style={{ border: '1px solid red', width: '100%', height: '100%' }}>
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment,spaced-comment */}
+      {/*// @ts-ignore*/}
       {children}
     </div>
   );
@@ -12,4 +15,4 @@ const Debug = ({ children }:Props) => (
 const NoDebug = ({ children }: Props) => <>{children}</>;
 
 
-export default Debug;
+export default NoDebug;

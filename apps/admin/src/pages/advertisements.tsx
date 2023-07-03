@@ -1,5 +1,4 @@
 import AdSpaceSection from '@/components/advertisementsDashboard/adSpaceSection';
-import useResponsiveness from '@inc/ui/dist/hook/useResponsiveness';
 import Grid from '@mui/material/Grid';
 import ActiveGraph from '@/components/advertisementsDashboard/activeGraph';
 import ClicksPie from '@/components/advertisementsDashboard/clicksPie';
@@ -14,7 +13,6 @@ const useGetAdSpaceDataQuery = () => {
 
 
 const AdvertisementDashboard = () => {
-  const [sm, md, lg] = useResponsiveness(['sm', 'md', 'lg']);
   const apiData = useGetAdSpaceDataQuery();
 
   return (
@@ -29,12 +27,10 @@ const AdvertisementDashboard = () => {
       </Grid>
       <Grid item container xs={12} md={3} lg={3}>
         <Grid item xs={6} md={12} lg={12}>
-          {/* Chart placeholder */}
           <Debug>
             <ClicksPie />
           </Debug>
         </Grid>
-        {/* Graph placeholder */}
         <Grid item xs={6} md={12} lg={12}>
           <Debug>
             <ActiveGraph />

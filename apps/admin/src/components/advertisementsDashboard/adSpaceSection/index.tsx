@@ -2,8 +2,11 @@ import AdSpaceTable from '@/components/advertisementsDashboard/adSpaceTable';
 import { useQuery } from 'react-query';
 import fetchAdSpaceData from '@/middlewares/fetchAdSpaceData';
 import Grid from '@mui/material/Grid';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import Debug from '@/components/Debug';
+import AdminFigure from '@/components/AdminFigure';
+import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
+import AdsClickIcon from '@mui/icons-material/AdsClick';
+import InfoCard from '@/components/advertisementsDashboard/InfoCard';
 
 const onDelete = (ids: readonly string[]) => {
 
@@ -44,13 +47,14 @@ const AdvertisementDashboard = () => {
         <Grid item xs={6} md={6} lg={6}>
           <Debug>
             <div style={{ width: '100%', height: '2em' }} />
-            {/* <AdminCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon} value={active.length.toString()}/> */}
+            <InfoCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon}
+                         value={active.length.toString()} />
           </Debug>
         </Grid>
         <Grid item xs={6} md={6} lg={6}>
           <Debug>
             <div style={{ width: '100%', height: '2em' }} />
-            {/* <AdminCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} /> */}
+            <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />
           </Debug>
         </Grid>
         <Grid item xs={12} md={12} lg={12}>

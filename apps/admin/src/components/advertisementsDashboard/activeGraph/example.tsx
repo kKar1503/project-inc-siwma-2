@@ -1,4 +1,5 @@
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme } from 'victory';
+import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 
 const data = [
   { quarter: 1, earnings: 13000 },
@@ -8,6 +9,7 @@ const data = [
 ];
 
 const ExampleGraph = () => (
+  <ModuleBase>
     <VictoryChart
       // adding the material theme provided with Victory
       theme={VictoryTheme.material}
@@ -27,6 +29,7 @@ const ExampleGraph = () => (
         y='earnings'
       />
     </VictoryChart>
+  </ModuleBase>
   );
 
 export default ExampleGraph;
