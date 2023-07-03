@@ -31,6 +31,20 @@ type BaseTableProps = {
   page: number;
 };
 
+/**
+ * Build wrapper tables around this component
+ * @param rows - The data to display in the table
+ * @param headers - The headers to display in the table
+ * @param rowsPerPageOptions - The options for the rows per page dropdown
+ * @param totalCount - The total number of rows (including the ones not displayed on the current page)
+ * @param onPageChange - The callback for when the page changes
+ * @param onRowsPerPageChange - The callback for when the rows per page changes
+ * @param onEdit - The callback for when the edit button is clicked
+ * @param onToggle - The callback for when the toggle button is clicked
+ * @param onDelete - The callback for when the delete button is clicked
+ * @param rowsPerPage - The number of rows per page
+ * @param page - The current page
+ */
 const BaseTable = (props: BaseTableProps) => {
   const [selected, setSelected] = useState<readonly BaseTableData[]>([]);
 
