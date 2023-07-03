@@ -46,14 +46,12 @@ const AdvertisementDashboard = () => {
       <Grid container spacing={2}>
         <Grid item xs={6} md={6} lg={6}>
           <Debug>
-            <div style={{ width: '100%', height: '2em' }} />
             <InfoCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon}
                          value={active.length.toString()} />
           </Debug>
         </Grid>
         <Grid item xs={6} md={6} lg={6}>
           <Debug>
-            <div style={{ width: '100%', height: '2em' }} />
             <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />
           </Debug>
         </Grid>
