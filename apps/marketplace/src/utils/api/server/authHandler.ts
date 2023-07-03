@@ -174,7 +174,7 @@ export const validateToken = async <T extends RefreshTokens>({
   if (token.revoked) {
     // The token has been revoked, but it was still used in the request
     // This might be an attack, so we should revoke all refresh tokens associated with the user
-    await revokeRefreshTokens(userId);
+    // await revokeRefreshTokens(userId);
 
     console.log('token revoked attack: ', token);
 

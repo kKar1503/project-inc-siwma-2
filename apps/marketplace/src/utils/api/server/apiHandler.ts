@@ -3,16 +3,19 @@ import {
   BucketConnectionFailure,
   ErrorJSON,
   InvalidBucketName,
+  InvalidDataProvided,
+  MissingUUID,
+  MultipartUploadError,
   ObjectCollision,
   ObjectNotFound,
   ParamError,
   ParamInvalidError,
   ParamRequiredError,
+  ParamTooShortError,
   ParamTypeError,
+  QueryError,
   UnknownError,
   UnknownS3Error,
-  ParamTooShortError,
-  QueryError,
 } from '@inc/errors';
 
 import { NextApiResponse } from 'next';
@@ -140,6 +143,12 @@ function handleS3Error(error: S3Error) {
       return new ObjectNotFound();
     case 'ObjectConflict':
       return new ObjectCollision();
+    case 'MultipartUploadError':
+      return new MultipartUploadError();
+    case 'InvalidDatatype':
+      return new InvalidDataProvided();
+    case 'MissingUUID':
+      return new MissingUUID();
     default:
       return new UnknownS3Error();
   }
@@ -153,6 +162,7 @@ function handleS3Error(error: S3Error) {
 function handleError($error: Error): ErrorJSON[] {
   // An error occurred
   let error = $error;
+
   console.log({ error });
 
   // Check if it was a zod error

@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -15,20 +16,33 @@ import Image from 'next/image';
 import { DateTime } from 'luxon';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme, alpha } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
 
-export interface ChatListProps {
+type CategoryType = 'All' | 'Buying' | 'Selling';
+
+export type ChatListProps = {
   id: string;
-  company: string;
-  category: string;
-  latestMessage: string;
-  price: number;
+  username: string;
+  category: CategoryType;
   itemName: string;
   inProgress: boolean;
-  date: string;
-  imageUrl: string;
-  badgeContent: number;
-}
-type CategoryType = 'all' | 'Buying' | 'Selling';
+  time?: Date;
+  userImage: string;
+  unreadMessages: number;
+} & (
+  | {
+      latestMessage: string;
+      contentType: 'text' | 'file' | 'image';
+    }
+  | {
+      latestMessage: {
+        amount: number;
+        accepted: boolean;
+        content: string;
+      };
+      contentType: 'offer';
+    }
+);
 
 export type ChatListPageProps = {
   chats: ChatListProps[];
@@ -41,22 +55,20 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography } = useTheme();
 
-  const [category, setCategory] = useState<CategoryType>('all');
+  const [category, setCategory] = useState<CategoryType>('All');
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const whiteTransparent = alpha(palette.common.white, 0.04);
+  const greyTransparent = alpha(palette.common.black, 0.06);
+  const { t } = useTranslation();
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
     setCategory(event.target.value as CategoryType);
   };
 
   const filteredChats = useMemo(() => {
-    if (category.toLowerCase() === 'all') {
-      return chats.filter((chat) => chat.inProgress);
+    if (category === 'All') {
+      return chats;
     }
-    const filteredItems = chats.filter(
-      (chat) => chat.category.toLowerCase() === category.toLowerCase() && chat.inProgress
-    );
-    return filteredItems;
+    return chats.filter((chat) => chat.category === category);
   }, [chats, category]);
 
   const chatListStyles = useMemo(() => {
@@ -232,12 +244,14 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
 
   return (
     <Box
+      id="chat-list"
       sx={{
         backgroundColor: palette.common.white,
         height: '100%',
+        borderRight: '1px solid rgba(0, 0, 0, 0.12)',
       }}
     >
-      <Box sx={chatListStyles?.listHeader}>
+      <Box id="list-header" sx={chatListStyles?.listHeader}>
         <Box
           sx={{
             display: 'flex',
@@ -247,11 +261,13 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
           }}
         >
           <Typography variant="h5" sx={chatListStyles?.listTitle}>
-            Conversations
+            {t('Conversations')}
           </Typography>
-          <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
-            {filteredChats.length} ACTIVE {filteredChats.length !== 1 ? 'CHATS' : 'CHAT'}
-          </Typography>
+          {/* Commented out just in case we want this feature back LOL */}
+          {/* <Typography variant="subtitle2" sx={chatListStyles?.activeChat}>
+            {filteredChats.length} {t('ACTIVE')}
+            {filteredChats.length !== 1 ? t('CHATS') : t('CHAT')}
+          </Typography> */}
         </Box>
         <FormControl
           variant="outlined"
@@ -285,9 +301,9 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
               ...chatListStyles?.searchBar,
             }}
           >
-            <MenuItem value="all">ALL CHATS</MenuItem>
-            <MenuItem value="Buying">BUYING</MenuItem>
-            <MenuItem value="Selling">SELLING</MenuItem>
+            <MenuItem value="All">{t('ALL CHATS')}</MenuItem>
+            <MenuItem value="Buying">{t('BUYING')}</MenuItem>
+            <MenuItem value="Selling">{t('SELLING')}</MenuItem>
           </Select>
         </FormControl>
 
@@ -296,15 +312,14 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
             disableUnderline: true,
             style: chatListStyles?.searchBar,
           }}
-          placeholder="Search messages, listings, usernames"
+          placeholder={t('Search messages, listings, usernames').toString()}
           variant="filled"
           fullWidth
           sx={{
             '& .MuiFilledInput-root': {
-              background: whiteTransparent,
               borderRadius: '4px',
               '&:hover': {
-                background: whiteTransparent,
+                background: grey,
               },
             },
             '& .MuiInputBase-input': {
@@ -334,15 +349,23 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                 setSelectChat(chat.id);
               }}
               sx={{
+                cursor: 'pointer',
                 background: activeItem === chat.id ? palette.grey[300] : 'none',
                 height: '100%',
+                '&:hover': {
+                  background: greyTransparent,
+                },
               }}
             >
               <ListItemAvatar>
-                <Badge overlap="circular" color="error" badgeContent={chat.badgeContent}>
+                <Badge overlap="circular" color="error" badgeContent={chat.unreadMessages}>
                   <Image
                     style={{ borderRadius: '100%' }}
-                    src={chat.imageUrl}
+                    src={
+                      chat.userImage === ''
+                        ? '/images/placeholder.png'
+                        : `https://${process.env.NEXT_PUBLIC_AWS_BUCKET}/${chat.userImage}`
+                    }
                     width={chatListStyles?.listImage?.width}
                     height={chatListStyles?.listImage?.height}
                     alt="pic"
@@ -358,13 +381,20 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                       maxWidth: '55%',
+                      userSelect: 'none',
                       ...chatListStyles?.companyText,
                     }}
                   >
-                    {chat.company}
+                    {chat.username}
                   </Typography>
-                  <Typography variant="body2" sx={chatListStyles?.dateTime}>
-                    {DateTime.fromISO(chat.date).setLocale('en').toFormat('f')}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      userSelect: 'none',
+                      ...chatListStyles?.dateTime,
+                    }}
+                  >
+                    {chat.time ? DateTime.fromJSDate(chat.time).setLocale('en').toFormat('f') : ''}
                   </Typography>
                 </Box>
                 <Typography
@@ -375,6 +405,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '95%',
+                    userSelect: 'none',
                     ...chatListStyles?.productText,
                   }}
                 >
@@ -388,19 +419,68 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     maxWidth: '95%',
+                    userSelect: 'none',
                     ...chatListStyles?.latestMessage,
                   }}
                 >
-                  {chat.latestMessage}
+                  {chat.contentType === 'offer' ? (
+                    <>
+                      <Typography
+                        component="span"
+                        sx={{
+                          userSelect: 'none',
+                        }}
+                      >
+                        {t('Offer: ')}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        sx={{
+                          userSelect: 'none',
+                        }}
+                      >{`$${chat.latestMessage.amount} `}</Typography>
+                      {chat.latestMessage.accepted ? (
+                        <Typography
+                          component="span"
+                          sx={{
+                            userSelect: 'none',
+                          }}
+                        >
+                          {t('(Accepted)')}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          component="span"
+                          sx={{
+                            userSelect: 'none',
+                          }}
+                        >
+                          {t(chat.latestMessage.content)}
+                        </Typography>
+                      )}
+                    </>
+                  ) : (
+                    <Typography
+                      component="span"
+                      sx={{
+                        userSelect: 'none',
+                      }}
+                    >
+                      {chat.latestMessage}
+                    </Typography>
+                  )}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{
                     fontWeight: 500,
+                    textAlign: 'right',
+                    mt: spacing(1),
+                    userSelect: 'none',
                     ...chatListStyles?.progressText,
                   }}
                 >
-                  {chat.inProgress ? 'In progress' : `Offered price: $${chat.price}`}
+                  {chat.inProgress ? t('In progress') : ''}
                 </Typography>
               </ListItemText>
             </ListItem>

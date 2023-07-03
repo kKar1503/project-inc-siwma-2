@@ -24,9 +24,9 @@ export default async function sendEmails<T extends Record<string, string>>(
     apiKey = retrieved.key?.key;
     senderEmail = retrieved.key?.senderEmail;
   } else {
+    // Otherwise, get the API key from the environment variables.
     apiKey = process.env.SIB_API_KEY;
     senderEmail = process.env.SIB_SENDER_EMAIL;
-    // Otherwise, get the API key from the environment variables.
   }
 
   if (!apiKey) {

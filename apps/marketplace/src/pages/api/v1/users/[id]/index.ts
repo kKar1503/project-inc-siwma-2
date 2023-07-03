@@ -2,9 +2,11 @@ import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
 import { NotFoundError, ForbiddenError, ParamRequiredError, WrongPasswordError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { validateEmail, validateName, validatePhone, validatePassword } from '@/utils/api/validate';
+import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
 import { userSchema } from '@/utils/api/server/zod';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import bucket from '@/utils/s3Bucket';
 
 export default apiHandler()
   .get(async (req, res) => {
@@ -84,7 +86,6 @@ export default apiHandler()
       name,
       email,
       company,
-      profilePicture,
       mobileNumber,
       contactMethod,
       bio,
@@ -172,7 +173,6 @@ export default apiHandler()
         email,
         companyId,
         password,
-        profilePicture,
         phone: mobileNumber,
         contact: contactMethod,
         whatsappNumber,
@@ -216,6 +216,10 @@ export default apiHandler()
 
       if (!userExists) {
         throw new NotFoundError('User');
+      }
+
+      if (userExists.profilePicture) {
+        await bucket.deleteObject(userExists.profilePicture);
       }
 
       await client.users.delete({

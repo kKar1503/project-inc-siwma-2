@@ -9,8 +9,10 @@ export { default as inviteSchemas } from './invites';
 export { default as listingSchemas } from './listings';
 export { default as paramSchemas } from './parameters';
 export { default as userSchemas } from './users';
+export { default as reviewSchemas } from './reviews';
 
 export * from './categories';
 export * from './companies';
 export * from './listings';
 export * from './parameters';
+export * from './reviews';

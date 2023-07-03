@@ -10,6 +10,9 @@ export default apiHandler().get(async (req, res) => {
 
   const { id } = userSchema.userId.parse(req.query);
 
+  // Obtain the id of the user making the request
+  const requester = req.token?.user?.id;
+
   // Verify that the user exists
   const userExists = await PrismaClient.users.findUnique({
     where: {
@@ -28,24 +31,26 @@ export default apiHandler().get(async (req, res) => {
     where: {
       owner: id,
       categoryId: queryParams.category ? queryParams.category : undefined,
-      negotiable: queryParams.negotiable ? queryParams.negotiable : undefined,
+      negotiable: queryParams.negotiable != null ? queryParams.negotiable : undefined,
+      type: queryParams.type ? queryParams.type : undefined,
       price: {
         gte: queryParams.minPrice ? queryParams.minPrice : undefined,
         lte: queryParams.maxPrice ? queryParams.maxPrice : undefined,
       },
+      deletedAt: null,
       name: queryParams.matching
         ? {
-          contains: queryParams.matching,
-          mode: 'insensitive',
-        }
+            contains: queryParams.matching,
+            mode: 'insensitive',
+          }
         : undefined,
       listingsParametersValues: queryParams.params
         ? {
-          some: {
-            parameterId: Number(queryParams.params.paramId),
-            value: queryParams.params.value,
-          },
-        }
+            some: {
+              parameterId: Number(queryParams.params.paramId),
+              value: queryParams.params.value,
+            },
+          }
         : undefined,
     },
     orderBy,
@@ -53,7 +58,23 @@ export default apiHandler().get(async (req, res) => {
     take: queryParams.limit,
     include: {
       listingsParametersValues: queryParams.includeParameters,
-      offersOffersListingTolistings: true,
+      listingImages: queryParams.includeImages
+        ? {
+            orderBy: {
+              order: 'asc',
+            },
+          }
+        : false,
+      offersOffersListingTolistings: {
+        select: {
+          accepted: true,
+          messages: {
+            select: {
+              author: true,
+            },
+          },
+        },
+      },
       users: {
         include: {
           companies: true,
@@ -88,7 +109,7 @@ export default apiHandler().get(async (req, res) => {
         reviewCount,
         multiple,
       };
-    }),
+    })
   );
 
   const sortedListings = postSort(listingsWithRatingsAndReviewCount);
@@ -96,10 +117,9 @@ export default apiHandler().get(async (req, res) => {
   // Format the listings
   const formattedListings = await Promise.all(
     sortedListings.map((listing) =>
-      formatSingleListingResponse(listing, queryParams.includeParameters),
-    ),
+      formatSingleListingResponse(listing, requester, queryParams.includeParameters)
+    )
   );
 
   res.status(200).json(formatAPIResponse(formattedListings));
 });
-

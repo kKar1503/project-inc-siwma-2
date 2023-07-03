@@ -5,29 +5,61 @@ export const EVENTS = {
   CONNECTION: {
     CONNECT: 'connect',
     DISCONNECT: 'disconnect',
+    IAM: 'iam',
   },
 
   // Client Events
   CLIENT: {
-    DELETE_MESSAGE: 'clientDeleteMessage',
-    CREATE_ROOM: 'createRoom',
-    SEND_MESSAGE: 'sendMessage',
-    PING: 'clientPing',
-    START_TYPE: 'clientStartType',
-    STOP_TYPE: 'clientStopType',
-    READ: 'clientRead',
+    ROOM: {
+      JOIN: 'clientJoinRoom',
+      PART: 'clientPartRoom',
+      CREATE: 'clientCreateRoom',
+      DELETE: 'clientDeleteRoom',
+      GET: 'clientGetRooms',
+    },
+    MESSAGE: {
+      SEND: 'clientSendMessage',
+      DELETE: 'clientDeleteMessage',
+      READ: 'clientReadMessage',
+      SYNC: 'clientSyncMessage',
+      GET: 'clientGetMessages',
+    },
+    OFFER: {
+      MAKE: 'clientMakeOffer',
+      ACCEPT: 'clientAcceptOffer',
+      REJECT: 'clientRejectOffer',
+      CANCEL: 'clientCancelOffer',
+    },
+    TYPING: {
+      START: 'clientStartType',
+      STOP: 'clientStopType',
+    },
   },
 
   // Server Events
   SERVER: {
-    ROOMS: 'rooms',
-    DELETE_MESSAGE: 'serverDeleteMessage',
-    JOINED_ROOM: 'joinedRoom',
-    ROOM_MESSAGE: 'roomMessage',
-    PING: 'serverPing',
-    START_TYPE: 'serverStartType',
-    STOP_TYPE: 'serverStopType',
-    READ: 'serverRead',
+    ROOM: {
+      CREATED: 'serverCreatedRoom',
+      DELETED: 'serverDeletedRoom',
+      SYNC: 'serverSyncRooms',
+    },
+    MESSAGE: {
+      ROOM: 'serverRoomMessage',
+      DELETED: 'serverDeletedMessage',
+      READ: 'serverReadMessage',
+      SYNC: 'serverSyncMessage',
+      SYNC2: 'serverSyncMessage2',
+    },
+    OFFER: {
+      MAKE: 'serverMakeOffer',
+      ACCEPT: 'serverAcceptOffer',
+      REJECT: 'serverRejectOffer',
+      CANCEL: 'serverCancelOffer',
+    },
+    TYPING: {
+      START: 'serverStartType',
+      STOP: 'serverStopType',
+    },
   },
 } as const;
 
