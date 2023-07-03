@@ -3,7 +3,7 @@ import StarIcon from '@mui/icons-material/Star';
 import { useTheme } from '@mui/material/styles';
 
 type StarRatingProps = {
-  rating: number;
+  rating: number | null;
   precision?: number;
   // size prop will only accept these strings
   size?: 'small' | 'medium' | 'large';
@@ -15,7 +15,7 @@ const StarsRating = ({ rating, precision, size, readOnly }: StarRatingProps) => 
 
   return (
     <Rating
-      defaultValue={rating}
+      value={rating}
       readOnly={readOnly}
       size={size}
       precision={precision}

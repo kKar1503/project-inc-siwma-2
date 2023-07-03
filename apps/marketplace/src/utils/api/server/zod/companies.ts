@@ -19,7 +19,6 @@ const editCompanyRequestBody = z.object({
   website: z.string().optional(),
   bio: z.string().optional(),
   comments: z.string().optional(),
-  image: z.string().optional(),
 });
 
 export type PostCompanyRequestBody = z.infer<typeof createCompanyRequestBody>;

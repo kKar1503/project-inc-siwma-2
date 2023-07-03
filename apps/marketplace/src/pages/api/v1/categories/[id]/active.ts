@@ -1,11 +1,12 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
+import { parseCategoryId } from '..';
 
 export default apiHandler({ allowAdminsOnly: true }).patch(async (req, res) => {
   const { id } = req.query;
-  const categoryid = parseToNumber(id as string, 'id');
+  const categoryid = parseCategoryId(id as string, false);
 
   const response: Pick<CategoryResponseBody, 'active'> = await PrismaClient.$queryRaw`
         UPDATE "category" SET "active" = NOT "active" WHERE "id" = ${categoryid} RETURNING "active"

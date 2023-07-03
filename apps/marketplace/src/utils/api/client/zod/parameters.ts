@@ -7,7 +7,7 @@ const name = z.string();
 const displayName = z.string();
 const type = z.nativeEnum(ParameterType);
 const dataType = z.nativeEnum(DataType);
-const active = z.boolean();
+const active = z.boolean().optional();
 const options = z.string().array();
 
 // -- Define schema -- //
