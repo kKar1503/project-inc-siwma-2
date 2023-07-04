@@ -29,6 +29,7 @@ type BaseTableProps = {
   onDelete: (rows: readonly BaseTableData[]) => void;
   rowsPerPage: number;
   page: number;
+  heading: string;
 };
 
 /**
@@ -61,6 +62,7 @@ const BaseTable = (props: BaseTableProps) => {
     onDelete,
     rowsPerPage,
     page,
+    heading,
   } = props;
 
   /**
@@ -104,7 +106,7 @@ const BaseTable = (props: BaseTableProps) => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <BaseTableToolbar
-          heading="Desserts"
+          heading={heading}
           selectedRows={selected}
           toggleColumn="enabled"
           onEdit={() => onEdit(selected[0])}

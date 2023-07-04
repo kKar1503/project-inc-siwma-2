@@ -35,7 +35,7 @@ const FileUpload = ({
   maxWidth,
   maxHeight,
 }: FileUploadProps) => (
-  <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
+  <Paper elevation={3} sx={{ p: 3, borderRadius: 2, height: '994px' }}>
     <Box sx={{ mb: 2 }}>
       <Typography variant="h6" fontWeight="bold">
         {title}
@@ -52,7 +52,7 @@ const FileUpload = ({
           alignItems: 'center',
           border: '1px solid primary.main',
           borderStyle: 'dotted',
-          height: '100%',
+          height: '',
           p: 2,
           gap: 2,
         }}
@@ -78,7 +78,7 @@ const FileUpload = ({
               }}
             >
               {selectedFile === null || !selectedFile.type.startsWith('image/') ? (
-                <IconButton component="span">
+                <IconButton component="span" sx={{ fontSize: '96px' }}>
                   {selectedFile === null ? <FiUpload /> : <BsFileEarmarkSpreadsheet />}
                 </IconButton>
               ) : (
@@ -98,7 +98,9 @@ const FileUpload = ({
               )}
             </Box>
             <Typography variant="body1" textAlign="center">
-              {selectedFile != null ? selectedFile.name : 'Click to Upload a File'}
+              {selectedFile != null
+                ? selectedFile.name
+                : 'Click to upload or drag and drop .xslx or .csv (MAX. 64MB)'}
             </Typography>
           </label>
           <input
