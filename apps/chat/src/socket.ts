@@ -51,7 +51,7 @@ export default (io: Server) => {
         iamEventLog('error', `SocketId userId pair not added to cache...`);
 
         iamEventLog('trace', `Acknowledging 'iam' event...`);
-        ack({ success: false });
+        if (typeof ack === 'function') ack({ success: false });
 
         iamEventLog('error', `Disconnecting socket... Reason: Failed to add to cache.`);
         socket.disconnect(true);
@@ -59,7 +59,7 @@ export default (io: Server) => {
       }
 
       iamEventLog('trace', `Acknowledging 'iam' event...`);
-      ack({ success: true });
+      if (typeof ack === 'function') ack({ success: true });
 
       iamEventLog('trace', `SocketId userId pair added to cache.`);
 

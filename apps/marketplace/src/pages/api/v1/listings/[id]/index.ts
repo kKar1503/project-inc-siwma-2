@@ -20,6 +20,7 @@ export async function checkListingExists($id: string | number, requireImages = f
   const listing = await PrismaClient.listing.findFirst({
     where: {
       id,
+      deletedAt: null,
     },
     include: {
       users: {
@@ -302,10 +303,20 @@ export default apiHandler()
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
     }
-    await Promise.all(listing.listingImages.map(async (image) => bucket.deleteObject(image.image)));
 
-    await PrismaClient.listing.delete({
+    try {
+      await Promise.all(
+        listing.listingImages.map(async (image) => bucket.deleteObject(image.image))
+      );
+    } catch (e) {
+      console.log("Warning, couldn't delete images from S3 bucket: ", e);
+    }
+
+    await PrismaClient.listing.update({
       where: { id },
+      data: {
+        deletedAt: new Date().toISOString(),
+      },
     });
 
     handleBookmarks(UpdateType.DELETE, listing);

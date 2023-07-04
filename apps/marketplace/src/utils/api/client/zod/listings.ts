@@ -1,5 +1,6 @@
 import { ListingType } from '@prisma/client';
 import { z } from 'zod';
+import reviewSchemas from './reviews';
 
 // -- Define properties -- //
 const id = z.string();
@@ -37,16 +38,16 @@ const owner = z.object({
   bio: z.string().nullable(),
 });
 
-const parameter = z
-  .object({
-    paramId: z.string(),
-    value: z.string(),
-  })
-  .optional();
+const parameter = z.object({
+  paramId: z.string(),
+  value: z.string(),
+});
 
 const open = z.boolean();
 
 const purchased = z.boolean();
+
+const review = reviewSchemas.get;
 
 // -- Define listing schema -- //
 const listing = z.object({
@@ -68,16 +69,6 @@ const listing = z.object({
   reviewCount,
   createdAt,
   purchased,
-});
-
-// -- Define review schema -- //
-const review = z.object({
-  id: z.string(),
-  review: z.string(),
-  rating: z.number(),
-  userId: z.string(),
-  listingId: z.string(),
-  createdAt: z.string(),
 });
 
 // POST /listings
@@ -138,7 +129,6 @@ const deleteListingImage = z.object({});
 export type ListingParameter = z.infer<typeof parameter>;
 export type ListingResponseBody = z.infer<typeof listing>;
 export type Listing = z.infer<typeof listing>;
-export type Review = z.infer<typeof review>;
 
 export default {
   create: createListing,

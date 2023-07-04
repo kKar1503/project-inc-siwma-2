@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import Image, { ImageProps } from 'next/image';
+import Link from 'next/link';
 import { useQuery } from 'react-query';
 import fetchS3Image from '@/middlewares/fetchS3Image';
+import Avatar, { AvatarProps } from '@mui/material/Avatar';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));
 
-export type S3ImageProps = ImageProps & { src: string };
+export type S3AvatarProps = AvatarProps & { src: string };
 
 const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   e.preventDefault();
   e.stopPropagation();
 };
 
-const S3Image = ({ src, alt, ...others }: S3ImageProps) => {
+const S3Avatar = ({ src, alt, children, ...others }: S3AvatarProps) => {
   const { data } = useImageQuery(src);
-  const [image, setImage] = useState<{ url: string; name: string } | undefined>();
+  const [image, setImage] = useState<{ url: string; name?: string } | undefined>();
 
   useEffect(() => {
     if (!data) return;
@@ -25,10 +26,17 @@ const S3Image = ({ src, alt, ...others }: S3ImageProps) => {
   }, [alt, data]);
 
   return image ? (
-    <a href={image.url} download={image.name} onClick={onClick} style={{ cursor: 'default' }}>
-      <Image src={image.url} alt={alt} title={image.name} {...others} />
-    </a>
+    <Link
+      href={image.url}
+      download={image.name}
+      onClick={onClick}
+      style={{ cursor: 'default', textDecoration: 'none' }}
+    >
+      <Avatar src={image.url} {...others}>
+        {children}
+      </Avatar>
+    </Link>
   ) : null;
 };
 
-export default S3Image;
+export default S3Avatar;
