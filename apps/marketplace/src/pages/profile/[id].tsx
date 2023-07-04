@@ -1,7 +1,5 @@
 import Head from 'next/head';
-import ProfileDetailCard, {
-  ProfileDetailCardProps,
-} from '@/components/marketplace/profile/ProfileDetailCard';
+import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import ListingsTab from '@/components/marketplace/profilePage/ListingsTab';
 import ReviewsTab from '@/components/marketplace/profilePage/ReviewsTab';
 import TabPanel from '@/components/marketplace/profilePage/TabPanel';
@@ -9,14 +7,11 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
-import { useState, SyntheticEvent, useMemo, useEffect } from 'react';
+import { useState, SyntheticEvent, useMemo } from 'react';
 import { useTheme, styled } from '@mui/material/styles';
-import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 import fetchCompany from '@/middlewares/fetchCompany';
 import { useRouter } from 'next/router';
-import { Listing } from '@/utils/api/client/zod';
-import fetchProfilesListings from '@/middlewares/fetchProfilesListings';
 import { useResponsiveness } from '@inc/ui';
 import { useTranslation } from 'react-i18next';
 
@@ -39,11 +34,6 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   },
 }));
 
-export type ProfilePageProps = {
-  data: ProfileDetailCardProps;
-  serverSideListings: Listing[];
-};
-
 const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
     enabled: userUuid !== undefined,
@@ -51,79 +41,20 @@ const useGetUser = (userUuid: string) => {
   return data;
 };
 
-const useGetListing = (
-  userUuid: string,
-  matching?: string,
-  sortBy?: string,
-  filter?: string,
-  del?: string
-) => {
-  const { data } = useQuery(
-    ['listingdata', userUuid, matching, sortBy, filter, del],
-    async () => {
-      if (matching || sortBy || filter) {
-        return fetchProfilesListings(userUuid, matching, sortBy, filter);
-      }
-      return fetchProfilesListings(userUuid);
-    },
-    {
-      // change the enabled to trigger on filter/sort
-      enabled:
-        userUuid !== undefined ||
-        sortBy !== undefined ||
-        matching !== undefined ||
-        filter !== undefined ||
-        del !== undefined,
-    }
-  );
-
-  return data;
-};
-
-const ProfilePage = ({ data, serverSideListings }: ProfilePageProps) => {
-  const user = useSession();
-  const loggedUserUuid = user.data?.user.id as string;
+const ProfilePage = () => {
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
   const { t } = useTranslation();
 
   const theme = useTheme();
   const { spacing } = theme;
-
   const [value, setValue] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  // when filter/sorts are called use set states to set the new listings/reviews again
-  const [listings, setListings] = useState(serverSideListings);
-  const [filterListings, setFilterListings] = useState('');
-  const [sortByListings, setSortByListings] = useState('recent_newest');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [del, setDel] = useState('');
-
-  const userListings = useGetListing(id, searchQuery, sortByListings, filterListings, del);
-
-  useEffect(() => {
-    if (userListings) {
-      setListings(userListings);
-    }
-  }, [userListings]);
-
-  const handleFilterListings = (filter: string) => {
-    setFilterListings(filter);
-    // make endpoint call to carry out filter
-  };
-
-  const handleSortByListings = (filter: string) => {
-    setSortByListings(filter);
-  };
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
   const handleChangeIndex = (index: number) => {
     setValue(index);
   };
@@ -229,12 +160,7 @@ const ProfilePage = ({ data, serverSideListings }: ProfilePageProps) => {
             </Tabs>
             <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
               <TabPanel value={value} index={0} dir={theme.direction} height="100vh">
-                <ListingsTab
-                  handleSearch={handleSearch}
-                  filterListings={handleFilterListings}
-                  sortByListings={handleSortByListings}
-                  // setDel={setDel}
-                />
+                <ListingsTab/>
               </TabPanel>
               <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
                 <ReviewsTab/>
