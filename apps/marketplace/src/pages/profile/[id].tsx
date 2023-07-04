@@ -1,38 +1,12 @@
 import Head from 'next/head';
 import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
-import ListingsTab from '@/components/marketplace/profilePage/ListingsTab';
-import ReviewsTab from '@/components/marketplace/profilePage/ReviewsTab';
-import TabPanel from '@/components/marketplace/profilePage/TabPanel';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import SwipeableViews from 'react-swipeable-views';
 import Box from '@mui/material/Box';
-import { useState, SyntheticEvent, useMemo } from 'react';
-import { useTheme, styled } from '@mui/material/styles';
+import { useMemo } from 'react';
+import { useTheme } from '@mui/material/styles';
 import { useQuery } from 'react-query';
 import fetchCompany from '@/middlewares/fetchCompany';
 import { useRouter } from 'next/router';
 import { useResponsiveness } from '@inc/ui';
-import { useTranslation } from 'react-i18next';
-
-const StyledTab = styled(Tab)(({ theme }) => ({
-  minHeight: 60,
-  bgcolor: theme.palette.common.white,
-  color: theme.palette.primary[400],
-  border: 1,
-  borderColor: theme.palette.primary[400],
-  borderRadius: theme.shape.borderRadius,
-  //   for some reason, half of this doesn't work??
-  //   upon further investigation seems like it's more specifically the ones regarding border, including the styles above
-  '&.Mui-selected': {
-    minHeight: 60,
-    color: theme.palette.common.white,
-    bgcolor: theme.palette.primary[400],
-    border: 1,
-    borderColor: theme.palette.primary[400],
-    borderRadius: theme.shape,
-  },
-}));
 
 const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
@@ -44,20 +18,10 @@ const useGetUser = (userUuid: string) => {
 const ProfilePage = () => {
   const id = useRouter().query.id as string;
   const userDetails = useGetUser(id);
-  const { t } = useTranslation();
 
   const theme = useTheme();
   const { spacing } = theme;
-  const [value, setValue] = useState(0);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
-  const handleChange = (event: SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
-  const handleChangeIndex = (index: number) => {
-    setValue(index);
-  };
 
   const spaceStyle = useMemo(() => {
     if (isSm) {
@@ -116,56 +80,7 @@ const ProfilePage = () => {
               overflow: 'hidden',
             }}
           >
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              variant="fullWidth"
-              sx={{
-                '& .MuiTabs-indicator': {
-                  display: 'none',
-                },
-              }}
-            >
-              <StyledTab
-                label={t('Listings')}
-                sx={{
-                  // added in-line styling here because styled() doesn't want to work
-                  border: 1,
-                  borderColor: theme.palette.primary[400],
-                  '&.Mui-selected': {
-                    minHeight: 60,
-                    color: theme.palette.common.white,
-                    bgcolor: theme.palette.primary[400],
-                    border: 1,
-                    borderColor: theme.palette.primary[400],
-                    borderRadius: theme.shape,
-                  },
-                }}
-              />
-              <StyledTab
-                label={t('Reviews')}
-                sx={{
-                  border: 1,
-                  borderColor: theme.palette.primary[400],
-                  '&.Mui-selected': {
-                    minHeight: 60,
-                    color: theme.palette.common.white,
-                    bgcolor: theme.palette.primary[400],
-                    border: 1,
-                    borderColor: theme.palette.primary[400],
-                    borderRadius: theme.shape,
-                  },
-                }}
-              />
-            </Tabs>
-            <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
-              <TabPanel value={value} index={0} dir={theme.direction} height="100vh">
-                <ListingsTab/>
-              </TabPanel>
-              <TabPanel value={value} index={1} dir={theme.direction} height="100vh">
-                <ReviewsTab/>
-              </TabPanel>
-            </SwipeableViews>
+            {/* nth here */}
           </Box>
         </Box>
       </main>
