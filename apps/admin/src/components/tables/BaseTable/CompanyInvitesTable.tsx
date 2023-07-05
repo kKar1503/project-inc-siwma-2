@@ -46,7 +46,7 @@ const CompanyInvitesTable = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{ my: 2, mx : 1 }}>
       <BaseTable
         rows={rows}
         headers={headCells}
@@ -59,7 +59,7 @@ const CompanyInvitesTable = () => {
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={rows.length}
-        heading='Company Profiles Preview'
+        heading="Company Profiles Preview"
       />
     </Box>
   );

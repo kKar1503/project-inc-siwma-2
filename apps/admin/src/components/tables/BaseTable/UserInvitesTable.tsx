@@ -51,7 +51,7 @@ const UserInvitesTable = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{ my: 2, mx: 1 }}>
       <BaseTable
         rows={rows}
         headers={headCells}

@@ -35,7 +35,7 @@ const FileUpload = ({
   maxWidth,
   maxHeight,
 }: FileUploadProps) => (
-  <Paper elevation={3} sx={{ p: 3, borderRadius: 2, height: '994px' }}>
+  <Paper elevation={3} sx={{ p: 3, borderRadius: 2, my: 2, mx: 1 }}>
     <Box sx={{ mb: 2 }}>
       <Typography variant="h6" fontWeight="bold">
         {title}

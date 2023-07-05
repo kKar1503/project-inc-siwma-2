@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import FileUpload, {
   FileUploadProps,
   AcceptedFileTypes,
@@ -8,11 +8,13 @@ import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTabl
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import CompanyInvitesTable from '@/components/tables/BaseTable/CompanyInvitesTable';
 import Head from 'next/head';
-import { Box } from '@mui/material';
+import { Box, SxProps, Theme } from '@mui/material';
 import UserInvitesTable from '@/components/tables/BaseTable/UserInvitesTable';
+import { useResponsiveness } from '@inc/ui';
 
 const BulkInvitesPage = () => {
   const [file, setFile] = useState<File | null>(null);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (!event.target.files) return;
@@ -103,6 +105,35 @@ const BulkInvitesPage = () => {
     createData('Oreo', 437, 18.0, 63, 4.0),
   ];
 
+  const bulkInvitesSx: SxProps<Theme> = useMemo(() => {
+    if (isLg) {
+      return {
+        width: '50%',
+        m: '32px',
+        height: '994px',
+      };
+    }
+    if (isMd) {
+      return {
+        width: '90%',
+        m: '32px',
+        height: '900px',
+      };
+    }
+    if (isSm) {
+      return {
+        width: '90%',
+        m: '32px',
+        height: '700px',
+      };
+    }
+    return {
+      width: '90%',
+      m: '48px',
+      height: '900px',
+    };
+  }, [isLg, isMd, isSm]);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -116,8 +147,18 @@ const BulkInvitesPage = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Box sx={{ width: '30%', m: '32px', height: '994px'}}>
+    <Box
+      sx={{
+        display: isLg ? 'flex' : 'block',
+        flexDirection: isLg ? 'row' : 'column',
+        gap: isLg ? '32px' : '100px',
+      }}
+    >
+      <Box
+        sx={{
+          ...(isLg && { maxWidth: '900px', width: '100%' }),
+        }}
+      >
         <FileUpload
           id="bulk-invites"
           title="Bulk Add Companies & Invite Users"
@@ -128,11 +169,15 @@ const BulkInvitesPage = () => {
           }}
           accept={[AcceptedFileTypes.XLSX]}
           maxWidth="200px"
-          maxHeight="750px"
+          maxHeight={isLg ? '750px' : '500px'}
         />
       </Box>
 
-      <Box sx={{ width: '50%', m: '32px' }}>
+      <Box
+        sx={{
+          ...(isLg && { maxWidth: '900px', width: '100%' }),
+        }}
+      >
         <CompanyInvitesTable />
         <UserInvitesTable />
       </Box>
