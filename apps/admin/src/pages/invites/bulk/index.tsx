@@ -117,7 +117,7 @@ const BulkInvitesPage = () => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <Box sx={{ width: '30%', m: '32px' }}>
+      <Box sx={{ width: '30%', m: '32px', height: '994px'}}>
         <FileUpload
           id="bulk-invites"
           title="Bulk Add Companies & Invite Users"
@@ -128,7 +128,7 @@ const BulkInvitesPage = () => {
           }}
           accept={[AcceptedFileTypes.XLSX]}
           maxWidth="200px"
-          maxHeight="200px"
+          maxHeight="750px"
         />
       </Box>
 

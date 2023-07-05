@@ -62,6 +62,7 @@ const FileUpload = ({
             width: '100%',
             height: '100%',
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -74,34 +75,43 @@ const FileUpload = ({
                 margin: 'auto',
                 display: 'flex',
                 justifyContent: 'center',
+                flexDirection: 'column',
                 alignItems: 'center',
               }}
             >
-              {selectedFile === null || !selectedFile.type.startsWith('image/') ? (
-                <IconButton component="span" sx={{ fontSize: '96px' }}>
-                  {selectedFile === null ? <FiUpload /> : <BsFileEarmarkSpreadsheet />}
-                </IconButton>
-              ) : (
-                <Image
-                  src={URL.createObjectURL(selectedFile)}
-                  alt="preview"
-                  style={{
-                    objectFit: 'contain',
-                    display: 'block',
-                    height: '100%',
-                    width: '100%',
-                    margin: 'auto',
-                  }}
-                  width={10} // Arbitrary width and height to make NextJS happy
-                  height={10}
-                />
-              )}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {selectedFile === null || !selectedFile.type.startsWith('image/') ? (
+                  <IconButton component="span" sx={{ fontSize: '96px' }}>
+                    {selectedFile === null ? <FiUpload /> : <BsFileEarmarkSpreadsheet />}
+                  </IconButton>
+                ) : (
+                  <Image
+                    src={URL.createObjectURL(selectedFile)}
+                    alt="preview"
+                    style={{
+                      objectFit: 'contain',
+                      display: 'block',
+                      height: '100%',
+                      width: '100%',
+                      margin: 'auto',
+                    }}
+                    width={10} // Arbitrary width and height to make NextJS happy
+                    height={10}
+                  />
+                )}
+              </Box>
+              <Typography variant="body1" textAlign="center">
+                {selectedFile != null
+                  ? selectedFile.name
+                  : 'Click to upload or drag and drop .xslx or .csv (MAX. 64MB)'}
+              </Typography>
             </Box>
-            <Typography variant="body1" textAlign="center">
-              {selectedFile != null
-                ? selectedFile.name
-                : 'Click to upload or drag and drop .xslx or .csv (MAX. 64MB)'}
-            </Typography>
           </label>
           <input
             id={id}
