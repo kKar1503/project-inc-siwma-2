@@ -9,6 +9,7 @@ import { ThemeComponent } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import SideBar from '@/components/AdminSideBar';
 import Box from '@mui/material/Box';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,9 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   const queryClient = new QueryClient();
   const { allowAuthenticated, allowNonAuthenticated, includeSideBar = true } = Component;
 
+  const theme = useTheme();
+  const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <ThemeComponent>
       <SessionProvider session={session}>
@@ -65,9 +69,15 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           allowNonAuthenticated={allowNonAuthenticated}
         >
           <QueryClientProvider client={queryClient}>
-            <Box display="flex">
-              {includeSideBar && <SideBar />}
-              <Box flex={1}>{getLayout(<Component {...pageProps} />)}</Box>
+            <Box display="flex" flexDirection="row">
+              {includeSideBar && (
+                <Box width={isMobileOrTablet ? '0px' : '290px'} overflow="auto">
+                  <SideBar />
+                </Box>
+              )}
+              <Box flex="1" paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}>
+                {getLayout(<Component {...pageProps} />)}
+              </Box>
             </Box>
           </QueryClientProvider>
         </AuthenticationGuard>

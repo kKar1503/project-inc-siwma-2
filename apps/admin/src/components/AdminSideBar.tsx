@@ -1,102 +1,101 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Link,
-  Box,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Drawer,
-  Hidden,
-  Avatar,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import List from '@mui/material/List';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
+import Box from '@mui/material/Box';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Drawer from '@mui/material/Drawer';
+import Hidden from '@mui/material/Hidden';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import Collapse from '@mui/material/Collapse';
+import ListItemButton from '@mui/material/ListItemButton';
 import { ChevronRight, ExpandMore } from '@mui/icons-material';
+import HomeIcon from '@mui/icons-material/Home';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import UploadIcon from '@mui/icons-material/Upload';
+import CategoryIcon from '@mui/icons-material/Category';
+import BusinessIcon from '@mui/icons-material/Business';
+import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
+import SettingsAccessibilityIcon from '@mui/icons-material/SettingsAccessibility';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useResponsiveness } from '@inc/ui';
 
 const menuItems = [
   {
     name: 'Overview',
     link: '/overview',
-    logo: '/images/favicons/overview-icon.png',
-    highlightedLogo: '/images/favicons/overview-icon-blue.png',
+    Icon: HomeIcon,
   },
   {
     name: 'Data Analytics',
     link: '/dataAnalytics',
-    logo: '/images/favicons/data-analytics-icon.png',
-    highlightedLogo: '/images/favicons/data-analytics-icon-blue.png',
+    Icon: BarChartIcon,
   },
   {
     name: 'Advertisement',
     link: '/advertisement',
-    logo: '/images/favicons/advertisment-icon.png',
-    highlightedLogo: '/images/favicons/advertisement-icon-blue.png',
+    Icon: SpaceDashboardIcon,
     dropdown: [
       {
         name: 'Advertisement Dashboard',
         link: '/advertisement/dashboard',
-        logo: '/images/favicons/advertisement-dashboard-icon.png',
-        highlightedLogo: '/images/favicons/advertisement-dashboard-icon-blue.png',
+        Icon: AssessmentIcon,
       },
       {
         name: 'Advertisement Upload',
         link: '/advertisement/upload',
-        logo: '/images/favicons/advertisement-upload-icon.png',
-        highlightedLogo: '/images/favicons/advertisement-upload-icon-blue.png',
+        Icon: UploadIcon,
       },
     ],
   },
   {
     name: 'Category Management',
     link: '/categoryManagement',
-    logo: '/images/favicons/category-management-icon.png',
-    highlightedLogo: '/images/favicons/category-management-icon-blue.png',
+    Icon: CategoryIcon,
     dropdown: [
       {
         name: 'Category',
         link: '/categoryManagement/category',
-        logo: '/images/favicons/category-icon.png',
-        highlightedLogo: '/images/favicons/category-icon-blue.png',
+        Icon: BusinessIcon,
       },
       {
         name: 'Parameters',
         link: '/categoryManagement/parameters',
-        logo: '/images/favicons/parameter-icon.png',
-        highlightedLogo: '/images/favicons/parameter-icon-blue.png',
+        Icon: FormatListNumberedRtlIcon,
       },
     ],
   },
   {
     name: 'User Management',
     link: '/userManagement',
-    logo: '/images/favicons/user-management-icon.png',
-    highlightedLogo: '/images/favicons/user-management-icon-blue.png',
+    Icon: SettingsAccessibilityIcon,
     dropdown: [
       {
         name: 'Companies',
         link: '/userManagement/companies',
-        logo: '/images/favicons/companies-icon.png',
-        highlightedLogo: '/images/favicons/companies-icon-blue.png',
+        Icon: ApartmentIcon,
       },
       {
         name: 'Users',
         link: '/userManagement/users',
-        logo: '/images/favicons/users-icon.png',
-        highlightedLogo: '/images/favicons/users-icon-blue.png',
+        Icon: PeopleAltIcon,
       },
       {
         name: 'Invites',
         link: '/userManagement/invites',
-        logo: '/images/favicons/invites-icon.png',
-        highlightedLogo: '/images/favicons/invites-icon-blue.png',
+        Icon: PersonAddIcon,
       },
     ],
   },
@@ -110,7 +109,7 @@ const AdminSideBar = () => {
   const { typography } = useTheme();
   const router = useRouter();
 
-  // function that fetches the user info from your backend
+  // function that fetches the user info from backend
   function getUserInfo() {
     return {
       name: 'John Doe',
@@ -120,7 +119,7 @@ const AdminSideBar = () => {
   }
 
   useEffect(() => {
-    // Assume that `getUserInfo` is a function that fetches the user info from your backend
+    // Assume that `getUserInfo` is a function that fetches the user info from backend
     const userInfo = getUserInfo();
     setUser(userInfo);
   }, []);
@@ -136,9 +135,6 @@ const AdminSideBar = () => {
       }
     });
   }, [router.pathname]);
-
-  const isCurrentRoute = (path: string) => router.pathname.includes(path);
-  const isCurrentSubRoute = (path: string) => router.pathname.startsWith(path);
 
   const handleDrawerToggle = () => {
     setIsSideBarOpen(!isSideBarOpen);
@@ -156,11 +152,12 @@ const AdminSideBar = () => {
     if (isSm) {
       return {
         name: {
-          fontSize: typography.h6,
-          fontWeight: 'bold',
+          font: 'bold 1rem Roboto, sans-serif',
+          color: '#000',
         },
         email: {
           fontSize: typography.subtitle1,
+          font: 'bold 0.8rem Roboto, sans-serif',
           color: '#9E9E9E',
         },
       };
@@ -169,11 +166,12 @@ const AdminSideBar = () => {
     if (isMd) {
       return {
         name: {
-          fontSize: typography.h6,
-          fontWeight: 'bold',
+          font: 'bold 1.2rem Roboto, sans-serif',
+          color: '#000',
         },
         email: {
           fontSize: typography.subtitle1,
+          font: 'bold 0.8rem Roboto, sans-serif',
           color: '#9E9E9E',
         },
       };
@@ -182,11 +180,12 @@ const AdminSideBar = () => {
     if (isLg) {
       return {
         name: {
-          fontSize: typography.h5,
-          fontWeight: 'bold',
+          font: 'bold 1.2rem Roboto, sans-serif',
+          color: '#000',
         },
         email: {
           fontSize: typography.subtitle1,
+          font: 'bold 0.8rem Roboto, sans-serif',
           color: '#9E9E9E',
         },
       };
@@ -195,10 +194,11 @@ const AdminSideBar = () => {
     return {
       name: {
         fontSize: '24px',
-        fontWeight: 'bold',
+        font: 'bold 1.2rem Roboto, sans-serif',
+        color: '#000',
       },
       email: {
-        fontSize: '14px',
+        font: 'bold 0.8rem Roboto, sans-serif',
         color: '#9E9E9E',
       },
     };
@@ -207,10 +207,17 @@ const AdminSideBar = () => {
   const drawer = (
     <Box
       sx={{
+        width: '290px',
         padding: '1em',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        overflowX: 'hidden',
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
+        overflowY: 'auto',
+        backgroundColor: '#fff',
       }}
     >
       <Box>
@@ -232,98 +239,81 @@ const AdminSideBar = () => {
             />
           </Box>
         </Box>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
+        <Typography
+          variant="h4"
+          sx={{ font: 'bold 1.8rem Roboto, sans-serif', marginBottom: '16px' }}
+        >
           General
         </Typography>
         <Divider />
         <List>
           {menuItems.map((item) => (
             <Box key={item.name}>
-              <ListItem
-                button
+              <ListItemButton
                 onClick={() => handleClick(item.name)}
-                style={{
-                  backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
+                sx={{
                   display: 'flex',
                   alignItems: 'center',
                 }}
               >
                 <Box style={{ marginRight: '1em' }}>
-                  {item.logo && (
-                    <Image
-                      src={
-                        isCurrentRoute(item.link) ? item.highlightedLogo || item.logo : item.logo
-                      }
-                      alt="Logo"
-                      width={24}
-                      height={24}
-                    />
-                  )}
+                  <item.Icon style={{ color: 'black' }} />
                 </Box>
                 <ListItemText
                   primary={item.name}
                   primaryTypographyProps={{
                     style: {
-                      color: isCurrentRoute(item.link) ? '#2962FF' : 'black',
+                      color: 'black',
+                      font: '0.9rem Roboto, sans-serif',
                     },
                   }}
                 />
                 {item.dropdown &&
                   (openDropdown === item.name ? (
-                    <ExpandMore
-                      style={{ color: isCurrentRoute(item.link) ? '#2962FF' : 'black' }}
-                    />
+                    <ExpandMore />
                   ) : (
                     <ChevronRight style={{ color: 'black' }} />
                   ))}
-              </ListItem>
-              {item.dropdown &&
-                openDropdown === item.name &&
-                item.dropdown.map((subitem) => (
-                  <ListItem
-                    button
-                    key={subitem.name}
-                    sx={{
-                      backgroundColor: isCurrentRoute(item.link) ? '#EAEFFC' : 'transparent',
-                      pl: '2em',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Box style={{ marginRight: '1em' }}>
-                      {subitem.logo && (
-                        <Image
-                          src={
-                            isCurrentSubRoute(subitem.link)
-                              ? subitem.highlightedLogo || subitem.logo
-                              : subitem.logo
+              </ListItemButton>
+              {item.dropdown && (
+                <Collapse in={openDropdown === item.name} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {item.dropdown.map((subitem) => (
+                      <ListItemButton
+                        key={subitem.name}
+                        onClick={() => router.push(subitem.link)}
+                        sx={{
+                          pl: '2em',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Box style={{ marginRight: '1em' }}>
+                          <subitem.Icon style={{ color: 'black' }} />
+                        </Box>
+                        <ListItemText
+                          primary={
+                            <Link
+                              href={subitem.link}
+                              underline="none"
+                              sx={{
+                                color: 'black',
+                                font: '0.9rem Roboto, sans-serif',
+                                textDecoration: 'none',
+                                '&:hover': {
+                                  textDecoration: 'none',
+                                },
+                              }}
+                            >
+                              {subitem.name}
+                            </Link>
                           }
-                          alt="Logo"
-                          width={24}
-                          height={24}
-                          objectFit="contain"
                         />
-                      )}
-                    </Box>
-                    <ListItemText
-                      primary={
-                        <Link
-                          href={subitem.link}
-                          underline="none"
-                          sx={{
-                            color: isCurrentSubRoute(subitem.link) ? '#2962FF' : 'black',
-                            textDecoration: 'none',
-                            '&:hover': {
-                              textDecoration: 'none',
-                            },
-                          }}
-                        >
-                          {subitem.name}
-                        </Link>
-                      }
-                    />
-                  </ListItem>
-                ))}
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Collapse>
+              )}
             </Box>
           ))}
         </List>
@@ -374,7 +364,6 @@ const AdminSideBar = () => {
           position="fixed"
           sx={{
             bgcolor: '#ffffff',
-            borderRadius: '0 0 15px 15px',
             boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
           }}
         >
@@ -417,12 +406,13 @@ const AdminSideBar = () => {
             ModalProps={{
               keepMounted: true,
             }}
+            sx={{ overflowX: 'hidden' }}
           >
             {drawer}
           </Drawer>
         </Hidden>
         <Hidden mdDown implementation="css">
-          <Drawer variant="permanent" open={isSideBarOpen}>
+          <Drawer variant="permanent" open={isSideBarOpen} sx={{ overflowX: 'hidden' }}>
             {drawer}
           </Drawer>
         </Hidden>
