@@ -154,15 +154,16 @@ model Listing {
   deletedAt                                   DateTime?                 @map("deleted_at") @db.Timestamptz(6)
   multiple                                    Boolean                   @default(false)
   hashedUrl                                   String?                   @unique(map: "listing_un") @map("hashed_url")
+  unit                                        UnitType                  @default(kg)
+  condition                                   ConditionType             @default(good)
+  grading                                     String
   category                                    Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
   users                                       Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
   listingBookmarks                            ListingBookmarks[]
   listingClicksListingClicksListingTolistings ListingClicks[]           @relation("listingClicksListingTolisting")
-  listingImages                               ListingImages[]
   listingNotifications                        ListingNotifications[]
   listingsParametersValues                    ListingsParametersValue[]
   offersOffersListingTolistings               Offers[]                  @relation("offersListingTolisting")
-  reviewsReviewsListingTolistings             Reviews[]                 @relation("reviewsListingTolisting")
   roomsRoomsListingTolistings                 Rooms[]                   @relation("roomsListingTolisting")
 
   @@map("listing")
@@ -189,18 +190,6 @@ model ListingClicks {
   users                                Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listing_clicks_fk_1")
 
   @@map("listing_clicks")
-}
-
-model ListingImages {
-  id        Int      @id(map: "listing_images_pk") @default(sequence(maxValue: 2147483647))
-  listingId Int      @map("listing_id")
-  image     String
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-  order     Int
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listing_images_fk")
-
-  @@map("listing_images")
 }
 
 model ListingNotifications {
@@ -307,19 +296,6 @@ model RefreshTokens {
   @@map("refresh_tokens")
 }
 
-model Reviews {
-  id                             Int      @id(map: "reviews_pk") @default(sequence(maxValue: 2147483647))
-  review                         String
-  rating                         Int      @db.Int2
-  user                           String   @db.Uuid
-  listing                        Int
-  createdAt                      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  users                          Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk")
-  listingReviewsListingTolisting Listing  @relation("reviewsListingTolisting", fields: [listing], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk_1")
-
-  @@map("reviews")
-}
-
 model Rooms {
   id                           String     @id(map: "rooms_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   seller                       String     @db.Uuid
@@ -404,7 +380,6 @@ model Users {
   messages                                            Messages[]
   passwordResets                                      PasswordReset[]
   refreshTokens                                       RefreshTokens[]
-  reviews                                             Reviews[]
   roomsRoomsSellerTousers                             Rooms[]                  @relation("roomsSellerTousers")
   roomsRoomsBuyerTousers                              Rooms[]                  @relation("roomsBuyerTousers")
   userBookmarksUserBookmarksUserIdTousers             UserBookmarks[]          @relation("userBookmarksUserIdTousers")
@@ -414,6 +389,12 @@ model Users {
   companies                                           Companies                @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
 
   @@map("users")
+}
+
+enum ConditionType {
+  good
+  bad
+  excellent
 }
 
 enum ContentType {
@@ -453,6 +434,12 @@ enum ReasonType {
   Suspicious_Account          @map("Suspicious Account")
   Cancelling_on_deal          @map("Cancelling on deal")
   Inaccurate_Listings         @map("Inaccurate Listings")
+}
+
+enum UnitType {
+  kg
+  m
+  unit
 }
 
 enum UserContacts {
