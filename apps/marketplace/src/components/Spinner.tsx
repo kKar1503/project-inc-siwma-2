@@ -1,4 +1,4 @@
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 /**
  * Loading spinner
@@ -15,7 +15,9 @@ const Spinner = () => {
       })}
       role="status"
     >
-      {t('Loading...')}
+      <Typography variant="h4" gutterBottom>
+        {t('Loading...')}
+      </Typography>
       <CircularProgress />
     </Box>
   );
