@@ -1,502 +1,586 @@
-import { useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
+// ** React / Next Imports **
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useSession } from 'next-auth/react';
+
+// ** Components Imports **
 import ChatHeader from '@/components/rtc/ChatHeader';
 import ChatSubHeader from '@/components/rtc/ChatSubHeader';
-import ChatBox, { ChatBoxProps } from '@/components/rtc/ChatBox';
+import ChatBox from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
-import ChatList, { ChatListProps } from '@/components/rtc/ChatList';
-import { useSession } from 'next-auth/react';
-import { useQuery } from 'react-query';
-import fetchChatList from '@/middlewares/fetchChatList';
-import fetchListing from '@/middlewares/fetchListing';
-import fetchListingImages from '@/middlewares/fetchListingImages';
-import fetchUser from '@/middlewares/fetchUser';
-import fetchRoomMessages from '@/middlewares/fetchRoomMessages';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import { useTheme } from '@mui/material/styles';
+import ChatList from '@/components/rtc/ChatList';
 
-const useChatListQuery = (loggedUserUuid: string) => {
-  const { data } = useQuery('chatList', async () => fetchChatList(loggedUserUuid), {
-    enabled: loggedUserUuid !== undefined,
-  });
-  return data;
-};
+// ** Chat Related Imports **
+import { io } from 'socket.io-client';
+import {
+  acceptOffer,
+  cancelOffer,
+  createRoom,
+  getMessage,
+  getRooms,
+  joinRoom,
+  makeOffer,
+  partRoom,
+  rejectOffer,
+  sendMessage,
+} from '@/chat/emitters';
 
-const useGetListingQuery = (listingID: string) => {
-  const { data } = useQuery('listing', async () => fetchListing(listingID), {
-    enabled: listingID !== undefined,
-  });
-  return data;
-};
+// ** MUI Imports **
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import { SxProps, Theme, useTheme } from '@mui/material/styles';
 
-// not in dev yet
-const useGetListingImagesQuery = (listingID: string) => {
-  const { data } = useQuery('listingImage', async () => fetchListingImages(listingID), {
-    enabled: listingID !== undefined,
-  });
-  return data;
-};
+// ** Types Imports **
+import type { ChatListProps } from '@/components/rtc/ChatList';
+import type { ChatData } from '@/components/rtc/ChatBox';
+import type { Messages } from '@inc/types';
 
-const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-  return data;
-};
+// ** Hooks Imports **
+import { useResponsiveness } from '@inc/ui';
+import useChat from '@/hooks/useChat';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
 
-const useGetMessagesQuery = (roomUuid: string) => {
-  const { data } = useQuery('roomMessages', async () => fetchRoomMessages(roomUuid), {
-    enabled: roomUuid !== undefined,
-  });
-  return data;
+function formatMessage(message: Messages): ChatData {
+  const { createdAt, message: messageContent, ...rest } = message;
+  const formatted: ChatData = {
+    ...rest,
+    messageContent,
+    createdAt: new Date(createdAt),
+  };
+  if (messageContent.contentType === 'offer') {
+    if (messageContent.offerAccepted) {
+      formatted.offerState = 'accepted';
+    } else if (messageContent.content === '') {
+      formatted.offerState = 'pending';
+    } else {
+      formatted.offerState = 'rejected';
+    }
+  }
+
+  return formatted;
+}
+
+type RoomData = ChatListProps & {
+  itemId: number;
+  itemPrice: number;
+  itemPriceIsUnit: boolean;
+  itemImage: string;
 };
 
 const ChatRoom = () => {
+  // ** Socket Initialization
+  const socket = useRef(
+    io(process.env.NEXT_PUBLIC_CHAT_SERVER_URL, { transports: ['websocket'], autoConnect: false })
+  );
+
+  // ** Hooks **
+  const { data } = useSession();
+  const router = useRouter();
+
+  // ** Refs **
+  const userIdRef = useRef<string>('');
+  const roomIdRef = useRef('');
+  const userId = userIdRef.current;
+
+  // ** MUI **
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
-  const [makeOffer, setMakeOffer] = useState<boolean>(false);
-  const [selectChat, setSelectChat] = useState<string>('');
+
+  // ** Socket Related **z
+  const [connect, setConnect] = useState(false);
+  const [roomId, setRoomId] = useState('');
+  const [rooms, setRooms] = useState<RoomData[]>([]);
+  const [messages, setMessages] = useState<ChatData[]>([]);
+
+  // ** States **
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [inputText, setInputText] = useState<string>('');
-  const [onSend, setOnSend] = useState<boolean>(false);
+  const [inputText, setInputText] = useState('');
+  const [domLoaded, setDomLoaded] = useState(false);
+  const [roomSynced, setRoomSynced] = useState(false);
+  const [messageSynced, setMessageSynced] = useState('');
+  const [queryChecked, setQueryChecked] = useState(false);
 
-  const user = useSession();
-  const loggedUserUuid = user.data?.user.id as string;
+  // ** Update Chat List **
+  const updateChatList = (message: Messages) => {
+    setRooms((prev) =>
+      prev.map((room) => {
+        console.log('iterating rooms', room);
+        if (room.id !== message.room) {
+          return room;
+        }
+        const newRoom = { ...room };
 
-  // converts to UI design if screen goes to mobile
-  const chatStyles = useMemo(() => {
-    if (isSm) {
+        let latestMessageDataString = '';
+        const latestMessageDataObj = {
+          amount: 0,
+          accepted: false,
+          content: '',
+        };
+
+        if (message.message.contentType === 'offer') {
+          latestMessageDataObj.amount = message.message.amount;
+          latestMessageDataObj.accepted = message.message.offerAccepted;
+          latestMessageDataObj.content = message.message.content;
+        } else {
+          latestMessageDataString = message.message.content;
+        }
+
+        newRoom.time = new Date(message.createdAt);
+        newRoom.latestMessage =
+          message.message.contentType === 'offer' ? latestMessageDataObj : latestMessageDataString;
+        newRoom.contentType = message.message.contentType;
+
+        return newRoom;
+      })
+    );
+  };
+
+  // ** Update Message List **
+  const updateOffer = (messageId: number, newContent: string, accepted: boolean) => {
+    setMessages((prev) =>
+      prev.map((message) => {
+        console.log('iterating rooms', message);
+        if (message.id !== messageId) {
+          return message;
+        }
+        const newMessage = { ...message };
+
+        if (newMessage.messageContent.contentType === 'offer') {
+          newMessage.messageContent.content = newContent;
+          newMessage.messageContent.offerAccepted = accepted;
+          newMessage.offerState = accepted ? 'accepted' : 'rejected';
+        }
+
+        return newMessage;
+      })
+    );
+  };
+
+  // ** useChat **
+  const { isConnected, loading, setLoading } = useChat(socket.current, connect, {
+    userId,
+    currentRoom: roomIdRef,
+    roomSyncCallback: (roomSync) => {
+      switch (roomSync.status) {
+        case 'success': {
+          console.log('Sync success');
+          break;
+        }
+        case 'error': {
+          console.log(`Sync error: ${roomSync.err}`);
+          break;
+        }
+        case 'in_progress': {
+          console.log('Sync in progress');
+          console.log(roomSync.progress);
+          console.log(roomSync.data);
+          const { time, latestMessage, category, ...rest } = roomSync.data;
+
+          let latestMessageDataString = '';
+          const latestMessageDataObj = {
+            amount: 0,
+            accepted: false,
+            content: '',
+          };
+
+          if (latestMessage !== undefined) {
+            if (latestMessage.contentType === 'offer') {
+              latestMessageDataObj.amount = latestMessage.amount;
+              latestMessageDataObj.accepted = latestMessage.offerAccepted;
+              latestMessageDataObj.content = latestMessage.content;
+            } else {
+              latestMessageDataString = latestMessage.content;
+            }
+          }
+
+          const contentType = latestMessage?.contentType ?? 'text';
+
+          const roomsData = {
+            ...rest,
+            contentType,
+            time: time ? new Date(time) : undefined,
+            category: category === 'BUY' ? 'Buying' : 'Selling',
+            latestMessage: contentType === 'offer' ? latestMessageDataObj : latestMessageDataString,
+          } as RoomData;
+          setRooms((curr) => [...curr, roomsData]);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
+    messageCallback: (message) => {
+      setMessages((curr) => [...curr, formatMessage(message)]);
+      updateChatList(message);
+    },
+    messageUnreadCallback: (messageUnread) => {
+      updateChatList(messageUnread);
+    },
+    messageSyncCallback: (messageSync) => {
+      switch (messageSync.status) {
+        case 'success': {
+          console.log('Sync success');
+          break;
+        }
+        case 'error': {
+          console.log(`Sync error: ${messageSync.err}`);
+          break;
+        }
+        case 'in_progress': {
+          console.log('Sync in progress');
+          setMessages((curr) => [...curr, formatMessage(messageSync.data)]);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
+    offerCallback: (messageId, offerState) => {
+      switch (offerState) {
+        case 'accept': {
+          updateOffer(messageId, '(Accepted)', true);
+          break;
+        }
+        case 'reject': {
+          updateOffer(messageId, '(Rejected)', false);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
+  });
+
+  // ** useEffect **
+  useEffect(() => {
+    if (data !== undefined && data !== null) {
+      console.log('userId acquired from user session');
+      userIdRef.current = data.user.id;
+      setDomLoaded(true);
+      setConnect(true);
+      return;
+    }
+
+    userIdRef.current = 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26';
+
+    setConnect(true);
+    setDomLoaded(true);
+    // TODO, to change back to following
+    // console.log('userId cannot be found, redirecting to signin page');
+    // router.push('/login');
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (isConnected && domLoaded && !queryChecked) {
+      if (
+        router.query.listing !== undefined &&
+        ((router.query.buyer !== undefined && router.query.seller === undefined) ||
+          (router.query.buyer === undefined && router.query.seller !== undefined))
+      ) {
+        const { listing, buyer, seller } = router.query;
+        if (buyer !== undefined) {
+          createRoom(
+            socket.current,
+            {
+              buyerId: buyer as string,
+              sellerId: userId,
+              listingId: parseInt(listing as string, 10),
+            },
+            (ack) => {
+              setQueryChecked(true);
+              if (ack.success) {
+                console.log('createRoom', ack.data);
+                setRoomId(ack.data.id);
+              } else {
+                console.log('createRoom', ack.err);
+              }
+            }
+          );
+        } else {
+          createRoom(
+            socket.current,
+            {
+              buyerId: userId,
+              sellerId: seller as string,
+              listingId: parseInt(listing as string, 10),
+            },
+            (ack) => {
+              setQueryChecked(true);
+              if (ack.success) {
+                console.log('createRoom', ack.data);
+                setRoomId(ack.data.id);
+              } else {
+                console.log('createRoom', ack.err);
+              }
+            }
+          );
+        }
+      } else {
+        setQueryChecked(true);
+      }
+    }
+  }, [isConnected, domLoaded]);
+
+  useEffect(() => {
+    if (isConnected && loading === 'idle' && domLoaded && queryChecked && !roomSynced) {
+      setRoomSynced(true);
+      getRooms(socket.current, userId, (ack) => {
+        if (ack.success) {
+          console.log('getRooms', ack.data);
+        } else {
+          console.log('getRooms', ack.err);
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, loading, domLoaded, roomSynced, queryChecked]);
+
+  useEffect(() => {
+    if (isConnected && loading === 'idle' && domLoaded && queryChecked && roomId !== '') {
+      if (messageSynced !== roomId) {
+        if (messageSynced === '') {
+          joinRoom(socket.current, roomId, (ack) => {
+            if (ack.success) {
+              setMessageSynced(roomId);
+              setMessages([]);
+              getMessage(socket.current, roomId, (ack) => {
+                if (ack.success) {
+                  console.log('getMessage', ack.data);
+                } else {
+                  console.log('getMessage', ack.err);
+                }
+              });
+            } else {
+              console.log('joinRoom', ack.err);
+            }
+          });
+        } else {
+          setLoading('part');
+          partRoom(socket.current, messageSynced, (ack) => {
+            if (ack.success) {
+              joinRoom(socket.current, roomId, (ack) => {
+                setLoading('idle');
+                if (ack.success) {
+                  setMessageSynced(roomId);
+                  setMessages([]);
+                  getMessage(socket.current, roomId, (ack) => {
+                    if (ack.success) {
+                      console.log('getMessage', ack.data);
+                    } else {
+                      console.log('getMessage', ack.err);
+                    }
+                  });
+                } else {
+                  console.log('joinRoom', ack.err);
+                }
+              });
+            } else {
+              console.log('partRoom', ack.err);
+            }
+          });
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, loading, domLoaded, roomId, queryChecked]);
+
+  // ** Memos **
+  const currentRoom = useMemo<RoomData | null>(() => {
+    if (roomId === '') {
+      return null;
+    }
+
+    for (let i = 0; i < rooms.length; i++) {
+      if (rooms[i].id === roomId) {
+        return rooms[i];
+      }
+    }
+
+    return null;
+  }, [roomId, rooms]);
+
+  const chatPageSx: SxProps<Theme> = useMemo(() => {
+    if (isLg) {
       return {
-        pagePadding: {
-          mx: spacing(0),
-          mt: spacing(0),
-        },
+        height: 'calc(100vh - 113px)',
+        minWidth: '900px',
+        px: 'calc(50vw - 656px)',
       };
     }
     if (isMd) {
       return {
-        pagePadding: {
-          mx: spacing(5),
-          mt: spacing(3),
-        },
+        height: 'calc(100vh - 64px)',
+        minWidth: '900px',
+        px: 'calc(50vw - 656px)',
       };
     }
-    if (isLg) {
+    if (isSm) {
       return {
-        pagePadding: {
-          mx: spacing(5),
-          mt: spacing(3),
-        },
+        height: 'calc(100vh - 64px)',
+        minWidth: '0px',
+        px: '0px',
       };
     }
     return {
-      pagePadding: {
-        mx: spacing(5),
-        mt: spacing(3),
-      },
+      height: 'calc(100vh - 64px)',
+      minWidth: '0px',
+      px: '64px',
     };
-  }, [isSm, isMd, isLg]);
+  }, [isLg, isMd, isSm]);
 
-  const userChatList = useChatListQuery(loggedUserUuid);
-  // console.log(userChatList);
+  const onClickSend: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    if (inputText !== '') {
+      console.log('onClickSend', inputText);
+      sendMessage(
+        socket.current,
+        { message: inputText, roomId, time: new Date().toISOString() },
+        (ack) => {
+          if (ack.success) {
+            console.log('sendMessage', ack.data);
+            setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
+            updateChatList(ack.data as Messages);
+            setInputText('');
+          } else {
+            console.log('sendMessage', ack.err);
+          }
+        }
+      );
+    }
+  };
 
-  // TODO: set listing data from retrieved listingID
-  // const listingData = useGetListingQuery('3');
-  // console.log(listingData);
+  const onCreateOffer = (val: number) => {
+    // TODO: need to have a better way to assert the dp to 2
+    const amount = parseFloat(val.toFixed(2));
 
-  // TODO: set listing images data from retrieved listingID
-  // const listingImagesData = useGetListingImagesQuery('3');
-  // console.log(listingImagesData);
+    if (currentRoom !== null) {
+      const { itemId: listingId, id: roomId } = currentRoom;
 
-  // TODO: set buyer data from retrieved buyerID
-  // const buyer = useGetUserQuery(loggedUserUuid);
-  // console.log(buyer);
+      makeOffer(socket.current, { amount, userId, roomId, listingId }, (ack) => {
+        if (ack.success) {
+          console.log('makeOffer', ack.data);
+          setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
+          updateChatList(ack.data as Messages);
+        } else {
+          console.log('makeOffer', ack.err);
+        }
+      });
+    }
+  };
 
-  // TODO: set messages data from retrieved roomID
-  // const roomMessages = useGetMessagesQuery(selectChat);
-  // console.log(roomMessages);
+  const onAcceptOffer = (id: number) => {
+    acceptOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('acceptOffer', ack.data);
+        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
+        updateChatList(ack.data as Messages);
+      } else {
+        console.log('acceptOffer', ack.err);
+      }
+    });
+  };
 
-  const messages: ChatBoxProps['roomData'] = [
-    {
-      id: '2451',
-      content_type: 'text',
-      read: false,
-      content: 'hello',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '2163',
-      content_type: 'text',
-      read: false,
-      content: 'Not much, just working on some projects. How about you?',
-      author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '2461',
-      content_type: 'text',
-      read: false,
-      content: 'Not much, just working on some projects. How about you?',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '2351',
-      content_type: 'image',
-      read: false,
-      content:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '2175',
-      content_type: 'image',
-      read: false,
-      content:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU',
-      author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '2123',
-      content_type: 'text',
-      read: false,
-      content: 'Not much, just working on some projects. How about you?',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '2124',
-      content_type: 'text',
-      read: false,
-      content: 'Not much, just working on some projects. How about you?',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '2435',
-      content_type: 'offer',
-      read: false,
-      offer: 188.8,
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '25',
-      content_type: 'offer',
-      read: false,
-      offer: 188.8,
-      author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '25434',
-      content_type: 'text',
-      read: false,
-      content: 'https://test.zip',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '23',
-      content_type: 'file',
-      read: false,
-      content: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      author: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '254324',
-      content_type: 'text',
-      read: false,
-      content: 'LAST MESSAGE',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '243234',
-      content_type: 'text',
-      read: false,
-      content: 'CAN YOU SEE ME',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '254234',
-      content_type: 'text',
-      read: false,
-      content: '2ND LAST MESSAGE',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '2547234',
-      content_type: 'text',
-      read: false,
-      content: 'FINAL MESSAGE SRSLY',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      createdAt: '2023-01-12T06:11:49.43002+00:00',
-    },
-  ];
-  const messagesOfChatRoomId1 = [
-    {
-      id: '365',
-      content_type: 'message',
-      read: false,
-      content: 'hello',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      created_at: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '366',
-      content_type: 'image',
-      read: false,
-      content: 'https://s3.amazonaws.com/mybucket/myimage-20230322T120000Z.jpg',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      created_at: '2023-01-12T06:11:52.43002+00:00',
-    },
-    {
-      id: '367',
-      content_type: 'offer',
-      read: true,
-      offer: 4500,
-      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
-      created_at: '2023-01-12T06:11:49.43002+00:00',
-    },
-  ];
+  const onRejectOffer = (id: number) => {
+    rejectOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('rejectOffer', ack.data);
+        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
+        updateChatList(ack.data as Messages);
+      } else {
+        console.log('rejectOffer', ack.err);
+      }
+    });
+  };
 
-  const messagesOfChatRoomId2 = [
-    {
-      id: '365',
-      content_type: 'message',
-      read: false,
-      content: 'hello',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      created_at: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '366',
-      content_type: 'image',
-      read: true,
-      content: 'https://s3.amazonaws.com/mybucket/myimage-20230322T120000Z.jpg',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      created_at: '2023-01-12T06:11:52.43002+00:00',
-    },
-    {
-      id: '367',
-      content_type: 'offer',
-      read: true,
-      offer: 4500,
-      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
-      created_at: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '369',
-      content_type: 'offer',
-      read: true,
-      offer: 4500,
-      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
-      created_at: '2023-01-12T06:11:49.43002+00:00',
-    },
-  ];
+  const onCancelOffer = (id: number) => {
+    cancelOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('cancelOffer', ack.data);
+        const indexToRemove = messages.findIndex((room) => room.id === ack.data);
 
-  const messagesOfChatRoomId3 = [
-    {
-      id: '365',
-      content_type: 'message',
-      read: true,
-      content: 'hello',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      created_at: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '366',
-      content_type: 'image',
-      read: true,
-      content: 'https://s3.amazonaws.com/mybucket/myimage-20230322T120000Z.jpg',
-      author: '8fc4060d-5046-458f-b521-9e845b405cf1',
-      created_at: '2023-01-12T06:11:52.43002+00:00',
-    },
-    {
-      id: '367',
-      content_type: 'offer',
-      read: true,
-      offer: 4500,
-      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
-      created_at: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '369',
-      content_type: 'offer',
-      read: true,
-      offer: 4500,
-      author: '6ac846d-5468-3f84-b648-6a544f23e4f5',
-      created_at: '2023-01-12T06:11:49.43002+00:00',
-    },
-  ];
+        if (indexToRemove !== -1) {
+          let removedMessage: ChatData[];
+          setMessages((curr) => {
+            const newMessages = [...curr];
+            removedMessage = newMessages.splice(indexToRemove, 1);
+            return newMessages;
+          });
 
-  const allChats: ChatListProps[] = [
-    {
-      id: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
-      company: 'ABC Corp',
-      category: 'Buying',
-      itemName: 'Mild Steel Channel',
-      latestMessage:
-        'Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?Hey, are you still interested in buying?',
-      price: 100,
-      inProgress: true,
-      badgeContent: messagesOfChatRoomId1.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '7bc2b79e-8eb9-4a44-9656-58327d75a0cb',
-      company: 'XYZ Corp',
-      category: 'Buying',
-      latestMessage: 'Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem IpsumvLorem Ipsum ',
-      price: 50,
-      inProgress: true,
-      itemName: 'Product Name 2',
-      badgeContent: messagesOfChatRoomId2.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '42268d5f-a094-493c-a75f-7ed4e3db9c69',
-      company: '42268d5f-a094-493c-a75f-7ed4e3db9c69',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '3',
-      company: 'LMN Corp',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '4',
-      company: 'LMN Corp',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '5',
-      company: 'LMN Corp',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '6',
-      company: 'LMN Corp',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '7',
-      company: 'LMN Corp',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '8',
-      company: 'LMN Corp',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '9',
-      company: 'FINAL COMPANY',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-    {
-      id: '10',
-      company: 'SERIOUS FINAL COMPANY',
-      category: 'Selling',
-      latestMessage: 'I can offer 80, what do you think?',
-      price: 80,
-      inProgress: true,
-      itemName: 'Product Name 3',
-      badgeContent: messagesOfChatRoomId3.filter((message) => !message.read).length,
-      imageUrl: 'https://siwma.org.sg/wp-content/uploads/SIW-logo.png',
-      date: '2023-01-12T06:11:49.43002+00:00',
-    },
-  ];
+          if (indexToRemove === messages.length - 1) {
+            const newLatestMessage = messages[indexToRemove - 1];
+            setRooms((curr) =>
+              curr.map((room) => {
+                console.log('iterating rooms', room);
+
+                if (room.contentType === 'offer') {
+                  if (room.latestMessage.content !== removedMessage[0].messageContent.content) {
+                    return room;
+                  }
+                } else {
+                  return room;
+                }
+
+                console.log('updating room', room);
+
+                const newRoom = {
+                  ...room,
+                  contentType: newLatestMessage.messageContent.contentType,
+                } as RoomData;
+
+                let latestMessageDataString = '';
+                const latestMessageDataObj = {
+                  amount: 0,
+                  accepted: false,
+                  content: '',
+                };
+
+                if (newLatestMessage.messageContent.contentType === 'offer') {
+                  latestMessageDataObj.amount = newLatestMessage.messageContent.amount;
+                  latestMessageDataObj.accepted = newLatestMessage.messageContent.offerAccepted;
+                  latestMessageDataObj.content = newLatestMessage.messageContent.content;
+                } else {
+                  latestMessageDataString = newLatestMessage.messageContent.content;
+                }
+
+                newRoom.time = new Date(newLatestMessage.createdAt);
+                newRoom.latestMessage =
+                  newLatestMessage.messageContent.contentType === 'offer'
+                    ? latestMessageDataObj
+                    : latestMessageDataString;
+
+                return newRoom;
+              })
+            );
+          }
+        }
+      } else {
+        console.log('cancelOffer', ack.err);
+      }
+    });
+  };
 
   return (
-    <Box
-      display="flex"
-      sx={{
-        height: '100vh',
-        // overflowY: 'hidden',
-        ...chatStyles?.pagePadding,
-      }}
-    >
-      {/* render if isMd and isLg, if isSm check if there's a selected chat */}
-      {/* if there is selectedChat, display chat only, else display chat list only */}
-      {(isMd || isLg || (isSm && selectChat === '')) && (
+    <Box id="chat-page" display="flex" sx={chatPageSx}>
+      {/* render if isMd and isLg */}
+      {/* if isSm, display chat list if roomId is '' (room not selected) */}
+      {(isMd || isLg || (isSm && roomId === '')) && (
         <Box
-          sx={({ shadows }) => ({
-            boxShadow: shadows[3],
+          sx={{
             width: isSm ? 1 / 1 : 1 / 3,
-            height: isSm ? '100%' : '90%',
             overflow: 'hidden',
-          })}
+          }}
         >
           <ChatList
-            chats={allChats}
-            selectChat={selectChat}
-            setSelectChat={setSelectChat}
+            chats={rooms}
+            selectChat={roomId}
+            setSelectChat={(roomId) => {
+              setRoomId(roomId);
+              roomIdRef.current = roomId;
+            }}
             onChange={(e) => {
               const element = e.currentTarget as HTMLInputElement;
               const { value } = element;
@@ -504,40 +588,48 @@ const ChatRoom = () => {
           />
         </Box>
       )}
-      {selectChat !== '' && (
+      {/* if isSm, display  */}
+      {roomId !== '' && currentRoom !== null && (
         <Box
+          id="chat-right-side-wrapper"
           sx={{
             width: isSm ? 1 / 1 : 2 / 3,
-            height: isSm ? '100%' : '90%',
+            height: '100%',
             overflow: 'hidden',
           }}
         >
-          <ChatHeader
-            profilePic=""
-            companyName="Hi Metals PTE LTD"
-            available
-            setSelectChat={setSelectChat}
-          />
-          <ChatSubHeader
-            itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
-            itemName="Hi Metals PTE LTD"
-            available
-            itemPrice={200.8}
-            makeOffer={makeOffer}
-            setMakeOffer={setMakeOffer}
-          />
-          <Box sx={{ height: '100%' }}>
+          <Box
+            id="chat-right-side"
+            sx={{
+              height: '100%',
+            }}
+          >
+            <ChatHeader
+              profilePic={currentRoom.userImage}
+              username={currentRoom.username}
+              handleBack={() => setRoomId('')}
+            />
+            <ChatSubHeader
+              itemPic={currentRoom.itemImage}
+              itemName={currentRoom.itemName}
+              available={currentRoom.inProgress}
+              itemPrice={currentRoom.itemPrice}
+              itemPriceIsUnit={currentRoom.itemPriceIsUnit}
+              onCreateOffer={onCreateOffer}
+            />
             <ChatBox
               roomData={messages}
-              loginId="c9f22ccc-0e8e-42bd-9388-7f18a5520c26"
+              loginId={userId}
+              onAcceptOffer={onAcceptOffer}
+              onRejectOffer={onRejectOffer}
+              onCancelOffer={onCancelOffer}
               ChatText={
                 <ChatTextBox
                   selectedFile={selectedFile}
                   setSelectedFile={setSelectedFile}
                   inputText={inputText}
                   setInputText={setInputText}
-                  onSend={onSend}
-                  setOnSend={setOnSend}
+                  onClickSend={onClickSend}
                 />
               }
             />

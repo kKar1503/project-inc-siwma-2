@@ -76,6 +76,18 @@ export class InvalidBucketName extends S3ApiError {
   }
 }
 
+export class MissingUUID extends S3ApiError {
+  public static readonly status = 500;
+  public static readonly code = S3ApiError.code + 300; // 3300
+
+  constructor() {
+    super();
+    this.message = 'Something went wrong';
+    this.status = MissingUUID.status;
+    this.code = MissingUUID.code;
+  }
+}
+
 export class ObjectNotFound extends S3ApiError {
   public static readonly status = 404;
   public static readonly code = S3ApiError.code + 300; // 3400
@@ -97,5 +109,27 @@ export class ObjectCollision extends S3ApiError {
     this.message = `Something went wrong`;
     this.status = BucketConnectionFailure.status;
     this.code = BucketConnectionFailure.code;
+  }
+}
+export class InvalidDataProvided extends S3ApiError {
+  public static readonly status = 500;
+  public static readonly code = S3ApiError.code + 400; // 3402
+
+  constructor() {
+    super();
+    this.message = `Something went wrong`;
+    this.status = MultipartUploadError.status;
+    this.code = MultipartUploadError.code;
+  }
+}
+export class MultipartUploadError extends S3ApiError {
+  public static readonly status = 500;
+  public static readonly code = S3ApiError.code + 401; // 3402
+
+  constructor() {
+    super();
+    this.message = `Something went wrong`;
+    this.status = MultipartUploadError.status;
+    this.code = MultipartUploadError.code;
   }
 }

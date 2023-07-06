@@ -1,5 +1,6 @@
 // ** Type Import
 import type { PaletteOptions } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 const mainColor = '#2962ff';
 
@@ -96,13 +97,13 @@ const DefaultPalette: PaletteOptions = {
     default: '#F5F5F5',
   },
   action: {
-    active: `rgba(${mainColor}, 0.54)`,
-    hover: `rgba(${mainColor}, 0.05)`,
+    active: alpha(mainColor, 0.54),
+    hover: alpha(mainColor, 0.05),
     hoverOpacity: 0.05,
-    selected: `rgba(${mainColor}, 0.08)`,
-    disabled: `rgba(${mainColor}, 0.26)`,
-    disabledBackground: `rgba(${mainColor}, 0.12)`,
-    focus: `rgba(${mainColor}, 0.12)`,
+    selected: alpha(mainColor, 0.08),
+    disabled: alpha(mainColor, 0.26),
+    disabledBackground: alpha(mainColor, 0.12),
+    focus: alpha(mainColor, 0.12),
   },
 };
 

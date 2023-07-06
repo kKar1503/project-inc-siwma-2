@@ -4,4 +4,3 @@ export type BulkEmailResponseBody = {
   success: boolean;
   error?: EmailError;
 };
-

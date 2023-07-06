@@ -1,7 +1,9 @@
-import { NotFoundError, ParamError, ForbiddenError } from '@inc/errors';
-import { apiHandler, parseToNumber, formatAPIResponse } from '@/utils/api';
+import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { Companies } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
+import bucket from '@/utils/s3Bucket';
 import { companySchema } from '@/utils/api/server/zod';
 import { CompanyResponseBody } from '@/utils/api/client/zod';
 
@@ -30,7 +32,7 @@ function formatResponse(r: Companies): CompanyResponseBody {
     image: r.logo,
     visible: r.visibility,
     comments: r.comments,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt ? r.createdAt.toISOString() : undefined,
   };
 }
 
@@ -64,7 +66,7 @@ export default apiHandler()
   })
   .put(async (req, res) => {
     const { id } = req.query;
-    const { name, website, bio, comments, image } = companySchema.put.body.parse(req.body);
+    const { name, website, bio, comments } = companySchema.put.body.parse(req.body);
 
     const companyid = parseCompanyId(id as string);
     const isAdmin = req.token?.user.permissions === 1;
@@ -104,7 +106,6 @@ export default apiHandler()
         name,
         website,
         bio,
-        logo: image,
         comments,
       },
       select: {
@@ -133,6 +134,10 @@ export default apiHandler()
     const company = await checkCompany(companyid);
     if (!company) {
       throw new NotFoundError('Company');
+    }
+
+    if (company.logo) {
+      await bucket.deleteObject(company.logo);
     }
 
     await PrismaClient.companies.delete({

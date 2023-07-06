@@ -1,8 +1,7 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient, { Messages } from '@inc/db';
+import { apiHandler, formatAPIResponse, formatMessageResponse } from '@/utils/api';
+import PrismaClient from '@inc/db';
 import { NotFoundError, InvalidRangeError, ForbiddenError } from '@inc/errors';
 import { chatSchema } from '@/utils/api/server/zod';
-import { ChatMessage } from '@/utils/api/client/zod/chat';
 import { checkChatExists } from '.';
 
 async function getMessages(chatId: string, lastIdPointer: number, limit: number) {
@@ -21,26 +20,6 @@ async function getMessages(chatId: string, lastIdPointer: number, limit: number)
   });
 
   return messages;
-}
-
-function formatMessageResponse(message: Messages) {
-  // Construct base response
-  const response: ChatMessage = {
-    id: message.id.toString(),
-    contentType: message.contentType,
-    read: message.read,
-    author: message.author,
-    createdAt: message.createdAt.toISOString(),
-  };
-
-  // Format the message based on the content type
-  if (message.contentType !== 'offer') {
-    response.content = message.content;
-  } else {
-    response.offer = message.offer;
-  }
-
-  return response;
 }
 
 export default apiHandler().get(async (req, res) => {

@@ -20,11 +20,14 @@ import { ListingsParametersValue } from './tables/listings_parameters_value';
 import { UserBookmarks } from './tables/user_bookmarks';
 import { SibKeys } from './tables/sibkeys';
 import { PasswordReset } from './tables/password_reset';
+import { Reviews } from './tables/reviews';
 
 const main = async (): Promise<void> => {
   console.log('\nClearing database...');
 
   await Promise.allSettled([
+    prismaClient.logs.deleteMany({}),
+    prismaClient.reviews.deleteMany({}),
     prismaClient.category.deleteMany({}),
     prismaClient.companies.deleteMany({}),
     prismaClient.users.deleteMany({}),
@@ -64,11 +67,12 @@ const main = async (): Promise<void> => {
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_bookmarks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_images_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.logs_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.messages_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.notification_settings_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.offers_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.parameter_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.refresh_tokens_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.reviews_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.user_bookmarks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.password_reset_seq RESTART WITH 1;`,
   ]);
@@ -109,13 +113,6 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${roomsCount} rows into public.rooms`);
-  console.log('Seeding public.messages...');
-
-  const { count: messagesCount } = await prismaClient.messages.createMany({
-    data: Messages,
-  });
-
-  console.log(`Seeded ${messagesCount} rows into public.messages`);
   console.log('Seeding public.offers...');
 
   const { count: offersCount } = await prismaClient.offers.createMany({
@@ -123,14 +120,13 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${offersCount} rows into public.offers`);
-  console.log('Adding an offer to a message...');
+  console.log('Seeding public.messages...');
 
-  await prismaClient.messages.update({
-    where: { id: 9 },
-    data: { offer: 1 },
+  const { count: messagesCount } = await prismaClient.messages.createMany({
+    data: Messages,
   });
 
-  console.log('Added an offer to a message');
+  console.log(`Seeded ${messagesCount} rows into public.messages`);
   console.log('Seeding public.parameter...');
 
   const { count: parameterCount } = await prismaClient.parameter.createMany({
@@ -223,6 +219,13 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${passwordResetCount} rows into public.password_reset`);
+  console.log('Seeding public.reviews...');
+
+  const { count: reviewsCount } = await prismaClient.reviews.createMany({
+    data: Reviews,
+  });
+
+  console.log(`Seeded ${reviewsCount} rows into public.reviews`);
 };
 
 main()

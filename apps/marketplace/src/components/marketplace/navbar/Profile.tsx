@@ -8,7 +8,10 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import Link from '@mui/material/Link';
+import { signOut } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 
@@ -21,7 +24,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
+  const { t } = useTranslation();
   const { typography, palette, spacing } = useTheme();
 
   const isMenuOpen = anchorEl !== null;
@@ -34,13 +37,18 @@ const Profile = ({ userName, userId }: UserNameProps) => {
     setAnchorEl(null);
   };
 
+  const handleLogOut = async () => {
+    setAnchorEl(null);
+    await signOut({ callbackUrl: '/login' });
+  };
+
   return (
     <>
       <IconButton
         size="medium"
         onClick={handleProfileMenuOpen}
         sx={({ spacing }) => ({
-          ml: isMd ? spacing(1) : spacing(2),
+          mx: isMd ? spacing(1) : spacing(2),
         })}
       >
         <AccountCircle
@@ -100,7 +108,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
             my: spacing(1),
           }}
         >
-          Hi, {userName}!
+          {`${t('Hi, ')}${userName}${t('!')}`}
         </Typography>
 
         <Divider />
@@ -125,7 +133,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
                 mb: spacing(1),
               }}
             >
-              Profile
+              {t('Profile')}
             </Typography>
           </MenuItem>
         </Link>
@@ -150,35 +158,62 @@ const Profile = ({ userName, userId }: UserNameProps) => {
                 mb: spacing(1),
               }}
             >
-              Edit Profile
+              {t('Edit Profile')}
             </Typography>
           </MenuItem>
         </Link>
 
-        <MenuItem onClick={handleMenuClose}>
-          <LockIcon
-            sx={{
-              fontSize: typography.h5,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            }}
-          />
-          <Typography
-            sx={{
-              fontSize: typography.subtitle2,
-              color: palette.text.secondary,
-              mr: spacing(2),
-              mt: spacing(1),
-              mb: spacing(1),
-            }}
-          >
-            Change Password
-          </Typography>
-        </MenuItem>
+        <Link href="/profile/change-password" underline="none">
+          <MenuItem onClick={handleMenuClose}>
+            <LockIcon
+              sx={{
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: typography.subtitle2,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            >
+              {t('Change Password')}
+            </Typography>
+          </MenuItem>
+        </Link>
 
-        <MenuItem onClick={handleMenuClose}>
+        <Link href="/bookmarks" underline="none">
+          <MenuItem onClick={handleMenuClose}>
+            <BookmarksIcon
+              sx={{
+                fontSize: typography.h5,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: typography.subtitle2,
+                color: palette.text.secondary,
+                mr: spacing(2),
+                mt: spacing(1),
+                mb: spacing(1),
+              }}
+            >
+              {t('Bookmarks')}
+            </Typography>
+          </MenuItem>
+        </Link>
+
+        <MenuItem onClick={handleLogOut}>
           <LogoutIcon
             sx={{
               fontSize: typography.h5,
@@ -197,7 +232,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
               mb: spacing(1),
             }}
           >
-            Log Out
+            {t('Log Out')}
           </Typography>
         </MenuItem>
       </Menu>

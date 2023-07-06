@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import InputBase from '@mui/material/InputBase';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
@@ -16,8 +17,7 @@ export type ChatTextBoxProps = {
   setSelectedFile: (val: File | null) => void;
   inputText: string;
   setInputText: (val: string) => void;
-  onSend: boolean;
-  setOnSend: (val: boolean) => void;
+  onClickSend: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const ChatTextBox = ({
@@ -25,9 +25,9 @@ const ChatTextBox = ({
   setSelectedFile,
   inputText,
   setInputText,
-  onSend,
-  setOnSend,
+  onClickSend,
 }: ChatTextBoxProps) => {
+  const { t } = useTranslation();
   const [fileName, setFileName] = useState<string>('');
   const [uploadType, setUploadType] = useState<string>('');
   const imageFileRef = useRef<HTMLInputElement>(null);
@@ -82,6 +82,7 @@ const ChatTextBox = ({
 
   return (
     <Box
+      id="chat-text-box"
       sx={({ spacing, palette }) => ({
         display: 'flex',
         alignItems: 'center',
@@ -115,7 +116,7 @@ const ChatTextBox = ({
       >
         <MenuItem onClick={handleImageClick} disabled={fileName !== ''}>
           <ImageOutlinedIcon sx={({ spacing }) => ({ mr: spacing(2) })} />
-          Image
+          {t('Image')}
           <input
             hidden
             ref={imageFileRef}
@@ -126,7 +127,7 @@ const ChatTextBox = ({
         </MenuItem>
         <MenuItem onClick={handleFileClick} disabled={fileName !== ''}>
           <InsertDriveFileOutlinedIcon sx={({ spacing }) => ({ mr: spacing(2) })} />
-          File
+          {t('File')}
           <input hidden ref={fileRef} type="file" onChange={handleFileSelect} />
         </MenuItem>
       </Menu>
@@ -154,13 +155,15 @@ const ChatTextBox = ({
       )}
       {fileName === '' && (
         <InputBase
-          placeholder="Type your message here"
+          placeholder={t(`Type your message here`).toString()}
           value={inputText}
           fullWidth
           sx={({ spacing, typography }) => ({
             fontSize: typography.body1,
             py: spacing(1),
-            maxHeight: '150px',
+            // TODO: Need to add a fix to the above div getting pushed up when the height here is increased
+            // maxHeight: '150px',
+            height: '56px',
             overflow: 'auto',
             scrollbarWidth: 'thin',
             scrollbarColor: 'transparent transparent',
@@ -170,7 +173,7 @@ const ChatTextBox = ({
         />
       )}
 
-      <IconButton onClick={() => setOnSend(true)}>
+      <IconButton onClick={onClickSend}>
         <SendIcon sx={{ fontSize: 40 }} />
       </IconButton>
     </Box>
