@@ -1,11 +1,19 @@
+import { Box } from '@mui/material';
 import Spinner from '../Spinner';
 
 const SpinnerPage = () => (
-  <div className="w-full h-screen flex flex-col items-center justify-center">
-    <div className="w-full h-full flex flex-col gap-2 items-center justify-center max-w-md px-8">
-      <Spinner />
-    </div>
-  </div>
+  <Box
+    sx={{
+      width: '100%',
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'column',
+    }}
+  >
+    <Spinner />
+  </Box>
 );
 
 SpinnerPage.allowNonAuthenticated = true;

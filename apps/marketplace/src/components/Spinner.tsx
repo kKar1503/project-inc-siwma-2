@@ -1,3 +1,4 @@
+import { Box, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 /**
  * Loading spinner
@@ -5,14 +6,18 @@ import { useTranslation } from 'react-i18next';
 const Spinner = () => {
   const { t } = useTranslation();
   return (
-    <div
-      className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+    <Box
+      sx={({ spacing }) => ({
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: spacing(2),
+      })}
       role="status"
     >
-      <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-        {t('Loading...')}
-      </span>
-    </div>
+      {t('Loading...')}
+      <CircularProgress />
+    </Box>
   );
 };
 
