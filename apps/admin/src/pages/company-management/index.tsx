@@ -1,19 +1,24 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import CompanyTable from './companyTable';
 import RegisterCompanyCard from './registerCompanyCard';
 import BulkRegisterCompanyCard from './bulkRegisterCompanyCard';
 
-const CompanyManagement = () => {
-    return (
-        <Box sx={{ display: 'flex', gap: 4 }}>
-            <Box sx={{ flex: 1 }}>
-                <RegisterCompanyCard />
-            </Box>
-            <Box sx={{ flex: 1 }}>
-                <BulkRegisterCompanyCard />
-            </Box>
-        </Box>
-    );
-};
+const CompanyManagement = () => (
+  <Container maxWidth="lg" sx={{ my: 2 }}>
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
+        <RegisterCompanyCard />
+      </Grid>
+      <Grid item xs={6}>
+        <BulkRegisterCompanyCard />
+      </Grid>
+      <Grid item xs={12}>
+        <CompanyTable />
+      </Grid>
+    </Grid>
+  </Container>
+);
 
 export default CompanyManagement;
