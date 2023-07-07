@@ -106,7 +106,7 @@ const AdminSideBar = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [user, setUser] = useState({ name: '', email: '', imageUrl: '' });
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { typography } = useTheme();
+  const { palette, typography } = useTheme();
   const router = useRouter();
 
   // function that fetches the user info from backend
@@ -152,12 +152,12 @@ const AdminSideBar = () => {
     if (isSm) {
       return {
         name: {
-          font: 'bold 1rem Roboto, sans-serif',
+          ...typography.subtitle1,
+          fontWeight: 'bold',
           color: '#000',
         },
         email: {
-          fontSize: typography.subtitle1,
-          font: 'bold 0.8rem Roboto, sans-serif',
+          ...typography.body2,
           color: '#9E9E9E',
         },
       };
@@ -166,12 +166,12 @@ const AdminSideBar = () => {
     if (isMd) {
       return {
         name: {
-          font: 'bold 1.2rem Roboto, sans-serif',
+          ...typography.subtitle1,
+          fontWeight: 'bold',
           color: '#000',
         },
         email: {
-          fontSize: typography.subtitle1,
-          font: 'bold 0.8rem Roboto, sans-serif',
+          ...typography.body2,
           color: '#9E9E9E',
         },
       };
@@ -180,12 +180,12 @@ const AdminSideBar = () => {
     if (isLg) {
       return {
         name: {
-          font: 'bold 1.2rem Roboto, sans-serif',
+          ...typography.h6,
+          fontWeight: 'bold',
           color: '#000',
         },
         email: {
-          fontSize: typography.subtitle1,
-          font: 'bold 0.8rem Roboto, sans-serif',
+          ...typography.body1,
           color: '#9E9E9E',
         },
       };
@@ -193,12 +193,12 @@ const AdminSideBar = () => {
 
     return {
       name: {
-        fontSize: '24px',
-        font: 'bold 1.2rem Roboto, sans-serif',
+        ...typography.h4,
+        fontWeight: 'bold',
         color: '#000',
       },
       email: {
-        font: 'bold 0.8rem Roboto, sans-serif',
+        ...typography.subtitle1,
         color: '#9E9E9E',
       },
     };
@@ -208,7 +208,6 @@ const AdminSideBar = () => {
     <Box
       sx={{
         width: '290px',
-        padding: '1em',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -217,7 +216,7 @@ const AdminSideBar = () => {
         top: 0,
         bottom: 0,
         overflowY: 'auto',
-        backgroundColor: '#fff',
+        backgroundColor: palette.primary.main,
       }}
     >
       <Box>
@@ -227,6 +226,7 @@ const AdminSideBar = () => {
             flexDirection: 'column',
             alignItems: 'center',
             margin: '2em 0',
+            padding: '1em',
           }}
         >
           <Box style={{ marginBottom: '1em' }}>
@@ -241,7 +241,7 @@ const AdminSideBar = () => {
         </Box>
         <Typography
           variant="h4"
-          sx={{ font: 'bold 1.8rem Roboto, sans-serif', marginBottom: '16px' }}
+          sx={{ font: 'bold 1.8rem Roboto, sans-serif', marginBottom: '16px', marginLeft: '0.5em' }}
         >
           General
         </Typography>
@@ -256,7 +256,7 @@ const AdminSideBar = () => {
                   alignItems: 'center',
                 }}
               >
-                <Box style={{ marginRight: '1em' }}>
+                <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
                   <item.Icon style={{ color: 'black' }} />
                 </Box>
                 <ListItemText
@@ -288,7 +288,7 @@ const AdminSideBar = () => {
                           alignItems: 'center',
                         }}
                       >
-                        <Box style={{ marginRight: '1em' }}>
+                        <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
                           <subitem.Icon style={{ color: 'black' }} />
                         </Box>
                         <ListItemText
@@ -321,7 +321,7 @@ const AdminSideBar = () => {
       <Hidden mdDown implementation="css">
         <Box
           sx={{
-            backgroundColor: '#F7F7F8',
+            backgroundColor: palette.secondary.main,
             padding: '1em',
             display: 'flex',
             alignItems: 'flex-end',
@@ -364,7 +364,9 @@ const AdminSideBar = () => {
           position="fixed"
           sx={{
             bgcolor: '#ffffff',
-            boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
+            boxShadow: 'none',
+            borderBottom: 1,
+            borderColor: '#dbdbdb',
           }}
         >
           <Toolbar>

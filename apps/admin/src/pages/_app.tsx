@@ -9,7 +9,7 @@ import { ThemeComponent } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import SideBar from '@/components/AdminSideBar';
 import Box from '@mui/material/Box';
-import { useMediaQuery, useTheme } from '@mui/material';
+import { useMediaQuery, useTheme, createTheme, ThemeProvider } from '@mui/material';
 
 const queryClient = new QueryClient();
 
@@ -58,6 +58,16 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
 
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
+  const backgroundColor = createTheme({
+    palette: {
+      primary: {
+        main: '#fff',
+      },
+      secondary: {
+        main: '#f7f7f8',
+      },
+    },
+  });
 
   return (
     <ThemeComponent>
@@ -72,7 +82,9 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
             <Box display="flex" flexDirection="row">
               {includeSideBar && (
                 <Box width={isMobileOrTablet ? '0px' : '290px'} overflow="auto">
-                  <SideBar />
+                  <ThemeProvider theme={backgroundColor}>
+                    <SideBar />
+                  </ThemeProvider>
                 </Box>
               )}
               <Box flex="1" paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}>
