@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Card, CardContent, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Card, CardContent, useMediaQuery, useTheme } from '@mui/material';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import Form from './form';
 
@@ -31,6 +31,7 @@ const AdvertisementUpload = () => {
               accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
               maxWidth="500px"
               maxHeight="500px"
+              // maxFileSize={64 * 1024 * 1024} // 64MB in bytes
             />
           </Box>
           <Form />
