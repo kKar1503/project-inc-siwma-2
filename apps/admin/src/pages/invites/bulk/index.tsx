@@ -7,11 +7,18 @@ import FileUpload, {
 import CompanyInvitesTable from '@/components/tables/BaseTable/CompanyInvitesTable';
 import { Box, Button } from '@mui/material';
 import UserInvitesTable from '@/components/tables/BaseTable/UserInvitesTable';
-import { useResponsiveness } from '@inc/ui';
+import { Modal, useResponsiveness } from '@inc/ui';
 
 const BulkInvitesPage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  const [leftButtonState, setLeftButtonState] = useState(false);
+  const [rightButtonState, setRightButtonState] = useState(false);
 
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (!event.target.files) return;
@@ -38,10 +45,8 @@ const BulkInvitesPage = () => {
 
   const handleFileUpload = () => {
     console.log('File uploading...');
+    setOpenConfirm(true);
   };
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -109,6 +114,21 @@ const BulkInvitesPage = () => {
           CONFIRM
         </Button>
       </Box>
+
+      <Modal
+        open={openConfirm}
+        setOpen={setOpenConfirm}
+        buttonColor="#2962FF"
+        icon="info"
+        title="Confirmation"
+        content="Companies and Users have been successfully invited!"
+        leftButtonText={null} // <= only one button set as null
+        rightButtonText="back to invites"
+        leftButtonState={false} // <= only one button, set as false
+        rightButtonState={rightButtonState}
+        setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
+        setRightButtonState={setRightButtonState}
+      />
     </Box>
   );
 };
