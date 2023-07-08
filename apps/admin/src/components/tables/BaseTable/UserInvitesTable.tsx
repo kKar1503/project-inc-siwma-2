@@ -1,7 +1,6 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
-import { Box, Typography } from '@mui/material';
-import Head from 'next/head';
+import { Box } from '@mui/material';
 import { useState } from 'react';
 
 function createData(company: string, email: string, mobileNum: string): BaseTableData {

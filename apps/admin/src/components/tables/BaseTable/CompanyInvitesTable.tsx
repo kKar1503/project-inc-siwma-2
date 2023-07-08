@@ -1,7 +1,7 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import { Box, Typography } from '@mui/material';
-import Head from 'next/head';
+
 import { useState } from 'react';
 
 function createData(company: string, website: string): BaseTableData {
@@ -46,7 +46,7 @@ const CompanyInvitesTable = () => {
   };
 
   return (
-    <Box sx={{ my: 2, mx : 1 }}>
+    <Box sx={{ my: 2, mx: 1 }}>
       <BaseTable
         rows={rows}
         headers={headCells}
