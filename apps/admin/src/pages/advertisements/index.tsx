@@ -45,7 +45,7 @@ const AdvertisementDashboard = () => {
       <Grid item container xs={12} md={3} lg={3}>
         <Grid item xs={6} md={12} lg={12}>
           <Debug>
-            <ClicksPie data={companyClicks} />
+            <ClicksPie data={companyClicks} totalClicks={totalClicks} />
           </Debug>
         </Grid>
         <Grid item xs={6} md={12} lg={12}>
