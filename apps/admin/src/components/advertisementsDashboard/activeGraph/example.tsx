@@ -1,32 +1,41 @@
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme } from 'victory';
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 
 const data = [
-  { quarter: 1, earnings: 13000 },
-  { quarter: 2, earnings: 16500 },
-  { quarter: 3, earnings: 14250 },
-  { quarter: 4, earnings: 19000 },
+  { month: 1, adSpaces: 5, label: '5' },
+  { month: 2, adSpaces: 1, label: '1'  },
+  { month: 3, adSpaces: 2 , label: '2' },
+  { month: 4, adSpaces: 4 , label: '4' },
+  { month: 5, adSpaces: 4 , label: '4' },
+  { month: 6, adSpaces: 2 , label: '2' },
+  { month: 7, adSpaces: 4 , label: '4' },
+  { month: 8, adSpaces: 2 , label: '2' },
+  { month: 9, adSpaces: 3 , label: '3' },
+  { month: 10, adSpaces: 4, label: '4'  },
+  { month: 11, adSpaces: 0 , label: '0' },
+  { month: 12, adSpaces: 0 , label: '0' },
 ];
 
 const ExampleGraph = () => (
   <ModuleBase>
     <VictoryChart
+      labelComponent={<VictoryTooltip/>}
       // adding the material theme provided with Victory
       theme={VictoryTheme.material}
       domainPadding={20}
     >
       <VictoryAxis
-        tickValues={[1, 2, 3, 4]}
-        tickFormat={['Quarter 1', 'Quarter 2', 'Quarter 3', 'Quarter 4']}
+        tickValues={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+        tickFormat={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
       />
       <VictoryAxis
         dependentAxis
-        tickFormat={(x) => (`$${x / 1000}k`)}
+        tickFormat={x => x.toFixed(1)}
       />
       <VictoryBar
         data={data}
-        x='quarter'
-        y='earnings'
+        x='month'
+        y='adSpaces'
       />
     </VictoryChart>
   </ModuleBase>
