@@ -1,9 +1,6 @@
-import AdSpaceTable from '@/components/advertisementsDashboard/adSpaceTable';
-import { useQuery } from 'react-query';
-import fetchAdSpaceData from '@/middlewares/fetchAdSpaceData';
+import AdSpaceTable, { DataType } from '@/components/advertisementsDashboard/adSpaceTable';
 import Grid from '@mui/material/Grid';
 import Debug from '@/components/Debug';
-import AdminFigure from '@/components/AdminFigure';
 import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 import AdsClickIcon from '@mui/icons-material/AdsClick';
 import InfoCard from '@/components/advertisementsDashboard/InfoCard';
@@ -24,30 +21,21 @@ const onSetInactive = (ids: readonly string[]) => {
 
 };
 
-const useGetAdSpaceDataQuery = () => {
-  const { data } = useQuery('adSpace', async () => fetchAdSpaceData());
-  return data;
-};
+export interface AdvertisementDashboardProps {
+  totalClicks: number;
+  active: DataType[];
+  inactive: DataType[];
+}
 
-
-const AdvertisementDashboard = () => {
-
-  const apiData = useGetAdSpaceDataQuery();
-
-  if (!apiData) return null;
-
-  const { data, totalClicks } = apiData;
-
-  const active = data.filter((item) => item.active);
-  const inactive = data.filter((item) => !item.active);
-
+const AdvertisementDashboard = ({ totalClicks, active, inactive }: AdvertisementDashboardProps) => {
+  const initialized = active.length > 0 || inactive.length > 0;
   return (
     <Debug>
       <Grid container spacing={2}>
         <Grid item xs={6} md={6} lg={6}>
           <Debug>
             <InfoCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon}
-                         value={active.length.toString()} />
+                      value={active.length.toString()} />
           </Debug>
         </Grid>
         <Grid item xs={6} md={6} lg={6}>
@@ -56,22 +44,26 @@ const AdvertisementDashboard = () => {
           </Debug>
         </Grid>
         <Grid item xs={12} md={12} lg={12}>
-          <AdSpaceTable
-            active
-            rows={active}
-            onDelete={onDelete}
-            onEdit={onEdit}
-            onChangeActiveStatus={onSetInactive}
-          />
+          {initialized &&
+            <AdSpaceTable
+              active
+              rows={active}
+              onDelete={onDelete}
+              onEdit={onEdit}
+              onChangeActiveStatus={onSetInactive}
+            />
+          }
         </Grid>
         <Grid item xs={12} md={12} lg={12}>
-          <AdSpaceTable
-            active={false}
-            rows={inactive}
-            onDelete={onDelete}
-            onEdit={onEdit}
-            onChangeActiveStatus={onSetActive}
-          />
+          {initialized &&
+            <AdSpaceTable
+              active={false}
+              rows={inactive}
+              onDelete={onDelete}
+              onEdit={onEdit}
+              onChangeActiveStatus={onSetActive}
+            />
+          }
         </Grid>
       </Grid>
     </Debug>

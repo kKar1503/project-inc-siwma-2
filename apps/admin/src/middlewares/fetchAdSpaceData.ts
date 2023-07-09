@@ -1,11 +1,15 @@
-import { DataType } from '@/components/advertisementsDashboard/adSpaceTable';
-
-interface Response {
-  data: DataType[];
-  totalClicks: number;
+export interface FetchAdSpaceDataResponse {
+  data: Array<{
+    id: string;
+    user: string;
+    email: string;
+    company: string;
+    mobileNumber: string;
+    active: boolean;
+  }>;
 }
 
-const fetchAdSpaceData = async (): Promise<Response> => {
+const fetchAdSpaceData = async (): Promise<FetchAdSpaceDataResponse> => {
   function createData(
     id: string,
     user: string,
@@ -13,7 +17,7 @@ const fetchAdSpaceData = async (): Promise<Response> => {
     company: string,
     mobileNumber: string,
     active: boolean,
-  ): DataType {
+  ) {
     return {
       id,
       user,
@@ -34,8 +38,7 @@ const fetchAdSpaceData = async (): Promise<Response> => {
         createData('5', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', true),
         createData('6', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', false),
         createData('7', 'Sally Knox', 'sallyknox_slfi@gmail.com', 'SHI LI FANG IRONWORKS PTE', '+65 9832 0293', false),
-      ],
-    totalClicks: 125,
+      ]
   };
 };
 

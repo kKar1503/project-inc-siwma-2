@@ -23,6 +23,36 @@ const ExampleGraph = () => (
       // adding the material theme provided with Victory
       theme={VictoryTheme.material}
       domainPadding={20}
+      events={[{
+        target: 'data',
+        eventHandlers: {
+          onMouseOver: () => [
+            {
+              target: 'data',
+              mutation: ({ datum, style }) => ({
+                style: { ...style, fill: 'black' },
+                text: `${datum.x} : ${datum.y}`,
+              }),
+            },
+            {
+              target: 'labels',
+              mutation: () => ({ active: true }),
+            },
+          ],
+          onMouseOut: () => [
+            {
+              target: 'data',
+              mutation: () => ({
+                text: 'dasdas',
+              }),
+            },
+            {
+              target: 'labels',
+              mutation: () => ({ active: false }),
+            },
+          ],
+        },
+      }]}
     >
       <VictoryAxis
         tickValues={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}

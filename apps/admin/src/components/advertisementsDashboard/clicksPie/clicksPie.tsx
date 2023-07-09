@@ -1,12 +1,19 @@
 import { VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 
-const ClicksPie = () => {
-  const sampleData = [
-    { id: 1, x: 'Cats', y: 35, label: '35' },
-    { id: 2, x: 'Dogs', y: 40, label: '40' },
-    { id: 3, x: 'Birds', y: 55, label: '55' },
-  ];
+export interface ClicksPieProps {
+  data: Array<{
+    company: string;
+    clicks: number;
+  }>;
+}
+
+const ClicksPie = ({ data }: ClicksPieProps) => {
+  const formattedData = data.map((item) => ({
+    x: item.company,
+    y: item.clicks,
+    label: `${item.company}\n${item.clicks}`,
+  }));
   return (
     <ModuleBase>
       <VictoryPie
@@ -30,7 +37,7 @@ const ClicksPie = () => {
             ],
           },
         }]}
-        data={sampleData}
+        data={formattedData}
       />
     </ModuleBase>
   );
