@@ -18,24 +18,11 @@ const ClicksPie = () => {
           eventHandlers: {
             onMouseOver: () => [
               {
-                target: 'data',
-                mutation: ({ datum, style }) => ({
-                  style: { ...style, fill: 'black' },
-                  text: `${datum.x} : ${datum.y}`,
-                }),
-              },
-              {
                 target: 'labels',
                 mutation: () => ({ active: true }),
               },
             ],
             onMouseOut: () => [
-              {
-                target: 'data',
-                mutation: () => ({
-                  text: 'dasdas',
-                }),
-              },
               {
                 target: 'labels',
                 mutation: () => ({ active: false }),
