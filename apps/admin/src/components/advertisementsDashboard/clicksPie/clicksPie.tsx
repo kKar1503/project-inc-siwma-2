@@ -1,18 +1,18 @@
-import { VictoryPie, VictoryTheme } from 'victory';
+import { VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 
 const ClicksPie = () => {
   const sampleData = [
-    { id: 1, x: 'Cats', y: 35 },
-    { id: 2, x: 'Dogs', y: 40 },
-    { id: 3, x: 'Birds', y: 55 },
+    { id: 1, x: 'Cats', y: 35, label: '35' },
+    { id: 2, x: 'Dogs', y: 40, label: '40' },
+    { id: 3, x: 'Birds', y: 55, label: '55' },
   ];
   return (
     <ModuleBase>
       <VictoryPie
+        labelComponent={<VictoryTooltip />}
         theme={VictoryTheme.material}
         innerRadius={() => 100}
-        labels={() => ''}
         events={[{
           target: 'data',
           eventHandlers: {
@@ -23,13 +23,22 @@ const ClicksPie = () => {
                   style: { ...style, fill: 'black' },
                   text: `${datum.x} : ${datum.y}`,
                 }),
-              }],
+              },
+              {
+                target: 'labels',
+                mutation: () => ({ active: true }),
+              },
+            ],
             onMouseOut: () => [
               {
                 target: 'data',
                 mutation: () => ({
                   text: 'dasdas',
                 }),
+              },
+              {
+                target: 'labels',
+                mutation: () => ({ active: false }),
               },
             ],
           },
