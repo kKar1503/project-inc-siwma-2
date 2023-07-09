@@ -24,6 +24,7 @@ const AdminFigure = ({ title, value, color, icon }: AdminFigureProps) => {
         borderRadius: '8px',
         px: '1rem',
         py: '0.5rem',
+        marginBottom: isSm ? 2 : 0,
       }}
     >
       <Box
@@ -35,15 +36,15 @@ const AdminFigure = ({ title, value, color, icon }: AdminFigureProps) => {
         <Typography variant={isSm ? 'h3' : 'h2'} color={color}>
           {value}
         </Typography>
-        <Typography variant={isSm ? 'subtitle2' : 'subtitle1'}>{title}</Typography>
+        <Typography variant={isSm ? 'h6' : 'h5'}>{title}</Typography>
       </Box>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '40%',
-          height: '40%',
+          width: isSm ? '30%' : '40%',
+          height: isSm ? '30%' : '40%',
         }}
       >
         <IconComponent
