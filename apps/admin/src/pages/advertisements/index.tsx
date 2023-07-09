@@ -7,6 +7,7 @@ import fetchAdSpaceData, { FetchAdSpaceDataResponse } from '@/middlewares/fetchA
 import fetchAdClicksData, { FetchAdClicksDataResponse } from '@/middlewares/fetchAdClicksData';
 import Debug from '@/components/Debug';
 import { useMemo } from 'react';
+import Box from '@mui/material/Box';
 
 const mapData = (adSpaceData: UseQueryResult<FetchAdSpaceDataResponse>, adClicksData: UseQueryResult<FetchAdClicksDataResponse>) => {
   const totalClicks = adClicksData.data?.data.reduce((acc, item) => acc + item.clicks, 0) ?? 0;
@@ -33,28 +34,34 @@ const AdvertisementDashboard = () => {
   } = useMemo(() => mapData(adSpaceData, adClicksData), [adSpaceData, adClicksData]);
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={2} lg={2}>
-        <Debug>NAVBAR</Debug>
-      </Grid>
-      <Grid item xs={12} md={7} lg={7}>
-        <Debug>
-          <AdSpaceSection totalClicks={totalClicks} active={active} inactive={inactive} />
-        </Debug>
-      </Grid>
-      <Grid item container xs={12} md={3} lg={3}>
-        <Grid item xs={6} md={12} lg={12}>
+    <Box style={{
+      marginTop: '1rem',
+      marginRight: '1rem',
+      marginLeft: '1rem',
+    }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={2}>
+          <Debug>NAVBAR</Debug>
+        </Grid>
+        <Grid item xs={12} md={7}>
           <Debug>
-            <ClicksPie data={companyClicks} totalClicks={totalClicks} />
+            <AdSpaceSection totalClicks={totalClicks} active={active} inactive={inactive} />
           </Debug>
         </Grid>
-        <Grid item xs={6} md={12} lg={12}>
-          <Debug>
-            <ActiveGraph />
-          </Debug>
+        <Grid item container xs={12} md={3}>
+          <Grid item xs={6} md={12}>
+            <Debug>
+              <ClicksPie data={companyClicks} totalClicks={totalClicks} />
+            </Debug>
+          </Grid>
+          <Grid item xs={6} md={12}>
+            <Debug>
+              <ActiveGraph />
+            </Debug>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 
