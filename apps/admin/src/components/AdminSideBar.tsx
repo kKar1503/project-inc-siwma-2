@@ -154,11 +154,11 @@ const AdminSideBar = () => {
         name: {
           ...typography.subtitle1,
           fontWeight: 'bold',
-          color: '#000',
+          color: palette.common.black,
         },
         email: {
           ...typography.body2,
-          color: '#9E9E9E',
+          color: palette.grey[500],
         },
       };
     }
@@ -168,11 +168,11 @@ const AdminSideBar = () => {
         name: {
           ...typography.subtitle1,
           fontWeight: 'bold',
-          color: '#000',
+          color: palette.common.black,
         },
         email: {
           ...typography.body2,
-          color: '#9E9E9E',
+          color: palette.grey[500],
         },
       };
     }
@@ -182,11 +182,11 @@ const AdminSideBar = () => {
         name: {
           ...typography.h6,
           fontWeight: 'bold',
-          color: '#000',
+          color: palette.common.black,
         },
         email: {
           ...typography.body1,
-          color: '#9E9E9E',
+          color: palette.grey[500],
         },
       };
     }
@@ -195,11 +195,11 @@ const AdminSideBar = () => {
       name: {
         ...typography.h4,
         fontWeight: 'bold',
-        color: '#000',
+        color: palette.common.black,
       },
       email: {
         ...typography.subtitle1,
-        color: '#9E9E9E',
+        color: palette.grey[500],
       },
     };
   }, [isSm, isMd, isLg, typography]);
@@ -257,13 +257,13 @@ const AdminSideBar = () => {
                 }}
               >
                 <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
-                  <item.Icon style={{ color: 'black' }} />
+                  <item.Icon style={{ color: palette.common.black }} />
                 </Box>
                 <ListItemText
                   primary={item.name}
                   primaryTypographyProps={{
                     style: {
-                      color: 'black',
+                      color: palette.common.black,
                       font: '0.9rem Roboto, sans-serif',
                     },
                   }}
@@ -272,7 +272,7 @@ const AdminSideBar = () => {
                   (openDropdown === item.name ? (
                     <ExpandMore />
                   ) : (
-                    <ChevronRight style={{ color: 'black' }} />
+                    <ChevronRight style={{ color: palette.common.black }} />
                   ))}
               </ListItemButton>
               {item.dropdown && (
@@ -289,7 +289,7 @@ const AdminSideBar = () => {
                         }}
                       >
                         <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
-                          <subitem.Icon style={{ color: 'black' }} />
+                          <subitem.Icon style={{ color: palette.common.black }} />
                         </Box>
                         <ListItemText
                           primary={
@@ -297,7 +297,7 @@ const AdminSideBar = () => {
                               href={subitem.link}
                               underline="none"
                               sx={{
-                                color: 'black',
+                                color: palette.common.black,
                                 font: '0.9rem Roboto, sans-serif',
                                 textDecoration: 'none',
                                 '&:hover': {
@@ -363,7 +363,7 @@ const AdminSideBar = () => {
         <AppBar
           position="fixed"
           sx={{
-            bgcolor: '#ffffff',
+            bgcolor: palette.common.white,
             boxShadow: 'none',
             borderBottom: 1,
             borderColor: '#dbdbdb',
@@ -375,7 +375,7 @@ const AdminSideBar = () => {
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ color: 'black' }}
+              sx={{ color: palette.common.black }}
             >
               <MenuIcon />
             </IconButton>
