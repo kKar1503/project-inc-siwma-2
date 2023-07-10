@@ -107,7 +107,7 @@ const BaseTable = (props: BaseTableProps) => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <BaseTableToolbar
-          heading="
+          heading={heading}
           selectedRows={selected}
           toggleColumn="enabled"
           onEdit={() => onEdit(selected[0])}
