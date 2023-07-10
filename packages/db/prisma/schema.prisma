@@ -139,31 +139,32 @@ model Invite {
 }
 
 model Listing {
-  id                                          Int                       @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
+  id                                          Int                      @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
   name                                        String
   description                                 String
-  price                                       Decimal                   @default(0) @db.Decimal
-  unitPrice                                   Boolean                   @default(false) @map("unit_price")
-  negotiable                                  Boolean                   @default(true)
-  categoryId                                  Int                       @map("category_id")
+  price                                       Decimal                  @default(0) @db.Decimal
+  unitPrice                                   Boolean                  @default(false) @map("unit_price")
+  negotiable                                  Boolean                  @default(true)
+  categoryId                                  Int                      @map("category_id")
   type                                        ListingType
-  owner                                       String                    @db.Uuid
-  createdAt                                   DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                                   DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  archived                                    Boolean                   @default(false)
-  deletedAt                                   DateTime?                 @map("deleted_at") @db.Timestamptz(6)
-  multiple                                    Boolean                   @default(false)
-  hashedUrl                                   String?                   @unique(map: "listing_un") @map("hashed_url")
-  category                                    Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
-  users                                       Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
+  owner                                       String                   @db.Uuid
+  createdAt                                   DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                                   DateTime                 @default(now()) @map("updated_at") @db.Timestamptz(6)
+  archived                                    Boolean                  @default(false)
+  deletedAt                                   DateTime?                @map("deleted_at") @db.Timestamptz(6)
+  multiple                                    Boolean                  @default(false)
+  hashedUrl                                   String?                  @unique(map: "listing_un") @map("hashed_url")
+  unit                                        UnitType                 @default(kg)
+  condition                                   ConditionType            @default(good)
+  grading                                     String
+  category                                    Category                 @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
+  users                                       Users                    @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
   listingBookmarks                            ListingBookmarks[]
-  listingClicksListingClicksListingTolistings ListingClicks[]           @relation("listingClicksListingTolisting")
-  listingImages                               ListingImages[]
+  listingClicksListingClicksListingTolistings ListingClicks[]          @relation("listingClicksListingTolisting")
   listingNotifications                        ListingNotifications[]
-  listingsParametersValues                    ListingsParametersValue[]
-  offersOffersListingTolistings               Offers[]                  @relation("offersListingTolisting")
-  reviewsReviewsListingTolistings             Reviews[]                 @relation("reviewsListingTolisting")
-  roomsRoomsListingTolistings                 Rooms[]                   @relation("roomsListingTolisting")
+  listingsParametersValue                     ListingsParametersValue?
+  offersOffersListingTolistings               Offers[]                 @relation("offersListingTolisting")
+  roomsRoomsListingTolistings                 Rooms[]                  @relation("roomsListingTolisting")
 
   @@map("listing")
 }
@@ -191,18 +192,6 @@ model ListingClicks {
   @@map("listing_clicks")
 }
 
-model ListingImages {
-  id        Int      @id(map: "listing_images_pk") @default(sequence(maxValue: 2147483647))
-  listingId Int      @map("listing_id")
-  image     String
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-  order     Int
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listing_images_fk")
-
-  @@map("listing_images")
-}
-
 model ListingNotifications {
   id                 Int      @id(map: "listing_notifications_pk") @default(sequence(maxValue: 2147483647))
   userId             String   @map("user_id") @db.Uuid
@@ -216,15 +205,14 @@ model ListingNotifications {
 }
 
 model ListingsParametersValue {
-  listingId   Int       @map("listing_id")
-  parameterId Int       @map("parameter_id")
-  value       String
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  listing     Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk")
-  parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk_1")
+  listingId  Int      @id(map: "listings_parameters_values_pk") @map("listing_id")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  parameters Json
+  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listings_parameters_values_fk")
 
-  @@id([listingId, parameterId], map: "listings_parameters_value_pk")
+  @@index([listingId], map: "idx_listingid")
+  @@index([parameters], map: "idx_parameters_gin", type: Gin)
   @@map("listings_parameters_value")
 }
 
@@ -265,17 +253,16 @@ model Offers {
 }
 
 model Parameter {
-  id                       Int                       @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
-  type                     ParameterType
-  dataType                 DataType                  @map("data_type")
-  name                     String
-  displayName              String                    @map("display_name")
-  active                   Boolean                   @default(true)
-  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  options                  String[]
-  categoriesParameters     CategoriesParameters[]
-  listingsParametersValues ListingsParametersValue[]
+  id                   Int                    @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
+  type                 ParameterType
+  dataType             DataType               @map("data_type")
+  name                 String
+  displayName          String                 @map("display_name")
+  active               Boolean                @default(true)
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
+  options              String[]
+  categoriesParameters CategoriesParameters[]
 
   @@map("parameter")
 }
@@ -305,19 +292,6 @@ model RefreshTokens {
   @@index([token])
   @@index([userId])
   @@map("refresh_tokens")
-}
-
-model Reviews {
-  id                             Int      @id(map: "reviews_pk") @default(sequence(maxValue: 2147483647))
-  review                         String
-  rating                         Int      @db.Int2
-  user                           String   @db.Uuid
-  listing                        Int
-  createdAt                      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  users                          Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk")
-  listingReviewsListingTolisting Listing  @relation("reviewsListingTolisting", fields: [listing], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk_1")
-
-  @@map("reviews")
 }
 
 model Rooms {
@@ -404,7 +378,6 @@ model Users {
   messages                                            Messages[]
   passwordResets                                      PasswordReset[]
   refreshTokens                                       RefreshTokens[]
-  reviews                                             Reviews[]
   roomsRoomsSellerTousers                             Rooms[]                  @relation("roomsSellerTousers")
   roomsRoomsBuyerTousers                              Rooms[]                  @relation("roomsBuyerTousers")
   userBookmarksUserBookmarksUserIdTousers             UserBookmarks[]          @relation("userBookmarksUserIdTousers")
@@ -414,6 +387,12 @@ model Users {
   companies                                           Companies                @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
 
   @@map("users")
+}
+
+enum ConditionType {
+  good
+  bad
+  excellent
 }
 
 enum ContentType {
@@ -453,6 +432,12 @@ enum ReasonType {
   Suspicious_Account          @map("Suspicious Account")
   Cancelling_on_deal          @map("Cancelling on deal")
   Inaccurate_Listings         @map("Inaccurate Listings")
+}
+
+enum UnitType {
+  kg
+  m
+  unit
 }
 
 enum UserContacts {
