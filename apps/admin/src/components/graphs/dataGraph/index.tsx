@@ -97,7 +97,7 @@ const DataGraph = ({ data, format, style }: DataGraphProps) => {
             fill: style.fillColor,
           },
         }}
-        cornerRadius={{ top: 7, bottom: 7 }}
+        cornerRadius={{ top: 10, bottom: 10 }}
       />
     </VictoryChart>
   );

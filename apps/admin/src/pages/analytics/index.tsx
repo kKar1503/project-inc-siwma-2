@@ -1,8 +1,10 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Debug from '@/components/Debug';
+import TopCategories from '@/components/dataAnalytics/topCategories';
 
 const Analytics = () => {
+  const level = [18,33,12,12,25,14,12,33];
   return (
     <Box style={{
       marginTop: '1rem',
@@ -19,10 +21,10 @@ const Analytics = () => {
               <h1>Company</h1>
             </Grid>
             <Grid container item xs={6} md={3}>
-              top companies
+              <TopCategories data={level}/>
             </Grid>
             <Grid container item xs={6} md={3}>
-              top companies
+              <TopCategories data={level}/>
             </Grid>
             <Grid container item xs={12} md={3}>
               line graph thing
@@ -36,10 +38,10 @@ const Analytics = () => {
             </Grid>
 
             <Grid container item xs={6} md={3}>
-              graph 1
+              <TopCategories data={level}/>
             </Grid>
             <Grid container item xs={6} md={3}>
-              graph 2
+              <TopCategories data={level}/>
             </Grid>
             <Grid container item xs={12} md={3}>
               pie chart thing
