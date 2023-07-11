@@ -18,6 +18,7 @@ export type CompanyTableProps = {
 };
 
 function createData(
+  id: string,
   name: string,
   bio: string,
   website: string,
@@ -27,7 +28,7 @@ function createData(
   createdAt: string
 ): BaseTableData {
   return {
-    id: name,
+    id,
     name,
     bio,
     website,
@@ -84,6 +85,7 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
     data.forEach((item: CompanyProps) =>
       rowsData.push(
         createData(
+          item.id,
           item.name,
           item.bio,
           item.website,
