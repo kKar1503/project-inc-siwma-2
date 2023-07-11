@@ -17,7 +17,9 @@ const mapData = (adSpaceData: UseQueryResult<FetchAdSpaceDataResponse>, adClicks
     company: item.company,
     clicks: item.clicks,
   })) ?? [];
-  return { totalClicks, active, inactive, companyClicks };
+
+  const activeData = [5, 1, 2, 4, 4, 2, 4, 2, 3, 4, 0, 0];
+  return { totalClicks, active, inactive, companyClicks, activeData };
 };
 
 const AdvertisementDashboard = () => {
@@ -31,6 +33,7 @@ const AdvertisementDashboard = () => {
     active,
     inactive,
     companyClicks,
+    activeData,
   } = useMemo(() => mapData(adSpaceData, adClicksData), [adSpaceData, adClicksData]);
 
   return (
@@ -56,7 +59,7 @@ const AdvertisementDashboard = () => {
           </Grid>
           <Grid item xs={6} md={12}>
             <Debug>
-              <ActiveGraph />
+              <ActiveGraph data={activeData} />
             </Debug>
           </Grid>
         </Grid>
