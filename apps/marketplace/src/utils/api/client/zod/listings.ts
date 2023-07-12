@@ -11,8 +11,6 @@ const negotiable = z.boolean();
 const categoryId = z.string();
 const type = z.nativeEnum(ListingType);
 const multiple = z.boolean();
-const images = z.array(z.string()).optional();
-const coverImage = z.string().optional();
 const createdAt = z.string();
 
 const company = z.object({
@@ -55,8 +53,6 @@ const listing = z.object({
   categoryId,
   type,
   multiple,
-  images,
-  coverImage,
   owner,
   open,
   parameters: z.array(parameter).optional(),
@@ -79,23 +75,11 @@ const getListings = z.array(listing);
 // GET /listings/:id
 const getListing = listing;
 
-// GET /listings/:id/images
-const getListingImages = z.array(images);
-
-// GET /listings/:id/images/:imageId
-const getListingImage = z.object({
-  fileName: z.string(),
-  url: z.string(),
-});
-
 // GET /listings/:id/parameters
 const getListingParameters = z.array(parameter);
 
 // PUT /listings/:id
 const updateListing = listing;
-
-// PUT /listings/:id/images
-const updateListingImages = z.array(images);
 
 // PUT /listings/:id/images/:imageId
 const updateListingImage = z.object({
@@ -123,11 +107,8 @@ export default {
   createParameter: createListingParameter,
   getAll: getListings,
   getById: getListing,
-  getImages: getListingImages,
-  getImage: getListingImage,
   getParameters: getListingParameters,
   update: updateListing,
-  updateImages: updateListingImages,
   updateImage: updateListingImage,
   updateParameters: updateListingParameters,
   delete: deleteListing,
