@@ -15,13 +15,15 @@ const format = [
 
 export interface TopCategoriesProps {
   data: number[];
+  type:'Buying'|'Selling';
+  year: number;
 }
 
-const TopCategories = ({ data }: TopCategoriesProps) => {
+const TopCategories = ({ data,type,year }: TopCategoriesProps) => {
   const mapData = data.map((item, index) => ({ id: index + 1, value: item, label: item.toString() }));
   return (
     <ModuleBase>
-      <Title title='Top 8 Categories' />
+      <Title title={`Top 8 ${type} Categories in ${year}`} />
       <DataGraph data={mapData} format={format} style={{ fillColor: '#d7d7d7', hoverColor: '#ea3b59' }} />
     </ModuleBase>
   );
