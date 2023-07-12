@@ -4,6 +4,7 @@ import { Categories } from './tables/category';
 import { Companies } from './tables/companies';
 import { Users } from './tables/users';
 import { Listings } from './tables/listing';
+import { ListingItems } from './tables/listing_items';
 import { Rooms } from './tables/rooms';
 import { Offers } from './tables/offers';
 import { Messages } from './tables/messages';
@@ -62,6 +63,7 @@ const main = async (): Promise<void> => {
     prismaClient.$executeRaw`ALTER SEQUENCE public.invite_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_bookmarks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.listing_item_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.logs_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.messages_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.offers_seq RESTART WITH 1;`,
@@ -93,6 +95,13 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${usersCount} rows into public.users`);
+  console.log('Seeding public.listingItem...');
+
+  const { count: listingItemsCount } = await prismaClient.listingItem.createMany({
+    data: ListingItems,
+  });
+
+  console.log(`Seeded ${listingItemsCount} rows into public.users`);
   console.log('Seeding public.listing...');
 
   const { count: listingCount } = await prismaClient.listing.createMany({
@@ -100,27 +109,27 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${listingCount} rows into public.listing`);
-  console.log('Seeding public.rooms...');
+  // console.log('Seeding public.rooms...');
 
-  const { count: roomsCount } = await prismaClient.rooms.createMany({
-    data: Rooms,
-  });
+  // const { count: roomsCount } = await prismaClient.rooms.createMany({
+  //   data: Rooms,
+  // });
 
-  console.log(`Seeded ${roomsCount} rows into public.rooms`);
-  console.log('Seeding public.offers...');
+  // console.log(`Seeded ${roomsCount} rows into public.rooms`);
+  // console.log('Seeding public.offers...');
 
-  const { count: offersCount } = await prismaClient.offers.createMany({
-    data: Offers,
-  });
+  // const { count: offersCount } = await prismaClient.offers.createMany({
+  //   data: Offers,
+  // });
 
-  console.log(`Seeded ${offersCount} rows into public.offers`);
-  console.log('Seeding public.messages...');
+  // console.log(`Seeded ${offersCount} rows into public.offers`);
+  // console.log('Seeding public.messages...');
 
-  const { count: messagesCount } = await prismaClient.messages.createMany({
-    data: Messages,
-  });
+  // const { count: messagesCount } = await prismaClient.messages.createMany({
+  //   data: Messages,
+  // });
 
-  console.log(`Seeded ${messagesCount} rows into public.messages`);
+  // console.log(`Seeded ${messagesCount} rows into public.messages`);
   console.log('Seeding public.parameter...');
 
   const { count: parameterCount } = await prismaClient.parameter.createMany({
