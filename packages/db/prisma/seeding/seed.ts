@@ -26,6 +26,7 @@ const main = async (): Promise<void> => {
 
   await Promise.allSettled([
     prismaClient.logs.deleteMany({}),
+    prismaClient.parameter.deleteMany({}),
     prismaClient.category.deleteMany({}),
     prismaClient.companies.deleteMany({}),
     prismaClient.users.deleteMany({}),
@@ -33,7 +34,6 @@ const main = async (): Promise<void> => {
     prismaClient.rooms.deleteMany({}),
     prismaClient.offers.deleteMany({}),
     prismaClient.messages.deleteMany({}),
-    prismaClient.parameter.deleteMany({}),
     prismaClient.advertisements.deleteMany({}),
     prismaClient.categoriesParameters.deleteMany({}),
     prismaClient.advertClicks.deleteMany({}),
@@ -109,27 +109,27 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${listingCount} rows into public.listing`);
-  // console.log('Seeding public.rooms...');
+  console.log('Seeding public.rooms...');
 
-  // const { count: roomsCount } = await prismaClient.rooms.createMany({
-  //   data: Rooms,
-  // });
+  const { count: roomsCount } = await prismaClient.rooms.createMany({
+    data: Rooms,
+  });
 
-  // console.log(`Seeded ${roomsCount} rows into public.rooms`);
-  // console.log('Seeding public.offers...');
+  console.log(`Seeded ${roomsCount} rows into public.rooms`);
+  console.log('Seeding public.offers...');
 
-  // const { count: offersCount } = await prismaClient.offers.createMany({
-  //   data: Offers,
-  // });
+  const { count: offersCount } = await prismaClient.offers.createMany({
+    data: Offers,
+  });
 
-  // console.log(`Seeded ${offersCount} rows into public.offers`);
-  // console.log('Seeding public.messages...');
+  console.log(`Seeded ${offersCount} rows into public.offers`);
+  console.log('Seeding public.messages...');
 
-  // const { count: messagesCount } = await prismaClient.messages.createMany({
-  //   data: Messages,
-  // });
+  const { count: messagesCount } = await prismaClient.messages.createMany({
+    data: Messages,
+  });
 
-  // console.log(`Seeded ${messagesCount} rows into public.messages`);
+  console.log(`Seeded ${messagesCount} rows into public.messages`);
   console.log('Seeding public.parameter...');
 
   const { count: parameterCount } = await prismaClient.parameter.createMany({
