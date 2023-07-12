@@ -92,6 +92,7 @@ const TableTest = () => {
       </Head>
       <main>
         <BaseTable
+          heading="Desserts"
           rows={rows}
           headers={headCells}
           onPageChange={handleChangePage}

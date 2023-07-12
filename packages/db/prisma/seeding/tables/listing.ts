@@ -1,4 +1,4 @@
-import { Prisma, ListingType } from '../../../index';
+import { Prisma, ListingType, UnitType, ConditionType } from '../../../index';
 
 interface IListings {
   id?: number;
@@ -16,6 +16,9 @@ interface IListings {
   deletedAt?: Date;
   multiple: boolean;
   hashedUrl?: string;
+  unit?: UnitType;
+  condition?: ConditionType;
+  grading: string;
 }
 
 const Listings: IListings[] = [
@@ -28,6 +31,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Stainless Steel Round Bar',
@@ -38,6 +42,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'FAST SELL Round Bar',
@@ -48,6 +53,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'BUYING Aluminum Round Bar',
@@ -57,6 +63,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Stainless Stell Square Bar 303',
@@ -67,6 +74,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'WTB Steel Square Bar',
@@ -78,6 +86,7 @@ const Listings: IListings[] = [
     owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
     archived: true,
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Square Bar [ CLOSING DOWN SALE ]',
@@ -88,6 +97,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'BRAND NEW Stainless Steel Square Bar (FAST DEAL)',
@@ -98,6 +108,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '[USED] Round Hollow Bar 10"',
@@ -108,6 +119,7 @@ const Listings: IListings[] = [
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
     archived: true,
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Copper Square Bars (Grade CW103C / Cu Co1 Ni1 Be)',
@@ -117,6 +129,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Stainless Steel Piles [Grade 303]',
@@ -128,6 +141,7 @@ const Listings: IListings[] = [
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
     archived: true,
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '(Grade 17-4PH) Stainless Steel Round Bars',
@@ -137,6 +151,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '90 Degree Grade 304/304L Stainless Steel Angle Bar',
@@ -146,6 +161,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'WTS Stainless Steel Hollow Sections URGENT',
@@ -156,6 +172,7 @@ const Listings: IListings[] = [
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     archived: true,
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'WTB Iron Sheet piles (must be a pile)',
@@ -165,6 +182,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'selling stainless steel channels',
@@ -174,6 +192,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Buying Stainless Steel Purlins',
@@ -183,6 +202,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'buying copper angles',
@@ -193,6 +213,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'buying stainless steel plates urgently',
@@ -202,6 +223,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'selling stainless steel round bars LIMITED TIME',
@@ -212,6 +234,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'ERW SHS RHS Welded Black Square Steel Pipe',
@@ -221,6 +244,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Selling Purlins',
@@ -230,6 +254,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'CHS Stainless steel tubes',
@@ -240,6 +265,7 @@ const Listings: IListings[] = [
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     archived: true,
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'buying square shaped bar of 304 Stainless Steel',
@@ -251,6 +277,7 @@ const Listings: IListings[] = [
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     archived: true,
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '[BRAND NEW] Selling steel plates',
@@ -260,6 +287,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'BRAND NEW round bars for sale',
@@ -269,6 +297,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'buying gratings',
@@ -278,6 +307,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'selling steel beams',
@@ -287,6 +317,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Buying steel sheet piles',
@@ -296,6 +327,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Selling Aluminum Channel 6063',
@@ -305,6 +337,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Selling Steel angles',
@@ -314,6 +347,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Stainless steel purlins',
@@ -323,6 +357,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Alloy Steel Plate 4140',
@@ -333,6 +368,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '[SLIGHTLY USED] Iron angles',
@@ -342,6 +378,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Steel Sheet Piles for sale',
@@ -351,6 +388,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'square bar',
@@ -360,6 +398,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Mild Steel Bar Grating',
@@ -370,6 +409,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'metal beam for sale',
@@ -379,6 +419,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'L Aluminum Metal Angle Stick',
@@ -388,6 +429,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Selling Circular Hollow Section',
@@ -398,6 +440,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Mild Steel Angle',
@@ -408,6 +451,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Brass flat bars',
@@ -417,6 +461,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Copper sheets for sale',
@@ -426,6 +471,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Buying Ground Shafting Alloy Steel',
@@ -436,6 +482,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Buying Mild Steel Plate',
@@ -446,6 +493,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Selling Mild steel sheet',
@@ -455,6 +503,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Hexagonal bars alloy steel buying urgent',
@@ -465,6 +514,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '(SELLING) Aluminium hexagon bar',
@@ -474,6 +524,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Alloy Steel Flat bar needed urgent',
@@ -483,6 +534,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Buying Aluminium Plates',
@@ -492,6 +544,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Tool steel plates (BUYING)',
@@ -501,6 +554,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: 'LF Mild Steel Bar Grating',
@@ -510,6 +564,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Plates: Stainless Steel WTS',
@@ -519,6 +574,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '[FIRE SALE] Stainless steel channel',
@@ -528,6 +584,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Tool steel drill rods up for purchase',
@@ -537,6 +594,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'stainless steel sheets, looking for 300x',
@@ -546,6 +604,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'WTB perforated metal sheet',
@@ -555,6 +614,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Steel alloy sheets',
@@ -564,6 +624,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'square tube: stainless steel',
@@ -573,6 +634,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Ground shafting alloy steel',
@@ -582,6 +644,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Square bars: Copper',
@@ -591,6 +654,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Zinc square bars UP FOR SALE',
@@ -600,6 +664,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Angle stainless steel: IN-STOCK 3000 LEFT',
@@ -609,6 +674,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: 'SELLING copper plates',
@@ -618,6 +684,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Stainless steel round bars',
@@ -627,6 +694,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'BUYING Tool steel square bar',
@@ -636,6 +704,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'alloy steel plate WTS',
@@ -645,6 +714,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Mild steel tread plate (1x)',
@@ -654,6 +724,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'WTS Zinc round bars',
@@ -663,6 +734,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Steel square tube',
@@ -672,6 +744,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Hexagon bar (alloy steel)',
@@ -681,6 +754,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Expanded sheet mild sheet',
@@ -690,6 +764,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Aluminium Bar Grating',
@@ -699,6 +774,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'WTB Safety Grip: Aluminium',
@@ -708,6 +784,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Rounded mild steel bar',
@@ -717,6 +794,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'LF Aluminium Tread Plate',
@@ -726,6 +804,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'stainless steel round bars for sale',
@@ -735,6 +814,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Stainless steel channel',
@@ -744,6 +824,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '[FIRE SALE] Alloy steel round tube',
@@ -753,6 +834,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: 'Tool steel: Ground Flat Stock',
@@ -762,6 +844,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Copper flat bars',
@@ -771,6 +854,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Aluminum Safety Grips Offer',
@@ -780,6 +864,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Steel square tubes for sale',
@@ -789,6 +874,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Brass plates (x2331)',
@@ -799,6 +885,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: 'Zinc round bars',
@@ -809,6 +896,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: 'WTS Alloy steel sheets',
@@ -819,6 +907,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: '84e51e55-b2b7-4751-ab3e-8ce264d94b80',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Want [x315] Copper plates',
@@ -828,6 +917,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: 'Tool steel ground plate stocks selling in bulk!',
@@ -837,6 +927,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Buying Expanded sheets made out of Aluminum',
@@ -846,6 +937,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'WTB Stainless steel channel',
@@ -856,6 +948,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Square bars alloy steel up for sale',
@@ -865,6 +958,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Selling for mild steel bars - Only 231 left!',
@@ -874,6 +968,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'b42f91ca-86e5-4ac6-a8c9-10bda477370e',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: 'Aluminum Perforated Sheet purchase in bulk for discounts',
@@ -884,6 +979,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: '[Warehouse Clearance] Stainless Steel Square Bars',
@@ -894,6 +990,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Round bars: Aluminum [WTB]',
@@ -903,6 +1000,7 @@ const Listings: IListings[] = [
     type: ListingType.BUY,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '(WTS) Mild steel grating',
@@ -913,6 +1011,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'Grating: Aluminum FOR SALE',
@@ -922,6 +1021,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: 'High Quality Rectangular Steel Tubing',
@@ -932,6 +1032,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'cb4dbbcd-cb8d-45f7-b6c0-057fb8b0f3c7',
     multiple: true,
+    grading: 'S275'
   },
   {
     name: 'Selling Zinc sheets for cheap',
@@ -941,6 +1042,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     multiple: false,
+    grading: 'S275'
   },
   {
     name: '(WTS) Aluminum beams',
@@ -951,6 +1053,7 @@ const Listings: IListings[] = [
     type: ListingType.SELL,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     multiple: false,
+    grading: 'S275'
   },
 ];
 
