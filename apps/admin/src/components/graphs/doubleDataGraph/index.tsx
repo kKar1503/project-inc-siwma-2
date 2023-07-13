@@ -26,8 +26,17 @@ export interface DataGraphProps {
 const DoubleDataGraph = ({ data, format, style }: DataGraphProps) => {
   const tickValues = format.map((item) => item.id);
   const tickFormat = format.map((item) => item.display);
-  const primaryData = data.filter((item) => !item.isSecondary);
-  const secondaryData = data.filter((item) => item.isSecondary);
+  const primaryData = data.filter((item) => !item.isSecondary).map(i => ({
+    id: i.id + 0.15,
+    value: i.value,
+    label: i.label,
+  }));
+  const secondaryData = data.filter((item) => item.isSecondary).map(i => ({
+    id: i.id - 0.15,
+    value: i.value,
+    label: i.label,
+  }));
+
   return (
     <VictoryChart
       // adding the material theme provided with Victory
@@ -67,7 +76,7 @@ const DoubleDataGraph = ({ data, format, style }: DataGraphProps) => {
         }}
       />
       <VictoryBar
-        barRatio={0.8}
+        barRatio={0.4 }
         data={primaryData}
         x='id'
         y='value'
@@ -102,10 +111,10 @@ const DoubleDataGraph = ({ data, format, style }: DataGraphProps) => {
             fill: style.fillColor,
           },
         }}
-        cornerRadius={{ top: 15, bottom: 15 }}
+        cornerRadius={{ top: 10, bottom: 10 }}
       />
       <VictoryBar
-        barRatio={0.8}
+        barRatio={0.4}
         data={secondaryData}
         x='id'
         y='value'
@@ -140,7 +149,7 @@ const DoubleDataGraph = ({ data, format, style }: DataGraphProps) => {
             fill: style.fillColor2,
           },
         }}
-        cornerRadius={{ top: 0, bottom: 15 }}
+        cornerRadius={{ top: 10, bottom: 10 }}
       />
     </VictoryChart>
   );
