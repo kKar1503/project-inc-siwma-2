@@ -17,6 +17,7 @@ import PrismaClient, {
 import { ParamError, ParamRequiredError } from '@inc/errors';
 import { GetListingsQueryParameter, listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
+import { ListingParameter } from '@inc/types';
 
 export type ListingWithParameters = Listing & {
   listingItem: ListingItem;
@@ -147,10 +148,10 @@ export async function formatSingleListingResponse(
     listing.listingsParametersValue.parameters
   ) {
     formattedListing.parameters = (
-      listing.listingsParametersValue.parameters as Prisma.JsonArray
+      listing.listingsParametersValue.parameters as ListingParameter[]
     ).map((parameter) => ({
-      paramId: (parameter as string) || '',
-      value: (parameter as string) || '',
+      paramId: parameter.parameterId.toString(),
+      value: parameter.value,
     }));
   }
 

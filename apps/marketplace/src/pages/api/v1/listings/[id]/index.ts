@@ -1,8 +1,8 @@
 import { apiHandler, formatAPIResponse, handleBookmarks, UpdateType } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
-import bucket from '@/utils/s3Bucket';
 import { listingSchema } from '@/utils/api/server/zod';
+import { ListingParameter } from '@inc/types';
 import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
@@ -12,7 +12,7 @@ import { formatSingleListingResponse, parseListingId } from '..';
  * @param $id
  * @param requireImages
  */
-export async function checkListingExists($id: string | number, requireImages = false) {
+export async function checkListingExists($id: string | number) {
   // Parse and validate listing id provided
   const id = typeof $id === 'number' ? $id : parseListingId($id);
 
@@ -23,20 +23,14 @@ export async function checkListingExists($id: string | number, requireImages = f
       deletedAt: null,
     },
     include: {
+      listingItem: true,
       users: {
         include: {
           companies: true,
         },
       },
-      listingsParametersValues: true,
-      listingImages: requireImages
-        ? {
-            orderBy: {
-              order: 'asc',
-            },
-          }
-        : false,
-      offersOffersListingTolistings: {
+      listingsParametersValue: true,
+      offers: {
         select: {
           accepted: true,
           messages: {
@@ -46,7 +40,6 @@ export async function checkListingExists($id: string | number, requireImages = f
           },
         },
       },
-      reviewsReviewsListingTolistings: true,
     },
   });
 
@@ -57,19 +50,25 @@ export async function checkListingExists($id: string | number, requireImages = f
   return listing;
 }
 
-async function getValidParametersForCategory(categoryId: number): Promise<string[]> {
+async function getValidParametersForCategory(listingItemId: number): Promise<string[]> {
   // Fetch valid parameters for the category
-  const validParameters = await PrismaClient.category.findUnique({
-    where: { id: categoryId },
-    include: { categoriesParameters: true },
+  const validParameters = await PrismaClient.listingItem.findUnique({
+    where: { id: listingItemId },
+    select: {
+      category: {
+        select: {
+          categoriesParameters: true,
+        },
+      },
+    },
   });
 
   if (!validParameters) {
-    throw new NotFoundError(`Category with id '${categoryId}'`);
+    throw new NotFoundError(`Listing item with id '${listingItemId}'`);
   }
 
   // Return an array of valid parameter ids
-  return validParameters.categoriesParameters.map((param) => param.parameterId.toString());
+  return validParameters.category.categoriesParameters.map((param) => param.parameterId.toString());
 }
 
 export default apiHandler()
@@ -81,28 +80,11 @@ export default apiHandler()
 
     // Retrieve the listing from the database
     const id = parseListingId(req.query.id as string, false);
-    const { _avg, _count } = await PrismaClient.reviews.aggregate({
-      _avg: {
-        rating: true,
-      },
-      _count: {
-        rating: true,
-      },
-      where: {
-        listing: id,
-      },
-    });
 
-    const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
-    const reviewCount = _count && _count.rating;
-
-    const listing = await checkListingExists(id, queryParams.includeImages);
+    const listing = await checkListingExists(id);
 
     const completeListing = {
       ...listing,
-      rating,
-      reviewCount,
-      multiple: listing.multiple,
     };
     // Return the result
 
@@ -120,7 +102,7 @@ export default apiHandler()
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
 
-    const listing = await checkListingExists(id, queryParams.includeImages);
+    const listing = await checkListingExists(id);
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
@@ -133,41 +115,49 @@ export default apiHandler()
     // Validate the request body
     const data = listingSchema.put.body.parse(req.body);
 
-    if (data.categoryId) {
-      // Remove old parameters if the category has changed
-      if (data.categoryId !== listing.categoryId) {
+    if (data.listingItemId) {
+      // Check if the listing item exists
+      const listingItem = await PrismaClient.listingItem.findUnique({
+        where: { id: data.listingItemId },
+      });
+
+      if (!listingItem) {
+        throw new ParamError(`listingItemId`);
+      }
+
+      // Remove old parameters if the listingItemId has changed
+      if (data.listingItemId !== listing.listingItemId) {
         await PrismaClient.listingsParametersValue.deleteMany({
           where: {
             listingId: id,
           },
         });
       }
+    }
 
-      // Get valid parameters for the listing's category
-      const validParameters = await getValidParametersForCategory(data.categoryId);
+    // Get valid parameters for the listing's category
+    const validParameters = await getValidParametersForCategory(
+      data.listingItemId || listing.listingItemId
+    );
 
-      // Check that each paramId is a valid parameter for the category
-      if (data.parameters) {
-        data.parameters.forEach((parameter) => {
-          if (!validParameters.includes(parameter.paramId.toString())) {
-            throw new ParamError('paramId');
-          }
-        });
-      }
+    // Check that each paramId is a valid parameter for the category
+    if (data.parameters) {
+      data.parameters.forEach((parameter) => {
+        if (!validParameters.includes(parameter.paramId.toString())) {
+          throw new ParamError('paramId');
+        }
+      });
     }
 
     // Do not remove this, it is necessary to update the listing
     const updatedListing = await PrismaClient.listing.update({
       where: { id },
       data: {
-        name: data.name,
-        description: data.description,
+        listingItemId: data.listingItemId,
+        quantity: data.quantity,
         price: data.price,
-        unitPrice: data.unitPrice,
         negotiable: data.negotiable,
-        categoryId: data.categoryId,
         type: data.type,
-        multiple: data.multiple,
       },
       include: {
         users: {
@@ -175,25 +165,40 @@ export default apiHandler()
             companies: true,
           },
         },
-        listingsParametersValues: true,
-        offersOffersListingTolistings: true,
+        listingsParametersValue: true,
+        offers: true,
       },
     });
 
-    if (data.parameters) {
-      const parameterUpdates = data.parameters.map((parameter) =>
+    // Construct the new parameter value object
+    const parameterValues = data.parameters?.map((parameter) => {
+      const oldParams = updatedListing.listingsParametersValue?.parameters as ListingParameter[];
+      const existingParam = oldParams.find((param) => param.parameterId === parameter.paramId) || {
+        parameterId: parameter.paramId,
+        value: parameter.value,
+      };
+
+      existingParam.value = parameter.value.toString();
+
+      return existingParam;
+    });
+
+    // Update the listing's parameters
+    if (parameterValues) {
+      const parameterUpdates = parameterValues.map((parameter) =>
         PrismaClient.listingsParametersValue.upsert({
           where: {
-            listingId_parameterId: {
-              parameterId: parameter.paramId,
-              listingId: id,
-            },
-          },
-          update: { value: parameter.value.toString() },
-          create: {
-            value: parameter.value.toString(),
-            parameterId: parameter.paramId,
             listingId: id,
+          },
+          update: {
+            parameters: parameterValues,
+          },
+          create: {
+            listingId: id,
+            parameters: {
+              parameterId: parameter.parameterId,
+              value: parameter.value.toString(),
+            },
           },
         })
       );
@@ -209,44 +214,15 @@ export default apiHandler()
             companies: true,
           },
         },
-        listingsParametersValues: true,
-        listingImages: queryParams.includeImages
-          ? {
-              orderBy: {
-                order: 'asc',
-              },
-            }
-          : false,
-        offersOffersListingTolistings: true,
-        reviewsReviewsListingTolistings: true,
+        listingItem: true,
+        listingsParametersValue: true,
+        offers: true,
       },
     });
 
     if (!completeListing) {
       throw new NotFoundError(`Listing with id '${id}'`);
     }
-
-    const { _avg, _count } = await PrismaClient.reviews.aggregate({
-      _avg: {
-        rating: true,
-      },
-      _count: {
-        rating: true,
-      },
-      where: {
-        listing: id,
-      },
-    });
-
-    const rating = _avg && _avg.rating ? Number(_avg.rating.toFixed(1)) : null;
-    const reviewCount = _count && _count.rating;
-
-    const listingWithRatingAndReviewCount = {
-      ...completeListing,
-      rating,
-      reviewCount,
-      multiOffer: completeListing.multiple,
-    };
 
     // MARK: - Notifications
 
@@ -263,13 +239,9 @@ export default apiHandler()
       }
     }
 
-    const wasListingOpen = listing.multiple
-      ? true
-      : !listing.offersOffersListingTolistings?.some((offer) => offer.accepted);
+    const wasListingOpen = Number(listing.quantity) > 0;
 
-    const isListingOpen = updatedListing.multiple
-      ? true
-      : !updatedListing.offersOffersListingTolistings?.some((offer) => offer.accepted);
+    const isListingOpen = Number(listing.quantity) > 0;
 
     if (wasListingOpen && !isListingOpen) {
       handleBookmarks(UpdateType.SOLD_OUT, listing);
@@ -281,11 +253,7 @@ export default apiHandler()
       .status(200)
       .json(
         formatAPIResponse(
-          await formatSingleListingResponse(
-            listingWithRatingAndReviewCount,
-            userId,
-            queryParams.includeParameters
-          )
+          await formatSingleListingResponse(completeListing, userId, queryParams.includeParameters)
         )
       );
   })
@@ -294,7 +262,7 @@ export default apiHandler()
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
 
-    const listing = await checkListingExists(id, true);
+    const listing = await checkListingExists(id);
 
     const isOwner = listing.owner === userId;
     const isAdmin = userRole && userRole >= 1;
@@ -302,14 +270,6 @@ export default apiHandler()
 
     if (!isOwner && !isAdmin && !sameCompany) {
       throw new ForbiddenError();
-    }
-
-    try {
-      await Promise.all(
-        listing.listingImages.map(async (image) => bucket.deleteObject(image.image))
-      );
-    } catch (e) {
-      console.log("Warning, couldn't delete images from S3 bucket: ", e);
     }
 
     await PrismaClient.listing.update({
