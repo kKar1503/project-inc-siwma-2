@@ -4,6 +4,7 @@ import {
   ErrorJSON,
   InvalidBucketName,
   InvalidDataProvided,
+  InvalidRangeError,
   MissingUUID,
   MultipartUploadError,
   ObjectCollision,
@@ -80,10 +81,23 @@ function handleZodError(error: ZodError) {
       return new ParamInvalidError(zodPathToString(err.path), err.received, err.options).toJSON();
     }
 
-    // Check if it was because the string was too short
+    // Check if it was because the value was too short
     if (err.code === 'too_small') {
-      // Yes it was, return a param error
-      return new ParamTooShortError(zodPathToString(err.path), Number(err.minimum)).toJSON();
+      // Check if the string was too short
+      if (err.type === 'string') {
+        // Yes it was, return a param error
+        return new ParamTooShortError(zodPathToString(err.path), Number(err.minimum)).toJSON();
+      }
+
+      // Check if the number was too small
+      if (err.type === 'number') {
+        // Yes it was, return a param error
+        return new InvalidRangeError(
+          zodPathToString(err.path),
+          undefined,
+          err.minimum.toString()
+        ).toJSON();
+      }
     }
 
     // Check if it was a invalid_union error
