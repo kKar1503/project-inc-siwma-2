@@ -261,10 +261,10 @@ export class NumberRangeError extends ParamError {
     this.code = NumberRangeError.code;
     this.message =
       `Parameter '${parameter}' ` +
-      (min
+      (min != null
         ? `must be greater than ${min}`
-        : max
+        : max != null
         ? `must be less than ${max}`
-        : (min && max) ?? `must be between ${min} and ${max}`);
+        : (min != null && max != null) ?? `must be between ${min} and ${max}`);
   }
 }
