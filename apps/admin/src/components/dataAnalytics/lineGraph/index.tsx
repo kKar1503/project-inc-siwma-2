@@ -17,7 +17,7 @@ const LineGraph = () => {
   //     }),
   // );
   return (
-    <ModuleBase noFlex>
+    <ModuleBase noFlex width='85%'>
       <VictoryChart
         theme={VictoryTheme.material}
       >

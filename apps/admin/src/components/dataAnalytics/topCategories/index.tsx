@@ -22,7 +22,7 @@ export interface TopCategoriesProps {
 const TopCategories = ({ data,type,year }: TopCategoriesProps) => {
   const mapData = data.map((item, index) => ({ id: index + 1, value: item, label: item.toString() }));
   return (
-    <ModuleBase>
+    <ModuleBase width='85%'>
       <DataGraph data={mapData} format={format} style={{ fillColor: '#d7d7d7', hoverColor: '#ea3b59' }}>
         <Title title={`Top 8 ${type} Categories in ${year}`} />
       </DataGraph>

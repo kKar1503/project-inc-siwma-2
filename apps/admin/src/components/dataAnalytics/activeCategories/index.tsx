@@ -17,7 +17,7 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
       }),
   );
   return (
-    <ModuleBase noFlex>
+    <ModuleBase noFlex width='85%'>
       <svg viewBox='0 0 400 400' style={{ width: '100%'}}>
         <Title title='Active Categories' />
         <VictoryPie

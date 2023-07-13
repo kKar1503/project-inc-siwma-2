@@ -21,7 +21,7 @@ const TopCompanies = ({ data }: TopCompaniesProps) => {
     isSecondary: index % 2 === 1,
   }));
   return (
-    <ModuleBase>
+    <ModuleBase width='85%'>
       <DoubleDataGraph data={mapData} format={format} style={
         {
           fillColor: '#d7d7d7',

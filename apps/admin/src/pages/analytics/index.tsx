@@ -30,13 +30,13 @@ const Analytics = () => {
             <h1>Company</h1>
           </Grid>
 
-          <Grid container item xs={6} md={3}>
+          <Grid container item xs={6} md={4}>
             <TopCompanies data={topCompanies} />
           </Grid>
-          <Grid container item xs={6} md={3}>
+          <Grid container item xs={6} md={4}>
             <TopCompanies data={topCompanies} />
           </Grid>
-          <Grid container item xs={12} md={3}>
+          <Grid container item xs={12} md={4}>
             <LineGraph />
           </Grid>
 
@@ -44,21 +44,21 @@ const Analytics = () => {
             <h1>Settlement</h1>
           </Grid>
 
-          <Grid container item xs={6} md={3}>
+          <Grid container item xs={6} md={4}>
             <Debug>
               <TopCategories data={topCategories} type='Selling' year={2022} />
             </Debug>
           </Grid>
-          <Grid container item xs={6} md={3}>
+          <Grid container item xs={6} md={4}>
             <Debug>
               <TopCategories data={topCategories} type='Buying' year={2022} />
             </Debug>
           </Grid>
-              <Grid container item xs={12} md={3}>
-                <Debug>
-                  <ActiveCategories data={activeCategories} />
-                </Debug>
-              </Grid>
+          <Grid container item xs={12} md={4}>
+            <Debug>
+              <ActiveCategories data={activeCategories} />
+            </Debug>
+          </Grid>
         </Grid>
       </Grid>
     </Box>

@@ -4,9 +4,11 @@ import { ReactNode } from 'react';
 export type ModuleBaseProps = {
   children: ReactNode;
   noFlex?: boolean;
+  height?: string;
+  width?: string;
 }
 
-const ModuleBase = ({ children, noFlex }: ModuleBaseProps) => <Paper
+const ModuleBase = ({ children, noFlex,height,width }: ModuleBaseProps) => <Paper
   sx={{
     display: noFlex ? 'block' : 'flex',
     justifyContent: 'space-between',
@@ -15,6 +17,8 @@ const ModuleBase = ({ children, noFlex }: ModuleBaseProps) => <Paper
     borderRadius: '0.3em',
     px: '1rem',
     py: '0.5rem',
+    height,
+    width,
   }}
 >
   {children}
