@@ -1,4 +1,4 @@
-import { VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
+import { VictoryLabel, VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
 import Box from '@mui/material/Box';
@@ -27,43 +27,45 @@ const Index = ({ data, totalClicks }: ClicksPieProps) => {
   return (
     <ModuleBase noFlex>
       <Title title='Total click distribution' subtitle='Number of clicks per ad-space' />
-      <Box style={{ position: 'relative', textAlign: 'center', width: '100%', height: '100%' }}>
-        <Box style={{
-          position: 'absolute',
-          top: '9.8rem',
-          left: '50%',
-          transform: 'translate(-50%, 0)',
-        }}>
-          <Debug>
-            <Box sx={{ fontSize: 65, fontWeight: 'bold' }}>{totalClicks}</Box>
-            <Box sx={{ fontSize: 15, color: 'text.secondary' }}>Clicks</Box>
-          </Debug>
-        </Box>
-      </Box>
-      <VictoryPie
-        // origin={}
-        labelComponent={<VictoryTooltip />}
-        theme={VictoryTheme.material}
-        innerRadius={() => 100}
-        events={[{
-          target: 'data',
-          eventHandlers: {
-            onMouseOver: () => [
-              {
-                target: 'labels',
-                mutation: () => ({ active: true }),
-              },
-            ],
-            onMouseOut: () => [
-              {
-                target: 'labels',
-                mutation: () => ({ active: false }),
-              },
-            ],
-          },
-        }]}
-        data={formattedData}
-      />
+      <svg viewBox='0 0 400 400'>
+        <VictoryPie
+          // origin={}
+          standalone={false}
+          labelComponent={<VictoryTooltip />}
+          theme={VictoryTheme.material}
+          innerRadius={() => 100}
+          events={[{
+            target: 'data',
+            eventHandlers: {
+              onMouseOver: () => [
+                {
+                  target: 'labels',
+                  mutation: () => ({ active: true }),
+                },
+              ],
+              onMouseOut: () => [
+                {
+                  target: 'labels',
+                  mutation: () => ({ active: false }),
+                },
+              ],
+            },
+          }]}
+          data={formattedData}
+        />
+        <VictoryLabel
+          textAnchor='middle'
+          style={{ fontSize: 65, fontWeight: 'bold' }}
+          x={180} y={165}
+          text={totalClicks}
+        />
+        <VictoryLabel
+          textAnchor='middle'
+          style={{ fontSize: 15, color: 'text.secondary' }}
+          x={180} y={205}
+          text='Clicks'
+        />
+      </svg>
     </ModuleBase>
   );
 };
