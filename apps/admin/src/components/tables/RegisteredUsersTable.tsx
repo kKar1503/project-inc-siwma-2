@@ -4,22 +4,7 @@ import BaseTable from '@/components/tables/BaseTable/BaseTable';
 import { Box, Button, Typography } from '@mui/material';
 import SearchBar from '@/components/SearchBar';
 import FilterListIcon from '@mui/icons-material/FilterList';
-
-type Users = {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  createdAt: string;
-  enabled: boolean;
-  profilePic: string | null;
-  comments: string | null;
-  whatsappNumber: null;
-  telegramUsername: null;
-  mobileNumber: string;
-  contactMethod: string;
-  bio: string | null;
-};
+import { User } from '@/utils/api/client/zod/users';
 
 type RowData = {
   id: string;
@@ -30,7 +15,7 @@ type RowData = {
   enabled: boolean;
 };
 
-const UsersData: Users[] = [
+const UsersData: User[] = [
   {
     id: '14f9a310-958c-4273-b4b3-4377804642a5',
     name: 'Andrew Tan',
@@ -109,7 +94,7 @@ const UsersData: Users[] = [
   },
 ];
 
-const parseUsersData = (users: Users[]) => {
+const parseUsersData = (users: User[]) => {
   const rows: RowData[] = [];
   users.forEach((u) => {
     rows.push({

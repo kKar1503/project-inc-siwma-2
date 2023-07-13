@@ -17,9 +17,10 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useResponsiveness } from '@inc/ui';
 import { useMemo } from 'react';
+import { Company } from '@/utils/api/client/zod';
 
 export type CreateInviteModalProps = {
-  data: any[];
+  data: Company[];
   isOpen: boolean;
   setOpen: (val: boolean) => void;
 };

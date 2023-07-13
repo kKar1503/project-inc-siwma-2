@@ -4,15 +4,9 @@ import BaseTable from '@/components/tables/BaseTable/BaseTable';
 import { Box, Button, Typography } from '@mui/material';
 import SearchBar from '@/components/SearchBar';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import { Invite } from '@/utils/api/client/zod/invites';
 
-type Invites = {
-  id: string;
-  name: string;
-  email: string;
-  companyId: string;
-};
-
-const InvitesData: Invites[] = [
+const InvitesData: Invite[] = [
   {
     id: '14f9a310-958c-4273-b4b3-4377804642a5',
     name: 'Andrew Tan',
