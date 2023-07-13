@@ -6,11 +6,11 @@ const id = z.string();
 const name = z.string();
 const description = z.string();
 const price = z.number();
-const unitPrice = z.boolean();
+const unit = z.string();
+const quantity = z.number();
 const negotiable = z.boolean();
 const categoryId = z.string();
 const type = z.nativeEnum(ListingType);
-const multiple = z.boolean();
 const createdAt = z.string();
 
 const company = z.object({
@@ -48,11 +48,11 @@ const listing = z.object({
   name,
   description,
   price,
-  unitPrice,
+  unit,
+  quantity,
   negotiable,
   categoryId,
   type,
-  multiple,
   owner,
   open,
   parameters: z.array(parameter).optional(),
