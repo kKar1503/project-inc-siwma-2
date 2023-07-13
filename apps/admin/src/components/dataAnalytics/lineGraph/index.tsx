@@ -1,4 +1,4 @@
-import { VictoryChart, VictoryLine, VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
+import { VictoryAxis, VictoryChart, VictoryLine, VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
 
@@ -47,6 +47,22 @@ const LineGraph = () => {
             { x: 4, y: 4 },
             { x: 5, y: 7 }
           ]}
+        />
+        <VictoryAxis
+          theme={VictoryTheme.material}
+          tickValues={[1,2,3,4,5,6,7,8,9,10,11,12]}
+          tickFormat={['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}
+          style={{
+            ticks:
+              {
+                stroke: 'none',
+              },
+            tickLabels:
+              {
+                fontSize: 10,
+                padding: 5,
+              },
+          }}
         />
       </VictoryChart>
     </ModuleBase>

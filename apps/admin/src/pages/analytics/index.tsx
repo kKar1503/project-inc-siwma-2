@@ -26,44 +26,39 @@ const Analytics = () => {
           <Debug>NAVBAR</Debug>
         </Grid>
         <Grid container item xs={12} md={10}>
-          <Debug>
-            <Grid container item xs={12}>
-              <Grid container item xs={12}>
-                <h1>Company</h1>
-              </Grid>
-              <Grid container item xs={6} md={3}>
-                <TopCompanies data={topCompanies} />
-              </Grid>
-              <Grid container item xs={6} md={3}>
-                <TopCompanies data={topCompanies} />
-              </Grid>
-              <Grid container item xs={12} md={3}>
-                <LineGraph />
-              </Grid>
-            </Grid>
+          <Grid container item xs={12}>
+            <h1>Company</h1>
+          </Grid>
 
-            <Grid container item xs={12}>
-              <Grid container item xs={12}>
-                <h1>Settlement</h1>
-              </Grid>
+          <Grid container item xs={6} md={3}>
+            <TopCompanies data={topCompanies} />
+          </Grid>
+          <Grid container item xs={6} md={3}>
+            <TopCompanies data={topCompanies} />
+          </Grid>
+          <Grid container item xs={12} md={3}>
+            <LineGraph />
+          </Grid>
 
-              <Grid container item xs={6} md={3}>
-                <Debug>
-                  <TopCategories data={topCategories} type='Selling' year={2022} />
-                </Debug>
-              </Grid>
-              <Grid container item xs={6} md={3}>
-                <Debug>
-                  <TopCategories data={topCategories} type='Buying' year={2022} />
-                </Debug>
-              </Grid>
+          <Grid container item xs={12}>
+            <h1>Settlement</h1>
+          </Grid>
+
+          <Grid container item xs={6} md={3}>
+            <Debug>
+              <TopCategories data={topCategories} type='Selling' year={2022} />
+            </Debug>
+          </Grid>
+          <Grid container item xs={6} md={3}>
+            <Debug>
+              <TopCategories data={topCategories} type='Buying' year={2022} />
+            </Debug>
+          </Grid>
               <Grid container item xs={12} md={3}>
                 <Debug>
                   <ActiveCategories data={activeCategories} />
                 </Debug>
               </Grid>
-            </Grid>
-          </Debug>
         </Grid>
       </Grid>
     </Box>
