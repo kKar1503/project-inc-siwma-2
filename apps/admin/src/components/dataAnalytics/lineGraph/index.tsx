@@ -18,10 +18,10 @@ const LineGraph = () => {
   // );
   return (
     <ModuleBase noFlex>
-      <Title title="Number of Companies Buying and Selling" />
       <VictoryChart
         theme={VictoryTheme.material}
       >
+        <Title title="Number of Companies Buying and Selling" />
         <VictoryLine
           style={{
             data: { stroke: '#ee6e6d' },

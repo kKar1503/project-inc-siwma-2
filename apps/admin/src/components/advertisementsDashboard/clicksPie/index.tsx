@@ -1,8 +1,6 @@
 import { VictoryLabel, VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
-import Box from '@mui/material/Box';
-import Debug from '@/components/Debug';
 
 export interface ClicksPieProps {
   data: Array<{
@@ -26,8 +24,8 @@ const Index = ({ data, totalClicks }: ClicksPieProps) => {
   );
   return (
     <ModuleBase noFlex>
-      <Title title='Total click distribution' subtitle='Number of clicks per ad-space' />
       <svg viewBox='0 0 400 400'>
+        <Title title='Total click distribution' subtitle='Number of clicks per ad-space' />
         <VictoryPie
           // origin={}
           standalone={false}

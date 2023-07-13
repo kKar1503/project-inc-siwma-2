@@ -22,15 +22,16 @@ const TopCompanies = ({ data }: TopCompaniesProps) => {
   }));
   return (
     <ModuleBase>
-      <Title title={`Top 4 Companies with most posts`} />
       <DoubleDataGraph data={mapData} format={format} style={
         {
           fillColor: '#d7d7d7',
           fillColor2: '#383091',
-          hoverColor: '#ea3b59' ,
+          hoverColor: '#ea3b59',
           hoverColor2: '#54a5f0',
         }
-      } />
+      }>
+        <Title title={`Top 4 Companies with most posts`} />
+      </DoubleDataGraph>
     </ModuleBase>
   );
 };

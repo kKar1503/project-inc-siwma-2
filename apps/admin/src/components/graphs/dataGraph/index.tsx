@@ -1,4 +1,5 @@
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme, VictoryTooltip } from 'victory';
+import { ReactNode } from 'react';
 
 export interface DataGraphElement {
   id: number;
@@ -18,9 +19,10 @@ export interface DataGraphProps {
     fillColor: string;
     hoverColor: string;
   };
+  children?: ReactNode;
 }
 
-const DataGraph = ({ data, format, style }: DataGraphProps) => {
+const DataGraph = ({ data, format, style,children }: DataGraphProps) => {
   const tickValues = format.map((item) => item.id);
   const tickFormat = format.map((item) => item.display);
   return (
@@ -29,6 +31,7 @@ const DataGraph = ({ data, format, style }: DataGraphProps) => {
       theme={VictoryTheme.material}
       domainPadding={20}
     >
+      {children}
       <VictoryAxis
         theme={VictoryTheme.material}
         tickValues={tickValues}

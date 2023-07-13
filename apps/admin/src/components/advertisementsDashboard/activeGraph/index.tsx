@@ -27,8 +27,9 @@ const ActiveGraph = ({ data }: ActiveGraphProps) => {
   });
   return (
     <ModuleBase>
-      <Title title='Number of active ad-spaces per month' subtitle='Year 2022' />
-      <DataGraph data={mapData} format={format} style={{ fillColor: '#d7d7d7', hoverColor: '#ea3b59' }} />
+      <DataGraph data={mapData} format={format} style={{ fillColor: '#d7d7d7', hoverColor: '#ea3b59' }} >
+        <Title title='Number of active ad-spaces per month' subtitle='Year 2022' />
+      </DataGraph>
     </ModuleBase>
   );
 };
