@@ -117,6 +117,7 @@ const PendingInvitesTable = () => {
         <SearchBar />
       </Box>
       <BaseTable
+        heading="Pending Invites"
         rows={InvitesData}
         headers={headers}
         onPageChange={handlePageChange}

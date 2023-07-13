@@ -203,6 +203,7 @@ const RegisteredUsersTable = () => {
       </Box>
 
       <BaseTable
+        heading="Registered Users"
         rows={rows}
         headers={headers}
         onPageChange={handlePageChange}
