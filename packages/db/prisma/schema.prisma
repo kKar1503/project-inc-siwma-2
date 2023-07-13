@@ -77,7 +77,7 @@ model Category {
   createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
   categoriesParameters CategoriesParameters[]
-  listings             Listing[]
+  listingItems         ListingItem[]
 
   @@map("category")
 }
@@ -140,30 +140,22 @@ model Invite {
 
 model Listing {
   id                                          Int                      @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
-  name                                        String
-  description                                 String
   price                                       Decimal                  @default(0) @db.Decimal
-  unitPrice                                   Boolean                  @default(false) @map("unit_price")
   negotiable                                  Boolean                  @default(true)
-  categoryId                                  Int                      @map("category_id")
-  type                                        ListingType
+  quantity                                    Decimal                  @default(0) @db.Decimal
+  type                                        ListingType              @default(BUY)
   owner                                       String                   @db.Uuid
   createdAt                                   DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                                   DateTime                 @default(now()) @map("updated_at") @db.Timestamptz(6)
-  archived                                    Boolean                  @default(false)
   deletedAt                                   DateTime?                @map("deleted_at") @db.Timestamptz(6)
-  multiple                                    Boolean                  @default(false)
-  hashedUrl                                   String?                  @unique(map: "listing_un") @map("hashed_url")
-  unit                                        UnitType                 @default(kg)
-  condition                                   ConditionType            @default(good)
-  grading                                     String
-  category                                    Category                 @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
+  listingItemId                               Int                      @map("listing_item_id")
+  listingItem                                 ListingItem              @relation(fields: [listingItemId], references: [id], onDelete: Cascade, map: "listing_fk")
   users                                       Users                    @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
   listingBookmarks                            ListingBookmarks[]
   listingClicksListingClicksListingTolistings ListingClicks[]          @relation("listingClicksListingTolisting")
   listingNotifications                        ListingNotifications[]
   listingsParametersValue                     ListingsParametersValue?
-  offersOffersListingTolistings               Offers[]                 @relation("offersListingTolisting")
+  offers                                      Offers[]
   roomsRoomsListingTolistings                 Rooms[]                  @relation("roomsListingTolisting")
 
   @@map("listing")
@@ -186,10 +178,26 @@ model ListingClicks {
   listing                              Int
   user                                 String   @db.Uuid
   createdAt                            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  listingListingClicksListingTolisting Listing  @relation("listingClicksListingTolisting", fields: [listing], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "listing_clicks_fk")
+  listingListingClicksListingTolisting Listing  @relation("listingClicksListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "listing_clicks_fk")
   users                                Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listing_clicks_fk_1")
 
   @@map("listing_clicks")
+}
+
+model ListingItem {
+  id          Int       @id(map: "listing_item_pk") @default(sequence())
+  name        String
+  chineseName String?   @map("chinese_name")
+  description String
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  unit        String
+  chineseUnit String?   @map("chinese_unit")
+  categoryId  Int       @map("category_id")
+  listings    Listing[]
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_item_fk")
+
+  @@map("listing_item")
 }
 
 model ListingNotifications {
@@ -209,7 +217,7 @@ model ListingsParametersValue {
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
   parameters Json
-  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listings_parameters_values_fk")
+  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk")
 
   @@index([listingId], map: "idx_listingid")
   @@index([parameters], map: "idx_parameters_gin", type: Gin)
@@ -242,12 +250,12 @@ model Messages {
 }
 
 model Offers {
-  id                            Int        @id(map: "offers_pk") @default(sequence(maxValue: 2147483647))
-  listing                       Int
-  amount                        Decimal    @default(0.00) @db.Decimal
-  accepted                      Boolean    @default(false)
-  messages                      Messages[]
-  listingOffersListingTolisting Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
+  id        Int        @id(map: "offers_pk") @default(sequence(maxValue: 2147483647))
+  listingId Int        @map("listing_id")
+  amount    Decimal    @default(0.00) @db.Decimal
+  accepted  Boolean    @default(false)
+  messages  Messages[]
+  listing   Listing    @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "offers_fk")
 
   @@map("offers")
 }
