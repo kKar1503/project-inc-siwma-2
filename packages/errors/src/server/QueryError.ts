@@ -247,3 +247,24 @@ export class BookmarkSelfError extends ParamError {
     this.message = `Cannot bookmark self`;
   }
 }
+
+/**
+ * Number range error
+ */
+export class NumberRangeError extends ParamError {
+  public static readonly status = 422;
+  public static readonly code = 2011;
+
+  constructor(parameter: string, min?: number, max?: number) {
+    super();
+    this.status = NumberRangeError.status;
+    this.code = NumberRangeError.code;
+    this.message =
+      `Parameter '${parameter}' ` +
+      (min
+        ? `must be greater than ${min}`
+        : max
+        ? `must be less than ${max}`
+        : (min && max) ?? `must be between ${min} and ${max}`);
+  }
+}

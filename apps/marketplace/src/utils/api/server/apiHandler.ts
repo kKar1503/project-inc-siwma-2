@@ -4,7 +4,6 @@ import {
   ErrorJSON,
   InvalidBucketName,
   InvalidDataProvided,
-  InvalidRangeError,
   MissingUUID,
   MultipartUploadError,
   ObjectCollision,
@@ -25,6 +24,7 @@ import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
 import { APIHandlerOptions, APIRequestType } from '@/types/api-types';
 import { S3Error } from '@inc/s3-simplified';
+import { NumberRangeError } from '@inc/errors/src';
 import { apiGuardMiddleware } from './middlewares/apiGuardMiddleware';
 import jwtMiddleware from './middlewares/jwtMiddleware';
 
@@ -92,11 +92,7 @@ function handleZodError(error: ZodError) {
       // Check if the number was too small
       if (err.type === 'number') {
         // Yes it was, return a param error
-        return new InvalidRangeError(
-          zodPathToString(err.path),
-          undefined,
-          err.minimum.toString()
-        ).toJSON();
+        return new NumberRangeError(zodPathToString(err.path), Number(err.minimum)).toJSON();
       }
     }
 
