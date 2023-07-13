@@ -147,7 +147,7 @@ model Listing {
   owner                                       String                   @db.Uuid
   createdAt                                   DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                                   DateTime                 @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deletedAt                                   DateTime                 @default(now()) @map("deleted_at") @db.Timestamptz(6)
+  deletedAt                                   DateTime?                @map("deleted_at") @db.Timestamptz(6)
   listingItemId                               Int                      @map("listing_item_id")
   listingItem                                 ListingItem              @relation(fields: [listingItemId], references: [id], onDelete: Cascade, map: "listing_fk")
   users                                       Users                    @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
@@ -155,7 +155,7 @@ model Listing {
   listingClicksListingClicksListingTolistings ListingClicks[]          @relation("listingClicksListingTolisting")
   listingNotifications                        ListingNotifications[]
   listingsParametersValue                     ListingsParametersValue?
-  offers                                      Offers?
+  offers                                      Offers[]
   roomsRoomsListingTolistings                 Rooms[]                  @relation("roomsListingTolisting")
 
   @@map("listing")
@@ -255,7 +255,7 @@ model Offers {
   amount    Decimal    @default(0.00) @db.Decimal
   accepted  Boolean    @default(false)
   messages  Messages[]
-  listing   Listing    @relation(fields: [id], references: [id], onDelete: Cascade, map: "offers_fk")
+  listing   Listing    @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "offers_fk")
 
   @@map("offers")
 }

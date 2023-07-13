@@ -38,6 +38,7 @@ const main = async (): Promise<void> => {
     prismaClient.categoriesParameters.deleteMany({}),
     prismaClient.advertClicks.deleteMany({}),
     prismaClient.listingClicks.deleteMany({}),
+    prismaClient.listingItem.deleteMany({}),
     prismaClient.companiesBookmarks.deleteMany({}),
     prismaClient.invite.deleteMany({}),
     prismaClient.listingBookmarks.deleteMany({}),
