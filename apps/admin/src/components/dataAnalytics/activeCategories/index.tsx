@@ -11,10 +11,10 @@ export interface ActiveCategoriesProps {
 
 const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
   const formattedData = data.map((item) => ({
-        x: item.category,
-        y: item.value,
-        label: `${item.value}`,
-      }),
+      x: item.category,
+      y: item.value,
+      label: `${item.category}\n${item.value}`,
+    }),
   );
   return (
     <ModuleBase noFlex width='85%'>
