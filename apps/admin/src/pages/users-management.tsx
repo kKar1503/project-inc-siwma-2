@@ -7,10 +7,17 @@ import RegisteredUsersTable from '@/components/tables/RegisteredUsersTable';
 import PendingInvitesTable from '@/components/tables/PendingInvitesTable';
 import { Box, Button, Grid, Typography, styled } from '@mui/material';
 import { useResponsiveness } from '@inc/ui';
-import { useQueries } from 'react-query';
+import { useQueries, useMutation } from 'react-query';
 import fetchCompanies from '@/middlewares/fetchCompanies';
 import fetchUsers from '@/middlewares/fetchUsers';
 import fetchInvites from '@/middlewares/fetchInvites';
+import apiClient from '@/utils/api/client/apiClient';
+import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
+
+const deleteInvites = async (emails: string[]) => {
+  const promises = emails.map((email) => apiClient.delete(`/v1/invites/email/${email}`));
+  await Promise.all(promises);
+};
 
 const Page = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -31,6 +38,10 @@ const Page = () => {
     },
   ]);
 
+  const { mutate } = useMutation('deleteInvites', deleteInvites, {
+    onSuccess: () => queries[2].refetch(),
+  });
+
   const companies = queries[0].data;
   const users = queries[1].data;
   const invites = queries[2].data;
@@ -43,8 +54,13 @@ const Page = () => {
     marginBottom: theme.spacing(2),
   }));
 
-  const handleOnClick = () => {
+  const handleClick = () => {
     setOpen(!open);
+  };
+
+  const handleDelete = (rows: readonly BaseTableData[]) => {
+    const emails = rows.map((row) => row.email);
+    mutate(emails as string[]);
   };
 
   return (
@@ -99,7 +115,7 @@ const Page = () => {
               marginTop: 2,
             }}
             variant="outlined"
-            onClick={handleOnClick}
+            onClick={handleClick}
           >
             Send Invite
           </Button>
@@ -126,8 +142,8 @@ const Page = () => {
           marginTop: 2,
         }}
       >
-        <PendingInvitesTable />
-        <RegisteredUsersTable />
+        <PendingInvitesTable data={invites || []} onDelete={handleDelete} />
+        <RegisteredUsersTable data={users || []} />
       </Box>
 
       <CreateInviteModal data={companies || []} isOpen={open} setOpen={setOpen} />

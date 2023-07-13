@@ -1,43 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
-import BaseTable from '@/components/tables/BaseTable/BaseTable';
+import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Box, Button, Typography } from '@mui/material';
 import SearchBar from '@/components/SearchBar';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { Invite } from '@/utils/api/client/zod/invites';
 
-const InvitesData: Invite[] = [
-  {
-    id: '14f9a310-958c-4273-b4b3-4377804642a5',
-    name: 'Andrew Tan',
-    email: 'andrewtan@gmail.com',
-    companyId: '7',
-  },
-  {
-    id: '1965b49b-3e55-4493-bc69-5701cabf8baa',
-    name: 'Fok Yanrui Javier',
-    email: 'javier@ichat.sp.edu.sg',
-    companyId: '4',
-  },
-  {
-    id: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
-    name: 'James Tan',
-    email: 'jamestanmetals@gmail.com',
-    companyId: '9',
-  },
-  {
-    id: '2a7f0665-57a8-454b-8518-ce2c4f003237',
-    name: 'Ng Ping How',
-    email: 'pinghowng@gmail.com',
-    companyId: '3',
-  },
-  {
-    id: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
-    name: 'Jonathan Tan',
-    email: 'jonathan@gmail.com',
-    companyId: '5',
-  },
-];
+type PendingInvitesTableProps = {
+  data: Invite[];
+  onDelete: (rows: readonly BaseTableData[]) => void;
+};
 
 const headers: Header[] = [
   {
@@ -58,9 +30,10 @@ const headers: Header[] = [
   },
 ];
 
-const PendingInvitesTable = () => {
+const PendingInvitesTable = ({ data, onDelete }: PendingInvitesTableProps) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [tableData, setTableData] = useState<Invite[]>([]);
 
   const handlePageChange = (event: unknown, newPage: number) => {
     console.log('Page Change');
@@ -81,9 +54,9 @@ const PendingInvitesTable = () => {
     console.log('toggle');
   };
 
-  const onDelete = () => {
-    console.log('delete');
-  };
+  useEffect(() => {
+    setTableData(data.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1)));
+  }, [data, page, rowsPerPage]);
 
   return (
     <Box
@@ -112,7 +85,7 @@ const PendingInvitesTable = () => {
       </Box>
       <BaseTable
         heading="Pending Invites"
-        rows={InvitesData}
+        rows={tableData}
         headers={headers}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -122,7 +95,7 @@ const PendingInvitesTable = () => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        totalCount={InvitesData.length}
+        totalCount={data.length}
       />
     </Box>
   );
