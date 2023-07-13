@@ -14,8 +14,18 @@ import fetchInvites from '@/middlewares/fetchInvites';
 import apiClient from '@/utils/api/client/apiClient';
 import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 
-const deleteInvites = async (emails: string[]) => {
+const deleteInvitesMutationFn = async (emails: string[]) => {
   const promises = emails.map((email) => apiClient.delete(`/v1/invites/email/${email}`));
+  await Promise.all(promises);
+};
+
+const toggleUsersMutationFn = async (ids: string[]) => {
+  const promises = ids.map((id) => apiClient.patch(`/v1/users/${id}/enabled`));
+  await Promise.all(promises);
+};
+
+const deleteUsersMutationFn = async (ids: string[]) => {
+  const promises = ids.map((id) => apiClient.delete(`/v1/users/${id}`));
   await Promise.all(promises);
 };
 
@@ -38,7 +48,15 @@ const Page = () => {
     },
   ]);
 
-  const { mutate } = useMutation('deleteInvites', deleteInvites, {
+  const { mutate: deleteUsers } = useMutation('deleteUsers', deleteUsersMutationFn, {
+    onSuccess: () => queries[1].refetch(),
+  });
+
+  const { mutate: toggleUsers } = useMutation('toggleUsers', toggleUsersMutationFn, {
+    onSuccess: () => queries[1].refetch(),
+  });
+
+  const { mutate: deleteInvites } = useMutation('deleteInvites', deleteInvitesMutationFn, {
     onSuccess: () => queries[2].refetch(),
   });
 
@@ -58,9 +76,19 @@ const Page = () => {
     setOpen(!open);
   };
 
-  const handleDelete = (rows: readonly BaseTableData[]) => {
+  const handleDeleteUsers = (rows: readonly BaseTableData[]) => {
+    const uuids = rows.map((row) => row.id);
+    deleteUsers(uuids as string[]);
+  };
+
+  const handleToggleUsers = (toggled: boolean, rows: readonly BaseTableData[]) => {
+    const uuids = rows.map((row) => row.id);
+    toggleUsers(uuids as string[]);
+  };
+
+  const handleDeleteInvites = (rows: readonly BaseTableData[]) => {
     const emails = rows.map((row) => row.email);
-    mutate(emails as string[]);
+    deleteInvites(emails as string[]);
   };
 
   return (
@@ -142,8 +170,12 @@ const Page = () => {
           marginTop: 2,
         }}
       >
-        <PendingInvitesTable data={invites || []} onDelete={handleDelete} />
-        <RegisteredUsersTable data={users || []} />
+        <PendingInvitesTable data={invites || []} onDelete={handleDeleteInvites} />
+        <RegisteredUsersTable
+          data={users || []}
+          onToggle={handleToggleUsers}
+          onDelete={handleDeleteUsers}
+        />
       </Box>
 
       <CreateInviteModal data={companies || []} isOpen={open} setOpen={setOpen} />

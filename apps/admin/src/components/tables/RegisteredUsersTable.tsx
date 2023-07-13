@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
-import BaseTable from '@/components/tables/BaseTable/BaseTable';
+import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Box, Button, Typography } from '@mui/material';
 import SearchBar from '@/components/SearchBar';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { User } from '@/utils/api/client/zod/users';
+import { useRouter } from 'next/router';
 
 type RowData = {
   id: string;
@@ -15,84 +16,11 @@ type RowData = {
   enabled: boolean;
 };
 
-const UsersData: User[] = [
-  {
-    id: '14f9a310-958c-4273-b4b3-4377804642a5',
-    name: 'Andrew Tan',
-    email: 'andrewtan@gmail.com',
-    company: '7',
-    createdAt: '2023-06-28T08:15:39.493Z',
-    enabled: true,
-    profilePic: null,
-    comments: null,
-    whatsappNumber: null,
-    telegramUsername: null,
-    mobileNumber: '88908732',
-    contactMethod: 'telegram',
-    bio: null,
-  },
-  {
-    id: '1965b49b-3e55-4493-bc69-5701cabf8baa',
-    name: 'Fok Yanrui Javier',
-    email: 'javier@ichat.sp.edu.sg',
-    company: '4',
-    createdAt: '2023-06-28T08:15:39.493Z',
-    enabled: true,
-    profilePic: null,
-    comments: 'You can find whatever you want or need easily.',
-    whatsappNumber: null,
-    telegramUsername: null,
-    mobileNumber: '91287659',
-    contactMethod: 'whatsapp',
-    bio: null,
-  },
-  {
-    id: '27666b0b-491a-4ce8-86bc-ab45f814ee07',
-    name: 'James Tan',
-    email: 'jamestanmetals@gmail.com',
-    company: '9',
-    createdAt: '2023-06-28T08:15:39.493Z',
-    enabled: true,
-    profilePic: null,
-    comments: null,
-    whatsappNumber: null,
-    telegramUsername: null,
-    mobileNumber: '95648321',
-    contactMethod: 'facebook',
-    bio: null,
-  },
-  {
-    id: '2a7f0665-57a8-454b-8518-ce2c4f003237',
-    name: 'Ng Ping How',
-    email: 'pinghowng@gmail.com',
-    company: '3',
-    createdAt: '2023-06-28T08:15:39.493Z',
-    enabled: true,
-    profilePic: null,
-    comments: null,
-    whatsappNumber: null,
-    telegramUsername: null,
-    mobileNumber: '91234568',
-    contactMethod: 'whatsapp',
-    bio: null,
-  },
-  {
-    id: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
-    name: 'Jonathan Tan',
-    email: 'jonathan@gmail.com',
-    company: '5',
-    createdAt: '2023-06-28T08:15:39.493Z',
-    enabled: true,
-    profilePic: null,
-    comments:
-      'Never had problems with sellers or buyers on that page all went successfuly until today.',
-    whatsappNumber: null,
-    telegramUsername: null,
-    mobileNumber: '88493883',
-    contactMethod: 'telegram',
-    bio: null,
-  },
-];
+type RegisteredUsersTableProps = {
+  data: User[];
+  onToggle: (toggled: boolean, rows: readonly BaseTableData[]) => void;
+  onDelete: (rows: readonly BaseTableData[]) => void;
+};
 
 const parseUsersData = (users: User[]) => {
   const rows: RowData[] = [];
@@ -132,34 +60,28 @@ const headers: Header[] = [
   },
 ];
 
-const RegisteredUsersTable = () => {
+const RegisteredUsersTable = ({ data, onToggle, onDelete }: RegisteredUsersTableProps) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [tableData, setTableData] = useState<User[]>([]);
+  const router = useRouter();
 
   const handlePageChange = (event: unknown, newPage: number) => {
-    console.log('Page Change');
     setPage(newPage);
   };
 
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Rows Change');
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const onEdit = () => {
-    console.log('edit');
+  const onEdit = (row: BaseTableData) => {
+    router.push(`/edit-user/${row.id}`);
   };
 
-  const onToggle = () => {
-    console.log('toggle');
-  };
-
-  const onDelete = () => {
-    console.log('delete');
-  };
-
-  const rows = parseUsersData(UsersData);
+  useEffect(() => {
+    setTableData(data.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1)));
+  }, [data, page, rowsPerPage]);
 
   return (
     <Box
@@ -189,7 +111,7 @@ const RegisteredUsersTable = () => {
 
       <BaseTable
         heading="Registered Users"
-        rows={rows}
+        rows={parseUsersData(tableData)}
         headers={headers}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -199,7 +121,7 @@ const RegisteredUsersTable = () => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        totalCount={rows.length}
+        totalCount={data.length}
       />
     </Box>
   );
