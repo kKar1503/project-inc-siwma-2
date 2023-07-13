@@ -1,4 +1,5 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
+import DeleteCompany from '@/components/modals/DeleteCompany';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import { useEffect, useState } from 'react';
 
@@ -79,6 +80,9 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
 
+  // modals
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+
   const sortRows = async (): Promise<void> => {
     const rowsData: BaseTableData[] = [];
 
@@ -109,24 +113,31 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
     setPage(0);
   };
 
+  const handleDeleteRows = () => {
+    setOpenDeleteModal(true);
+  };
+
   useEffect(() => {
     sortRows();
   }, [data]);
 
   return (
-    <BaseTable
-      rows={rows}
-      headers={headCells}
-      onPageChange={handleChangePage}
-      onRowsPerPageChange={handleChangeRowsPerPage}
-      onDelete={() => console.log('delete')}
-      onEdit={() => console.log('edit')}
-      onToggle={() => console.log('toggle')}
-      page={page}
-      rowsPerPage={rowsPerPage}
-      rowsPerPageOptions={[5, 10, 25]}
-      totalCount={rows.length}
-    />
+    <>
+      <BaseTable
+        rows={rows}
+        headers={headCells}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        onDelete={handleDeleteRows}
+        onEdit={() => console.log('edit')}
+        onToggle={() => console.log('toggle')}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[5, 10, 25]}
+        totalCount={rows.length}
+      />
+      <DeleteCompany open={openDeleteModal} setOpen={setOpenDeleteModal} />
+    </>
   );
 };
 
