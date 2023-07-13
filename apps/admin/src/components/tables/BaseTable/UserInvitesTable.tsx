@@ -31,14 +31,6 @@ const headCells: Header[] = [
   },
 ];
 
-const rows = [
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'sallyknox_slfi@gmail.com', '+65 9832 0293'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'sallyknox_slfi@gmail.com', '+65 9832 0293'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'sallyknox_slfi@gmail.com', '+65 9832 0293'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'sallyknox_slfi@gmail.com', '+65 9832 0293'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'sallyknox_slfi@gmail.com', '+65 9832 0293'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'sallyknox_slfi@gmail.com', '+65 9832 0293'),
-];
 
 const UserInvitesTable = ({ details }: InviteFileProps) => {
   const [page, setPage] = useState(0);
@@ -56,7 +48,7 @@ const UserInvitesTable = ({ details }: InviteFileProps) => {
   };
 
   return (
-    <Box sx={{ my: 2, mx: 1 }}>
+    <Box sx={{ my: 2, mx: 1, height: '500px'}}>
       <BaseTable
         rows={userRows}
         headers={headCells}
@@ -68,7 +60,7 @@ const UserInvitesTable = ({ details }: InviteFileProps) => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        totalCount={rows.length}
+        totalCount={userRows.length}
         heading="User Invites Preview"
       />
     </Box>

@@ -27,15 +27,6 @@ const headCells: Header[] = [
   },
 ];
 
-const rows = [
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'www.guangzhao.com'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'www.guangzhao.com'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'www.guangzhao.com'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'www.guangzhao.com'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'www.guangzhao.com'),
-  createData('GUANGZHAO METALWORKS, PTE. LTD', 'www.guangzhao.com'),
-];
-
 const CompanyInvitesTable = ({ details }: InviteFileProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -68,7 +59,7 @@ const CompanyInvitesTable = ({ details }: InviteFileProps) => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        totalCount={rows.length}
+        totalCount={companyRows.length}
         heading="Company Profiles Preview"
       />
     </Box>
