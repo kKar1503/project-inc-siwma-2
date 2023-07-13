@@ -1,13 +1,15 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import Container from '@mui/material/Container';
+import Button from '@mui/material/Button';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import fetchParameters from '@/middlewares/fetchParameters';
 import { ParameterResponseBody } from '@/utils/api/client/zod';
-import { useState, useMemo} from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import Head from 'next/head';
+import Box from '@mui/material/Box';
 
 export type ParameterProps = {
   data: ParameterResponseBody[];
@@ -102,6 +104,16 @@ const ParameterTable = ({ data }: ParameterTableProps) => {
         <title>Parameters</title>
       </Head>
       <Container sx={tableStyle}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Button variant="contained" sx={({ palette }) => ({ bgcolor: palette.primary[400] })}>
+            Create Parameter
+          </Button>
+        </Box>
         <BaseTable
           heading="Parameters"
           rows={rows}
