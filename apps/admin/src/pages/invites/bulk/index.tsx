@@ -8,6 +8,9 @@ import CompanyInvitesTable from '@/components/tables/BaseTable/CompanyInvitesTab
 import { Box, Button } from '@mui/material';
 import UserInvitesTable from '@/components/tables/BaseTable/UserInvitesTable';
 import { Modal, useResponsiveness } from '@inc/ui';
+import * as XLSX from 'xlsx';
+
+export type InviteFileProps = Array<string>;
 
 const BulkInvitesPage = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -16,6 +19,7 @@ const BulkInvitesPage = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [fileDetails, setFileDetails] = useState<InviteFileProps[]>([]);
 
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
@@ -41,7 +45,26 @@ const BulkInvitesPage = () => {
       setFile(null);
       alert('Please Select a File Smaller Than 64 MB');
     }
+
+    const reader = new FileReader();
+    reader.readAsBinaryString(event.target.files[0]);
+
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const data = e.target?.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as InviteFileProps[];
+      parsedData.shift();
+      console.log(parsedData);
+      setFileDetails(parsedData);
+    };
+
+    console.log('hello');
+    // console.log(fileDetails);
   };
+
+  console.log(fileDetails);
 
   const handleFileUpload = () => {
     console.log('File uploading...');
@@ -92,8 +115,8 @@ const BulkInvitesPage = () => {
             ...(isLg && { maxWidth: '900px', width: '100%' }),
           }}
         >
-          <CompanyInvitesTable />
-          <UserInvitesTable />
+          <CompanyInvitesTable details={fileDetails} />
+          <UserInvitesTable details={fileDetails} />
         </Box>
       </Box>
       <Box

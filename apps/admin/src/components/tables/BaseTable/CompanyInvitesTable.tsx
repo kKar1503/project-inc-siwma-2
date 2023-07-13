@@ -4,6 +4,10 @@ import { Box, Typography } from '@mui/material';
 
 import { useState } from 'react';
 
+export type InviteFileProps = {
+  details: Array<Array<string>>;
+};
+
 function createData(company: string, website: string): BaseTableData {
   return {
     id: company,
@@ -32,9 +36,15 @@ const rows = [
   createData('GUANGZHAO METALWORKS, PTE. LTD', 'www.guangzhao.com'),
 ];
 
-const CompanyInvitesTable = () => {
+const CompanyInvitesTable = ({ details }: InviteFileProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  console.log(details);
+
+  const companyRows = details.map((x) => createData(x[0], x[1]));
+
+  console.log(companyRows);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -48,7 +58,7 @@ const CompanyInvitesTable = () => {
   return (
     <Box sx={{ my: 2, mx: 1 }}>
       <BaseTable
-        rows={rows}
+        rows={companyRows}
         headers={headCells}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}

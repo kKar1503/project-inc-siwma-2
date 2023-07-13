@@ -3,12 +3,16 @@ import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import { Box } from '@mui/material';
 import { useState } from 'react';
 
-function createData(company: string, email: string, mobileNum: string): BaseTableData {
+export type InviteFileProps = {
+  details: Array<Array<string>>;
+};
+
+function createData(company: string, email: string, mobile: string): BaseTableData {
   return {
     id: company,
     company,
     email,
-    mobileNum,
+    mobile,
   };
 }
 
@@ -22,7 +26,7 @@ const headCells: Header[] = [
     label: 'Email',
   },
   {
-    key: 'mobileNum',
+    key: 'mobile',
     label: 'Mobile Number',
   },
 ];
@@ -36,9 +40,11 @@ const rows = [
   createData('GUANGZHAO METALWORKS, PTE. LTD', 'sallyknox_slfi@gmail.com', '+65 9832 0293'),
 ];
 
-const UserInvitesTable = () => {
+const UserInvitesTable = ({ details }: InviteFileProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const userRows = details.map((x) => createData(x[0], x[2], x[3]));
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -52,7 +58,7 @@ const UserInvitesTable = () => {
   return (
     <Box sx={{ my: 2, mx: 1 }}>
       <BaseTable
-        rows={rows}
+        rows={userRows}
         headers={headCells}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
