@@ -171,16 +171,11 @@ export default apiHandler()
     });
 
     // Construct the new parameter value object
-    const parameterValues = data.parameters?.map((parameter) => {
-      const oldParams = updatedListing.listingsParametersValue?.parameters as ListingParameter[];
-      const existingParam = oldParams.find((param) => param.parameterId === parameter.paramId) || {
-        parameterId: parameter.paramId,
-        value: parameter.value,
-      };
+    const oldParams = updatedListing.listingsParametersValue?.parameters as ListingParameter[];
+    const parameterValues = oldParams.map((parameter) => {
+      const newParam = data.parameters?.find((param) => param.paramId === parameter.parameterId);
 
-      existingParam.value = parameter.value.toString();
-
-      return existingParam;
+      return newParam ?? parameter;
     });
 
     // Update the listing's parameters
@@ -196,7 +191,7 @@ export default apiHandler()
           create: {
             listingId: id,
             parameters: {
-              parameterId: parameter.parameterId,
+              parameterId: parameter,
               value: parameter.value.toString(),
             },
           },
