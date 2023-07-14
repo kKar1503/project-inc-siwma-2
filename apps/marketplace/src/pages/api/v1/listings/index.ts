@@ -14,7 +14,7 @@ import PrismaClient, {
   Prisma,
   Users,
 } from '@inc/db';
-import { ParamError, ParamRequiredError } from '@inc/errors';
+import { ParamError, ParamInvalidError, ParamRequiredError } from '@inc/errors';
 import { GetListingsQueryParameter, listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
 import { ListingParameter } from '@inc/types';
@@ -272,6 +272,13 @@ export default apiHandler()
     requiredParameters.forEach((reqParam) => {
       if (!providedParameters.includes(reqParam)) {
         throw new ParamRequiredError('paramId');
+      }
+    });
+
+    // Check if any of the provided parameters are invalid
+    providedParameters.forEach((param) => {
+      if (!requiredParameters.includes(param)) {
+        throw new ParamInvalidError('paramId', param);
       }
     });
 

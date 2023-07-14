@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse, handleBookmarks, UpdateType } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
+import { ForbiddenError, NotFoundError, ParamError, ParamInvalidError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import { ListingParameter } from '@inc/types';
 import { formatSingleListingResponse, parseListingId } from '..';
@@ -144,7 +144,7 @@ export default apiHandler()
     if (data.parameters) {
       data.parameters.forEach((parameter) => {
         if (!validParameters.includes(parameter.paramId.toString())) {
-          throw new ParamError('paramId');
+          throw new ParamInvalidError('paramId', parameter.paramId);
         }
       });
     }
