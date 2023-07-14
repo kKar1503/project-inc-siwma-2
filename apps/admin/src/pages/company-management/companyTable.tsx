@@ -1,7 +1,8 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
-import DeleteCompany from '@/components/modals/DeleteCompany';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import { useEffect, useState } from 'react';
+import DeleteCompanyModal from '@/components/modals/DeleteCompanyModal';
+import EditCompanyModal from '@/components/modals/EditCompanyModal';
 
 export type CompanyProps = {
   id: string;
@@ -82,6 +83,7 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
 
   // modals
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
   const sortRows = async (): Promise<void> => {
     const rowsData: BaseTableData[] = [];
@@ -117,6 +119,10 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
     setOpenDeleteModal(true);
   };
 
+  const handleEditRow = () => {
+    setOpenEditModal(true);
+  };
+
   useEffect(() => {
     sortRows();
   }, [data]);
@@ -129,14 +135,15 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         onDelete={handleDeleteRows}
-        onEdit={() => console.log('edit')}
+        onEdit={handleEditRow}
         onToggle={() => console.log('toggle')}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={rows.length}
       />
-      <DeleteCompany open={openDeleteModal} setOpen={setOpenDeleteModal} />
+      <DeleteCompanyModal open={openDeleteModal} setOpen={setOpenDeleteModal} />
+      <EditCompanyModal open={openEditModal} setOpen={() => setOpenEditModal(false)} />
     </>
   );
 };
