@@ -27,28 +27,7 @@ import { S3Error } from '@inc/s3-simplified';
 import { NumberRangeError } from '@inc/errors/src';
 import { apiGuardMiddleware } from './middlewares/apiGuardMiddleware';
 import jwtMiddleware from './middlewares/jwtMiddleware';
-
-/**
- * Zod path to string
- */
-function zodPathToString(path: (string | number)[]) {
-  // Initialise result
-  let result = '';
-
-  // Iterate through each path
-  for (let i = 0; i < path.length; i++) {
-    // Check if it is a number
-    if (typeof path[i] === 'number') {
-      // It is a number, add it to the result
-      result += `[${path[i]}]`;
-    } else {
-      // It is a string, add it to the result
-      result += `${i > 0 ? '.' : ''}${path[i]}`;
-    }
-  }
-
-  return result;
-}
+import { zodPathToString } from '../apiHelper';
 
 /**
  * Zod error handler
