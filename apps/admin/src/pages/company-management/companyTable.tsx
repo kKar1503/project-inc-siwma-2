@@ -130,6 +130,7 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
   return (
     <>
       <BaseTable
+        heading="Registered Companies"
         rows={rows}
         headers={headCells}
         onPageChange={handleChangePage}
