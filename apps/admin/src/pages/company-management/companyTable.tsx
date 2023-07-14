@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from 'react';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
-import { useEffect, useState } from 'react';
 import DeleteCompanyModal from '@/components/modals/DeleteCompanyModal';
 import EditCompanyModal from '@/components/modals/EditCompanyModal';
 
