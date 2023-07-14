@@ -56,6 +56,13 @@ function zodPathToString(path: (string | number)[]) {
 function handleZodError(error: ZodError) {
   // Iterate through each Zod Issue
   const result = error.issues.map((err) => {
+    // Check if it was a custom error
+    if (err.code === 'custom') {
+      // Yes it was, handle the custom error
+      // Return the error message
+      return err.params?.response as ErrorJSON;
+    }
+
     // Check if it was a type error
     if (err.code === 'invalid_type') {
       // Yes it was
