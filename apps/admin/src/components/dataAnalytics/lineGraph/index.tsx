@@ -1,52 +1,42 @@
-import { VictoryAxis, VictoryChart, VictoryLine, VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
+import { VictoryAxis, VictoryChart, VictoryLine, VictoryTheme } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
 
-export interface ActiveCategoriesProps {
+export interface LineGraphsProps {
   data: Array<{
-    category: string;
+    month: number;
     value: number;
+    isBuying: boolean;
   }>;
 }
 
-const LineGraph = () => {
-  // const formattedData = data.map((item) => ({
-  //       x: item.category,
-  //       y: item.value,
-  //       label: `${item.value}`,
-  //     }),
-  // );
+const LineGraph = ({ data }: LineGraphsProps) => {
+  const formattedData = data.map((item) => ({
+      x: item.month,
+      y: item.value,
+      label: `${item.value}`,
+      isBuying: item.isBuying,
+    }),
+  );
   return (
     <ModuleBase noFlex width='85%'>
       <VictoryChart
         theme={VictoryTheme.material}
       >
-        <Title title="Number of Companies Buying and Selling" />
+        <Title title='Number of Companies Buying and Selling' />
         <VictoryLine
           style={{
             data: { stroke: '#ee6e6d' },
-            parent: { border: '1px solid #ccc'}
+            parent: { border: '1px solid #ccc' },
           }}
-          data={[
-            { x: 1, y: 2 },
-            { x: 2, y: 3 },
-            { x: 3, y: 5 },
-            { x: 4, y: 4 },
-            { x: 5, y: 3 }
-          ]}
+          data={formattedData.filter((item) => item.isBuying)}
         />
         <VictoryLine
           style={{
             data: { stroke: '#f3ca22' },
-            parent: { border: '1px solid #ccc'}
+            parent: { border: '1px solid #ccc' },
           }}
-          data={[
-            { x: 2, y: 2 },
-            { x: 3, y: 3 },
-            { x: 1, y: 5 },
-            { x: 4, y: 4 },
-            { x: 5, y: 7 }
-          ]}
+          data={formattedData.filter((item) => !item.isBuying)}
         />
         <VictoryAxis
           theme={VictoryTheme.material}

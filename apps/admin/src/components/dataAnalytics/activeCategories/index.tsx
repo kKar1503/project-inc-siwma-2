@@ -5,7 +5,7 @@ import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
 export interface ActiveCategoriesProps {
   data: Array<{
     category: string;
-    value: number;
+    value: string;
   }>;
 }
 
