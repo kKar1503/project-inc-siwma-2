@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TopCategories from '@/components/dataAnalytics/topCategories';
 import TopCompanies from '@/components/dataAnalytics/topCompanies';
+import TopCompaniesBuySell from '@/components/dataAnalytics/topCompaniesBuySell';
 import ActiveCategories from '@/components/dataAnalytics/activeCategories';
 import LineGraph from '@/components/dataAnalytics/lineGraph';
 import { useQueries, UseQueryResult } from 'react-query';
@@ -17,7 +18,8 @@ const mapData = (categories: UseQueryResult<CategoryResponseBody[]>, companies: 
   })) || [];
   const topBuyingCategories = [18, 33, 12, 12, 25, 14, 12, 33];
   const topSellingCategories = [18, 33, 12, 12, 25, 14, 12, 33];
-  const topCompanies = [18, 17, 12, 11, 25, 14, 24, 5];
+  const topCompanies = [18 + 33, 12 + 12, 25 + 14, 12 + 33];
+  const topCompaniesBuySell = [18, 33, 12, 12, 25, 14, 12, 33];
   const buyingSellingData = [
     { month: 1, value: 1, isBuying: true },
     { month: 1, value: 2, isBuying: false },
@@ -44,7 +46,7 @@ const mapData = (categories: UseQueryResult<CategoryResponseBody[]>, companies: 
     { month: 12, value: 30, isBuying: true },
     { month: 12, value: 14, isBuying: false },
   ];
-  return { activeCategories, topBuyingCategories, topSellingCategories,buyingSellingData, topCompanies };
+  return { activeCategories, topBuyingCategories, topSellingCategories,buyingSellingData,topCompaniesBuySell, topCompanies };
 };
 
 const Analytics = () => {
@@ -60,6 +62,7 @@ const Analytics = () => {
     topBuyingCategories,
     topSellingCategories,
     topCompanies,
+    topCompaniesBuySell,
     buyingSellingData,
   } = useMemo(() => mapData(categories, companies), [categories, companies]);
 
@@ -82,7 +85,7 @@ const Analytics = () => {
             <TopCompanies data={topCompanies} />
           </Grid>
           <Grid container item xs={6} md={4}>
-            <TopCompanies data={topSellingCategories} />
+            <TopCompaniesBuySell data={topCompaniesBuySell} />
           </Grid>
           <Grid container item xs={6} md={4}>
             <LineGraph data={buyingSellingData} />

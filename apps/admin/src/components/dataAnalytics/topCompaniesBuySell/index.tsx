@@ -1,6 +1,6 @@
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/graphs/overlay/title';
-import DataGraph from '@/components/graphs/dataGraph';
+import DoubleDataGraph from '@/components/graphs/doubleDataGraph';
 
 const format = [
   { id: 1, display: 'Company 1' },
@@ -15,21 +15,25 @@ export interface TopCompaniesProps {
 
 const TopCompanies = ({ data }: TopCompaniesProps) => {
   const mapData = data.map((item, index) => ({
-    id: index + 1,
+    id: Math.round((index + 1) / 2),
     value: item,
     label: item.toString(),
+    isSecondary: index % 2 === 1,
   }));
   return (
     <ModuleBase width='85%'>
-      <DataGraph data={mapData} format={format}
+      <DoubleDataGraph data={mapData} format={format}
+                       legend={['Buying', 'Selling']}
                        style={
                          {
                            fillColor: '#d7d7d7',
+                           fillColor2: '#383091',
                            hoverColor: '#ea3b59',
+                           hoverColor2: '#54a5f0',
                          }
                        }>
-        <Title title="Top 4 Companies with most posts" />
-      </DataGraph>
+        <Title title={`Top 4 Companies with most posts`} />
+      </DoubleDataGraph>
     </ModuleBase>
   );
 };
