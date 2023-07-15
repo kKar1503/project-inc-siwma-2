@@ -27,7 +27,7 @@ type BaseTableProps = {
   onRowsPerPageChange: React.ComponentProps<typeof TablePagination>['onRowsPerPageChange'];
   onEdit: (row: BaseTableData) => void;
   onToggle: (toggled: boolean, rows: readonly BaseTableData[]) => void;
-  onDelete: (rows: readonly BaseTableData[]) => void;
+  onDelete: (rows: readonly BaseTableData[]) => boolean;
   rowsPerPage: number;
   page: number;
 };
@@ -43,7 +43,7 @@ type BaseTableProps = {
  * @param onRowsPerPageChange - The callback for when the rows per page changes
  * @param onEdit - The callback for when the edit button is clicked
  * @param onToggle - The callback for when the toggle button is clicked
- * @param onDelete - The callback for when the delete button is clicked
+ * @param onDelete - The callback for when the delete button is clicked (Should return a boolean indicating if the selection should be cleared)
  * @param rowsPerPage - The number of rows per page
  * @param page - The current page
  */
@@ -98,6 +98,16 @@ const BaseTable = (props: BaseTableProps) => {
     setSelected(newSelected);
   };
 
+  const handleDelete = () => {
+    // Invoke the callback function
+    const result = onDelete(selected);
+
+    // Check if we should clear the selection
+    if (result) {
+      setSelected([]);
+    }
+  };
+
   const isSelected = (row: BaseTableData) => selected.indexOf(row) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -112,7 +122,7 @@ const BaseTable = (props: BaseTableProps) => {
           toggleColumn="enabled"
           onEdit={() => onEdit(selected[0])}
           onToggle={(e, toggled) => onToggle(toggled, selected)}
-          onDelete={() => onDelete(selected)}
+          onDelete={handleDelete}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
