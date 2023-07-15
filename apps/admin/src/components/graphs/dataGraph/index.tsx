@@ -1,4 +1,4 @@
-import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme, VictoryTooltip } from 'victory';
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryContainer, VictoryTheme, VictoryTooltip } from 'victory';
 import { ReactNode } from 'react';
 
 export interface DataGraphElement {
@@ -28,6 +28,7 @@ const DataGraph = ({ data, format, style,children }: DataGraphProps) => {
   return (
     <VictoryChart
       // adding the material theme provided with Victory
+      containerComponent={<VictoryContainer />}
       theme={VictoryTheme.material}
       domainPadding={20}
     >
@@ -103,6 +104,7 @@ const DataGraph = ({ data, format, style,children }: DataGraphProps) => {
         cornerRadius={{ top: 10, bottom: 10 }}
       />
     </VictoryChart>
+
   );
 };
 

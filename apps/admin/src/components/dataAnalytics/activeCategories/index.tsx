@@ -22,31 +22,31 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
       <Grid container spacing={2} sx={{ height: '100%' }}>
         <Grid item xs={1} />
         <Grid item xs={11}>
-              <Title title='Active Categories' />
-              <VictoryPie
-                containerComponent={<VictoryContainer />}
-                // origin={}
-                labelComponent={<VictoryTooltip />}
-                theme={VictoryTheme.material}
-                events={[{
-                  target: 'data',
-                  eventHandlers: {
-                    onMouseOver: () => [
-                      {
-                        target: 'labels',
-                        mutation: () => ({ active: true }),
-                      },
-                    ],
-                    onMouseOut: () => [
-                      {
-                        target: 'labels',
-                        mutation: () => ({ active: false }),
-                      },
-                    ],
+          <Title title='Active Categories' primarySize={20} x={-35} />
+          <VictoryPie
+            containerComponent={<VictoryContainer />}
+            // origin={}
+            labelComponent={<VictoryTooltip />}
+            theme={VictoryTheme.material}
+            events={[{
+              target: 'data',
+              eventHandlers: {
+                onMouseOver: () => [
+                  {
+                    target: 'labels',
+                    mutation: () => ({ active: true }),
                   },
-                }]}
-                data={formattedData}
-              />
+                ],
+                onMouseOut: () => [
+                  {
+                    target: 'labels',
+                    mutation: () => ({ active: false }),
+                  },
+                ],
+              },
+            }]}
+            data={formattedData}
+          />
         </Grid>
       </Grid>
     </ModuleBase>

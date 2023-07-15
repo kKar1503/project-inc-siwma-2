@@ -29,37 +29,37 @@ const Index = ({ data, totalClicks }: ClicksPieProps) => {
         <Grid item xs={1} />
         <Grid item xs={11}>
           <VictoryContainer>
-              <Title title='Total click distribution' subtitle='Number of clicks per ad-space' />
-              <VictoryPie
-                // origin={}
-                standalone={false}
-                labelComponent={<VictoryTooltip />}
-                theme={VictoryTheme.material}
-                innerRadius={() => 100}
-                events={[{
-                  target: 'data',
-                  eventHandlers: {
-                    onMouseOver: () => [
-                      {
-                        target: 'labels',
-                        mutation: () => ({ active: true }),
-                      },
-                    ],
-                    onMouseOut: () => [
-                      {
-                        target: 'labels',
-                        mutation: () => ({ active: false }),
-                      },
-                    ],
-                  },
-                }]}
-                data={formattedData}
-              />
-              <VictoryLabel
-                textAnchor='middle'
-                style={{ fontSize: 65, fontWeight: 'bold' }}
-                x={170} y={165}
-                text={totalClicks}
+            <Title title='Total click distribution' subtitle='Number of clicks per ad-space' x={-40}   primarySize={20} />
+            <VictoryPie
+              // origin={}
+              standalone={false}
+              labelComponent={<VictoryTooltip />}
+              theme={VictoryTheme.material}
+              innerRadius={() => 100}
+              events={[{
+                target: 'data',
+                eventHandlers: {
+                  onMouseOver: () => [
+                    {
+                      target: 'labels',
+                      mutation: () => ({ active: true }),
+                    },
+                  ],
+                  onMouseOut: () => [
+                    {
+                      target: 'labels',
+                      mutation: () => ({ active: false }),
+                    },
+                  ],
+                },
+              }]}
+              data={formattedData}
+            />
+            <VictoryLabel
+              textAnchor='middle'
+              style={{ fontSize: 65, fontWeight: 'bold' }}
+              x={170} y={165}
+              text={totalClicks}
               />
               <VictoryLabel
                 textAnchor='middle'
