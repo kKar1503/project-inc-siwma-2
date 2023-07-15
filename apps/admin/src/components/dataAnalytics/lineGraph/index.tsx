@@ -1,4 +1,4 @@
-import { VictoryAxis, VictoryChart, VictoryLine, VictoryTheme } from 'victory';
+import { VictoryAxis, VictoryChart, VictoryLine, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
 
@@ -25,23 +25,48 @@ const LineGraph = ({ data }: LineGraphsProps) => {
       >
         <Title title='Number of Companies Buying and Selling' />
         <VictoryLine
+          labelComponent={<VictoryTooltip />}
           style={{
-            data: { stroke: '#ee6e6d' },
-            parent: { border: '1px solid #ccc' },
+            data: { stroke: '#ee6e6d', strokeWidth: 3 },
+            parent: { border: '1rem solid #ccc' },
           }}
+          events={[{
+            target: 'parent',
+            eventHandlers: {
+              onClick: () => [
+                {
+                  target: 'labels',
+                  mutation: ({ active }) => ({ active: !active }),
+                },
+              ],
+            },
+          }]}
           data={formattedData.filter((item) => item.isBuying)}
         />
         <VictoryLine
+          labelComponent={<VictoryTooltip />}
           style={{
-            data: { stroke: '#f3ca22' },
-            parent: { border: '1px solid #ccc' },
+            data: { stroke: '#f3ca22', strokeWidth: 3 },
+            parent: { border: '3px solid #ccc' },
           }}
+          events={[{
+            target: 'parent',
+            eventHandlers: {
+              onClick: () => [
+                {
+                  target: 'labels',
+                  mutation: ({active}) => ({ active: !active }),
+                },
+              ],
+
+            },
+          }]}
           data={formattedData.filter((item) => !item.isBuying)}
         />
         <VictoryAxis
           theme={VictoryTheme.material}
-          tickValues={[1,2,3,4,5,6,7,8,9,10,11,12]}
-          tickFormat={['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}
+          tickValues={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+          tickFormat={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
           style={{
             ticks:
               {
