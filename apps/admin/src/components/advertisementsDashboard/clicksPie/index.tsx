@@ -1,6 +1,6 @@
 import { VictoryContainer, VictoryLabel, VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
-import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
+import Title from '@/components/graphs/overlay/title';
 import Grid from '@mui/material/Grid';
 
 export interface ClicksPieProps {

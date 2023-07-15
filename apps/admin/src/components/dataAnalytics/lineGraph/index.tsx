@@ -1,6 +1,6 @@
 import { VictoryAxis, VictoryChart, VictoryLegend, VictoryLine, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
-import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
+import Title from '@/components/graphs/overlay/title';
 
 export interface LineGraphsProps {
   data: Array<{

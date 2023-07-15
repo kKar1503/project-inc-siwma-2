@@ -1,5 +1,5 @@
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
-import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
+import Title from '@/components/graphs/overlay/title';
 import DoubleDataGraph from '@/components/graphs/doubleDataGraph';
 
 const format = [
