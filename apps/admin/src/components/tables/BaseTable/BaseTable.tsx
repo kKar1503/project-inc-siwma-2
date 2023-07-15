@@ -115,7 +115,13 @@ const BaseTable = (props: BaseTableProps) => {
           onDelete={() => onDelete(selected)}
         />
         <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+          <Table
+            sx={{
+              minWidth: 750,
+              minHeight: 'calc(100vh /2)',
+            }}
+            aria-labelledby="tableTitle"
+          >
             <BaseTableHead
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}

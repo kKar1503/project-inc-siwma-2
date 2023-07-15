@@ -89,43 +89,33 @@ const BulkInvitesPage = () => {
           gap: isLg ? '32px' : '100px',
           justifyContent: 'flex-end',
           m: 2,
+          alignItems: isLg ? 'flex-start' : 'center',
         }}
       >
-        <Box
-          sx={{
-            ...(isLg && { maxWidth: '900px', width: '100%' }),
+        <FileUpload
+          id="bulk-invites"
+          title="Bulk Add Companies & Invite Users"
+          description="Import an .xlsx file below to bulk add company profiles and bulk invite users"
+          selectedFile={file}
+          changeHandler={(event) => {
+            handleFileChange(event);
           }}
-        >
-          <FileUpload
-            id="bulk-invites"
-            title="Bulk Add Companies & Invite Users"
-            description="Import an .xlsx file below to bulk add company profiles and bulk invite users"
-            selectedFile={file}
-            changeHandler={(event) => {
-              handleFileChange(event);
-            }}
-            accept={[AcceptedFileTypes.XLSX]}
-            maxWidth="200px"
-            maxHeight={isLg ? '750px' : '500px'}
-          />
-        </Box>
-
+          accept={[AcceptedFileTypes.XLSX]}
+          maxWidth="200px"
+          maxHeight="100vh"
+        />
         <Box
           sx={{
-            ...(isLg && { maxWidth: '900px', width: '100%' }),
+            ...(isLg && { maxWidth: '900px' }),
+            extAlign: isLg ? 'right' : 'center',
           }}
         >
           <CompanyInvitesTable details={fileDetails} />
           <UserInvitesTable details={fileDetails} />
         </Box>
       </Box>
-      <Box
-        sx={{
-          m: 2,
-          display: 'flex',
-          justifyContent: isLg ? 'flex-end' : 'center',
-        }}
-      >
+
+      <Box sx={{ justifyContent: isLg ? 'flex-end' : 'center', m: 2, display: 'flex' }}>
         <Button
           variant="contained"
           sx={({ palette }) => ({
