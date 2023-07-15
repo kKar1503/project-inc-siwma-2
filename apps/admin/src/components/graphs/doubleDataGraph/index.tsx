@@ -177,7 +177,7 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
                 { name: legend[0], symbol: { fill: style.fillColor } },
                 { name: legend[1], symbol: { fill: style.fillColor2 } },
               ]}
-              x={290} y={300}
+              x={290} y={245}
             />
           </VictoryPortal>}
       </VictoryChart>
