@@ -27,7 +27,7 @@ type BaseTableProps = {
   onRowsPerPageChange: React.ComponentProps<typeof TablePagination>['onRowsPerPageChange'];
   onEdit: (row: BaseTableData) => void;
   onToggle: (toggled: boolean, rows: readonly BaseTableData[]) => void;
-  onDelete: (rows: readonly BaseTableData[]) => boolean;
+  onDelete: (rows: readonly BaseTableData[]) => BaseTableData[];
   rowsPerPage: number;
   page: number;
 };
@@ -43,7 +43,7 @@ type BaseTableProps = {
  * @param onRowsPerPageChange - The callback for when the rows per page changes
  * @param onEdit - The callback for when the edit button is clicked
  * @param onToggle - The callback for when the toggle button is clicked
- * @param onDelete - The callback for when the delete button is clicked (Should return a boolean indicating if the selection should be cleared)
+ * @param onDelete - The callback for when the delete button is clicked (Should return an updated array of selected rows)
  * @param rowsPerPage - The number of rows per page
  * @param page - The current page
  */
@@ -102,10 +102,8 @@ const BaseTable = (props: BaseTableProps) => {
     // Invoke the callback function
     const result = onDelete(selected);
 
-    // Check if we should clear the selection
-    if (result) {
-      setSelected([]);
-    }
+    // Update the selection
+    setSelected(result);
   };
 
   const isSelected = (row: BaseTableData) => selected.indexOf(row) !== -1;
