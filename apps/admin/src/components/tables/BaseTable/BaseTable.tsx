@@ -30,7 +30,6 @@ type BaseTableProps = {
   onDelete: (rows: readonly BaseTableData[]) => void;
   rowsPerPage: number;
   page: number;
-  heading: string;
 };
 
 /**
@@ -65,7 +64,6 @@ const BaseTable = (props: BaseTableProps) => {
     onDelete,
     rowsPerPage,
     page,
-    heading,
   } = props;
 
   /**
