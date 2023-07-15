@@ -174,8 +174,10 @@ export default apiHandler()
     const oldParams = updatedListing.listingsParametersValue?.parameters as ListingParameter[];
     const parameterValues = oldParams.map((parameter) => {
       const newParam = data.parameters?.find((param) => param.paramId === parameter.parameterId);
-
-      return newParam ?? parameter;
+      const result = newParam
+        ? { parameterId: newParam.paramId, value: newParam.value.toString() }
+        : parameter;
+      return result;
     });
 
     // Update the listing's parameters
