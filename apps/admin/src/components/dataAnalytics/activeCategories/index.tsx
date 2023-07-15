@@ -22,10 +22,9 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
       <Grid container spacing={2} sx={{ height: '100%' }}>
         <Grid item xs={1} />
         <Grid item xs={11}>
-          <VictoryContainer>
               <Title title='Active Categories' />
               <VictoryPie
-                standalone={false}
+                containerComponent={<VictoryContainer />}
                 // origin={}
                 labelComponent={<VictoryTooltip />}
                 theme={VictoryTheme.material}
@@ -48,7 +47,6 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
                 }]}
                 data={formattedData}
               />
-          </VictoryContainer>
         </Grid>
       </Grid>
     </ModuleBase>

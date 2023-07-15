@@ -4,10 +4,12 @@ import {
   VictoryChart,
   VictoryContainer,
   VictoryLegend,
+  VictoryPortal,
   VictoryTheme,
   VictoryTooltip,
 } from 'victory';
 import { ReactNode } from 'react';
+import Box from '@mui/material/Box';
 
 export interface DataGraphElement {
   id: number;
@@ -50,14 +52,14 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
   }));
 
   return (
-    <VictoryContainer>
+    <Box sx={{ height: '100%' }}>
       <VictoryChart
-        standalone={false}
+        containerComponent={<VictoryContainer />}
         // adding the material theme provided with Victory
         theme={VictoryTheme.material}
         domainPadding={20}
-        height={400}
-        width={400}
+        height={350}
+        width={350}
       >
         {children}
         <VictoryAxis
@@ -93,7 +95,7 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
           }}
         />
         <VictoryBar
-          barRatio={0.4 }
+          barRatio={0.4}
           data={primaryData}
           x='id'
           y='value'
@@ -108,7 +110,7 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
                 },
                 {
                   target: 'data',
-                  mutation: () => ({ style: { fill: style.hoverColor} }),
+                  mutation: () => ({ style: { fill: style.hoverColor } }),
                 },
               ],
               onMouseOut: () => [
@@ -146,7 +148,7 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
                 },
                 {
                   target: 'data',
-                  mutation: () => ({ style: { fill: style.hoverColor2} }),
+                  mutation: () => ({ style: { fill: style.hoverColor2 } }),
                 },
               ],
               onMouseOut: () => [
@@ -168,15 +170,18 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
           }}
           cornerRadius={{ top: 10, bottom: 10 }}
         />
-        {legend && <VictoryLegend
-          data={[
-            { name: legend[0], symbol: { fill: style.fillColor } },
-            { name: legend[1], symbol: { fill: style.fillColor2 } },
-          ]}
-          x={340} y={300}
-        />}
+        {legend &&
+          <VictoryPortal>
+            <VictoryLegend
+              data={[
+                { name: legend[0], symbol: { fill: style.fillColor } },
+                { name: legend[1], symbol: { fill: style.fillColor2 } },
+              ]}
+              x={290} y={300}
+            />
+          </VictoryPortal>}
       </VictoryChart>
-    </VictoryContainer>
+    </Box>
   );
 };
 
