@@ -1,43 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
+import { Company } from '@/utils/api/client/zod/companies';
 import DeleteCompanyModal from '@/components/modals/DeleteCompanyModal';
 import EditCompanyModal from '@/components/modals/EditCompanyModal';
 
-export type CompanyProps = {
-  id: string;
-  name: string;
-  bio: string;
-  website: string;
-  visible: boolean;
-  image: string;
-  comments: string;
-  createdAt: string;
-};
-
 export type CompanyTableProps = {
-  data: CompanyProps[];
+  data: Company[];
 };
 
-function createData(
-  id: string,
-  name: string,
-  bio: string,
-  website: string,
-  visible: boolean,
-  image: string,
-  comments: string,
-  createdAt: string
-): BaseTableData {
+function createData(id: string, name: string, bio: string | null): BaseTableData {
   return {
     id,
     name,
-    bio,
-    website,
-    visible: visible ?? false,
-    image,
-    comments,
-    createdAt,
+    bio: bio || '',
   };
 }
 
@@ -49,30 +25,6 @@ const headCells: Header[] = [
   {
     key: 'bio',
     label: 'Bio',
-  },
-  {
-    key: 'website',
-    label: 'Website',
-  },
-  {
-    key: 'visible',
-    label: 'Visible',
-    replace: {
-      a: 'Yes',
-      false: 'No',
-    },
-  },
-  {
-    key: 'image',
-    label: 'Image',
-  },
-  {
-    key: 'comments',
-    label: 'Comments',
-  },
-  {
-    key: 'createdAt',
-    label: 'Created At',
   },
 ];
 
@@ -88,20 +40,7 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
   const sortRows = async (): Promise<void> => {
     const rowsData: BaseTableData[] = [];
 
-    data.forEach((item: CompanyProps) =>
-      rowsData.push(
-        createData(
-          item.id,
-          item.name,
-          item.bio,
-          item.website,
-          item.visible,
-          item.image,
-          item.comments,
-          item.createdAt
-        )
-      )
-    );
+    data.forEach((item: Company) => rowsData.push(createData(item.id, item.name, item.bio)));
 
     setRows(rowsData);
   };

@@ -1,3 +1,6 @@
+import apiClient from '@/utils/api/client/apiClient';
+import companies, { Company } from '@/utils/api/client/zod/companies';
+
 const sampleData = [
   {
     id: '1',
@@ -42,7 +45,6 @@ const sampleData = [
   {
     id: '5',
     name: 'Tan Metals5',
-    bio: 'We sell metals',
     website: 'tanmetals.com',
     visible: true,
     image: '550e8400-e29b-41d4-a716-446655440000.png',
@@ -52,11 +54,11 @@ const sampleData = [
 ];
 
 const fetchCompanies = async () => {
-  const response = sampleData;
+  const response = await apiClient.get(`/v1/companies`);
 
-  const companiesData = response;
+  const parsedCompanies = companies.getAll.parse(response.data.data);
 
-  return companiesData;
+  return parsedCompanies;
 };
 
 export default fetchCompanies;
