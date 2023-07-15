@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Debug from '@/components/Debug';
 import TopCategories from '@/components/dataAnalytics/topCategories';
 import TopCompanies from '@/components/dataAnalytics/topCompanies';
 import ActiveCategories from '@/components/dataAnalytics/activeCategories';
@@ -72,7 +71,7 @@ const Analytics = () => {
     }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={2}>
-          <Debug>NAVBAR</Debug>
+          NAVBAR
         </Grid>
         <Grid container item xs={12} md={10}>
           <Grid container item xs={12}>
@@ -85,7 +84,7 @@ const Analytics = () => {
           <Grid container item xs={6} md={4}>
             <TopCompanies data={topSellingCategories} />
           </Grid>
-          <Grid container item xs={12} md={4}>
+          <Grid container item xs={6} md={4}>
             <LineGraph data={buyingSellingData} />
           </Grid>
 
@@ -94,19 +93,13 @@ const Analytics = () => {
           </Grid>
 
           <Grid container item xs={6} md={4}>
-            <Debug>
               <TopCategories data={topSellingCategories} type='Selling' />
-            </Debug>
           </Grid>
           <Grid container item xs={6} md={4}>
-            <Debug>
-              <TopCategories data={topBuyingCategories} type='Buying' />
-            </Debug>
+            <TopCategories data={topBuyingCategories} type='Buying' />
           </Grid>
-          <Grid container item xs={12} md={4}>
-            <Debug>
-              <ActiveCategories data={activeCategories} />
-            </Debug>
+          <Grid container item xs={6} md={4}>
+            <ActiveCategories data={activeCategories} />
           </Grid>
         </Grid>
       </Grid>

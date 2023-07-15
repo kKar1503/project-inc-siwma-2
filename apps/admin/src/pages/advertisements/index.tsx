@@ -5,7 +5,6 @@ import ClicksPie from '@/components/advertisementsDashboard/clicksPie';
 import { useQueries, UseQueryResult } from 'react-query';
 import fetchAdSpaceData, { FetchAdSpaceDataResponse } from '@/middlewares/fetchAdSpaceData';
 import fetchAdClicksData, { FetchAdClicksDataResponse } from '@/middlewares/fetchAdClicksData';
-import Debug from '@/components/Debug';
 import { useMemo } from 'react';
 import Box from '@mui/material/Box';
 
@@ -44,23 +43,17 @@ const AdvertisementDashboard = () => {
       }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={2}>
-            <Debug>NAVBAR</Debug>
+            NAVBAR
           </Grid>
           <Grid item xs={12} md={7}>
-            <Debug>
-              <AdSpaceSection totalClicks={totalClicks} active={active} inactive={inactive} />
-            </Debug>
+            <AdSpaceSection totalClicks={totalClicks} active={active} inactive={inactive} />
           </Grid>
           <Grid item container xs={12} md={3}>
             <Grid item xs={6} md={12}>
-              <Debug>
-                <ClicksPie data={companyClicks} totalClicks={totalClicks} />
-              </Debug>
+              <ClicksPie data={companyClicks} totalClicks={totalClicks} />
             </Grid>
             <Grid item xs={6} md={12}>
-              <Debug>
-                <ActiveGraph data={activeData} />
-              </Debug>
+              <ActiveGraph data={activeData} />
             </Grid>
           </Grid>
         </Grid>
