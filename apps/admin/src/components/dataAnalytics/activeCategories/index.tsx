@@ -1,4 +1,4 @@
-import { VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
+import { VictoryContainer, VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
 
@@ -18,33 +18,35 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
   );
   return (
     <ModuleBase noFlex width='85%'>
-      <svg viewBox='0 0 400 400' style={{ width: '100%'}}>
-        <Title title='Active Categories' />
-        <VictoryPie
-          standalone={false}
-          // origin={}
-          labelComponent={<VictoryTooltip />}
-          theme={VictoryTheme.material}
-          events={[{
-            target: 'data',
-            eventHandlers: {
-              onMouseOver: () => [
-                {
-                  target: 'labels',
-                  mutation: () => ({ active: true }),
-                },
-              ],
-              onMouseOut: () => [
-                {
-                  target: 'labels',
-                  mutation: () => ({ active: false }),
-                },
-              ],
-            },
-          }]}
-          data={formattedData}
-        />
-      </svg>
+      <VictoryContainer>
+        <svg viewBox='0 0 400 400' style={{ width: '100%' }}>
+          <Title title='Active Categories' />
+          <VictoryPie
+            standalone={false}
+            // origin={}
+            labelComponent={<VictoryTooltip />}
+            theme={VictoryTheme.material}
+            events={[{
+              target: 'data',
+              eventHandlers: {
+                onMouseOver: () => [
+                  {
+                    target: 'labels',
+                    mutation: () => ({ active: true }),
+                  },
+                ],
+                onMouseOut: () => [
+                  {
+                    target: 'labels',
+                    mutation: () => ({ active: false }),
+                  },
+                ],
+              },
+            }]}
+            data={formattedData}
+          />
+        </svg>
+      </VictoryContainer>
     </ModuleBase>
   );
 };
