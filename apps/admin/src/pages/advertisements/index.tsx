@@ -48,7 +48,7 @@ const AdvertisementDashboard = () => {
           <Grid item xs={12} md={7}>
             <AdSpaceSection totalClicks={totalClicks} active={active} inactive={inactive} />
           </Grid>
-          <Grid item container xs={12} md={3}>
+          <Grid item container xs={12} md={3} spacing={2}>
             <Grid item xs={6} md={12}>
               <ClicksPie data={companyClicks} totalClicks={totalClicks} />
             </Grid>

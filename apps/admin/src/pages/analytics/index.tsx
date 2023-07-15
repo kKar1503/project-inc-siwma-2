@@ -76,7 +76,7 @@ const Analytics = () => {
         <Grid item xs={12} md={2}>
           NAVBAR
         </Grid>
-        <Grid container item xs={12} md={10}>
+        <Grid container item xs={12} md={10} spacing={2}>
           <Grid container item xs={12}>
             <h1>Company</h1>
           </Grid>
