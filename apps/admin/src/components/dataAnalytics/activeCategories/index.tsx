@@ -1,6 +1,7 @@
 import { VictoryContainer, VictoryPie, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
+import Grid from '@mui/material/Grid';
 
 export interface ActiveCategoriesProps {
   data: Array<{
@@ -18,35 +19,40 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
   );
   return (
     <ModuleBase noFlex width='85%'>
-      <VictoryContainer>
-        <svg viewBox='0 0 400 400' style={{ width: '100%' }}>
-          <Title title='Active Categories' />
-          <VictoryPie
-            standalone={false}
-            // origin={}
-            labelComponent={<VictoryTooltip />}
-            theme={VictoryTheme.material}
-            events={[{
-              target: 'data',
-              eventHandlers: {
-                onMouseOver: () => [
-                  {
-                    target: 'labels',
-                    mutation: () => ({ active: true }),
+      <Grid container spacing={2} sx={{ height: '100%' }}>
+        <Grid item xs={1} />
+        <Grid item xs={11}>
+          <VictoryContainer>
+            <svg viewBox='0 0 400 400' style={{ width: '100%' }}>
+              <Title title='Active Categories' />
+              <VictoryPie
+                standalone={false}
+                // origin={}
+                labelComponent={<VictoryTooltip />}
+                theme={VictoryTheme.material}
+                events={[{
+                  target: 'data',
+                  eventHandlers: {
+                    onMouseOver: () => [
+                      {
+                        target: 'labels',
+                        mutation: () => ({ active: true }),
+                      },
+                    ],
+                    onMouseOut: () => [
+                      {
+                        target: 'labels',
+                        mutation: () => ({ active: false }),
+                      },
+                    ],
                   },
-                ],
-                onMouseOut: () => [
-                  {
-                    target: 'labels',
-                    mutation: () => ({ active: false }),
-                  },
-                ],
-              },
-            }]}
-            data={formattedData}
-          />
-        </svg>
-      </VictoryContainer>
+                }]}
+                data={formattedData}
+              />
+            </svg>
+          </VictoryContainer>
+        </Grid>
+      </Grid>
     </ModuleBase>
   );
 };
