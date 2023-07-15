@@ -25,11 +25,10 @@ const Index = ({ data, totalClicks }: ClicksPieProps) => {
   );
   return (
     <ModuleBase noFlex height='95%' width='100%'>
-      <Grid container spacing={2} sx={{ height: '100%' }}>
+      <Grid container spacing={2} sx={{ height: '120%' }}>
         <Grid item xs={1} />
         <Grid item xs={11}>
           <VictoryContainer>
-            <svg viewBox='50 0 300 300'>
               <Title title='Total click distribution' subtitle='Number of clicks per ad-space' />
               <VictoryPie
                 // origin={}
@@ -68,7 +67,6 @@ const Index = ({ data, totalClicks }: ClicksPieProps) => {
                 x={170} y={205}
                 text='Clicks'
               />
-            </svg>
           </VictoryContainer>
         </Grid>
       </Grid>

@@ -23,7 +23,6 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
         <Grid item xs={1} />
         <Grid item xs={11}>
           <VictoryContainer>
-            <svg viewBox='0 0 400 400' style={{ width: '100%' }}>
               <Title title='Active Categories' />
               <VictoryPie
                 standalone={false}
@@ -49,7 +48,6 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
                 }]}
                 data={formattedData}
               />
-            </svg>
           </VictoryContainer>
         </Grid>
       </Grid>
