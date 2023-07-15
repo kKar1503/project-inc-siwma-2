@@ -5,7 +5,10 @@ import listingSchemas from './listings';
 const id = z.string();
 const name = z.string();
 const email = z.string();
-const company = z.string();
+const company = z.object({
+  id: z.string(),
+  name: z.string(),
+});
 const createdAt = z.string().datetime();
 const enabled = z.boolean();
 const profilePic = z.string().nullable();
