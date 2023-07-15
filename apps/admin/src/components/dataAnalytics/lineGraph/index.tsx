@@ -1,4 +1,4 @@
-import { VictoryAxis, VictoryChart, VictoryLine, VictoryTheme, VictoryTooltip } from 'victory';
+import { VictoryAxis, VictoryChart, VictoryLegend, VictoryLine, VictoryTheme, VictoryTooltip } from 'victory';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/advertisementsDashboard/analyticsOverlay/title';
 
@@ -78,6 +78,13 @@ const LineGraph = ({ data }: LineGraphsProps) => {
                 padding: 5,
               },
           }}
+        />
+        <VictoryLegend
+          data={[
+            { name: 'Buying', symbol: { fill: '#ee6e6d' } },
+            { name: 'Selling', symbol: { fill: '#f3ca22' } },
+          ]}
+          x={280} y={250}
         />
       </VictoryChart>
     </ModuleBase>
