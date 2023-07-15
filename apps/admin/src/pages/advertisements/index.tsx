@@ -37,34 +37,34 @@ const AdvertisementDashboard = () => {
   } = useMemo(() => mapData(adSpaceData, adClicksData), [adSpaceData, adClicksData]);
 
   return (
-    <Box style={{
-      marginTop: '1rem',
-      marginRight: '1rem',
-      marginLeft: '1rem',
-    }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={2}>
-          <Debug>NAVBAR</Debug>
-        </Grid>
-        <Grid item xs={12} md={7}>
-          <Debug>
-            <AdSpaceSection totalClicks={totalClicks} active={active} inactive={inactive} />
-          </Debug>
-        </Grid>
-        <Grid item container xs={12} md={3}>
-          <Grid item xs={6} md={12}>
+      <Box style={{
+        marginTop: '1rem',
+        marginRight: '1rem',
+        marginLeft: '1rem',
+      }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={2}>
+            <Debug>NAVBAR</Debug>
+          </Grid>
+          <Grid item xs={12} md={7}>
             <Debug>
-              <ClicksPie data={companyClicks} totalClicks={totalClicks} />
+              <AdSpaceSection totalClicks={totalClicks} active={active} inactive={inactive} />
             </Debug>
           </Grid>
-          <Grid item xs={6} md={12}>
-            <Debug>
-              <ActiveGraph data={activeData} />
-            </Debug>
+          <Grid item container xs={12} md={3}>
+            <Grid item xs={6} md={12}>
+              <Debug>
+                <ClicksPie data={companyClicks} totalClicks={totalClicks} />
+              </Debug>
+            </Grid>
+            <Grid item xs={6} md={12}>
+              <Debug>
+                <ActiveGraph data={activeData} />
+              </Debug>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
   );
 };
 
