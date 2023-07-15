@@ -130,7 +130,7 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
               fill: style.fillColor,
             },
           }}
-          cornerRadius={{ top: 10, bottom: 10 }}
+          cornerRadius={{ top: 9, bottom: 9 }}
         />
         <VictoryBar
           barRatio={0.4}
@@ -168,7 +168,7 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
               fill: style.fillColor2,
             },
           }}
-          cornerRadius={{ top: 10, bottom: 10 }}
+          cornerRadius={{ top: 9, bottom: 9 }}
         />
         {legend &&
           <VictoryPortal>
