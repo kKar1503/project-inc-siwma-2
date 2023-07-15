@@ -38,6 +38,7 @@ export default apiHandler().get(async (req, res) => {
             }
           : undefined,
       },
+      listingItemId: queryParams.productId ? queryParams.productId : undefined,
       owner: id,
       negotiable: queryParams.negotiable != null ? queryParams.negotiable : undefined,
       type: queryParams.type ? queryParams.type : undefined,

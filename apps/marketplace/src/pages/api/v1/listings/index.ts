@@ -171,6 +171,7 @@ const getListingWhere = (
         }
       : undefined,
   },
+  listingItemId: queryParams.productId ? queryParams.productId : undefined,
   negotiable: queryParams.negotiable != null ? queryParams.negotiable : undefined,
   price: {
     gte: queryParams.minPrice ? queryParams.minPrice : undefined,
