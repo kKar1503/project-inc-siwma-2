@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import Spinner from '../Spinner';
+import Spinner from './Spinner';
 
 /**
  * Spinner page that is used as a fallback
