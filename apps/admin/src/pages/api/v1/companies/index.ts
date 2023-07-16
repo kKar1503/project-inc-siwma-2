@@ -71,7 +71,7 @@ export default apiHandler()
           contains: name,
         },
       },
-      take: limit > 0 ? limit : undefined,
+      take: limit === 0 ? undefined : limit,
     });
 
     res.status(200).json(formatAPIResponse(formatResponse(response)));
