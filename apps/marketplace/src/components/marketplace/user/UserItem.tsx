@@ -30,12 +30,12 @@ export type UserItemData = {
 };
 
 const UserItem = ({ user, updateBookmarkData }: UserItemData) => {
+  console.log(user);
   const [isSm] = useResponsiveness(['sm']);
   const { isFetched, data, refetch, isError, error } = useBookmarkUser(user.id);
 
   useEffect(() => {
-    console.log(isFetched);
-    console.log(data);
+    console.dir({ isFetched, data }, { depth: null });
   });
 
   useEffect(() => {
