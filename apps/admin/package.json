@@ -43,6 +43,7 @@
     "react": "18.2.0",
     "react-autocomplete": "^1.8.1",
     "react-dom": "18.2.0",
+    "react-hook-form": "7.45.1",
     "react-i18next": "12.3.1",
     "react-icons": "^4.8.0",
     "react-loading-skeleton": "^3.2.0",
@@ -54,7 +55,8 @@
     "sib-api-v3-sdk": "^8.5.0",
     "styled-components": "^5.3.9",
     "victory": "^36.6.8",
-    "zod": "3.22.0-canary.20230522T011705"
+    "zod": "3.22.0-canary.20230522T011705",
+    "zustand": "4.3.9"
   },
   "devDependencies": {
     "@inc/configs": "workspace:*",
