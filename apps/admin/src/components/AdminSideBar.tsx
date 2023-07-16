@@ -108,6 +108,8 @@ const AdminSideBar = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { palette, typography } = useTheme();
   const router = useRouter();
+  const customBlue = '#2962ff';
+  const blueBackground = '#EAEFFC';
 
   // function that fetches the user info from backend
   function getUserInfo() {
@@ -135,6 +137,9 @@ const AdminSideBar = () => {
       }
     });
   }, [router.pathname]);
+
+  const isCurrentRoute = (path: string) => router.pathname.includes(path);
+  const isCurrentSubRoute = (path: string) => router.pathname.startsWith(path);
 
   const handleDrawerToggle = () => {
     setIsSideBarOpen(!isSideBarOpen);
@@ -252,18 +257,21 @@ const AdminSideBar = () => {
               <ListItemButton
                 onClick={() => handleClick(item.name)}
                 sx={{
+                  backgroundColor: isCurrentRoute(item.link) ? blueBackground : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
                 }}
               >
                 <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
-                  <item.Icon style={{ color: palette.common.black }} />
+                  <item.Icon
+                    style={{ color: isCurrentRoute(item.link) ? customBlue : palette.common.black }}
+                  />
                 </Box>
                 <ListItemText
                   primary={item.name}
                   primaryTypographyProps={{
                     style: {
-                      color: palette.common.black,
+                      color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
                       font: '0.9rem Roboto, sans-serif',
                     },
                   }}
@@ -272,7 +280,11 @@ const AdminSideBar = () => {
                   (openDropdown === item.name ? (
                     <ExpandMore />
                   ) : (
-                    <ChevronRight style={{ color: palette.common.black }} />
+                    <ChevronRight
+                      style={{
+                        color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
+                      }}
+                    />
                   ))}
               </ListItemButton>
               {item.dropdown && (
@@ -283,13 +295,22 @@ const AdminSideBar = () => {
                         key={subitem.name}
                         onClick={() => router.push(subitem.link)}
                         sx={{
+                          backgroundColor: isCurrentRoute(item.link)
+                            ? blueBackground
+                            : 'transparent',
                           pl: '2em',
                           display: 'flex',
                           alignItems: 'center',
                         }}
                       >
                         <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
-                          <subitem.Icon style={{ color: palette.common.black }} />
+                          <subitem.Icon
+                            style={{
+                              color: isCurrentSubRoute(subitem.link)
+                                ? customBlue
+                                : palette.common.black,
+                            }}
+                          />
                         </Box>
                         <ListItemText
                           primary={
@@ -297,7 +318,7 @@ const AdminSideBar = () => {
                               href={subitem.link}
                               underline="none"
                               sx={{
-                                color: palette.common.black,
+                                color: isCurrentSubRoute(subitem.link) ? customBlue : palette.common.black,
                                 font: '0.9rem Roboto, sans-serif',
                                 textDecoration: 'none',
                                 '&:hover': {
