@@ -58,5 +58,5 @@ export default apiHandler().patch(async (req, res) => {
     isBookmarked = false;
   }
 
-  return res.status(200).json(formatAPIResponse({ bookmarked: isBookmarked }));
+  return res.status(200).json(formatAPIResponse({ data: { bookmarked: isBookmarked } }));
 });
