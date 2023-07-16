@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import { Company } from '@/utils/api/client/zod/companies';
 import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -8,13 +9,28 @@ import RegisterCompanyCard from './registerCompanyCard';
 import BulkRegisterCompanyCard from './bulkRegisterCompanyCard';
 
 const useGetCompaniesQuery = () => {
-  const { data } = useQuery('companies', async () => fetchCompanies());
+  const { data } = useQuery('companies', async () => fetchCompanies(), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   return data;
 };
 
 const CompanyManagement = () => {
   const companies = useGetCompaniesQuery();
+  const [companiesData, setcompaniesData] = useState<Company[]>();
+
+  const handleCompaniesChange = async (companies: Company[]) => {
+    setcompaniesData(companies);
+  };
+
+  useEffect(() => {
+    if (companies) {
+      handleCompaniesChange(companies);
+    }
+    console.log(companies);
+  }, [companies]);
 
   return (
     <Container maxWidth="lg" sx={{ my: 2 }}>
@@ -26,7 +42,7 @@ const CompanyManagement = () => {
           <BulkRegisterCompanyCard />
         </Grid>
         <Grid item xs={12}>
-          {companies && <CompanyTable data={companies} />}
+          {companiesData && <CompanyTable data={companiesData} />}
         </Grid>
       </Grid>
     </Container>
