@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useResponsiveness } from '@inc/ui';
+import { useMutation, useQuery } from 'react-query';
 import fetchCompany from '@/middlewares/company-management/fetchCompany';
 import updateCompany from '@/middlewares/company-management/updateCompany';
 
@@ -17,9 +18,25 @@ export type EditCompanyModalProps = {
   company: string;
 };
 
-// const usePutCompanyQuery = (company) => {
+export type PutCategoryRequestBody = {
+  name: string;
+  website: string;
+  bio: string;
+  image?: string;
+};
 
-// }
+const useGetCompanyQuery = (companyId: string) => {
+  const { data } = useQuery(['company', companyId], async () => fetchCompany(companyId), {
+    enabled: companyId !== undefined,
+  });
+  return data;
+};
+
+const useUpdateCompanyMutation = (companyId: string) => {
+  useMutation((updatedCompanyData: PutCategoryRequestBody) =>
+    updateCompany(updatedCompanyData, companyId)
+  );
+};
 
 const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -65,7 +82,7 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
     };
   }, [isSm, isMd, isLg]);
 
-  console.log(company);
+  const companyData = useGetCompanyQuery(company);
 
   return (
     <Box>
@@ -115,6 +132,7 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
                   size="medium"
                   variant="outlined"
                   label="Company Name"
+                  value={companyData?.name || ''}
                   fullWidth
                   sx={{ mb: 2 }}
                 />
@@ -122,6 +140,7 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
                   size="medium"
                   variant="outlined"
                   label="Company Website"
+                  value={companyData?.website || ''}
                   fullWidth
                   sx={{ mb: 2 }}
                 />
@@ -130,6 +149,7 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
                   size="medium"
                   variant="outlined"
                   label="Company Bio"
+                  value={companyData?.bio || ''}
                   fullWidth
                   multiline
                 />

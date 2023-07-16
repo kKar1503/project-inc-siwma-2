@@ -1,9 +1,19 @@
 import apiClient from '@/utils/api/client/apiClient';
+import companies from '@/utils/api/client/zod/companies';
 
-const updateCompany = async (id: string, data: any) => {
+export type PutCategoryRequestBody = {
+  name: string;
+  website: string;
+  bio: string;
+  image?: string;
+};
+
+const updateCompany = async (data: PutCategoryRequestBody, id: string) => {
   const response = await apiClient.put(`/v1/companies/${id}`, data);
 
-  return response.data;
+  const parsedCompany = companies.update.parse(response.data.data[0]);
+
+  return parsedCompany;
 };
 
 export default updateCompany;
