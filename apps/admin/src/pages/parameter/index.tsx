@@ -1,28 +1,51 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import fetchParameters from '@/middlewares/fetchParameters';
 import { ParameterResponseBody } from '@/utils/api/client/zod';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Head from 'next/head';
-import Box from '@mui/material/Box';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
-export type ParameterProps = {
-  data: ParameterResponseBody[];
+type DataType = 'string' | 'number' | 'boolean';
+type TableType = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
+export type ParameterProps = {  
+  id: string;
+  name: string;
+  displayName: string;
+  type: TableType;
+  dataType: DataType;
+  active: boolean;
 };
 
 export type ParameterTableProps = {
-  data: ParameterProps[];
+  data: ParameterResponseBody[];
 };
 
-const useParameterQuery = () => {
-  const { data } = useQuery('parameter', async () => fetchParameters());
-  return data;
-};
+
+function createData(
+  id: string,
+  name: string,
+  displayName: string,
+  type: TableType,
+  dataType: DataType,
+  active: boolean
+): BaseTableData {
+  return {
+    id,
+    name,
+    displayName,
+    type,
+    dataType,
+    active,
+  };
+}
 
 const headCells: Header[] = [
   {
@@ -42,25 +65,57 @@ const headCells: Header[] = [
     label: 'Data Type',
   },
   {
-    key: 'status',
+    key: 'active',
     label: 'Status',
-  },
-  {
-    key: 'enabled',
-    label: 'Enabled',
     replace: {
-      a: 'Yes',
-      false: 'No',
+      a: 'Active',
+      false: 'Inactive',
     },
   },
 ];
 
-const ParameterTable = ({ data }: ParameterTableProps) => {
+const useParameterQuery = () => {
+  const { data } = useQuery('parameter', async () => fetchParameters());
+  return data;
+};
+
+const ParameterTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
-  const parameterQuery = useParameterQuery();
-  console.log(useParameterQuery);
+  const parameter = useParameterQuery();
+  console.log(parameter);
+  const router = useRouter();
+
+  // const sortRows = (): void => {
+  //   const rowsData: BaseTableData[] = [];
+  //   parameter?.forEach(
+  //     (item: ParameterProps) => {
+  //       rowsData.push(
+  //         createData(item.id, item.name, item.displayName, item.type, item.dataType, item.active)
+  //       );
+  //     }
+  //   );
+  //   setRows(rowsData);
+  // };
+
+  // useEffect(() => {
+  //   sortRows();
+  // }, [parameter]);
+
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const pageRows = rows.slice(startIndex, endIndex);
+  
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -89,14 +144,7 @@ const ParameterTable = ({ data }: ParameterTableProps) => {
     };
   }, [isSm, isMd, isLg]);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   return (
     <>
@@ -110,13 +158,15 @@ const ParameterTable = ({ data }: ParameterTableProps) => {
             justifyContent: 'flex-end',
           }}
         >
-          <Button variant="contained" sx={({ palette }) => ({ bgcolor: palette.primary[400] })}>
-            Create Parameter
-          </Button>
+      <Link href="/create-parameter">
+        <Button variant="contained" sx={({ palette }) => ({ bgcolor: palette.primary[400] })}>
+          Create Parameter
+        </Button>
+      </Link>
         </Box>
         <BaseTable
           heading="Parameters"
-          rows={rows}
+          rows={pageRows}
           headers={headCells}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}

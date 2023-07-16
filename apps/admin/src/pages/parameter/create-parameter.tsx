@@ -74,8 +74,8 @@ const CreateParameter = () => {
       <Container sx={tableStyle}>
         <Box
           sx={{
-            display: 'flex',
-            width: isLg ? '73%' : '100%',
+            // display: 'flex',
+            // width: isLg ? '73%' : '100%',
           }}
         >
           <Grid
@@ -125,7 +125,7 @@ const CreateParameter = () => {
               <CardContent>
                 <TextField
                   label="Parameter Name"
-                  placeholder="Thickness"
+                  placeholder="Thickness (Hollow Sections)"
                   InputLabelProps={{ shrink: true }}
                   // value={name}
                   // onChange={handleNameChange}
@@ -152,21 +152,26 @@ const CreateParameter = () => {
                   })}
                 />
 
-                <TextField
-                  label="Parameter Type"
-                  placeholder="Measurement (Weight)"
-                  InputLabelProps={{ shrink: true }}
-                  sx={({ spacing }) => ({
-                    mt: spacing(2),
-                    width: '100%',
-                  })}
-                  //   value={email}
-                  //   onChange={handleEmailChange}
-                  //   error={!!emailError}
-                  //   helperText={emailError}
-                />
+                <FormControl
+                  sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
+                >
+                  <InputLabel>Parameter Type</InputLabel>
+                  <Select
+                    label="Parameter Type"
+                    //   value={contactMethod}
+                    //   onChange={handleContactChange}
+                  >
+                    <MenuItem value="weight">Weight</MenuItem>
+                    <MenuItem value="dimension">Dimension</MenuItem>
+                    <MenuItem value="twoChoices">Two choices</MenuItem>
+                    <MenuItem value="manyChoices">Many choices</MenuItem>
+                    <MenuItem value="openEnded">Open Ended</MenuItem>
+                  </Select>
+                </FormControl>
 
-                <FormControl sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt:spacing(2)})}>
+                <FormControl
+                  sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
+                >
                   <InputLabel>Data Type</InputLabel>
                   <Select
                     label="Contact"
