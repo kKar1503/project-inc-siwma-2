@@ -8,31 +8,51 @@ import {
   IconButton,
   styled,
   useTheme,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormControl,
-  OutlinedInput,
+  Autocomplete,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useResponsiveness } from '@inc/ui';
-import { useMemo } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { Company } from '@/utils/api/client/zod';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { validateEmail, validateName } from '@/utils/api/validate';
+import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
 
 export type CreateInviteModalProps = {
   data: Company[];
   isOpen: boolean;
   setOpen: (val: boolean) => void;
+  onSubmit: (data: PostInviteRequestBody) => void;
 };
+
+type Inputs = {
+  name: string;
+  email: string;
+  company: string;
+};
+
+const ErrorText = ({ children }: { children: ReactNode }) => (
+  <Typography variant="body1" color="red" display="inline">
+    {children}
+  </Typography>
+);
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   width: '100%',
   marginBottom: theme.spacing(2),
 }));
 
-const CreateInviteModal = ({ data, isOpen, setOpen }: CreateInviteModalProps) => {
+const CreateInviteModal = ({ data, isOpen, setOpen, onSubmit }: CreateInviteModalProps) => {
   const { palette, spacing } = useTheme();
+  const [error, setError] = useState<Error | null>(null);
   const [isXs, isSm, isMd] = useResponsiveness(['xs', 'sm', 'md']);
+
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
 
   const modalStyles = useMemo(() => {
     if (isXs) {
@@ -65,6 +85,21 @@ const CreateInviteModal = ({ data, isOpen, setOpen }: CreateInviteModalProps) =>
 
   const handleClose = () => {
     setOpen(!isOpen);
+    reset();
+  };
+
+  const submitHandler: SubmitHandler<Inputs> = (formData) => {
+    try {
+      validateName(formData.name);
+      validateEmail(formData.email);
+      setError(null);
+      const companyId = data.find((element) => element.name === formData.company)?.id;
+      if (!companyId) return;
+      onSubmit({ name: formData.name, email: formData.email, company: companyId });
+      reset();
+    } catch (error: unknown) {
+      if (error instanceof Error) setError(error);
+    }
   };
 
   return (
@@ -105,29 +140,49 @@ const CreateInviteModal = ({ data, isOpen, setOpen }: CreateInviteModalProps) =>
           <Typography sx={{ mb: 2 }} variant="subtitle1">
             Invite an individual user to the system
           </Typography>
-          <StyledTextField label="Name" variant="outlined" />
-          <StyledTextField label="Email" variant="outlined" />
-          <FormControl sx={{ mb: spacing(2), width: '100%' }}>
-            <InputLabel>Company</InputLabel>
-            <Select input={<OutlinedInput label="Company" />}>
-              {data.map((item) => (
-                <MenuItem value={item.id} key={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <StyledTextField label="Mobile Number" variant="outlined" />
-          <Button
-            sx={{
-              width: '100%',
-              py: '0.5rem',
-              my: '1rem',
-            }}
-            variant="outlined"
-          >
-            Send Invite
-          </Button>
+          <form onSubmit={handleSubmit(submitHandler)}>
+            <StyledTextField
+              label="Name"
+              variant="outlined"
+              {...register('name', { required: true })}
+            />
+            <StyledTextField
+              label="Email"
+              variant="outlined"
+              type="email"
+              {...register('email', { required: true })}
+            />
+            <Autocomplete
+              sx={{
+                marginBottom: spacing(2),
+              }}
+              options={data}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Company"
+                  {...register('company', { required: true })}
+                />
+              )}
+            />
+            {errors.name && <ErrorText>Name is required!</ErrorText>}
+            {errors.email && <ErrorText> Email is required!</ErrorText>}
+            {errors.company && <ErrorText> Company is required!</ErrorText>}
+            {error && <ErrorText>{error.message}</ErrorText>}
+            <Button
+              type="submit"
+              sx={{
+                width: '100%',
+                py: '0.5rem',
+                my: '1rem',
+              }}
+              variant="outlined"
+            >
+              Send Invite
+            </Button>
+          </form>
         </Box>
       </Fade>
     </Modal>

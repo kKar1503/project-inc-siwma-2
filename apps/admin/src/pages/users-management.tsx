@@ -13,6 +13,7 @@ import fetchUsers from '@/middlewares/fetchUsers';
 import fetchInvites from '@/middlewares/fetchInvites';
 import apiClient from '@/utils/api/client/apiClient';
 import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
+import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
 
 const deleteInvitesMutationFn = async (emails: string[]) => {
   const promises = emails.map((email) => apiClient.delete(`/v1/invites/email/${email}`));
@@ -27,6 +28,11 @@ const toggleUsersMutationFn = async (ids: string[]) => {
 const deleteUsersMutationFn = async (ids: string[]) => {
   const promises = ids.map((id) => apiClient.delete(`/v1/users/${id}`));
   await Promise.all(promises);
+};
+
+const createInviteMutationFn = async (data: PostInviteRequestBody) => {
+  const response = await apiClient.post('/v1/invites', data);
+  return response;
 };
 
 const Page = () => {
@@ -58,6 +64,14 @@ const Page = () => {
 
   const { mutate: deleteInvites } = useMutation('deleteInvites', deleteInvitesMutationFn, {
     onSuccess: () => queries[2].refetch(),
+  });
+
+  const { mutate: createInvite } = useMutation('createInvite', createInviteMutationFn, {
+    onSuccess: (response) => {
+      queries[2].refetch();
+      setOpen(!open);
+      console.log(response);
+    },
   });
 
   const companies = queries[0].data;
@@ -178,7 +192,12 @@ const Page = () => {
         />
       </Box>
 
-      <CreateInviteModal data={companies || []} isOpen={open} setOpen={setOpen} />
+      <CreateInviteModal
+        data={companies || []}
+        isOpen={open}
+        setOpen={setOpen}
+        onSubmit={createInvite}
+      />
     </Box>
   );
 };
