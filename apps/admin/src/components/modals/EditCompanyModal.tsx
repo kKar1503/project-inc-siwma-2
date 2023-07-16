@@ -117,6 +117,7 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
     };
 
     mutation.mutate(companyData);
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -181,7 +182,7 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
                   size="medium"
                   variant="outlined"
                   label="Company Name"
-                  value={companyData?.name || ''}
+                  value={companyName}
                   sx={{ mb: 2 }}
                   onChange={handleNameChange}
                   fullWidth
@@ -190,17 +191,17 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
                   size="medium"
                   variant="outlined"
                   label="Company Website"
-                  value={companyData?.website || ''}
+                  value={companyWebsite}
                   sx={{ mb: 2 }}
                   onChange={handleWebsiteChange}
                   fullWidth
                 />
                 <TextField
-                  rows={6}
+                  rows={10}
                   size="medium"
                   variant="outlined"
                   label="Company Bio"
-                  value={companyData?.bio || ''}
+                  value={companyBio}
                   onChange={handleBioChange}
                   fullWidth
                   multiline
@@ -208,43 +209,20 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
               </Grid>
               <Grid item xs={6}>
                 <Upload
-                  id="categoryImage"
-                  title="Upload Company Logo"
+                  id="companyImage"
+                  title="Company Logo (Optional)"
                   description=""
                   selectedFile={selectedCompanyFile}
                   changeHandler={handleLogoChange}
                   accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
                   maxWidth="200px"
-                  maxHeight="10px"
+                  maxHeight="100px"
                 />
-                {/* <input type="file" accept="image/*" id="upload-btn" style={{ display: 'none' }} />
-                <label htmlFor="upload-btn">
-                  <Box
-                    sx={{
-                      height: '255px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      border: '1px solid #BDBDBD',
-                      mb: 2,
-                    }}
-                  >
-                    <DownloadIcon
-                      sx={({ typography }) => ({
-                        fontSize: typography.h2.fontSize,
-                      })}
-                    />
-                    <Typography variant="body2">Company Logo (Optional)</Typography>
-                  </Box>
-                </label> */}
                 <Button
                   variant="contained"
                   type="submit"
                   size="large"
-                  onSubmit={handleSubmit}
+                  onClick={handleSubmit}
                   sx={{ mt: 2 }}
                   fullWidth
                 >
