@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
@@ -8,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useResponsiveness } from '@inc/ui';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import fetchCompany from '@/middlewares/company-management/fetchCompany';
 import updateCompany from '@/middlewares/company-management/updateCompany';
 
@@ -18,7 +19,7 @@ export type EditCompanyModalProps = {
   company: string;
 };
 
-export type PutCategoryRequestBody = {
+export type PutCompanyRequestBody = {
   name: string;
   website: string;
   bio: string;
@@ -32,14 +33,20 @@ const useGetCompanyQuery = (companyId: string) => {
   return data;
 };
 
-const useUpdateCompanyMutation = (companyId: string) => {
-  useMutation((updatedCompanyData: PutCategoryRequestBody) =>
+const useUpdateCompanyMutation = (companyId: string) =>
+  useMutation((updatedCompanyData: PutCompanyRequestBody) =>
     updateCompany(updatedCompanyData, companyId)
   );
-};
 
 const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => {
+  const queryClient = useQueryClient();
+  const companyData = useGetCompanyQuery(company);
+
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [companyName, setCompanyName] = useState<string>(companyData?.name || '');
+  const [companyWebsite, setCompanyWebsite] = useState<string>(companyData?.website || '');
+  const [companyBio, setCompanyBio] = useState<string>(companyData?.bio || '');
+  const [selectedCompanyFile, setSelectedCompanyFile] = useState<File | null>(null);
 
   const modalStyles = useMemo(() => {
     if (isSm) {
@@ -82,7 +89,49 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
     };
   }, [isSm, isMd, isLg]);
 
-  const companyData = useGetCompanyQuery(company);
+  const handleLogoChange: FileUploadProps['changeHandler'] = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedCompanyFile(event.target.files[0]);
+    }
+  };
+
+  const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setCompanyName(event.target.value);
+  };
+
+  const handleWebsiteChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setCompanyWebsite(event.target.value);
+  };
+
+  const handleBioChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setCompanyBio(event.target.value);
+  };
+
+  const mutation = useUpdateCompanyMutation(company);
+
+  const handleSubmit = () => {
+    const companyData: PutCompanyRequestBody = {
+      name: companyName,
+      website: companyWebsite,
+      bio: companyBio,
+    };
+
+    mutation.mutate(companyData);
+  };
+
+  useEffect(() => {
+    if (companyData) {
+      setCompanyName(companyData?.name || '');
+      setCompanyWebsite(companyData?.website || '');
+      setCompanyBio(companyData?.bio || '');
+    }
+  }, [companyData]);
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      queryClient.invalidateQueries(['company', company]);
+    }
+  }, [mutation.isSuccess, queryClient, company]);
 
   return (
     <Box>
@@ -133,16 +182,18 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
                   variant="outlined"
                   label="Company Name"
                   value={companyData?.name || ''}
-                  fullWidth
                   sx={{ mb: 2 }}
+                  onChange={handleNameChange}
+                  fullWidth
                 />
                 <TextField
                   size="medium"
                   variant="outlined"
                   label="Company Website"
                   value={companyData?.website || ''}
-                  fullWidth
                   sx={{ mb: 2 }}
+                  onChange={handleWebsiteChange}
+                  fullWidth
                 />
                 <TextField
                   rows={6}
@@ -150,12 +201,23 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
                   variant="outlined"
                   label="Company Bio"
                   value={companyData?.bio || ''}
+                  onChange={handleBioChange}
                   fullWidth
                   multiline
                 />
               </Grid>
               <Grid item xs={6}>
-                <input type="file" accept="image/*" id="upload-btn" style={{ display: 'none' }} />
+                <Upload
+                  id="categoryImage"
+                  title="Upload Company Logo"
+                  description=""
+                  selectedFile={selectedCompanyFile}
+                  changeHandler={handleLogoChange}
+                  accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
+                  maxWidth="200px"
+                  maxHeight="10px"
+                />
+                {/* <input type="file" accept="image/*" id="upload-btn" style={{ display: 'none' }} />
                 <label htmlFor="upload-btn">
                   <Box
                     sx={{
@@ -177,8 +239,15 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
                     />
                     <Typography variant="body2">Company Logo (Optional)</Typography>
                   </Box>
-                </label>
-                <Button variant="contained" type="submit" size="large" fullWidth>
+                </label> */}
+                <Button
+                  variant="contained"
+                  type="submit"
+                  size="large"
+                  onSubmit={handleSubmit}
+                  sx={{ mt: 2 }}
+                  fullWidth
+                >
                   Edit Company
                 </Button>
               </Grid>
