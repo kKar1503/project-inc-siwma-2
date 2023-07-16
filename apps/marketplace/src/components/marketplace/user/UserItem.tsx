@@ -13,7 +13,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import red from '@mui/material/colors/red';
+import { red } from '@mui/material/colors';
 
 // ** Hooks Imports
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
@@ -23,7 +23,6 @@ import type { User } from '@/utils/api/client/zod/users';
 
 // ** Middleware Imports
 import useBookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
-import updateUser from '@/middlewares/updateUser';
 
 export type UserItemData = {
   user: User;
