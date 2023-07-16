@@ -18,6 +18,7 @@ export interface BaseTableData {
 }
 
 type BaseTableProps = {
+  heading: string;
   headers: Header[];
   rows: BaseTableData[];
   rowsPerPageOptions: React.ComponentProps<typeof TablePagination>['rowsPerPageOptions'];
@@ -33,6 +34,7 @@ type BaseTableProps = {
 
 /**
  * Build wrapper tables around this component
+ * @param heading - The heading of the table
  * @param rows - The data to display in the table
  * @param headers - The headers to display in the table
  * @param rowsPerPageOptions - The options for the rows per page dropdown
@@ -50,6 +52,7 @@ const BaseTable = (props: BaseTableProps) => {
 
   // Destructure props
   const {
+    heading,
     rows,
     headers,
     rowsPerPageOptions,
@@ -104,7 +107,7 @@ const BaseTable = (props: BaseTableProps) => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <BaseTableToolbar
-          heading="Desserts"
+          heading={heading}
           selectedRows={selected}
           toggleColumn="enabled"
           onEdit={() => onEdit(selected[0])}
