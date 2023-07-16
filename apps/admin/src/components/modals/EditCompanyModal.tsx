@@ -7,7 +7,6 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import DownloadIcon from '@mui/icons-material/Download';
 import { useResponsiveness } from '@inc/ui';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import fetchCompany from '@/middlewares/company-management/fetchCompany';
