@@ -99,12 +99,11 @@ const Bookmarks = () => {
             </Grid>
           ))}
         </Grid>
-        {selectedButton === 'LISTINGS' && (
+        {selectedButton === 'LISTINGS' &&
           // <ListingBookmarks data={listings} updateBookmarkData={updateBookmarkData} />
-          'no listing data for now'
-        )}
+          'no listing data for now'}
         {selectedButton === 'USERS' && (
-          <UserBookmarks data={users} updateBookmarkData={updateBookmarkData} />
+          <UserBookmarks users={users} updateBookmarkData={updateBookmarkData} />
         )}
       </Grid>
     </Container>

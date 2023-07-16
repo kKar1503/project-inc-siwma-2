@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+// ** React Imports
+import React, { useEffect, useState } from 'react';
+
+// ** NextJS Imports
+import Link from 'next/link';
+
+// ** MUI Imports
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import Avatar from '@mui/material/Avatar';
@@ -7,49 +13,59 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Link from 'next/link';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import { User } from '@/utils/api/client/zod/users';
-import { red } from '@mui/material/colors';
+import red from '@mui/material/colors/red';
 
-// Middleware
-import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
+// ** Hooks Imports
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+
+// ** Type Imports
+import type { User } from '@/utils/api/client/zod/users';
+
+// ** Middleware Imports
+import useBookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
+import updateUser from '@/middlewares/updateUser';
 
 export type UserItemData = {
-  data: User;
+  user: User;
   updateBookmarkData: () => void;
 };
 
-const useBookmarkUser = (userUuid: string, updateBookmarkData: () => void) => {
-  const [isBookmarked, setIsBookmarked] = useState(true);
+const UserItem = ({ user, updateBookmarkData }: UserItemData) => {
+  const [isSm] = useResponsiveness(['sm']);
+  const { isFetched, data, refetch, isError, error } = useBookmarkUser(user.id);
 
-  const handleBookmarkUser = async () => {
-    if (isBookmarked && updateBookmarkData) {
-      await bookmarkUser(userUuid);
-      setIsBookmarked(false);
+  useEffect(() => {
+    console.log(isFetched);
+    console.log(data);
+  });
+
+  useEffect(() => {
+    if (!isFetched) {
+      return;
+    }
+
+    if (isError) {
+      alert(`Error: ${error}`);
+    } else if (data === undefined) {
+      alert(`Endpoint returned undefined`);
+    } else if (!data) {
+      alert(`Unbookmarked`);
+      updateBookmarkData();
+    } else {
+      alert(`Bookmarked`);
       updateBookmarkData();
     }
-  };
-
-  return {
-    isBookmarked,
-    handleBookmarkUser,
-  };
-};
-
-const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
-  const [isSm] = useResponsiveness(['sm']);
-  const { isBookmarked, handleBookmarkUser } = useBookmarkUser(data.id, updateBookmarkData);
+  }, [isFetched]);
 
   return (
     <Card sx={{ height: '100%' }}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} src={data.profilePic || '/images/placeholder.png'}>
-            {data.name.charAt(0)}
+          <Avatar sx={{ bgcolor: red[500] }} src={user.profilePic || '/images/placeholder.png'}>
+            {user.name.charAt(0)}
           </Avatar>
         }
-        title={data.name}
+        title={user.name}
         titleTypographyProps={{
           sx: ({ typography }) => ({
             fontSize: isSm ? typography.body1 : typography.body2,
@@ -59,25 +75,21 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
         action={
           <IconButton
             aria-label="bookmark"
-            onClick={handleBookmarkUser}
+            onClick={() => refetch()}
             sx={({ spacing }) => ({
               p: spacing(0),
             })}
           >
-            {isBookmarked ? (
-              <BookmarkIcon
-                fontSize="large"
-                sx={({ palette }) => ({
-                  color: palette.warning[100],
-                })}
-              />
-            ) : (
-              <BookmarkBorderIcon fontSize="large" />
-            )}
+            <BookmarkIcon
+              fontSize="large"
+              sx={({ palette }) => ({
+                color: palette.warning[100],
+              })}
+            />
           </IconButton>
         }
       />
-      <Link style={{ textDecoration: 'none' }} href={`/profile/${data.id}`}>
+      <Link style={{ textDecoration: 'none' }} href={`/profile/${user.id}`}>
         <CardContent
           sx={({ spacing }) => ({
             pt: spacing(0),
@@ -90,7 +102,7 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
               fontWeight: typography.fontWeightMedium,
             })}
           >
-            {data.email}
+            {user.email}
           </Typography>
           <Typography
             align="center"
@@ -99,7 +111,7 @@ const UserItem = ({ data, updateBookmarkData }: UserItemData) => {
               fontWeight: typography.fontWeightMedium,
             })}
           >
-            {data.mobileNumber}
+            {user.mobileNumber}
           </Typography>
         </CardContent>
       </Link>

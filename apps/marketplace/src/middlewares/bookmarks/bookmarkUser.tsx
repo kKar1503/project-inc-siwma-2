@@ -1,9 +1,17 @@
+// ** API Client
 import apiClient from '@/utils/api/client/apiClient';
 
-const bookmarkUser = async (uuid: string) => {
-  const response = await apiClient.patch(`/v1/users/${uuid}/bookmark`);
+// ** React Query
+import { useQuery } from 'react-query';
 
-  return response.data;
-};
+/**
+ * Toggles the bookmarking of a user
+ */
+const useBookmarkUser = (uuid: string) =>
+  useQuery({
+    queryFn: async () =>
+      apiClient.patch(`/v1/users/${uuid}/bookmark`).then((res) => res.data.bookmarked as boolean),
+    enabled: false,
+  });
 
-export default bookmarkUser;
+export default useBookmarkUser;

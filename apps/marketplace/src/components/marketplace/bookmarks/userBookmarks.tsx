@@ -1,32 +1,36 @@
-import DisplayResults, { HeaderProps } from '@/layouts/DisplayResults';
+import DisplayResults, { HeaderDisplayText } from '@/layouts/DisplayResults';
 import Grid from '@mui/material/Grid';
 import UserItem from '@/components/marketplace/user/UserItem';
 import { User } from '@/utils/api/client/zod/users';
 import { useTranslation } from 'react-i18next';
 
 export type UserBookmarksProps = {
-  data: User[];
+  users: User[];
   updateBookmarkData: () => void;
 };
 
-const UserBookmarks = ({ data, updateBookmarkData }: UserBookmarksProps) => {
+/**
+ * User bookmark component that display
+ * a list of users that are bookmarked.
+ */
+const UserBookmarks = ({ users, updateBookmarkData }: UserBookmarksProps) => {
   const { t } = useTranslation();
 
-  const Header: HeaderProps = {
+  const header: HeaderDisplayText = {
     title: {
       single: t('User'),
       plural: t('Users'),
     },
-    noOfItems: data ? data.length : 0,
+    noOfItems: users ? users.length : 0,
   };
 
   return (
-    <DisplayResults filter={false} data={Header} subHeader>
-      {data && data.length > 0 && (
+    <DisplayResults filter={false} header={header} subHeader>
+      {users && users.length > 0 && (
         <Grid container display="flex" spacing={1}>
-          {data.map((item: User) => (
-            <Grid item xs={6} md={4} lg={3} key={item.name}>
-              <UserItem data={item} updateBookmarkData={updateBookmarkData} />
+          {users.map((user) => (
+            <Grid item xs={6} md={4} lg={3} key={user.name}>
+              <UserItem user={user} updateBookmarkData={updateBookmarkData} />
             </Grid>
           ))}
         </Grid>
