@@ -2,7 +2,7 @@ import EditUserForm from '@/components/forms/EditUserForm';
 import { Typography, Box, Divider, Button } from '@mui/material';
 import { useResponsiveness } from '@inc/ui';
 import { useRouter } from 'next/router';
-import { useQueries, useMutation, useQuery } from 'react-query';
+import { useQueries } from 'react-query';
 import fetchCompanies from '@/middlewares/fetchCompanies';
 import fetchUser from '@/middlewares/fetchUser';
 
