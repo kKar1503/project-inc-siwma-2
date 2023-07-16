@@ -19,7 +19,7 @@ import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useEffect, useMemo, useState } from 'react';
 import fetchUser from '@/middlewares/fetchUser';
-import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
+import useBookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
 import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -59,8 +59,10 @@ const useGetUserQuery = (userUuid: string) => {
 const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | undefined) => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
+  const { refetch } = useBookmarkUser(userUuid);
+
   const handleBookmarkUser = async () => {
-    await bookmarkUser(userUuid);
+    refetch();
     setIsBookmarked((prevState) => !prevState);
   };
 
