@@ -1,4 +1,3 @@
-import { ListingType } from '@inc/db';
 import { z } from 'zod';
 
 // -- Define properties -- //
@@ -9,7 +8,7 @@ const price = z.number();
 const unitPrice = z.boolean();
 const negotiable = z.boolean();
 const categoryId = z.string();
-const type = z.nativeEnum(ListingType);
+const type = z.enum(['BUY', 'SELL']);
 const multiple = z.boolean();
 const rating = z.number().nullable();
 const reviewCount = z.number();

@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { UserContacts } from '@inc/db';
 import listingSchemas from './listings';
 
 const id = z.string();
@@ -13,7 +12,7 @@ const comments = z.string().nullable().optional(); // Only returned for admins
 const mobileNumber = z.string();
 const whatsappNumber = z.string().nullable();
 const telegramUsername = z.string().nullable();
-const contactMethod = z.nativeEnum(UserContacts);
+const contactMethod = z.enum(['whatsapp', 'phone', 'telegram', 'facebook', 'email']);
 const bio = z.string().nullable();
 const bookmarks = z
   .object({
