@@ -1,5 +1,10 @@
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
-import { Box, Card, Divider, TextField, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
 
@@ -102,6 +107,11 @@ const CreateCategory = () => {
             maxWidth="200px"
             maxHeight="200px"
           />
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pr: 3, mb: 3 }}>
+            <Button variant="contained">
+              Confirm
+            </Button>
+          </Box>
         </Box>
       </Card>
     </Box>
