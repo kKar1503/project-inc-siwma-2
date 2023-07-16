@@ -57,7 +57,8 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
   };
 
   const handleDeleteRows = (rows: readonly BaseTableData[]) => {
-    console.log(rows);
+    const ids = rows.map((row) => row.id);
+    setIds(ids);
     setOpenDeleteModal(true);
   };
 
@@ -87,7 +88,7 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={rows.length}
       />
-      <DeleteCompanyModal open={openDeleteModal} setOpen={setOpenDeleteModal} />
+      <DeleteCompanyModal open={openDeleteModal} setOpen={setOpenDeleteModal} companies={ids} />
       <EditCompanyModal open={openEditModal} setOpen={() => setOpenEditModal(false)} company={id} />
     </>
   );

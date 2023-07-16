@@ -1,14 +1,25 @@
 import { Modal } from '@inc/ui';
 import { useState, useEffect } from 'react';
+import deleteCompanies from '@/middlewares/company-management/deleteCompanies';
 
 export type ReportModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
+  companies: string[];
 };
 
-const DeleteCompany = ({ open, setOpen }: ReportModalProps) => {
+const DeleteCompany = ({ open, setOpen, companies }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
+
+  const deleteCompany = async () => {
+    await Promise.all(companies.map((company) => deleteCompanies(company)));
+  };
+
+  if (rightButtonState === true) {
+    deleteCompany();
+    setOpen(false);
+  }
 
   useEffect(() => {
     if (leftButtonState === true) {
@@ -23,7 +34,7 @@ const DeleteCompany = ({ open, setOpen }: ReportModalProps) => {
       setOpen={setOpen}
       buttonColor="#D32F2F"
       icon="warning"
-      title="Delete x companies?"
+      title={`Delete ${companies.length} companies?`}
       content="The chat cannot be restored"
       leftButtonText="cancel"
       rightButtonText="Delete chat"
