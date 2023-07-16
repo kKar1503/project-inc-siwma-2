@@ -8,13 +8,20 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useResponsiveness } from '@inc/ui';
+import fetchCompany from '@/middlewares/company-management/fetchCompany';
+import updateCompany from '@/middlewares/company-management/updateCompany';
 
-export type ShareModalProps = {
+export type EditCompanyModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
+  company: string;
 };
 
-const ShareModal = ({ open, setOpen }: ShareModalProps) => {
+// const usePutCompanyQuery = (company) => {
+
+// }
+
+const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const modalStyles = useMemo(() => {
@@ -57,6 +64,8 @@ const ShareModal = ({ open, setOpen }: ShareModalProps) => {
       },
     };
   }, [isSm, isMd, isLg]);
+
+  console.log(company);
 
   return (
     <Box>
@@ -161,4 +170,4 @@ const ShareModal = ({ open, setOpen }: ShareModalProps) => {
   );
 };
 
-export default ShareModal;
+export default EditCompanyModal;

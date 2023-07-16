@@ -32,6 +32,8 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
+  const [id, setId] = useState<string>('');
+  const [ids, setIds] = useState<string[]>([]);
 
   // modals
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
@@ -54,11 +56,14 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
     setPage(0);
   };
 
-  const handleDeleteRows = () => {
+  const handleDeleteRows = (rows: readonly BaseTableData[]) => {
+    console.log(rows);
     setOpenDeleteModal(true);
   };
 
-  const handleEditRow = () => {
+  const handleEditRow = (row: BaseTableData) => {
+    const { id } = row;
+    setId(id);
     setOpenEditModal(true);
   };
 
@@ -83,7 +88,7 @@ const CompanyTable = ({ data }: CompanyTableProps) => {
         totalCount={rows.length}
       />
       <DeleteCompanyModal open={openDeleteModal} setOpen={setOpenDeleteModal} />
-      <EditCompanyModal open={openEditModal} setOpen={() => setOpenEditModal(false)} />
+      <EditCompanyModal open={openEditModal} setOpen={() => setOpenEditModal(false)} company={id} />
     </>
   );
 };

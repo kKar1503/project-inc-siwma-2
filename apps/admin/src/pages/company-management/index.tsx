@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useQuery } from 'react-query';
 import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 import Container from '@mui/material/Container';
@@ -9,7 +9,7 @@ import BulkRegisterCompanyCard from './bulkRegisterCompanyCard';
 
 const useGetCompaniesQuery = () => {
   const { data } = useQuery('companies', async () => fetchCompanies());
-  console.log(data);
+
   return data;
 };
 
