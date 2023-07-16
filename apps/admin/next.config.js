@@ -38,19 +38,20 @@ const nextConfig = {
     domains:
       process.env.NODE_ENV === 'development'
         ? [
-            'images.unsplash.com',
-            'via.placeholder.com',
-            'source.unsplash.com',
-            'rvndpcxlgtqfvrxhahnm.supabase.co',
-            'www.google.com',
-            'www.asiamediajournal.com',
-            'via.placeholder.com',
-          ]
+          'images.unsplash.com',
+          'via.placeholder.com',
+          'source.unsplash.com',
+          'rvndpcxlgtqfvrxhahnm.supabase.co',
+          'www.google.com',
+          'www.asiamediajournal.com',
+          'via.placeholder.com',
+          's3.karlok.dev',
+        ]
         : [],
   },
-  resolve:{
+  resolve: {
     alias: {
-        'aws-crt': path.resolve(__dirname, '../../node_modules/.pnpm/aws-crt'),
+      'aws-crt': path.resolve(__dirname, '../../node_modules/.pnpm/aws-crt'),
     },
   }
 };

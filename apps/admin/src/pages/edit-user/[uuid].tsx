@@ -1,9 +1,32 @@
 import EditUserForm from '@/components/forms/EditUserForm';
 import { Typography, Box, Divider, Button } from '@mui/material';
 import { useResponsiveness } from '@inc/ui';
+import { useRouter } from 'next/router';
+import { useQueries, useMutation, useQuery } from 'react-query';
+import fetchCompanies from '@/middlewares/fetchCompanies';
+import fetchUser from '@/middlewares/fetchUser';
 
 const EditUser = () => {
   const [isXs, isSm] = useResponsiveness(['xs', 'sm']);
+  const router = useRouter();
+  const { uuid } = router.query;
+
+  const queries = useQueries([
+    { queryKey: 'getCompanies', queryFn: fetchCompanies },
+    {
+      queryKey: ['getUser', uuid],
+      queryFn: () => fetchUser(uuid as string),
+      enabled: uuid !== undefined,
+    },
+  ]);
+
+  const companies = queries[0].data;
+  const user = queries[1].data;
+
+  const goBack = () => {
+    router.push('/users-management');
+  };
+
   return (
     <Box
       sx={{
@@ -33,6 +56,7 @@ const EditUser = () => {
               width: '100px',
             }}
             variant="contained"
+            onClick={goBack}
           >
             Go Back
           </Button>
@@ -40,7 +64,7 @@ const EditUser = () => {
       </Box>
 
       <Divider />
-      <EditUserForm />
+      <EditUserForm user={user} companies={companies || []} returnFn={goBack} />
     </Box>
   );
 };
