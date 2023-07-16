@@ -8,6 +8,8 @@ import {
   Button,
   Select,
   MenuItem,
+  Autocomplete,
+  TextField,
 } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
 import { FiImage, FiUpload } from 'react-icons/fi';
@@ -25,6 +27,7 @@ type TextInputProps = {
 };
 
 type SelectInputProps = {
+  placeholder: string;
   label: string;
   data: Company[];
 };
@@ -50,7 +53,7 @@ const TextInput = ({ label, placeholder, multiline }: TextInputProps) => (
   </FormControl>
 );
 
-const SelectInput = ({ label, data }: SelectInputProps) => (
+const SelectInput = ({ label, data, placeholder }: SelectInputProps) => (
   <FormControl
     sx={{
       paddingRight: 2,
@@ -58,20 +61,21 @@ const SelectInput = ({ label, data }: SelectInputProps) => (
     }}
   >
     <Typography variant="body1">{label}</Typography>
-    <Select
-      value={data.length !== 0 ? data[0].id : 0}
-      size="small"
-      sx={{
-        marginTop: 1,
-      }}
-      inputProps={{ 'aria-label': 'Without label' }}
-    >
-      {data.map((company) => (
-        <MenuItem value={company.id} key={company.id}>
-          {company.name}
-        </MenuItem>
-      ))}
-    </Select>
+    <Autocomplete
+      options={data}
+      getOptionLabel={(option) => option.name}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          fullWidth
+          placeholder={placeholder}
+          sx={{
+            marginTop: 1,
+          }}
+          size="small"
+        />
+      )}
+    />
   </FormControl>
 );
 
@@ -199,7 +203,7 @@ const EditUserForm = () => {
       <Grid item sm={12} md={8}>
         <Grid container marginTop={isXs || isSm ? 4 : 0} rowGap={2}>
           <Grid item xs={12} sm={6}>
-            <SelectInput label="Companies" data={companies || []} />
+            <SelectInput placeholder="Company" label="Companies" data={companies || []} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextInput label="Fullname" placeholder="Fullname" />
