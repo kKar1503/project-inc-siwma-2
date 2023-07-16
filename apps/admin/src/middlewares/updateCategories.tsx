@@ -1,7 +1,7 @@
 import apiClient from '@/utils/api/client/apiClient';
 import categories from '@/utils/api/client/zod/categories';
 
-const updateCatData = async (
+const updateCategoryData = async (
   requestBody: { name: string; description: string },
   catId: string,
   image?: File
@@ -23,4 +23,4 @@ const updateCatData = async (
 };
 
 
-export default updateCatData;
+export default updateCategoryData;

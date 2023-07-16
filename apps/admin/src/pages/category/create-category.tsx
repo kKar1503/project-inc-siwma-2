@@ -2,9 +2,6 @@ import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpl
 import { Box, Card, Divider, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
-import { useMutation, useQuery } from 'react-query';
-import CreateCategories from '@/middlewares/createCategories';
-import { PostCategoryRequestBody } from '@/utils/api/server/zod';
 
 export type CreateCategoryProps = {
   data: CategoryResponseBody[];

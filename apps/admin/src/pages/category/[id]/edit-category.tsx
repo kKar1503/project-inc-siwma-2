@@ -3,8 +3,8 @@ import { Box, Button, Card, Divider, TextField, Typography } from '@mui/material
 import { useEffect, useState } from 'react';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
 import { useRouter } from 'next/router';
-import fetchCatById from '@/middlewares/fetchCategoryById';
-import updateCatData from '@/middlewares/updateCategories';
+import fetchCategoryById from '@/middlewares/fetchCategoryById';
+import updateCategoryData from '@/middlewares/updateCategories';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 export type EditCategoryProps = {
@@ -19,8 +19,8 @@ type PutCategoryRequestBody = {
   parameters?: { parameterId: number; required: boolean }[];
 };
 
-const useGetCatQuery = (catId: string) => {
-  const { data } = useQuery('category', async () => fetchCatById(catId), {
+const useGetCategoryQuery = (catId: string) => {
+  const { data } = useQuery('category', async () => fetchCategoryById(catId), {
     enabled: catId !== undefined,
   });
   return data;
@@ -28,7 +28,7 @@ const useGetCatQuery = (catId: string) => {
 
 const useUpdateUserMutation = (userUuid: string, categoryImage?: File) =>
   useMutation((updatedUserData: PutCategoryRequestBody) =>
-    updateCatData(updatedUserData, userUuid, categoryImage)
+    updateCategoryData(updatedUserData, userUuid, categoryImage)
   );
 
 const EditCategory = () => {
@@ -36,12 +36,12 @@ const EditCategory = () => {
   const id = router.query.id as string;
   const queryClient = useQueryClient();
 
-  const catData = useGetCatQuery(id);
+  const categoryData = useGetCategoryQuery(id);
   const [selectedCatFile, setSelectedCatFile] = useState<File | null>(null);
   const [selectedCrossSectionFile, setSelectedCrossSectionFile] = useState<File | null>(null);
-  const [categoryName, setCategoryName] = useState<string>(catData?.name || '');
-  const [categoryNameChinese, setCategoryNameChinese] = useState<string>(catData?.name || '');
-  const [categoryDescription, setCategoryDescription] = useState<string>(catData?.description || '');
+  const [categoryName, setCategoryName] = useState<string>(categoryData?.name || '');
+  const [categoryNameChinese, setCategoryNameChinese] = useState<string>(categoryData?.name || '');
+  const [categoryDescription, setCategoryDescription] = useState<string>(categoryData?.description || '');
 
   const handleCatFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -83,12 +83,12 @@ const EditCategory = () => {
   };
 
   useEffect(() => {
-    if (catData) {
-      setCategoryName(catData.name || '');
-      setCategoryNameChinese(catData.name || '');
-      setCategoryDescription(catData.description || '');
+    if (categoryData) {
+      setCategoryName(categoryData.name || '');
+      setCategoryNameChinese(categoryData.name || '');
+      setCategoryDescription(categoryData.description || '');
     }
-  }, [catData]);
+  }, [categoryData]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
