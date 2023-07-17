@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse, handleBookmarks, UpdateType } from '@/ut
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError, ParamInvalidError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
-import { ListingParameter } from '@inc/types';
+import type { ListingParameter } from '@inc/types';
 import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
