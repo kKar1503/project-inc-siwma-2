@@ -1,16 +1,13 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { ListingItem, Prisma } from '@inc/db';
-import { ParamError } from '@inc/errors';
-import {
-  GetListingItemQueryParameter,
-  listingItemSchema,
-} from '@/utils/api/server/zod';
+import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { GetListingItemQueryParameter, listingItemSchema } from '@/utils/api/server/zod';
 import { ListingItemResponseBody } from '@/utils/api/client/zod/listingItems';
 
 /**
- * Obtains the listingITem id from the url
- * @example // Listing url: /api/v1/listingItem/1; Returns { name: '', id: 1 }
- * @example // Listing url: /api/v1/listingItem/some-listing-name-1; Returns { name: 'some listing name', id: 1 }
+ * Obtains the listingItem id from the url
+ * @example // Listing item url: /api/v1/listingItems/1; Returns { name: '', id: 1 }
+ * @example // Listing item url: /api/v1/listingItems/some-listingItem-name-1; Returns { name: 'some listing item name', id: 1 }
  */
 export function parseListingItemId($id: string, strict = true) {
   // Check if strict mode is set
@@ -25,6 +22,16 @@ export function parseListingItemId($id: string, strict = true) {
   // Parse and validate listing id provided
   return parseToNumber(id, 'id');
 }
+
+export type QueryResult = {
+  id: number;
+  name: string;
+  chineseName: string | null;
+  description: string;
+  unit: string;
+  chineseUnit: string | null;
+  categoryId: number;
+};
 
 function orderByOptions(sortBy: string | undefined): Prisma.ListingItemOrderByWithRelationInput {
   switch (sortBy) {
@@ -45,7 +52,7 @@ export function sortOptions(sortByStr: string | undefined) {
 }
 
 // -- Helper functions -- //
-export async function formatSingleListingResponse(
+export async function formatSingleListingItemResponse(
   listingItem: ListingItem
 ): Promise<ListingItemResponseBody> {
   const formattedListingItem: ListingItemResponseBody = {
@@ -55,8 +62,7 @@ export async function formatSingleListingResponse(
     description: listingItem.description,
     unit: listingItem.unit,
     chineseUnit: listingItem.chineseUnit as string,
-    categoryId: listingItem.categoryId.toString(),
-    createdAt: listingItem.createdAt.toISOString(),
+    categoryId: listingItem.categoryId,
   };
 
   return formattedListingItem;
@@ -86,7 +92,7 @@ export default apiHandler()
       where: getListingItemsWhere(queryParams),
     });
 
-    // Retrieve filtered and sorted listings from the database
+    // Retrieve filtered and sorted listings from the database (max of 10 items)
     const listingItems = await PrismaClient.listingItem.findMany({
       where: getListingItemsWhere(queryParams),
       orderBy,
@@ -94,30 +100,21 @@ export default apiHandler()
       take: queryParams.limit,
     });
 
-    res.status(200).json(formatAPIResponse({ totalCount }));
+    res.status(200).json(formatAPIResponse({ totalCount, listingItems }));
   })
-  .post(async (req, res) => {
-    const data = listingItemSchema.post.body.parse(req.body);
+  .post(
+    apiGuardMiddleware({
+      allowAdminsOnly: true,
+    }),
+    async (req, res) => {
+      const data = listingItemSchema.post.body.parse(req.body);
 
-    // Check if the category exists
-    const categoryExists = await PrismaClient.category.findUnique({
-      where: { id: data.categoryId },
-    });
+      const listingItem = await PrismaClient.listingItem.create({
+        data: {
+          ...data,
+        },
+      });
 
-    if (!categoryExists) {
-      throw new ParamError('Category');
+      res.status(201).json(formatAPIResponse({ listingItemId: listingItem.id.toString() }));
     }
-
-    const listingItem = await PrismaClient.listingItem.create({
-      data: {
-        name: data.name,
-        chineseName: data.chineseName,
-        description: data.description,
-        categoryId: data.categoryId,
-        unit: data.unit,
-        chineseUnit: data.chineseUnit,
-      },
-    });
-
-    res.status(201).json(formatAPIResponse({ listingItemId: listingItem.id }));
-  });
+  );
