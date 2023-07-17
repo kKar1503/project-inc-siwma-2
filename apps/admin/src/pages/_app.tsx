@@ -87,7 +87,11 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
                   </ThemeProvider>
                 </Box>
               )}
-              <Box flex="1" paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}>
+              <Box
+                flex="1"
+                paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}
+                overflow="auto"
+              >
                 {getLayout(<Component {...pageProps} />)}
               </Box>
             </Box>
