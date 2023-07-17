@@ -18,10 +18,10 @@ const getListingItemQueryParameters = z.object({
  */
 const listingItemRequestBodyType = z.object({
   name: z.string(),
-  chineseName: z.string(),
+  chineseName: z.string().optional(),
   description: z.string(),
   unit: z.string(),
-  chineseUnit: z.string(),
+  chineseUnit: z.string().optional(),
   categoryId: z.number(),
 });
 

@@ -5,10 +5,9 @@ const id = z.string();
 const name = z.string();
 const chineseName = z.string();
 const description = z.string();
-const categoryId = z.string();
+const categoryId = z.number();
 const unit = z.string();
 const chineseUnit = z.string();
-const createdAt = z.string();
 
 // -- Define listing schema -- //
 const listingItem = z.object({
@@ -19,7 +18,6 @@ const listingItem = z.object({
   categoryId,
   unit,
   chineseUnit,
-  createdAt,
 });
 
 // POST /listingItems
