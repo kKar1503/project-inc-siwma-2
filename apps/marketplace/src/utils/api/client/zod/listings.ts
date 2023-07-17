@@ -1,6 +1,5 @@
-import { ListingType } from '@prisma/client';
+import { ListingType } from '@inc/db';
 import { z } from 'zod';
-import reviewSchemas from './reviews';
 
 // -- Define properties -- //
 const id = z.string();
@@ -47,8 +46,6 @@ const open = z.boolean();
 
 const purchased = z.boolean();
 
-const review = reviewSchemas.get;
-
 // -- Define listing schema -- //
 const listing = z.object({
   id,
@@ -80,9 +77,6 @@ const createListingImage = z.object({ imageId: z.string() });
 // POST /listings/:id/parameters
 const createListingParameter = parameter;
 
-// POST /listings/:id/review
-const createListingReview = review;
-
 // GET /listings
 const getListings = z.array(listing);
 
@@ -100,9 +94,6 @@ const getListingImage = z.object({
 
 // GET /listings/:id/parameters
 const getListingParameters = z.array(parameter);
-
-// GET /listings/:id/reviews
-const getListingReviews = z.array(review);
 
 // PUT /listings/:id
 const updateListing = listing;
@@ -134,13 +125,11 @@ export default {
   create: createListing,
   createImage: createListingImage,
   createParameter: createListingParameter,
-  createReview: createListingReview,
   getAll: getListings,
   getById: getListing,
   getImages: getListingImages,
   getImage: getListingImage,
   getParameters: getListingParameters,
-  getReviews: getListingReviews,
   update: updateListing,
   updateImages: updateListingImages,
   updateImage: updateListingImage,

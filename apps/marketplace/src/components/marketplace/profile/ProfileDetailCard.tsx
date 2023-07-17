@@ -15,7 +15,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import { StarsRating, useResponsiveness } from '@inc/ui';
+import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useEffect, useMemo, useState } from 'react';
 import fetchUser from '@/middlewares/fetchUser';
@@ -23,7 +23,6 @@ import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
 import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { ReviewResponseBody } from '@/utils/api/client/zod/reviews';
 
 export type ProfileDetailCardProps =
   | {
@@ -46,7 +45,6 @@ export type ProfileDetailCardProps =
 
 export type ProfileDetailCardData = {
   data: ProfileDetailCardProps;
-  reviewData: ReviewResponseBody | undefined;
   visibleEditButton?: boolean;
 };
 
@@ -79,7 +77,7 @@ const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | unde
   };
 };
 
-const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetailCardData) => {
+const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) => {
   const user = useSession();
   const { spacing } = useTheme();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -174,31 +172,6 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
           {data?.companyName}
         </Typography>
         <Typography sx={{ wordWrap: 'break-word' }}>{data?.email}</Typography>
-
-        <Box
-          sx={({ spacing }) => ({
-            mt: spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-          })}
-        >
-          <Typography
-            sx={({ spacing }) => ({
-              mr: spacing(1),
-            })}
-          >
-            {/* {rating.toFixed(1)} */}
-            {reviewData?.avgRating.toFixed(1)}
-          </Typography>
-          <StarsRating rating={reviewData?.avgRating as number} />
-          <Typography
-            sx={({ spacing }) => ({
-              ml: spacing(1),
-            })}
-          >
-            ({reviewData?.count} {reviewData?.count === 1 ? t('Review') : t('Reviews')})
-          </Typography>
-        </Box>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
