@@ -43,7 +43,7 @@ export default apiHandler({ allowAdminsOnly: true })
       },
     });
 
-    res.status(201).json(formatAPIResponse({ companyId: response.id.toString() }));
+    res.status(201).json(formatAPIResponse({ categoryId: response.id.toString() }));
   });
 
 export const config = {
