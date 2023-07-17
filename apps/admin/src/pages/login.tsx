@@ -174,5 +174,5 @@ const LoginForm = () => {
   );
 };
 
-LoginForm.includeNavbar = false;
+LoginForm.includeSideBar = false;
 export default LoginForm;
