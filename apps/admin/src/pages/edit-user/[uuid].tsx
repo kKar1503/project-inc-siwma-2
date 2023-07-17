@@ -38,6 +38,7 @@ const EditUser = () => {
   return (
     <Box
       sx={{
+        marginX: 1,
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
         borderRadius: '8px',
         backgroundColor: 'white',

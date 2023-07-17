@@ -76,7 +76,7 @@ const TextInput = ({ label, placeholder, multiline, register, field, onClick }: 
           }}
           onClick={onClick}
         >
-          Send Email
+          SEND EMAIL
         </button>
       )}
     </Typography>
@@ -218,7 +218,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container>
+      <Grid container rowGap={1}>
         <Grid item sm={12} md={4}>
           <Typography variant="body1">Profile Picture (Optional)</Typography>
           <Box
@@ -278,16 +278,16 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
                         width: '100%',
                         margin: 'auto',
                       }}
-                      width={300}
-                      height={300}
+                      width={400}
+                      height={400}
                     />
                   )}
                 </Box>
                 {!(isXs || isSm) && (
-                  <Typography variant="body1" textAlign="center">
+                  <Typography variant="subtitle1" textAlign="center">
                     {file === null && profilePic === null
                       ? 'Click to upload or drag and drop SVG, PNG or JPG (MAX. 800 x 400px)'
-                      : file?.name || profilePic}
+                      : file?.name}
                   </Typography>
                 )}
               </label>
