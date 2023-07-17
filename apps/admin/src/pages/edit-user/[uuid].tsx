@@ -5,9 +5,15 @@ import { useRouter } from 'next/router';
 import { useQueries } from 'react-query';
 import fetchCompanies from '@/middlewares/fetchCompanies';
 import fetchUser from '@/middlewares/fetchUser';
+import WarningModal from '@/components/modals/WarningModal';
+import { useState } from 'react';
+import SuccessModal from '@/components/modals/SuccessModal';
 
 const EditUser = () => {
   const [isXs, isSm] = useResponsiveness(['xs', 'sm']);
+  const [openWarning, setOpenWarning] = useState<boolean>(false);
+  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+  const [openSent, setOpenSent] = useState<boolean>(false);
   const router = useRouter();
   const { uuid } = router.query;
 
@@ -23,8 +29,10 @@ const EditUser = () => {
   const companies = queries[0].data;
   const user = queries[1].data;
 
-  const goBack = () => {
-    router.push('/users-management');
+  const openModal = (modal: string) => {
+    if (modal === 'success') setOpenSuccess(true);
+    if (modal === 'warning') setOpenWarning(true);
+    if (modal === 'email') setOpenSent(true);
   };
 
   return (
@@ -56,7 +64,7 @@ const EditUser = () => {
               width: '100px',
             }}
             variant="contained"
-            onClick={goBack}
+            onClick={() => openModal('warning')}
           >
             Go Back
           </Button>
@@ -64,7 +72,23 @@ const EditUser = () => {
       </Box>
 
       <Divider />
-      <EditUserForm user={user} companies={companies || []} returnFn={goBack} />
+      <EditUserForm user={user} companies={companies || []} openModal={openModal} />
+      <WarningModal open={openWarning} setOpen={setOpenWarning} path="/users-management" />
+      <SuccessModal
+        title="Details Updated"
+        content="User details has been updated"
+        buttonText="Continue"
+        open={openSuccess}
+        setOpen={setOpenWarning}
+        path="/users-managemnt"
+      />
+      <SuccessModal
+        title="Email Sent"
+        content="Password reset email has been sent."
+        buttonText="Continue"
+        open={openSent}
+        setOpen={setOpenSent}
+      />
     </Box>
   );
 };

@@ -25,7 +25,7 @@ import { validateEmail, validateName, validatePassword, validatePhone } from '@/
 type EditUserFormProps = {
   user: User | undefined;
   companies: Company[];
-  returnFn: () => void;
+  openModal: (modal: string) => void;
 };
 
 type TextInputProps = {
@@ -45,10 +45,15 @@ type SelectInputProps = {
   field: string;
 };
 
-const useForgetPasswordMutation = () => useMutation('sendEmail', forgetPW);
+const useForgetPasswordMutation = (successFn: () => void) =>
+  useMutation('sendEmail', forgetPW, {
+    onSuccess: successFn,
+  });
 
-const useEditUserMutation = (uuid: string, file: File | undefined) =>
-  useMutation((updatedUserData: PutUserRequestBody) => editUser(updatedUserData, uuid, file));
+const useEditUserMutation = (uuid: string, file: File | undefined, successFn?: () => void) =>
+  useMutation((updatedUserData: PutUserRequestBody) => editUser(updatedUserData, uuid, file), {
+    onSuccess: successFn,
+  });
 
 const TextInput = ({ label, placeholder, multiline, register, field, onClick }: TextInputProps) => (
   <FormControl
@@ -117,7 +122,7 @@ const SelectInput = ({ label, data, placeholder, register, field }: SelectInputP
   </FormControl>
 );
 
-const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
+const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -125,6 +130,7 @@ const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
 
   const { register, handleSubmit, reset } = useForm();
 
+  // fill form
   useEffect(() => {
     if (user) {
       const formData = {
@@ -140,8 +146,10 @@ const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
     }
   }, [reset, user]);
 
-  const editUserMutation = useEditUserMutation(user?.id as string, file || undefined);
-  const passwordResetMutation = useForgetPasswordMutation();
+  const editUserMutation = useEditUserMutation(user?.id as string, file || undefined, () =>
+    openModal('success')
+  );
+  const passwordResetMutation = useForgetPasswordMutation(() => openModal('email'));
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -378,7 +386,7 @@ const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
           <Grid container>
             <Grid item md={2}>
               {!(isXs || isSm) && (
-                <Button variant="contained" onClick={returnFn}>
+                <Button variant="contained" onClick={() => openModal('warning')}>
                   Go Back
                 </Button>
               )}
