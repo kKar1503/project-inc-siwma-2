@@ -21,7 +21,7 @@ import {
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import { ZodError } from 'zod';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@inc/db';
 import { APIHandlerOptions, APIRequestType } from '@/types/api-types';
 import { S3Error } from '@inc/s3-simplified';
 import { NumberRangeError } from '@inc/errors/src';

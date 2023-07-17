@@ -15,8 +15,8 @@
     "seed": "ts-node prisma/seeding/seed.ts --transpileOnly"
   },
   "dependencies": {
-    "@prisma/client": "4.12.0",
-    "prisma": "4.12.0"
+    "@prisma/client": "^4.16.2",
+    "prisma": "^4.16.2"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
