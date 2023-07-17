@@ -44,9 +44,9 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   const companyData = useGetCompanyQuery(company);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [companyName, setCompanyName] = useState<string>(companyData?.name || '');
-  const [companyWebsite, setCompanyWebsite] = useState<string>(companyData?.website || '');
-  const [companyBio, setCompanyBio] = useState<string>(companyData?.bio || '');
+  const [name, setName] = useState<string>(companyData?.name || '');
+  const [website, setWebsite] = useState<string>(companyData?.website || '');
+  const [bio, setBio] = useState<string>(companyData?.bio || '');
   const [selectedCompanyFile, setSelectedCompanyFile] = useState<File | null>(null);
 
   const modalStyles = useMemo(() => {
@@ -97,24 +97,24 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   };
 
   const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setCompanyName(event.target.value);
+    setName(event.target.value);
   };
 
   const handleWebsiteChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setCompanyWebsite(event.target.value);
+    setWebsite(event.target.value);
   };
 
   const handleBioChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setCompanyBio(event.target.value);
+    setBio(event.target.value);
   };
 
   const mutation = useUpdateCompanyMutation(company);
 
   const handleSubmit = async () => {
     const companyData: PutCompanyRequestBody = {
-      name: companyName,
-      website: companyWebsite,
-      bio: companyBio,
+      name,
+      website,
+      bio,
     };
 
     await mutation.mutateAsync(companyData);
@@ -129,9 +129,9 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
 
   useEffect(() => {
     if (companyData) {
-      setCompanyName(companyData?.name || '');
-      setCompanyWebsite(companyData?.website || '');
-      setCompanyBio(companyData?.bio || '');
+      setName(companyData?.name || '');
+      setWebsite(companyData?.website || '');
+      setBio(companyData?.bio || '');
     }
   }, [companyData]);
 
@@ -189,7 +189,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                   size="medium"
                   variant="outlined"
                   label="Company Name"
-                  value={companyName}
+                  value={name}
                   sx={{ mb: 2 }}
                   onChange={handleNameChange}
                   fullWidth
@@ -198,7 +198,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                   size="medium"
                   variant="outlined"
                   label="Company Website"
-                  value={companyWebsite}
+                  value={website}
                   sx={{ mb: 2 }}
                   onChange={handleWebsiteChange}
                   fullWidth
@@ -208,7 +208,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                   size="medium"
                   variant="outlined"
                   label="Company Bio"
-                  value={companyBio}
+                  value={bio}
                   onChange={handleBioChange}
                   fullWidth
                   multiline
