@@ -1,4 +1,4 @@
-import { ListingType } from '@prisma/client';
+import { ListingType } from '@inc/db';
 import { z } from 'zod';
 
 const createChatRoom = z.object({
