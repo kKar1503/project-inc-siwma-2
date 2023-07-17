@@ -17,6 +17,10 @@ import { useResponsiveness } from '@inc/ui';
 import { useForm, SubmitHandler, FieldValues, UseFormRegister } from 'react-hook-form';
 import { PutUserRequestBody } from '@/utils/api/server/zod/users';
 import { User } from '@/utils/api/client/zod/users';
+import editUser from '@/middlewares/editUser';
+import forgetPW from '@/middlewares/forget-password';
+import { useMutation } from 'react-query';
+import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
 
 type EditUserFormProps = {
   user: User | undefined;
@@ -30,6 +34,7 @@ type TextInputProps = {
   multiline?: boolean;
   register: UseFormRegister<FieldValues>;
   field: string;
+  onClick?: () => void;
 };
 
 type SelectInputProps = {
@@ -40,14 +45,37 @@ type SelectInputProps = {
   field: string;
 };
 
-const TextInput = ({ label, placeholder, multiline, register, field }: TextInputProps) => (
+const useForgetPasswordMutation = () => useMutation('sendEmail', forgetPW);
+
+const useEditUserMutation = (uuid: string, file: File | undefined) =>
+  useMutation((updatedUserData: PutUserRequestBody) => editUser(updatedUserData, uuid, file));
+
+const TextInput = ({ label, placeholder, multiline, register, field, onClick }: TextInputProps) => (
   <FormControl
     sx={{
       paddingRight: 2,
       width: '100%',
     }}
   >
-    <Typography variant="body1">{label}</Typography>
+    <Typography variant="body1">
+      {label}
+      {placeholder === 'Password' && (
+        <button
+          style={{
+            display: 'inline',
+            background: 'none',
+            border: 'none',
+            color: 'blue',
+            textDecoration: 'underline',
+            cursor: 'pointer',
+          }}
+          onClick={onClick}
+        >
+          Send Email
+        </button>
+      )}
+    </Typography>
+
     <OutlinedInput
       fullWidth
       multiline={multiline || false}
@@ -92,21 +120,28 @@ const SelectInput = ({ label, data, placeholder, register, field }: SelectInputP
 const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [isXs, isSm, isMd] = useResponsiveness(['xs', 'sm', 'md']);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     if (user) {
-      reset(user);
+      const formData = {
+        name: user.name,
+        email: user.email,
+        company: user.company,
+        mobileNumber: user.mobileNumber,
+        bio: user.bio || undefined,
+        userComments: user.comments || undefined,
+      };
+      reset(formData);
       setProfilePic(user.profilePic);
     }
   }, [reset, user]);
+
+  const editUserMutation = useEditUserMutation(user?.id as string, file || undefined);
+  const passwordResetMutation = useForgetPasswordMutation();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -131,6 +166,10 @@ const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
     }
   };
 
+  const sendPasswordResetEmail = () => {
+    if (user) passwordResetMutation.mutate(user.email);
+  };
+
   const deleteImage = () => {
     if (file) {
       setFile(null);
@@ -142,7 +181,31 @@ const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
   };
 
   const onSubmit: SubmitHandler<PutUserRequestBody> = (data) => {
-    console.log(data);
+    try {
+      // validations
+      if (data.name !== undefined) validateName(data.name);
+      if (data.email) validateEmail(data.email);
+      if (data.mobileNumber) validatePhone(data.mobileNumber);
+      if (data.password) {
+        if (data.password !== data.oldPassword) throw new Error('Passwords do not match.');
+        validatePassword(data.password);
+      }
+
+      setError(null);
+      const companyId = companies.find((element) => element.name === data.company)?.id;
+      const newUserData = {
+        name: data.name,
+        email: data.email,
+        company: companyId,
+        mobileNumber: data.mobileNumber,
+        bio: data.bio || undefined,
+        password: data.password || undefined,
+        userComments: data.userComments || undefined,
+      };
+      editUserMutation.mutate(newUserData);
+    } catch (error: unknown) {
+      if (error instanceof Error) setError(error);
+    }
   };
 
   return (
@@ -197,7 +260,7 @@ const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
                       src={
                         file !== null
                           ? URL.createObjectURL(file)
-                          : `https://s3.karlok.dev/${profilePic}`
+                          : `https://siwma-marketplace.s3.ap-southeast-1.amazonaws.com/${profilePic}`
                       }
                       alt="preview"
                       style={{
@@ -282,15 +345,19 @@ const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
                 label="Change Password"
                 placeholder="Password"
                 register={register}
-                field="oldPassword"
+                field="password"
+                onClick={sendPasswordResetEmail}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextInput
-                label="Change Password"
-                placeholder="New Password"
+                label="Confrim Password"
+                placeholder="Confirm Password"
                 register={register}
-                field="password"
+                field="oldPassword"
+                // Instead of confirm password, oldPassword is used. That is because
+                // oldPassword is not used by admin and confirmPassword doesn't exits on PUT user request body.
+                // And I also don't want to create a new type
               />
             </Grid>
             <Grid item xs={12}>
@@ -301,6 +368,9 @@ const EditUserForm = ({ user, companies, returnFn }: EditUserFormProps) => {
                 register={register}
                 field="userComments"
               />
+            </Grid>
+            <Grid item xs={12}>
+              {error && <Typography color="red">{error.message}</Typography>}
             </Grid>
           </Grid>
         </Grid>
