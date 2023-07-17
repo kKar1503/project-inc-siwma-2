@@ -60,8 +60,7 @@ const CompanyTable = () => {
 
   const updateCompanyData = async () => {
     const updatedCompanies = await fetchCompanies();
-    console.log(updatedCompanies);
-    handleCompaniesChange(updatedCompanies); // Update the state immediately
+    handleCompaniesChange(updatedCompanies);
   };
 
   // modals
