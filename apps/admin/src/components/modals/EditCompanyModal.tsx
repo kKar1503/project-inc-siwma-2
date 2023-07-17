@@ -16,6 +16,7 @@ export type EditCompanyModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   company: string;
+  updateData: () => void;
 };
 
 export type PutCompanyRequestBody = {
@@ -32,12 +33,13 @@ const useGetCompanyQuery = (companyId: string) => {
   return data;
 };
 
+// update data after this is run
 const useUpdateCompanyMutation = (companyId: string) =>
   useMutation((updatedCompanyData: PutCompanyRequestBody) =>
     updateCompany(updatedCompanyData, companyId)
   );
 
-const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => {
+const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyModalProps) => {
   const queryClient = useQueryClient();
   const companyData = useGetCompanyQuery(company);
 
@@ -108,16 +110,22 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
 
   const mutation = useUpdateCompanyMutation(company);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const companyData: PutCompanyRequestBody = {
       name: companyName,
       website: companyWebsite,
       bio: companyBio,
     };
 
-    mutation.mutate(companyData);
+    await mutation.mutateAsync(companyData);
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      queryClient.invalidateQueries(['company', company]);
+    }
+  }, [mutation.isSuccess, queryClient, company]);
 
   useEffect(() => {
     if (companyData) {
@@ -129,9 +137,9 @@ const EditCompanyModal = ({ open, setOpen, company }: EditCompanyModalProps) => 
 
   useEffect(() => {
     if (mutation.isSuccess) {
-      queryClient.invalidateQueries(['company', company]);
+      updateData(); // Call updateData after the mutation has completed
     }
-  }, [mutation.isSuccess, queryClient, company]);
+  }, [mutation.isSuccess, updateData]);
 
   return (
     <Box>

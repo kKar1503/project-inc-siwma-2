@@ -6,14 +6,17 @@ export type ReportModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   companies: string[];
+  updateData: () => void;
 };
 
-const DeleteCompany = ({ open, setOpen, companies }: ReportModalProps) => {
+const DeleteCompany = ({ open, setOpen, companies, updateData }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
 
   const deleteCompany = async () => {
     await Promise.all(companies.map((company) => deleteCompanies(company)));
+
+    updateData();
   };
 
   if (rightButtonState === true) {

@@ -21,16 +21,20 @@ const CompanyManagement = () => {
   const companies = useGetCompaniesQuery();
   const [companiesData, setcompaniesData] = useState<Company[]>();
 
-  const handleCompaniesChange = async (companies: Company[]) => {
-    setcompaniesData(companies);
-  };
+  // const handleCompaniesChange = async (companies: Company[]) => {
+  //   setcompaniesData(companies);
+  // };
 
-  useEffect(() => {
-    if (companies) {
-      handleCompaniesChange(companies);
-    }
-    console.log(companies);
-  }, [companies]);
+  // useEffect(() => {
+  //   if (companies) {
+  //     handleCompaniesChange(companies);
+  //   }
+  // }, [companies]);
+
+  // const updateCompanyData = async () => {
+  //   const updatedCompanies = await fetchCompanies();
+  //   handleCompaniesChange(updatedCompanies);
+  // };
 
   return (
     <Container maxWidth="lg" sx={{ my: 2 }}>
@@ -42,7 +46,7 @@ const CompanyManagement = () => {
           <BulkRegisterCompanyCard />
         </Grid>
         <Grid item xs={12}>
-          {companiesData && <CompanyTable data={companiesData} />}
+          <CompanyTable />
         </Grid>
       </Grid>
     </Container>
