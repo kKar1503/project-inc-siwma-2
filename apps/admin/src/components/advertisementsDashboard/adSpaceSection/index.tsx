@@ -4,30 +4,30 @@ import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 import AdsClickIcon from '@mui/icons-material/AdsClick';
 import InfoCard from '@/components/advertisementsDashboard/InfoCard';
 
-const onDelete = (ids: readonly string[]) => {
+const onDelete = (ids: readonly DataType[]) => {
 
 };
 
-const onEdit = (id: string) => {
+const onEdit = (id: DataType) => {
 
 };
 
-const onSetActive = (ids: readonly string[]) => {
+const onSetActive = (ids: readonly DataType[]) => {
 
 };
 
-const onSetInactive = (ids: readonly string[]) => {
+const onSetInactive = (ids: readonly DataType[]) => {
 
 };
 
 export interface AdvertisementDashboardProps {
   totalClicks: number;
-  active: DataType[];
-  inactive: DataType[];
+  adspace: DataType[];
 }
 
-const AdvertisementDashboard = ({ totalClicks, active, inactive }: AdvertisementDashboardProps) => {
-  const initialized = active.length > 0 || inactive.length > 0;
+const AdvertisementDashboard = ({ totalClicks, adspace }: AdvertisementDashboardProps) => {
+  const initialized = adspace.length > 0;
+  const active = adspace.filter((item) => item.active);
   return (
       <Grid container spacing={2}>
         <Grid item xs={6} md={6} lg={6}>
@@ -40,22 +40,11 @@ const AdvertisementDashboard = ({ totalClicks, active, inactive }: Advertisement
         <Grid item xs={12} md={12} lg={12}>
           {initialized &&
             <AdSpaceTable
-              active
-              rows={active}
+              rows={adspace}
               onDelete={onDelete}
               onEdit={onEdit}
-              onChangeActiveStatus={onSetInactive}
-            />
-          }
-        </Grid>
-        <Grid item xs={12} md={12} lg={12}>
-          {initialized &&
-            <AdSpaceTable
-              active={false}
-              rows={inactive}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              onChangeActiveStatus={onSetActive}
+              onSetActive={onSetActive}
+              onSetInactive={onSetInactive}
             />
           }
         </Grid>

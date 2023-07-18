@@ -1,12 +1,10 @@
 import { ChangeEvent, MouseEvent, useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import MainHeader from '@/components/advertisementsDashboard/adSpaceTable/mainHeader';
 import RowHeader from '@/components/advertisementsDashboard/adSpaceTable/rowHeader';
 import RowBody from '@/components/advertisementsDashboard/adSpaceTable/rowBody';
@@ -15,22 +13,22 @@ import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/data
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 
 export interface Props {
-  active: boolean;
   rows: readonly DataType[];
-  onDelete: (ids: readonly string[]) => void;
-  onEdit: (id: string) => void;
-  onChangeActiveStatus: (ids: readonly string[]) => void;
+  onDelete: (elements: readonly DataType[]) => void;
+  onEdit: (element: DataType) => void;
+  onSetActive: (elements: readonly DataType[]) => void;
+  onSetInactive: (elements: readonly DataType[]) => void;
 }
 
 // eslint-disable-next-line react/function-component-definition
 export default function({
-                          active,
                           rows,
                           onDelete,
                           onEdit,
-                          onChangeActiveStatus,
+                          onSetActive,
+                          onSetInactive,
                         }: Props) {
-  const [selected, setSelected] = useState<readonly string[]>([]);
+  const [selected, setSelected] = useState<readonly DataType[]>([]);
   const {
     page,
     rowsPerPage,
@@ -39,7 +37,7 @@ export default function({
     rowPageOptions,
   } = usePagination(4);
 
-  const data = useMemo(() => rows.filter(r => r.active === active), [active]);
+  const data = rows;
   const visibleRows = useMemo(
     () => {
       const pageStart = page * rowsPerPage;
@@ -50,19 +48,18 @@ export default function({
   );
   const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = data.map((n) => n.id);
-      setSelected(newSelected);
+      setSelected(data);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly string[] = [];
+  const handleClick = (event: MouseEvent<unknown>, element: DataType) => {
+    const selectedIndex = selected.indexOf(element);
+    let newSelected: readonly DataType[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, element);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -91,20 +88,24 @@ export default function({
     setSelected([]);
   };
 
-  const handleChangeStatus = () => {
-    onChangeActiveStatus(selected);
+  const handleSetActive = () => {
+    onSetActive(selected);
+    setSelected([]);
+  };
+  const handleSetInactive = () => {
+    onSetInactive(selected);
     setSelected([]);
   };
 
 
   return (
     <ModuleBase noFlex>
-        <MainHeader
-          numSelected={selected.length}
-          active={active}
-          onChangeActiveStatus={handleChangeStatus}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
+      <MainHeader
+        selected={selected}
+        onSetActive={handleSetActive}
+        onSetInactive={handleSetInactive}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
         />
         <TableContainer>
           <Table
@@ -120,7 +121,7 @@ export default function({
             <TableBody>
               {
                 visibleRows.map((row, index) => {
-                  const isSelected = selected.indexOf(row.id) !== -1;
+                  const isSelected = selected.indexOf(row) !== -1;
                   return <RowBody row={row} index={index} isSelected={isSelected} onSelect={handleClick} />;
                 })
               }

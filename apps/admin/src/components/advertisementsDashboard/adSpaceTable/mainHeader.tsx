@@ -8,23 +8,25 @@ import EditIcon from '@mui/icons-material/Edit';
 import MinusIcon from '@mui/icons-material/Remove';
 import PlusIcon from '@mui/icons-material/Add';
 import { MouseEventHandler } from 'react';
+import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/dataLayout';
 
 interface Props {
-  numSelected: number;
-  active: boolean;
+  selected: readonly DataType[];
   onDelete: MouseEventHandler<HTMLDivElement>;
   onEdit: MouseEventHandler<HTMLDivElement>;
-  onChangeActiveStatus: MouseEventHandler<HTMLDivElement>;
+  onSetActive: MouseEventHandler<HTMLDivElement>;
+  onSetInactive: MouseEventHandler<HTMLDivElement>;
 }
 
 const MainHeader = ({
-                      numSelected,
-                      active,
+                      selected,
                       onDelete,
                       onEdit,
-                      onChangeActiveStatus,
+                      onSetActive,
+                      onSetInactive,
                     }: Props) => {
 
+  const numSelected = selected.length;
   const isElementSelected = numSelected > 0;
 
   return (
@@ -54,25 +56,32 @@ const MainHeader = ({
           id='tableTitle'
           component='div'
         >
-          {active ? 'Active' : 'Inactive'} Ad-Spaces
+          Ad-Spaces
         </Typography>
       )}
       {isElementSelected ? (
         <>
-          <Tooltip title={active ? 'Make Inactive' : 'Make Active'} onClick={onChangeActiveStatus}>
-            <IconButton>
-              {active
-                ? <MinusIcon fontSize='large' />
-                : <PlusIcon fontSize='large' />}
-            </IconButton>
-          </Tooltip>
-          {numSelected === 1
-            ? <Tooltip title='Edit' onClick={onEdit}>
+          {
+            selected.find(item => item.active) &&
+            <Tooltip title='Make Inactive' onClick={onSetInactive}>
+              <IconButton>
+                <MinusIcon fontSize='large' />
+              </IconButton>
+            </Tooltip>
+          }
+          {
+            selected.find(item => !item.active) &&
+            <Tooltip title='Make Active' onClick={onSetActive}>
+              <IconButton>
+                <PlusIcon fontSize='large' />
+              </IconButton>
+            </Tooltip>
+          }
+          {numSelected === 1 && <Tooltip title='Edit' onClick={onEdit}>
               <IconButton>
                 <EditIcon />
               </IconButton>
-            </Tooltip>
-            : null}
+            </Tooltip>}
           <Tooltip title='Delete' onClick={onDelete}>
             <IconButton>
               <DeleteIcon />

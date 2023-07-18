@@ -10,15 +10,14 @@ import Box from '@mui/material/Box';
 
 const mapData = (adSpaceData: UseQueryResult<FetchAdSpaceDataResponse>, adClicksData: UseQueryResult<FetchAdClicksDataResponse>) => {
   const totalClicks = adClicksData.data?.data.reduce((acc, item) => acc + item.clicks, 0) ?? 0;
-  const active = adSpaceData.data?.data.filter((item) => item.active) ?? [];
-  const inactive = adSpaceData.data?.data.filter((item) => !item.active) ?? [];
+  const adspace = adSpaceData.data?.data ?? [];
   const companyClicks = adClicksData.data?.data.map((item) => ({
     company: item.company,
     clicks: item.clicks,
   })) ?? [];
 
   const activeData = [5, 1, 2, 4, 4, 2, 4, 2, 3, 4, 0, 0];
-  return { totalClicks, active, inactive, companyClicks, activeData };
+  return { totalClicks, adspace, companyClicks, activeData };
 };
 
 const AdvertisementDashboard = () => {
@@ -29,8 +28,7 @@ const AdvertisementDashboard = () => {
 
   const {
     totalClicks,
-    active,
-    inactive,
+    adspace,
     companyClicks,
     activeData,
   } = useMemo(() => mapData(adSpaceData, adClicksData), [adSpaceData, adClicksData]);
@@ -46,7 +44,7 @@ const AdvertisementDashboard = () => {
             NAVBAR
           </Grid>
           <Grid item xs={12} md={7}>
-            <AdSpaceSection totalClicks={totalClicks} active={active} inactive={inactive} />
+            <AdSpaceSection totalClicks={totalClicks} adspace={adspace} />
           </Grid>
           <Grid item container xs={12} md={3} spacing={2}>
             <Grid item xs={6} md={12}>

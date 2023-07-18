@@ -1,10 +1,14 @@
 export interface DataType {
   id: string;
-  user: string;
-  email: string;
+
   company: string;
-  mobileNumber: string;
+  image: string;
+  description: string;
+  link: string;
   active: boolean;
+  createdAt: string;
+  startDate: string;
+  endDate: string;
 }
 
 export interface HeadCell {
@@ -14,19 +18,35 @@ export interface HeadCell {
 
 export const headCells: readonly HeadCell[] = [
   {
-    id: 'user',
-    label: 'User',
-  },
-  {
-    id: 'email',
-    label: 'Email',
-  },
-  {
     id: 'company',
     label: 'Company',
   },
   {
-    id: 'mobileNumber',
-    label: 'Mobile Number',
+    id: 'image',
+    label: 'Advertisement Image',
   },
+  {
+    id: 'description',
+    label: 'Description',
+  },
+  {
+    id: 'link',
+    label: 'Link',
+  },
+  {
+    id: 'active',
+    label: 'Active',
+  },
+  {
+    id: 'createdAt',
+    label: 'Created On',
+  },
+  {
+    id: 'startDate',
+    label: 'Start From',
+  },
+  {
+    id: 'endDate',
+    label: 'End At',
+  }
 ];
