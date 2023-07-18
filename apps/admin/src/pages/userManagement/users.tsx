@@ -14,6 +14,7 @@ import fetchInvites from '@/middlewares/fetchInvites';
 import apiClient from '@/utils/api/client/apiClient';
 import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
+import SuccessModal from '@/components/modals/SuccessModal';
 
 const deleteInvitesMutationFn = async (emails: string[]) => {
   const promises = emails.map((email) => apiClient.delete(`/v1/invites/email/${email}`));
@@ -39,31 +40,47 @@ const Page = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [isSm] = useResponsiveness(['sm']);
 
+  const [deleteUser, setDeleteUser] = useState<boolean>(false);
+  const [deleteInvite, setDeleteInvite] = useState<boolean>(false);
+  const [toggleUser, setToggleUser] = useState<boolean>(false);
+
   const queries = useQueries([
     {
       queryKey: 'companies',
       queryFn: fetchCompanies,
+      refetchInterval: 50000,
     },
     {
       queryKey: 'users',
       queryFn: fetchUsers,
+      refetchInterval: 50000,
     },
     {
       queryKey: 'invites',
       queryFn: fetchInvites,
+      refetchInterval: 50000,
     },
   ]);
 
   const { mutate: deleteUsers } = useMutation('deleteUsers', deleteUsersMutationFn, {
-    onSuccess: () => queries[1].refetch(),
+    onSuccess: () => {
+      queries[1].refetch();
+      setDeleteUser(true);
+    },
   });
 
   const { mutate: toggleUsers } = useMutation('toggleUsers', toggleUsersMutationFn, {
-    onSuccess: () => queries[1].refetch(),
+    onSuccess: () => {
+      queries[1].refetch();
+      setToggleUser(true);
+    },
   });
 
   const { mutate: deleteInvites } = useMutation('deleteInvites', deleteInvitesMutationFn, {
-    onSuccess: () => queries[2].refetch(),
+    onSuccess: () => {
+      queries[2].refetch();
+      setDeleteInvite(true);
+    },
   });
 
   const { mutate: createInvite } = useMutation('createInvite', createInviteMutationFn, {
@@ -204,6 +221,27 @@ const Page = () => {
         isOpen={open}
         setOpen={setOpen}
         onSubmit={createInvite}
+      />
+      <SuccessModal
+        title="Successfully Deleted"
+        content="Selected users have been successfully deleted"
+        open={deleteUser}
+        setOpen={setDeleteUser}
+        buttonText="Return"
+      />
+      <SuccessModal
+        title="Successfully Deleted"
+        content="Selected Invites have been successfully deleted"
+        open={deleteInvite}
+        setOpen={setDeleteInvite}
+        buttonText="Return"
+      />
+      <SuccessModal
+        title="Successfully Toggled"
+        content="Selected users have been successfully toggled"
+        open={toggleUser}
+        setOpen={setToggleUser}
+        buttonText="Return"
       />
     </Box>
   );
