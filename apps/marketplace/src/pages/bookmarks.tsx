@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
-import ListingBookmarks from '@/components/marketplace/bookmarks/listingBookmarks';
 import UserBookmarks from '@/components/marketplace/bookmarks/userBookmarks';
 
 import fetchUser from '@/middlewares/fetchUser';
@@ -101,7 +100,8 @@ const Bookmarks = () => {
           ))}
         </Grid>
         {selectedButton === 'LISTINGS' && (
-          <ListingBookmarks data={listings} updateBookmarkData={updateBookmarkData} />
+          // <ListingBookmarks data={listings} updateBookmarkData={updateBookmarkData} />
+          'no listing data for now'
         )}
         {selectedButton === 'USERS' && (
           <UserBookmarks data={users} updateBookmarkData={updateBookmarkData} />
