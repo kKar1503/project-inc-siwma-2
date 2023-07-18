@@ -1,6 +1,5 @@
 import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
-import PrismaClient from '@inc/db';
-import { Parameter, ParameterType } from '@prisma/client';
+import PrismaClient, { Parameter, ParameterType } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { ParamSizeError } from '@inc/errors';
 import { paramSchema, ParamsRequestBody } from '@/utils/api/server/zod';

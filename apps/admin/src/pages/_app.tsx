@@ -7,7 +7,9 @@ import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
 import { ThemeComponent } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import SideBar from '@/components/AdminSideBar';
 import Box from '@mui/material/Box';
+import { useMediaQuery, useTheme, createTheme, ThemeProvider } from '@mui/material';
 
 const queryClient = new QueryClient();
 
@@ -18,6 +20,7 @@ interface PageType extends React.FunctionComponent<any> {
   allowAuthenticated: boolean;
   allowNonAuthenticated: boolean;
   auth?: boolean;
+  includeSideBar?: boolean;
 }
 
 // App prop type
@@ -51,7 +54,20 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
-  const { allowAuthenticated, allowNonAuthenticated } = Component;
+  const { allowAuthenticated, allowNonAuthenticated, includeSideBar = true } = Component;
+
+  const theme = useTheme();
+  const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
+  const backgroundColor = createTheme({
+    palette: {
+      primary: {
+        main: '#fff',
+      },
+      secondary: {
+        main: '#f7f7f8',
+      },
+    },
+  });
 
   return (
     <ThemeComponent>
@@ -63,11 +79,18 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           allowNonAuthenticated={allowNonAuthenticated}
         >
           <QueryClientProvider client={queryClient}>
-            {getLayout(
-              <Box>
-                <Component {...pageProps} />
+            <Box display="flex" flexDirection="row">
+              {includeSideBar && (
+                <Box width={isMobileOrTablet ? '0px' : '290px'} overflow="auto">
+                  <ThemeProvider theme={backgroundColor}>
+                    <SideBar />
+                  </ThemeProvider>
+                </Box>
+              )}
+              <Box flex="1" paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}>
+                {getLayout(<Component {...pageProps} />)}
               </Box>
-            )}
+            </Box>
           </QueryClientProvider>
         </AuthenticationGuard>
       </SessionProvider>
