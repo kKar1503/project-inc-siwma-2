@@ -16,7 +16,12 @@ export default apiHandler({
       id: true,
       email: true,
       name: true,
-      companyId: true,
+      companies: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 
@@ -28,7 +33,10 @@ export default apiHandler({
     id: invite.id.toString(),
     email: invite.email,
     name: invite.name,
-    companyId: invite.companyId.toString(),
+    company: {
+      id: invite.companies.id.toString(),
+      name: invite.companies.name,
+    },
   };
 
   return res.status(200).json(formatAPIResponse(mappedInvite));
