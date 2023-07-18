@@ -26,7 +26,6 @@ export type ParameterTableProps = {
   data: ParameterResponseBody[];
 };
 
-
 function createData(
   id: string,
   name: string,
@@ -47,19 +46,19 @@ function createData(
 
 const headCells: Header[] = [
   {
-    key: 'parameter name',
+    key: 'name',
     label: 'Parameter Name',
   },
   {
-    key: 'display name',
+    key: 'displayName',
     label: 'Display Name',
   },
   {
-    key: 'parameter type',
+    key: 'type',
     label: 'Parameter Type',
   },
   {
-    key: 'data type',
+    key: 'dataType',
     label: 'Data Type',
   },
   {
