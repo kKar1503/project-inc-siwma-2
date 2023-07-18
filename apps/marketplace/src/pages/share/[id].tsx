@@ -33,3 +33,7 @@
 //
 // export { getServerSideProps };
 // export default SharePage;
+
+const Placeholder = () => <h1>Hello World</h1>;
+
+export default Placeholder;
