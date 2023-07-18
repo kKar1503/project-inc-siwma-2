@@ -16,7 +16,7 @@ const listing = z.object({
   id: z.string(),
   name: z.string(),
   price: z.number(),
-  unitPrice: z.boolean(),
+  unit: z.string(),
   type: z.nativeEnum(ListingType),
   open: z.boolean(),
   purchased: z.boolean(),
