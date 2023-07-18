@@ -177,7 +177,7 @@ const ParameterTable = () => {
             justifyContent: 'flex-end',
           }}
         >
-          <Link href="/create-parameter">
+          <Link href="/parameter/create-parameter">
             <Button
               variant="contained"
               sx={({ palette, spacing }) => ({ bgcolor: palette.primary[400], mb: spacing(1) })}

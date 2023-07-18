@@ -8,19 +8,18 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
-import Input from '@mui/material/Input';
 import Box from '@mui/material/Box';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
-import { useQuery} from 'react-query';
-// import createParameter from '@/middlewares/createParameter';
+import { useQuery } from 'react-query';
+import createParameter from '@/middlewares/createParameter';
+import OnLeaveModal from '@/components/modals/OnLeaveModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -30,7 +29,10 @@ export type ParameterProps = {
 };
 
 const usePostParameter = (paramBody: ParameterResponseBody) => {
-  const { data } = useQuery('parameter', async () => createParameter(paramBody));
+  const { data } = useQuery(['parameter', paramBody], async () => createParameter(paramBody), {
+    enabled: paramBody !== undefined,
+  });
+
   return data;
 };
 
@@ -38,57 +40,66 @@ const CreateParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [parameterType, setParameterType] = useState('');
+  const [displayNameError, setDisplayNameError] = useState('');
+  const [type, setType] = useState('');
   const [dataType, setDataType] = useState('');
-  const [active, setActive] = useState('');
-  const [formData, setFormData] = useState<{
-    paramBody: ParameterResponseBody;
-  }>();
-  const [types, setTypes] = useState<TypeProps>('MANY_CHOICES');
-  const [data, setData] = useState<DataTypeProps>('string');
-
-
-  // const postParameter = usePostParameter(formData, (data) => {
-  //   if (data === false) return;
-  // });
+  const [openLeave, setOpenLeave] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
     setName(newName);
+
     if (newName.trim() === '') {
-      setNameError('Please enter parameter name');
-    } else if (/\d/.test(newName)) {
-      setNameError('Name cannot contain numbers');
+      setNameError('Please enter a name');
     } else {
       setNameError('');
     }
   };
 
-  // const submitForm = (): boolean => {
-  //   const paramBody: ParameterResponseBody = {
-  //     name,
-  //     displayName,
-  //     type: types,
-  //     dataType: data,
-  //     active, 
-  //   };
+  const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDisplayName = e.target.value;
+    setDisplayName(newDisplayName);
 
-  //   // if (!validateForm()) return false;
+    if (newDisplayName.trim() === '') {
+      setDisplayNameError('Please enter a display name');
+    } else {
+      setDisplayNameError('');
+    }
+  };
 
-  //   setFormData({
-  //     paramBody,
-  //   });
-  //   return true;
-  // };
+  const handleParamTypeChange = (e: SelectChangeEvent) => {
+    const selectedParamType = e.target.value;
+    setType(selectedParamType);
+  };
 
-  // const handleSubmit = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   submitForm();
-  // };
+  const handleDataTypeChange = (e: SelectChangeEvent) => {
+    const selectedDataType = e.target.value;
+    setDataType(selectedDataType);
+  };
+
+  const postParameter = async () => {
+    const paramBody: ParameterResponseBody = {
+      id: '',
+      name,
+      displayName,
+      type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
+      dataType: dataType as 'string' | 'number' | 'boolean',
+    };
+
+    await createParameter(paramBody);
+  };
+
+  const handleSubmit = async () => {
+    postParameter();
+  };
+
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setOpenLeave(true);
+  };
 
   const tableStyle = useMemo(() => {
     if (isSm) {
@@ -121,15 +132,10 @@ const CreateParameter = () => {
         <title>Create Parameter</title>
       </Head>
       <Container sx={tableStyle}>
-        <Box
-          sx={{
-            // display: 'flex',
-            // width: isLg ? '73%' : '100%',
-          }}
-        >
+        <Box>
           <Grid
             item
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
             sx={({ spacing }) => ({
               ml: spacing(1),
               width: '100%',
@@ -158,11 +164,11 @@ const CreateParameter = () => {
                     variant="contained"
                     color="error"
                     sx={({ palette }) => ({ bgcolor: palette.error[400] })}
-                  // onClick={handleCancel}
+                    onClick={handleCancel}
                   >
                     Cancel
                   </Button>
-                  {/* <OnLeaveModal open={openLeave} setOpen={setOpenLeave} /> */}
+                  <OnLeaveModal open={openLeave} setOpen={setOpenLeave} />
                 </Box>
               </Box>
 
@@ -192,9 +198,9 @@ const CreateParameter = () => {
                   placeholder="Length"
                   InputLabelProps={{ shrink: true }}
                   value={displayName}
-                  // onChange={handleNameChange}
-                  // error={!!nameError}
-                  // helperText={nameError}
+                  onChange={handleDisplayNameChange}
+                  error={!!displayNameError}
+                  helperText={displayNameError}
                   sx={({ spacing }) => ({
                     mt: spacing(2),
                     width: '100%',
@@ -205,16 +211,12 @@ const CreateParameter = () => {
                   sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
                 >
                   <InputLabel>Parameter Type</InputLabel>
-                  <Select
-                    label="Parameter Type"
-                    value={types}
-                  //   onChange={handleContactChange}
-                  >
-                    <MenuItem value="WEIGHT">Weight</MenuItem>
-                    <MenuItem value="DIMENSION">Dimension</MenuItem>
-                    <MenuItem value="TWO_CHOICES">Two choices</MenuItem>
-                    <MenuItem value="MANY_CHOICES">Many choices</MenuItem>
-                    <MenuItem value="OPEN_ENDED">Open Ended</MenuItem>
+                  <Select label="Parameter Type" value={type} onChange={handleParamTypeChange}>
+                    <MenuItem value="WEIGHT">WEIGHT</MenuItem>
+                    <MenuItem value="DIMENSION">DIMENSION</MenuItem>
+                    <MenuItem value="TWO_CHOICES">TWO_CHOICES</MenuItem>
+                    <MenuItem value="MANY_CHOICES">MANY_CHOICES</MenuItem>
+                    <MenuItem value="OPEN_ENDED">OPEN_ENDED</MenuItem>
                   </Select>
                 </FormControl>
 
@@ -222,11 +224,7 @@ const CreateParameter = () => {
                   sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
                 >
                   <InputLabel>Data Type</InputLabel>
-                  <Select
-                    label="Contact"
-                    value={dataType}
-                  //   onChange={handleContactChange}
-                  >
+                  <Select label="Data Type" value={dataType} onChange={handleDataTypeChange}>
                     <MenuItem value="string">String</MenuItem>
                     <MenuItem value="number">Number</MenuItem>
                     <MenuItem value="boolean">Boolean</MenuItem>
@@ -244,7 +242,7 @@ const CreateParameter = () => {
                   })}
                 >
                   <Button
-                    // onClick={handleSubmit}
+                    onClick={handleSubmit}
                     variant="contained"
                     type="submit"
                     sx={({ spacing, palette }) => ({
@@ -255,12 +253,12 @@ const CreateParameter = () => {
                         color: palette.common.white,
                       },
                     })}
-                  // disabled={
-                  //   name.trim() === '' ||
-                  //   mobileNumber.trim() === '' ||
-                  //   email.trim() === '' ||
-                  //   bio.trim() === '' ||
-                  // }
+                    disabled={
+                      name.trim() === '' ||
+                      displayName.trim() === '' ||
+                      type.trim() === '' ||
+                      dataType.trim() === ''
+                    }
                   >
                     Confirm
                   </Button>
