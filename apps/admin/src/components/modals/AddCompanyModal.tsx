@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useResponsiveness } from '@inc/ui';
-import { useQuery } from 'react-query';
 import createCompany from '@/middlewares/company-management/createCompany';
 
 export type EditCompanyModalProps = {
@@ -103,7 +102,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
 
   const handleSubmit = async () => {
     await postCompany();
-
+    updateData();
     setOpen(false);
   };
 

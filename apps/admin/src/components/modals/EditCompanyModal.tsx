@@ -34,9 +34,9 @@ const useGetCompanyQuery = (companyId: string) => {
 };
 
 // update data after this is run
-const useUpdateCompanyMutation = (companyId: string) =>
+const useUpdateCompanyMutation = (companyId: string, companyImage?: File) =>
   useMutation((updatedCompanyData: PutCompanyRequestBody) =>
-    updateCompany(updatedCompanyData, companyId)
+    updateCompany(updatedCompanyData, companyId, companyImage)
   );
 
 const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyModalProps) => {
@@ -108,7 +108,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
     setBio(event.target.value);
   };
 
-  const mutation = useUpdateCompanyMutation(company);
+  const mutation = useUpdateCompanyMutation(company, selectedCompanyFile ?? undefined);
 
   const handleSubmit = async () => {
     const companyData: PutCompanyRequestBody = {
