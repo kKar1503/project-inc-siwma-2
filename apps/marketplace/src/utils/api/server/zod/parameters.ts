@@ -1,4 +1,4 @@
-import { DataType, ParameterType } from '@prisma/client';
+import { DataType, ParameterType } from '@inc/db';
 import { z } from 'zod';
 
 /**
