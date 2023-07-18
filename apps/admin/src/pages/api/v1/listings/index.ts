@@ -17,6 +17,7 @@ import PrismaClient, {
 import { ParamError, ParamInvalidError, ParamRequiredError } from '@inc/errors';
 import { GetListingsQueryParameter, listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
+import type { ListingParameter } from '@inc/types';
 
 export type ListingWithParameters = Listing & {
   listingItem: ListingItem;
