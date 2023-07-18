@@ -14,7 +14,14 @@ import { FiImage, FiUpload } from 'react-icons/fi';
 import Image from 'next/image';
 import { Company } from '@/utils/api/client/zod/companies';
 import { useResponsiveness } from '@inc/ui';
-import { useForm, SubmitHandler, FieldValues, UseFormRegister } from 'react-hook-form';
+import {
+  useForm,
+  SubmitHandler,
+  FieldValues,
+  UseFormRegister,
+  Controller,
+  Control,
+} from 'react-hook-form';
 import { PutUserRequestBody } from '@/utils/api/server/zod/users';
 import { User } from '@/utils/api/client/zod/users';
 import editUser from '@/middlewares/editUser';
@@ -41,8 +48,9 @@ type SelectInputProps = {
   placeholder: string;
   label: string;
   data: Company[];
+  fieldValue: string;
   register: UseFormRegister<FieldValues>;
-  field: string;
+  control: Control<FieldValues, any>;
 };
 
 const useForgetPasswordMutation = (successFn: () => void) =>
@@ -95,7 +103,14 @@ const TextInput = ({ label, placeholder, multiline, register, field, onClick }: 
   </FormControl>
 );
 
-const SelectInput = ({ label, data, placeholder, register, field }: SelectInputProps) => (
+const SelectInput = ({
+  label,
+  data,
+  placeholder,
+  register,
+  fieldValue,
+  control,
+}: SelectInputProps) => (
   <FormControl
     sx={{
       paddingRight: 2,
@@ -103,19 +118,27 @@ const SelectInput = ({ label, data, placeholder, register, field }: SelectInputP
     }}
   >
     <Typography variant="body1">{label}</Typography>
-    <Autocomplete
-      options={data}
-      getOptionLabel={(option) => option.name}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          fullWidth
-          placeholder={placeholder}
-          sx={{
-            marginTop: 1,
-          }}
-          size="small"
-          {...register(field)}
+    <Controller
+      name={fieldValue}
+      control={control}
+      defaultValue=""
+      render={({ field }) => (
+        <Autocomplete
+          {...field}
+          options={data}
+          getOptionLabel={(option) => option.name}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              fullWidth
+              placeholder={placeholder}
+              sx={{
+                marginTop: 1,
+              }}
+              size="small"
+              {...register(fieldValue)}
+            />
+          )}
         />
       )}
     />
@@ -128,7 +151,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
   const [error, setError] = useState<Error | null>(null);
   const [isXs, isSm, isMd] = useResponsiveness(['xs', 'sm', 'md']);
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, control, handleSubmit, reset } = useForm();
 
   // fill form
   useEffect(() => {
@@ -322,7 +345,8 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
                 label="Companies"
                 data={companies || []}
                 register={register}
-                field="company"
+                fieldValue="company"
+                control={control}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
