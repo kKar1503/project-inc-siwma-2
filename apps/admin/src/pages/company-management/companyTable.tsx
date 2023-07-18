@@ -102,11 +102,15 @@ const CompanyTable = () => {
     sortRows();
   }, [companiesData]);
 
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const pageRows = rows.slice(startIndex, endIndex);
+
   return (
     <>
       <BaseTable
         heading="Registered Companies"
-        rows={rows}
+        rows={pageRows}
         headers={headCells}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
