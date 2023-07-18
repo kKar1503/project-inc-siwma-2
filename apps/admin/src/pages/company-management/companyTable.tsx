@@ -61,6 +61,8 @@ const CompanyTable = ({ data, updateData }: CompanyTableProps) => {
     const ids = rows.map((row) => row.id);
     setIds(ids);
     setOpenDeleteModal(true);
+
+    return [];
   };
 
   const handleEditRow = (row: BaseTableData) => {

@@ -9,7 +9,7 @@ export type ReportModalProps = {
   updateData: () => void;
 };
 
-const DeleteCompany = ({ open, setOpen, companies, updateData }: ReportModalProps) => {
+const DeleteCompanyModal = ({ open, setOpen, companies, updateData }: ReportModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
 
@@ -19,17 +19,19 @@ const DeleteCompany = ({ open, setOpen, companies, updateData }: ReportModalProp
     updateData();
   };
 
-  if (rightButtonState === true) {
-    deleteCompany();
-    setOpen(false);
-  }
+  useEffect(() => {
+    if (rightButtonState === true) {
+      deleteCompany();
+      setOpen(false);
+    }
+  }, [rightButtonState, setOpen]);
 
   useEffect(() => {
     if (leftButtonState === true) {
       setOpen(false);
     }
     setLeftButtonState(false);
-  });
+  }, [leftButtonState, setOpen]);
 
   return (
     <Modal
@@ -49,4 +51,4 @@ const DeleteCompany = ({ open, setOpen, companies, updateData }: ReportModalProp
   );
 };
 
-export default DeleteCompany;
+export default DeleteCompanyModal;
