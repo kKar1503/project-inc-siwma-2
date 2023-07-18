@@ -5,7 +5,12 @@ import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 
 export type InviteFileProps = {
-  details: Array<Array<string>>;
+  details: Array<{
+    company: string;
+    website: string;
+    email: string;
+    mobileNumber: string;
+  }>;
 };
 
 function createData(company: string, website: string): BaseTableData {
@@ -33,7 +38,7 @@ const CompanyInvitesTable = ({ details }: InviteFileProps) => {
 
   console.log(details);
 
-  const companyRows = details.map((x) => createData(x[0], x[1]));
+  const companyRows = details.map((x) => createData(x.company, x.website));
 
   console.log(companyRows);
 

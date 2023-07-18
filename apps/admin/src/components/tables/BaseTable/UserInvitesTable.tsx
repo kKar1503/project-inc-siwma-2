@@ -4,7 +4,12 @@ import { Box } from '@mui/material';
 import { useState } from 'react';
 
 export type InviteFileProps = {
-  details: Array<Array<string>>;
+  details: Array<{
+    company: string;
+    website: string;
+    email: string;
+    mobileNumber: string;
+  }>;
 };
 
 function createData(company: string, email: string, mobile: string): BaseTableData {
@@ -31,12 +36,11 @@ const headCells: Header[] = [
   },
 ];
 
-
 const UserInvitesTable = ({ details }: InviteFileProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const userRows = details.map((x) => createData(x[0], x[2], x[3]));
+  const userRows = details.map((x) => createData(x.company, x.email, x.mobileNumber));
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -48,7 +52,7 @@ const UserInvitesTable = ({ details }: InviteFileProps) => {
   };
 
   return (
-    <Box sx={{ my: 2, mx: 1}}>
+    <Box sx={{ my: 2, mx: 1 }}>
       <BaseTable
         rows={userRows}
         headers={headCells}

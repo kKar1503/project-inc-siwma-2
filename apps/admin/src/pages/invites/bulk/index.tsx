@@ -9,20 +9,26 @@ import { Box, Button } from '@mui/material';
 import UserInvitesTable from '@/components/tables/BaseTable/UserInvitesTable';
 import { Modal, useResponsiveness } from '@inc/ui';
 import * as XLSX from 'xlsx';
+import { useQuery } from 'react-query';
+import bulkInvites from '@/middlewares/bulkInvites';
 
-export type InviteFileProps = Array<string>;
+export type InviteFileProps = {
+  company: string;
+  website: string;
+  email: string;
+  mobileNumber: string;
+};
 
 const BulkInvitesPage = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [isLg] = useResponsiveness(['lg']);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [fileDetails, setFileDetails] = useState<InviteFileProps[]>([]);
-
-  const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
+
 
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (!event.target.files) return;
@@ -54,30 +60,27 @@ const BulkInvitesPage = () => {
       const workbook = XLSX.read(data, { type: 'binary' });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-      const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as InviteFileProps[];
+      const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as Array<string>;
       parsedData.shift();
       console.log(parsedData);
-      setFileDetails(parsedData);
+
+      const mappedData = parsedData.map((x) => {
+        const data = {
+          company: x[0],
+          website: x[1],
+          email: x[2],
+          mobileNumber: x[3],
+        };
+        return data;
+      });
+
+      setFileDetails(mappedData);
     };
-
-    console.log('hello');
-    // console.log(fileDetails);
   };
-
-  console.log(fileDetails);
 
   const handleFileUpload = () => {
     console.log('File uploading...');
     setOpenConfirm(true);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   return (
