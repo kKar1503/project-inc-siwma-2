@@ -2,22 +2,12 @@ import React, { useEffect, useState } from 'react';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import { Company } from '@/utils/api/client/zod/companies';
-import { useQuery } from 'react-query';
-import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 import DeleteCompanyModal from '@/components/modals/DeleteCompanyModal';
 import EditCompanyModal from '@/components/modals/EditCompanyModal';
 
-// export type CompanyTableProps = {
-//   data: Company[];
-// };
-
-const useGetCompaniesQuery = () => {
-  const { data } = useQuery('companies', async () => fetchCompanies(), {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  return data;
+export type CompanyTableProps = {
+  data: Company[] | undefined;
+  updateData: () => void;
 };
 
 function createData(id: string, name: string, bio: string | null): BaseTableData {
@@ -39,29 +29,12 @@ const headCells: Header[] = [
   },
 ];
 
-const CompanyTable = () => {
+const CompanyTable = ({ data, updateData }: CompanyTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
   const [id, setId] = useState<string>('');
   const [ids, setIds] = useState<string[]>([]);
-  const companies = useGetCompaniesQuery();
-  const [companiesData, setcompaniesData] = useState<Company[]>();
-
-  const handleCompaniesChange = async (companies: Company[]) => {
-    setcompaniesData(companies);
-  };
-
-  useEffect(() => {
-    if (companies) {
-      handleCompaniesChange(companies);
-    }
-  }, [companies]);
-
-  const updateCompanyData = async () => {
-    const updatedCompanies = await fetchCompanies();
-    handleCompaniesChange(updatedCompanies);
-  };
 
   // modals
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
@@ -70,9 +43,7 @@ const CompanyTable = () => {
   const sortRows = async (): Promise<void> => {
     const rowsData: BaseTableData[] = [];
 
-    companiesData?.forEach((item: Company) =>
-      rowsData.push(createData(item.id, item.name, item.bio))
-    );
+    data?.forEach((item: Company) => rowsData.push(createData(item.id, item.name, item.bio)));
 
     setRows(rowsData);
   };
@@ -100,7 +71,7 @@ const CompanyTable = () => {
 
   useEffect(() => {
     sortRows();
-  }, [companiesData]);
+  }, [data]);
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -126,13 +97,13 @@ const CompanyTable = () => {
         open={openDeleteModal}
         setOpen={setOpenDeleteModal}
         companies={ids}
-        updateData={updateCompanyData}
+        updateData={updateData}
       />
       <EditCompanyModal
         open={openEditModal}
         setOpen={() => setOpenEditModal(false)}
         company={id}
-        updateData={updateCompanyData}
+        updateData={updateData}
       />
     </>
   );

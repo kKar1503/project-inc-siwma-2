@@ -24,17 +24,7 @@ export type PostCompanyRequestBody = {
   image?: File | null;
 };
 
-const usePostCompanyQuery = (company: PostCompanyRequestBody) => {
-  const { data } = useQuery(['postCompany', company], async () => createCompany(company), {
-    enabled: company !== undefined,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  return data;
-};
-
-const EditCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) => {
+const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [name, setName] = useState<string>('');
   const [website, setWebsite] = useState<string>('');
@@ -112,7 +102,7 @@ const EditCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) 
   };
 
   const handleSubmit = async () => {
-    postCompany();
+    await postCompany();
 
     setOpen(false);
   };
@@ -149,7 +139,7 @@ const EditCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) 
                     fontWeight: typography.fontWeightBold,
                   })}
                 >
-                  Edit an individual company
+                  Create an individual company
                 </Typography>
                 <Typography
                   id="transition-modal-description"
@@ -157,7 +147,7 @@ const EditCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) 
                     fontSize: typography.body2.fontSize,
                   })}
                 >
-                  Modify a company profile from the system
+                  Register a company profile into the system
                 </Typography>
               </Grid>
               <Grid item xs={6}>
@@ -217,4 +207,4 @@ const EditCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) 
   );
 };
 
-export default EditCompanyModal;
+export default AddCompanyModal;
