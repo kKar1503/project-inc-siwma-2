@@ -1,17 +1,18 @@
 import apiClient from '@/utils/api/client/apiClient';
+import companies from '@/utils/api/client/zod/companies';
+import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 
-export type PostCompanyRequestBody = {
-  name: string;
-  website: string;
-  comments: string;
-  image?: File | null;
-};
+const createCompany = async (data: PostCompanyRequestBody, image?: File) => {
+  const response = await apiClient.post(`v1/companies/`, data);
+  const createdCompany = companies.create.parse(response.data.data[0]);
 
-const createCompany = async (requestBody: PostCompanyRequestBody) => {
-  const response = await apiClient.post(`v1/companies/`, requestBody);
-  const newCompany = response.data.data;
+  if (image) {
+    const formData = new FormData();
+    formData.append('file', image);
+    await apiClient.post(`/v1/companies/${createdCompany.companyId}/images`, formData);
+  }
 
-  return newCompany;
+  return createdCompany;
 };
 
 export default createCompany;

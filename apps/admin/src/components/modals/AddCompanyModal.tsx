@@ -9,18 +9,12 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useResponsiveness } from '@inc/ui';
 import createCompany from '@/middlewares/company-management/createCompany';
+import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 
 export type EditCompanyModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   updateData: () => void;
-};
-
-export type PostCompanyRequestBody = {
-  name: string;
-  website: string;
-  comments: string;
-  image?: File | null;
 };
 
 const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) => {
@@ -94,10 +88,9 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
       name,
       website,
       comments,
-      image: selectedCompanyFile,
     };
 
-    await createCompany(companyData);
+    await createCompany(companyData, selectedCompanyFile ?? undefined);
   };
 
   const handleSubmit = async () => {
