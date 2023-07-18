@@ -10,7 +10,7 @@
     "dev:chat": "nx run-many -t dev -p @inc/chat @inc/marketplace --parallel=2",
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
-    "build:packages": "nx run-many -t build -p @inc/ui @inc/events @inc/s3-simplified @inc/errors @inc/send-in-blue @inc/utils @inc/db @inc/db-enums @inc/node-store --parallel=4",
+    "build:packages": "nx run-many -t build -p @inc/ui @inc/events @inc/s3-simplified @inc/errors @inc/send-in-blue @inc/utils @inc/db @inc/db-enums --parallel=4",
     "build:db": "nx run @inc/db:build",
     "build:db-enums": "nx run @inc/db-enums:build",
     "build:ui": "nx run @inc/ui:build",
