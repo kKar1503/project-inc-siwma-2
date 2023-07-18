@@ -11,6 +11,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Head from 'next/head';
 import Link from 'next/link';
+import DeleteParameterModal from '@/components/modals/DeleteParameterModal';
 
 type DataType = 'string' | 'number' | 'boolean';
 type TableType = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
@@ -77,6 +78,11 @@ const useParameterQuery = () => {
 };
 
 const ParameterTable = () => {
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+  const [id, setId] = useState<string>('');
+  const [ids, setIds] = useState<string[]>([]);
+  const [parameterData, setParameterData] = useState<Parameter[]>();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
@@ -96,14 +102,12 @@ const ParameterTable = () => {
         )
       );
     });
-    console.log(rowsData);
     setRows(rowsData);
   };
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const pageRows = rows.slice(startIndex, endIndex);
-  console.log(pageRows);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -114,30 +118,45 @@ const ParameterTable = () => {
     setPage(0);
   };
 
-  const theme = useTheme();
-  const { spacing } = theme;
+  const handleDeleteRows = (rows: readonly BaseTableData[]) => {
+    const ids = rows.map((row) => row.id);
+    setIds(ids);
+    setOpenDeleteModal(true);
+  };
+
+  const handleParametersChange = async (parameter: Parameter[]) => {
+    setParameterData(parameter);
+  };
+
+  useEffect(() => {
+    if (parameter) {
+      handleParametersChange(parameter);
+    }
+  }, [parameter]);
+
+  const updateParameterData = async () => {
+    const updatedParameters = await fetchParameters();
+    handleParametersChange(updatedParameters);
+  };
+
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const tableStyle = useMemo(() => {
     if (isSm) {
       return {
-        py: spacing(3),
         px: '20px',
       };
     }
     if (isMd) {
       return {
-        py: spacing(3),
         px: '40px',
       };
     }
     if (isLg) {
       return {
-        py: spacing(3),
         px: '60px',
       };
     }
     return {
-      py: spacing(3),
       px: '20px',
     };
   }, [isSm, isMd, isLg]);
@@ -151,7 +170,7 @@ const ParameterTable = () => {
       <Head>
         <title>Parameters</title>
       </Head>
-      <Container sx={tableStyle}>
+      <Container sx={({ spacing }) => ({ py: spacing(3), tableStyle })}>
         <Box
           sx={{
             display: 'flex',
@@ -159,7 +178,10 @@ const ParameterTable = () => {
           }}
         >
           <Link href="/create-parameter">
-            <Button variant="contained" sx={({ palette }) => ({ bgcolor: palette.primary[400] })}>
+            <Button
+              variant="contained"
+              sx={({ palette, spacing }) => ({ bgcolor: palette.primary[400], mb: spacing(1) })}
+            >
               Create Parameter
             </Button>
           </Link>
@@ -170,13 +192,19 @@ const ParameterTable = () => {
           headers={headCells}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          onDelete={() => console.log('delete')}
+          onDelete={handleDeleteRows}
           onEdit={() => console.log('edit')}
           onToggle={() => console.log('toggle')}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
           totalCount={rows.length}
+        />
+        <DeleteParameterModal
+          open={openDeleteModal}
+          setOpen={setOpenDeleteModal}
+          parameters={ids}
+          updateData={updateParameterData}
         />
       </Container>
     </>
