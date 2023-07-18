@@ -128,16 +128,16 @@ const ParameterTable = () => {
     setParameterData(parameter);
   };
 
-  useEffect(() => {
-    if (parameter) {
-      handleParametersChange(parameter);
-    }
-  }, [parameter]);
+  // useEffect(() => {
+  //   if (parameter) {
+  //     handleParametersChange(parameter);
+  //   }
+  // }, [parameter]);
 
-  const updateParameterData = async () => {
-    const updatedParameters = await fetchParameters();
-    handleParametersChange(updatedParameters);
-  };
+  // const updateParameterData = async () => {
+  //   const updatedParameters = await fetchParameters();
+  //   handleParametersChange(updatedParameters);
+  // };
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const tableStyle = useMemo(() => {
@@ -200,12 +200,12 @@ const ParameterTable = () => {
           rowsPerPageOptions={[5, 10, 25]}
           totalCount={rows.length}
         />
-        <DeleteParameterModal
+        {/* <DeleteParameterModal
           open={openDeleteModal}
           setOpen={setOpenDeleteModal}
           parameters={ids}
           updateData={updateParameterData}
-        />
+        /> */}
       </Container>
     </>
   );
