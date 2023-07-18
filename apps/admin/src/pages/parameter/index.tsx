@@ -6,24 +6,22 @@ import Button from '@mui/material/Button';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import fetchParameters from '@/middlewares/fetchParameters';
-import { ParameterResponseBody } from '@/utils/api/client/zod';
+import { Parameter, ParameterResponseBody } from '@/utils/api/client/zod';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 type DataType = 'string' | 'number' | 'boolean';
 type TableType = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
-export type ParameterProps = {  
+export type ParameterProps = {
   id: string;
   name: string;
   displayName: string;
   type: TableType;
   dataType: DataType;
-  active: boolean;
+  active?: boolean;
 };
-
 export type ParameterTableProps = {
   data: ParameterResponseBody[];
 };
@@ -84,29 +82,30 @@ const ParameterTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
   const parameter = useParameterQuery();
-  console.log(parameter);
-  const router = useRouter();
 
-  // const sortRows = (): void => {
-  //   const rowsData: BaseTableData[] = [];
-  //   parameter?.forEach(
-  //     (item: ParameterProps) => {
-  //       rowsData.push(
-  //         createData(item.id, item.name, item.displayName, item.type, item.dataType, item.active)
-  //       );
-  //     }
-  //   );
-  //   setRows(rowsData);
-  // };
-
-  // useEffect(() => {
-  //   sortRows();
-  // }, [parameter]);
+  const sortRows = (): void => {
+    const rowsData: BaseTableData[] = [];
+    Object.values(parameter ?? {}).forEach((item: ParameterProps) => {
+      rowsData.push(
+        createData(
+          item.id,
+          item.name,
+          item.displayName,
+          item.type,
+          item.dataType,
+          item.active ?? false
+        )
+      );
+    });
+    console.log(rowsData);
+    setRows(rowsData);
+  };
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const pageRows = rows.slice(startIndex, endIndex);
-  
+  console.log(pageRows);
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -144,7 +143,9 @@ const ParameterTable = () => {
     };
   }, [isSm, isMd, isLg]);
 
-
+  useEffect(() => {
+    sortRows();
+  }, [parameter]);
 
   return (
     <>
@@ -158,11 +159,11 @@ const ParameterTable = () => {
             justifyContent: 'flex-end',
           }}
         >
-      <Link href="/create-parameter">
-        <Button variant="contained" sx={({ palette }) => ({ bgcolor: palette.primary[400] })}>
-          Create Parameter
-        </Button>
-      </Link>
+          <Link href="/create-parameter">
+            <Button variant="contained" sx={({ palette }) => ({ bgcolor: palette.primary[400] })}>
+              Create Parameter
+            </Button>
+          </Link>
         </Box>
         <BaseTable
           heading="Parameters"

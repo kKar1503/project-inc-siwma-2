@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, FormEvent } from 'react';
+import Head from 'next/head';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -12,35 +13,83 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import Input from '@mui/material/Input';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import { useTheme } from '@mui/material/styles';
-import fetchParameters from '@/middlewares/fetchParameters';
-import { ParameterResponseBody } from '@/utils/api/client/zod';
-import { useQuery } from 'react-query';
-import Head from 'next/head';
 import Box from '@mui/material/Box';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useTheme } from '@mui/material/styles';
+import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
+import { useQuery} from 'react-query';
+// import createParameter from '@/middlewares/createParameter';
+
+export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
+export type DataTypeProps = 'string' | 'number' | 'boolean';
 
 export type ParameterProps = {
   data: ParameterResponseBody[];
 };
 
-export type ParameterTableProps = {
-  data: ParameterProps[];
-};
-
-const useCreateParameterQuery = () => {
-  const { data } = useQuery('parameter', async () => fetchParameters());
+const usePostParameter = (paramBody: ParameterResponseBody) => {
+  const { data } = useQuery('parameter', async () => createParameter(paramBody));
   return data;
 };
 
 const CreateParameter = () => {
-  const createParameterQuery = useCreateParameterQuery();
-  console.log(useCreateParameterQuery);
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const [name, setName] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [parameterType, setParameterType] = useState('');
+  const [dataType, setDataType] = useState('');
+  const [active, setActive] = useState('');
+  const [formData, setFormData] = useState<{
+    paramBody: ParameterResponseBody;
+  }>();
+  const [types, setTypes] = useState<TypeProps>('MANY_CHOICES');
+  const [data, setData] = useState<DataTypeProps>('string');
+
+
+  // const postParameter = usePostParameter(formData, (data) => {
+  //   if (data === false) return;
+  // });
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setName(newName);
+    if (newName.trim() === '') {
+      setNameError('Please enter parameter name');
+    } else if (/\d/.test(newName)) {
+      setNameError('Name cannot contain numbers');
+    } else {
+      setNameError('');
+    }
+  };
+
+  // const submitForm = (): boolean => {
+  //   const paramBody: ParameterResponseBody = {
+  //     name,
+  //     displayName,
+  //     type: types,
+  //     dataType: data,
+  //     active, 
+  //   };
+
+  //   // if (!validateForm()) return false;
+
+  //   setFormData({
+  //     paramBody,
+  //   });
+  //   return true;
+  // };
+
+  // const handleSubmit = async (e: FormEvent) => {
+  //   e.preventDefault();
+  //   submitForm();
+  // };
+
   const tableStyle = useMemo(() => {
     if (isSm) {
       return {
@@ -109,7 +158,7 @@ const CreateParameter = () => {
                     variant="contained"
                     color="error"
                     sx={({ palette }) => ({ bgcolor: palette.error[400] })}
-                    // onClick={handleCancel}
+                  // onClick={handleCancel}
                   >
                     Cancel
                   </Button>
@@ -127,10 +176,10 @@ const CreateParameter = () => {
                   label="Parameter Name"
                   placeholder="Thickness (Hollow Sections)"
                   InputLabelProps={{ shrink: true }}
-                  // value={name}
-                  // onChange={handleNameChange}
-                  // error={!!nameError}
-                  // helperText={nameError}
+                  value={name}
+                  onChange={handleNameChange}
+                  error={!!nameError}
+                  helperText={nameError}
                   sx={({ spacing }) => ({
                     mr: spacing(2),
                     mt: spacing(2),
@@ -142,7 +191,7 @@ const CreateParameter = () => {
                   label="Display Name"
                   placeholder="Length"
                   InputLabelProps={{ shrink: true }}
-                  // value={name}
+                  value={displayName}
                   // onChange={handleNameChange}
                   // error={!!nameError}
                   // helperText={nameError}
@@ -158,14 +207,14 @@ const CreateParameter = () => {
                   <InputLabel>Parameter Type</InputLabel>
                   <Select
                     label="Parameter Type"
-                    //   value={contactMethod}
-                    //   onChange={handleContactChange}
+                    value={types}
+                  //   onChange={handleContactChange}
                   >
-                    <MenuItem value="weight">Weight</MenuItem>
-                    <MenuItem value="dimension">Dimension</MenuItem>
-                    <MenuItem value="twoChoices">Two choices</MenuItem>
-                    <MenuItem value="manyChoices">Many choices</MenuItem>
-                    <MenuItem value="openEnded">Open Ended</MenuItem>
+                    <MenuItem value="WEIGHT">Weight</MenuItem>
+                    <MenuItem value="DIMENSION">Dimension</MenuItem>
+                    <MenuItem value="TWO_CHOICES">Two choices</MenuItem>
+                    <MenuItem value="MANY_CHOICES">Many choices</MenuItem>
+                    <MenuItem value="OPEN_ENDED">Open Ended</MenuItem>
                   </Select>
                 </FormControl>
 
@@ -175,8 +224,8 @@ const CreateParameter = () => {
                   <InputLabel>Data Type</InputLabel>
                   <Select
                     label="Contact"
-                    //   value={contactMethod}
-                    //   onChange={handleContactChange}
+                    value={dataType}
+                  //   onChange={handleContactChange}
                   >
                     <MenuItem value="string">String</MenuItem>
                     <MenuItem value="number">Number</MenuItem>
@@ -206,12 +255,12 @@ const CreateParameter = () => {
                         color: palette.common.white,
                       },
                     })}
-                    // disabled={
-                    //   name.trim() === '' ||
-                    //   mobileNumber.trim() === '' ||
-                    //   email.trim() === '' ||
-                    //   bio.trim() === '' ||
-                    // }
+                  // disabled={
+                  //   name.trim() === '' ||
+                  //   mobileNumber.trim() === '' ||
+                  //   email.trim() === '' ||
+                  //   bio.trim() === '' ||
+                  // }
                   >
                     Confirm
                   </Button>
