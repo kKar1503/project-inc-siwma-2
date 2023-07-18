@@ -2,7 +2,7 @@ import { apiHandler, formatAPIResponse, handleBookmarks, UpdateType } from '@/ut
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError, ParamInvalidError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
-import { ListingParameter } from '@inc/types';
+import type { ListingParameter } from '@inc/types';
 import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
@@ -182,25 +182,18 @@ export default apiHandler()
 
     // Update the listing's parameters
     if (parameterValues) {
-      const parameterUpdates = parameterValues.map((parameter) =>
-        PrismaClient.listingsParametersValue.upsert({
-          where: {
-            listingId: id,
-          },
-          update: {
-            parameters: parameterValues,
-          },
-          create: {
-            listingId: id,
-            parameters: {
-              parameterId: parameter,
-              value: parameter.value.toString(),
-            },
-          },
-        })
-      );
-
-      await PrismaClient.$transaction(parameterUpdates);
+      await PrismaClient.listingsParametersValue.upsert({
+        where: {
+          listingId: id,
+        },
+        update: {
+          parameters: parameterValues,
+        },
+        create: {
+          listingId: id,
+          parameters: parameterValues,
+        },
+      });
     }
 
     const completeListing = await PrismaClient.listing.findUnique({

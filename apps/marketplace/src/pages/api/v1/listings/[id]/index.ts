@@ -182,25 +182,18 @@ export default apiHandler()
 
     // Update the listing's parameters
     if (parameterValues) {
-      const parameterUpdates = parameterValues.map((parameter) =>
-        PrismaClient.listingsParametersValue.upsert({
-          where: {
-            listingId: id,
-          },
-          update: {
-            parameters: parameterValues,
-          },
-          create: {
-            listingId: id,
-            parameters: {
-              parameterId: parameter,
-              value: parameter.value.toString(),
-            },
-          },
-        })
-      );
-
-      await PrismaClient.$transaction(parameterUpdates);
+      await PrismaClient.listingsParametersValue.upsert({
+        where: {
+          listingId: id,
+        },
+        update: {
+          parameters: parameterValues,
+        },
+        create: {
+          listingId: id,
+          parameters: parameterValues,
+        },
+      });
     }
 
     const completeListing = await PrismaClient.listing.findUnique({
