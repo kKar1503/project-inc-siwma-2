@@ -136,7 +136,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
       const formData = {
         name: user.name,
         email: user.email,
-        company: user.company,
+        company: user.company.name,
         mobileNumber: user.mobileNumber,
         bio: user.bio || undefined,
         userComments: user.comments || undefined,
