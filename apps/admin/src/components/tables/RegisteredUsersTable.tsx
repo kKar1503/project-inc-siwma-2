@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
 import SearchBar from '@/components/SearchBar';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { User } from '@/utils/api/client/zod/users';
 import { useRouter } from 'next/router';
+import { Company } from '@/utils/api/client/zod';
 
 type RowData = {
   id: string;
@@ -18,23 +19,9 @@ type RowData = {
 
 type RegisteredUsersTableProps = {
   data: User[];
+  companies: Company[];
   onToggle: (toggled: boolean, rows: readonly BaseTableData[]) => void;
-  onDelete: (rows: readonly BaseTableData[]) => void;
-};
-
-const parseUsersData = (users: User[]) => {
-  const rows: RowData[] = [];
-  users.forEach((u) => {
-    rows.push({
-      id: u.id,
-      user: u.name,
-      email: u.email,
-      company: u.company,
-      mobileNumber: u.mobileNumber,
-      enabled: u.enabled ?? false,
-    });
-  });
-  return rows;
+  onDelete: (rows: readonly BaseTableData[]) => BaseTableData[];
 };
 
 const headers: Header[] = [
@@ -60,11 +47,45 @@ const headers: Header[] = [
   },
 ];
 
-const RegisteredUsersTable = ({ data, onToggle, onDelete }: RegisteredUsersTableProps) => {
+const parseUsersData = (users: User[]) => {
+  const rows: RowData[] = [];
+  users.forEach((u) => {
+    rows.push({
+      id: u.id,
+      user: u.name,
+      email: u.email,
+      company: u.company.name,
+      mobileNumber: u.mobileNumber,
+      enabled: u.enabled ?? false,
+    });
+  });
+  return rows;
+};
+
+const RegisteredUsersTable = ({
+  data,
+  companies,
+  onToggle,
+  onDelete,
+}: RegisteredUsersTableProps) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [selectedCompany, setSelectedCompany] = useState('');
+  const [filteredData, setFilteredData] = useState<User[]>([]);
   const [tableData, setTableData] = useState<User[]>([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const router = useRouter();
+
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
+
+  useEffect(() => {
+    setTableData(
+      filteredData.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1))
+    );
+  }, [filteredData, page, rowsPerPage]);
 
   const handlePageChange = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -75,13 +96,34 @@ const RegisteredUsersTable = ({ data, onToggle, onDelete }: RegisteredUsersTable
     setPage(0);
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const filterTable = (event: React.MouseEvent<HTMLElement>) => {
+    const selected = (event.target as HTMLInputElement).value;
+    setSelectedCompany(selected);
+    const filter = data.filter((user) => user.company.id === selected.toString());
+    setFilteredData(filter);
+  };
+
+  const clearFilter = () => {
+    setFilteredData(data);
+    setSelectedCompany('');
+  };
+
+  const handleSearch = (query: string) => {
+    const filter = data.filter((user) => user.name.toLowerCase().includes(query.toLowerCase()));
+    setFilteredData(filter);
+  };
+
+  const closeMenu = () => {
+    setAnchorEl(null);
+  };
+
   const onEdit = (row: BaseTableData) => {
     router.push(`/edit-user/${row.id}`);
   };
-
-  useEffect(() => {
-    setTableData(data.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1)));
-  }, [data, page, rowsPerPage]);
 
   return (
     <Box
@@ -103,10 +145,28 @@ const RegisteredUsersTable = ({ data, onToggle, onDelete }: RegisteredUsersTable
           marginBottom: 1,
         }}
       >
-        <Button variant="text" startIcon={<FilterListIcon />}>
-          Filter
-        </Button>
-        <SearchBar />
+        <div>
+          <Button onClick={handleClick} variant="text" startIcon={<FilterListIcon />}>
+            Filter
+          </Button>
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+            <MenuItem disabled={selectedCompany === ''} value="" onClick={clearFilter}>
+              Clear Filter
+            </MenuItem>
+            {companies.map((company) => (
+              <MenuItem
+                key={company.id}
+                value={company.id}
+                onClick={filterTable}
+                selected={company.id === selectedCompany.toString()}
+              >
+                {company.name}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
+
+        <SearchBar onSearch={handleSearch} />
       </Box>
 
       <BaseTable
@@ -121,7 +181,7 @@ const RegisteredUsersTable = ({ data, onToggle, onDelete }: RegisteredUsersTable
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        totalCount={data.length}
+        totalCount={filteredData.length}
       />
     </Box>
   );

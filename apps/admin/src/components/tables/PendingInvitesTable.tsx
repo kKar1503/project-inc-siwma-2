@@ -1,14 +1,23 @@
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
 import SearchBar from '@/components/SearchBar';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { Invite } from '@/utils/api/client/zod/invites';
+import { Company } from '@/utils/api/client/zod';
 
 type PendingInvitesTableProps = {
   data: Invite[];
-  onDelete: (rows: readonly BaseTableData[]) => void;
+  companies: Company[];
+  onDelete: (rows: readonly BaseTableData[]) => BaseTableData[];
+};
+
+type RowData = {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
 };
 
 const headers: Header[] = [
@@ -30,10 +39,36 @@ const headers: Header[] = [
   },
 ];
 
-const PendingInvitesTable = ({ data, onDelete }: PendingInvitesTableProps) => {
+const parseInvitesData = (invites: Invite[]) => {
+  const rows: RowData[] = [];
+  invites.forEach((invite) => {
+    rows.push({
+      id: invite.id,
+      name: invite.name,
+      email: invite.email,
+      company: invite.company.name,
+    });
+  });
+  return rows;
+};
+
+const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableProps) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [selectedCompany, setSelectedCompany] = useState('');
+  const [filteredData, setFilteredData] = useState<Invite[]>([]);
   const [tableData, setTableData] = useState<Invite[]>([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
+
+  useEffect(() => {
+    setTableData(
+      filteredData.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1))
+    );
+  }, [filteredData, page, rowsPerPage]);
 
   const handlePageChange = (event: unknown, newPage: number) => {
     console.log('Page Change');
@@ -46,17 +81,38 @@ const PendingInvitesTable = ({ data, onDelete }: PendingInvitesTableProps) => {
     setPage(0);
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const filterTable = (event: React.MouseEvent<HTMLElement>) => {
+    const selected = (event.target as HTMLInputElement).value;
+    setSelectedCompany(selected);
+    const filter = data.filter((user) => user.company.id === selected.toString());
+    setFilteredData(filter);
+  };
+
+  const clearFilter = () => {
+    setFilteredData(data);
+    setSelectedCompany('');
+  };
+
+  const handleSearch = (query: string) => {
+    const filter = data.filter((user) => user.name.toLowerCase().includes(query.toLowerCase()));
+    setFilteredData(filter);
+  };
+
   const onEdit = () => {
-    console.log('edit');
+    // nothing to do
   };
 
   const onToggle = () => {
-    console.log('toggle');
+    // nothing to do
   };
-
-  useEffect(() => {
-    setTableData(data.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1)));
-  }, [data, page, rowsPerPage]);
 
   return (
     <Box
@@ -78,14 +134,31 @@ const PendingInvitesTable = ({ data, onDelete }: PendingInvitesTableProps) => {
           marginBottom: 1,
         }}
       >
-        <Button variant="text" startIcon={<FilterListIcon />}>
-          Filter
-        </Button>
-        <SearchBar />
+        <div>
+          <Button onClick={handleClick} variant="text" startIcon={<FilterListIcon />}>
+            Filter
+          </Button>
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+            <MenuItem disabled={selectedCompany === ''} value="" onClick={clearFilter}>
+              Clear Filter
+            </MenuItem>
+            {companies.map((company) => (
+              <MenuItem
+                key={company.id}
+                value={company.id}
+                onClick={filterTable}
+                selected={company.id === selectedCompany.toString()}
+              >
+                {company.name}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
+        <SearchBar onSearch={handleSearch} />
       </Box>
       <BaseTable
         heading="Pending Invites"
-        rows={tableData}
+        rows={parseInvitesData(tableData)}
         headers={headers}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}

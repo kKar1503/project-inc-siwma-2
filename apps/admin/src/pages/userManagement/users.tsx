@@ -93,6 +93,7 @@ const Page = () => {
   const handleDeleteUsers = (rows: readonly BaseTableData[]) => {
     const uuids = rows.map((row) => row.id);
     deleteUsers(uuids as string[]);
+    return [];
   };
 
   const handleToggleUsers = (toggled: boolean, rows: readonly BaseTableData[]) => {
@@ -103,6 +104,7 @@ const Page = () => {
   const handleDeleteInvites = (rows: readonly BaseTableData[]) => {
     const emails = rows.map((row) => row.email);
     deleteInvites(emails as string[]);
+    return [];
   };
 
   return (
@@ -184,9 +186,14 @@ const Page = () => {
           marginTop: 2,
         }}
       >
-        <PendingInvitesTable data={invites || []} onDelete={handleDeleteInvites} />
+        <PendingInvitesTable
+          data={invites || []}
+          companies={companies || []}
+          onDelete={handleDeleteInvites}
+        />
         <RegisteredUsersTable
           data={users || []}
+          companies={companies || []}
           onToggle={handleToggleUsers}
           onDelete={handleDeleteUsers}
         />
