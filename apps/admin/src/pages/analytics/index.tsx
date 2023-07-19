@@ -6,10 +6,10 @@ import TopCompaniesBuySell from '@/components/dataAnalytics/topCompaniesBuySell'
 import ActiveCategories from '@/components/dataAnalytics/activeCategories';
 import LineGraph from '@/components/dataAnalytics/lineGraph';
 import { useQueries, UseQueryResult } from 'react-query';
-import fetchCategories from '@/middlewares/fetchCategories';
+import fetchCategories from '@/middlewares/categories/fetchCategories';
 import { CategoryResponseBody, CompanyResponseBody } from '@/utils/api/client/zod';
 import { useMemo } from 'react';
-import fetchCompanies from '@/middlewares/fetchCompanies';
+import fetchCompanies from '@/middlewares/companies/fetchCompanies';
 
 const mapData = (categories: UseQueryResult<CategoryResponseBody[]>, companies: UseQueryResult<CompanyResponseBody[]>) => {
   const activeCategories = categories.data?.filter(i => i.active).map((item) => ({
