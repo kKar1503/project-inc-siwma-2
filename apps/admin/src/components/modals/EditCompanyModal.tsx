@@ -1,5 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
+import { useResponsiveness } from '@inc/ui';
+import { Company } from '@/utils/api/client/zod/companies';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
@@ -7,9 +10,8 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { useResponsiveness } from '@inc/ui';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import fetchCompany from '@/middlewares/company-management/fetchCompany';
+import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 import updateCompany from '@/middlewares/company-management/updateCompany';
 
 export type EditCompanyModalProps = {
@@ -24,6 +26,15 @@ export type PutCompanyRequestBody = {
   website: string;
   bio: string;
   image?: string;
+};
+
+const useGetCompaniesQuery = () => {
+  const { data } = useQuery('companies', async () => fetchCompanies(), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  return data;
 };
 
 const useGetCompanyQuery = (companyId: string) => {
@@ -41,6 +52,7 @@ const useUpdateCompanyMutation = (companyId: string, companyImage?: File) =>
 
 const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyModalProps) => {
   const queryClient = useQueryClient();
+  const companies = useGetCompaniesQuery();
   const companyData = useGetCompanyQuery(company);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -53,6 +65,13 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   const [nameError, setNameError] = useState<string>('');
   const [websiteError, setWebsiteError] = useState<string>('');
   const [fileError, setFileError] = useState<string>('');
+
+  const checkCompanyDuplicate = (name: string) => {
+    if (companies) {
+      return companies.some((company: Company) => company.name === name);
+    }
+    return false;
+  };
 
   const resetErrors = () => {
     setNameError('');

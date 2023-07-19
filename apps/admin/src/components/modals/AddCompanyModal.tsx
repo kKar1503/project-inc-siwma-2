@@ -1,5 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
+import { useResponsiveness } from '@inc/ui';
+import { PostCompanyRequestBody } from '@/utils/api/server/zod';
+import { useQuery } from 'react-query';
+import { Company } from '@/utils/api/client/zod/companies';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
@@ -7,9 +11,8 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { useResponsiveness } from '@inc/ui';
 import createCompany from '@/middlewares/company-management/createCompany';
-import { PostCompanyRequestBody } from '@/utils/api/server/zod';
+import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 
 export type EditCompanyModalProps = {
   open: boolean;
@@ -17,7 +20,17 @@ export type EditCompanyModalProps = {
   updateData: () => void;
 };
 
+const useGetCompaniesQuery = () => {
+  const { data } = useQuery('companies', async () => fetchCompanies(), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  return data;
+};
+
 const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) => {
+  const companies = useGetCompaniesQuery();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [name, setName] = useState<string>('');
   const [website, setWebsite] = useState<string>('');
@@ -28,6 +41,13 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
   const [nameError, setNameError] = useState<string>('');
   const [websiteError, setWebsiteError] = useState<string>('');
   const [fileError, setFileError] = useState<string>('');
+
+  const checkCompanyDuplicate = (name: string) => {
+    if (companies) {
+      return companies.some((company: Company) => company.name === name);
+    }
+    return false;
+  };
 
   const resetErrors = () => {
     setNameError('');
@@ -41,6 +61,11 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
     let formIsValid = true;
     const websiteRegex =
       /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
+
+    if (checkCompanyDuplicate(name)) {
+      setNameError('Company already exists');
+      formIsValid = false;
+    }
 
     if (!name || name.trim().length === 0) {
       setNameError('Name is required');
