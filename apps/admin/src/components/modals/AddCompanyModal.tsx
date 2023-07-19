@@ -24,6 +24,74 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
   const [comments, setComments] = useState<string>('');
   const [selectedCompanyFile, setSelectedCompanyFile] = useState<File | null>(null);
 
+  // validation
+  const [nameError, setNameError] = useState<string>('');
+  const [websiteError, setWebsiteError] = useState<string>('');
+  const [fileError, setFileError] = useState<string>('');
+
+  const resetErrors = () => {
+    setNameError('');
+    setWebsiteError('');
+  };
+
+  const formValidation = () => {
+    resetErrors();
+
+    let formIsValid = true;
+    const websiteRegex =
+      /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
+
+    if (!name || name.trim().length === 0) {
+      setNameError('Name is required');
+      formIsValid = false;
+    }
+
+    if (website && !websiteRegex.test(website)) {
+      setWebsiteError('Website is invalid');
+      formIsValid = false;
+    }
+
+    return formIsValid;
+  };
+
+  const handleLogoChange: FileUploadProps['changeHandler'] = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedCompanyFile(event.target.files[0]);
+    }
+  };
+
+  const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setName(event.target.value);
+  };
+
+  const handleWebsiteChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setWebsite(event.target.value);
+  };
+
+  const handleCommentChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setComments(event.target.value);
+  };
+
+  const postCompany = async () => {
+    const companyData: PostCompanyRequestBody = {
+      name,
+      website,
+      comments,
+    };
+
+    if (!formValidation()) {
+      return;
+    }
+
+    await createCompany(companyData, selectedCompanyFile ?? undefined);
+    updateData();
+    setOpen(false);
+  };
+
+  const handleSubmit = async () => {
+    await postCompany();
+  };
+
   const modalStyles = useMemo(() => {
     if (isSm) {
       return {
@@ -64,40 +132,6 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
       },
     };
   }, [isSm, isMd, isLg]);
-
-  const handleLogoChange: FileUploadProps['changeHandler'] = (event) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedCompanyFile(event.target.files[0]);
-    }
-  };
-
-  const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setName(event.target.value);
-  };
-
-  const handleWebsiteChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setWebsite(event.target.value);
-  };
-
-  const handleCommentChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setComments(event.target.value);
-  };
-
-  const postCompany = async () => {
-    const companyData: PostCompanyRequestBody = {
-      name,
-      website,
-      comments,
-    };
-
-    await createCompany(companyData, selectedCompanyFile ?? undefined);
-  };
-
-  const handleSubmit = async () => {
-    await postCompany();
-    updateData();
-    setOpen(false);
-  };
 
   return (
     <Box>
@@ -149,6 +183,8 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
                   label="Company Name"
                   sx={{ mb: 2 }}
                   onChange={handleNameChange}
+                  error={Boolean(nameError)}
+                  helperText={nameError}
                   fullWidth
                 />
                 <TextField
@@ -157,6 +193,8 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
                   label="Company Website"
                   sx={{ mb: 2 }}
                   onChange={handleWebsiteChange}
+                  error={Boolean(websiteError)}
+                  helperText={websiteError}
                   fullWidth
                 />
                 <TextField
