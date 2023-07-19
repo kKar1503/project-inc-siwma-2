@@ -48,17 +48,17 @@ const Page = () => {
     {
       queryKey: 'companies',
       queryFn: fetchCompanies,
-      refetchInterval: 50000,
+      refetchInterval: 300000,
     },
     {
       queryKey: 'users',
       queryFn: fetchUsers,
-      refetchInterval: 50000,
+      refetchInterval: 300000,
     },
     {
       queryKey: 'invites',
       queryFn: fetchInvites,
-      refetchInterval: 50000,
+      refetchInterval: 300000,
     },
   ]);
 
