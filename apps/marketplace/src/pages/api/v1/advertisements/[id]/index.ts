@@ -12,7 +12,7 @@ import process from 'process';
 const AWS_BUCKET = process.env.AWS_BUCKET as string;
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
-  const id = parseToNumber(req.query.id as string, 'id');
+  const adId = parseToNumber(req.query.id as string, 'id');
 
   // Check if user is admin
   const isAdmin = req.token?.user.permissions === 1;
@@ -21,18 +21,19 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   const advertisement = await PrismaClient.advertisements.findUnique({
     select: select(isAdmin),
     where: where(isAdmin, {
-      id,
+      id: adId,
     }),
   });
 
   // Throw error if advertisement not found
   if (!advertisement) throw new NotFoundError(`advertisement`);
-  const { companyId, ...advertisementContent } = advertisement;
+  const { companyId, id, ...advertisementContent } = advertisement;
 
   // Return advertisement
   res.status(200).json(
     formatAPIResponse({
       ...advertisementContent,
+      id: id.toString(),
       companyId: companyId.toString(),
     })
   );
