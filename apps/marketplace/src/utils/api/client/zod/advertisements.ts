@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-const companyId = z.string();
+const id = z.string();
+const companyId = z.string().optional();
+const createdAt = z.string().datetime().optional();
 const image = z.string().nullable();
 const description = z.string();
 const link = z.string();
@@ -15,7 +17,9 @@ const advertisement = z.object({
   description,
   link,
   // Admin Fields
+  id,
   active,
+  createdAt,
   startDate,
   endDate,
 });
