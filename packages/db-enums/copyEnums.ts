@@ -8,7 +8,7 @@ function parseLine(line: string, cachedLines: string[], onEnum: boolean): boolea
   if (onEnum) {
     const enumEndMatch = line.match(/}/);
     if (enumEndMatch) {
-      cachedLines.push(`${line} as const;`);
+      cachedLines.push(`} as const;`);
 
       // Push an empty line just to separate the enums
       cachedLines.push('');
