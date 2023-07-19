@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ListingType } from '@inc/db';
+import { ListingType } from '@inc/db-enums';
 import {
   zodDecodeToJson,
   zodParseToBoolean,
@@ -12,7 +12,6 @@ const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional().default('10'),
   matching: z.string().optional(),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
-  includeImages: z.string().transform(zodParseToBoolean).optional().default('false'),
   params: z
     .preprocess(
       zodDecodeToJson,
@@ -28,6 +27,7 @@ const getQueryParameters = z.object({
   maxPrice: z.string().transform(zodParseToNumber).optional(),
   sortBy: z.string().optional(),
   type: z.nativeEnum(ListingType).optional(),
+  productId: z.string().transform(zodParseToInteger).optional(),
 });
 
 /**
@@ -36,14 +36,11 @@ const getQueryParameters = z.object({
  * But we when we perform z.infer<> we want to get the original type
  */
 const listingsRequestBodyType = z.object({
-  name: z.string(),
-  description: z.string(),
-  price: z.number().gte(0),
-  unitPrice: z.boolean().optional(),
+  listingItemId: z.string(),
+  quantity: z.number().gt(0),
+  price: z.number().gt(0),
   negotiable: z.boolean().optional(),
-  categoryId: z.string(),
   type: z.nativeEnum(ListingType),
-  multiple: z.boolean().optional(),
   parameters: z
     .array(
       z.object({
@@ -55,7 +52,7 @@ const listingsRequestBodyType = z.object({
 });
 
 const listingsRequestBody = listingsRequestBodyType.extend({
-  categoryId: z.string().transform(zodParseToInteger),
+  listingItemId: z.string().transform(zodParseToInteger),
   parameters: z
     .array(
       z.object({

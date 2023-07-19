@@ -1,5 +1,5 @@
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import { ParameterType } from '@inc/db';
+import { ParameterType } from '@inc/db-enums';
 
 export default apiHandler().get(async (req, res) => {
   // Retrieve all available parameter types
