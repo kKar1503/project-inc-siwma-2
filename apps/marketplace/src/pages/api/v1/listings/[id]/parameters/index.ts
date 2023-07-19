@@ -1,17 +1,20 @@
 import { NextApiResponse } from 'next';
 import { apiHandler, formatAPIResponse } from '@/utils/api';
-import PrismaClient, { ListingsParametersValue } from '@inc/db';
-import { ForbiddenError, NotFoundError, ParamError } from '@inc/errors';
+import PrismaClient from '@inc/db';
+import { ForbiddenError, NotFoundError, ParamError, ParamInvalidError } from '@inc/errors';
 import { APIRequestType } from '@/types/api-types';
 import { listingSchema } from '@/utils/api/server/zod';
+import type { ListingParameter as ListingParameterDB } from '@inc/types';
 import { ListingParameter } from '@/utils/api/client/zod';
 import { parseListingId } from '../../index';
 import { checkListingExists } from '../index';
 
 // -- Functions --//
-function formatParametersResponse(
-  parameters: Pick<ListingsParametersValue, 'parameterId' | 'value'>[]
-): ListingParameter[] {
+function formatParametersResponse(parameters: ListingParameterDB[]): ListingParameter[] {
+  if (!parameters) {
+    return [];
+  }
+
   return parameters.map(({ parameterId, value }) => ({
     paramId: parameterId.toString(),
     value,
@@ -51,16 +54,15 @@ const getListingParameters = async (req: APIRequestType, res: NextApiResponse) =
     throw new NotFoundError(`Listing with id '${id}'`);
   }
 
-  const parameters = await PrismaClient.listingsParametersValue.findMany({
+  const parameters = await PrismaClient.listingsParametersValue.findUnique({
     where: {
       listingId: id,
     },
-    include: {
-      parameter: true,
-    },
   });
 
-  const formattedParameters = formatParametersResponse(parameters);
+  const formattedParameters = formatParametersResponse(
+    parameters?.parameters as ListingParameterDB[]
+  );
   res.status(200).json(formatAPIResponse(formattedParameters));
 };
 
@@ -82,30 +84,34 @@ const createListingParameter = async (req: APIRequestType, res: NextApiResponse)
   const { paramId, value } = listingSchema.parameters.post.body.parse(req.body);
 
   // Get valid parameters for the listing's category
-  const validParameters = await getValidParametersForCategory(listing.categoryId);
+  const validParameters = await getValidParametersForCategory(listing.listingItemId);
 
-  // Check that the paramId is a valid parameter for the category
+  // Check that each paramId is a valid parameter for the category
   if (!validParameters.includes(paramId.toString())) {
-    throw new ParamError('paramId');
+    throw new ParamInvalidError('paramId', paramId);
   }
 
-  const createdParameter = await PrismaClient.listingsParametersValue.create({
-    data: {
-      value: value.toString(),
-      listing: {
-        connect: {
-          id,
-        },
-      },
-      parameter: {
-        connect: {
-          id: paramId,
-        },
-      },
+  // Construct the new parameter value object
+  const oldParams = listing.listingsParametersValue?.parameters as ListingParameterDB[];
+  const parameterValues = oldParams.map((parameter) => {
+    const result =
+      paramId === parameter.parameterId
+        ? { parameterId: paramId, value: value.toString() }
+        : parameter;
+    return result;
+  });
+
+  // Update the listing's parameters
+  await PrismaClient.listingsParametersValue.upsert({
+    where: {
+      listingId: id,
     },
-    select: {
-      parameterId: true,
-      value: true,
+    update: {
+      parameters: parameterValues,
+    },
+    create: {
+      listingId: id,
+      parameters: parameterValues,
     },
   });
 
@@ -113,9 +119,7 @@ const createListingParameter = async (req: APIRequestType, res: NextApiResponse)
     .status(201)
     .json(
       formatAPIResponse(
-        formatParametersResponse([
-          { parameterId: createdParameter.parameterId, value: createdParameter.value },
-        ])
+        formatParametersResponse([{ parameterId: paramId, value: value.toString() }])
       )
     );
 };
@@ -135,36 +139,50 @@ const updateListingParameters = async (req: APIRequestType, res: NextApiResponse
     throw new ForbiddenError();
   }
 
-  const parameters = listingSchema.parameters.put.body.parse(req.body);
+  const data = listingSchema.parameters.put.body.parse(req.body);
 
-  // Update the parameters in the database and format the response
-  const updatePromises = parameters.map((param) => {
-    const parameterId = param.paramId;
+  // Get valid parameters for the listing's category
+  const validParameters = await getValidParametersForCategory(listing.listingItemId);
 
-    // Update the parameter value
-    return PrismaClient.listingsParametersValue.update({
-      where: {
-        listingId_parameterId: {
-          listingId: id,
-          parameterId,
-        },
-      },
-      data: {
-        value: param.value.toString(),
-      },
-      select: {
-        parameterId: true,
-        value: true,
-      },
+  // Check that each paramId is a valid parameter for the category
+  if (data.length > 0) {
+    data.forEach((parameter) => {
+      if (!validParameters.includes(parameter.paramId.toString())) {
+        throw new ParamInvalidError('paramId', parameter.paramId);
+      }
     });
+  }
+
+  // Construct the new parameter value object
+  const oldParams = listing.listingsParametersValue?.parameters as ListingParameterDB[];
+  const parameterValues = oldParams.map((parameter) => {
+    const newParam = data.find((param) => param.paramId === parameter.parameterId);
+    const result = newParam
+      ? { parameterId: newParam.paramId, value: newParam.value.toString() }
+      : parameter;
+    return result;
   });
 
-  const updatedParametersResults = await PrismaClient.$transaction(updatePromises);
+  // Update the listing's parameters
+  const updatedParametersResults = await PrismaClient.listingsParametersValue.upsert({
+    where: {
+      listingId: id,
+    },
+    update: {
+      parameters: parameterValues,
+    },
+    create: {
+      listingId: id,
+      parameters: parameterValues,
+    },
+  });
 
-  const updatedParameters = updatedParametersResults.map((result) => ({
-    paramId: result.parameterId,
-    value: result.value,
-  }));
+  const updatedParameters = (updatedParametersResults.parameters as ListingParameterDB[]).map(
+    (result) => ({
+      paramId: result.parameterId,
+      value: result.value,
+    })
+  );
 
   res.status(200).json(formatAPIResponse({ updatedParameters }));
 };

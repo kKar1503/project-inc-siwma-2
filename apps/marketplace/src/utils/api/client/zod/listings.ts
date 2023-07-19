@@ -1,4 +1,4 @@
-import { ListingType } from '@prisma/client';
+import { ListingType } from '@inc/db-enums';
 import { z } from 'zod';
 
 // -- Define properties -- //
@@ -6,15 +6,11 @@ const id = z.string();
 const name = z.string();
 const description = z.string();
 const price = z.number();
-const unitPrice = z.boolean();
+const unit = z.string();
+const quantity = z.number();
 const negotiable = z.boolean();
 const categoryId = z.string();
 const type = z.nativeEnum(ListingType);
-const multiple = z.boolean();
-const rating = z.number().nullable();
-const reviewCount = z.number();
-const images = z.array(z.string()).optional();
-const coverImage = z.string().optional();
 const createdAt = z.string();
 
 const company = z.object({
@@ -52,18 +48,14 @@ const listing = z.object({
   name,
   description,
   price,
-  unitPrice,
+  unit,
+  quantity,
   negotiable,
   categoryId,
   type,
-  multiple,
-  images,
-  coverImage,
   owner,
   open,
   parameters: z.array(parameter).optional(),
-  rating,
-  reviewCount,
   createdAt,
   purchased,
 });
@@ -83,23 +75,11 @@ const getListings = z.array(listing);
 // GET /listings/:id
 const getListing = listing;
 
-// GET /listings/:id/images
-const getListingImages = z.array(images);
-
-// GET /listings/:id/images/:imageId
-const getListingImage = z.object({
-  fileName: z.string(),
-  url: z.string(),
-});
-
 // GET /listings/:id/parameters
 const getListingParameters = z.array(parameter);
 
 // PUT /listings/:id
 const updateListing = listing;
-
-// PUT /listings/:id/images
-const updateListingImages = z.array(images);
 
 // PUT /listings/:id/images/:imageId
 const updateListingImage = z.object({
@@ -127,11 +107,8 @@ export default {
   createParameter: createListingParameter,
   getAll: getListings,
   getById: getListing,
-  getImages: getListingImages,
-  getImage: getListingImage,
   getParameters: getListingParameters,
   update: updateListing,
-  updateImages: updateListingImages,
   updateImage: updateListingImage,
   updateParameters: updateListingParameters,
   delete: deleteListing,
