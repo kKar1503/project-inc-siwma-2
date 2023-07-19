@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: false
@@ -53,6 +53,9 @@ importers:
       '@inc/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@inc/db-enums':
+        specifier: workspace:*
+        version: link:../../packages/db-enums
       '@inc/errors':
         specifier: workspace:*
         version: link:../../packages/errors
