@@ -14,7 +14,7 @@ import Button from '@mui/material/Button';
 import createCompany from '@/middlewares/company-management/createCompany';
 import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 
-export type EditCompanyModalProps = {
+export type AddCompanyModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   updateData: () => void;
@@ -29,7 +29,7 @@ const useGetCompaniesQuery = () => {
   return data;
 };
 
-const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) => {
+const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) => {
   const companies = useGetCompaniesQuery();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [name, setName] = useState<string>('');

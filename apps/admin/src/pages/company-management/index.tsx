@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Company } from '@/utils/api/client/zod/companies';
+import { useQuery } from 'react-query';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
-import { Company } from '@/utils/api/client/zod/companies';
-import { useQuery } from 'react-query';
 import CompanyTable from './companyTable';
 import RegisterCompanyCard from './registerCompanyCard';
 import BulkRegisterCompanyCard from './bulkRegisterCompanyCard';
@@ -46,7 +46,7 @@ const CompanyManagement = () => {
           <RegisterCompanyCard updateData={updateCompanyData} />
         </Grid>
         <Grid item xs={12} lg={6}>
-          <BulkRegisterCompanyCard />
+          <BulkRegisterCompanyCard updateData={updateCompanyData} />
         </Grid>
         <Grid item xs={12}>
           <CompanyTable data={companiesData} updateData={updateCompanyData} />
