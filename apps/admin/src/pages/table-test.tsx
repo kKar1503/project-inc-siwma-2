@@ -97,7 +97,8 @@ const TableTest = () => {
           headers={headCells}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          onDelete={() => console.log('delete')}
+          // TODO: Someone please fix this....
+          onDelete={() => console.log('delete') as any as BaseTableData[]}
           onEdit={() => console.log('edit')}
           onToggle={() => console.log('toggle')}
           page={page}

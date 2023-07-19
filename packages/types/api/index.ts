@@ -1,1 +1,1 @@
-export * from './SomeType';
+export * from './ListingParameterType';
