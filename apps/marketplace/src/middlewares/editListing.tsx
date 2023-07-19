@@ -1,8 +1,11 @@
-import { ImageOrder } from '@/components/marketplace/createListing/ImageUploadForm';
 import apiClient from '@/utils/api/client/apiClient';
 import categories from '@/utils/api/client/zod/categories';
 import { PutListingsRequestBody } from '@/utils/api/server/zod/listings';
 import { ReturnType } from './createListing';
+
+type ImageOrder = {
+  [key: string]: number;
+};
 
 const editListing = async (
   id: string,
