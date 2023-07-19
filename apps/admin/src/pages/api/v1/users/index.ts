@@ -32,7 +32,12 @@ export default apiHandler({ allowNonAuthenticated: true })
           id: true,
           name: true,
           email: true,
-          companyId: true,
+          companies: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
           createdAt: true,
           enabled: true,
           profilePicture: true,
@@ -49,7 +54,10 @@ export default apiHandler({ allowNonAuthenticated: true })
         id: user.id,
         name: user.name,
         email: user.email,
-        company: user.companyId.toString(),
+        company: {
+          id: user.companies.id.toString(),
+          name: user.companies.name,
+        },
         createdAt: user.createdAt,
         enabled: user.enabled,
         profilePic: user.profilePicture,

@@ -49,19 +49,21 @@ function getNotificationString(
       updateString = 'been changed.';
   }
 
+  // TODO: Currently the notification just get changed to ID of the listing
+  // This is not ideal, someone need to refactor to use the listingItem name
   switch (notificationType) {
     case 'LISTING':
-      return `${listing?.name || 'A listing you bookmarked'} has ${updateString}.`;
+      return `${listing?.id || 'A listing you bookmarked'} has ${updateString}.`;
     case 'COMPANY':
-      return `${listing?.name || 'a listing'} from ${
+      return `${listing?.id || 'a listing'} from ${
         creator || 'a company you bookmarked'
       } has ${updateString}.`;
     case 'USER':
-      return `${listing?.name || 'a listing'} from ${
+      return `${listing?.id || 'a listing'} from ${
         creator || 'a user you bookmarked'
       } has ${updateString}.`;
     default:
-      return `${listing?.name || 'a listing'} from ${
+      return `${listing?.id || 'a listing'} from ${
         creator || 'an entity you bookmarked'
       } has ${updateString}.`;
   }

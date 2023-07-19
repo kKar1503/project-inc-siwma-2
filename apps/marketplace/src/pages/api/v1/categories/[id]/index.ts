@@ -4,7 +4,7 @@ import { NotFoundError, ParamError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { categorySchema } from '@/utils/api/server/zod';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
-import { QueryResult, formatParamters, parseCategoryId } from '../index';
+import { formatParamters, parseCategoryId, QueryResult } from '../index';
 
 function parseId(id: string | undefined): number {
   if (!id) {
@@ -68,7 +68,7 @@ export default apiHandler()
   .put(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { id } = req.query;
 
-    const { name, description, image, crossSectionImage, parameters } =
+    const { name, description, parameters } =
       categorySchema.put.body.parse(req.body);
 
     const categoryId = parseId(id as string);
@@ -106,8 +106,6 @@ export default apiHandler()
       data: {
         name,
         description,
-        image,
-        crossSectionImage,
       },
       select: {
         id: true,
