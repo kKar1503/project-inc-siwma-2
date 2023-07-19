@@ -23,7 +23,8 @@ const editListing = async (
      * 1. Remove Invalid Parameter values
      */
     const response = await apiClient.get(
-      `/v1/categories/${listingBody.categoryId}?includeParameters=true`
+      // TODO: This needs to be worked on when the product endpoint is up - Xavier
+      `/v1/categories/${(listingBody as any).categoryId}?includeParameters=true`
     );
     const category = categories.getAll.parse(response.data.data);
 
