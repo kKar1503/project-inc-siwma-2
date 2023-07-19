@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable camelcase */
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
@@ -10,8 +12,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import SideBar from '@/components/AdminSideBar';
 import Box from '@mui/material/Box';
 import { useMediaQuery, useTheme, createTheme, ThemeProvider } from '@mui/material';
-
-const queryClient = new QueryClient();
+import { Noto_Sans_SC } from 'next/font/google';
 
 // -- Type declarations --//
 // Page type
@@ -50,6 +51,13 @@ const DisallowAuthenticatedFallback = () => {
   return <SpinnerPage />;
 };
 
+// china font
+const notoSansSC = Noto_Sans_SC({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+});
+
 const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppProps) => {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
@@ -70,7 +78,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   });
 
   return (
-    <ThemeComponent>
+    <ThemeComponent fonts={notoSansSC.style.fontFamily}>
       <SessionProvider session={session}>
         <AuthenticationGuard
           disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
