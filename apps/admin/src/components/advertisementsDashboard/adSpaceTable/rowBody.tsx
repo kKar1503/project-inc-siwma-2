@@ -2,20 +2,30 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
 import { MouseEvent } from 'react';
-import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/dataLayout';
 import Button from '@mui/material/Button';
+import { Advertisment } from '@/utils/api/client/zod/advertisements';
 
 interface Props {
-  row: DataType;
+  row: Advertisment & { companyName: string };
   index: number;
   isSelected: boolean;
-  onSelect: (event: MouseEvent<unknown>, element: DataType) => void;
+  onSelect: (event: MouseEvent<unknown>, element: Advertisment) => void;
 }
 
-const ExternalLink = ({ link, display }: { link: string; display: string }) => {
-  return (
-    <Button onClick={()=>window.open(link,'_blank')}>{display}</Button>
-  );
+const ExternalLink = ({ link, display, displayInvalid }: {
+  link: string | null;
+  display: string,
+  displayInvalid?: string
+}) => link ? (
+  <Button onClick={() => window.open(link, '_blank')}>{display}</Button>
+) : (
+  <Button disabled>{displayInvalid}</Button>
+);
+
+const parseDate = (date: string | undefined) => {
+  if (!date) return 'unknown';
+  const dateObj = new Date(date);
+  return dateObj.toLocaleDateString();
 };
 
 const RowBody = ({
@@ -30,7 +40,7 @@ const RowBody = ({
   return (
     <TableRow
       hover
-      onClick={(event) => onSelect(event, row)}
+      onClick={(event: MouseEvent<unknown>) => onSelect(event, row)}
       role='checkbox'
       aria-checked={isSelected}
       tabIndex={-1}
@@ -47,14 +57,15 @@ const RowBody = ({
           }}
         />
       </TableCell>
-      <TableCell align='left'>{row.company}</TableCell>
-      <TableCell align='left'><ExternalLink link={row.image} display='View Image' /></TableCell>
+      <TableCell align='left'>{row.companyName}</TableCell>
+      <TableCell align='left'><ExternalLink link={`https://s3.karlok.dev/${row.image}`} display='View Image'
+                                            displayInvalid='No Image' /></TableCell>
       <TableCell align='left'>{row.description}</TableCell>
-      <TableCell align='left'><ExternalLink link={row.link} display={row.link} /></TableCell>
+      <TableCell align='left'><ExternalLink link={row.link} display={row.link} displayInvalid='No Link' /></TableCell>
       <TableCell align='left'>{row.active ? 'YES' : 'NO'}</TableCell>
-      <TableCell align='left'>{row.createdAt}</TableCell>
-      <TableCell align='left'>{row.startDate}</TableCell>
-      <TableCell align='left'>{row.endDate}</TableCell>
+       <TableCell align='left'>{row.createdAt}</TableCell>
+      <TableCell align='left'>{parseDate(row.startDate)}</TableCell>
+      <TableCell align='left'>{parseDate(row.endDate)}</TableCell>
     </TableRow>
   );
 };
