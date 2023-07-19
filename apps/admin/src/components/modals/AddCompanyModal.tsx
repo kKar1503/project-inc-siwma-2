@@ -32,6 +32,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
   const resetErrors = () => {
     setNameError('');
     setWebsiteError('');
+    setFileError('');
   };
 
   const formValidation = () => {
@@ -48,6 +49,16 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
 
     if (website && !websiteRegex.test(website)) {
       setWebsiteError('Website is invalid');
+      formIsValid = false;
+    }
+
+    if (
+      (selectedCompanyFile &&
+        !AcceptedFileTypes.JPG.includes(selectedCompanyFile.type) &&
+        !AcceptedFileTypes.PNG.includes(selectedCompanyFile.type)) ||
+      selectedCompanyFile?.type === ''
+    ) {
+      setFileError('File type is invalid');
       formIsValid = false;
     }
 
@@ -208,6 +219,15 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
                 />
               </Grid>
               <Grid item xs={6}>
+                {fileError && (
+                  <Typography
+                    sx={({ palette }) => ({
+                      color: palette.error.main,
+                    })}
+                  >
+                    {fileError}
+                  </Typography>
+                )}
                 <Upload
                   id="companyImage"
                   title="Company Logo (Optional)"
@@ -216,14 +236,13 @@ const AddCompanyModal = ({ open, setOpen, updateData }: EditCompanyModalProps) =
                   changeHandler={handleLogoChange}
                   accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
                   maxWidth="200px"
-                  maxHeight="100px"
+                  maxHeight="90px"
                 />
                 <Button
                   variant="contained"
                   type="submit"
                   size="large"
                   onClick={handleSubmit}
-                  sx={{ mt: 2 }}
                   fullWidth
                 >
                   Edit Company

@@ -49,6 +49,102 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   const [bio, setBio] = useState<string>(companyData?.bio || '');
   const [selectedCompanyFile, setSelectedCompanyFile] = useState<File | null>(null);
 
+  // validation
+  const [nameError, setNameError] = useState<string>('');
+  const [websiteError, setWebsiteError] = useState<string>('');
+  const [fileError, setFileError] = useState<string>('');
+
+  const resetErrors = () => {
+    setNameError('');
+    setWebsiteError('');
+    setFileError('');
+  };
+
+  const formValidation = () => {
+    resetErrors();
+
+    let formIsValid = true;
+    const websiteRegex =
+      /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
+
+    if (!name || name.trim().length === 0) {
+      setNameError('Name is required');
+      formIsValid = false;
+    }
+
+    if (website && !websiteRegex.test(website)) {
+      setWebsiteError('Website is invalid');
+      formIsValid = false;
+    }
+
+    if (
+      (selectedCompanyFile &&
+        !AcceptedFileTypes.JPG.includes(selectedCompanyFile.type) &&
+        !AcceptedFileTypes.PNG.includes(selectedCompanyFile.type)) ||
+      selectedCompanyFile?.type === ''
+    ) {
+      setFileError('File type is invalid');
+      formIsValid = false;
+    }
+
+    return formIsValid;
+  };
+
+  const handleLogoChange: FileUploadProps['changeHandler'] = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedCompanyFile(event.target.files[0]);
+    }
+  };
+
+  const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setName(event.target.value);
+  };
+
+  const handleWebsiteChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setWebsite(event.target.value);
+  };
+
+  const handleBioChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    setBio(event.target.value);
+  };
+
+  const mutation = useUpdateCompanyMutation(company, selectedCompanyFile ?? undefined);
+
+  const handleSubmit = async () => {
+    const companyData: PutCompanyRequestBody = {
+      name,
+      website,
+      bio,
+    };
+
+    if (!formValidation()) {
+      return;
+    }
+
+    await mutation.mutateAsync(companyData);
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      queryClient.invalidateQueries(['company', company]);
+    }
+  }, [mutation.isSuccess, queryClient, company]);
+
+  useEffect(() => {
+    if (companyData) {
+      setName(companyData?.name || '');
+      setWebsite(companyData?.website || '');
+      setBio(companyData?.bio || '');
+    }
+  }, [companyData]);
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      updateData(); // Call updateData after the mutation has completed
+    }
+  }, [mutation.isSuccess, updateData]);
+
   const modalStyles = useMemo(() => {
     if (isSm) {
       return {
@@ -89,57 +185,6 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
       },
     };
   }, [isSm, isMd, isLg]);
-
-  const handleLogoChange: FileUploadProps['changeHandler'] = (event) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedCompanyFile(event.target.files[0]);
-    }
-  };
-
-  const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setName(event.target.value);
-  };
-
-  const handleWebsiteChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setWebsite(event.target.value);
-  };
-
-  const handleBioChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    setBio(event.target.value);
-  };
-
-  const mutation = useUpdateCompanyMutation(company, selectedCompanyFile ?? undefined);
-
-  const handleSubmit = async () => {
-    const companyData: PutCompanyRequestBody = {
-      name,
-      website,
-      bio,
-    };
-
-    await mutation.mutateAsync(companyData);
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      queryClient.invalidateQueries(['company', company]);
-    }
-  }, [mutation.isSuccess, queryClient, company]);
-
-  useEffect(() => {
-    if (companyData) {
-      setName(companyData?.name || '');
-      setWebsite(companyData?.website || '');
-      setBio(companyData?.bio || '');
-    }
-  }, [companyData]);
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      updateData(); // Call updateData after the mutation has completed
-    }
-  }, [mutation.isSuccess, updateData]);
 
   return (
     <Box>
@@ -192,6 +237,8 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                   value={name}
                   sx={{ mb: 2 }}
                   onChange={handleNameChange}
+                  error={Boolean(nameError)}
+                  helperText={nameError}
                   fullWidth
                 />
                 <TextField
@@ -201,6 +248,8 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                   value={website}
                   sx={{ mb: 2 }}
                   onChange={handleWebsiteChange}
+                  error={Boolean(websiteError)}
+                  helperText={websiteError}
                   fullWidth
                 />
                 <TextField
@@ -215,6 +264,15 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                 />
               </Grid>
               <Grid item xs={6}>
+                {fileError && (
+                  <Typography
+                    sx={({ palette }) => ({
+                      color: palette.error.main,
+                    })}
+                  >
+                    {fileError}
+                  </Typography>
+                )}
                 <Upload
                   id="companyImage"
                   title="Company Logo (Optional)"
@@ -223,14 +281,13 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                   changeHandler={handleLogoChange}
                   accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
                   maxWidth="200px"
-                  maxHeight="100px"
+                  maxHeight="90px"
                 />
                 <Button
                   variant="contained"
                   type="submit"
                   size="large"
                   onClick={handleSubmit}
-                  sx={{ mt: 2 }}
                   fullWidth
                 >
                   Edit Company
