@@ -30,7 +30,7 @@ export function parseCategoryId($id: string, strict = true) {
 }
 
 export function formatParamters(
-  parameters: CategoriesParameters[] | undefined
+  parameters: CategoriesParameters[] | undefined,
 ): CatgeoryParameter[] {
   const temp: CatgeoryParameter[] = [];
   if (parameters) {
@@ -82,7 +82,7 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(formatResponse(response)));
   })
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const { name, description, image, crossSectionImage, parameters } =
+    const { name, description, parameters } =
       categorySchema.post.body.parse(req.body);
 
     if (name != null && name.trim().length === 0) {
@@ -93,8 +93,8 @@ export default apiHandler()
       data: {
         name,
         description,
-        image,
-        crossSectionImage,
+        image: '',
+        crossSectionImage: '',
         categoriesParameters: {
           create: parameters,
         },
