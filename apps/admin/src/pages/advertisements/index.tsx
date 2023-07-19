@@ -40,10 +40,7 @@ const AdvertisementDashboard = () => {
         marginLeft: '1rem',
       }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={2}>
-            NAVBAR
-          </Grid>
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} md={9}>
             <AdSpaceSection totalClicks={totalClicks} adspace={adspace} />
           </Grid>
           <Grid item container xs={12} md={3} spacing={2}>

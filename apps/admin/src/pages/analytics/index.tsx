@@ -73,23 +73,19 @@ const Analytics = () => {
       marginLeft: '1rem',
     }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={2}>
-          NAVBAR
+        <Grid container item xs={12}>
+          <h1>Company</h1>
         </Grid>
-        <Grid container item xs={12} md={10} spacing={2}>
-          <Grid container item xs={12}>
-            <h1>Company</h1>
-          </Grid>
 
-          <Grid container item xs={6} md={4}>
-            <TopCompanies data={topCompanies} />
-          </Grid>
-          <Grid container item xs={6} md={4}>
-            <TopCompaniesBuySell data={topCompaniesBuySell} />
-          </Grid>
-          <Grid container item xs={6} md={4}>
-            <LineGraph data={buyingSellingData} />
-          </Grid>
+        <Grid container item xs={6} md={4}>
+          <TopCompanies data={topCompanies} />
+        </Grid>
+        <Grid container item xs={6} md={4}>
+          <TopCompaniesBuySell data={topCompaniesBuySell} />
+        </Grid>
+        <Grid container item xs={6} md={4}>
+          <LineGraph data={buyingSellingData} />
+        </Grid>
 
           <Grid container item xs={12}>
             <h1>Settlement</h1>
@@ -105,7 +101,6 @@ const Analytics = () => {
             <ActiveCategories data={activeCategories} />
           </Grid>
         </Grid>
-      </Grid>
     </Box>
   );
 };
