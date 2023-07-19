@@ -30,7 +30,7 @@ export default apiHandler({ allowAdminsOnly: true })
 
     const [s3Object] = await Promise.all([
       bucket.createObject(fileToS3Object(files[0])),
-      category.image ? bucket.deleteObject(category.image) : null,
+      category.image !== '' ? bucket.deleteObject(category.image) : null,
     ]);
 
 
