@@ -3,13 +3,16 @@ import { z } from 'zod';
 const id = z.string();
 const name = z.string();
 const email = z.string();
-const companyId = z.string();
+const company = z.object({
+  id: z.string(),
+  name: z.string(),
+});
 
 const invite = z.object({
   id,
   name,
   email,
-  companyId,
+  company,
 });
 
 // Response Schemas

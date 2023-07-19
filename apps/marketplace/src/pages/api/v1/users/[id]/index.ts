@@ -22,7 +22,12 @@ export default apiHandler()
         id: true,
         name: true,
         email: true,
-        companyId: true,
+        companies: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         createdAt: true,
         enabled: true,
         profilePicture: true,
@@ -46,7 +51,10 @@ export default apiHandler()
       id: user.id,
       name: user.name,
       email: user.email,
-      company: user.companyId.toString(),
+      company: {
+        id: user.companies.id.toString(),
+        name: user.companies.name,
+      },
       createdAt: user.createdAt,
       enabled: user.enabled,
       profilePic: user.profilePicture,
@@ -180,13 +188,19 @@ export default apiHandler()
         bio,
         comments: userComments,
       },
+      include: {
+        companies: true,
+      },
     });
 
     const mappedUser = {
       id: user.id,
       name: user.name,
       email: user.email,
-      company: user.companyId.toString(),
+      company: {
+        id: user.companies.id.toString(),
+        name: user.companies.name,
+      },
       createdAt: user.createdAt,
       enabled: user.enabled,
       profilePic: user.profilePicture,

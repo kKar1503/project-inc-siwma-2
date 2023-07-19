@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "module": "CommonJS",
+    "target": "ESNext",
+    "outDir": "./dist"
+  },
+  "include": ["index.ts"],
+  "exclude": ["node_modules", "esbuild.config.js", "dist"]
+}
