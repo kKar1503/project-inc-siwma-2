@@ -1,4 +1,5 @@
 import { apiHandler, formatAPIResponse, formatMessageResponse } from '@/utils/api';
+import { ChatRoom } from '@/utils/api/client/zod/chat';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors';
 
@@ -47,13 +48,17 @@ export async function checkChatExists(chatId: string) {
       },
       listingRoomsListingTolisting: {
         select: {
+          listingItem: {
+            select: {
+              name: true,
+              unit: true,
+            },
+          },
           id: true,
-          name: true,
           price: true,
-          unitPrice: true,
           type: true,
-          multiple: true,
-          offersOffersListingTolistings: {
+          quantity: true,
+          offers: {
             select: {
               id: true,
               messages: {
@@ -119,7 +124,7 @@ export default apiHandler().get(async (req, res) => {
   }
 
   // Format chats
-  const formattedResponse = {
+  const formattedResponse: ChatRoom = {
     id: chat.id,
     seller: {
       id: chat.usersRoomsSellerTousers.id,
@@ -135,17 +140,15 @@ export default apiHandler().get(async (req, res) => {
     },
     listing: {
       id: chat.listingRoomsListingTolisting.id.toString(),
-      name: chat.listingRoomsListingTolisting.name,
+      name: chat.listingRoomsListingTolisting.listingItem.name,
       price: chat.listingRoomsListingTolisting.price.toNumber(),
-      unitPrice: chat.listingRoomsListingTolisting.unitPrice,
+      unit: chat.listingRoomsListingTolisting.listingItem.unit,
       type: chat.listingRoomsListingTolisting.type,
       // Whether or not the listing is still available for purchase
-      open:
-        chat.listingRoomsListingTolisting.multiple ||
-        chat.listingRoomsListingTolisting.offersOffersListingTolistings.length === 0,
+      open: chat.listingRoomsListingTolisting.quantity.toNumber() > 0,
       // Whether or not the user has purchased the listing
       purchased:
-        chat.listingRoomsListingTolisting.offersOffersListingTolistings.filter(
+        chat.listingRoomsListingTolisting.offers.filter(
           (e) => e.messages[0].author === req.token?.user.id
         ).length > 0,
     },

@@ -7,8 +7,6 @@ export const getCategoriesQueryParameter = z.object({
 export const categoryRequestBody = z.object({
   name: z.string(),
   description: z.string(),
-  image: z.string(),
-  crossSectionImage: z.string(),
   parameters: z
     .object({
       parameterId: z.number(),
@@ -20,8 +18,6 @@ export const categoryRequestBody = z.object({
 const editCategoryRequestBody = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
-  image: z.string().optional(),
-  crossSectionImage: z.string().optional(),
   parameters: z
     .object({
       parameterId: z.number(),
