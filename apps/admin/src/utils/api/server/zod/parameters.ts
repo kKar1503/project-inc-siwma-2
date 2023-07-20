@@ -1,4 +1,4 @@
-import { DataType, ParameterType } from '@inc/db';
+import { DataType, ParameterType } from '@inc/db-enums';
 import { z } from 'zod';
 
 /**
