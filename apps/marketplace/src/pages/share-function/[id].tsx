@@ -20,6 +20,9 @@ const useGetUser = (userUuid: string) => {
 const ShareFunctionPage = () => {
   const router = useRouter();
   const userDetails = useGetUser('c9f22ccc-0e8e-42bd-9388-7f18a5520c26');
+  if (userDetails) {
+    console.log(userDetails)
+  }
   return (
     <>
       <Head>
@@ -31,7 +34,6 @@ const ShareFunctionPage = () => {
       <main>
         <Box sx={{ display: 'flex' }}>
           {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
-          <Box width={400}>hi</Box>
           <ListingCard />
         </Box>
       </main>
