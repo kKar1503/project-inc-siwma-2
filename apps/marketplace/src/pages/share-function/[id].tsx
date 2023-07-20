@@ -9,6 +9,7 @@ import { useQuery } from 'react-query';
 import fetchCompany from '@/middlewares/fetchCompany';
 import { useRouter } from 'next/router';
 import ListingCard from '@/components/ListingCard';
+import { useSession } from 'next-auth/react';
 
 const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userData', async () => fetchCompany(userUuid), {
@@ -19,9 +20,10 @@ const useGetUser = (userUuid: string) => {
 
 const ShareFunctionPage = () => {
   const router = useRouter();
-  const userDetails = useGetUser('c9f22ccc-0e8e-42bd-9388-7f18a5520c26');
+  const loggedUserUuid = useSession().data?.user.id as string;
+  const userDetails = useGetUser(loggedUserUuid);
   if (userDetails) {
-    console.log(userDetails)
+    console.log(userDetails);
   }
   return (
     <>
