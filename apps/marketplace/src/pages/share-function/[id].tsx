@@ -26,14 +26,12 @@ const ShareFunctionPage = () => {
   const loggedUserUuid = useSession().data?.user.id as string;
   const userDetails = useGetUser(loggedUserUuid);
   let listingIds;
-  console.log(router);
   if (userDetails) {
     console.log(userDetails);
   }
 
   if (router.query.id) {
     listingIds = splitString(router.query.id as string);
-    console.log(listingIds);
   }
   return (
     <>
@@ -49,7 +47,7 @@ const ShareFunctionPage = () => {
 
           {/* map listing cards based on listing Ids */}
           {listingIds?.map((id) => (
-            <ListingCard key={id} />
+            <ListingCard key={id} listingId={id} />
           ))}
         </Box>
       </main>
