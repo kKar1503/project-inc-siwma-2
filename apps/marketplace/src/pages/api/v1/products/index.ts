@@ -24,3 +24,49 @@ export default apiHandler()
 
     res.status(200).json(formatAPIResponse({ products }));
   })
+  .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
+    const body = productSchema.post.body.parse(req.body);
+
+    const product = await PrismaClient.listingItem.create({
+      data: {
+        name: body.name,
+        chineseName: body.chineseName,
+        description: body.description,
+        unit: body.unit,
+        chineseUnit: body.chineseUnit,
+        categoryId: body.categoryId,
+      },
+    });
+
+    res.status(200).json(formatAPIResponse({ product }));
+  })
+  .put(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
+    const body = productSchema.put.body.parse(req.body);
+
+    const product = await PrismaClient.listingItem.update({
+      where: {
+        id: body.id,
+      },
+      data: {
+        name: body.name,
+        chineseName: body.chineseName,
+        description: body.description,
+        unit: body.unit,
+        chineseUnit: body.chineseUnit,
+        categoryId: body.categoryId,
+      },
+    });
+
+    res.status(200).json(formatAPIResponse({ product }));
+  })
+  .delete(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
+    const params = productSchema.delete.parameters.parse(req.query);
+
+    await PrismaClient.listingItem.delete({
+      where: {
+        id: params.id,
+      },
+    });
+
+    res.status(204).end();
+  });
