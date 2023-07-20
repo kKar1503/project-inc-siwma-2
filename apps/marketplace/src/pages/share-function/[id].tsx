@@ -8,17 +8,18 @@ import { useTheme } from '@mui/material/styles';
 import { useQuery } from 'react-query';
 import fetchCompany from '@/middlewares/fetchCompany';
 import { useRouter } from 'next/router';
-import { useResponsiveness } from '@inc/ui';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import ChatIcon from '@mui/icons-material/Chat';
-import IconButton from '@mui/material/IconButton';
+import ListingCard from '@/components/ListingCard';
+
+const useGetUser = (userUuid: string) => {
+  const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+  return data;
+};
 
 const ShareFunctionPage = () => {
   const router = useRouter();
-
+  const userDetails = useGetUser('c9f22ccc-0e8e-42bd-9388-7f18a5520c26');
   return (
     <>
       <Head>
@@ -29,86 +30,8 @@ const ShareFunctionPage = () => {
       </Head>
       <main>
         <Box sx={{ display: 'flex' }}>
-          <p>hi</p>
-          <Paper
-            sx={({ spacing, shape }) => ({
-              py: spacing(2),
-              px: spacing(4),
-              width: 1,
-              ...shape,
-            })}
-          >
-            <Box sx={{ alignItems: 'center', display: 'flex' }}>
-              <Box sx={{ flexGrow: 1, alignItems: 'center', display: 'flex' }}>
-                <Typography
-                  sx={({ typography, spacing }) => ({
-                    fontSize: typography.h4,
-                    fontWeight: 'bold',
-                    mr: spacing(2),
-                  })}
-                >
-                  Steel Bar Metal
-                </Typography>
-                <Box
-                  sx={({ palette, spacing }) => ({
-                    backgroundColor: '#34D399',
-                    borderRadius: 5,
-                    width: '80px',
-                    textAlign: 'center',
-                    p: spacing(1),
-                  })}
-                >
-                  <Typography
-                    sx={({ typography, palette }) => ({
-                      fontSize: typography.h5,
-                      fontWeight: 'auto',
-                      color: palette.common.white,
-                    })}
-                  >
-                    Buy
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box>
-                <IconButton sx={{ color: '#FFB743' }}>
-                  <BookmarkIcon fontSize="large" />
-                </IconButton>
-                <IconButton
-                  sx={({ palette, spacing }) => ({
-                    color: palette.common.black,
-                  })}
-                >
-                  <ChatIcon fontSize="large" />
-                </IconButton>
-              </Box>
-            </Box>
-
-            <Typography
-              sx={({ typography, spacing }) => ({
-                fontSize: typography.h5,
-                my: spacing(2),
-              })}
-            >
-              $999 kg / m
-            </Typography>
-            <Box display="flex" alignItems="center">
-              <Avatar />
-              <Typography
-                sx={({ spacing, typography }) => ({
-                  ml: spacing(2),
-                  fontSize: typography.h5,
-                })}
-              >
-                Hi Metal
-              </Typography>
-            </Box>
-            <Divider
-              sx={({ spacing }) => ({
-                my: spacing(2),
-              })}
-            />
-          </Paper>
+          {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
+          <ListingCard />
         </Box>
       </main>
     </>
