@@ -1,4 +1,4 @@
-import { ReasonType, UserContacts } from '@prisma/client';
+import { ReasonType, UserContacts } from '@inc/db-enums';
 import { z } from 'zod';
 
 const getUsersQuery = z

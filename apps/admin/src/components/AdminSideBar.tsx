@@ -24,6 +24,9 @@ import CategoryIcon from '@mui/icons-material/Category';
 import BusinessIcon from '@mui/icons-material/Business';
 import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
 import SettingsAccessibilityIcon from '@mui/icons-material/SettingsAccessibility';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import FeaturedPlayListOutlinedIcon from '@mui/icons-material/FeaturedPlayListOutlined';
+import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -74,6 +77,24 @@ const menuItems = [
         name: 'Parameters',
         link: '/categoryManagement/parameters',
         Icon: FormatListNumberedRtlIcon,
+      },
+    ],
+  },
+  {
+    
+    name: 'Listing Management',
+    link: '/listing',
+    Icon: FormatListBulletedIcon,
+    dropdown: [
+      {
+        name: 'All Listing',
+        link: '/listing/all-listing',
+        Icon: FeedOutlinedIcon,
+      },
+      {
+        name: 'Listing Items',
+        link: '/listing/listing-items',
+        Icon: FeaturedPlayListOutlinedIcon,
       },
     ],
   },

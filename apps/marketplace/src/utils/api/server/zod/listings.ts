@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ListingType } from '@prisma/client';
+import { ListingType } from '@inc/db-enums';
 import {
   zodDecodeToJson,
   zodParseToBoolean,

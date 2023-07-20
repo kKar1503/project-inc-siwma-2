@@ -1,5 +1,5 @@
 import { BaseError, ParamError, ParamInvalidError, ParamTypeError } from '@inc/errors';
-import { Messages } from '@prisma/client';
+import { Messages } from '@inc/db';
 import { z } from 'zod';
 import { ChatMessage } from './client/zod/chat';
 
