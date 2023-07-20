@@ -12,6 +12,8 @@ import placeholder from 'public/images/listing-placeholder.svg';
 import Grid from '@mui/material/Grid';
 import { useQuery } from 'react-query';
 import fetchListing from '@/middlewares/fetchListing';
+import { useMemo } from 'react';
+import { DateTime } from 'luxon';
 import ListingBadge from './listing/ListingBadge';
 
 export type ListingCardProps = {
@@ -50,9 +52,10 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               mr: spacing(2),
             })}
           >
-            Steel Bar Metal
+            {listingDetails?.name}
           </Typography>
-          <ListingBadge type="buy" />
+          {listingDetails?.type === 'BUY' && <ListingBadge type="buy" />}
+          {listingDetails?.type === 'SELL' && <ListingBadge type="sell" />}
         </Box>
 
         <Box>
@@ -85,7 +88,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
             fontSize: typography.h5,
           })}
         >
-          Hi Metal Pte Ltd
+          {listingDetails?.owner.company.name}
         </Typography>
       </Box>
       <Divider
@@ -119,7 +122,9 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               fontSize: typography.h6,
             })}
           >
-            100kg
+            {listingDetails?.quantity}
+            {/* how is this unit being written? */}
+            {listingDetails?.unit}
           </Typography>
         </Grid>
         <Grid item>
@@ -136,6 +141,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               fontSize: typography.h6,
             })}
           >
+            {/* no column for condition? */}
             Good
           </Typography>
         </Grid>
@@ -160,6 +166,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         })}
       >
         {/* Map parameters here */}
+        {/* parameters should be included in the endpoint */}
         <Grid item>
           <Typography
             sx={({ typography, palette }) => ({
@@ -254,6 +261,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         })}
       >
         Cross Section
+        {/* no cross section image? */}
       </Typography>
       <Box>
         <Image src={placeholder} alt="placeholder" />
@@ -276,6 +284,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               fontWeight: 'bold',
             })}
           >
+            {/* no metal grade column? */}
             Metal Grade
           </Typography>
           <Typography
@@ -293,6 +302,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               fontWeight: 'bold',
             })}
           >
+            {/* no certification column? */}
             Certification
           </Typography>
           <Typography
@@ -317,7 +327,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               fontSize: typography.h6,
             })}
           >
-            No
+            {listingDetails?.negotiable ? 'Yes' : 'No'}
           </Typography>
         </Grid>
         <Grid item>
@@ -334,6 +344,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               fontSize: typography.h6,
             })}
           >
+            {/* endpoint should return name of caetgory instead of id? */}
             Round Bars
           </Typography>
         </Grid>
@@ -351,7 +362,8 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               fontSize: typography.h6,
             })}
           >
-            3 days ago
+            {listingDetails &&
+              DateTime.fromISO(listingDetails.createdAt).toRelative({ locale: 'en-SG' })}
           </Typography>
         </Grid>
       </Grid>
