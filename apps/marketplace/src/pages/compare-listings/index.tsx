@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import SelectedListings from './SelectedListings';
+// import SelectedListings from './SelectedListings';
 import CompareDifferences from './CompareDifferences';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -68,7 +68,7 @@ const Compare = () => {
             >
                 Selected Listings
             </Typography>
-            <SelectedListings data={data} />
+            {/* <SelectedListings data={data} /> */}
 
             <Box
                 sx={({ spacing }) => ({
@@ -84,7 +84,7 @@ const Compare = () => {
                 >
                     Compare Differences
                 </Typography>
-                <CompareDifferences />
+                <CompareDifferences productIds={['2','3','5']}  />
             </Box>
         </Container>
     );

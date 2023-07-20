@@ -23,11 +23,7 @@ interface CompareDifferencesProps {
     productIds: string[];
 }
 
-
-
-
-const CompareDifferences: React.FC<CompareDifferencesProps> = ({ productIds }) => {
-    productIds = ['1', '2', '3'];
+const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
     const [listings, setListings] = useState<Listing[]>([]);
     console.log('Product IDs:', productIds);
     useEffect(() => {
@@ -55,16 +51,16 @@ const CompareDifferences: React.FC<CompareDifferencesProps> = ({ productIds }) =
             'Company',
         ],
         rows: [
-            { id: 'row1', data: ['Length: 355, Width: 255, Height: 44, Density: 150', 'Length: 400, Width: 300, Height: 50, Density: 200', 'Length: 450, Width: 350, Height: 55, Density: 250'] },
-            { id: 'row2', data: ['$ 999 / kg', '$ 1099 / kg', '$ 1199 / kg'] },
-            { id: 'row3', data: ['1000kg', '2000kg', '3000kg'] },
-            { id: 'row4', data: ['Good', 'Excellent', 'Fair'] },
-            { id: 'row5', data: ['Round Bars', 'Square Bars', 'Hexagonal Bars'] },
-            { id: 'row6', data: ['No', 'Yes', 'No'] },
-            { id: 'row7', data: ['S233', 'S244', 'S255'] },
-            { id: 'row8', data: ['S233', 'S244', 'S255'] },
-            { id: 'row9', data: ['image1', 'image2', 'image3'] },
-            { id: 'row10', data: ['Hi Metals Pte Ltd', 'MetalWorks Inc.', 'SteelCorp Ltd.'] },
+            { id: 'row1', data: listings.map(listing => listing.parameters ? `Length: ${listing.parameters.find(param => param.paramId === "2")?.value}, Width: ${listing.parameters.find(param => param.paramId === "4")?.value}, Height: ${listing.parameters.find(param => param.paramId === "21")?.value}` : '') },
+            { id: 'row2', data: listings.map(listing => `$ ${listing.price} / ${listing.unit}`) },
+            { id: 'row3', data: listings.map(listing => `${listing.quantity}`) },
+            { id: 'row4', data: listings.map(listing => listing.description) },
+            { id: 'row5', data: listings.map(listing => listing.categoryId) },
+            { id: 'row6', data: listings.map(listing => listing.negotiable ? 'Yes' : 'No') },
+            { id: 'row7', data: [] },
+            { id: 'row8', data: [] },
+            { id: 'row9', data:  listings.map(listing => listing.type) },
+            { id: 'row10', data: listings.map(listing => listing.owner.company.name) },
         ],
     };
 
@@ -72,13 +68,13 @@ const CompareDifferences: React.FC<CompareDifferencesProps> = ({ productIds }) =
         <TableContainer component={Paper}>
             <Table>
                 <TableHead>
-                    <TableRow>
-                        <TableCell>Key Specs</TableCell>
-                        <TableCell>Steel Metal Bar 1</TableCell>
-                        <TableCell>Steel Metal Bar 2</TableCell>
-                        <TableCell>Steel Metal Bar 3</TableCell>
-                    </TableRow>
-                </TableHead>
+                <TableRow>
+                    <TableCell>Key Specs</TableCell>
+                    {listings.map((listing, index) => (
+                        <TableCell key={index}>{listing.name}</TableCell>
+                    ))}
+                </TableRow>
+            </TableHead>
                 <TableBody>
                     {tableData.sideHeaders.map((header, index) => (
                         <TableRow key={header}>
@@ -93,5 +89,6 @@ const CompareDifferences: React.FC<CompareDifferencesProps> = ({ productIds }) =
         </TableContainer>
     );
 };
+
 
 export default CompareDifferences;
