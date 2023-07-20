@@ -32,7 +32,10 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
+import fetchUser from '@/middlewares/fetchUser';
 import { useRouter } from 'next/router';
+import { useQuery } from 'react-query';
+import { useSession } from 'next-auth/react';
 import { useResponsiveness } from '@inc/ui';
 
 const menuItems = [
@@ -122,7 +125,16 @@ const menuItems = [
   },
 ];
 
+const useGetUserQuery = (userUuid: string) => {
+  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+    enabled: userUuid !== undefined,
+  });
+
+  return data;
+};
+
 const AdminSideBar = () => {
+  const loginUser = useSession();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [user, setUser] = useState({ name: '', email: '', imageUrl: '' });
@@ -132,20 +144,25 @@ const AdminSideBar = () => {
   const customBlue = '#2962ff';
   const blueBackground = '#EAEFFC';
 
+  const loggedUserUuid = loginUser.data?.user.id as string;
+  const currentUser = useGetUserQuery(loggedUserUuid);
+
   // function that fetches the user info from backend
   function getUserInfo() {
     return {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      imageUrl: '/images/admin-bg.png',
+      name: currentUser?.name || (''),
+      email:currentUser?.email || (''),
+      imageUrl:currentUser?.profilePic ? `https://siwma-marketplace.s3.ap-southeast-1.amazonaws.com/${currentUser.profilePic}` : ('') ,
     };
   }
 
   useEffect(() => {
     // Assume that `getUserInfo` is a function that fetches the user info from backend
-    const userInfo = getUserInfo();
-    setUser(userInfo);
-  }, []);
+    if (currentUser) {
+      const userInfo = getUserInfo();
+      setUser(userInfo);
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     menuItems.forEach((item) => {
@@ -230,6 +247,8 @@ const AdminSideBar = () => {
     };
   }, [isSm, isMd, isLg, typography]);
 
+
+
   const drawer = (
     <Box
       sx={{
@@ -289,14 +308,23 @@ const AdminSideBar = () => {
                   />
                 </Box>
                 <ListItemText
-                  primary={item.name}
-                  primaryTypographyProps={{
-                    style: {
-                      color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
-                      font: '0.9rem Roboto, sans-serif',
-                    },
-                  }}
-                />
+          primary={
+            <Link 
+              href={item.link}
+              underline="none"
+              sx={{
+                color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
+                font: '0.9rem Roboto, sans-serif',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'none',
+                },
+              }}
+            >
+              {item.name}
+            </Link>
+          }
+        />
                 {item.dropdown &&
                   (openDropdown === item.name ? (
                     <ExpandMore />
