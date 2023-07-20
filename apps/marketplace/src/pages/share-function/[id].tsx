@@ -18,12 +18,22 @@ const useGetUser = (userUuid: string) => {
   return data;
 };
 
+// function to seperate string based on -
+const splitString = (str: string) => str.split('-');
+
 const ShareFunctionPage = () => {
   const router = useRouter();
   const loggedUserUuid = useSession().data?.user.id as string;
   const userDetails = useGetUser(loggedUserUuid);
+  let listingIds;
+  console.log(router);
   if (userDetails) {
     console.log(userDetails);
+  }
+
+  if (router.query.id) {
+    listingIds = splitString(router.query.id as string);
+    console.log(listingIds);
   }
   return (
     <>
@@ -36,7 +46,11 @@ const ShareFunctionPage = () => {
       <main>
         <Box sx={{ display: 'flex' }}>
           {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
-          <ListingCard />
+
+          {/* map listing cards based on listing Ids */}
+          {listingIds?.map((id) => (
+            <ListingCard key={id} />
+          ))}
         </Box>
       </main>
     </>
