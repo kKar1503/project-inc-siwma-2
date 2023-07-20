@@ -10,6 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import Image from 'next/image';
 import placeholder from 'public/images/listing-placeholder.svg';
 import Grid from '@mui/material/Grid';
+import { useQuery } from 'react-query';
+import fetchListing from '@/middlewares/fetchListing';
 import ListingBadge from './listing/ListingBadge';
 
 export type ListingCardProps = {
@@ -18,6 +20,17 @@ export type ListingCardProps = {
 
 const ListingCard = ({ listingId }: ListingCardProps) => {
   console.log(listingId);
+
+  const useFetchListingQuery = (listingId: string) => {
+    const { data } = useQuery(['user', listingId], async () => fetchListing(listingId), {
+      enabled: listingId !== undefined,
+    });
+
+    return data;
+  };
+
+  const listingDetails = useFetchListingQuery(listingId);
+  console.log(listingDetails);
 
   return (
     <Paper
