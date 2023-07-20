@@ -21,33 +21,13 @@ import {
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import { ZodError } from 'zod';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@inc/db';
 import { APIHandlerOptions, APIRequestType } from '@/types/api-types';
 import { S3Error } from '@inc/s3-simplified';
+import { NumberRangeError } from '@inc/errors/src';
 import { apiGuardMiddleware } from './middlewares/apiGuardMiddleware';
 import jwtMiddleware from './middlewares/jwtMiddleware';
-
-/**
- * Zod path to string
- */
-function zodPathToString(path: (string | number)[]) {
-  // Initialise result
-  let result = '';
-
-  // Iterate through each path
-  for (let i = 0; i < path.length; i++) {
-    // Check if it is a number
-    if (typeof path[i] === 'number') {
-      // It is a number, add it to the result
-      result += `[${path[i]}]`;
-    } else {
-      // It is a string, add it to the result
-      result += `${i > 0 ? '.' : ''}${path[i]}`;
-    }
-  }
-
-  return result;
-}
+import { zodPathToString } from '../apiHelper';
 
 /**
  * Zod error handler
@@ -55,6 +35,13 @@ function zodPathToString(path: (string | number)[]) {
 function handleZodError(error: ZodError) {
   // Iterate through each Zod Issue
   const result = error.issues.map((err) => {
+    // Check if it was a custom error
+    if (err.code === 'custom') {
+      // Yes it was, handle the custom error
+      // Return the error message
+      return err.params?.response as ErrorJSON;
+    }
+
     // Check if it was a type error
     if (err.code === 'invalid_type') {
       // Yes it was
@@ -80,10 +67,19 @@ function handleZodError(error: ZodError) {
       return new ParamInvalidError(zodPathToString(err.path), err.received, err.options).toJSON();
     }
 
-    // Check if it was because the string was too short
+    // Check if it was because the value was too short
     if (err.code === 'too_small') {
-      // Yes it was, return a param error
-      return new ParamTooShortError(zodPathToString(err.path), Number(err.minimum)).toJSON();
+      // Check if the string was too short
+      if (err.type === 'string') {
+        // Yes it was, return a param error
+        return new ParamTooShortError(zodPathToString(err.path), Number(err.minimum)).toJSON();
+      }
+
+      // Check if the number was too small
+      if (err.type === 'number') {
+        // Yes it was, return a param error
+        return new NumberRangeError(zodPathToString(err.path), Number(err.minimum)).toJSON();
+      }
     }
 
     // Check if it was a invalid_union error
