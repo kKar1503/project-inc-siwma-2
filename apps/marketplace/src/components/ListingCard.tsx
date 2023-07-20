@@ -1,25 +1,16 @@
-import Head from 'next/head';
-import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { useMemo } from 'react';
-import { useTheme } from '@mui/material/styles';
-import { useQuery } from 'react-query';
-import fetchCompany from '@/middlewares/fetchCompany';
-import { useRouter } from 'next/router';
-import { useResponsiveness } from '@inc/ui';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import ChatIcon from '@mui/icons-material/Chat';
 import IconButton from '@mui/material/IconButton';
-import CardMedia from '@mui/material/CardMedia';
 import Image from 'next/image';
 import placeholder from 'public/images/listing-placeholder.svg';
 import Grid from '@mui/material/Grid';
-
+import ListingBadge from './listing/ListingBadge';
 
 const ListingCard = () => (
   <Paper
@@ -34,32 +25,14 @@ const ListingCard = () => (
       <Box sx={{ flexGrow: 1, alignItems: 'center', display: 'flex' }}>
         <Typography
           sx={({ typography, spacing }) => ({
-            fontSize: typography.h4,
+            fontSize: typography.h5,
             fontWeight: 'bold',
             mr: spacing(2),
           })}
         >
           Steel Bar Metal
         </Typography>
-        <Box
-          sx={({ palette, spacing }) => ({
-            backgroundColor: '#34D399',
-            borderRadius: 5,
-            width: '80px',
-            textAlign: 'center',
-            p: spacing(1),
-          })}
-        >
-          <Typography
-            sx={({ typography, palette }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'auto',
-              color: palette.common.white,
-            })}
-          >
-            Buy
-          </Typography>
-        </Box>
+        <ListingBadge type="buy" />
       </Box>
 
       <Box>
@@ -104,10 +77,12 @@ const ListingCard = () => (
 
     <Grid
       container
+      spacing={5}
+      rowSpacing={1}
+      columnSpacing={{ xs: 1, sm: 2, md: 3 }}
       sx={({ spacing }) => ({
         display: 'flex',
         flexDirection: 'row',
-        gap: spacing(5),
       })}
     >
       <Grid item>
@@ -156,10 +131,12 @@ const ListingCard = () => (
     </Typography>
     <Grid
       container
+      spacing={5}
+      rowSpacing={1}
+      columnSpacing={{ xs: 1, sm: 2, md: 3 }}
       sx={({ spacing }) => ({
         display: 'flex',
         flexDirection: 'row',
-        gap: spacing(5),
       })}
     >
       {/* Map parameters here */}
@@ -231,7 +208,7 @@ const ListingCard = () => (
           69
         </Typography>
       </Grid>
-      <Box>
+      <Grid item>
         <Typography
           sx={({ typography, palette }) => ({
             fontSize: typography.h6,
@@ -247,7 +224,7 @@ const ListingCard = () => (
         >
           69
         </Typography>
-      </Box>
+      </Grid>
     </Grid>
     <Typography
       sx={({ spacing, typography }) => ({
@@ -263,11 +240,13 @@ const ListingCard = () => (
     </Box>
     <Grid
       container
+      spacing={5}
+      rowSpacing={1}
+      columnSpacing={{ xs: 1, sm: 2, md: 3 }}
       sx={({ spacing }) => ({
         display: 'flex',
         flexDirection: 'row',
-        gap: spacing(5),
-        mt: spacing(2),
+        my: spacing(2),
       })}
     >
       <Grid item>
@@ -338,28 +317,24 @@ const ListingCard = () => (
           Round Bars
         </Typography>
       </Grid>
+      <Grid item>
+        <Typography
+          sx={({ typography }) => ({
+            fontSize: typography.h5,
+            fontWeight: 'bold',
+          })}
+        >
+          Posted on
+        </Typography>
+        <Typography
+          sx={({ typography }) => ({
+            fontSize: typography.h6,
+          })}
+        >
+          3 days ago
+        </Typography>
+      </Grid>
     </Grid>
-    <Box
-      sx={({ spacing }) => ({
-        my: spacing(2),
-      })}
-    >
-      <Typography
-        sx={({ typography }) => ({
-          fontSize: typography.h5,
-          fontWeight: 'bold',
-        })}
-      >
-        Posted on
-      </Typography>
-      <Typography
-        sx={({ typography }) => ({
-          fontSize: typography.h6,
-        })}
-      >
-        3 days ago
-      </Typography>
-    </Box>
   </Paper>
 );
 

@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import ListingCard from '@/components/ListingCard';
 
 const useGetUser = (userUuid: string) => {
-  const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
+  const { data } = useQuery('userData', async () => fetchCompany(userUuid), {
     enabled: userUuid !== undefined,
   });
   return data;
@@ -31,6 +31,7 @@ const ShareFunctionPage = () => {
       <main>
         <Box sx={{ display: 'flex' }}>
           {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
+          <Box width={400}>hi</Box>
           <ListingCard />
         </Box>
       </main>
