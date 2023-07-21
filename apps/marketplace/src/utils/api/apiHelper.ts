@@ -33,6 +33,28 @@ const parseToNumber = (string: string, key: string | undefined, toInt?: boolean)
 };
 
 /**
+ * Zod path to string
+ */
+const zodPathToString = (path: (string | number)[]) => {
+  // Initialise result
+  let result = '';
+
+  // Iterate through each path
+  for (let i = 0; i < path.length; i++) {
+    // Check if it is a number
+    if (typeof path[i] === 'number') {
+      // It is a number, add it to the result
+      result += `[${path[i]}]`;
+    } else {
+      // It is a string, add it to the result
+      result += `${i > 0 ? '.' : ''}${path[i]}`;
+    }
+  }
+
+  return result;
+}
+
+/**
  * Parses a string to a number
  * @param string The string to parse
  * @param ctx The zod error context
@@ -42,7 +64,7 @@ const parseToNumber = (string: string, key: string | undefined, toInt?: boolean)
 const zodParseToNumber = (string: string, ctx: z.RefinementCtx, toInt?: boolean) => {
   // Attempt to parse from string to a number
   try {
-    const result = parseToNumber(string, String(ctx.path), toInt);
+    const result = parseToNumber(string, zodPathToString(ctx.path), toInt);
     return result;
   } catch (error) {
     // An error occurred, add to zod error
@@ -82,7 +104,7 @@ const zodParseToBoolean = ($string: string, ctx: z.RefinementCtx) => {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       params: {
-        response: new ParamInvalidError(String(ctx.path), string, ['true', 'false']),
+        response: new ParamInvalidError(zodPathToString(ctx.path), string, ['true', 'false']),
       },
     });
 
@@ -113,7 +135,7 @@ const zodDecodeToJson = ($string: unknown, ctx: z.RefinementCtx) => {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       params: {
-        response: new ParamTypeError(String(ctx.path), 'object', typeof $string),
+        response: new ParamTypeError(zodPathToString(ctx.path), 'object', typeof $string),
       },
     });
 
@@ -192,6 +214,7 @@ export {
   parseToNumber,
   parseArray,
   formatAPIResponse,
+  zodPathToString,
   zodParseToNumber,
   zodParseToInteger,
   zodParseToBoolean,
