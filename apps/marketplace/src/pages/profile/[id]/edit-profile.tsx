@@ -33,7 +33,6 @@ import fetchCompany from '@/middlewares/fetchCompany';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
-import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useTranslation } from 'react-i18next';
 
 export type ProfilePageProps = {
@@ -52,29 +51,11 @@ const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
     updateUser(updatedUserData, userUuid, profilePicture)
   );
 
-const useGetReview = (userUuid: string, sortBy?: string) => {
-  const { data } = useQuery(
-    ['reviewdata', userUuid, sortBy],
-    async () => {
-      if (sortBy) {
-        return fetchProfilesReview(userUuid, sortBy);
-      }
-      return fetchProfilesReview(userUuid);
-    },
-    {
-      enabled: userUuid !== undefined || sortBy !== undefined,
-    }
-  );
-
-  return data;
-};
-
 const EditProfile = () => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
   const userDetails = useGetUserQuery(id);
-  const userReviews = useGetReview(id);
   const theme = useTheme();
   const { spacing } = theme;
   const router = useRouter();
@@ -320,7 +301,7 @@ const EditProfile = () => {
       </Head>
 
       <Grid sx={gridCols}>
-        {userDetails && <ProfileDetailCard data={userDetails} reviewData={userReviews} />}
+        {userDetails && <ProfileDetailCard data={userDetails} />}
         <Box
           sx={{
             display: 'flex',
