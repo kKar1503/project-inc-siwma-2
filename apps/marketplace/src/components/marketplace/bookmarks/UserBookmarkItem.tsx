@@ -50,7 +50,7 @@ const UserBookmarkItem = ({ user, updateBookmarkData }: UserBookmarkItemProps) =
       return;
     }
 
-    if (!data) {
+    if (data === false) {
       updateBookmarkData();
       return;
     }
