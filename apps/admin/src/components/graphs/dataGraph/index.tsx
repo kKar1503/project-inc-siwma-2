@@ -14,7 +14,7 @@ export interface DataGraphFormatElement {
 
 export interface DataGraphProps {
   data: DataGraphElement[];
-  format: Array<DataGraphFormatElement>;
+  format: Array<DataGraphFormatElement | string>;
   style: {
     fillColor: string;
     hoverColor: string;
@@ -23,8 +23,8 @@ export interface DataGraphProps {
 }
 
 const DataGraph = ({ data, format, style,children }: DataGraphProps) => {
-  const tickValues = format.map((item) => item.id);
-  const tickFormat = format.map((item) => item.display);
+  const tickValues = format.map((item, index) => typeof item === 'string' ? index + 1 : item.id);
+  const tickFormat = format.map((item) => typeof item === 'string' ? item : item.display);
   return (
     <VictoryChart
       // adding the material theme provided with Victory

@@ -3,14 +3,14 @@ import Title from '@/components/graphs/overlay/title';
 import DataGraph from '@/components/graphs/dataGraph';
 
 const format = [
-  { id: 1, display: 'Cat 1' },
-  { id: 2, display: 'Cat 2' },
-  { id: 3, display: 'Cat 3' },
-  { id: 4, display: 'Cat 4' },
-  { id: 5, display: 'Cat 5' },
-  { id: 6, display: 'Cat 6' },
-  { id: 7, display: 'Cat 7' },
-  { id: 8, display: 'Cat 8' },
+  'Cat 1',
+  'Cat 2',
+  'Cat 3',
+  'Cat 4',
+  'Cat 5',
+  'Cat 6',
+  'Cat 7',
+  'Cat 8',
 ];
 
 export interface TopCategoriesProps {
