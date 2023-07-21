@@ -83,8 +83,10 @@ const Form = () => {
   const gridCols = useMemo(() => {
     if (isSm) {
       return {
-        py: spacing(3),
-        px: '20px',
+        pt: spacing(3),
+        pr: '20px',
+        pl: '20px',
+        pb: spacing(3),
         height: '100%;',
         width: '100%',
         justifyContent: 'center',
@@ -92,8 +94,10 @@ const Form = () => {
     }
     if (isMd) {
       return {
-        py: spacing(3),
-        px: '40px',
+        pt: spacing(3),
+        pb: spacing(3),
+        pr: '40px',
+        pl: '40px',
         height: '100%;',
         width: '100%',
         justifyContent: 'center',
@@ -101,8 +105,10 @@ const Form = () => {
     }
     if (isLg) {
       return {
-        py: spacing(3),
-        px: '60px',
+        pt: spacing(3),
+        pb: spacing(3),
+        pr: '60px',
+        pl: '60px',
         height: '100%;',
         width: '100%',
         display: 'flex',
@@ -140,7 +146,7 @@ const Form = () => {
             sx={{
               fontWeight: 'bold',
               fontSize: '20px',
-              pb: '40px',
+              pb: '30px',
             }}
           >
             Create Listing Item
@@ -192,12 +198,7 @@ const Form = () => {
           helperText={formErrors.description}
         />
 
-        <Select
-          sx={({ spacing }) => ({
-            width: '100%',
-          })}
-          label="Category"
-        ></Select>
+        <Select sx={{ width: '100%' }} label="Category"></Select>
 
         <TextField
           label="Unit"
@@ -208,7 +209,7 @@ const Form = () => {
             mt: spacing(3),
             width: '100%',
           })}
-          name="description"
+          name="unit"
           value={formValues.unit}
           onChange={handleChange}
           error={formErrors.unit !== ''}
@@ -223,7 +224,7 @@ const Form = () => {
             pb: spacing(1),
             width: '100%',
           })}
-          name="description"
+          name="unitChinese"
           value={formValues.unitChinese}
           onChange={handleChange}
           error={formErrors.unitChinese !== ''}
@@ -241,7 +242,7 @@ const Form = () => {
             onClick={handleClickOpen}
             variant="contained"
             sx={({ spacing }) => ({
-              width: '10%',
+              width: '20%',
               mt: spacing(1),
               mb: spacing(1),
             })}
