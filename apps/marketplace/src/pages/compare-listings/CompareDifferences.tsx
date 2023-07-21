@@ -7,88 +7,105 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import fetchListing from '@/middlewares/fetchListing';
+import fetchCatById from '@/middlewares/fetchCatById';
 import { Listing } from '@/utils/api/client/zod/listings';
+import { Category } from '@/utils/api/client/zod/categories';
 
 interface TableRowData {
-    id: string;
-    data: string[];
+  id: string;
+  data: string[];
 }
 
 interface TableData {
-    sideHeaders: string[];
-    rows: TableRowData[];
+  sideHeaders: string[];
+  rows: TableRowData[];
 }
 
 interface CompareDifferencesProps {
-    productIds: string[];
+  productIds: string[];
 }
 
 const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
-    const [listings, setListings] = useState<Listing[]>([]);
-    console.log('Product IDs:', productIds);
-    useEffect(() => {
-        const fetchListings = async () => {
-            const listings = await Promise.all(productIds.map((id) => fetchListing(id)));
-            setListings(listings);
-        };
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [category, setCategory] = useState<Category[]>([]);
 
-        fetchListings();
-    }, [productIds]);
-
-    console.log('Listings:', listings);
-
-    const tableData: TableData = {
-        sideHeaders: [
-            'Dimensions',
-            'Price ($)',
-            'Stock',
-            'Condition',
-            'Category',
-            'Negotiable',
-            'Metal Grade',
-            'Cross Section Image',
-            'Type',
-            'Company',
-        ],
-        rows: [
-            { id: 'row1', data: listings.map(listing => listing.parameters ? `Length: ${listing.parameters.find(param => param.paramId === "2")?.value}, Width: ${listing.parameters.find(param => param.paramId === "4")?.value}, Height: ${listing.parameters.find(param => param.paramId === "21")?.value}` : '') },
-            { id: 'row2', data: listings.map(listing => `$ ${listing.price} / ${listing.unit}`) },
-            { id: 'row3', data: listings.map(listing => `${listing.quantity}`) },
-            { id: 'row4', data: listings.map(listing => listing.description) },
-            { id: 'row5', data: listings.map(listing => listing.categoryId) },
-            { id: 'row6', data: listings.map(listing => listing.negotiable ? 'Yes' : 'No') },
-            { id: 'row7', data: [] },
-            { id: 'row8', data: [] },
-            { id: 'row9', data:  listings.map(listing => listing.type) },
-            { id: 'row10', data: listings.map(listing => listing.owner.company.name) },
-        ],
+  console.log('Product IDs:', productIds);
+  useEffect(() => {
+    const fetchListings = async () => {
+      const listings = await Promise.all(productIds.map((id) => fetchListing(id)));
+      const categories = await Promise.all(
+        listings.map((listing) => fetchCatById(listing.categoryId))
+      );
+      setCategory(categories);
+      setListings(listings);
     };
+    fetchListings();
+  }, [productIds]);
+  console.log('Listings:', listings);
+  console.log('Category:', category);
 
-    return (
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                <TableRow>
-                    <TableCell>Key Specs</TableCell>
-                    {listings.map((listing, index) => (
-                        <TableCell key={index}>{listing.name}</TableCell>
-                    ))}
-                </TableRow>
-            </TableHead>
-                <TableBody>
-                    {tableData.sideHeaders.map((header, index) => (
-                        <TableRow key={header}>
-                            <TableCell>{header}</TableCell>
-                            {tableData.rows[index]?.data.map((cellData) => (
-                                <TableCell key={cellData}>{cellData}</TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
+  const tableData: TableData = {
+    sideHeaders: [
+      'Dimensions',
+      'Price ($)',
+      'Stock',
+      'Condition',
+      'Category',
+      'Negotiable',
+      'Metal Grade',
+      'Cross Section Image',
+      'Type',
+      'Company',
+    ],
+    rows: [
+      {
+        id: 'row1',
+        data: listings.map((listing) =>
+          listing.parameters
+            ? `Length: ${
+                listing.parameters.find((param) => param.paramId === '2')?.value
+              }, Width: ${
+                listing.parameters.find((param) => param.paramId === '4')?.value
+              }, Height: ${listing.parameters.find((param) => param.paramId === '21')?.value}`
+            : ''
+        ),
+      },
+      { id: 'row2', data: listings.map((listing) => `$ ${listing.price} / ${listing.unit}`) },
+      { id: 'row3', data: listings.map((listing) => `${listing.quantity}`) },
+      { id: 'row4', data: listings.map((listing) => listing.description) },
+      { id: 'row5', data: listings.map((listing) => listing.categoryId) },
+      { id: 'row6', data: listings.map((listing) => (listing.negotiable ? 'Yes' : 'No')) },
+      { id: 'row7', data: [] },
+      { id: 'row8', data: [] },
+      { id: 'row9', data: listings.map((listing) => listing.type) },
+      { id: 'row10', data: listings.map((listing) => listing.owner.company.name) },
+    ],
+  };
+
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Key Specs</TableCell>
+            {listings.map((listing, index) => (
+              <TableCell key={index}>{listing.name}</TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tableData.sideHeaders.map((header, index) => (
+            <TableRow key={header}>
+              <TableCell>{header}</TableCell>
+              {tableData.rows[index]?.data.map((cellData) => (
+                <TableCell key={cellData}>{cellData}</TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 };
-
 
 export default CompareDifferences;
