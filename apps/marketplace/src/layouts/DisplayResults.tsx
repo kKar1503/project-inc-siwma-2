@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
-import { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
+import { FilterOptions, SortingOptions } from '@/services/searchListings';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTranslation } from 'react-i18next';
 

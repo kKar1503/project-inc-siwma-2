@@ -1,29 +1,29 @@
+// ** React Imports
 import React, { useState, useEffect, useCallback } from 'react';
+
+// ** MUI Imports
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
-import UserBookmarks from '@/components/marketplace/bookmarks/userBookmarks';
+// ** Custom Components Imports
+import UserBookmarks from '@/components/marketplace/bookmarks/UserBookmarks';
 
-import fetchUser from '@/middlewares/fetchUser';
-import fetchListing from '@/middlewares/fetchListing';
+// ** Type Imports
+import type { Listing } from '@/utils/api/client/zod/listings';
+import type { User } from '@/utils/api/client/zod/users';
 
-import { Listing } from '@/utils/api/client/zod/listings';
-import { User } from '@/utils/api/client/zod/users';
-
+// ** Hooks Imports
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
-
 import { useTranslation } from 'react-i18next';
+import useUser from '@/services/fetchUser';
+import fetchListing from '@/services/fetchListing';
 
 export type BookmarkTypeProps = 'LISTINGS' | 'USERS';
 
-export type RawUserProps = {
-  data: User[];
-};
-
 const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery(['user', userUuid], async () => fetchUser(userUuid));
+  const { data } = useQuery(['user', userUuid], async () => useUser(userUuid));
 
   return data;
 };
@@ -59,7 +59,7 @@ const Bookmarks = () => {
       return;
     }
 
-    const usersData = await Promise.all(userIDs.map(fetchUser));
+    const usersData = await Promise.all(userIDs.map(useUser));
     setUsers(usersData);
   };
 
@@ -73,7 +73,7 @@ const Bookmarks = () => {
   }, [userDetails]);
 
   const updateBookmarkData = async () => {
-    const updatedUserDetails = await fetchUser(loggedUserUuid);
+    const updatedUserDetails = await useUser(loggedUserUuid);
     const updatedBookmarkData = updatedUserDetails?.bookmarks;
 
     if (updatedBookmarkData) {

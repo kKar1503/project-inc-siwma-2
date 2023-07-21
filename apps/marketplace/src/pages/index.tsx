@@ -9,8 +9,8 @@ import { useQuery } from 'react-query';
 import Carousel from '@/components/marketplace/carousel/AdvertisementCarousel';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 
-import fetchCategories from '@/middlewares/fetchCategories';
-import fetchAdvertisements from '@/middlewares/fetchAdvertisements';
+import fetchCategories from '@/services/fetchCategories';
+import fetchAdvertisements from '@/services/fetchAdvertisements';
 
 import { useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
@@ -112,7 +112,7 @@ const Marketplace = () => {
             </Link>
           </Box>
         </Box>
-        <Box display="flex" justifyContent="center" paddingTop="2em" sx={{mb: 4}}>
+        <Box display="flex" justifyContent="center" paddingTop="2em" sx={{ mb: 4 }}>
           <Grid container spacing={2}>
             {categories?.map((category) => (
               <Grid item xl={2} lg={3} md={4} xs={6} key={category.name}>

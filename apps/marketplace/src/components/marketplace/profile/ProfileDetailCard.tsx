@@ -18,11 +18,11 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useEffect, useMemo, useState } from 'react';
-import fetchUser from '@/middlewares/fetchUser';
-import useBookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
+import useUser from '@/services/fetchUser';
 import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import useBookmarkUser from '@/services/bookmarks/useBookmarkUser';
 
 export type ProfileDetailCardProps =
   | {
@@ -49,7 +49,7 @@ export type ProfileDetailCardData = {
 };
 
 const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(userUuid), {
+  const { data } = useQuery('user', async () => useUser(userUuid), {
     enabled: userUuid !== undefined,
   });
 

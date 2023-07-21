@@ -21,7 +21,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import type { User } from '@/utils/api/client/zod/users';
 
 // ** Middleware Imports
-import useBookmarkUser from '@/middlewares/bookmarks/useBookmarkUser';
+import useBookmarkUser from '@/services/bookmarks/useBookmarkUser';
 
 export type UserBookmarkItemProps = {
   user: User;

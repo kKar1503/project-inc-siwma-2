@@ -4,11 +4,12 @@ import Box from '@mui/material/Box';
 import { useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useQuery } from 'react-query';
-import fetchCompany from '@/middlewares/fetchCompany';
+import fetchCompany from '@/services/fetchCompany';
 import { useRouter } from 'next/router';
 import { useResponsiveness } from '@inc/ui';
 
 const useGetUser = (userUuid: string) => {
+  console.log({ userUuid });
   const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
     enabled: userUuid !== undefined,
   });
@@ -17,6 +18,7 @@ const useGetUser = (userUuid: string) => {
 
 const ProfilePage = () => {
   const id = useRouter().query.id as string;
+  console.log(id);
   const userDetails = useGetUser(id);
 
   const theme = useTheme();
@@ -68,9 +70,7 @@ const ProfilePage = () => {
       </Head>
       <main>
         <Box sx={spaceStyle}>
-          {userDetails && (
-            <ProfileDetailCard data={userDetails} visibleEditButton />
-          )}
+          {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
           <Box
             sx={{
               width: isLg ? '73%' : '100%',
