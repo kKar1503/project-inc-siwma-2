@@ -1,11 +1,22 @@
-import DisplayResults, { HeaderDisplayText } from '@/layouts/DisplayResults';
+// ** React Imports
+import React from 'react';
+
+// ** Mui Imports
 import Grid from '@mui/material/Grid';
-import UserItem from '@/components/marketplace/user/UserItem';
-import { User } from '@/utils/api/client/zod/users';
+
+// ** Custom Components Imports
+import DisplayResults, { HeaderDisplayText } from '@/layouts/DisplayResults';
+import UserBookmarkItem from '@/components/marketplace/bookmarks/UserBookmarkItem';
+
+// ** Hooks Import
 import { useTranslation } from 'react-i18next';
+
+// ** Types Imports
+import type { User } from '@/utils/api/client/zod/users';
 
 export type UserBookmarksProps = {
   users: User[];
+  /** Callback function to inform the update of bookmark data */
   updateBookmarkData: () => void;
 };
 
@@ -14,8 +25,10 @@ export type UserBookmarksProps = {
  * a list of users that are bookmarked.
  */
 const UserBookmarks = ({ users, updateBookmarkData }: UserBookmarksProps) => {
+  // ** Hooks
   const { t } = useTranslation();
 
+  // ** Vars
   const header: HeaderDisplayText = {
     title: {
       single: t('User'),
@@ -30,7 +43,7 @@ const UserBookmarks = ({ users, updateBookmarkData }: UserBookmarksProps) => {
         <Grid container display="flex" spacing={1}>
           {users.map((user) => (
             <Grid item xs={6} md={4} lg={3} key={user.name}>
-              <UserItem user={user} updateBookmarkData={updateBookmarkData} />
+              <UserBookmarkItem user={user} updateBookmarkData={updateBookmarkData} />
             </Grid>
           ))}
         </Grid>
