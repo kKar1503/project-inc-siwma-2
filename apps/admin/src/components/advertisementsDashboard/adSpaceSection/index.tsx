@@ -10,6 +10,7 @@ import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { Company } from '@/utils/api/client/zod';
 import UpdateAdvertisement from '@/middlewares/advertisements/updateAdvertisement';
 import { useState } from 'react';
+import deleteAdvertisement from '@/middlewares/advertisements/deleteAdvertisement';
 
 export interface AdvertisementDashboardProps {
   totalClicks: number;
@@ -61,7 +62,13 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   };
 
   const onDelete = (ids: readonly string[]) => {
-
+    Promise.all(ids.map((id) => deleteAdvertisement(id))).then(() => {
+      const newAdvertisements = { ...mutatedAdvertisements };
+      ids.forEach((id) => {
+        newAdvertisements[id] = false;
+      });
+      setMutatedAdvertisements(newAdvertisements);
+    });
   };
 
   const onEdit = (id: string) => {
