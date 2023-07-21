@@ -6,46 +6,30 @@ import { useQueries, UseQueryResult } from 'react-query';
 import fetchAdClicksData, { FetchAdClicksDataResponse } from '@/middlewares/fetchAdClicksData';
 import { useMemo } from 'react';
 import Box from '@mui/material/Box';
-import fetchAdvertisements from '@/middlewares/advertisements/fetchAdvertisements';
-import { Advertisment } from '@/utils/api/client/zod/advertisements';
-import fetchCompanies from '@/middlewares/companies/fetchCompanies';
-import { Company } from '@/utils/api/client/zod';
 
 const mapData = (
   adClicksData: UseQueryResult<FetchAdClicksDataResponse>,
-  advertisementsQuery: UseQueryResult<Advertisment[]>,
-  companiesQuery: UseQueryResult<Company[]>,
   ) => {
   const totalClicks = adClicksData.data?.data.reduce((acc, item) => acc + item.clicks, 0) ?? 0;
   const companyClicks = adClicksData.data?.data.map((item) => ({
     company: item.company,
     clicks: item.clicks,
   })) ?? [];
-  const advertisements = advertisementsQuery.data?.map(i =>{
-    const company = companiesQuery.data?.find((c) => c.id === i.companyId);
-    return {
-      ...i,
-      company: company?.name ?? '',
-    };
-  }) || [];
   const activeData = [5, 1, 2, 4, 4, 2, 4, 2, 3, 4, 0, 0];
-  return { totalClicks, advertisements, companyClicks, activeData };
+  return { totalClicks, companyClicks, activeData };
 };
 
 const AdvertisementDashboard = () => {
-  const [adClicksData, advertisementsQuery,companiesQuery] = useQueries([
+  const [adClicksData] = useQueries([
     { queryKey: 'adClicks', queryFn: () => fetchAdClicksData() },
-    { queryKey: 'advertisements', queryFn: () => fetchAdvertisements() },
-    { queryKey: 'companies', queryFn: () => fetchCompanies() },
   ]);
 
 
   const {
     totalClicks,
-    advertisements,
     companyClicks,
     activeData,
-  } = useMemo(() => mapData(adClicksData, advertisementsQuery,companiesQuery), [advertisementsQuery, adClicksData,companiesQuery]);
+  } = useMemo(() => mapData(adClicksData), [adClicksData]);
 
   return (
       <Box style={{
