@@ -18,6 +18,7 @@ export interface BaseTableData {
 }
 
 type BaseTableProps = {
+  heading: string;
   headers: Header[];
   rows: BaseTableData[];
   rowsPerPageOptions: React.ComponentProps<typeof TablePagination>['rowsPerPageOptions'];
@@ -26,13 +27,14 @@ type BaseTableProps = {
   onRowsPerPageChange: React.ComponentProps<typeof TablePagination>['onRowsPerPageChange'];
   onEdit: (row: BaseTableData) => void;
   onToggle: (toggled: boolean, rows: readonly BaseTableData[]) => void;
-  onDelete: (rows: readonly BaseTableData[]) => void;
+  onDelete: (rows: readonly BaseTableData[]) => BaseTableData[];
   rowsPerPage: number;
   page: number;
 };
 
 /**
  * Build wrapper tables around this component
+ * @param heading - The heading of the table
  * @param rows - The data to display in the table
  * @param headers - The headers to display in the table
  * @param rowsPerPageOptions - The options for the rows per page dropdown
@@ -41,7 +43,7 @@ type BaseTableProps = {
  * @param onRowsPerPageChange - The callback for when the rows per page changes
  * @param onEdit - The callback for when the edit button is clicked
  * @param onToggle - The callback for when the toggle button is clicked
- * @param onDelete - The callback for when the delete button is clicked
+ * @param onDelete - The callback for when the delete button is clicked (Should return an updated array of selected rows)
  * @param rowsPerPage - The number of rows per page
  * @param page - The current page
  */
@@ -50,6 +52,7 @@ const BaseTable = (props: BaseTableProps) => {
 
   // Destructure props
   const {
+    heading,
     rows,
     headers,
     rowsPerPageOptions,
@@ -95,21 +98,30 @@ const BaseTable = (props: BaseTableProps) => {
     setSelected(newSelected);
   };
 
+  const handleDelete = () => {
+    // Invoke the callback function
+    const result = onDelete(selected);
+
+    // Update the selection
+    setSelected(result);
+  };
+
   const isSelected = (row: BaseTableData) => selected.indexOf(row) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows = page > 0 ? rowsPerPage - rows.length : 0;
+  console.log({ emptyRows });
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <BaseTableToolbar
-          heading="Desserts"
+          heading={heading}
           selectedRows={selected}
           toggleColumn="enabled"
           onEdit={() => onEdit(selected[0])}
           onToggle={(e, toggled) => onToggle(toggled, selected)}
-          onDelete={() => onDelete(selected)}
+          onDelete={handleDelete}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
