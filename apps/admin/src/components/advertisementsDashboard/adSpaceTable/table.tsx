@@ -15,6 +15,7 @@ import { Company } from '@/utils/api/client/zod/companies';
 
 export interface Props {
   companies: readonly Company[];
+  ids: readonly string[];
   advertisements: { [key: string]: Advertisment; };
   onDelete: (elements: readonly string[]) => void;
   onEdit: (element: string) => void;
@@ -22,9 +23,10 @@ export interface Props {
   onSetInactive: (elements: readonly string[]) => void;
 }
 
-// eslint-disable-next-line react/function-component-definition
+// eslint-disable-next-line react/function-component-definition,func-names
 export default function({
                           companies,
+                          ids,
                           advertisements,
                           onDelete,
                           onEdit,
@@ -40,8 +42,6 @@ export default function({
     return companyNames;
   }, [companies]);
 
-  const ids = Object.keys(advertisements);
-
   const {
     page,
     rowsPerPage,
@@ -56,7 +56,7 @@ export default function({
       const pageEnd = pageStart + rowsPerPage;
       return ids.slice(pageStart, pageEnd);
     },
-    [page, rowsPerPage],
+    [page, rowsPerPage, ids],
   );
   const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {

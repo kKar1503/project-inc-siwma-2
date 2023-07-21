@@ -8,55 +8,56 @@ import fetchAdvertisements from '@/middlewares/advertisements/fetchAdvertisement
 import fetchCompanies from '@/middlewares/companies/fetchCompanies';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { Company } from '@/utils/api/client/zod';
-import { useState } from 'react';
 import UpdateAdvertisement from '@/middlewares/advertisements/updateAdvertisement';
+import { useState } from 'react';
 
 export interface AdvertisementDashboardProps {
   totalClicks: number;
 }
-
-const mapAdvertisements = (advertisementQuery: UseQueryResult<Advertisment[]>) => {
-  const advertisements = advertisementQuery.data || [];
-  const mappedAdvertisements: { [key: string]: Advertisment } = {};
-  advertisements.forEach((item) => {
-    mappedAdvertisements[item.id] = item;
-  });
-  return mappedAdvertisements;
-};
-
 const mapCompanies = (companiesQuery: UseQueryResult<Company[]>) => companiesQuery.data || [];
 
 const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) => {
-  const [advertisements, setAdvertisements] = useState<{
-    [key: string]: Advertisment;
+  const [mutatedAdvertisements, setMutatedAdvertisements] = useState<{
+    [key: string]: Advertisment | false;
   }>({});
-  const [companies, setCompanies] = useState<Company[]>([]);
   const [advertisementsQuery, companiesQuery] = useQueries([
-    {
-      queryKey: 'advertisements', queryFn: () => fetchAdvertisements(), onSuccess: () => {
-        console.log('advertisementsQuery', advertisementsQuery);
-        setAdvertisements(mapAdvertisements(advertisementsQuery));
-      },
-    },
-    {
-      queryKey: 'companies', queryFn: () => fetchCompanies(), onSuccess: () => {
-        console.log('companiesQuery', companiesQuery);
-        setCompanies(mapCompanies(companiesQuery));
-      },
-    },
+    { queryKey: 'advertisements', queryFn: () => fetchAdvertisements() },
+    { queryKey: 'companies', queryFn: () => fetchCompanies() },
   ]);
+
+  if (advertisementsQuery.isLoading || companiesQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+
+  const advertisements: { [key: string]: Advertisment } = {};
+
+  advertisementsQuery.data?.forEach((item) => {
+    const mutatedAdvertisement = mutatedAdvertisements[item.id];
+    switch (mutatedAdvertisement) {
+      case undefined:
+        advertisements[item.id] = item;
+        break;
+      case false:
+        break;
+      default:
+        advertisements[item.id] = mutatedAdvertisement;
+    }
+  });
+
+  const companies = mapCompanies(companiesQuery);
 
   const ids = Object.keys(advertisements);
   const active = ids.filter((id) => advertisements[id].active);
 
 
   const updateAdvertisementsTable = (updatedAdvertisements: Array<Advertisment | undefined>) => {
-    const newAdvertisements = { ...advertisements };
+    const newAdvertisements = { ...mutatedAdvertisements };
     updatedAdvertisements.forEach((advertisement) => {
       if (!advertisement) return;
       newAdvertisements[advertisement.id] = advertisement;
     });
-    setAdvertisements(newAdvertisements);
+    setMutatedAdvertisements(newAdvertisements);
   };
 
   const onDelete = (ids: readonly string[]) => {
@@ -86,8 +87,8 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
         <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />
       </Grid>
       <Grid item xs={12} md={12} lg={12}>
-        {ids.length > 0 &&
           <AdSpaceTable
+            ids={ids}
             advertisements={advertisements}
             companies={companies}
             onDelete={onDelete}
@@ -95,7 +96,6 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
             onSetActive={onSetActive}
             onSetInactive={onSetInactive}
           />
-        }
       </Grid>
     </Grid>
   );
