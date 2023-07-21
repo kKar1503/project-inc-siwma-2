@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
@@ -42,13 +42,45 @@ const ShareFunctionPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Box sx={{ display: 'flex' }}>
-          {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
-
-          {/* map listing cards based on listing Ids */}
-          {listingIds?.map((id) => (
-            <ListingCard key={id} listingId={id} />
-          ))}
+        <Box
+          sx={({ spacing }) => ({
+            px: spacing(5),
+            mt: spacing(2),
+          })}
+        >
+          <Box
+            sx={({ spacing }) => ({
+              display: 'flex',
+              gap: spacing(3),
+            })}
+          >
+            {userDetails && <ProfileDetailCard data={userDetails} />}
+            {/* map listing cards based on listing Ids */}
+            <Box sx={{ height: '70vh', overflow: 'auto', width: '100%' }}>
+              {listingIds?.map((id) => (
+                <ListingCard key={id} listingId={id} />
+              ))}
+            </Box>
+          </Box>
+          <Box
+            sx={({ spacing }) => ({
+              marginTop: spacing(2),
+              mr: spacing(2)
+            })}
+          >
+            <Button
+              variant="contained"
+              size="large"
+              sx={({ typography }) => ({
+                display: 'flex',
+                justifyContent: 'flex-end', // Aligns the button to the right
+                marginLeft: 'auto',
+                fontSize: typography.h6, 
+              })}
+            >
+              Share
+            </Button>
+          </Box>
         </Box>
       </main>
     </>

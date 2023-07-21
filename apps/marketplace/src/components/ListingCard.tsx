@@ -39,6 +39,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
       sx={({ spacing, shape }) => ({
         py: spacing(2),
         px: spacing(5),
+        mb: spacing(2),
         width: 1,
         ...shape,
       })}
