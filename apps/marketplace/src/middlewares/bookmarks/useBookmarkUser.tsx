@@ -10,10 +10,9 @@ import { useQuery } from 'react-query';
 const useBookmarkUser = (uuid: string) =>
   useQuery({
     queryFn: async () =>
-      apiClient.patch(`/v1/users/${uuid}/bookmark`).then((res) => {
-        console.log(res.data);
-        return res.data.data.bookmarked as boolean;
-      }),
+      apiClient
+        .patch(`/v1/users/${uuid}/bookmark`)
+        .then((res) => res.data.data.bookmarked as boolean),
     enabled: false,
   });
 
