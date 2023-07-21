@@ -2,8 +2,12 @@ import { useState, useMemo } from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import Modal from '@inc/ui/lib/components/Modal';
@@ -16,41 +20,47 @@ const Form = () => {
   const [leftButtonState, setLeftButtonState] = useState(false);
 
   const [formValues, setFormValues] = useState({
-    companyToTag: '',
-    companyLink: '',
-    advertisementTitle: '',
-    advertisementDescription: '',
+    listingName: '',
+    listingNameChinese: '',
+    description: '',
+    unit: '',
+    unitChinese: '',
   });
 
   const [formErrors, setFormErrors] = useState({
-    companyToTag: '',
-    companyLink: '',
-    advertisementTitle: '',
-    advertisementDescription: '',
+    listingName: '',
+    listingNameChinese: '',
+    description: '',
+    unit: '',
+    unitChinese: '',
   });
 
   const validateForm = () => {
     const errors = {
-      companyToTag: '',
-      companyLink: '',
-      advertisementTitle: '',
-      advertisementDescription: '',
+      listingName: '',
+      listingNameChinese: '',
+      description: '',
+      unit: '',
+      unitChinese: '',
     };
 
-    if (formValues.companyToTag.trim() === '') {
-      errors.companyToTag = 'Company to tag is required';
+    if (formValues.listingName.trim() === '') {
+      errors.listingName = 'Listing Name is required';
     }
 
-    if (formValues.companyLink.trim() === '') {
-      errors.companyLink = 'Company link is required';
+    if (formValues.listingNameChinese.trim() === '') {
+      errors.listingNameChinese = 'Company link is required';
     }
 
-    if (formValues.advertisementTitle.trim() === '') {
-      errors.advertisementTitle = 'Advertisement title is required';
+    if (formValues.description.trim() === '') {
+      errors.description = 'Advertisement title is required';
     }
 
-    if (formValues.advertisementDescription.trim() === '') {
-      errors.advertisementDescription = 'Advertisement description is required';
+    if (formValues.unit.trim() === '') {
+      errors.unit = 'Advertisement description is required';
+    }
+    if (formValues.unitChinese.trim() === '') {
+      errors.unitChinese = 'Advertisement description is required';
     }
 
     return errors;
@@ -116,83 +126,108 @@ const Form = () => {
   };
 
   return (
-    <Grid sx={gridCols}>
+    <Box sx={gridCols}>
       <Box
         component="form"
         sx={() => ({
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
           width: '100%',
         })}
       >
-        <Box
-          sx={() => ({
-            display: 'flex',
-            alignItems: 'center',
-            width: '100%',
-          })}
-        >
-          <Typography>Create Listing Item</Typography>
-
-          <TextField
-            label="Company to tag"
-            variant="outlined"
-            sx={({ spacing }) => ({
-              mr: spacing(2),
-              width: '100%',
-            })}
-            name="companyToTag"
-            value={formValues.companyToTag}
-            onChange={handleChange}
-            error={formErrors.companyToTag !== ''}
-            helperText={formErrors.companyToTag}
-          />
-
-          <TextField
-            label="Company link"
-            variant="outlined"
+        <Box>
+          <Typography
             sx={{
-              width: '100%',
+              fontWeight: 'bold',
+              fontSize: '20px',
+              pb: '40px',
             }}
-            name="companyLink"
-            value={formValues.companyLink}
-            onChange={handleChange}
-            error={formErrors.companyLink !== ''}
-            helperText={formErrors.companyLink}
-          />
+          >
+            Create Listing Item
+          </Typography>
         </Box>
 
         <TextField
-          label="Advertisement title"
+          label="Listing Name"
           variant="outlined"
-          fullWidth
           sx={({ spacing }) => ({
-            mt: spacing(2),
+            mr: spacing(2),
+            pb: spacing(3),
             width: '100%',
           })}
-          name="advertisementTitle"
-          value={formValues.advertisementTitle}
+          name="listingName"
+          value={formValues.listingName}
           onChange={handleChange}
-          error={formErrors.advertisementTitle !== ''}
-          helperText={formErrors.advertisementTitle}
+          error={formErrors.listingName !== ''}
+          helperText={formErrors.listingName}
         />
 
         <TextField
-          label="Advertisement description"
+          label="Listing Name (Chinese)"
           variant="outlined"
-          multiline
-          rows={4}
-          fullWidth
           sx={({ spacing }) => ({
-            mt: spacing(2),
+            mr: spacing(2),
+            pb: spacing(3),
             width: '100%',
           })}
-          name="advertisementDescription"
-          value={formValues.advertisementDescription}
+          name="listingNameChinese"
+          value={formValues.listingNameChinese}
           onChange={handleChange}
-          error={formErrors.advertisementDescription !== ''}
-          helperText={formErrors.advertisementDescription}
+          error={formErrors.listingNameChinese !== ''}
+          helperText={formErrors.listingNameChinese}
+        />
+
+        <TextField
+          label="Description"
+          variant="outlined"
+          sx={({ spacing }) => ({
+            mr: spacing(2),
+            pb: spacing(3),
+            width: '100%',
+          })}
+          name="description"
+          value={formValues.description}
+          onChange={handleChange}
+          error={formErrors.description !== ''}
+          helperText={formErrors.description}
+        />
+
+        <Select
+          sx={({ spacing }) => ({
+            width: '100%',
+          })}
+          label="Category"
+        ></Select>
+
+        <TextField
+          label="Unit"
+          variant="outlined"
+          sx={({ spacing }) => ({
+            mr: spacing(2),
+            pb: spacing(3),
+            mt: spacing(3),
+            width: '100%',
+          })}
+          name="description"
+          value={formValues.unit}
+          onChange={handleChange}
+          error={formErrors.unit !== ''}
+          helperText={formErrors.unit}
+        />
+
+        <TextField
+          label="Unit (Chinese)"
+          variant="outlined"
+          sx={({ spacing }) => ({
+            mr: spacing(2),
+            pb: spacing(1),
+            width: '100%',
+          })}
+          name="description"
+          value={formValues.unitChinese}
+          onChange={handleChange}
+          error={formErrors.unitChinese !== ''}
+          helperText={formErrors.unitChinese}
         />
         <Box
           sx={({ spacing }) => ({
@@ -228,7 +263,7 @@ const Form = () => {
           />
         </Box>
       </Box>
-    </Grid>
+    </Box>
   );
 };
 

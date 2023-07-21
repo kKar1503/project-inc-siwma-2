@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, useMediaQuery, useTheme, Button, TextField, InputLabel } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import Link from 'next/link';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 
@@ -119,18 +119,19 @@ const AdvertisementUpload = () => {
 
   return (
     <Box
-      marginLeft={isSmallOrMediumScreen ? 0 : '300px'}
       sx={{
         mt: '10px',
       }}
     >
       <Box>
-        <Button
-          variant="contained"
-          sx={{ mt: '20px', mr: '30px', ml: '20px', fontSize: '10px', fontWeight: 'bold' }}
-        >
-          CREATE LISTING NAME
-        </Button>
+        <Link href="/create-listing" passHref>
+          <Button
+            variant="contained"
+            sx={{ mt: '20px', mr: '30px', ml: '20px', fontSize: '10px', fontWeight: 'bold' }}
+          >
+            CREATE LISTING NAME
+          </Button>
+        </Link>
 
         <TextField
           label="Search Listings..."
