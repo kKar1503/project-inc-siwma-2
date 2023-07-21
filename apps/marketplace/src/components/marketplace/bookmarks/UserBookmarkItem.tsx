@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 // ** NextJS Imports
 import Link from 'next/link';
@@ -10,7 +10,6 @@ import CardHeader from '@mui/material/CardHeader';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
@@ -22,22 +21,25 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import type { User } from '@/utils/api/client/zod/users';
 
 // ** Middleware Imports
-import useBookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
+import useBookmarkUser from '@/middlewares/bookmarks/useBookmarkUser';
 
-export type UserItemData = {
+export type UserBookmarkItemProps = {
   user: User;
+  /** Callback function to alert a change in user bookmarks */
   updateBookmarkData: () => void;
 };
 
-const UserItem = ({ user, updateBookmarkData }: UserItemData) => {
-  console.log(user);
+/**
+ * UserBookmarkItem is a component that is displayed on the users tab of /bookmarks page.
+ * This component mainly exists for user to either navigate to the user profile or
+ * unbookmark users.
+ */
+const UserBookmarkItem = ({ user, updateBookmarkData }: UserBookmarkItemProps) => {
+  // ** Hooks
   const [isSm] = useResponsiveness(['sm']);
-  const { isFetched, data, refetch, isError, error } = useBookmarkUser(user.id);
+  const { refetch, isError, data, isFetched, error } = useBookmarkUser(user.id);
 
-  useEffect(() => {
-    console.dir({ isFetched, data }, { depth: null });
-  });
-
+  // ** Effects
   useEffect(() => {
     if (!isFetched) {
       return;
@@ -45,15 +47,18 @@ const UserItem = ({ user, updateBookmarkData }: UserItemData) => {
 
     if (isError) {
       alert(`Error: ${error}`);
-    } else if (data === undefined) {
-      alert(`Endpoint returned undefined`);
-    } else if (!data) {
-      alert(`Unbookmarked`);
-      updateBookmarkData();
-    } else {
-      alert(`Bookmarked`);
-      updateBookmarkData();
+      return;
     }
+
+    if (!data) {
+      updateBookmarkData();
+      return;
+    }
+
+    // It should never reach here.
+    // If it reaches here it means the data is undefined / true, which should not happen
+    // for this component
+    alert('Something went wrong!');
   }, [isFetched]);
 
   return (
@@ -118,4 +123,4 @@ const UserItem = ({ user, updateBookmarkData }: UserItemData) => {
   );
 };
 
-export default UserItem;
+export default UserBookmarkItem;
