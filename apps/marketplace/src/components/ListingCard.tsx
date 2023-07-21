@@ -12,8 +12,11 @@ import placeholder from 'public/images/listing-placeholder.svg';
 import Grid from '@mui/material/Grid';
 import { useQuery } from 'react-query';
 import fetchListing from '@/middlewares/fetchListing';
+import fetchCatById from '@/middlewares/fetchCatById';
+import fetchParamNames from '@/middlewares/fetchParamNames';
 import { useMemo } from 'react';
 import { DateTime } from 'luxon';
+import S3BoxImage from './S3BoxImage';
 import ListingBadge from './listing/ListingBadge';
 
 export type ListingCardProps = {
@@ -31,8 +34,30 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
     return data;
   };
 
+  const useFetchCategoryQuery = (categoryId: string) => {
+    const { data } = useQuery(['category', categoryId], async () => fetchCatById(categoryId), {
+      enabled: categoryId !== undefined,
+    });
+
+    return data;
+  };
+
+  const useFetchParamNamesQuery = (paramIds?: string[]) => {
+    const { data } = useQuery(['paramNames', paramIds], async () => fetchParamNames(paramIds), {
+      enabled: paramIds !== undefined,
+    });
+
+    return data;
+  };
+
   const listingDetails = useFetchListingQuery(listingId);
   console.log(listingDetails);
+
+  const categoryDetails = useFetchCategoryQuery(listingDetails?.categoryId || 'null');
+  console.log(categoryDetails);
+
+  const paramNames = useFetchParamNamesQuery(['1', '2', '9']);
+  console.log(paramNames);
 
   return (
     <Paper
@@ -79,7 +104,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
           my: spacing(2),
         })}
       >
-        $999 kg / m
+        ${listingDetails?.price}/{listingDetails?.unit}
       </Typography>
       <Box display="flex" alignItems="center">
         <Avatar />
@@ -124,26 +149,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
             })}
           >
             {listingDetails?.quantity}
-            {/* how is this unit being written? */}
             {listingDetails?.unit}
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'bold',
-            })}
-          >
-            Condition
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            {/* no column for condition? */}
-            Good
           </Typography>
         </Grid>
       </Grid>
@@ -166,93 +172,25 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
           flexDirection: 'row',
         })}
       >
-        {/* Map parameters here */}
-        {/* parameters should be included in the endpoint */}
-        <Grid item>
-          <Typography
-            sx={({ typography, palette }) => ({
-              fontSize: typography.h6,
-              color: palette.grey[500],
-            })}
-          >
-            Length
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            69
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography
-            sx={({ typography, palette }) => ({
-              fontSize: typography.h6,
-              color: palette.grey[500],
-            })}
-          >
-            Width
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            69
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography
-            sx={({ typography, palette }) => ({
-              fontSize: typography.h6,
-              color: palette.grey[500],
-            })}
-          >
-            Width
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            69
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography
-            sx={({ typography, palette }) => ({
-              fontSize: typography.h6,
-              color: palette.grey[500],
-            })}
-          >
-            Width
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            69
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography
-            sx={({ typography, palette }) => ({
-              fontSize: typography.h6,
-              color: palette.grey[500],
-            })}
-          >
-            Width
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            69
-          </Typography>
-        </Grid>
+        {listingDetails?.parameters?.map((id) => (
+          <Grid item>
+            <Typography
+              sx={({ typography, palette }) => ({
+                fontSize: typography.h6,
+                color: palette.grey[500],
+              })}
+            >
+              {id.paramId}
+            </Typography>
+            <Typography
+              sx={({ typography }) => ({
+                fontSize: typography.h6,
+              })}
+            >
+              {id.value}
+            </Typography>
+          </Grid>
+        ))}
       </Grid>
       <Typography
         sx={({ spacing, typography }) => ({
@@ -262,10 +200,10 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         })}
       >
         Cross Section
-        {/* no cross section image? */}
       </Typography>
       <Box>
-        <Image src={placeholder} alt="placeholder" />
+        {/* throws error without the empty string */}
+        <S3BoxImage src={categoryDetails?.crossSectionImage || ''} />
       </Box>
       <Grid
         container
@@ -345,8 +283,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               fontSize: typography.h6,
             })}
           >
-            {/* endpoint should return name of caetgory instead of id? */}
-            Round Bars
+            {categoryDetails?.name}
           </Typography>
         </Grid>
         <Grid item>
