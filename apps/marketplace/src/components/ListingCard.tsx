@@ -24,8 +24,6 @@ export type ListingCardProps = {
 };
 
 const ListingCard = ({ listingId }: ListingCardProps) => {
-  console.log(listingId);
-
   const useFetchListingQuery = (listingId: string) => {
     const { data } = useQuery(['user', listingId], async () => fetchListing(listingId), {
       enabled: listingId !== undefined,
@@ -51,13 +49,17 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
   };
 
   const listingDetails = useFetchListingQuery(listingId);
-  console.log(listingDetails);
 
   const categoryDetails = useFetchCategoryQuery(listingDetails?.categoryId || 'null');
-  console.log(categoryDetails);
 
-  const paramNames = useFetchParamNamesQuery(['1', '2', '9']);
-  console.log(paramNames);
+  const listingParamNames: string[] = [];
+
+  listingDetails?.parameters?.map((id) => {
+    listingParamNames.push(id.paramId);
+    return id.paramId;
+  });
+
+  const paramNames = useFetchParamNamesQuery(listingParamNames);
 
   return (
     <Paper
@@ -180,7 +182,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
                 color: palette.grey[500],
               })}
             >
-              {id.paramId}
+              {paramNames?.find((param) => param.id === id.paramId)?.name}
             </Typography>
             <Typography
               sx={({ typography }) => ({

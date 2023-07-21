@@ -65,7 +65,7 @@ const ShareFunctionPage = () => {
           <Box
             sx={({ spacing }) => ({
               marginTop: spacing(2),
-              mr: spacing(2)
+              mr: spacing(2),
             })}
           >
             <Button
@@ -75,7 +75,7 @@ const ShareFunctionPage = () => {
                 display: 'flex',
                 justifyContent: 'flex-end', // Aligns the button to the right
                 marginLeft: 'auto',
-                fontSize: typography.h6, 
+                fontSize: typography.h6,
               })}
             >
               Share
