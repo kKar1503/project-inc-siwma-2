@@ -15,11 +15,11 @@ import { Company } from '@/utils/api/client/zod/companies';
 
 export interface Props {
   companies: readonly Company[];
-  advertisements: readonly Advertisment[];
-  onDelete: (elements: readonly Advertisment[]) => void;
-  onEdit: (element: Advertisment) => void;
-  onSetActive: (elements: readonly Advertisment[]) => void;
-  onSetInactive: (elements: readonly Advertisment[]) => void;
+  advertisements: { [key: string]: Advertisment; };
+  onDelete: (elements: readonly string[]) => void;
+  onEdit: (element: string) => void;
+  onSetActive: (elements: readonly string[]) => void;
+  onSetInactive: (elements: readonly string[]) => void;
 }
 
 // eslint-disable-next-line react/function-component-definition
@@ -31,7 +31,7 @@ export default function({
                           onSetActive,
                           onSetInactive,
                         }: Props) {
-  const [selected, setSelected] = useState<readonly Advertisment[]>([]);
+  const [selected, setSelected] = useState<readonly string[]>([]);
   const companyNames = useMemo(() => {
     const companyNames = new Map<string, string>();
     companies.forEach((company) => {
@@ -39,6 +39,9 @@ export default function({
     });
     return companyNames;
   }, [companies]);
+
+  const ids = Object.keys(advertisements);
+
   const {
     page,
     rowsPerPage,
@@ -47,28 +50,28 @@ export default function({
     rowPageOptions,
   } = usePagination(4);
 
-  const visibleRows = useMemo(
+  const visibleRowIds = useMemo(
     () => {
       const pageStart = page * rowsPerPage;
       const pageEnd = pageStart + rowsPerPage;
-      return advertisements.slice(pageStart, pageEnd);
+      return ids.slice(pageStart, pageEnd);
     },
     [page, rowsPerPage],
   );
   const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setSelected(advertisements);
+      setSelected(ids);
       return;
     }
     setSelected([]);
   };
 
   const handleClick = (event: MouseEvent<unknown>, element: Advertisment) => {
-    const selectedIndex = selected.indexOf(element);
-    let newSelected: readonly Advertisment[] = [];
+    const selectedIndex = selected.indexOf(element.id);
+    let newSelected: readonly string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, element);
+      newSelected = newSelected.concat(selected, element.id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -84,7 +87,7 @@ export default function({
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = Math.max(0, (1 + page) * rowsPerPage - advertisements.length);
+  const emptyRows = Math.max(0, (1 + page) * rowsPerPage - ids.length);
 
 
   const handleDelete = () => {
@@ -110,6 +113,7 @@ export default function({
   return (
     <ModuleBase noFlex>
       <MainHeader
+        advertisements={advertisements}
         selected={selected}
         onSetActive={handleSetActive}
         onSetInactive={handleSetInactive}
@@ -125,15 +129,16 @@ export default function({
             <RowHeader
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
-              rowCount={advertisements.length}
+              rowCount={ids.length}
             />
             <TableBody>
               {
-                visibleRows.map((row, index) => {
+                visibleRowIds.map((row, index) => {
                   const isSelected = selected.indexOf(row) !== -1;
+                  const advertisement = advertisements[row];
                   return <RowBody row={{
-                    ...row,
-                    companyName: row.companyId? companyNames.get(row.companyId) || '' : '',
+                    ...advertisement,
+                    companyName: advertisement.companyId? companyNames.get(advertisement.companyId) || '' : '',
                   }} index={index} isSelected={isSelected} onSelect={handleClick} />;
                 })
               }
@@ -153,7 +158,7 @@ export default function({
         <TablePagination
           rowsPerPageOptions={rowPageOptions}
           component='div'
-          count={advertisements.length}
+          count={ids.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

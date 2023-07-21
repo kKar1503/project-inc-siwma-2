@@ -27,7 +27,7 @@ const rowHeader = (props: Props) => {
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
-            key={headCell.id}
+            key={headCell.label}
             align='left'
             padding='normal'
           >

@@ -1,4 +1,4 @@
-import AdSpaceTable, { DataType } from '@/components/advertisementsDashboard/adSpaceTable';
+import AdSpaceTable from '@/components/advertisementsDashboard/adSpaceTable';
 import Grid from '@mui/material/Grid';
 import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 import AdsClickIcon from '@mui/icons-material/AdsClick';
@@ -8,44 +8,68 @@ import fetchAdvertisements from '@/middlewares/advertisements/fetchAdvertisement
 import fetchCompanies from '@/middlewares/companies/fetchCompanies';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { Company } from '@/utils/api/client/zod';
-import { useMemo } from 'react';
-
-const onDelete = (ids: readonly DataType[]) => {
-
-};
-
-const onEdit = (id: DataType) => {
-
-};
-
-const onSetActive = (ids: readonly DataType[]) => {
-
-};
-
-const onSetInactive = (ids: readonly DataType[]) => {
-
-};
+import { useEffect, useMemo, useState } from 'react';
+import UpdateAdvertisement from '@/middlewares/advertisements/updateAdvertisement';
 
 export interface AdvertisementDashboardProps {
   totalClicks: number;
 }
 
-const mapAdvertisements = (advertisementQuery: UseQueryResult<Advertisment[]>) => advertisementQuery.data || [];
+const mapAdvertisements = (advertisementQuery: UseQueryResult<Advertisment[]>) => {
+  const advertisements = advertisementQuery.data || [];
+  const mappedAdvertisements: { [key: string]: Advertisment } = {};
+  advertisements.forEach((item) => {
+    mappedAdvertisements[item.id] = item;
+  });
+  return mappedAdvertisements;
+};
+
 const mapCompanies = (companiesQuery: UseQueryResult<Company[]>) => companiesQuery.data || [];
 
 const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) => {
+  const [advertisements, setAdvertisements] = useState<{
+    [key: string]: Advertisment;
+  }>({});
   const [advertisementsQuery, companiesQuery] = useQueries([
     { queryKey: 'advertisements', queryFn: () => fetchAdvertisements() },
     { queryKey: 'companies', queryFn: () => fetchCompanies() },
   ]);
 
-  const advertisements = useMemo(() => mapAdvertisements(advertisementsQuery), [advertisementsQuery]);
+  useEffect(() => {
+    setAdvertisements(mapAdvertisements(advertisementsQuery));
+  }, [advertisementsQuery]);
   const companies = useMemo(() => mapCompanies(companiesQuery), [companiesQuery]);
 
-  console.log(advertisements);
+  const ids = Object.keys(advertisements);
+  const active = ids.filter((id) => advertisements[id].active);
 
-  const initialized = advertisements.length > 0;
-  const active = advertisements.filter((item) => item.active);
+
+  const updateAdvertisementsTable = (updatedAdvertisements: Array<Advertisment | undefined>) => {
+    const newAdvertisements = { ...advertisements };
+    updatedAdvertisements.forEach((advertisement) => {
+      if (!advertisement) return;
+      newAdvertisements[advertisement.id] = advertisement;
+    });
+    setAdvertisements(newAdvertisements);
+  };
+
+  const onDelete = (ids: readonly string[]) => {
+
+  };
+
+  const onEdit = (id: string) => {
+
+  };
+
+  const onSetActive = (ids: readonly string[]) => {
+    Promise.all(ids.map((id) => UpdateAdvertisement(id, { active: true }, undefined))).then(updateAdvertisementsTable);
+  };
+
+  const onSetInactive = (ids: readonly string[]) => {
+    Promise.all(ids.map((id) => UpdateAdvertisement(id, { active: false }, undefined))).then(updateAdvertisementsTable);
+  };
+
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={6} md={6} lg={6}>
@@ -56,7 +80,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
         <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />
       </Grid>
       <Grid item xs={12} md={12} lg={12}>
-        {initialized &&
+        {ids.length > 0 &&
           <AdSpaceTable
             advertisements={advertisements}
             companies={companies}

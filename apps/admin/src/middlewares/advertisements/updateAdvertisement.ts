@@ -1,13 +1,9 @@
 import apiClient from '@/utils/api/client/apiClient';
 import advertisements, { Advertisment } from '@/utils/api/client/zod/advertisements';
+import { PutAdvertisementRequestBody } from '@/utils/api/server/zod/advertisements';
 
-export type PutCompanyRequestBody = {
-  name: string;
-  website: string;
-  bio: string | null;
-};
 
-const updateBody = async (data: PutCompanyRequestBody, id: string): Promise<Advertisment> => {
+const updateBody = async (data: PutAdvertisementRequestBody, id: string): Promise<Advertisment> => {
   const response = await apiClient.put(`/v1/advertisements/${id}`, data);
   return advertisements.update.parse(response.data.data[0]);
 };
@@ -19,9 +15,9 @@ export const updateImage = async (image: File, id: string): Promise<Advertisment
   return advertisements.update.parse(response.data.data[0]);
 };
 
-const updateAdvertisement = async (id: string, data: PutCompanyRequestBody | undefined, image: File | undefined) => {
+const updateAdvertisement = async (id: string, data: PutAdvertisementRequestBody | undefined, image: File | undefined): Promise<Advertisment | undefined> => {
   if (!id) {
-    return null;
+    return undefined;
   }
 
   const [response1, response2] = await Promise.all(

@@ -8,10 +8,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import MinusIcon from '@mui/icons-material/Remove';
 import PlusIcon from '@mui/icons-material/Add';
 import { MouseEventHandler } from 'react';
-import { DataType } from '@/components/advertisementsDashboard/adSpaceTable/dataLayout';
+import { Advertisment } from '@/utils/api/client/zod/advertisements';
 
 interface Props {
-  selected: readonly DataType[];
+  advertisements: { [key: string]: Advertisment };
+  selected: readonly string[];
   onDelete: MouseEventHandler<HTMLDivElement>;
   onEdit: MouseEventHandler<HTMLDivElement>;
   onSetActive: MouseEventHandler<HTMLDivElement>;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const MainHeader = ({
+                      advertisements,
                       selected,
                       onDelete,
                       onEdit,
@@ -62,7 +64,7 @@ const MainHeader = ({
       {isElementSelected ? (
         <>
           {
-            selected.find(item => item.active) &&
+            selected.find(id => advertisements[id].active) &&
             <Tooltip title='Make Inactive' onClick={onSetInactive}>
               <IconButton>
                 <MinusIcon fontSize='large' />
@@ -70,7 +72,7 @@ const MainHeader = ({
             </Tooltip>
           }
           {
-            selected.find(item => !item.active) &&
+            selected.find(id => !advertisements[id].active) &&
             <Tooltip title='Make Active' onClick={onSetActive}>
               <IconButton>
                 <PlusIcon fontSize='large' />
