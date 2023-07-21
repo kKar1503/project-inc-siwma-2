@@ -63,7 +63,7 @@ const RowBody = ({
       <TableCell align='left'>{row.description}</TableCell>
       <TableCell align='left'><ExternalLink link={row.link} display={row.link} displayInvalid='No Link' /></TableCell>
       <TableCell align='left'>{row.active ? 'YES' : 'NO'}</TableCell>
-       <TableCell align='left'>{row.createdAt}</TableCell>
+      <TableCell align='left'>{parseDate(row.createdAt)}</TableCell>
       <TableCell align='left'>{parseDate(row.startDate)}</TableCell>
       <TableCell align='left'>{parseDate(row.endDate)}</TableCell>
     </TableRow>

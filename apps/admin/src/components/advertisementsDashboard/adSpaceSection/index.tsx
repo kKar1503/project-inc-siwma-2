@@ -8,7 +8,7 @@ import fetchAdvertisements from '@/middlewares/advertisements/fetchAdvertisement
 import fetchCompanies from '@/middlewares/companies/fetchCompanies';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { Company } from '@/utils/api/client/zod';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import UpdateAdvertisement from '@/middlewares/advertisements/updateAdvertisement';
 
 export interface AdvertisementDashboardProps {
@@ -30,15 +30,21 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   const [advertisements, setAdvertisements] = useState<{
     [key: string]: Advertisment;
   }>({});
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [advertisementsQuery, companiesQuery] = useQueries([
-    { queryKey: 'advertisements', queryFn: () => fetchAdvertisements() },
-    { queryKey: 'companies', queryFn: () => fetchCompanies() },
+    {
+      queryKey: 'advertisements', queryFn: () => fetchAdvertisements(), onSuccess: () => {
+        console.log('advertisementsQuery', advertisementsQuery);
+        setAdvertisements(mapAdvertisements(advertisementsQuery));
+      },
+    },
+    {
+      queryKey: 'companies', queryFn: () => fetchCompanies(), onSuccess: () => {
+        console.log('companiesQuery', companiesQuery);
+        setCompanies(mapCompanies(companiesQuery));
+      },
+    },
   ]);
-
-  useEffect(() => {
-    setAdvertisements(mapAdvertisements(advertisementsQuery));
-  }, [advertisementsQuery]);
-  const companies = useMemo(() => mapCompanies(companiesQuery), [companiesQuery]);
 
   const ids = Object.keys(advertisements);
   const active = ids.filter((id) => advertisements[id].active);
