@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-const id = z.string();
-const companyId = z.string().optional();
+const id = z.string().optional();
+const companyId = z.string();
 const createdAt = z.string().datetime().optional();
 const image = z.string().nullable();
 const description = z.string();
