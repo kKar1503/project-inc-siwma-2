@@ -18,6 +18,7 @@ const useUser = (uuid: string) =>
         // parse data through zod to ensure data is correct
         .then((res) => users.getById.parse(res.data.data[0])),
     queryKey: ['user', uuid],
+    enabled: !!uuid,
   });
 
 export default useUser;

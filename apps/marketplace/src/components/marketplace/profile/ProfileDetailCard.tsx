@@ -23,7 +23,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 // ** Types Imports
-import type { UserContacts } from '@inc/db-enums';
+import type { User } from '@/utils/api/client/zod/users';
 
 // ** Hooks Imports
 import { useResponsiveness } from '@inc/ui';
@@ -33,27 +33,8 @@ import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
 import useBookmarkUser from '@/services/bookmarks/useBookmarkUser';
 
-export type ProfileDetailCardProps =
-  | {
-      email: string;
-      id: string;
-      name: string;
-      enabled: boolean;
-      createdAt: string;
-      profilePic: string | null;
-      companyName: string;
-      mobileNumber: string;
-      whatsappNumber: string | null;
-      telegramUsername: string | null;
-      contactMethod: (typeof UserContacts)[keyof typeof UserContacts];
-      bio: string | null;
-      comments?: string | null | undefined;
-    }
-  | null
-  | undefined;
-
 export type ProfileDetailCardData = {
-  data: ProfileDetailCardProps;
+  data: User;
   visibleEditButton?: boolean;
 };
 
@@ -193,7 +174,7 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
         </S3Avatar>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
-          {data?.companyName}
+          {data?.company.name}
         </Typography>
         <Typography sx={{ wordWrap: 'break-word' }}>{data?.email}</Typography>
       </CardContent>
