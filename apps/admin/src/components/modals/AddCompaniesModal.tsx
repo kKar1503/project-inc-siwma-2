@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import { useResponsiveness } from '@inc/ui';
+import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 import { useQuery } from 'react-query';
+import { Company } from '@/utils/api/client/zod/companies';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
@@ -133,14 +135,17 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleExcelChange} />
-                <Button
-                  variant="contained"
-                  type="submit"
-                  size="large"
-                  onClick={postCompanies}
-                  fullWidth
-                >
+                <Upload
+                  id="companyImage"
+                  title=""
+                  description=""
+                  selectedFile={null}
+                  changeHandler={handleExcelChange}
+                  accept={[AcceptedFileTypes.XLSX]}
+                  maxWidth="200px"
+                  maxHeight="200px"
+                />
+                <Button variant="contained" type="submit" size="large" fullWidth>
                   Edit Company
                 </Button>
               </Grid>

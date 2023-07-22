@@ -2,7 +2,7 @@ import apiClient from '@/utils/api/client/apiClient';
 import companies from '@/utils/api/client/zod/companies';
 
 const fetchCompanies = async () => {
-  const response = await apiClient.get(`/v1/companies?limit=20`);
+  const response = await apiClient.get(`/v1/companies?limit=30`);
 
   const parsedCompanies = companies.getAll.parse(response.data.data);
 
