@@ -11,6 +11,8 @@ const getListingItemQueryParameters = z.object({
   sortBy: z.string().optional(),
 });
 
+// Listing items have been changed to products however it is still lisitng-items in the db
+
 /**
  * We define a separate schema for the type of the request body
  * Because we want to perform a type transformation
@@ -22,11 +24,11 @@ const listingItemRequestBodyType = z.object({
   description: z.string(),
   unit: z.string(),
   chineseUnit: z.string().optional(),
-  categoryId: z.number(),
+  categoryId: z.string(),
 });
 
 const listingItemRequestBody = listingItemRequestBodyType.extend({
-  categoryId: z.number(),
+  categoryId: z.string().transform(zodParseToInteger),
 });
 
 const putListingItemRequestBodyType = listingItemRequestBodyType.partial();

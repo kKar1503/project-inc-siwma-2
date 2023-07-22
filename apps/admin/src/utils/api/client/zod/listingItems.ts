@@ -5,7 +5,7 @@ const id = z.string();
 const name = z.string();
 const chineseName = z.string();
 const description = z.string();
-const categoryId = z.number();
+const categoryId = z.string();
 const unit = z.string();
 const chineseUnit = z.string();
 
@@ -20,19 +20,20 @@ const listingItem = z.object({
   chineseUnit,
 });
 
-// POST /listingItems
+// Listing items have been changed to products however it is still lisitng-items in the db
+// POST /products
 const createListingItem = z.object({ listingItemId: id });
 
-// GET /listingItems
+// GET /products
 const getListingItems = z.array(listingItem);
 
-// GET /listingItems/:id
+// GET /products/:id
 const getListingItem = listingItem;
 
-// PUT /listingItems/:id
+// PUT /products/:id
 const updateListingItem = listingItem;
 
-// DELETE /listingItems/:id
+// DELETE /products/:id
 const deleteListingItem = z.object({});
 
 export type ListingItemResponseBody = z.infer<typeof listingItem>;
