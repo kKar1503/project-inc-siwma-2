@@ -25,7 +25,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import updateUser from '@/services/users/updateUser';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
