@@ -17,6 +17,7 @@ const useUser = (uuid: string) =>
         .get(`/v1/users/${uuid}`)
         // parse data through zod to ensure data is correct
         .then((res) => users.getById.parse(res.data.data[0])),
+    queryKey: ['user', uuid],
   });
 
 export default useUser;
