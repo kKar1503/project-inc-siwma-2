@@ -1,4 +1,4 @@
-import { ListingType } from '@inc/db';
+import { ListingType } from '@inc/db-enums';
 import { z } from 'zod';
 
 // -- Define properties -- //
