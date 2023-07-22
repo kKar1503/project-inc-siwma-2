@@ -1,15 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import { useResponsiveness } from '@inc/ui';
-import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 import { useQuery } from 'react-query';
-import { Company } from '@/utils/api/client/zod/companies';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import createCompany from '@/middlewares/company-management/createCompany';
 import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
@@ -34,13 +31,20 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [selectedCompaniesFile, setSelectedCompaniesFile] = useState<File | null>(null);
 
-  const handleExcelChange: FileUploadProps['changeHandler'] = (event) => {
+  const handleExcelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      setSelectedCompaniesFile(event.target.files[0]);
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const contents = e.target?.result as string;
+        // Process the contents of the Excel file
+        console.log(contents);
+      };
+      reader.readAsText(file);
     }
   };
 
-  const postCompanies = async () => {
+  const postCompanies = () => {
     console.log('postCompanies');
   };
 
@@ -91,7 +95,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
-        onClose={setOpen}
+        onClose={() => setOpen(false)}
         closeAfterTransition
       >
         <Fade in={open}>
@@ -129,17 +133,14 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Upload
-                  id="companyImage"
-                  title=""
-                  description=""
-                  selectedFile={null}
-                  changeHandler={handleExcelChange}
-                  accept={[AcceptedFileTypes.XLSX]}
-                  maxWidth="200px"
-                  maxHeight="200px"
-                />
-                <Button variant="contained" type="submit" size="large" fullWidth>
+                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleExcelChange} />
+                <Button
+                  variant="contained"
+                  type="submit"
+                  size="large"
+                  onClick={postCompanies}
+                  fullWidth
+                >
                   Edit Company
                 </Button>
               </Grid>
