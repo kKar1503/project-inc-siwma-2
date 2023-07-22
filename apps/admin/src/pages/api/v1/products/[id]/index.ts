@@ -1,15 +1,10 @@
-import { apiHandler, formatAPIResponse } from '@/utils/api';
+import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import { ForbiddenError, NotFoundError } from '@inc/errors';
+import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
+import { NotFoundError, ParamError } from '@inc/errors';
 import { listingItemSchema } from '@/utils/api/server/zod';
 import { formatSingleListingItemResponse, parseListingItemId } from '..';
 
-// -- Functions --//
-/**
- * Checks if a listing exists
- * @returns The listing item if it exists
- * @param $id
- */
 export async function checkListingItemExists($id: string | number) {
   // Parse and validate listing id provided
   const id = typeof $id === 'number' ? $id : parseListingItemId($id);
@@ -28,6 +23,22 @@ export async function checkListingItemExists($id: string | number) {
   return listingItem;
 }
 
+function parseId(id: string | undefined): number {
+  if (!id) {
+    throw new ParamError('id');
+  }
+  return parseToNumber(id, 'id');
+}
+
+async function checkCategory(categoryId: number) {
+  const category = await PrismaClient.category.findFirst({
+    where: {
+      id: categoryId,
+    },
+  });
+  return category;
+}
+
 export default apiHandler()
   .get(async (req, res) => {
     // Retrieve the listing from the database
@@ -44,33 +55,23 @@ export default apiHandler()
 
     res.status(200).json(formatAPIResponse(response));
   })
-  .put(async (req, res) => {
+  .put(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const id = parseListingItemId(req.query.id as string);
-    const userRole = req.token?.user?.permissions;
-
-    const listingItem = await checkListingItemExists(id);
-
-    const isAdmin = userRole && userRole >= 1;
-
-    if (!isAdmin) {
-      throw new ForbiddenError();
-    }
 
     // Validate the request body
     const data = listingItemSchema.put.body.parse(req.body);
 
-    if (data.categoryId) {
-      // Remove old parameters if the category has changed
-      if (data.categoryId !== listingItem.categoryId) {
-        await PrismaClient.listingsParametersValue.deleteMany({
-          where: {
-            listingId: id,
-          },
-        });
-      }
+    const categoryId = parseId(id as unknown as string);
+
+    if (data.name != null && data.name.trim().length === 0) {
+      throw new ParamError('name');
     }
 
-    // Do not remove this, it is necessary to update the listing item
+    const category = await checkCategory(categoryId);
+    if (!category) {
+      throw new NotFoundError('Category');
+    }
+
     await PrismaClient.listingItem.update({
       where: { id },
       data: {
@@ -95,22 +96,12 @@ export default apiHandler()
       .status(200)
       .json(formatAPIResponse(await formatSingleListingItemResponse(completeListingItem)));
   })
-  .delete(async (req, res) => {
+  .delete(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const id = parseListingItemId(req.query.id as string);
 
-    const userRole = req.token?.user?.permissions;
-
-    const isAdmin = userRole && userRole >= 1;
-
-    if (!isAdmin) {
-      throw new ForbiddenError();
-    }
-
-    // Delete listing item from db
     await PrismaClient.listingItem.delete({
       where: { id },
     });
 
-    // Return 204 no content
     res.status(204).end();
   });

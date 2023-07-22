@@ -3,6 +3,7 @@ import PrismaClient, { ListingItem, Prisma } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { GetListingItemQueryParameter, listingItemSchema } from '@/utils/api/server/zod';
 import { ListingItemResponseBody } from '@/utils/api/client/zod/listingItems';
+import { ParamError } from '@inc/errors';
 
 /**
  * Obtains the listingItem id from the url
@@ -22,16 +23,6 @@ export function parseListingItemId($id: string, strict = true) {
   // Parse and validate listing id provided
   return parseToNumber(id, 'id');
 }
-
-export type QueryResult = {
-  id: number;
-  name: string;
-  chineseName: string | null;
-  description: string;
-  unit: string;
-  chineseUnit: string | null;
-  categoryId: number;
-};
 
 function orderByOptions(sortBy: string | undefined): Prisma.ListingItemOrderByWithRelationInput {
   switch (sortBy) {
@@ -62,7 +53,7 @@ export async function formatSingleListingItemResponse(
     description: listingItem.description,
     unit: listingItem.unit,
     chineseUnit: listingItem.chineseUnit as string,
-    categoryId: listingItem.categoryId,
+    categoryId: listingItem.categoryId.toString(),
   };
 
   return formattedListingItem;
@@ -100,7 +91,13 @@ export default apiHandler()
       take: queryParams.limit,
     });
 
-    res.status(200).json(formatAPIResponse({ totalCount, listingItems }));
+    const formattedListingItems = await Promise.all(
+      listingItems.map((listingItem) =>
+        formatSingleListingItemResponse(listingItem)
+      )
+    );
+
+    res.status(200).json(formatAPIResponse({totalCount, listingItems: formattedListingItems}));
   })
   .post(
     apiGuardMiddleware({
@@ -108,6 +105,18 @@ export default apiHandler()
     }),
     async (req, res) => {
       const data = listingItemSchema.post.body.parse(req.body);
+
+      const categoryExists = await PrismaClient.category.findUnique({
+        where: { id: data.categoryId },
+      });
+
+      if (!categoryExists) {
+        throw new ParamError('Category');
+      }
+
+      if (data.name != null && data.name.trim().length === 0) {
+        throw new ParamError('name');
+      }
 
       const listingItem = await PrismaClient.listingItem.create({
         data: {
