@@ -1,6 +1,7 @@
 const DISABLE_RENAME_INTEGRATION = true;
 
 const fetchS3Image = async (imgKey: string) => {
+  if(!imgKey) return undefined;
   const imgSrc = `https://s3.karlok.dev/${imgKey}`;
   if (DISABLE_RENAME_INTEGRATION) return { url: imgSrc, name: undefined };
   try {

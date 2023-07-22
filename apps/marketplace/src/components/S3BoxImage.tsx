@@ -4,7 +4,9 @@ import { useQuery } from 'react-query';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import Box, { BoxProps } from '@mui/material/Box';
 
-const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));
+const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey), {
+  enabled: !!imgKey,
+});
 
 export type S3BoxImageProps = BoxProps & { src: string, placeholderImg?: string };
 
