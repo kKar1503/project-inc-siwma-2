@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 
 // ** NextJS Imports
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 // ** MUI Imports
 import Card from '@mui/material/Card';
@@ -37,16 +38,17 @@ export type UserBookmarkItemProps = {
 const UserBookmarkItem = ({ user, updateBookmarkData }: UserBookmarkItemProps) => {
   // ** Hooks
   const [isSm] = useResponsiveness(['sm']);
-  const { refetch, isError, data, isFetched, error } = useBookmarkUser(user.id);
+  const { refetch, isError, data, isFetched, isFetching, error } = useBookmarkUser(user.id);
+  const router = useRouter();
 
   // ** Effects
   useEffect(() => {
-    if (!isFetched) {
+    if (!isFetched || isFetching) {
       return;
     }
 
     if (isError) {
-      alert(`Error: ${error}`);
+      router.replace('/500');
       return;
     }
 
@@ -58,7 +60,7 @@ const UserBookmarkItem = ({ user, updateBookmarkData }: UserBookmarkItemProps) =
     // It should never reach here.
     // If it reaches here it means the data is undefined / true, which should not happen
     // for this component
-    alert('Something went wrong!');
+    router.replace('/500');
   }, [isFetched]);
 
   return (

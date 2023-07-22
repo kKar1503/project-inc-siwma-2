@@ -68,7 +68,6 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
     isFetched: bookmarkFetched,
     isError: bookmarkIsError,
     data: bookmarked,
-    error: bookmarkError,
   } = useBookmarkUser(profileUserUuid);
 
   // ** Effects
@@ -89,7 +88,7 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
     }
 
     if (bookmarkIsError) {
-      alert(`Error: ${bookmarkError}`);
+      router.replace('/500');
       return;
     }
 
@@ -101,7 +100,7 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
     // It should never reach here.
     // If it reaches here it means the data is undefined, which should not happen
     // for this component
-    alert('Something went wrong!');
+    router.replace('/500');
   }, [bookmarkFetching, bookmarkFetched]);
 
   // ** Styles
