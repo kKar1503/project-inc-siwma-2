@@ -15,11 +15,11 @@ import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCar
 import { useTheme } from '@mui/material/styles';
 import { useQuery } from 'react-query';
 import { useResponsiveness } from '@inc/ui';
-import fetchCompany from '@/services/fetchCompany';
+import useUserWithCompany from '@/services/users/useUserWithCompany';
 
 const useGetUser = (userUuid: string) => {
   console.log({ userUuid });
-  const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
+  const { data } = useQuery('userdata', async () => useUserWithCompany(userUuid), {
     enabled: userUuid !== undefined,
   });
   return data;

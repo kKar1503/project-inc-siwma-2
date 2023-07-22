@@ -29,7 +29,7 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import fetchCompany from '@/services/fetchCompany';
+import useUserWithCompany from '@/services/users/useUserWithCompany';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
@@ -40,7 +40,7 @@ export type ProfilePageProps = {
 };
 
 const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', () => fetchCompany(userUuid), {
+  const { data } = useQuery('user', () => useUserWithCompany(userUuid), {
     enabled: userUuid !== undefined,
   });
   return data;
