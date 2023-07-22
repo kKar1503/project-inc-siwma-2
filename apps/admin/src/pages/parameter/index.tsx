@@ -5,13 +5,14 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
-import fetchParameters from '@/middlewares/fetchParameters';
-import { Parameter, ParameterResponseBody } from '@/utils/api/client/zod';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Head from 'next/head';
 import Link from 'next/link';
+import { Parameter, ParameterResponseBody } from '@/utils/api/client/zod';
+import fetchParameters from '@/middlewares/fetchParameters';
 import DeleteParameterModal from '@/components/modals/DeleteParameterModal';
+import router from 'next/router';
 
 type DataType = 'string' | 'number' | 'boolean';
 type TableType = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
@@ -80,13 +81,27 @@ const useParameterQuery = () => {
 const ParameterTable = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [id, setId] = useState<string>('');
   const [ids, setIds] = useState<string[]>([]);
   const [parameterData, setParameterData] = useState<Parameter[]>();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
   const parameter = useParameterQuery();
+
+  // const handleParametersChange = async (parameter: Parameter[]) => {
+  //   setParameterData(parameter);
+  // };
+
+  // useEffect(() => {
+  //   if (parameter) {
+  //     handleParametersChange(parameter);
+  //   }
+  // }, [parameter]);
+
+  // const updateParameterData = async () => {
+  //   const updatedParameters = await fetchParameters();
+  //   handleParametersChange(updatedParameters);
+  // };
 
   const sortRows = (): void => {
     const rowsData: BaseTableData[] = [];
@@ -105,10 +120,6 @@ const ParameterTable = () => {
     setRows(rowsData);
   };
 
-  const startIndex = page * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const pageRows = rows.slice(startIndex, endIndex);
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -124,20 +135,16 @@ const ParameterTable = () => {
     setOpenDeleteModal(true);
   };
 
-  const handleParametersChange = async (parameter: Parameter[]) => {
-    setParameterData(parameter);
+  const handleEditRow = (row: BaseTableData) => {
+    const { id } = row;
+    const editUrl = `parameter/${id}/edit-parameter`;
+    router.push(editUrl);
   };
 
-  // useEffect(() => {
-  //   if (parameter) {
-  //     handleParametersChange(parameter);
-  //   }
-  // }, [parameter]);
 
-  // const updateParameterData = async () => {
-  //   const updatedParameters = await fetchParameters();
-  //   handleParametersChange(updatedParameters);
-  // };
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const pageRows = rows.slice(startIndex, endIndex);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const tableStyle = useMemo(() => {
@@ -193,7 +200,7 @@ const ParameterTable = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           onDelete={handleDeleteRows}
-          onEdit={() => console.log('edit')}
+          onEdit={handleEditRow}
           onToggle={() => console.log('toggle')}
           page={page}
           rowsPerPage={rowsPerPage}
