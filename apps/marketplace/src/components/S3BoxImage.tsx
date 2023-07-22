@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useQuery } from 'react-query';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import Box, { BoxProps } from '@mui/material/Box';
+import placeholder from 'public/images/catPlaceholder.png';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey), {
   enabled: !!imgKey && imgKey !== '',
@@ -35,14 +36,14 @@ const S3BoxImage = ({ src, placeholderImg, children, ...others }: S3BoxImageProp
 
   return (
     <Link
-      href={image.url || placeholderImg || ''}
+      href={image.url || placeholderImg || placeholder.src}
       download={image.name}
       onClick={onClick}
       style={{ cursor: 'default', textDecoration: 'none' }}
     >
       <Box
         component='img'
-        src={image.url || placeholderImg || ''}
+        src={image.url || placeholderImg || placeholder.src}
         {...others}
       >
         {children}

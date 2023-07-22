@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useQuery } from 'react-query';
 import fetchS3Image from '@/middlewares/fetchS3Image';
 import Avatar, { AvatarProps } from '@mui/material/Avatar';
+import placeholder from 'public/images/placeholder.png';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey), {
   enabled: !!imgKey && imgKey !== '',
@@ -35,12 +36,12 @@ const S3Avatar = ({ src, alt, placeholderImg, children, ...others }: S3AvatarPro
 
   return (
     <Link
-      href={image.url || placeholderImg || ''}
+      href={image.url || placeholderImg || placeholder.src}
       download={image.name || alt}
       onClick={onClick}
       style={{ cursor: 'default', textDecoration: 'none' }}
     >
-      <Avatar src={image.url || placeholderImg || ''} {...others}>
+      <Avatar src={image.url || placeholderImg || placeholder.src} {...others}>
         {children}
       </Avatar>
     </Link>
