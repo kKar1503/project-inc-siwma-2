@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import type { User } from '@/utils/api/client/zod/users';
 
 export type UserBookmarksProps = {
-  users: User[];
+  users: User[] | undefined;
   /** Callback function to inform the update of bookmark data */
   updateBookmarkData: () => void;
 };

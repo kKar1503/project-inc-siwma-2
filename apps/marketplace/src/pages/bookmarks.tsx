@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid';
@@ -9,89 +9,57 @@ import Container from '@mui/material/Container';
 // ** Custom Components Imports
 import UserBookmarks from '@/components/marketplace/bookmarks/UserBookmarks';
 
-// ** Type Imports
-import type { Listing } from '@/utils/api/client/zod/listings';
-import type { User } from '@/utils/api/client/zod/users';
-
 // ** Hooks Imports
 import { useSession } from 'next-auth/react';
-import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
-import fetchListing from '@/services/fetchListing';
+import useMultipleUsers from '@/services/users/useMultipleUsers';
 
-export type BookmarkTypeProps = 'LISTINGS' | 'USERS';
-
-const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery(['user', userUuid], async () => useUser(userUuid));
-
-  return data;
-};
+const BUTTONS = ['LISTINGS', 'USERS'] as const;
+export type BookmarkType = (typeof BUTTONS)[number];
 
 const Bookmarks = () => {
-  const [selectedButton, setSelectedButton] = useState<BookmarkTypeProps>('LISTINGS');
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  // ** States
+  const [selectedButton, setSelectedButton] = useState<BookmarkType>('LISTINGS');
+  // const [bookmarkedListings, setBookmarkedListings] = useState<Listing[]>([]);
+  const [bookmarkedUserUuids, setBookmarkedUsersUuids] = useState<string[]>([]);
 
+  // ** Hooks
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
-  const userDetails = useGetUserQuery(loggedUserUuid);
-
+  const { data: userDetails, refetch: refetchUser } = useUser(loggedUserUuid);
+  const { data: bookmarkedUsers } = useMultipleUsers(bookmarkedUserUuids);
   const { t } = useTranslation();
 
-  const handleButtonClick = useCallback((type: BookmarkTypeProps) => {
-    setSelectedButton(type);
-  }, []);
-
-  const findListings = async (listingIDs: string[]) => {
-    if (listingIDs.length === 0) {
-      setListings([]);
-      return;
-    }
-
-    const listings = await Promise.all(listingIDs.map((id) => fetchListing(id)));
-    setListings(listings);
-  };
-
-  const findUsers = async (userIDs: string[]) => {
-    if (userIDs.length === 0) {
-      setUsers([]);
-      return;
-    }
-
-    const usersData = await Promise.all(userIDs.map(useUser));
-    setUsers(usersData);
-  };
-
+  // ** Effects
   useEffect(() => {
     if (userDetails?.bookmarks) {
-      const { listings, users } = userDetails.bookmarks;
-
-      findListings(listings);
-      findUsers(users);
+      if (userDetails?.bookmarks?.users) {
+        setBookmarkedUsersUuids(userDetails.bookmarks.users);
+      } else {
+        setBookmarkedUsersUuids([]);
+      }
     }
   }, [userDetails]);
 
-  const updateBookmarkData = async () => {
-    const updatedUserDetails = await useUser(loggedUserUuid);
-    const updatedBookmarkData = updatedUserDetails?.bookmarks;
-
-    if (updatedBookmarkData) {
-      findListings(updatedBookmarkData.listings);
-      findUsers(updatedBookmarkData.users);
+  // ** Handlers
+  const handleButtonClick = (type: BookmarkType) => {
+    if (selectedButton === type) {
+      return;
     }
+    setSelectedButton(type);
   };
 
   return (
     <Container maxWidth="lg" sx={{ my: 4 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} display="flex" justifyContent="center">
-          {['LISTINGS', 'USERS'].map((type) => (
+          {BUTTONS.map((type) => (
             <Grid item xs={12} md={6} key={type}>
               <Button
                 size="large"
                 variant={selectedButton === type ? 'contained' : 'outlined'}
-                onClick={() => handleButtonClick(type as BookmarkTypeProps)}
+                onClick={() => handleButtonClick(type)}
                 fullWidth
               >
                 {t([type])}
@@ -103,7 +71,7 @@ const Bookmarks = () => {
           // <ListingBookmarks data={listings} updateBookmarkData={updateBookmarkData} />
           'no listing data for now'}
         {selectedButton === 'USERS' && (
-          <UserBookmarks users={users} updateBookmarkData={updateBookmarkData} />
+          <UserBookmarks users={bookmarkedUsers} updateBookmarkData={refetchUser} />
         )}
       </Grid>
     </Container>
