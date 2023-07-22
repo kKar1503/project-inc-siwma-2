@@ -17,7 +17,7 @@ import type { User } from '@/utils/api/client/zod/users';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
-import useUser from '@/services/fetchUser';
+import useUser from '@/services/users/fetchUser';
 import fetchListing from '@/services/fetchListing';
 
 export type BookmarkTypeProps = 'LISTINGS' | 'USERS';

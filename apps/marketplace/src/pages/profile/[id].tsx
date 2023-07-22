@@ -1,12 +1,21 @@
-import Head from 'next/head';
-import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
-import Box from '@mui/material/Box';
+// ** React Imports
 import { useMemo } from 'react';
+
+// ** Next Imports
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+
+// ** MUI Imports
+import Box from '@mui/material/Box';
+
+// ** Custom Components Imports
+import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
+
+// ** HooksImports
 import { useTheme } from '@mui/material/styles';
 import { useQuery } from 'react-query';
-import fetchCompany from '@/services/fetchCompany';
-import { useRouter } from 'next/router';
 import { useResponsiveness } from '@inc/ui';
+import fetchCompany from '@/services/fetchCompany';
 
 const useGetUser = (userUuid: string) => {
   console.log({ userUuid });
