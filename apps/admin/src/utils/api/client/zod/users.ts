@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserContacts } from '@prisma/client';
+import { UserContacts } from '@inc/db-enums';
 import listingSchemas from './listings';
 
 const id = z.string();
