@@ -30,6 +30,19 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
     return <div>Loading...</div>;
   }
 
+  if(advertisementsQuery.isError || companiesQuery.isError) {
+    return <div>
+      An error occurred, please refresh the page try again
+      <br/>
+      If the problem persists, please contact the administrator for assistance
+    </div>;
+  }
+
+  const refetchData = () => {
+    advertisementsQuery.refetch();
+    companiesQuery.refetch();
+    setMutatedAdvertisements({});
+  }
 
   const advertisements: { [key: string]: Advertisment } = {};
 
