@@ -5,6 +5,7 @@ import FileUpload, {
   AcceptedFileTypes,
 } from '@/components/FileUpload/FileUploadBase';
 import CompanyInvitesTable from '@/components/tables/BaseTable/CompanyInvitesTable';
+import PendingInvitesTables from '@/components/tables/BaseTable/CompanyInvitesTables';
 import { Box, Button } from '@mui/material';
 import UserInvitesTable from '@/components/tables/BaseTable/UserInvitesTable';
 import { Modal, useResponsiveness } from '@inc/ui';
@@ -12,11 +13,16 @@ import * as XLSX from 'xlsx';
 import { useQuery } from 'react-query';
 import bulkInvites from '@/middlewares/bulkInvites';
 
-export type InviteFileProps = {
+export type InviteFileProps = [{
   company: string;
   website: string;
   email: string;
   mobileNumber: string;
+}];
+
+const useBulkInvitesQuery = (file: InviteFileProps) => {
+  const { data } = useQuery('cat', async () => bulkInvites(file));
+  return data;
 };
 
 const BulkInvitesPage = () => {
@@ -28,7 +34,6 @@ const BulkInvitesPage = () => {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [fileDetails, setFileDetails] = useState<InviteFileProps[]>([]);
   const [rightButtonState, setRightButtonState] = useState(false);
-
 
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (!event.target.files) return;
@@ -78,6 +83,8 @@ const BulkInvitesPage = () => {
     };
   };
 
+  // const res = useBulkInvitesQuery(fileDetails);
+
   const handleFileUpload = () => {
     console.log('File uploading...');
     setOpenConfirm(true);
@@ -91,7 +98,7 @@ const BulkInvitesPage = () => {
           flexDirection: isLg ? 'row' : 'column',
           gap: isLg ? '32px' : '100px',
           justifyContent: 'flex-end',
-          m: 2,
+          m: 1,
           alignItems: isLg ? 'flex-start' : 'center',
         }}
       >
@@ -104,26 +111,29 @@ const BulkInvitesPage = () => {
             handleFileChange(event);
           }}
           accept={[AcceptedFileTypes.XLSX]}
-          maxWidth="200px"
-          maxHeight="100vh"
+          maxWidth={isLg ? '45%' : '100%'}
+          maxHeight={isLg ? '100vh' : '70vh'}
         />
         <Box
-          sx={{
-            ...(isLg && { maxWidth: '900px' }),
-            extAlign: isLg ? 'right' : 'center',
-          }}
+          sx={({ spacing }) => ({
+            maxWidth: isLg ? '45%' : '100%',
+            mr: spacing(2),
+          })}
         >
+          {/* <PendingInvitesTable/> */}
           <CompanyInvitesTable details={fileDetails} />
           <UserInvitesTable details={fileDetails} />
+
         </Box>
       </Box>
 
       <Box sx={{ justifyContent: isLg ? 'flex-end' : 'center', m: 2, display: 'flex' }}>
         <Button
           variant="contained"
-          sx={({ palette }) => ({
+          sx={({ palette, spacing }) => ({
             backgroundColor: palette.primary.main,
             width: isLg ? '10%' : '95%',
+            mr: spacing(2),
           })}
           onClick={handleFileUpload}
         >

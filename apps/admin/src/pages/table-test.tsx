@@ -104,9 +104,7 @@ const TableTest = () => {
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
-          totalCount={rows.length}
-          heading='Desserts'
-        />
+          totalCount={rows.length}        />
       </main>
     </>
   );

@@ -2,7 +2,7 @@ import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTabl
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import { Box, Typography } from '@mui/material';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export type InviteFileProps = {
   details: Array<{
@@ -35,12 +35,21 @@ const headCells: Header[] = [
 const CompanyInvitesTable = ({ details }: InviteFileProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [tableData, setTableData] = useState<BaseTableData[]>([]);
 
   console.log(details);
 
-  const companyRows = details.map((x) => createData(x.company, x.website));
+const companyRows = useMemo(() => details.map((x) => createData(x.company, x.website)), [details]);
 
   console.log(companyRows);
+
+  useEffect(() => {
+    setTableData(
+      companyRows.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1))
+    );
+  }, [companyRows, page, rowsPerPage]);
+
+  console.log(tableData);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -54,11 +63,11 @@ const CompanyInvitesTable = ({ details }: InviteFileProps) => {
   return (
     <Box sx={{ my: 2, mx: 1 }}>
       <BaseTable
-        rows={companyRows}
+        rows={tableData}
         headers={headCells}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        onDelete={() => console.log('delete')}
+        onDelete={() => console.log('delete') as any as BaseTableData[]}
         onEdit={() => console.log('edit')}
         onToggle={() => console.log('toggle')}
         page={page}

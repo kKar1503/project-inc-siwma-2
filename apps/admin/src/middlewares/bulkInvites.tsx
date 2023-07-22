@@ -5,7 +5,7 @@ const bulkInvites = async (
     {
       company: string;
       website: string;
-      name: string;
+      email: string;
       mobileNumber: string;
     }
   ]
