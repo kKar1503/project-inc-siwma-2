@@ -62,38 +62,44 @@ const UserBookmarkItem = ({ user, updateBookmarkData }: UserBookmarkItemProps) =
   }, [isFetched]);
 
   return (
-    <Card sx={{ height: '100%' }}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} src={user.profilePic || '/images/placeholder.png'}>
-            {user.name.charAt(0)}
-          </Avatar>
-        }
-        title={user.name}
-        titleTypographyProps={{
-          sx: ({ typography }) => ({
-            fontSize: isSm ? typography.body1 : typography.body2,
-            fontWeight: typography.fontWeightBold,
-          }),
-        }}
-        action={
-          <IconButton
-            aria-label="bookmark"
-            onClick={() => refetch()}
-            sx={({ spacing }) => ({
-              p: spacing(0),
-            })}
-          >
-            <BookmarkIcon
-              fontSize="large"
-              sx={({ palette }) => ({
-                color: palette.warning[100],
+    <Link style={{ textDecoration: 'none' }} href={`/profile/${user.id}`}>
+      <Card sx={{ height: '100%' }}>
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: red[500] }} src={user.profilePic || '/images/placeholder.png'}>
+              {user.name.charAt(0)}
+            </Avatar>
+          }
+          title={user.name}
+          titleTypographyProps={{
+            sx: ({ typography }) => ({
+              fontSize: isSm ? typography.body1 : typography.body2,
+              fontWeight: typography.fontWeightBold,
+            }),
+          }}
+          action={
+            <IconButton
+              aria-label="bookmark"
+              onClick={(e) => {
+                // This helps to prevent clicking on the profile
+                e.preventDefault();
+                e.stopPropagation();
+
+                refetch();
+              }}
+              sx={({ spacing }) => ({
+                p: spacing(0),
               })}
-            />
-          </IconButton>
-        }
-      />
-      <Link style={{ textDecoration: 'none' }} href={`/profile/${user.id}`}>
+            >
+              <BookmarkIcon
+                fontSize="large"
+                sx={({ palette }) => ({
+                  color: palette.warning[100],
+                })}
+              />
+            </IconButton>
+          }
+        />
         <CardContent
           sx={({ spacing }) => ({
             pt: spacing(0),
@@ -118,8 +124,8 @@ const UserBookmarkItem = ({ user, updateBookmarkData }: UserBookmarkItemProps) =
             {user.mobileNumber}
           </Typography>
         </CardContent>
-      </Link>
-    </Card>
+      </Card>
+    </Link>
   );
 };
 
