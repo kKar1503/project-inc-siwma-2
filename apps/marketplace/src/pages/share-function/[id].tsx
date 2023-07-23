@@ -1,16 +1,22 @@
-import Head from 'next/head';
-import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
+// ** React Imports
+import { useState } from 'react';
+
+// ** Next Imports
+import { useRouter } from 'next/router';
+
+// ** MUI Imports
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { useMemo, useState } from 'react';
-import { useTheme } from '@mui/material/styles';
+
+// ** Custom Components Imports
+import ListingCard from '@/components/ListingCard';
+import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
+import ShareModal from '@/components/modal/ShareModal';
+
+// ** HooksImports
+import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 import fetchCompany from '@/middlewares/fetchCompany';
-import { useRouter } from 'next/router';
-import ListingCard from '@/components/ListingCard';
-import { useSession } from 'next-auth/react';
-import ShareModal from '@/components/modal/ShareModal';
 
 const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userData', async () => fetchCompany(userUuid), {
