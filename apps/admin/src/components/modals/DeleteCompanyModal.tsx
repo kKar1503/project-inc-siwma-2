@@ -24,6 +24,8 @@ const DeleteCompanyModal = ({ open, setOpen, companies, updateData }: ReportModa
       deleteCompany();
       setOpen(false);
     }
+
+    setRightButtonState(false);
   }, [rightButtonState, setOpen]);
 
   useEffect(() => {
