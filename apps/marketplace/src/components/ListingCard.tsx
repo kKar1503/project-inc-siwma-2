@@ -1,3 +1,8 @@
+// ** React Imports
+
+// ** Next Imports
+
+// ** MUI Imports
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -5,17 +10,23 @@ import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import Grid from '@mui/material/Grid';
 import ChatIcon from '@mui/icons-material/Chat';
 import IconButton from '@mui/material/IconButton';
-import Image from 'next/image';
-import placeholder from 'public/images/listing-placeholder.svg';
-import Grid from '@mui/material/Grid';
-import { useQuery } from 'react-query';
+
+// ** HooksImports
 import fetchListing from '@/middlewares/fetchListing';
 import fetchCatById from '@/middlewares/fetchCatById';
 import fetchParamNames from '@/middlewares/fetchParamNames';
-import { useMemo } from 'react';
+import { useQuery } from 'react-query';
+
+// ** Image Imports
+import placeholder from 'public/images/listing-placeholder.svg';
+
+// ** Luxon Imports
 import { DateTime } from 'luxon';
+
+// ** Custom Components Imports
 import S3BoxImage from './S3BoxImage';
 import ListingBadge from './listing/ListingBadge';
 
@@ -88,7 +99,12 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
 
         <Box>
           <IconButton sx={{ color: '#FFB743' }}>
-            <BookmarkIcon fontSize="large" />
+            <BookmarkIcon
+              fontSize="large"
+              sx={({ palette }) => ({
+                color: palette.warning[100],
+              })}
+            />
           </IconButton>
           <IconButton
             sx={({ palette, spacing }) => ({
