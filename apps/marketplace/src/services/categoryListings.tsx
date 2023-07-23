@@ -1,6 +1,6 @@
 import apiClient from '@/utils/api/client/apiClient';
 import listings from '@/utils/api/client/zod/listings';
-import { FilterOptions } from '@/middlewares/searchListings';
+import { FilterOptions } from '@/services/searchListings';
 
 const CategoryListings = async (
   lastListingId: number,
