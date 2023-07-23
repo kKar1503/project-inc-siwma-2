@@ -2,10 +2,12 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { ListingItem } from '@inc/db';
 
+export type ProductMap = Record<number, ListingItem>;
+
 export interface ProductStates {
   initialized: Date | null;
   productIds: number[];
-  products: ListingItem[];
+  products: ProductMap;
 }
 
 export interface ProductActions {
@@ -22,20 +24,26 @@ export interface ProductActions {
 const initialState: ProductStates = {
   initialized: null,
   productIds: [],
-  products: [],
+  products: {},
 };
 
 const useProductStore = create<ProductStates & ProductActions>()(
   devtools(
     (set, get) => ({
       ...initialState,
-      resetProducts: () => set(initialState),
+      resetProducts: () => {
+        set(initialState);
+      },
       setProducts: (products, initialized, isSorted = false) => {
         const sortedProducts = isSorted ? products : products.sort((a, b) => a.id - b.id);
+        const productMap: ProductMap = {};
+        sortedProducts.forEach((p) => {
+          productMap[p.id] = p;
+        });
         set({
           initialized: initialized === undefined ? new Date() : initialized,
           productIds: sortedProducts.map((p) => p.id),
-          products: sortedProducts,
+          products: productMap,
         });
       },
       addProduct: (product) => {
@@ -49,28 +57,27 @@ const useProductStore = create<ProductStates & ProductActions>()(
         const newArrLength = productIds.length + 1;
 
         const newProductIds = new Array<number>(newArrLength);
-        const newProducts = new Array<ListingItem>(newArrLength);
 
         let inserted = false;
         for (let i = 0; i < newArrLength; i++) {
           if (inserted) {
             newProductIds[i] = productIds[i - 1];
-            newProducts[i] = products[i - 1];
           }
 
           if (i === productIds.length || productIds[i] > product.id) {
             newProductIds[i] = product.id;
-            newProducts[i] = { ...product };
             inserted = true;
           } else {
             newProductIds[i] = productIds[i];
-            newProducts[i] = products[i];
           }
         }
 
+        const newProduct = { ...products };
+        newProduct[product.id] = product;
+
         set({
           productIds: newProductIds,
-          products: newProducts,
+          products: newProduct,
         });
       },
       addProducts: (newProducts, isSorted = false) => {
@@ -90,7 +97,6 @@ const useProductStore = create<ProductStates & ProductActions>()(
         const newArrLength = combinedProductIdsSet.size;
 
         const updatedProductIds = new Array<number>(newArrLength);
-        const updatedProducts = new Array<ListingItem>(newArrLength);
 
         let j = 0; // original
         let k = 0; // new
@@ -101,30 +107,30 @@ const useProductStore = create<ProductStates & ProductActions>()(
           if (j === productIds.length) {
             // Handles when productIds are all filled into the arr
             updatedProductIds[i] = newProductId;
-            updatedProducts[i] = sortedNewProducts[k];
             k++;
           } else if (k === sortedNewProductIds.length) {
             // Handles when sortedNewProductIds are all filled into the arr
             updatedProductIds[i] = productId;
-            updatedProducts[i] = products[j];
             j++;
           } else if (productId === newProductId) {
             // We prioritizes the sortedNewProductIds and sortedNewProducts
             // as they are likely to be the "newer" version
             updatedProductIds[i] = newProductId;
-            updatedProducts[i] = sortedNewProducts[k];
             j++;
             k++;
           } else if (productId > newProductId) {
             updatedProductIds[i] = newProductId;
-            updatedProducts[i] = sortedNewProducts[k];
             k++;
           } else {
             updatedProductIds[i] = productId;
-            updatedProducts[i] = products[j];
             j++;
           }
         }
+
+        const updatedProducts = { ...products };
+        newProducts.forEach((p) => {
+          updatedProducts[p.id] = p;
+        });
 
         set({
           productIds: updatedProductIds,
@@ -138,7 +144,6 @@ const useProductStore = create<ProductStates & ProductActions>()(
         const { productIds, products } = get();
         const sortedRemoveProducts = isSorted ? productsToRemove : productsToRemove.sort();
         const updatedProductIds: number[] = [];
-        const updatedProducts: ListingItem[] = [];
 
         // Since both arrays are sorted, and we will need to create a new array.
         // We can do a O(m+n) double pointer traversal to remove items in the second array.
@@ -147,11 +152,9 @@ const useProductStore = create<ProductStates & ProductActions>()(
         let finished = false;
         let somethingRemoved = false;
         while (!finished) {
-          console.log(JSON.stringify({ i, j, updatedProductIds }));
           if (j === sortedRemoveProducts.length) {
             // Out of index range, already finished going through the j value
             if (i < productIds.length) {
-              updatedProducts.push(products[i]);
               updatedProductIds.push(productIds[i]);
               i++;
             } else {
@@ -162,20 +165,16 @@ const useProductStore = create<ProductStates & ProductActions>()(
             const removeProductId = sortedRemoveProducts[j].id;
 
             if (productId === removeProductId) {
-              console.log('a');
               // Id is the same, will means the product gets removed, and thus not pushed to the new array.
               j++;
               i++;
               somethingRemoved = true;
             } else if (productId < removeProductId) {
-              console.log('b');
               // productId is less meaning that this shouldn't be removed
               // since we haven't reach the next one to remove
               updatedProductIds.push(productIds[i]);
-              updatedProducts.push(products[i]);
               i++;
             } else {
-              console.log('c');
               // productId is more, this shouldn't happen, but since it does,
               // it's likely the remove array was not deduped.
               // We will skip
@@ -184,26 +183,38 @@ const useProductStore = create<ProductStates & ProductActions>()(
           }
         }
 
-        if (somethingRemoved)
+        if (somethingRemoved) {
+          const updatedProducts = { ...products };
+          productsToRemove.forEach((p) => {
+            if (p.id in updatedProducts) {
+              delete updatedProducts[p.id];
+            }
+          });
+
           set({
             productIds: updatedProductIds,
             products: updatedProducts,
           });
+        }
       },
       removeProductById: (productId) => {
         const idx = get().productIds.indexOf(productId);
         if (idx !== -1) {
-          set((state) => ({
-            productIds: state.productIds.filter((p) => p !== productId),
-            products: state.products.filter((p) => p.id !== productId),
-          }));
+          const updatedProducts = { ...get().products };
+          if (productId in updatedProducts) {
+            delete updatedProducts[productId];
+          }
+
+          set({
+            productIds: get().productIds.filter((p) => p !== productId),
+            products: updatedProducts,
+          });
         }
       },
       removeProductsById: (productIdsToRemove, isSorted = false) => {
         const { productIds, products } = get();
         const sortedRemoveProductIds = isSorted ? productIdsToRemove : productIdsToRemove.sort();
         const updatedProductIds: number[] = [];
-        const updatedProducts: ListingItem[] = [];
 
         // Since both arrays are sorted, and we will need to create a new array.
         // We can do a O(m+n) double pointer traversal to remove items in the second array.
@@ -212,11 +223,9 @@ const useProductStore = create<ProductStates & ProductActions>()(
         let finished = false;
         let somethingRemoved = false;
         while (!finished) {
-          console.log(JSON.stringify({ i, j, updatedProductIds }));
           if (j === sortedRemoveProductIds.length) {
             // Out of index range, already finished going through the j value
             if (i < productIds.length) {
-              updatedProducts.push(products[i]);
               updatedProductIds.push(productIds[i]);
               i++;
             } else {
@@ -227,20 +236,16 @@ const useProductStore = create<ProductStates & ProductActions>()(
             const removeProductId = sortedRemoveProductIds[j];
 
             if (productId === removeProductId) {
-              console.log('a');
               // Id is the same, will means the product gets removed, and thus not pushed to the new array.
               j++;
               i++;
               somethingRemoved = true;
             } else if (productId < removeProductId) {
-              console.log('b');
               // productId is less meaning that this shouldn't be removed
               // since we haven't reach the next one to remove
               updatedProductIds.push(productIds[i]);
-              updatedProducts.push(products[i]);
               i++;
             } else {
-              console.log('c');
               // productId is more, this shouldn't happen, but since it does,
               // it's likely the remove array was not deduped.
               // We will skip
@@ -249,11 +254,19 @@ const useProductStore = create<ProductStates & ProductActions>()(
           }
         }
 
-        if (somethingRemoved)
+        if (somethingRemoved) {
+          const updatedProducts = { ...products };
+          productIdsToRemove.forEach((p) => {
+            if (p in updatedProducts) {
+              delete updatedProducts[p];
+            }
+          });
+
           set({
             productIds: updatedProductIds,
             products: updatedProducts,
           });
+        }
       },
     }),
     { name: 'product-store' }

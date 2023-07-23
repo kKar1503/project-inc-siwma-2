@@ -14,7 +14,7 @@ const ListingTable = () => {
   return (
     <>
       <ul>
-        {product.products.map((p) => (
+        {Object.values(product.products).map((p) => (
           <li>
             <span>{JSON.stringify(p)}</span>
             <button onClick={() => product.removeProductById(p.id)}>removeProductById</button>
@@ -48,7 +48,7 @@ const ListingTable = () => {
         onClick={() => {
           product.addProducts([
             {
-              id: product.products.length + 1,
+              id: product.productIds.length + 1,
               name,
               chineseName,
               description,
@@ -60,7 +60,7 @@ const ListingTable = () => {
               categoryId,
             },
             {
-              id: product.products.length + 2,
+              id: product.productIds.length + 2,
               name,
               chineseName,
               description,
@@ -79,7 +79,7 @@ const ListingTable = () => {
       <button
         onClick={() => {
           product.addProduct({
-            id: product.products.length + 1,
+            id: product.productIds.length + 1,
             name,
             chineseName,
             description,
