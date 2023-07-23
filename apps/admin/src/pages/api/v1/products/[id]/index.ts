@@ -3,11 +3,11 @@ import PrismaClient from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { NotFoundError, ParamError } from '@inc/errors';
 import { listingItemSchema } from '@/utils/api/server/zod';
-import { formatSingleListingItemResponse, parseListingItemId } from '..';
+import { formatSingleListingItemResponse, parseProductId } from '..';
 
 export async function checkListingItemExists($id: string | number) {
   // Parse and validate listing id provided
-  const id = typeof $id === 'number' ? $id : parseListingItemId($id);
+  const id = typeof $id === 'number' ? $id : parseProductId($id);
 
   // Check if the listing exists
   const listingItem = await PrismaClient.listingItem.findFirst({
@@ -42,7 +42,7 @@ async function checkCategory(categoryId: number) {
 export default apiHandler()
   .get(async (req, res) => {
     // Retrieve the listing from the database
-    const id = parseListingItemId(req.query.id as string, false);
+    const id = parseProductId(req.query.id as string, false);
 
     const listingItem = await checkListingItemExists(id);
 
@@ -56,12 +56,12 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(response));
   })
   .put(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const id = parseListingItemId(req.query.id as string);
+    const id = parseProductId(req.query.id as string);
 
     // Validate the request body
     const data = listingItemSchema.put.body.parse(req.body);
 
-    const categoryId = parseId(id as unknown as string);
+    const categoryId = parseId(data.categoryId as unknown as string);
 
     if (data.name != null && data.name.trim().length === 0) {
       throw new ParamError('name');
@@ -97,7 +97,7 @@ export default apiHandler()
       .json(formatAPIResponse(await formatSingleListingItemResponse(completeListingItem)));
   })
   .delete(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
-    const id = parseListingItemId(req.query.id as string);
+    const id = parseProductId(req.query.id as string);
 
     await PrismaClient.listingItem.delete({
       where: { id },

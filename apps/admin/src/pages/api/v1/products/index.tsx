@@ -1,16 +1,16 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import PrismaClient, { ListingItem, Prisma } from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { GetListingItemQueryParameter, listingItemSchema } from '@/utils/api/server/zod';
-import { ListingItemResponseBody } from '@/utils/api/client/zod/listingItems';
+import { GetProductQueryParameter, listingItemSchema } from '@/utils/api/server/zod';
+import { ProductResponseBody } from '@/utils/api/client/zod/products';
 import { ParamError } from '@inc/errors';
 
 /**
  * Obtains the listingItem id from the url
- * @example // Listing item url: /api/v1/listingItems/1; Returns { name: '', id: 1 }
- * @example // Listing item url: /api/v1/listingItems/some-listingItem-name-1; Returns { name: 'some listing item name', id: 1 }
+ * @example // Listing item url: /api/v1/products/1; Returns { name: '', id: 1 }
+ * @example // Listing item url: /api/v1/products/some-listingItem-name-1; Returns { name: 'some listing item name', id: 1 }
  */
-export function parseListingItemId($id: string, strict = true) {
+export function parseProductId($id: string, strict = true) {
   // Check if strict mode is set
   if (strict) {
     // Attempt to parse the listingItem id
@@ -45,8 +45,8 @@ export function sortOptions(sortByStr: string | undefined) {
 // -- Helper functions -- //
 export async function formatSingleListingItemResponse(
   listingItem: ListingItem
-): Promise<ListingItemResponseBody> {
-  const formattedListingItem: ListingItemResponseBody = {
+): Promise<ProductResponseBody> {
+  const formattedListingItem: ProductResponseBody = {
     id: listingItem.id.toString(),
     name: listingItem.name,
     chineseName: listingItem.chineseName as string,
@@ -60,7 +60,7 @@ export async function formatSingleListingItemResponse(
 }
 
 const getListingItemsWhere = (
-  queryParams: GetListingItemQueryParameter
+  queryParams: GetProductQueryParameter
 ): Prisma.ListingItemWhereInput => ({
   categoryId: queryParams.category ? queryParams.category : undefined,
   name: queryParams.matching
@@ -92,12 +92,10 @@ export default apiHandler()
     });
 
     const formattedListingItems = await Promise.all(
-      listingItems.map((listingItem) =>
-        formatSingleListingItemResponse(listingItem)
-      )
+      listingItems.map((listingItem) => formatSingleListingItemResponse(listingItem))
     );
 
-    res.status(200).json(formatAPIResponse({totalCount, listingItems: formattedListingItems}));
+    res.status(200).json(formatAPIResponse({ totalCount, listingItems: formattedListingItems }));
   })
   .post(
     apiGuardMiddleware({
