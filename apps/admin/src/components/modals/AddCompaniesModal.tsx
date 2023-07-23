@@ -43,7 +43,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
 
   const checkCompanyDuplicate = (name: string) => {
     if (companies) {
-      return companies.some((company: Company) => company.name === name);
+      return companies.data.some((company: Company) => company.name === name);
     }
     return false;
   };

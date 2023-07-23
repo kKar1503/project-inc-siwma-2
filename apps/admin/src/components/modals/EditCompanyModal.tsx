@@ -68,7 +68,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
 
   const checkCompanyDuplicate = (name: string) => {
     if (companies) {
-      return companies.some((company: Company) => company.name === name);
+      return companies.data.some((company: Company) => company.name === name);
     }
     return false;
   };
