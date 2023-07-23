@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
-import fetchS3Image from '@/middlewares/fetchS3Image';
+import fetchS3Image from '@/services/fetchS3Image';
 import Avatar, { AvatarProps } from '@mui/material/Avatar';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));

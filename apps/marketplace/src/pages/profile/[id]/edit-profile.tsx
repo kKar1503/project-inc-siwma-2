@@ -1,8 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
-import ProfileDetailCard, {
-  ProfileDetailCardProps,
-} from '@/components/marketplace/profile/ProfileDetailCard';
+import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
@@ -24,57 +22,27 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import updateUser from '@/middlewares/updateUser';
+import updateUser from '@/services/users/updateUser';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import fetchCompany from '@/middlewares/fetchCompany';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
-import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useTranslation } from 'react-i18next';
-
-export type ProfilePageProps = {
-  data: ProfileDetailCardProps;
-};
-
-const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', () => fetchCompany(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-  return data;
-};
+import useUser from '@/services/users/useUser';
 
 const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
   useMutation((updatedUserData: PutUserRequestBody) =>
     updateUser(updatedUserData, userUuid, profilePicture)
   );
 
-const useGetReview = (userUuid: string, sortBy?: string) => {
-  const { data } = useQuery(
-    ['reviewdata', userUuid, sortBy],
-    async () => {
-      if (sortBy) {
-        return fetchProfilesReview(userUuid, sortBy);
-      }
-      return fetchProfilesReview(userUuid);
-    },
-    {
-      enabled: userUuid !== undefined || sortBy !== undefined,
-    }
-  );
-
-  return data;
-};
-
 const EditProfile = () => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
-  const userDetails = useGetUserQuery(id);
-  const userReviews = useGetReview(id);
+  const { data: userDetails } = useUser(id);
   const theme = useTheme();
   const { spacing } = theme;
   const router = useRouter();
@@ -320,7 +288,7 @@ const EditProfile = () => {
       </Head>
 
       <Grid sx={gridCols}>
-        {userDetails && <ProfileDetailCard data={userDetails} reviewData={userReviews} />}
+        {userDetails && <ProfileDetailCard data={userDetails} />}
         <Box
           sx={{
             display: 'flex',
