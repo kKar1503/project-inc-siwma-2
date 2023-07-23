@@ -1,7 +1,7 @@
 {
   "extends": ["@inc/eslint-config-custom/react"],
   "parserOptions": {
-    "project": "apps/marketplace/tsconfig.json"
+    "project": "./tsconfig.json"
   },
   "settings": {
     "next": {
