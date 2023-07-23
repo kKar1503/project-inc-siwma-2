@@ -42,7 +42,6 @@ const ProfilePage = () => {
         return;
       }
 
-      alert(`Error: ${JSON.stringify(userError)}`);
       router.replace('/500');
       return;
     }
