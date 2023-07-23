@@ -13,8 +13,6 @@ export type CompanyManagementProps = {
   count: number;
 };
 
-// lastIdPointer: the prev last value
-// limit: the number of items to fetch (per page)
 const useGetCompaniesQuery = (lastIdPointer?: number, limit?: number) => {
   const { data } = useQuery(
     ['companies', lastIdPointer, limit],
@@ -30,14 +28,15 @@ const useGetCompaniesQuery = (lastIdPointer?: number, limit?: number) => {
 
 const CompanyManagement = () => {
   const companies = useGetCompaniesQuery();
-  const [companiesData, setcompaniesData] = useState<CompanyManagementProps>();
+  const count = companies?.count;
+  const [companiesData, setCompaniesData] = useState<CompanyManagementProps>();
 
   const handleCompaniesChange = async (companies: CompanyManagementProps) => {
-    setcompaniesData(companies);
+    setCompaniesData(companies);
   };
 
   useEffect(() => {
-    if (companies && companies.data) {
+    if (companies) {
       handleCompaniesChange(companies);
     }
   }, [companies]);
@@ -60,7 +59,9 @@ const CompanyManagement = () => {
           <BulkRegisterCompanyCard updateData={updateCompanyData} />
         </Grid>
         <Grid item xs={12}>
-          {companiesData && <CompanyTable data={companiesData} updateData={updateCompanyData} />}
+          {companiesData && (
+            <CompanyTable data={companiesData} count={count} updateData={updateCompanyData} />
+          )}
         </Grid>
       </Grid>
     </Container>

@@ -12,7 +12,8 @@ export type CompanyManagementProps = {
 
 export type CompanyTableProps = {
   data: CompanyManagementProps;
-  updateData: () => void;
+  count: number;
+  updateData: (lastIdPointer?: number, limit?: number) => void;
 };
 
 function createData(id: string, name: string, bio: string | null): BaseTableData {
@@ -34,7 +35,7 @@ const headCells: Header[] = [
   },
 ];
 
-const CompanyTable = ({ data, updateData }: CompanyTableProps) => {
+const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
@@ -50,23 +51,23 @@ const CompanyTable = ({ data, updateData }: CompanyTableProps) => {
     [data]
   );
 
-  const updateDisplayedRows = () => {
-    const startIdx = rowsPerPage * page;
-    const endIdx = Math.min(rowsPerPage * (page + 1), companyRows.length);
-    setRows(companyRows.slice(startIdx, endIdx));
-  };
-
   useEffect(() => {
-    updateDisplayedRows();
+    setRows(companyRows);
   }, [companyRows, page, rowsPerPage]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
+
+    const lastIdPointer = rows.length * newPage;
+    updateData(lastIdPointer, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
     setPage(0);
+
+    updateData(0, newRowsPerPage);
   };
 
   const handleDeleteRows = (rows: readonly BaseTableData[]) => {
@@ -97,7 +98,7 @@ const CompanyTable = ({ data, updateData }: CompanyTableProps) => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        totalCount={data.count}
+        totalCount={count}
       />
       <DeleteCompanyModal
         open={openDeleteModal}
