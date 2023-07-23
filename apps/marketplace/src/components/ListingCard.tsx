@@ -15,9 +15,6 @@ import ChatIcon from '@mui/icons-material/Chat';
 import IconButton from '@mui/material/IconButton';
 
 // ** HooksImports
-import fetchListing from '@/middlewares/fetchListing';
-import fetchCatById from '@/middlewares/fetchCatById';
-import fetchParamNames from '@/middlewares/fetchParamNames';
 import { useQuery } from 'react-query';
 
 // ** Image Imports
@@ -25,6 +22,11 @@ import placeholder from 'public/images/listing-placeholder.svg';
 
 // ** Luxon Imports
 import { DateTime } from 'luxon';
+
+// ** Middlewares
+import fetchListing from '@/middlewares/fetchListing';
+import fetchCatById from '@/middlewares/fetchCatById';
+import fetchParamNames from '@/middlewares/fetchParamNames';
 
 // ** Custom Components Imports
 import S3BoxImage from './S3BoxImage';

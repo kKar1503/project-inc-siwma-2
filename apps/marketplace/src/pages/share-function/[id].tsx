@@ -16,6 +16,8 @@ import ShareModal from '@/components/modal/ShareModal';
 // ** HooksImports
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
+
+// ** Middlewares
 import fetchCompany from '@/middlewares/fetchCompany';
 
 const useGetUser = (userUuid: string) => {
