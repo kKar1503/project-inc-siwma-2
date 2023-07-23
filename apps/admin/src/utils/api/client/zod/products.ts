@@ -10,7 +10,7 @@ const unit = z.string();
 const chineseUnit = z.string();
 
 // -- Define listing schema -- //
-const listingItem = z.object({
+const product = z.object({
   id,
   name,
   chineseName,
@@ -22,27 +22,27 @@ const listingItem = z.object({
 
 // Listing items have been changed to products however it is still lisitng-items in the db
 // POST /products
-const createListingItem = z.object({ listingItemId: id });
+const createProduct = z.object({ productId: id });
 
 // GET /products
-const getListingItems = z.array(listingItem);
+const getProducts = z.array(product);
 
 // GET /products/:id
-const getListingItem = listingItem;
+const getProduct = product;
 
 // PUT /products/:id
-const updateListingItem = listingItem;
+const updateProduct = product;
 
 // DELETE /products/:id
-const deleteListingItem = z.object({});
+const deleteProduct = z.object({});
 
-export type ListingItemResponseBody = z.infer<typeof listingItem>;
-export type ListingItem = z.infer<typeof listingItem>;
+export type ProductResponseBody = z.infer<typeof product>;
+export type Product = z.infer<typeof product>;
 
 export default {
-  create: createListingItem,
-  getAll: getListingItems,
-  getById: getListingItem,
-  update: updateListingItem,
-  delete: deleteListingItem,
+  create: createProduct,
+  getAll: getProducts,
+  getById: getProduct,
+  update: updateProduct,
+  delete: deleteProduct,
 };

@@ -3,7 +3,7 @@ import {
   zodParseToInteger,
 } from '../../apiHelper';
 
-const getListingItemQueryParameters = z.object({
+const getProductQueryParameters = z.object({
   lastIdPointer: z.string().transform(zodParseToInteger).optional(),
   limit: z.string().transform(zodParseToInteger).optional().default('10'),
   matching: z.string().optional(),
@@ -18,7 +18,7 @@ const getListingItemQueryParameters = z.object({
  * Because we want to perform a type transformation
  * But we when we perform z.infer<> we want to get the original type
  */
-const listingItemRequestBodyType = z.object({
+const productRequestBodyType = z.object({
   name: z.string(),
   chineseName: z.string().optional(),
   description: z.string(),
@@ -27,25 +27,25 @@ const listingItemRequestBodyType = z.object({
   categoryId: z.string(),
 });
 
-const listingItemRequestBody = listingItemRequestBodyType.extend({
+const productRequestBody = productRequestBodyType.extend({
   categoryId: z.string().transform(zodParseToInteger),
 });
 
-const putListingItemRequestBodyType = listingItemRequestBodyType.partial();
-const putListingItemRequestBody = listingItemRequestBody.partial();
+const putProductRequestBodyType = productRequestBodyType.partial();
+const putProductRequestBody = productRequestBody.partial();
 
-export type GetListingItemQueryParameter = z.infer<typeof getListingItemQueryParameters>;
-export type PostListingItemRequestBody = z.infer<typeof listingItemRequestBodyType>;
-export type PutListingItemRequestBody = z.infer<typeof putListingItemRequestBodyType>;
+export type GetProductQueryParameter = z.infer<typeof getProductQueryParameters>;
+export type PostProductRequestBody = z.infer<typeof productRequestBodyType>;
+export type PutProductRequestBody = z.infer<typeof putProductRequestBodyType>;
 
 export default {
   get: {
-    query: getListingItemQueryParameters,
+    query: getProductQueryParameters,
   },
   post: {
-    body: listingItemRequestBody,
+    body: productRequestBody,
   },
   put: {
-    body: putListingItemRequestBody,
+    body: putProductRequestBody,
   },
 };
