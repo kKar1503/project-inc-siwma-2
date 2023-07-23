@@ -4,6 +4,7 @@ import { useResponsiveness } from '@inc/ui';
 import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 import { useQuery } from 'react-query';
 import { Company } from '@/utils/api/client/zod/companies';
+import XLSX from 'xlsx';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
@@ -31,23 +32,36 @@ const useGetCompaniesQuery = () => {
 const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) => {
   const companies = useGetCompaniesQuery();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [selectedCompaniesFile, setSelectedCompaniesFile] = useState<File | null>(null);
 
   const handleExcelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       const reader = new FileReader();
-      reader.onload = (e) => {
-        const contents = e.target?.result as string;
-        // Process the contents of the Excel file
-        console.log(contents);
-      };
-      reader.readAsText(file);
-    }
-  };
 
-  const postCompanies = () => {
-    console.log('postCompanies');
+      reader.onload = (e) => {
+        const contents = e.target?.result as ArrayBuffer;
+        const workbook = XLSX.read(new Uint8Array(contents), { type: 'array' });
+
+        // Assuming the data is in the first sheet, you can change this accordingly
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        // Process the data
+        const data = XLSX.utils.sheet_to_json<PostCompanyRequestBody[]>(worksheet, { header: 1 });
+
+        // Assuming your data is organized as [name, website, comments, image]
+        const companies = data.map(([name, website, comments, image]) => ({
+          name,
+          website,
+          comments,
+          image,
+        }));
+
+        console.log('Companies:', companies);
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
   };
 
   const modalStyles = useMemo(() => {
