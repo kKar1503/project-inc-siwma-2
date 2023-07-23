@@ -6,6 +6,7 @@ import { useQueries, UseQueryResult } from 'react-query';
 import fetchAdClicksData, { FetchAdClicksDataResponse } from '@/middlewares/fetchAdClicksData';
 import { useMemo } from 'react';
 import Box from '@mui/material/Box';
+import CompanyForm from '@/components/advertisementsDashboard/companyForm';
 
 const mapData = (
   adClicksData: UseQueryResult<FetchAdClicksDataResponse>,
@@ -40,6 +41,8 @@ const AdvertisementDashboard = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={9}>
             <AdSpaceSection totalClicks={totalClicks}/>
+
+            <CompanyForm />
           </Grid>
           <Grid item container xs={12} md={3} spacing={2}>
             <Grid item xs={6} md={12}>
