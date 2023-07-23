@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
-import fetchS3Image from '@/middlewares/fetchS3Image';
+import fetchS3Image from '@/services/fetchS3Image';
 import Box, { BoxProps } from '@mui/material/Box';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey), {
   enabled: !!imgKey && imgKey !== '',
 });
 
-export type S3BoxImageProps = BoxProps & { src: string, placeholderImg?: string };
+export type S3BoxImageProps = BoxProps & { src: string; placeholderImg?: string };
 
 const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   e.preventDefault();
