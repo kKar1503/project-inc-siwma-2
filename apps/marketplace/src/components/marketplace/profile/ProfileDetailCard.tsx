@@ -1,5 +1,11 @@
-import { useTranslation } from 'react-i18next';
+// ** React Imports
+import React, { useEffect, useMemo, useState } from 'react';
+
+// ** Next Imports
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+
+// ** MUI Imports
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
@@ -15,82 +21,90 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+
+// ** Types Imports
+import type { User } from '@/utils/api/client/zod/users';
+
+// ** Hooks Imports
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
-import { useEffect, useMemo, useState } from 'react';
-import fetchUser from '@/middlewares/fetchUser';
-import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
-import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-
-export type ProfileDetailCardProps =
-  | {
-      email: string;
-      id: string;
-      name: string;
-      enabled: boolean;
-      createdAt: string;
-      profilePic: string | null;
-      companyName: string;
-      mobileNumber: string;
-      whatsappNumber: string | null;
-      telegramUsername: string | null;
-      contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone';
-      bio: string | null;
-      comments?: string | null | undefined;
-    }
-  | null
-  | undefined;
+import { useTranslation } from 'react-i18next';
+import useUser from '@/services/users/useUser';
+import useBookmarkUser from '@/services/bookmarks/useBookmarkUser';
 
 export type ProfileDetailCardData = {
-  data: ProfileDetailCardProps;
+  data: User;
   visibleEditButton?: boolean;
 };
 
-const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-
-  return data;
-};
-
-const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | undefined) => {
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-
-  const handleBookmarkUser = async () => {
-    await bookmarkUser(userUuid);
-    setIsBookmarked((prevState) => !prevState);
-  };
-
-  useEffect(() => {
-    if (bookmarkedUsers) {
-      const bookmarked = bookmarkedUsers.includes(userUuid);
-      setIsBookmarked(bookmarked);
-    }
-  }, [bookmarkedUsers, userUuid]);
-
-  return {
-    isBookmarked,
-    handleBookmarkUser,
-  };
-};
-
+/**
+ * Left side of profile page showing the profile detail card containing the user profile
+ * details.
+ */
 const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) => {
+  // ** States
+  const [init, setInit] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  // ** Hooks
   const user = useSession();
   const { spacing } = useTheme();
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [isLg] = useResponsiveness(['lg']);
   const { t } = useTranslation();
+  const router = useRouter();
 
-  const styleProfileCard = useMemo(() => {
-    if (isSm || isMd) {
-      return {
-        width: '100%',
-        height: '100%',
-        mb: spacing(3),
-      };
+  // ** Vars
+  const loggedUserUuid = user.data?.user.id as string;
+  const profileUserUuid = data?.id as string;
+  const isOwnProfile = loggedUserUuid === profileUserUuid;
+  const userId = router.query.id as string;
+
+  // ** Queries
+  const { data: currentUser } = useUser(loggedUserUuid);
+  const {
+    refetch: toggleBookmark,
+    isFetching: bookmarkFetching,
+    isFetched: bookmarkFetched,
+    isError: bookmarkIsError,
+    data: bookmarked,
+  } = useBookmarkUser(profileUserUuid);
+
+  // ** Effects
+  useEffect(() => {
+    if (!init && currentUser !== undefined) {
+      setInit(true);
+
+      const bookmarkedUsers = currentUser?.bookmarks?.users;
+      setIsBookmarked(
+        bookmarkedUsers !== undefined && bookmarkedUsers.indexOf(profileUserUuid) !== -1
+      );
     }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!bookmarkFetched || bookmarkFetching) {
+      return;
+    }
+
+    if (bookmarkIsError) {
+      router.replace('/500');
+      return;
+    }
+
+    if (bookmarked !== undefined) {
+      setIsBookmarked(bookmarked);
+      return;
+    }
+
+    // It should never reach here.
+    // If it reaches here it means the data is undefined, which should not happen
+    // for this component
+    router.replace('/500');
+  }, [bookmarkFetching, bookmarkFetched]);
+
+  // ** Styles
+  const styleProfileCard = useMemo(() => {
     if (isLg) {
       return {
         width: '25%',
@@ -103,21 +117,7 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
       height: '100%',
       mb: spacing(3),
     };
-  }, [isSm, isMd, isLg]);
-
-  const loggedUserUuid = user.data?.user.id as string;
-  const currentUser = useGetUserQuery(loggedUserUuid);
-  const profileUserUuid = data?.id as string;
-  const bookmarkedUsers = currentUser?.bookmarks?.users;
-  const isOwnProfile = loggedUserUuid === profileUserUuid;
-
-  const router = useRouter();
-  const userId = router.query.id as string;
-
-  const { isBookmarked, handleBookmarkUser } = useBookmarkUserQuery(
-    profileUserUuid,
-    bookmarkedUsers
-  );
+  }, [isLg]);
 
   return (
     <Card sx={styleProfileCard}>
@@ -132,7 +132,11 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
           loggedUserUuid !== userId && (
             <IconButton
               aria-label="bookmark"
-              onClick={handleBookmarkUser}
+              onClick={() => {
+                if (!bookmarkFetching) {
+                  toggleBookmark();
+                }
+              }}
               sx={({ spacing }) => ({
                 p: spacing(0),
               })}
@@ -169,7 +173,7 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
         </S3Avatar>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
-          {data?.companyName}
+          {data?.company.name}
         </Typography>
         <Typography sx={{ wordWrap: 'break-word' }}>{data?.email}</Typography>
       </CardContent>
