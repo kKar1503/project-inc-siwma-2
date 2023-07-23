@@ -48,19 +48,21 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
 
   const checkCompanyDuplicateInFile = (
     companyData: PostCompanyRequestBody,
-    index: number,
-    fileData: PostCompanyRequestBody[]
+    fileData: PostCompanyRequestBody[],
+    index: number
   ) => {
     if (fileData) {
       return fileData.some(
-        (company: PostCompanyRequestBody) =>
-          company.name === companyData.name && companyData !== fileData[index]
+        (company: PostCompanyRequestBody, i: number) =>
+          i !== index && company.name === companyData.name
       );
     }
     return false;
   };
 
   const validateData = (data: PostCompanyRequestBody[]) => {
+    setErrors([]);
+
     const errorData: string[] = [];
     const websiteRegex =
       /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
@@ -69,21 +71,22 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
     data.forEach((companyData, index) => {
       let error = '';
 
-      if (!companyData.name || companyData.name.trim().length === 0) {
+      if (!companyData.name || companyData.name.toString().trim().length === 0) {
         error = 'Name is required';
       }
 
-      if (
-        checkCompanyDuplicate(companyData.name) ||
-        checkCompanyDuplicateInFile(companyData, index, data)
-      ) {
+      if (checkCompanyDuplicate(companyData.name)) {
         error = `Company already exists: ${companyData.name}`;
+      }
+
+      if (checkCompanyDuplicateInFile(companyData, data, index)) {
+        error = `Company already exists in the file: ${companyData.name}`;
       }
 
       if (companyData.website && !websiteRegex.test(companyData.website)) {
         error = 'Website is invalid';
       }
-      console.log(error);
+
       if (error) {
         errorData.push(error);
       } else {
@@ -95,16 +98,13 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       setErrors(errorData);
     }
 
-    console.log(validatedData);
-    console.log(errorData);
     return validatedData;
   };
 
   const postCompanies = async () => {
-    console.log(fileDetails);
-    // await Promise.all(fileDetails.map((company) => createCompany(company)));
+    await Promise.all(fileDetails.map((company) => createCompany(company)));
 
-    // updateData();
+    updateData();
   };
 
   const handleExcelChange: FileUploadProps['changeHandler'] = (event) => {
@@ -143,7 +143,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       const mappedData = parsedData.map((x) => {
         const data = {
           name: x[0],
-          website: x[1],
+          website: x[1] || '',
           comments: x[2],
           image: x[3],
         };
@@ -152,7 +152,6 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       });
 
       const companiesData = validateData(mappedData);
-
       setFileDetails(companiesData);
     };
   };
@@ -255,14 +254,20 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                 <FileUpload
                   id="bulk-registers"
                   title=""
-                  description=""
+                  description="Import an .xlsx file below to bulk add company profiles"
                   selectedFile={file}
                   changeHandler={handleExcelChange}
                   accept={[AcceptedFileTypes.XLSX]}
                   maxWidth="200px"
                   maxHeight="200px"
                 />
-                <Button variant="contained" type="submit" size="large" fullWidth>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  size="large"
+                  onClick={postCompanies}
+                  fullWidth
+                >
                   Add Companies
                 </Button>
               </Grid>
