@@ -36,8 +36,9 @@ const useGetCompaniesQuery = () => {
 const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) => {
   const companies = useGetCompaniesQuery();
   const [file, setFile] = useState<File | null>(null);
-  const [fileDetails, setFileDetails] = useState<PostCompanyRequestBody[]>([]); // [name, website, comments, image
+  const [fileDetails, setFileDetails] = useState<PostCompanyRequestBody[]>([]);
   const [errors, setErrors] = useState<{ [error: string]: number }>({});
+  const [fileError, setFileError] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const checkCompanyDuplicate = (name: string) => {
@@ -85,7 +86,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       }
 
       if (companyData.website && !websiteRegex.test(companyData.website)) {
-        error = 'Website is invalid';
+        error = 'Website is invalid. Use the format: https://www.example.com';
       }
 
       if (error) {
@@ -110,25 +111,36 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
   };
 
   const handleExcelChange: FileUploadProps['changeHandler'] = (event) => {
+    setFileError('');
+
     if (!event.target.files) return;
 
     if (event.target.files.length === 1) {
       setFile(event.target.files[0]);
     } else if (event.target.files.length > 1) {
       setFile(null);
-      alert('Please Select Only One File');
+      setFileError('Please Select Only One File');
 
       return;
     } else {
       setFile(null);
-      alert('Please Select a File');
+      setFileError('Please Select a File');
 
       return;
     }
 
     if (event.target.files[0].size > 64000000) {
       setFile(null);
-      alert('Please Select a File Smaller Than 64 MB');
+      setFileError('Please Select a File Smaller Than 64 MB');
+
+      return;
+    }
+
+    if (event.target.files[0].type !== AcceptedFileTypes.XLSX) {
+      setFile(null);
+      setFileError('Please upload a .xlsx File');
+
+      return;
     }
 
     const reader = new FileReader();
@@ -243,17 +255,25 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                 </Typography>
               </Grid>
               <Grid item xs={12}>
+                {fileError && (
+                  <Typography
+                    sx={({ palette }) => ({
+                      color: palette.error.main,
+                    })}
+                  >
+                    {fileError}
+                  </Typography>
+                )}
                 {errors &&
                   Object.entries(errors).map(([error, count]) => (
-                    <Grid container key={error}>
+                    <Grid container key={error} sx={{ alignItems: 'center' }}>
                       <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
                         <Badge
                           key={error}
                           badgeContent={count}
                           color="error"
                           sx={({ spacing }) => ({
-                            ml: spacing(1),
-                            mr: spacing(2),
+                            mx: spacing(2),
                           })}
                         />
                         <Typography

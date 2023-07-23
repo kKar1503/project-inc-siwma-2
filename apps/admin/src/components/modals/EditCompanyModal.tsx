@@ -97,7 +97,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
     }
 
     if (website && !websiteRegex.test(website)) {
-      setWebsiteError('Website is invalid');
+      setWebsiteError('Website is invalid. Use the format: https://www.example.com');
       formIsValid = false;
     }
 
@@ -107,7 +107,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
         !AcceptedFileTypes.PNG.includes(selectedCompanyFile.type)) ||
       selectedCompanyFile?.type === ''
     ) {
-      setFileError('File type is invalid');
+      setFileError('File type is invalid. Please upload a JPG or PNG file');
       formIsValid = false;
     }
 
