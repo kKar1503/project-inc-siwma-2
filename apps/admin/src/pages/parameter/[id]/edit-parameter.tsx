@@ -1,4 +1,4 @@
-import { useState, useMemo, FormEvent, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Head from 'next/head';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
@@ -16,11 +16,11 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
-import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
+import { ParameterResponseBody} from '@/utils/api/client/zod';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import updateParameter from '@/middlewares/updateParameter';
-import fetchParameters from '@/middlewares/fetchParameters';
+import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
@@ -36,7 +36,7 @@ export type ParameterProps = {
 };
 
 const useGetParameter = (parameterId: string) => {
-  const { data } = useQuery(['parameter', parameterId], async () => fetchParameters(), {
+  const { data } = useQuery(['parameter', parameterId], async () => fetchParameterById(parameterId), {
     enabled: parameterId !== undefined,
   });
 
@@ -57,12 +57,14 @@ const EditParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(parameterData?.name || '');
+  const [displayName, setDisplayName] = useState(parameterData?.displayName || '');
+  const [type, setType] = useState(parameterData?.type || '');
+  // const [options, setOptions] = useState(parameterData?.options || '');
+  const [dataType, setDataType] = useState(parameterData?.dataType || '');
+
+  const [displayNameError, setDisplayNameError] = useState('');  
   const [nameError, setNameError] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [displayNameError, setDisplayNameError] = useState('');
-  const [type, setType] = useState('');
-  const [dataType, setDataType] = useState('');
   const [openLeave, setOpenLeave] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,19 +113,21 @@ const EditParameter = () => {
       displayName,
       type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
       dataType: dataType as 'string' | 'number' | 'boolean',
+      // options,
     };
 
     mutation.mutate(requestBody);
   };
 
-  // useEffect(() => {
-  //   if (parameterData) {
-  //     setName(parameterData?.name || '');
-  //     setDisplayName(parameterData?.displayName || '');
-  //     setType(parameterData?.type || '');
-  //     setDataType(parameterData?.dataType || '');
-  //   }
-  // }, [parameterData]);
+  useEffect(() => {
+    if (parameterData) {
+      setName(parameterData?.name || '');
+      setDisplayName(parameterData?.displayName || '');
+      setType(parameterData?.type || '');
+      // setOptions(parameterData?.options || '');
+      setDataType(parameterData?.dataType || '');
+    }
+  }, [parameterData]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
