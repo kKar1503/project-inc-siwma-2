@@ -51,7 +51,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
     fileData: PostCompanyRequestBody[],
     index: number
   ) => {
-    if (fileData) {
+    if (fileData && fileData.length > 0) {
       return fileData.some(
         (company: PostCompanyRequestBody, i: number) =>
           i !== index && company.name === companyData.name
@@ -79,7 +79,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
         error = `Company already exists: ${companyData.name}`;
       }
 
-      if (checkCompanyDuplicateInFile(companyData, data, index)) {
+      if (checkCompanyDuplicateInFile(companyData, validatedData, index)) {
         error = `Company already exists in the file: ${companyData.name}`;
       }
 
