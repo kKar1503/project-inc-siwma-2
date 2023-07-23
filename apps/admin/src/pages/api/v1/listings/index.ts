@@ -1,4 +1,10 @@
-import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
+import {
+  apiHandler,
+  formatAPIResponse,
+  handleBookmarks,
+  parseToNumber,
+  UpdateType,
+} from '@/utils/api';
 import PrismaClient, {
   Companies,
   Listing,
@@ -103,13 +109,10 @@ export async function formatSingleListingResponse(
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
-    name: listing.listingItem.name,
-    description: listing.listingItem.description,
+    productId: listing.listingItemId.toString(),
     price: listing.price.toNumber(),
-    unit: listing.listingItem.unit,
     quantity: listing.quantity.toNumber(),
     negotiable: listing.negotiable,
-    categoryId: listing.listingItem.categoryId.toString(),
     type: listing.type,
     owner: {
       id: listing.users.id,
@@ -192,55 +195,116 @@ const getListingWhere = (
   },
 });
 
-export default apiHandler().get(async (req, res) => {
-  // Parse the query parameters
-  const queryParams = listingSchema.get.query.parse(req.query);
-  const { orderBy, postSort } = sortOptions(queryParams.sortBy);
+export default apiHandler()
+  .get(async (req, res) => {
+    // Parse the query parameters
+    const queryParams = listingSchema.get.query.parse(req.query);
+    const { orderBy, postSort } = sortOptions(queryParams.sortBy);
 
-  // Obtain the user's ID & status
-  const userId = req.token?.user.id;
-  const isAdmin = req.token?.user.permissions === 1;
+    // Obtain the user's ID & status
+    const userId = req.token?.user.id;
+    const isAdmin = req.token?.user.permissions === 1;
 
-  // Get total count ignoring pagination
-  const totalCount = await PrismaClient.listing.count({
-    where: getListingWhere(queryParams, isAdmin),
-  });
+    // Get total count ignoring pagination
+    const totalCount = await PrismaClient.listing.count({
+      where: getListingWhere(queryParams, isAdmin),
+    });
 
-  // Retrieve filtered and sorted listings from the database
-  const listings = await PrismaClient.listing.findMany({
-    where: getListingWhere(queryParams, isAdmin),
-    orderBy,
-    skip: queryParams.lastIdPointer,
-    take: queryParams.limit,
-    include: {
-      listingItem: true,
-      listingsParametersValue: queryParams.includeParameters,
-      offers: {
-        select: {
-          accepted: true,
-          messages: {
-            select: {
-              author: true,
+    // Retrieve filtered and sorted listings from the database
+    const listings = await PrismaClient.listing.findMany({
+      where: getListingWhere(queryParams, isAdmin),
+      orderBy,
+      skip: queryParams.lastIdPointer,
+      take: queryParams.limit,
+      include: {
+        listingItem: true,
+        listingsParametersValue: queryParams.includeParameters,
+        offers: {
+          select: {
+            accepted: true,
+            messages: {
+              select: {
+                author: true,
+              },
             },
           },
         },
-      },
-      users: {
-        include: {
-          companies: true,
+        users: {
+          include: {
+            companies: true,
+          },
         },
       },
-    },
+    });
+
+    const sortedListings = postSort(listings);
+
+    // Format the listings
+    const formattedListings = await Promise.all(
+      sortedListings.map((listing) =>
+        formatSingleListingResponse(listing, userId, queryParams.includeParameters)
+      )
+    );
+
+    res.status(200).json(formatAPIResponse({ totalCount, listings: formattedListings }));
+  })
+  .post(async (req, res) => {
+    const data = listingSchema.post.body.parse(req.body);
+
+    // Use the user ID from the request object
+    const userId = req.token?.user?.id;
+
+    // Check if the listing item exists
+    const listingItem = await PrismaClient.listingItem.findUnique({
+      where: { id: data.productId },
+    });
+
+    if (!listingItem) {
+      throw new ParamError('listing item');
+    }
+
+    // Check if all required parameters for the category are provided
+    const requiredParameters = await getRequiredParametersForCategory(listingItem.categoryId);
+    const providedParameters = data.parameters ? data.parameters.map((param) => param.paramId) : [];
+
+    requiredParameters.forEach((reqParam) => {
+      if (!providedParameters.includes(reqParam)) {
+        throw new ParamRequiredError('paramId');
+      }
+    });
+
+    // Check if any of the provided parameters are invalid
+    providedParameters.forEach((param) => {
+      if (!requiredParameters.includes(param)) {
+        throw new ParamInvalidError('paramId', param);
+      }
+    });
+
+    const listing = await PrismaClient.listing.create({
+      data: {
+        listingItemId: data.productId,
+        quantity: data.quantity,
+        price: data.price,
+        negotiable: data.negotiable,
+        type: data.type,
+        owner: userId,
+        listingsParametersValue: data.parameters
+          ? {
+              create: {
+                parameters: data.parameters.map((parameter) => ({
+                  parameterId: parameter.paramId,
+                  value: parameter.value.toString(),
+                })),
+              },
+            }
+          : undefined,
+      },
+      include: {
+        listingsParametersValue: true,
+      },
+    });
+
+    handleBookmarks(UpdateType.CREATE, listing);
+
+    res.status(201).json(formatAPIResponse({ listingId: listing.id }));
   });
-
-  const sortedListings = postSort(listings);
-
-  // Format the listings
-  const formattedListings = await Promise.all(
-    sortedListings.map((listing) =>
-      formatSingleListingResponse(listing, userId, queryParams.includeParameters)
-    )
-  );
-
-  res.status(200).json(formatAPIResponse({ totalCount, listings: formattedListings }));
-});
