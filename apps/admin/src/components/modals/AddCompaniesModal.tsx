@@ -12,6 +12,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Grid from '@mui/material/Grid';
+import Badge from '@mui/material/Badge';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import createCompany from '@/middlewares/company-management/createCompany';
@@ -36,7 +37,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
   const companies = useGetCompaniesQuery();
   const [file, setFile] = useState<File | null>(null);
   const [fileDetails, setFileDetails] = useState<PostCompanyRequestBody[]>([]); // [name, website, comments, image
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<{ [error: string]: number }>({});
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const checkCompanyDuplicate = (name: string) => {
@@ -61,9 +62,9 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
   };
 
   const validateData = (data: PostCompanyRequestBody[]) => {
-    setErrors([]);
+    setErrors({});
 
-    const errorData: string[] = [];
+    const errorData: { [error: string]: number } = {}; // Object to store error messages and their counts
     const websiteRegex =
       /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
     const validatedData: PostCompanyRequestBody[] = [];
@@ -76,11 +77,11 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       }
 
       if (checkCompanyDuplicate(companyData.name)) {
-        error = `Company already exists: ${companyData.name}`;
+        error = `Company already exists`;
       }
 
       if (checkCompanyDuplicateInFile(companyData, validatedData, index)) {
-        error = `Company already exists in the file: ${companyData.name}`;
+        error = `Company already exists in the file`;
       }
 
       if (companyData.website && !websiteRegex.test(companyData.website)) {
@@ -88,13 +89,14 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       }
 
       if (error) {
-        errorData.push(error);
+        // Update errorData to store error messages and their counts
+        errorData[error] = (errorData[error] || 0) + 1;
       } else {
         validatedData.push(companyData);
       }
     });
 
-    if (errorData.length !== 0) {
+    if (Object.keys(errorData).length !== 0) {
       setErrors(errorData);
     }
 
@@ -242,14 +244,27 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
               </Grid>
               <Grid item xs={12}>
                 {errors &&
-                  errors.map((error) => (
-                    <Typography
-                      sx={({ palette }) => ({
-                        color: palette.error.main,
-                      })}
-                    >
-                      {error}
-                    </Typography>
+                  Object.entries(errors).map(([error, count]) => (
+                    <Grid container key={error}>
+                      <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Badge
+                          key={error}
+                          badgeContent={count}
+                          color="error"
+                          sx={({ spacing }) => ({
+                            ml: spacing(1),
+                            mr: spacing(2),
+                          })}
+                        />
+                        <Typography
+                          sx={({ palette }) => ({
+                            color: palette.error.main,
+                          })}
+                        >
+                          {error}
+                        </Typography>
+                      </Grid>
+                    </Grid>
                   ))}
                 <FileUpload
                   id="bulk-registers"
