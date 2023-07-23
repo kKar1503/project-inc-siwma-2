@@ -2,7 +2,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import { useQuery } from 'react-query';
 import { Box, Typography, CardMedia, CardContent, Card, Grid, useTheme } from '@mui/material';
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
-import fetchCategories from '@/middlewares/fetchCategories';
+import fetchCategories from '@/services/fetchCategories';
 import Link from 'next/link';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 
