@@ -3,13 +3,14 @@ import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCar
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useQuery } from 'react-query';
 import fetchCompany from '@/middlewares/fetchCompany';
 import { useRouter } from 'next/router';
 import ListingCard from '@/components/ListingCard';
 import { useSession } from 'next-auth/react';
+import ShareModal from '@/components/modal/ShareModal';
 
 const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userData', async () => fetchCompany(userUuid), {
@@ -23,12 +24,10 @@ const splitString = (str: string) => str.split('-');
 
 const ShareFunctionPage = () => {
   const router = useRouter();
+  const [openShare, setOpenShare] = useState(false);
   const loggedUserUuid = useSession().data?.user.id as string;
   const userDetails = useGetUser(loggedUserUuid);
   let listingIds;
-  if (userDetails) {
-    console.log(userDetails);
-  }
 
   if (router.query.id) {
     listingIds = splitString(router.query.id as string);
@@ -62,6 +61,7 @@ const ShareFunctionPage = () => {
           })}
         >
           <Button
+            onClick={() => setOpenShare(true)}
             variant="contained"
             size="large"
             sx={({ typography }) => ({
@@ -73,6 +73,14 @@ const ShareFunctionPage = () => {
           >
             Share
           </Button>
+          <ShareModal
+            open={openShare}
+            setOpen={setOpenShare}
+            title="Share this listing!"
+            content="Share this link with anyone!"
+            // gets current link and allows user to copy it
+            link={process.env.FRONTEND_URL + router.asPath}
+          />
         </Box>
       </Box>
     </main>
