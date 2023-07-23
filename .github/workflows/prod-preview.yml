@@ -53,7 +53,7 @@ jobs:
       # instead, define a new task definition and update the service with the new task definition
       # but it will do for now :p
 
-  preview-chat:
+  preview-admin:
     environment: staging
     runs-on: ubuntu-latest
     steps:
@@ -73,25 +73,24 @@ jobs:
       - name: Build and save docker images
         id: save-docker-image
         run: |
-          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/chat:latest -f apps/chat/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg CHAT_CORS="${{ vars.CHAT_CORS }}" --build-arg CHAT_HOST="${{ vars.CHAT_HOST }}" --build-arg CHAT_LOG_LEVEL="${{ vars.CHAT_LOG_LEVEL }}" --build-arg CHAT_PORT="${{ vars.CHAT_PORT }}" .
-          docker tag ${{ secrets.AWS_REPOSITORY_URI }}/chat:latest ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }}
-        # docker save ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }} > chat-${{ github.sha }}.tar
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/admin:latest -f apps/admin/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" --build-arg NEXTAUTH_URL="${{ secrets.NEXTAUTH_URL }}" --build-arg NEXT_BUILD_OPTION="${{ vars.NEXT_BUILD_OPTION }}" --build-arg NEXT_ESLINT_OPTION="${{ vars.NEXT_ESLINT_OPTION }}" .
+          docker build -t ${{ secrets.AWS_REPOSITORY_URI }}/admin:${{ github.sha }} -f apps/admin/Dockerfile --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" --build-arg NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}" --build-arg NEXTAUTH_URL="${{ secrets.NEXTAUTH_URL }}" --build-arg NEXT_BUILD_OPTION="${{ vars.NEXT_BUILD_OPTION }}" --build-arg NEXT_ESLINT_OPTION="${{ vars.NEXT_ESLINT_OPTION }}" .
+        # docker save ${{ secrets.AWS_REPOSITORY_URI }}/admin:${{ github.sha }} > admin-${{ github.sha }}.tar
 
       # - uses: actions/upload-artifact@v3
       #   if: ${{ steps.save-docker-image.outcome == 'success' }}
       #   with:
-      #     name: chat-${{ github.sha }}.tar
-      #     path: chat-${{ github.sha }}.tar
+      #     name: admin-${{ github.sha }}.tar
+      #     path: admin-${{ github.sha }}.tar
       #     retention-days: 1
 
       - name: Push images into ECR
         run: |
-          docker push ${{ secrets.AWS_REPOSITORY_URI }}/chat:${{ github.sha }}
-          docker push ${{ secrets.AWS_REPOSITORY_URI }}/chat:latest
-
+          docker push ${{ secrets.AWS_REPOSITORY_URI }}/admin:${{ github.sha }}
+          docker push ${{ secrets.AWS_REPOSITORY_URI }}/admin:latest
       - name: Restart task
         # TODO: do not restart tasks like this
-        run: aws ecs update-service --force-new-deployment --service chat-service --cluster chat
+        run: aws ecs update-service --force-new-deployment --service admin-service --cluster admin
 
       # instead, define a new task definition and update the service with the new task definition
       # but it will do for now :p

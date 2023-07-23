@@ -1,8 +1,14 @@
-FROM node:18.15.0-alpine3.17 as depsbuilder
+FROM node:18.16.0-alpine3.18 as depsbuilder
 
 WORKDIR /app
 
-COPY . .
+COPY apps/marketplace ./apps/marketplace
+COPY packages ./packages
+COPY static ./static
+COPY .npmrc nx.json package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# do some eslint magic
+RUN rm -f apps/marketplace/.eslintrc.json && mv apps/marketplace/.eslintrc.cli.json apps/marketplace/.eslintrc.json
 
 # DATABASE_URL for Prisma
 ARG DATABASE_URL
@@ -37,7 +43,7 @@ RUN pnpx nx run @inc/marketplace:build:prod
 
 # ===================================================================
 
-FROM node:18.15.0-alpine3.17 as runner
+FROM node:18.16.0-alpine3.18 as runner
 
 WORKDIR /app
 ENV NODE_ENV production
