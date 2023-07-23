@@ -155,6 +155,9 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
             )}
           </IconButton>
           <IconButton
+            // onclick redirect to chat page, should create a new chat if none exists, else redirect to existing chat
+            // ^ not implemented yet, just redirects to chat page
+            href="/chat"
             sx={({ palette, spacing }) => ({
               color: palette.common.black,
             })}
