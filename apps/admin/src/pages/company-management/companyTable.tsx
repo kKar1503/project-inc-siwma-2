@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import { Company } from '@/utils/api/client/zod/companies';
 import DeleteCompanyModal from '@/components/modals/DeleteCompanyModal';
 import EditCompanyModal from '@/components/modals/EditCompanyModal';
 
+export type CompanyManagementProps = {
+  data: Company[];
+  count: number;
+};
+
 export type CompanyTableProps = {
-  data: Company[] | undefined;
+  data: CompanyManagementProps;
   updateData: () => void;
 };
 
@@ -40,13 +45,20 @@ const CompanyTable = ({ data, updateData }: CompanyTableProps) => {
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
-  const sortRows = async (): Promise<void> => {
-    const rowsData: BaseTableData[] = [];
+  const companyRows = useMemo(
+    () => data.data.map((item) => createData(item.id, item.name, item.bio)),
+    [data]
+  );
 
-    data?.forEach((item: Company) => rowsData.push(createData(item.id, item.name, item.bio)));
-
-    setRows(rowsData);
+  const updateDisplayedRows = () => {
+    const startIdx = rowsPerPage * page;
+    const endIdx = Math.min(rowsPerPage * (page + 1), companyRows.length);
+    setRows(companyRows.slice(startIdx, endIdx));
   };
+
+  useEffect(() => {
+    updateDisplayedRows();
+  }, [companyRows, page, rowsPerPage]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -71,19 +83,11 @@ const CompanyTable = ({ data, updateData }: CompanyTableProps) => {
     setOpenEditModal(true);
   };
 
-  useEffect(() => {
-    sortRows();
-  }, [data]);
-
-  const startIndex = page * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const pageRows = rows.slice(startIndex, endIndex);
-
   return (
     <>
       <BaseTable
         heading="Registered Companies"
-        rows={pageRows}
+        rows={rows}
         headers={headCells}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
@@ -93,7 +97,7 @@ const CompanyTable = ({ data, updateData }: CompanyTableProps) => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        totalCount={rows.length}
+        totalCount={data.count}
       />
       <DeleteCompanyModal
         open={openDeleteModal}

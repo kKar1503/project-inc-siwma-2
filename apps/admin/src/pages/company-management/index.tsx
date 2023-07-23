@@ -1,38 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { Company } from '@/utils/api/client/zod/companies';
 import { useQuery } from 'react-query';
+import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 import CompanyTable from './companyTable';
 import RegisterCompanyCard from './registerCompanyCard';
 import BulkRegisterCompanyCard from './bulkRegisterCompanyCard';
 
-const useGetCompaniesQuery = () => {
-  const { data } = useQuery('companies', async () => fetchCompanies(), {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+export type CompanyManagementProps = {
+  data: Company[];
+  count: number;
+};
+
+// lastIdPointer: the prev last value
+// limit: the number of items to fetch (per page)
+const useGetCompaniesQuery = (lastIdPointer?: number, limit?: number) => {
+  const { data } = useQuery(
+    ['companies', lastIdPointer, limit],
+    async () => fetchCompanies(lastIdPointer, limit),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
   return data;
 };
 
 const CompanyManagement = () => {
   const companies = useGetCompaniesQuery();
-  const [companiesData, setcompaniesData] = useState<Company[]>();
+  const [companiesData, setcompaniesData] = useState<CompanyManagementProps>();
 
-  const handleCompaniesChange = async (companies: Company[]) => {
+  const handleCompaniesChange = async (companies: CompanyManagementProps) => {
     setcompaniesData(companies);
   };
 
   useEffect(() => {
-    if (companies) {
+    if (companies && companies.data) {
       handleCompaniesChange(companies);
     }
   }, [companies]);
 
-  const updateCompanyData = async () => {
-    const updatedCompanies = await fetchCompanies();
+  const updateCompanyData = async (lastIdPointer?: number, limit?: number) => {
+    const updatedCompanies = await fetchCompanies(lastIdPointer, limit);
 
     if (companies) {
       handleCompaniesChange(updatedCompanies);
@@ -49,7 +60,7 @@ const CompanyManagement = () => {
           <BulkRegisterCompanyCard updateData={updateCompanyData} />
         </Grid>
         <Grid item xs={12}>
-          <CompanyTable data={companiesData} updateData={updateCompanyData} />
+          {companiesData && <CompanyTable data={companiesData} updateData={updateCompanyData} />}
         </Grid>
       </Grid>
     </Container>
