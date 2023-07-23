@@ -1,5 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
+import FileUpload, {
+  AcceptedFileTypes,
+  FileUploadProps,
+} from '@/components/FileUpload/FileUploadBase';
 import { useResponsiveness } from '@inc/ui';
 import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 import { useQuery } from 'react-query';
@@ -31,37 +34,127 @@ const useGetCompaniesQuery = () => {
 
 const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) => {
   const companies = useGetCompaniesQuery();
+  const [file, setFile] = useState<File | null>(null);
+  const [fileDetails, setFileDetails] = useState<PostCompanyRequestBody[]>([]); // [name, website, comments, image
+  const [errors, setErrors] = useState<string[]>([]);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
-  const handleExcelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        const contents = e.target?.result as ArrayBuffer;
-        const workbook = XLSX.read(new Uint8Array(contents), { type: 'array' });
-
-        // Assuming the data is in the first sheet, you can change this accordingly
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-
-        // Process the data
-        const data = XLSX.utils.sheet_to_json<PostCompanyRequestBody[]>(worksheet, { header: 1 });
-
-        // Assuming your data is organized as [name, website, comments, image]
-        const companies = data.map(([name, website, comments, image]) => ({
-          name,
-          website,
-          comments,
-          image,
-        }));
-
-        console.log('Companies:', companies);
-      };
-
-      reader.readAsArrayBuffer(file);
+  const checkCompanyDuplicate = (name: string) => {
+    if (companies) {
+      return companies.some((company: Company) => company.name === name);
     }
+    return false;
+  };
+
+  const checkCompanyDuplicateInFile = (
+    companyData: PostCompanyRequestBody,
+    index: number,
+    fileData: PostCompanyRequestBody[]
+  ) => {
+    if (fileData) {
+      return fileData.some(
+        (company: PostCompanyRequestBody) =>
+          company.name === companyData.name && companyData !== fileData[index]
+      );
+    }
+    return false;
+  };
+
+  const validateData = (data: PostCompanyRequestBody[]) => {
+    const errorData: string[] = [];
+    const websiteRegex =
+      /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
+    const validatedData: PostCompanyRequestBody[] = [];
+
+    data.forEach((companyData, index) => {
+      let error = '';
+
+      if (!companyData.name || companyData.name.trim().length === 0) {
+        error = 'Name is required';
+      }
+
+      if (
+        checkCompanyDuplicate(companyData.name) ||
+        checkCompanyDuplicateInFile(companyData, index, data)
+      ) {
+        error = `Company already exists: ${companyData.name}`;
+      }
+
+      if (companyData.website && !websiteRegex.test(companyData.website)) {
+        error = 'Website is invalid';
+      }
+      console.log(error);
+      if (error) {
+        errorData.push(error);
+      } else {
+        validatedData.push(companyData);
+      }
+    });
+
+    if (errorData.length !== 0) {
+      setErrors(errorData);
+    }
+
+    console.log(validatedData);
+    console.log(errorData);
+    return validatedData;
+  };
+
+  const postCompanies = async () => {
+    console.log(fileDetails);
+    // await Promise.all(fileDetails.map((company) => createCompany(company)));
+
+    // updateData();
+  };
+
+  const handleExcelChange: FileUploadProps['changeHandler'] = (event) => {
+    if (!event.target.files) return;
+
+    if (event.target.files.length === 1) {
+      setFile(event.target.files[0]);
+    } else if (event.target.files.length > 1) {
+      setFile(null);
+      alert('Please Select Only One File');
+
+      return;
+    } else {
+      setFile(null);
+      alert('Please Select a File');
+
+      return;
+    }
+
+    if (event.target.files[0].size > 64000000) {
+      setFile(null);
+      alert('Please Select a File Smaller Than 64 MB');
+    }
+
+    const reader = new FileReader();
+    reader.readAsBinaryString(event.target.files[0]);
+
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const data = e.target?.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as Array<string>;
+      parsedData.shift();
+
+      const mappedData = parsedData.map((x) => {
+        const data = {
+          name: x[0],
+          website: x[1],
+          comments: x[2],
+          image: x[3],
+        };
+
+        return data;
+      });
+
+      const companiesData = validateData(mappedData);
+
+      setFileDetails(companiesData);
+    };
   };
 
   const modalStyles = useMemo(() => {
@@ -149,18 +242,28 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Upload
-                  id="companyImage"
+                {errors &&
+                  errors.map((error) => (
+                    <Typography
+                      sx={({ palette }) => ({
+                        color: palette.error.main,
+                      })}
+                    >
+                      {error}
+                    </Typography>
+                  ))}
+                <FileUpload
+                  id="bulk-registers"
                   title=""
                   description=""
-                  selectedFile={null}
+                  selectedFile={file}
                   changeHandler={handleExcelChange}
                   accept={[AcceptedFileTypes.XLSX]}
                   maxWidth="200px"
                   maxHeight="200px"
                 />
                 <Button variant="contained" type="submit" size="large" fullWidth>
-                  Edit Company
+                  Add Companies
                 </Button>
               </Grid>
             </Grid>

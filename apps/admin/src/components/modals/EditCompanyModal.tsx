@@ -91,6 +91,11 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
       formIsValid = false;
     }
 
+    if (!checkCompanyDuplicate(name)) {
+      setNameError('Company already exists');
+      formIsValid = false;
+    }
+
     if (website && !websiteRegex.test(website)) {
       setWebsiteError('Website is invalid');
       formIsValid = false;
