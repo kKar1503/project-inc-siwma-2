@@ -8,6 +8,8 @@ import { advertisementSchema } from '@/utils/api/server/zod';
 export const select = (isAdmin: boolean) => ({
   companyId: true,
   image: true,
+  id: isAdmin,
+  createdAt: isAdmin,
   endDate: isAdmin,
   startDate: isAdmin,
   active: isAdmin,
@@ -72,9 +74,10 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   });
 
   const mappedAdvertisements = advertisements.map((advertisement) => {
-    const { companyId, ...advertisementContent } = advertisement;
+    const { companyId, id, ...advertisementContent } = advertisement;
     return {
       ...advertisementContent,
+      id: id.toString(),
       companyId: companyId.toString(),
     };
   });
