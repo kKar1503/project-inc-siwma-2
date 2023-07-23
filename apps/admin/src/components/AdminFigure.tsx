@@ -22,8 +22,9 @@ const AdminFigure = ({ title, value, color, icon }: AdminFigureProps) => {
         alignItems: 'center',
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
         borderRadius: '8px',
-        px: '1rem',
-        py: '0.5rem',
+        px: '1.5rem',
+        py: '1rem',
+        backgroundColor: 'white',
         marginBottom: isSm ? 2 : 0,
       }}
     >
@@ -33,18 +34,17 @@ const AdminFigure = ({ title, value, color, icon }: AdminFigureProps) => {
           flexDirection: 'column',
         }}
       >
-        <Typography variant={isSm ? 'h3' : 'h2'} color={color}>
+        <Typography variant={isSm ? 'h3' : 'h1'} fontWeight="bold" color={color}>
           {value}
         </Typography>
-        <Typography variant={isSm ? 'h6' : 'h5'}>{title}</Typography>
+        <Typography variant={isSm ? 'h5' : 'h4'}>{title}</Typography>
       </Box>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          width: isSm ? '30%' : '40%',
-          height: isSm ? '30%' : '40%',
+          width: isSm ? '20%' : '30%',
         }}
       >
         <IconComponent
