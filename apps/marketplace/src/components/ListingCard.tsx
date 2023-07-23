@@ -1,6 +1,8 @@
 // ** React Imports
+import { useEffect, useState } from 'react';
 
 // ** Next Imports
+import { useSession } from 'next-auth/react';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
@@ -27,6 +29,8 @@ import { DateTime } from 'luxon';
 import fetchListing from '@/middlewares/fetchListing';
 import fetchCatById from '@/middlewares/fetchCatById';
 import fetchParamNames from '@/middlewares/fetchParamNames';
+import fetchUser from '@/middlewares/fetchUser';
+import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 
 // ** Custom Components Imports
 import S3BoxImage from './S3BoxImage';
@@ -53,6 +57,16 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
     return data;
   };
 
+  const useGetUserQuery = (userUuid: string) => {
+    const { data } = useQuery(['user', userUuid], async () => fetchUser(userUuid));
+
+    return data;
+  };
+
+  const user = useSession();
+  const loggedUserUuid = user.data?.user.id as string;
+  const userDetails = useGetUserQuery(loggedUserUuid);
+
   const useFetchParamNamesQuery = (paramIds?: string[]) => {
     const { data } = useQuery(['paramNames', paramIds], async () => fetchParamNames(paramIds), {
       enabled: paramIds !== undefined,
@@ -61,9 +75,32 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
     return data;
   };
 
+  const useBookmarkListing = (listingId: string) => {
+    const bookmarkBool = userDetails?.bookmarks?.listings.includes(listingId);
+
+    const [isBookmarked, setIsBookmarked] = useState(bookmarkBool);
+
+    // useEffect to update isBookmarked when bookmarkBool changes
+    useEffect(() => {
+      setIsBookmarked(bookmarkBool);
+    }, [bookmarkBool]);
+
+    const handleBookmarkListing = async () => {
+      await bookmarkListing(listingId);
+      setIsBookmarked(!isBookmarked);
+    };
+
+    return {
+      isBookmarked,
+      handleBookmarkListing,
+    };
+  };
+
   const listingDetails = useFetchListingQuery(listingId);
 
   const categoryDetails = useFetchCategoryQuery(listingDetails?.categoryId || 'null');
+
+  const { isBookmarked, handleBookmarkListing } = useBookmarkListing(listingId);
 
   const listingParamNames: string[] = [];
 
@@ -100,13 +137,22 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         </Box>
 
         <Box>
-          <IconButton sx={{ color: '#FFB743' }}>
-            <BookmarkIcon
-              fontSize="large"
-              sx={({ palette }) => ({
-                color: palette.warning[100],
-              })}
-            />
+          <IconButton onClick={handleBookmarkListing} sx={{ color: '#FFB743' }}>
+            {isBookmarked ? (
+              <BookmarkIcon
+                fontSize="large"
+                sx={({ palette }) => ({
+                  color: palette.warning[100],
+                })}
+              />
+            ) : (
+              <BookmarkBorderIcon
+                sx={({ palette }) => ({
+                  color: palette.common.black,
+                })}
+                fontSize="large"
+              />
+            )}
           </IconButton>
           <IconButton
             sx={({ palette, spacing }) => ({
