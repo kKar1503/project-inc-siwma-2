@@ -117,7 +117,6 @@ const CreateParameter = () => {
         <>
           {options.map((options, index) => (
             <TextField
-              // key={`customOption_${index}`}
               label={`Option ${index + 1}`}
               placeholder="Long"
               value={options}

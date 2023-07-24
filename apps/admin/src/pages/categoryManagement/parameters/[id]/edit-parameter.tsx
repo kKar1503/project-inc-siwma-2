@@ -14,14 +14,19 @@ import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
-import { ParameterResponseBody} from '@/utils/api/client/zod';
+import { ParameterResponseBody } from '@/utils/api/client/zod';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import updateParameter from '@/middlewares/updateParameter';
 import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
+import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -36,9 +41,13 @@ export type ParameterProps = {
 };
 
 const useGetParameter = (parameterId: string) => {
-  const { data } = useQuery(['parameter', parameterId], async () => fetchParameterById(parameterId), {
-    enabled: parameterId !== undefined,
-  });
+  const { data } = useQuery(
+    ['parameter', parameterId],
+    async () => fetchParameterById(parameterId),
+    {
+      enabled: parameterId !== undefined,
+    }
+  );
 
   return data;
 };
@@ -60,12 +69,17 @@ const EditParameter = () => {
   const [name, setName] = useState(parameterData?.name || '');
   const [displayName, setDisplayName] = useState(parameterData?.displayName || '');
   const [type, setType] = useState(parameterData?.type || '');
-  // const [options, setOptions] = useState(parameterData?.options || '');
+  const [options, setOptions] = useState<string[]>(
+    parameterData?.options && Array.isArray(parameterData?.options) ? parameterData.options : []
+  );
   const [dataType, setDataType] = useState(parameterData?.dataType || '');
 
-  const [displayNameError, setDisplayNameError] = useState('');  
+  const [displayNameError, setDisplayNameError] = useState('');
   const [nameError, setNameError] = useState('');
+  const [optionsError, setOptionsError] = useState('');
+
   const [openLeave, setOpenLeave] = useState<boolean>(false);
+  const [openMany, setOpenMany] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -89,9 +103,86 @@ const EditParameter = () => {
     }
   };
 
+  const handleTypeChange = (e: SelectChangeEvent) => {
+    setType(e.target.value);
+    setOptions([]);
+  };
+
+  const handleOptionChange = (index: number, value: string) => {
+    const newOptions = [...options];
+    newOptions[index] = value;
+    setOptions(newOptions);
+
+    if (value.trim() === '') {
+      setOptionsError('Please enter an option');
+    } else {
+      setOptionsError('');
+    }
+  };
+
+  const handleAddOption = () => {
+    setOptions([...options, '']);
+  };
+
+  const handleRemoveOption = (indexToRemove: number) => {
+    setOptions((prevOptions) => prevOptions.filter((_, index) => index !== indexToRemove));
+  };
+
   const handleParamTypeChange = (e: SelectChangeEvent) => {
     const selectedParamType = e.target.value;
     setType(selectedParamType);
+  };
+
+  const renderCustomOptions = () => {
+    if (type === 'TWO_CHOICES' || type === 'MANY_CHOICES') {
+      return (
+        <>
+          {options.map((options, index) => (
+            <TextField
+              label={`Option ${index + 1}`}
+              placeholder="Long"
+              value={options}
+              onChange={(e) => handleOptionChange(index, e.target.value)}
+              error={!!optionsError}
+              helperText={optionsError}
+              variant="outlined"
+              sx={({ spacing }) => ({
+                width: '100%',
+                mt: spacing(2),
+              })}
+              InputLabelProps={{ shrink: true }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <IconButton onClick={() => handleRemoveOption(index)} color="error">
+                      <DeleteIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          ))}
+          <Button
+            onClick={handleAddOption}
+            variant="contained"
+            sx={({ spacing, palette }) => ({
+              width: '15%',
+              mt: spacing(2),
+              bgcolor: palette.secondary[600],
+            })}
+          >
+            Add Option
+          </Button>
+        </>
+      );
+    }
+    return null;
   };
 
   const handleDataTypeChange = (e: SelectChangeEvent) => {
@@ -119,20 +210,20 @@ const EditParameter = () => {
     mutation.mutate(requestBody);
   };
 
-  useEffect(() => {
-    if (parameterData) {
-      setName(parameterData?.name || '');
-      setDisplayName(parameterData?.displayName || '');
-      setType(parameterData?.type || '');
-      // setOptions(parameterData?.options || '');
-      setDataType(parameterData?.dataType || '');
-    }
-  }, [parameterData]);
+  // useEffect(() => {
+  //   if (parameterData) {
+  //     setName(parameterData?.name || '');
+  //     setDisplayName(parameterData?.displayName || '');
+  //     setType(parameterData?.type || '');
+  //     setOptions(parameterData?.options || '');
+  //     setDataType(parameterData?.dataType || '');
+  //   }
+  // }, [parameterData]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
       queryClient.invalidateQueries('parameter');
-      router.push(`/parameter`);
+      // router.push(`/categoryManagement/parameters`);
     }
   }, [mutation.isSuccess, queryClient, router, id]);
 
@@ -254,6 +345,7 @@ const EditParameter = () => {
                     <MenuItem value="OPEN_ENDED">OPEN_ENDED</MenuItem>
                   </Select>
                 </FormControl>
+                {renderCustomOptions()}
 
                 <FormControl
                   sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
@@ -297,6 +389,12 @@ const EditParameter = () => {
                   >
                     Confirm
                   </Button>
+
+                  <OptionsErrorModal
+                    open={openMany}
+                    setOpen={setOpenMany}
+                    errorMessage={optionsError}
+                  />
                 </Box>
               </CardActions>
             </Card>
