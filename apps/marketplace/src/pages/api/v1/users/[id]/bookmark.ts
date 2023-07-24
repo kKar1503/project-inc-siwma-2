@@ -38,7 +38,7 @@ export default apiHandler().patch(async (req, res) => {
   });
 
   if (getUserBookmarkStatus === null && userId !== targetUser) {
-    const response = await client.userBookmarks.create({
+    await client.userBookmarks.create({
       data: {
         userId,
         targetUser,
@@ -49,7 +49,7 @@ export default apiHandler().patch(async (req, res) => {
   } else if (userId === targetUser) {
     throw new BookmarkSelfError();
   } else {
-    const response = await client.userBookmarks.delete({
+    await client.userBookmarks.delete({
       where: {
         id: getUserBookmarkStatus?.id,
       },

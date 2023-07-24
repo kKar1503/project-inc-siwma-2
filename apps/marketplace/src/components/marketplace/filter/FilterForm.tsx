@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import Checkbox from '@mui/material/Checkbox';
 
 // middleware
-import fetchCategories from '@/middlewares/fetchCategories';
+import fetchCategories from '@/services/fetchCategories';
 
 export type SortProps =
   | 'Recent'

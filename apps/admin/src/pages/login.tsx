@@ -12,11 +12,15 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useTogglePasswordVisibility } from '@inc/ui';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
+  const { showPassword, handleTogglePassword } = useTogglePasswordVisibility();
 
   const router = useRouter();
 
@@ -30,6 +34,15 @@ const LoginForm = () => {
     if (!authResult?.ok) {
       setErrorMessage(true);
     } else {
+      // Check if there is a redirect parameter in the router's query object
+      const redirect = router.query.redirect as string;
+
+      // If it exists, redirect the user to that URL
+      if (redirect) {
+        return router.push(redirect);
+      }
+
+      // Otherwise, redirect the user to the root page
       return router.push('/');
     }
 
@@ -124,9 +137,23 @@ const LoginForm = () => {
                 label="Password"
                 placeholder="Your password"
                 value={password}
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 variant="standard"
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        sx={({ palette }) => ({
+                          color: palette.grey[600],
+                        })}
+                        onClick={handleTogglePassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               {errorMessage && (
                 <Typography
@@ -175,4 +202,7 @@ const LoginForm = () => {
 };
 
 LoginForm.includeSideBar = false;
+LoginForm.allowNonAuthenticated = true;
+LoginForm.allowAuthenticated = false;
+
 export default LoginForm;

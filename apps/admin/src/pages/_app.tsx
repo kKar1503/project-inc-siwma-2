@@ -11,7 +11,7 @@ import { ThemeComponent } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import SideBar from '@/components/AdminSideBar';
 import Box from '@mui/material/Box';
-import { useMediaQuery, useTheme, createTheme, ThemeProvider } from '@mui/material';
+import { ThemeProvider, createTheme, useMediaQuery, useTheme } from '@mui/material';
 import { Noto_Sans_SC } from 'next/font/google';
 
 // -- Type declarations --//
@@ -46,6 +46,16 @@ const DisallowNonAuthenticatedFallback = () => {
 const DisallowAuthenticatedFallback = () => {
   const router = useRouter();
   useEffect(() => {
+    // Check if there is a redirect parameter in the router's query object
+    const redirect = router.query.redirect as string;
+
+    // If it exists, redirect the user to that URL
+    if (redirect) {
+      router.push(redirect);
+      return;
+    }
+
+    // It does not, so redirect the user to the root page
     router.push(`/`);
   }, [router]);
   return <SpinnerPage />;
@@ -62,7 +72,11 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
-  const { allowAuthenticated, allowNonAuthenticated, includeSideBar = true } = Component;
+  const {
+    allowAuthenticated = true,
+    allowNonAuthenticated = false,
+    includeSideBar = true,
+  } = Component;
 
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
@@ -83,6 +97,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
         <AuthenticationGuard
           disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
           disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
+          loader={<SpinnerPage />}
           allowAuthenticated={allowAuthenticated}
           allowNonAuthenticated={allowNonAuthenticated}
         >
