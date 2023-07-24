@@ -39,20 +39,20 @@ const LoginForm = () => {
     if (!authResult?.ok) {
       setErrorMessage(true);
     } else {
-      // Check if there is a callbackUrl parameter in the router's query object
-      const callbackUrl = router.query.callbackUrl as string;
-      console.log('callbackUrl', callbackUrl);
+      // Check if there is a redirect parameter in the router's query object
+      const redirect = router.query.redirect as string;
+
       // If it exists, redirect the user to that URL
-      if (callbackUrl) {
-        return router.push(callbackUrl);
+      if (redirect) {
+        return router.push(redirect);
       }
+
       // Otherwise, redirect the user to the root page
-       return router.push('/');
+      return router.push('/');
     }
 
     return authResult;
   };
-
 
   const stylesLogin = useMemo(() => {
     if (isSm) {
@@ -108,7 +108,12 @@ const LoginForm = () => {
         }}
       >
         <Box sx={{ width: '100%', height: '100%' }}>
-          <Image src="/images/siwma-background.png" alt="logo" style={{ objectFit: 'cover' }} fill />
+          <Image
+            src="/images/siwma-background.png"
+            alt="logo"
+            style={{ objectFit: 'cover' }}
+            fill
+          />
         </Box>
         <Container
           component="main"
@@ -250,4 +255,7 @@ const LoginForm = () => {
 };
 
 LoginForm.includeNavbar = false;
+LoginForm.allowAuthenticated = false;
+LoginForm.allowNonAuthenticated = true;
+
 export default LoginForm;

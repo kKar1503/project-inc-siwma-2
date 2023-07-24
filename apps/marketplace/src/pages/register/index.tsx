@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
 import { useMutation } from 'react-query';
-import createUser from '@/middlewares/createUser';
+import createUser from '@/services/users/createUser';
 import { useRouter } from 'next/router';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
 

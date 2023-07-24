@@ -1,15 +1,12 @@
-import { ListingType } from '@inc/db';
+import { ListingType } from '@inc/db-enums';
 import { z } from 'zod';
 
 // -- Define properties -- //
 const id = z.string();
-const name = z.string();
-const description = z.string();
+const productId = z.string();
 const price = z.number();
-const unit = z.string();
 const quantity = z.number();
 const negotiable = z.boolean();
-const categoryId = z.string();
 const type = z.nativeEnum(ListingType);
 const createdAt = z.string();
 
@@ -45,13 +42,10 @@ const purchased = z.boolean();
 // -- Define listing schema -- //
 const listing = z.object({
   id,
-  name,
-  description,
+  productId,
   price,
-  unit,
   quantity,
   negotiable,
-  categoryId,
   type,
   owner,
   open,
