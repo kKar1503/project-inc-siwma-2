@@ -55,7 +55,7 @@ const owner = z.object({
 
 // -- Paramter Properties -- //
 const parameter = z.object({
-  parameterId: z.string(),
+  parameterId: z.number(),
   value: z.string(),
 });
 
@@ -73,13 +73,20 @@ export const listingSchema = z.object({
 
 export const listingsSchema = z.array(listingSchema);
 
+export const paginationSchema = z.object({
+  totalCount: z.number(),
+  totalPage: z.number(),
+  page: z.number().default(0),
+  prevPage: z.number().nullable(),
+  nextPage: z.number().nullable(),
+  limit: z.number().default(10),
+});
+
+export const listingTableResponseSchema = z.object({
+  pagination: paginationSchema,
+  listings: listingsSchema,
+});
+
 export type Listing = z.infer<typeof listingSchema>;
 export type GetListingsQueryParameter = z.infer<typeof getQueryParameters>;
-export type Pagination = {
-  totalCount: number;
-  totalPage: number;
-  page: number; // starts from 0
-  prevPage: number | null; // at page 0
-  nextPage: number | null; // at last page
-  limit: number; // defaults to 10
-};
+export type Pagination = z.infer<typeof paginationSchema>;
