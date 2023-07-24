@@ -15,7 +15,7 @@ const OnLeaveModal = ({ open, setOpen }: ReportModalProps) => {
   const { t } = useTranslation();
 
   if (leftButtonState === true) {
-    router.push('/');
+    router.push(`/categoryManagement/parameters`);
   }
 
   useEffect(() => {

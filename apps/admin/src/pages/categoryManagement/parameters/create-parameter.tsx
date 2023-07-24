@@ -23,6 +23,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
 import { useQuery } from 'react-query';
+import { useRouter } from 'next/router';
 import createParameter from '@/middlewares/createParameter';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
@@ -46,6 +47,8 @@ const CreateParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const router = useRouter();
+
   const [name, setName] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [type, setType] = useState('');
@@ -185,6 +188,7 @@ const CreateParameter = () => {
       setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
     } else {
       await postParameter();
+      router.push(`/categoryManagement/parameters`);
     }
   };
 

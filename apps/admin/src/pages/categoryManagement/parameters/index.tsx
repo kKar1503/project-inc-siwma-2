@@ -15,11 +15,13 @@ import DeleteParameterModal from '@/components/modals/DeleteParameterModal';
 
 type DataType = 'string' | 'number' | 'boolean';
 type TableType = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
+
 export type ParameterProps = {
   id: string;
   name: string;
   displayName: string;
   type: TableType;
+  options?: string[];
   dataType: DataType;
   active?: boolean;
 };
@@ -32,6 +34,7 @@ function createData(
   name: string,
   displayName: string,
   type: TableType,
+  options: string[],
   dataType: DataType,
   active: boolean
 ): BaseTableData {
@@ -40,6 +43,7 @@ function createData(
     name,
     displayName,
     type,
+    options,
     dataType,
     active,
   };
@@ -57,6 +61,10 @@ const headCells: Header[] = [
   {
     key: 'type',
     label: 'Parameter Type',
+  },
+  {
+    key: 'options',
+    label: 'Parameter Type (Options)',
   },
   {
     key: 'dataType',
@@ -78,16 +86,17 @@ const useParameterQuery = () => {
 };
 
 const ParameterTable = () => {
+  const theme = useTheme();
+  const { spacing } = theme;
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [ids, setIds] = useState<string[]>([]);
   const [parameterData, setParameterData] = useState<Parameter[]>();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
-
-  const theme = useTheme();
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
+  
   const router = useRouter();
   const parameter = useParameterQuery();
 
@@ -119,13 +128,14 @@ const ParameterTable = () => {
           item.name,
           item.displayName,
           item.type,
+          item.options ?? [],
           item.dataType,
           item.active ?? false
         )
       );
     });
     setRows(rowsData);
-  };
+  };  
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
