@@ -1,12 +1,24 @@
+// ** API Client
 import apiClient from '@/utils/api/client/apiClient';
+
+// ** React Query
+import { useQuery } from 'react-query';
+
+// ** Types Imports
 import users from '@/utils/api/client/zod/users';
 
-const fetchUser = async (uuid: string) => {
-  const response = await apiClient.get(`/v1/users/${uuid}`);
-  // parse data through zod to ensure data is correct
-  const parsedUser = users.getById.parse(response.data.data[0]);
+/**
+ * Fetch a full user data
+ */
+const FetchUser = (uuid: string) =>
+  useQuery({
+    queryFn: async () =>
+      apiClient
+        .get(`/v1/users/${uuid}`)
+        // parse data through zod to ensure data is correct
+        .then((res) => users.getById.parse(res.data.data[0])),
+    queryKey: ['user', uuid],
+    enabled: !!uuid,
+  });
 
-  return parsedUser;
-};
-
-export default fetchUser;
+export default FetchUser;

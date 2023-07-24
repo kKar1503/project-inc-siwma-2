@@ -34,7 +34,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
 import fetchUser from '@/middlewares/fetchUser';
 import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
 import { useSession } from 'next-auth/react';
 import { useResponsiveness } from '@inc/ui';
 
@@ -125,13 +124,6 @@ const menuItems = [
   },
 ];
 
-const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-
-  return data;
-};
 
 const AdminSideBar = () => {
   const loginUser = useSession();
@@ -145,7 +137,13 @@ const AdminSideBar = () => {
   const blueBackground = '#EAEFFC';
 
   const loggedUserUuid = loginUser.data?.user.id as string;
-  const currentUser = useGetUserQuery(loggedUserUuid);
+
+    const {
+      data: currentUser,
+      error: userError,
+      isError: isUserError,
+      isFetched: isUserFetched,
+    } = fetchUser(loggedUserUuid);
 
   // function that fetches the user info from backend
   function getUserInfo() {
@@ -157,12 +155,29 @@ const AdminSideBar = () => {
   }
 
   useEffect(() => {
+    if (!isUserFetched) {
+      return;
+    }
+
+    if (isUserError) {
+      if ('status' in (userError as any) && (userError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (user === undefined) {
+      router.replace('/500');
+    }
     // Assume that `getUserInfo` is a function that fetches the user info from backend
     if (currentUser) {
       const userInfo = getUserInfo();
       setUser(userInfo);
     }
-  }, [currentUser]);
+  }, [currentUser, isUserFetched]);
 
   useEffect(() => {
     menuItems.forEach((item) => {
