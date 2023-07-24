@@ -44,11 +44,6 @@ const menuItems = [
     Icon: HomeIcon,
   },
   {
-    name: 'Data Analytics',
-    link: '/dataAnalytics',
-    Icon: BarChartIcon,
-  },
-  {
     name: 'Advertisement',
     link: '/advertisement',
     Icon: SpaceDashboardIcon,
@@ -84,14 +79,14 @@ const menuItems = [
   },
   {
     
-    name: 'Listing Management',
+    name: 'Listing',
     link: '/listing',
     Icon: FormatListBulletedIcon,
     dropdown: [
       {
-        name: 'All Listing',
-        link: '/listing/all-listing',
-        Icon: FeedOutlinedIcon,
+        name: 'Listing',
+        link: '/listing/listing',
+        Icon: FormatListBulletedIcon,
       },
       {
         name: 'Listing Items',
@@ -109,17 +104,7 @@ const menuItems = [
         name: 'Companies',
         link: '/userManagement/companies',
         Icon: ApartmentIcon,
-      },
-      {
-        name: 'Users',
-        link: '/userManagement/users',
-        Icon: PeopleAltIcon,
-      },
-      {
-        name: 'Invites',
-        link: '/userManagement/invites',
-        Icon: PersonAddIcon,
-      },
+      }
     ],
   },
 ];
