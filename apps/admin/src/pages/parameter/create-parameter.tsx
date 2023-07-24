@@ -76,8 +76,6 @@ const CreateParameter = () => {
   };
 
   const handleTypeChange = (e: SelectChangeEvent) => {
-    // const selectedParamType = e.target.value;
-    // setType(selectedParamType);
     setType(e.target.value);
     setCustomOptions([]);
   };

@@ -9,10 +9,10 @@ import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Head from 'next/head';
 import Link from 'next/link';
+import router, { useRouter } from 'next/router';
 import { Parameter, ParameterResponseBody } from '@/utils/api/client/zod';
 import fetchParameters from '@/middlewares/fetchParameters';
 import DeleteParameterModal from '@/components/modals/DeleteParameterModal';
-import router from 'next/router';
 
 type DataType = 'string' | 'number' | 'boolean';
 type TableType = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
@@ -67,7 +67,7 @@ const headCells: Header[] = [
     key: 'active',
     label: 'Status',
     replace: {
-      a: 'Active',
+      true: 'Active',
       false: 'Inactive',
     },
   },
@@ -80,13 +80,21 @@ const useParameterQuery = () => {
 
 const ParameterTable = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [ids, setIds] = useState<string[]>([]);
   const [parameterData, setParameterData] = useState<Parameter[]>();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
+
+  const theme = useTheme();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const router = useRouter();
   const parameter = useParameterQuery();
+
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const pageRows = rows.slice(startIndex, endIndex);
 
   // const handleParametersChange = async (parameter: Parameter[]) => {
   //   setParameterData(parameter);
@@ -141,12 +149,6 @@ const ParameterTable = () => {
     router.push(editUrl);
   };
 
-
-  const startIndex = page * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const pageRows = rows.slice(startIndex, endIndex);
-
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const tableStyle = useMemo(() => {
     if (isSm) {
       return {
@@ -171,6 +173,30 @@ const ParameterTable = () => {
   useEffect(() => {
     sortRows();
   }, [parameter]);
+
+  // useEffect(() => {
+  //   if (!parameter.isFetched) {
+  //     return
+  //   }
+
+  //   if (parameter.isError) {
+  //     if ('status' in (parameter.error as any) && (parameter.error as any).status === 404) {
+  //       router.replace('/404');
+  //       return;
+  //     }
+
+  //     router.replace('/500');
+  //     return;
+  //   }
+
+  //   if (parameter === undefined) {
+  //     router.replace('/500');
+  //   }
+  // }, [parameter.isFetched]);
+
+  // if (!parameter.isFetched) {
+  //   return <SpinnerPage />;
+  // }
 
   return (
     <>
