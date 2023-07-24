@@ -11,14 +11,14 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import fetchCompany from '@/middlewares/company-management/fetchCompany';
-import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
+import fetchCompaniesByName from '@/middlewares/company-management/fetchCompaniesByName';
 import updateCompany from '@/middlewares/company-management/updateCompany';
 
 export type EditCompanyModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   company: string;
-  updateData: () => void;
+  updateData: (lastIdPointer?: number, limit?: number) => void;
 };
 
 export type PutCompanyRequestBody = {
@@ -28,8 +28,8 @@ export type PutCompanyRequestBody = {
   image?: string;
 };
 
-const useGetCompaniesQuery = () => {
-  const { data } = useQuery('companies', async () => fetchCompanies(), {
+const useGetCompaniesByNameQuery = (name?: string) => {
+  const { data } = useQuery(['companies', name], async () => fetchCompaniesByName(name), {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -44,7 +44,6 @@ const useGetCompanyQuery = (companyId: string) => {
   return data;
 };
 
-// update data after this is run
 const useUpdateCompanyMutation = (companyId: string, companyImage?: File) =>
   useMutation((updatedCompanyData: PutCompanyRequestBody) =>
     updateCompany(updatedCompanyData, companyId, companyImage)
@@ -52,8 +51,8 @@ const useUpdateCompanyMutation = (companyId: string, companyImage?: File) =>
 
 const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyModalProps) => {
   const queryClient = useQueryClient();
-  const companies = useGetCompaniesQuery();
   const companyData = useGetCompanyQuery(company);
+  const companies = useGetCompaniesByNameQuery(companyData?.name);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [name, setName] = useState<string>(companyData?.name || '');
@@ -61,7 +60,6 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   const [bio, setBio] = useState<string>(companyData?.bio || '');
   const [selectedCompanyFile, setSelectedCompanyFile] = useState<File | null>(null);
 
-  // validation
   const [nameError, setNameError] = useState<string>('');
   const [websiteError, setWebsiteError] = useState<string>('');
   const [fileError, setFileError] = useState<string>('');
@@ -91,7 +89,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
       formIsValid = false;
     }
 
-    if (!checkCompanyDuplicate(name)) {
+    if (checkCompanyDuplicate(name)) {
       setNameError('Company already exists');
       formIsValid = false;
     }
@@ -147,13 +145,8 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
 
     await mutation.mutateAsync(companyData);
     setOpen(false);
+    updateData();
   };
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      queryClient.invalidateQueries(['company', company]);
-    }
-  }, [mutation.isSuccess, queryClient, company]);
 
   useEffect(() => {
     if (companyData) {
@@ -163,11 +156,11 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
     }
   }, [companyData]);
 
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      updateData(); // Call updateData after the mutation has completed
-    }
-  }, [mutation.isSuccess, updateData]);
+  // useEffect(() => {
+  //   if (mutation.isSuccess) {
+  //     updateData();
+  //   }
+  // }, [mutation.isSuccess, queryClient, company, updateData]);
 
   const modalStyles = useMemo(() => {
     if (isSm) {

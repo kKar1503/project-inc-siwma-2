@@ -41,6 +41,8 @@ const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
   const [rows, setRows] = useState<BaseTableData[]>([]);
   const [id, setId] = useState<string>('');
   const [ids, setIds] = useState<string[]>([]);
+  const [lastIdPointer, setLastIdPointer] = useState<number>(0);
+  const [lastData, setLastData] = useState<Company[]>(data.data);
 
   // modals
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
@@ -53,13 +55,27 @@ const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
 
   useEffect(() => {
     setRows(companyRows);
+
+    if (companyRows.length > 0) {
+      const { id } = companyRows[companyRows.length - 1];
+      setLastIdPointer(parseInt(id, 10));
+    }
   }, [companyRows, page, rowsPerPage]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
+    setLastData(data.data);
 
-    const lastIdPointer = rows.length * newPage;
-    updateData(lastIdPointer, rowsPerPage);
+    if (newPage === 0) {
+      updateData(0, rowsPerPage);
+    } else if (newPage < page) {
+      const { id } = lastData[0];
+      const idPointer = parseInt(id, 10) - 1;
+
+      updateData(idPointer, rowsPerPage);
+    } else {
+      updateData(lastIdPointer, rowsPerPage);
+    }
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
