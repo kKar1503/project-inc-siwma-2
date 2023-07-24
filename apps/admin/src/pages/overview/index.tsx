@@ -15,11 +15,8 @@ import fetchProducts from '@/services/products/fetchProducts';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
-const mapData = (categories: UseQueryResult<CategoryResponseBody[]>) => {
-  const activeCategories = categories.data?.filter(i => i.active).map((item) => ({
-    category: item.name,
-    value: item.id,
-  })) || [];
+const mapData = () => {
+
   const buyingSellingData = [
     { month: 1, value: 1, isBuying: true }, { month: 1, value: 2, isBuying: false },
     { month: 2, value: 3, isBuying: true }, { month: 2, value: 1, isBuying: false },
@@ -34,7 +31,7 @@ const mapData = (categories: UseQueryResult<CategoryResponseBody[]>) => {
     { month: 11, value: 20, isBuying: true }, { month: 11, value: 12, isBuying: false },
     { month: 12, value: 30, isBuying: true }, { month: 12, value: 14, isBuying: false },
   ];
-  return { activeCategories, buyingSellingData };
+  return { buyingSellingData };
 };
 
 const categoryMap = (query: UseQueryResult<CategoryResponseBody[]>): Record<string, {
@@ -116,7 +113,6 @@ const Analytics = () => {
   const categoryNames = useMemo(() => categoryMap(categoriesQuery), [categoriesQuery.isSuccess]);
 
   const listingQuery = DataStream('listings', fetchListings, (data, nextIndex) => {
-    console.log(data);
     const listingCompanyBinLocal = listingCompanyBin;
     const listingProductsBinLocal = listingProductsBin;
     data.listings.forEach(listing => {
@@ -132,7 +128,6 @@ const Analytics = () => {
         }
         listingCompanyBinLocal.set(company.name, buySell);
       }
-
       // product stuff
       {
         const { productId } = listing;
@@ -148,28 +143,20 @@ const Analytics = () => {
     });
     setListingCompanyBin(listingCompanyBinLocal);
     setListingProductsBin(listingProductsBinLocal);
-
     return nextIndex < data.totalCount;
   });
 
   const productsQuery = DataStream('products', fetchProducts, (data, nextIndex) => {
-    console.log(data);
-
     const productToCategoryAndNameLocal = productToCategoryAndName;
     data.listingItems.forEach(item => {
       const { id, categoryId, name } = item;
       productToCategoryAndNameLocal.set(id, { categoryId, name });
     });
-
     setProductToCategoryAndName(productToCategoryAndNameLocal);
-
     return nextIndex < data.totalCount;
   });
 
-  const {
-    activeCategories,
-    buyingSellingData,
-  } = useMemo(() => mapData(categoriesQuery), [categoriesQuery]);
+  const { buyingSellingData } = useMemo(() => mapData(), []);
 
   const topCompanies = useMemo(() => mapTopCompanies(listingCompanyBin), [listingProductsBin.size]);
 
