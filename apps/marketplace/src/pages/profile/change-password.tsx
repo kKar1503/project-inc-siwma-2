@@ -14,7 +14,7 @@ import FormControl from '@mui/material/FormControl';
 import { useSession } from 'next-auth/react';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { useMutation } from 'react-query';
-import updateUser from '@/middlewares/updateUser';
+import updateUser from '@/services/users/updateUser';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
