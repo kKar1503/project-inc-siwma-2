@@ -16,7 +16,7 @@ const deleteListingsMutationFn = async (ids: string[]) => {
 const AllListings = () => {
   const [deleteListing, setDeleteListing] = useState<boolean>(false);
   const [lastIdPointer, setLastIdPointer] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [currPage, setPage] = useState<number>(0);
   const totalCount = useRef(0);
 
@@ -96,7 +96,7 @@ const AllListings = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', paddingX: 2 }}>
       <AllListingsTable
         data={listings || []}
         onDelete={handleDeleteListings}
