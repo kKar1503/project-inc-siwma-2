@@ -81,7 +81,6 @@ const EditUser = () => {
         buttonText="Continue"
         open={openSuccess}
         setOpen={setOpenWarning}
-        path="/users-managemnt"
       />
       <SuccessModal
         title="Email Sent"
