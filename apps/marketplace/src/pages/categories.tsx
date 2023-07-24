@@ -1,23 +1,49 @@
-import CardActionArea from '@mui/material/CardActionArea';
 import { useQuery } from 'react-query';
-import { Box, Typography, CardMedia, CardContent, Card, Grid, useTheme } from '@mui/material';
+import { Box, Typography, Grid, useTheme } from '@mui/material';
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCategories from '@/services/fetchCategories';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import CategoryCard from '@/components/marketplace/listing/Categories';
+import Spinner from '@/components/fallbacks/Spinner';
+import { useEffect } from 'react';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
 };
 
 const useCategoryPageQuery = () => {
-  const { data } = useQuery('cat', async () => fetchCategories());
-  return data;
+  const { data, error, isError, isFetched } = useQuery('cat', async () => fetchCategories());
+  return {data, error, isError, isFetched};
 };
 
 const CategoriesPage = () => {
+  const router = useRouter();
   const catData = useCategoryPageQuery();
   const theme = useTheme();
+
+  useEffect(() => {
+    if (!catData.isFetched) {
+      return
+    }
+
+    if (catData.isError) {
+      if ('status' in (catData.error as any) && (catData.error as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (catData === undefined) {
+      router.replace('/500');
+    }
+  }, [catData.isFetched]);
+
+  if (!catData.isFetched) {
+    return <Spinner />;
+  }
 
   return (
     <Box
@@ -52,7 +78,7 @@ const CategoriesPage = () => {
             direction: 'row',
           }}
         >
-          {catData?.map((category) => (
+          {catData?.data?.map((category) => (
             <Grid item xl={2} lg={3} md={4} sm={6} xs={6} key={category.name}>
               <CategoryCard {...category} />
             </Grid>
