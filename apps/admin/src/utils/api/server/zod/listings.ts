@@ -11,6 +11,7 @@ const getQueryParameters = z.object({
   lastIdPointer: z.string().transform(zodParseToInteger).optional(),
   limit: z.string().transform(zodParseToInteger).optional().default('10'),
   matching: z.string().optional(),
+  includeName: z.string().transform(zodParseToBoolean).optional().default('false'),
   includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
   params: z
     .preprocess(
