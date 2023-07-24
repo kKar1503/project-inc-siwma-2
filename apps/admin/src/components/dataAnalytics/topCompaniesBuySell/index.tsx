@@ -2,27 +2,28 @@ import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import Title from '@/components/graphs/overlay/title';
 import DoubleDataGraph from '@/components/graphs/doubleDataGraph';
 
-const format = [
-  { id: 1, display: 'Company 1' },
-  { id: 2, display: 'Company 2' },
-  { id: 3, display: 'Company 3' },
-  { id: 4, display: 'Company 4' },
-];
-
 export interface TopCompaniesProps {
-  data: number[];
+  data: Array<{ name: string, buying: number, selling: number }>;
 }
 
 const TopCompanies = ({ data }: TopCompaniesProps) => {
-  const mapData = data.map((item, index) => ({
-    id: Math.round((index + 1) / 2),
-    value: item,
-    label: item.toString(),
-    isSecondary: index % 2 === 1,
+  const trimmedData = data.slice(0, 4);
+  console.log(trimmedData)
+  const buyData = trimmedData.map((item, index) => ({
+    id: index + 1,
+    value: item.buying,
+    label: item.buying.toString(),
+    isSecondary: false,
+  }));
+  const sellData = trimmedData.map((item, index) => ({
+    id: index + 1,
+    value: item.selling,
+    label: item.selling.toString(),
+    isSecondary: true,
   }));
   return (
     <ModuleBase width='85%'>
-      <DoubleDataGraph data={mapData} format={format}
+      <DoubleDataGraph data1={buyData} data2={sellData} format={trimmedData.map((item) => item.name)}
                        legend={['Buying', 'Selling']}
                        style={
                          {

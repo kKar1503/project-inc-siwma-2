@@ -15,7 +15,6 @@ export interface DataGraphElement {
   id: number;
   value: number;
   label: string;
-  isSecondary: boolean;
 }
 
 export interface DataGraphFormatElement {
@@ -24,8 +23,9 @@ export interface DataGraphFormatElement {
 }
 
 export interface DataGraphProps {
-  data: DataGraphElement[];
-  format: Array<DataGraphFormatElement>;
+  data1: DataGraphElement[];
+  data2: DataGraphElement[];
+  format: Array<DataGraphFormatElement | string>;
   style: {
     fillColor: string;
     fillColor2: string;
@@ -37,19 +37,10 @@ export interface DataGraphProps {
   legend?: [string, string];
 }
 
-const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphProps) => {
-  const tickValues = format.map((item) => item.id);
-  const tickFormat = format.map((item) => item.display);
-  const primaryData = data.filter((item) => !item.isSecondary).map(i => ({
-    id: i.id + 0.15,
-    value: i.value,
-    label: i.label,
-  }));
-  const secondaryData = data.filter((item) => item.isSecondary).map(i => ({
-    id: i.id - 0.15,
-    value: i.value,
-    label: i.label,
-  }));
+const DoubleDataGraph = ({ data1, data2, format, style, children, legend }: DataGraphProps) => {
+  const tickValues = format.map((item, index) => typeof item === 'string' ? index + 1 : item.id);
+  const tickFormat = format.map((item) => typeof item === 'string' ? item : item.display);
+
 
   return (
     <Box sx={{ height: '100%' }}>
@@ -96,7 +87,7 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
         />
         <VictoryBar
           barRatio={0.4}
-          data={primaryData}
+          data={data1.map((item) => ({ ...item, id: item.id + 0.15 }))} // offset the bars
           x='id'
           y='value'
           labelComponent={<VictoryTooltip />}
@@ -134,7 +125,7 @@ const DoubleDataGraph = ({ data, format, style, children, legend }: DataGraphPro
         />
         <VictoryBar
           barRatio={0.4}
-          data={secondaryData}
+          data={data2.map((item) => ({ ...item, id: item.id - 0.15 }))} // offset the bars
           x='id'
           y='value'
           labelComponent={<VictoryTooltip />}
