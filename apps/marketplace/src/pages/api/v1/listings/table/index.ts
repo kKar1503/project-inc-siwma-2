@@ -33,8 +33,10 @@ function getOrderBy(
 function generatePaginationDetails(total: number, limit: number, supposedPage: number): Pagination {
   const pageRequirement = supposedPage * limit;
   const hasEnoughPage = pageRequirement < total;
-  const page = hasEnoughPage ? pageRequirement : Math.max(pageRequirement - limit, 0);
-  // ^ Defaults to 10 page
+  const page = hasEnoughPage
+    ? supposedPage
+    : Math.max(Math.ceil((pageRequirement - limit) / limit), 0);
+  // ^ Defaults to page 0
   const totalPage = Math.ceil(total / limit);
   const nextPage = page + 1 > totalPage ? null : page + 1;
   const prevPage = page === 0 ? null : page - 1;
