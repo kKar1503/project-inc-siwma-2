@@ -8,7 +8,6 @@ import { useTheme } from '@mui/material/styles';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Head from 'next/head';
-import Link from 'next/link';
 import router, { useRouter } from 'next/router';
 import { Parameter, ParameterResponseBody } from '@/utils/api/client/zod';
 import fetchParameters from '@/middlewares/fetchParameters';

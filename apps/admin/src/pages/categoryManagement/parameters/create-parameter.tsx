@@ -14,6 +14,10 @@ import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
@@ -90,6 +94,10 @@ const CreateParameter = () => {
     setCustomOptions([...customOptions, '']);
   };
 
+  const handleRemoveCustomOption = (indexToRemove: number) => {
+    setCustomOptions((prevOptions) => prevOptions.filter((_, index) => index !== indexToRemove));
+  };
+
   const handleDataTypeChange = (e: SelectChangeEvent) => {
     const selectedDataType = e.target.value;
     setDataType(selectedDataType);
@@ -110,15 +118,30 @@ const CreateParameter = () => {
                 width: '100%',
                 mt: spacing(2),
               })}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <IconButton onClick={() => handleRemoveCustomOption(index)} color="error">
+                      <DeleteIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           ))}
           <Button
             onClick={handleAddCustomOption}
-            variant="outlined"
-            color="primary"
-            sx={({ spacing }) => ({
-              width: '20%',
+            variant="contained"
+            sx={({ spacing, palette }) => ({
+              width: '15%',
               mt: spacing(2),
+              bgcolor: palette.secondary[600],
             })}
           >
             Add Option
