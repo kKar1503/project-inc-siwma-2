@@ -5,16 +5,17 @@ import Grid from '@mui/material/Grid';
 
 export interface ActiveCategoriesProps {
   data: Array<{
-    category: string;
-    value: string;
+    name: string;
+    total: number;
   }>;
+  title: string;
 }
 
-const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
+const PieChart = ({ data,title }: ActiveCategoriesProps) => {
   const formattedData = data.map((item) => ({
-      x: item.category,
-      y: item.value,
-      label: `${item.category}\n${item.value}`,
+      x: item.name,
+      y: item.total,
+      label: `${item.name}\n${item.total}`,
     }),
   );
   return (
@@ -22,7 +23,7 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
       <Grid container spacing={2} sx={{ height: '100%' }}>
         <Grid item xs={1} />
         <Grid item xs={11}>
-          <Title title='Active Categories' primarySize={20} x={-35} />
+          <Title title={title} primarySize={20} x={-35} />
           <VictoryPie
             containerComponent={<VictoryContainer />}
             // origin={}
@@ -54,4 +55,4 @@ const ActiveCategories = ({ data }: ActiveCategoriesProps) => {
 };
 
 
-export default ActiveCategories;
+export default PieChart;
