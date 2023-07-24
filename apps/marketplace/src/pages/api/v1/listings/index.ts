@@ -109,13 +109,10 @@ export async function formatSingleListingResponse(
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
-    name: listing.listingItem.name,
-    description: listing.listingItem.description,
+    productId: listing.listingItemId.toString(),
     price: listing.price.toNumber(),
-    unit: listing.listingItem.unit,
     quantity: listing.quantity.toNumber(),
     negotiable: listing.negotiable,
-    categoryId: listing.listingItem.categoryId.toString(),
     type: listing.type,
     owner: {
       id: listing.users.id,
@@ -259,7 +256,7 @@ export default apiHandler()
 
     // Check if the listing item exists
     const listingItem = await PrismaClient.listingItem.findUnique({
-      where: { id: data.listingItemId },
+      where: { id: data.productId },
     });
 
     if (!listingItem) {
@@ -285,7 +282,7 @@ export default apiHandler()
 
     const listing = await PrismaClient.listing.create({
       data: {
-        listingItemId: data.listingItemId,
+        listingItemId: data.productId,
         quantity: data.quantity,
         price: data.price,
         negotiable: data.negotiable,
