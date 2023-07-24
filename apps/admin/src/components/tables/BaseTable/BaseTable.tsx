@@ -106,15 +106,22 @@ const BaseTable = (props: BaseTableProps) => {
     setSelected(result);
   };
 
-  const isSelected = (row: BaseTableData) => selected.indexOf(row) !== -1;
+  const isSelected = (row: BaseTableData) => selected.find((e) => e.id === row.id) !== undefined;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? rowsPerPage - rows.length : 0;
-  console.log({ emptyRows });
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box width="100%" height="100%">
+      <Paper
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          mb: 2,
+        }}
+      >
         <BaseTableToolbar
           heading={heading}
           selectedRows={selected}
@@ -123,8 +130,8 @@ const BaseTable = (props: BaseTableProps) => {
           onToggle={(e, toggled) => onToggle(toggled, selected)}
           onDelete={handleDelete}
         />
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+        <TableContainer sx={{ flexGrow: 1 }}>
+          <Table width="100%" aria-labelledby="tableTitle" stickyHeader>
             <BaseTableHead
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
@@ -194,6 +201,7 @@ const BaseTable = (props: BaseTableProps) => {
           </Table>
         </TableContainer>
         <TablePagination
+          sx={{ flexGrow: 0, overflow: 'initial' }}
           rowsPerPageOptions={rowsPerPageOptions}
           component="div"
           count={totalCount}
