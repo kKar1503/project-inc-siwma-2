@@ -117,5 +117,5 @@ export default apiHandler().post(async (req, res) => {
   console.log(hashedUrl.id);
   console.log(listingIds);
 
-  res.status(200).json(formatAPIResponse({ id: hashedUrl.id, hash }));
+  res.status(200).json(formatAPIResponse({ id: hashedUrl.id.toString(), hash }));
 });
