@@ -6,6 +6,7 @@ import fetchListings from '@/middlewares/fetchListings';
 import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import AllListingsTable from '@/components/tables/AllListingsTable';
 import { Box } from '@mui/material';
+import SuccessModal from '@/components/modals/SuccessModal';
 
 const deleteListingsMutationFn = async (ids: string[]) => {
   const promises = ids.map((id) => apiClient.delete(`/v1/listings/${id}`));
@@ -95,7 +96,7 @@ const AllListings = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
       <AllListingsTable
         data={listings || []}
         onDelete={handleDeleteListings}
@@ -106,6 +107,14 @@ const AllListings = () => {
         onToggle={onToggle}
         rowsPerPage={rowsPerPage}
         page={currPage}
+      />
+       <SuccessModal
+        title="Successfully Deleted!"
+        content="Selected listing(s) have been successfully deleted"
+        open={deleteListing}
+        setOpen={setDeleteListing}
+        buttonText="Return"
+        path="/listing/all-listing"
       />
     </Box>
   );
