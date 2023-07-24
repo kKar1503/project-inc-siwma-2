@@ -20,6 +20,7 @@ import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
 import { useQuery } from 'react-query';
 import createParameter from '@/middlewares/createParameter';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
+import ManyChoicesModal from '@/components/modals/ManyChoicesModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -41,12 +42,16 @@ const CreateParameter = () => {
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [name, setName] = useState('');
-  const [nameError, setNameError] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [displayNameError, setDisplayNameError] = useState('');
   const [type, setType] = useState('');
+  const [customOptions, setCustomOptions] = useState<string[]>([]);
   const [dataType, setDataType] = useState('');
+
+  const [nameError, setNameError] = useState('');
+  const [displayNameError, setDisplayNameError] = useState('');
   const [openLeave, setOpenLeave] = useState<boolean>(false);
+  const [openMany, setOpenMany] = useState<boolean>(false);
+  const [optionsError, setOptionsError] = useState('');
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -70,14 +75,60 @@ const CreateParameter = () => {
     }
   };
 
-  const handleParamTypeChange = (e: SelectChangeEvent) => {
-    const selectedParamType = e.target.value;
-    setType(selectedParamType);
+  const handleTypeChange = (e: SelectChangeEvent) => {
+    // const selectedParamType = e.target.value;
+    // setType(selectedParamType);
+    setType(e.target.value);
+    setCustomOptions([]);
+  };
+
+  const handleCustomOptionChange = (index: number, value: string) => {
+    const newOptions = [...customOptions];
+    newOptions[index] = value;
+    setCustomOptions(newOptions);
+  };
+
+  const handleAddCustomOption = () => {
+    setCustomOptions([...customOptions, '']);
   };
 
   const handleDataTypeChange = (e: SelectChangeEvent) => {
     const selectedDataType = e.target.value;
     setDataType(selectedDataType);
+  };
+
+  const renderCustomOptions = () => {
+    if (type === 'TWO_CHOICES' || type === 'MANY_CHOICES') {
+      return (
+        <>
+          {customOptions.map((option, index) => (
+            <TextField
+              // key={`customOption_${index}`}
+              label={`Option ${index + 1}`}
+              value={option}
+              onChange={(e) => handleCustomOptionChange(index, e.target.value)}
+              variant="outlined"
+              sx={({ spacing }) => ({
+                width: '100%',
+                mt: spacing(2),
+              })}
+            />
+          ))}
+          <Button
+            onClick={handleAddCustomOption}
+            variant="outlined"
+            color="primary"
+            sx={({ spacing }) => ({
+              width: '20%',
+              mt: spacing(2),
+            })}
+          >
+            Add Option
+          </Button>
+        </>
+      );
+    }
+    return null;
   };
 
   const postParameter = async () => {
@@ -93,7 +144,15 @@ const CreateParameter = () => {
   };
 
   const handleSubmit = async () => {
-    postParameter();
+    if (type === 'MANY_CHOICES' && customOptions.length < 3) {
+      setOpenMany(true);
+      setOptionsError('Please add at least 3 options for MANY_CHOICES');
+    } else if (type === 'TWO_CHOICES' && customOptions.length < 2) {
+      setOpenMany(true);
+      setOptionsError('Please add at least 2 options for TWO_CHOICES');
+    } else {
+      await postParameter();
+    }
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -211,7 +270,7 @@ const CreateParameter = () => {
                   sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
                 >
                   <InputLabel>Parameter Type</InputLabel>
-                  <Select label="Parameter Type" value={type} onChange={handleParamTypeChange}>
+                  <Select label="Parameter Type" value={type} onChange={handleTypeChange}>
                     <MenuItem value="WEIGHT">WEIGHT</MenuItem>
                     <MenuItem value="DIMENSION">DIMENSION</MenuItem>
                     <MenuItem value="TWO_CHOICES">TWO_CHOICES</MenuItem>
@@ -219,6 +278,7 @@ const CreateParameter = () => {
                     <MenuItem value="OPEN_ENDED">OPEN_ENDED</MenuItem>
                   </Select>
                 </FormControl>
+                {renderCustomOptions()}
 
                 <FormControl
                   sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
@@ -262,6 +322,12 @@ const CreateParameter = () => {
                   >
                     Confirm
                   </Button>
+
+                  <ManyChoicesModal
+                    open={openMany}
+                    setOpen={setOpenMany}
+                    errorMessage={optionsError}
+                  />
                 </Box>
               </CardActions>
             </Card>
