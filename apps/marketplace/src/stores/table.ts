@@ -49,69 +49,74 @@ const initialState: TableStates = {
 };
 
 const useTableStore = create<TableStates & TableActions>()(
-  devtools((set, get) => ({
-    ...initialState,
-    resetStates: () => {
-      set(initialState);
-    },
-    setNormalMode: () => {
-      if (get().mode !== 'NORMAL')
+  devtools(
+    (set, get) => ({
+      ...initialState,
+      resetStates: () => {
+        set(initialState);
+      },
+      setNormalMode: () => {
+        if (get().mode !== 'NORMAL')
+          set({
+            mode: 'NORMAL',
+          });
+      },
+      setSearchMode: () => {
+        if (get().mode !== 'SEARCH')
+          set({
+            mode: 'SEARCH',
+          });
+      },
+      setCategoryMode: () => {
+        if (get().mode !== 'CATEGORY')
+          set({
+            mode: 'CATEGORY',
+          });
+      },
+      setSearchString: (searchString) => {
         set({
-          mode: 'NORMAL',
+          searchString,
         });
-    },
-    setSearchMode: () => {
-      if (get().mode !== 'SEARCH')
+      },
+      setCategoryId: (categoryId) => {
         set({
-          mode: 'SEARCH',
+          categoryId,
         });
-    },
-    setCategoryMode: () => {
-      if (get().mode !== 'CATEGORY')
-        set({
-          mode: 'CATEGORY',
-        });
-    },
-    setSearchString: (searchString) => {
-      set({
-        searchString,
-      });
-    },
-    setCategoryId: (categoryId) => {
-      set({
-        categoryId,
-      });
-    },
-    setPagination: (pagination) => {
-      const { limit, ...rest } = pagination;
-      const paginationData: Partial<TableStates> = { ...rest };
-      if ([10, 25, 50].indexOf(limit) !== -1) {
-        paginationData.limit = limit as TableDisplayLimit;
-      }
+      },
+      setPagination: (pagination) => {
+        const { limit, ...rest } = pagination;
+        const paginationData: Partial<TableStates> = { ...rest };
+        if ([10, 25, 50].indexOf(limit) !== -1) {
+          paginationData.limit = limit as TableDisplayLimit;
+        }
 
-      set(paginationData);
-    },
-    addSelected: (listingId) => {
-      set({
-        selected: [...get().selected, listingId],
-      });
-    },
-    addManySelected: (listingIds) => {
-      set({
-        selected: [...get().selected, ...listingIds],
-      });
-    },
-    removeSelected: (listingId) => {
-      set({
-        selected: get().selected.filter((s) => s !== listingId),
-      });
-    },
-    clearSelected: () => {
-      set({
-        selected: [],
-      });
-    },
-  }))
+        set(paginationData);
+      },
+      addSelected: (listingId) => {
+        set({
+          selected: [...get().selected, listingId],
+        });
+      },
+      addManySelected: (listingIds) => {
+        set({
+          selected: [...get().selected, ...listingIds],
+        });
+      },
+      removeSelected: (listingId) => {
+        set({
+          selected: get().selected.filter((s) => s !== listingId),
+        });
+      },
+      clearSelected: () => {
+        set({
+          selected: [],
+        });
+      },
+    }),
+    {
+      name: 'table-store',
+    }
+  )
 );
 
 export default useTableStore;
