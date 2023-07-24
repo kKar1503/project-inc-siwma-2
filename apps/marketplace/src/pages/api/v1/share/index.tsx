@@ -70,7 +70,7 @@ async function checkHashExists($hash: string) {
   return hash;
 }
 
-async function generateHash() {
+async function generateHash(): Promise<string> {
   // creates random hash
   const value = compressInt(Math.random() * 64 ** 12);
 
