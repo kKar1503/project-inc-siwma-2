@@ -66,13 +66,13 @@ const EditParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [name, setName] = useState(parameterData?.name || '');
-  const [displayName, setDisplayName] = useState(parameterData?.displayName || '');
-  const [type, setType] = useState(parameterData?.type || '');
+  const [name, setName] = useState<string>(parameterData?.name || '');
+  const [displayName, setDisplayName] = useState<string>(parameterData?.displayName || '');
+  const [type, setType] = useState<string>(parameterData?.type || '');
   const [options, setOptions] = useState<string[]>(
     parameterData?.options && Array.isArray(parameterData?.options) ? parameterData.options : []
   );
-  const [dataType, setDataType] = useState(parameterData?.dataType || '');
+  const [dataType, setDataType] = useState<string>(parameterData?.dataType || '');
 
   const [displayNameError, setDisplayNameError] = useState('');
   const [nameError, setNameError] = useState('');
@@ -126,11 +126,6 @@ const EditParameter = () => {
 
   const handleRemoveOption = (indexToRemove: number) => {
     setOptions((prevOptions) => prevOptions.filter((_, index) => index !== indexToRemove));
-  };
-
-  const handleParamTypeChange = (e: SelectChangeEvent) => {
-    const selectedParamType = e.target.value;
-    setType(selectedParamType);
   };
 
   const renderCustomOptions = () => {
@@ -202,9 +197,9 @@ const EditParameter = () => {
       id,
       name,
       displayName,
-      type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
+      type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',      
+      options,
       dataType: dataType as 'string' | 'number' | 'boolean',
-      // options,
     };
 
     mutation.mutate(requestBody);
@@ -223,7 +218,7 @@ const EditParameter = () => {
   useEffect(() => {
     if (mutation.isSuccess) {
       queryClient.invalidateQueries('parameter');
-      // router.push(`/categoryManagement/parameters`);
+      router.push(`/categoryManagement/parameters`);
     }
   }, [mutation.isSuccess, queryClient, router, id]);
 
@@ -337,7 +332,7 @@ const EditParameter = () => {
                   sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
                 >
                   <InputLabel>Parameter Type</InputLabel>
-                  <Select label="Parameter Type" value={type} onChange={handleParamTypeChange}>
+                  <Select label="Parameter Type" value={type} onChange={handleTypeChange}>
                     <MenuItem value="WEIGHT">WEIGHT</MenuItem>
                     <MenuItem value="DIMENSION">DIMENSION</MenuItem>
                     <MenuItem value="TWO_CHOICES">TWO_CHOICES</MenuItem>
@@ -384,7 +379,10 @@ const EditParameter = () => {
                       name.trim() === '' ||
                       displayName.trim() === '' ||
                       type.trim() === '' ||
-                      dataType.trim() === ''
+                      dataType.trim() === '' || 
+                      dataType.trim() === '' ||
+                      ((type === 'MANY_CHOICES' || type === 'TWO_CHOICES') &&
+                        options.some((option) => option.trim() === ''))
                     }
                   >
                     Confirm
