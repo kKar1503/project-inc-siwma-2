@@ -24,6 +24,10 @@ import fetchCompany from '@/middlewares/fetchCompany';
 // ** Packages
 import { useResponsiveness } from '@inc/ui';
 
+// ** i18n import
+import { useTranslation } from 'react-i18next';
+
+
 const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userData', async () => fetchCompany(userUuid), {
     enabled: userUuid !== undefined,
@@ -42,6 +46,7 @@ const ShareFunctionPage = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
   const { spacing } = theme;
+  const { t } = useTranslation();
   let listingIds;
 
   if (router.query.id) {
@@ -76,7 +81,7 @@ const ShareFunctionPage = () => {
           gap: spacing(3),
         },
         scrollBox: {
-          height: '80vh',
+          height: '75vh',
           overflow: 'auto',
           width: '100%',
         },
@@ -92,7 +97,7 @@ const ShareFunctionPage = () => {
         gap: spacing(3),
       },
       scrollBox: {
-        height: '80vh',
+        height: '75vh',
         overflow: 'auto',
         width: '100%',
       },
@@ -128,7 +133,7 @@ const ShareFunctionPage = () => {
               fontSize: typography.h6,
             })}
           >
-            Share
+            {t('Share')}
           </Button>
           <ShareModal
             open={openShare}

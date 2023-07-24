@@ -33,10 +33,15 @@ import fetchParamNames from '@/middlewares/fetchParamNames';
 import fetchUser from '@/middlewares/fetchUser';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 
+// ** i18n import
+import { useTranslation } from 'react-i18next';
+
 // ** Custom Components Imports
 import { useResponsiveness } from '@inc/ui';
 import S3BoxImage from './S3BoxImage';
 import ListingBadge from './listing/ListingBadge';
+
+
 
 export type ListingCardProps = {
   listingId: string;
@@ -116,6 +121,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
   const { spacing, typography, palette } = theme;
+  const { t } = useTranslation();
 
   const cardStyle = useMemo(() => {
     if (isSm || isMd) {
@@ -251,7 +257,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         })}
       >
         <Grid item>
-          <Typography sx={cardStyle.title}>Quantity</Typography>
+          <Typography sx={cardStyle.title}>{t('Quantity')}</Typography>
           <Typography sx={cardStyle.name}>
             {listingDetails?.quantity}
             {listingDetails?.unit}
@@ -259,7 +265,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         </Grid>
       </Grid>
       <Typography mt={spacing(2)} sx={cardStyle.title}>
-        Dimensions (mm)
+        {t('Dimensions (mm)')}
       </Typography>
       <Grid
         container
@@ -281,7 +287,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         ))}
       </Grid>
       <Typography my={spacing(2)} sx={cardStyle.title}>
-        Cross Section
+        {t('Cross Section')}
       </Typography>
       <Box>
         {/* throws error without the empty string */}
@@ -304,27 +310,27 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         <Grid item>
           <Typography sx={cardStyle.title}>
             {/* no metal grade column? */}
-            Metal Grade
+            {t('Metal Grade')}
           </Typography>
           <Typography sx={cardStyle.name}>S233</Typography>
         </Grid>
         <Grid item>
           <Typography sx={cardStyle.title}>
             {/* no certification column? */}
-            Certification
+            {t('Certification')}
           </Typography>
           <Typography sx={cardStyle.name}>Example Cert</Typography>
         </Grid>
         <Grid item>
-          <Typography sx={cardStyle.title}>Negotiable</Typography>
+          <Typography sx={cardStyle.title}>{t('Negotiable')}</Typography>
           <Typography sx={cardStyle.name}>{listingDetails?.negotiable ? 'Yes' : 'No'}</Typography>
         </Grid>
         <Grid item>
-          <Typography sx={cardStyle.title}>Category</Typography>
+          <Typography sx={cardStyle.title}>{t('Category')}</Typography>
           <Typography sx={cardStyle.name}>{categoryDetails?.name}</Typography>
         </Grid>
         <Grid item>
-          <Typography sx={cardStyle.title}>Posted on</Typography>
+          <Typography sx={cardStyle.title}>{t('Posted on')}</Typography>
           <Typography sx={cardStyle.name}>
             {listingDetails &&
               DateTime.fromISO(listingDetails.createdAt).toRelative({ locale: 'en-SG' })}
