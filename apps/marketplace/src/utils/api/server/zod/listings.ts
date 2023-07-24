@@ -9,10 +9,10 @@ import {
 
 const getQueryParameters = z.object({
   lastIdPointer: z.string().transform(zodParseToInteger).optional(),
-  limit: z.string().transform(zodParseToInteger).optional().default('10'),
+  limit: z.string().transform(zodParseToInteger).default('10').optional(),
   matching: z.string().optional(),
-  includeName: z.string().transform(zodParseToBoolean).optional().default('false'),
-  includeParameters: z.string().transform(zodParseToBoolean).optional().default('true'),
+  includeName: z.string().transform(zodParseToBoolean).default('false').optional(),
+  includeParameters: z.string().transform(zodParseToBoolean).default('true').optional(),
   params: z
     .preprocess(
       zodDecodeToJson,
