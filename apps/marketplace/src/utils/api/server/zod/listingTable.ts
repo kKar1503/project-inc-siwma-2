@@ -9,10 +9,14 @@ export const SortableFields = {
   CreatedAt: 'createdAt',
 } as const;
 
+export type TSortableField = (typeof SortableFields)[keyof typeof SortableFields];
+
 export const SortableDirection = {
   Asc: 'asc',
-  Dsc: 'dsc',
+  Dsc: 'desc',
 } as const;
+
+export type TSortableDirection = (typeof SortableDirection)[keyof typeof SortableDirection];
 
 export const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional().default('10'),
@@ -51,10 +55,7 @@ const owner = z.object({
 
 // -- Paramter Properties -- //
 const parameter = z.object({
-  id: z.string(),
-  type: z.nativeEnum(ParameterType),
-  dataType: z.nativeEnum(DataType),
-  name: z.string(),
+  parameterId: z.string(),
   value: z.string(),
 });
 
@@ -74,3 +75,11 @@ export const listingsSchema = z.array(listingSchema);
 
 export type Listing = z.infer<typeof listingSchema>;
 export type GetListingsQueryParameter = z.infer<typeof getQueryParameters>;
+export type Pagination = {
+  totalCount: number;
+  totalPage: number;
+  page: number; // starts from 0
+  prevPage: number | null; // at page 0
+  nextPage: number | null; // at last page
+  limit: number; // defaults to 10
+};
