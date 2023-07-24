@@ -106,6 +106,11 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        // Check if the user is an admin
+        if (user.permissions !== 1) {
+          return null;
+        }
+
         // Format the result to be returned
         const result = {
           id: user.id,
