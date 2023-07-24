@@ -116,10 +116,9 @@ const AllListings = () => {
     <Box
       sx={{
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        paddingX: 2,
+        height: '100%',
       }}
     >
       <AllListingsTable

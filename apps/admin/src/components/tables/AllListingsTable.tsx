@@ -69,26 +69,31 @@ const parsedListingsData = (listings: Listing[]) => {
 const AllListingsTable: React.FC<AllListingsTableProps> = ({ data, ...props }) => (
   <Box
     sx={{
-      width: '100%',
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-      borderRadius: '8px',
-      padding: 2,
-      marginY: 2,
-      backgroundColor: 'white',
+      maxHeight: '90%',
+      width: '95%',
+      margin: 'auto',
     }}
   >
-    <Typography variant="h5">Listings</Typography>
-    <Typography variant="body1">Management of listings</Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-      {/* <SearchBar onSearch={handleSearch} /> */}
-    </Box>
-
     <BaseTable
+      sx={{
+        height: '100%',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+        borderRadius: '8px',
+      }}
       {...props}
       heading=""
       rows={parsedListingsData(data)}
       headers={headers}
       rowsPerPageOptions={[5, 10, 25]}
+      customHeader={
+        <Box sx={{ padding: 2 }}>
+          <Typography variant="h5">Listings</Typography>
+          <Typography variant="body1">Management of listings</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            {/* <SearchBar onSearch={handleSearch} /> */}
+          </Box>
+        </Box>
+      }
     />
   </Box>
 );
