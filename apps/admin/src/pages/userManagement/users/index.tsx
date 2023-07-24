@@ -84,10 +84,9 @@ const Page = () => {
   });
 
   const { mutate: createInvite } = useMutation('createInvite', createInviteMutationFn, {
-    onSuccess: (response) => {
+    onSuccess: () => {
       queries[2].refetch();
       setOpen(!open);
-      console.log(response);
     },
   });
 
@@ -101,6 +100,7 @@ const Page = () => {
     borderRadius: '8px',
     padding: theme.spacing(2),
     marginBottom: theme.spacing(2),
+    backgroundColor: 'white',
   }));
 
   const handleClick = () => {

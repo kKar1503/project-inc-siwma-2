@@ -41,10 +41,6 @@ const headers: Header[] = [
     key: 'mobileNumber',
     label: 'Mobile Number',
   },
-  {
-    key: 'enabled',
-    label: 'Enabled',
-  },
 ];
 
 const parseUsersData = (users: User[]) => {
@@ -133,10 +129,17 @@ const RegisteredUsersTable = ({
         borderRadius: '8px',
         padding: 2,
         marginY: 2,
+        backgroundColor: 'white',
       }}
     >
       <Typography variant="h5">Registered Users</Typography>
-      <Typography variant="body1">Showing of registered users</Typography>
+      <Typography variant="body1">
+        Showing {filteredData.length === 0 ? 0 : rowsPerPage * page + 1}-
+        {filteredData.length < rowsPerPage * (page + 1)
+          ? filteredData.length
+          : rowsPerPage * (page + 1)}{' '}
+        of {filteredData.length} registered users
+      </Typography>
       <Box
         sx={{
           display: 'flex',

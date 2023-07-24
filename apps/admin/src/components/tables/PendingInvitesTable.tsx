@@ -34,7 +34,7 @@ const headers: Header[] = [
     label: 'Email',
   },
   {
-    key: 'companyId',
+    key: 'company',
     label: 'Company',
   },
 ];
@@ -122,10 +122,17 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
         borderRadius: '8px',
         padding: 2,
         marginY: 2,
+        backgroundColor: 'white',
       }}
     >
       <Typography variant="h5">Pending Invites</Typography>
-      <Typography variant="body1">Showing of pending invites</Typography>
+      <Typography variant="body1">
+        Showing {filteredData.length === 0 ? 0 : rowsPerPage * page + 1}-
+        {filteredData.length < rowsPerPage * (page + 1)
+          ? filteredData.length
+          : rowsPerPage * (page + 1)}{' '}
+        of {filteredData.length} pending invites
+      </Typography>
       <Box
         sx={{
           display: 'flex',
