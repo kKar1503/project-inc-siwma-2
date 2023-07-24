@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import { useResponsiveness } from '@inc/ui';
 import { PostCompanyRequestBody } from '@/utils/api/server/zod';
-import { useQuery } from 'react-query';
 import { Company } from '@/utils/api/client/zod/companies';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -12,7 +11,6 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import createCompany from '@/middlewares/company-management/createCompany';
-import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
 import fetchCompaniesByName from '@/middlewares/company-management/fetchCompaniesByName';
 
 export type AddCompanyModalProps = {
@@ -21,17 +19,7 @@ export type AddCompanyModalProps = {
   updateData: () => void;
 };
 
-const useGetCompaniesQuery = () => {
-  const { data } = useQuery('companies', async () => fetchCompanies(), {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  return data;
-};
-
 const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) => {
-  const companies = useGetCompaniesQuery();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [name, setName] = useState<string>('');
   const [website, setWebsite] = useState<string>('');
@@ -81,7 +69,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
       formIsValid = false;
     }
 
-    if (website && !websiteRegex.test(website)) {
+    if (!website && !websiteRegex.test(website)) {
       setWebsiteError('Website is invalid. Use the format: https://www.example.com');
       formIsValid = false;
     }

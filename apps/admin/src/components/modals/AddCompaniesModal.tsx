@@ -7,6 +7,7 @@ import { useResponsiveness } from '@inc/ui';
 import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 import { Company } from '@/utils/api/client/zod/companies';
 import XLSX from 'xlsx';
+import Spinner from '@/components/fallbacks/Spinner';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
@@ -29,6 +30,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
   const [errors, setErrors] = useState<{ [error: string]: number }>({});
   const [fileError, setFileError] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [loading, setLoading] = useState(false);
 
   const getCompaniesByName = async (name: string) => {
     const data = await fetchCompaniesByName(name);
@@ -61,6 +63,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
 
   const validateData = async (data: PostCompanyRequestBody[]) => {
     setErrors({});
+    setLoading(true);
 
     const errorData: { [error: string]: number } = {}; // Object to store error messages and their counts
     const websiteRegex =
@@ -100,6 +103,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       setErrors(errorData);
     }
 
+    setLoading(false);
     return validatedData;
   };
 
@@ -161,6 +165,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       });
 
       const companiesData = await validateData(mappedData);
+
       setFileDetails(companiesData);
     };
   };
@@ -242,8 +247,9 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                 </Typography>
                 <Typography
                   id="transition-modal-description"
-                  sx={({ typography }) => ({
+                  sx={({ typography, spacing }) => ({
                     fontSize: typography.body2.fontSize,
+                    mb: loading ? spacing(4) : 0,
                   })}
                 >
                   Register multiple company profiles into the system
@@ -281,21 +287,28 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                       </Grid>
                     </Grid>
                   ))}
-                <FileUpload
-                  id="bulk-registers"
-                  title=""
-                  description="Import an .xlsx file below to bulk add company profiles"
-                  selectedFile={file}
-                  changeHandler={handleExcelChange}
-                  accept={[AcceptedFileTypes.XLSX]}
-                  maxWidth="200px"
-                  maxHeight="200px"
-                />
+                {loading ? (
+                  <Spinner />
+                ) : (
+                  <FileUpload
+                    id="bulk-registers"
+                    title=""
+                    description="Import an .xlsx file below to bulk add company profiles"
+                    selectedFile={file}
+                    changeHandler={handleExcelChange}
+                    accept={[AcceptedFileTypes.XLSX]}
+                    maxWidth="200px"
+                    maxHeight="200px"
+                  />
+                )}
                 <Button
                   variant="contained"
                   type="submit"
                   size="large"
                   onClick={postCompanies}
+                  sx={({ spacing }) => ({
+                    mt: loading ? spacing(4) : 0,
+                  })}
                   fullWidth
                 >
                   Add Companies
