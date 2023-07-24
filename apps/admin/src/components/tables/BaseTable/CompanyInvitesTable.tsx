@@ -1,23 +1,19 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import { Box, Typography } from '@mui/material';
+import { PostBulkInviteRequestBody } from '@/utils/api/server/zod/invites';
 
 import { useEffect, useMemo, useState } from 'react';
 
 export type InviteFileProps = {
-  details: Array<{
-    company: string;
-    website: string;
-    email: string;
-    mobileNumber: string;
-  }>;
+  details: PostBulkInviteRequestBody;
 };
 
-function createData(company: string, website: string): BaseTableData {
+function createData(company: string, name: string): BaseTableData {
   return {
     id: company,
     company,
-    website,
+    name,
   };
 }
 
@@ -27,8 +23,8 @@ const headCells: Header[] = [
     label: 'Company',
   },
   {
-    key: 'website',
-    label: 'Website',
+    key: 'name',
+    label: 'Name',
   },
 ];
 
@@ -37,19 +33,13 @@ const CompanyInvitesTable = ({ details }: InviteFileProps) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [tableData, setTableData] = useState<BaseTableData[]>([]);
 
-  console.log(details);
-
-const companyRows = useMemo(() => details.map((x) => createData(x.company, x.website)), [details]);
-
-  console.log(companyRows);
+  const companyRows = useMemo(() => details.map((x) => createData(x.company, x.name)), [details]);
 
   useEffect(() => {
     setTableData(
       companyRows.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1))
     );
   }, [companyRows, page, rowsPerPage]);
-
-  console.log(tableData);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);

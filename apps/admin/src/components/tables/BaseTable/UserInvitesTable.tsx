@@ -1,23 +1,24 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
+import { PostBulkInviteRequestBody } from '@/utils/api/server/zod';
 import { Box } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 
 export type InviteFileProps = {
-  details: Array<{
-    company: string;
-    website: string;
-    email: string;
-    mobileNumber: string;
-  }>;
+  details: PostBulkInviteRequestBody;
 };
 
-function createData(company: string, email: string, mobile: string): BaseTableData {
+function createData(
+  company: string,
+  email: string,
+  mobileNumber: string | undefined
+): BaseTableData {
+  const validMobileNumber: string = mobileNumber ?? 'N/A';
   return {
     id: company,
     company,
     email,
-    mobile,
+    mobileNumber: validMobileNumber,
   };
 }
 
@@ -31,7 +32,7 @@ const headCells: Header[] = [
     label: 'Email',
   },
   {
-    key: 'mobile',
+    key: 'mobileNumber',
     label: 'Mobile Number',
   },
 ];
@@ -51,8 +52,6 @@ const UserInvitesTable = ({ details }: InviteFileProps) => {
       userRows.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1))
     );
   }, [userRows, page, rowsPerPage]);
-
-  console.log(tableData);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);

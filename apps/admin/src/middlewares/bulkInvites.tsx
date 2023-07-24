@@ -1,19 +1,8 @@
 import apiClient from '@/utils/api/client/apiClient';
+import { PostBulkInviteRequestBody } from '@/utils/api/server/zod';
 
-const bulkInvites = async (
-  fileData: [
-    {
-      company: string;
-      website: string;
-      email: string;
-      mobileNumber: string;
-    }
-  ]
-) => {
-  const bulkInvitesBody = {
-    fileData,
-  };
-  const data = await apiClient.post('/v1/invites/bulk', bulkInvitesBody);
+const bulkInvites = async (fileData: PostBulkInviteRequestBody) => {
+  const data = await apiClient.post('/v1/invites/bulk', fileData);
   return data.status;
 };
 export default bulkInvites;

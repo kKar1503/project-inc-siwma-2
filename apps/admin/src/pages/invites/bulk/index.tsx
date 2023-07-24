@@ -1,39 +1,35 @@
 /* eslint-disable no-alert */
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import FileUpload, {
   FileUploadProps,
   AcceptedFileTypes,
 } from '@/components/FileUpload/FileUploadBase';
 import CompanyInvitesTable from '@/components/tables/BaseTable/CompanyInvitesTable';
-import PendingInvitesTables from '@/components/tables/BaseTable/CompanyInvitesTables';
 import { Box, Button } from '@mui/material';
 import UserInvitesTable from '@/components/tables/BaseTable/UserInvitesTable';
 import { Modal, useResponsiveness } from '@inc/ui';
 import * as XLSX from 'xlsx';
 import { useQuery } from 'react-query';
 import bulkInvites from '@/middlewares/bulkInvites';
+import { useRouter } from 'next/router';
+import { PostBulkInviteRequestBody } from '@/utils/api/server/zod/invites';
 
-export type InviteFileProps = [{
-  company: string;
-  website: string;
-  email: string;
-  mobileNumber: string;
-}];
-
-const useBulkInvitesQuery = (file: InviteFileProps) => {
-  const { data } = useQuery('cat', async () => bulkInvites(file));
+const useBulkInvitesQuery = (file: PostBulkInviteRequestBody) => {
+  const { data } = useQuery('bulkInvites', async () => bulkInvites(file));
   return data;
 };
 
 const BulkInvitesPage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isLg] = useResponsiveness(['lg']);
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [fileDetails, setFileDetails] = useState<InviteFileProps[]>([]);
+  const [fileDetails, setFileDetails] = useState<PostBulkInviteRequestBody>([]);
   const [rightButtonState, setRightButtonState] = useState(false);
+  const router = useRouter();
+
+  if (rightButtonState === true) {
+    router.push('/invites');
+  }
 
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (!event.target.files) return;
@@ -72,18 +68,18 @@ const BulkInvitesPage = () => {
       const mappedData = parsedData.map((x) => {
         const data = {
           company: x[0],
-          website: x[1],
+          name: x[1],
           email: x[2],
           mobileNumber: x[3],
         };
         return data;
       });
 
-      setFileDetails(mappedData);
+      setFileDetails(mappedData as PostBulkInviteRequestBody);
     };
   };
 
-  // const res = useBulkInvitesQuery(fileDetails);
+  const res = useBulkInvitesQuery(fileDetails);
 
   const handleFileUpload = () => {
     console.log('File uploading...');
@@ -120,10 +116,8 @@ const BulkInvitesPage = () => {
             mr: spacing(2),
           })}
         >
-          {/* <PendingInvitesTable/> */}
           <CompanyInvitesTable details={fileDetails} />
           <UserInvitesTable details={fileDetails} />
-
         </Box>
       </Box>
 
@@ -141,20 +135,24 @@ const BulkInvitesPage = () => {
         </Button>
       </Box>
 
-      <Modal
-        open={openConfirm}
-        setOpen={setOpenConfirm}
-        buttonColor="#2962FF"
-        icon="info"
-        title="Confirmation"
-        content="Companies and Users have been successfully invited!"
-        leftButtonText={null} // <= only one button set as null
-        rightButtonText="back to invites"
-        leftButtonState={false} // <= only one button, set as false
-        rightButtonState={rightButtonState}
-        setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
-        setRightButtonState={setRightButtonState}
-      />
+      {res === 204 ? (
+        <Modal
+          open={openConfirm}
+          setOpen={setOpenConfirm}
+          buttonColor="#2962FF"
+          icon="info"
+          title="Confirmation"
+          content="Companies and Users have been successfully invited!"
+          leftButtonText={null} // <= only one button set as null
+          rightButtonText="back to invites"
+          leftButtonState={false} // <= only one button, set as false
+          rightButtonState={rightButtonState}
+          setLeftButtonState={setRightButtonState} // <= only one button, set as the rightButtonState
+          setRightButtonState={setRightButtonState}
+        />
+      ) : (
+        <Box />
+      )}
     </Box>
   );
 };
