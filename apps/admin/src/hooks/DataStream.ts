@@ -17,13 +17,13 @@ const defaultOptions: DataStreamOptions = { numberPerFetch: 10 };
  */
 function DataStream<T>(
   queryKey: string,
-  query: ({ lastListingId }: { lastListingId: number }) => Promise<T>,
+  query: ({ lastListingId, limit }: { lastListingId: number; limit: number }) => Promise<T>,
   callback: (data: T, nextIndex: number) => boolean,
   options ?: Partial<DataStreamOptions>,
 ) {
   const { numberPerFetch } = { ...defaultOptions, ...options };
   const [index, setIndex] = useState<number>(0);
-  const listingQuery = useQuery([queryKey, index], () => query({ lastListingId: index }), {
+  const listingQuery = useQuery([queryKey, index], () => query({ lastListingId: index, limit: numberPerFetch }), {
     enabled: index !== -1,
   });
 

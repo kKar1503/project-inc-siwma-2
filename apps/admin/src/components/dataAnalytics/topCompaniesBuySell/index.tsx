@@ -8,7 +8,6 @@ export interface TopCompaniesProps {
 
 const TopCompanies = ({ data }: TopCompaniesProps) => {
   const trimmedData = data.slice(0, 4);
-  console.log(trimmedData)
   const buyData = trimmedData.map((item, index) => ({
     id: index + 1,
     value: item.buying,

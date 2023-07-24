@@ -11,6 +11,7 @@ import { CategoryResponseBody } from '@/utils/api/client/zod';
 import { useMemo, useState } from 'react';
 import fetchListings from '@/services/listings/fetchListings';
 import DataStream from '@/hooks/DataStream';
+import fetchProducts from '@/services/products/fetchProducts';
 
 
 const mapData = (categories: UseQueryResult<CategoryResponseBody[]>) => {
@@ -90,6 +91,15 @@ const Analytics = () => {
     return nextIndex < data.totalCount;
   });
 
+  const productsQuery = DataStream('products', fetchProducts, (data, nextIndex) => {
+    console.log(data);
+
+    data.listingItems.forEach(item => {
+
+    });
+
+    return nextIndex < data.totalCount;
+  });
 
   const {
     activeCategories,
