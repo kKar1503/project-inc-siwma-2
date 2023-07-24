@@ -20,7 +20,7 @@ import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
 import { useQuery } from 'react-query';
 import createParameter from '@/middlewares/createParameter';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
-import ManyChoicesModal from '@/components/modals/ManyChoicesModal';
+import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -146,10 +146,10 @@ const CreateParameter = () => {
   const handleSubmit = async () => {
     if (type === 'MANY_CHOICES' && customOptions.length < 3) {
       setOpenMany(true);
-      setOptionsError('Please add at least 3 options for MANY_CHOICES');
+      setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
     } else if (type === 'TWO_CHOICES' && customOptions.length < 2) {
       setOpenMany(true);
-      setOptionsError('Please add at least 2 options for TWO_CHOICES');
+      setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
     } else {
       await postParameter();
     }
@@ -323,7 +323,7 @@ const CreateParameter = () => {
                     Confirm
                   </Button>
 
-                  <ManyChoicesModal
+                  <OptionsErrorModal
                     open={openMany}
                     setOpen={setOpenMany}
                     errorMessage={optionsError}

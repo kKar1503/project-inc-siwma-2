@@ -3,13 +3,13 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-export type ReportModalProps = {
+export type OptionsModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   errorMessage: string;
 };
 
-const ManyChoicesModal = ({ open, setOpen, errorMessage }: ReportModalProps) => {
+const OptionsErrorModal = ({ open, setOpen, errorMessage }: OptionsModalProps) => {
   const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
   const { t } = useTranslation();
@@ -36,4 +36,4 @@ const ManyChoicesModal = ({ open, setOpen, errorMessage }: ReportModalProps) => 
   );
 };
 
-export default ManyChoicesModal;
+export default OptionsErrorModal;
