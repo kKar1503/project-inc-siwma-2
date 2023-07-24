@@ -196,6 +196,8 @@ export default apiHandler()
       });
     }
 
+    // ** Listing after update
+    // TODO: do this thingy
     const completeListing = await PrismaClient.listing.findUnique({
       where: { id },
       include: {
@@ -268,6 +270,9 @@ export default apiHandler()
         deletedAt: new Date().toISOString(),
       },
     });
+
+    // ** Delete listing from meilisearch index using id
+    // TODO: delete this thingy
 
     handleBookmarks(UpdateType.DELETE, listing);
 

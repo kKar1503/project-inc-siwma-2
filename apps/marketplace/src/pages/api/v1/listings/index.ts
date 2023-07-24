@@ -280,6 +280,7 @@ export default apiHandler()
       }
     });
 
+    // ** completed listing
     const listing = await PrismaClient.listing.create({
       data: {
         listingItemId: data.productId,
@@ -303,6 +304,8 @@ export default apiHandler()
         listingsParametersValue: true,
       },
     });
+
+    // TODO: create this thingy
 
     handleBookmarks(UpdateType.CREATE, listing);
 

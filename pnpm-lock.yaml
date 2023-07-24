@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -220,7 +224,7 @@ importers:
         version: 8.7.0(eslint@8.36.0)
       eslint-import-resolver-typescript:
         specifier: ^3.5.5
-        version: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
+        version: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint@8.36.0)
       eslint-plugin-cypress:
         specifier: 2.12.1
         version: 2.12.1(eslint@8.36.0)
@@ -461,7 +465,7 @@ importers:
         version: 8.7.0(eslint@8.36.0)
       eslint-import-resolver-typescript:
         specifier: ^3.5.5
-        version: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
+        version: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint@8.36.0)
       eslint-plugin-cypress:
         specifier: 2.12.1
         version: 2.12.1(eslint@8.36.0)
@@ -614,6 +618,9 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
+      react-instantsearch-dom:
+        specifier: 6.40.1
+        version: 6.40.1(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@types/react':
         specifier: 18.0.28
@@ -3047,14 +3054,6 @@ packages:
   /@types/prop-types@15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
 
-  /@types/qs@6.9.7:
-    resolution: {integrity: sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==}
-    dev: true
-
-  /@types/range-parser@1.2.4:
-    resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
-    dev: true
-
   /@types/react-dom@18.0.11:
     resolution: {integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==}
     dependencies:
@@ -4707,6 +4706,29 @@ packages:
       - supports-color
     dev: true
 
+  /eslint-import-resolver-typescript@3.5.5(@typescript-eslint/parser@5.59.5)(eslint@8.36.0):
+    resolution: {integrity: sha512-TdJqPHs2lW5J9Zpe17DZNQuDnox4xo2o+0tE7Pggain9Rbc19ik8kFtXdxZ250FVx2kF4vlt2RSf4qlUpG7bhw==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      eslint: '*'
+      eslint-plugin-import: '*'
+    dependencies:
+      debug: 4.3.4(supports-color@5.5.0)
+      enhanced-resolve: 5.14.0
+      eslint: 8.36.0
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-typescript@3.5.5)(eslint@8.36.0)
+      get-tsconfig: 4.5.0
+      globby: 13.1.4
+      is-core-module: 2.12.0
+      is-glob: 4.0.3
+      synckit: 0.8.5
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - eslint-import-resolver-node
+      - eslint-import-resolver-webpack
+      - supports-color
+    dev: true
+
   /eslint-module-utils@2.8.0(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.36.0):
     resolution: {integrity: sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw==}
     engines: {node: '>=4'}
@@ -4733,6 +4755,35 @@ packages:
       eslint: 8.36.0
       eslint-import-resolver-node: 0.3.7
       eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /eslint-module-utils@2.8.0(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-typescript@3.5.5)(eslint@8.36.0):
+    resolution: {integrity: sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw==}
+    engines: {node: '>=4'}
+    peerDependencies:
+      '@typescript-eslint/parser': '*'
+      eslint: '*'
+      eslint-import-resolver-node: '*'
+      eslint-import-resolver-typescript: '*'
+      eslint-import-resolver-webpack: '*'
+    peerDependenciesMeta:
+      '@typescript-eslint/parser':
+        optional: true
+      eslint:
+        optional: true
+      eslint-import-resolver-node:
+        optional: true
+      eslint-import-resolver-typescript:
+        optional: true
+      eslint-import-resolver-webpack:
+        optional: true
+    dependencies:
+      '@typescript-eslint/parser': 5.59.5(eslint@8.36.0)(typescript@5.0.2)
+      debug: 3.2.7
+      eslint: 8.36.0
+      eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint@8.36.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -6041,11 +6092,6 @@ packages:
     resolution: {integrity: sha512-Hlk20WQHRIm9EE9luN1kjRjYXAQToHOIAHPJn9buxBwuhfTHoKUcX+lXBbxc85DVQfXYbEQ4HcwQdd128E3qHQ==}
     dependencies:
       css-mediaquery: 0.1.2
-    dev: false
-
-  /media-typer@0.3.0:
-    resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
-    engines: {node: '>= 0.6'}
     dev: false
 
   /meilisearch@0.33.0:
@@ -8687,7 +8733,3 @@ packages:
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
-
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
