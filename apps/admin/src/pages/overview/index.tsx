@@ -76,7 +76,7 @@ const Analytics = () => {
   }>>(new Map());
   const [listingCategoryBin, setListingCategoryBin] = useState<Record<string, number>>({});
 
-  const [categories, companies] = useQueries([
+  const [categoriesQuery, companies] = useQueries([
     { queryKey: 'categories', queryFn: () => fetchCategories() },
     { queryKey: 'companies', queryFn: () => fetchCompanies() },
   ]);
@@ -89,14 +89,14 @@ const Analytics = () => {
     listings.forEach(listing => {
       // company stuff
       const { company } = listing.owner;
-      const buySell = listingCompanyBinLocal.get(company.id) || { buying: 0, selling: 0 };
+      const buySell = listingCompanyBinLocal.get(company.name) || { buying: 0, selling: 0 };
       if (listing.type === 'BUY') {
         buySell.buying++;
       }
       if (listing.type === 'SELL') {
         buySell.selling++;
       }
-      listingCompanyBinLocal.set(company.id, buySell);
+      listingCompanyBinLocal.set(company.name, buySell);
       // category stuff
       // const { company } = listing.owner;
       // const buySell = listingCompanyBinLocal.get(company.id) || { buying: 0, selling: 0 };
@@ -117,17 +117,18 @@ const Analytics = () => {
     activeCategories,
     topBuyingCategories,
     topSellingCategories,
-    topCompaniesBuySell,
     buyingSellingData,
-  } = useMemo(() => mapData(categories, companies), [categories, companies]);
+  } = useMemo(() => mapData(categoriesQuery, companies), [categoriesQuery, companies]);
 
-  if (!listingQuery.isComplete) {
+  if (!listingQuery.isComplete || !categoriesQuery.isSuccess) {
     return <SpinnerPage />;
   }
 
-  let topCompanies: Array<{ name: string, buying: number, selling: number, total: number }> = [];
-  listingCompanyBin.forEach(({ buying, selling }, companyId) => {
-    topCompanies.push({ name: companyId, buying, selling, total: buying + selling });
+
+
+  const topCompanies: Array<{ name: string, buying: number, selling: number, total: number }> = [];
+  listingCompanyBin.forEach(({ buying, selling }, name) => {
+    topCompanies.push({ name, buying, selling, total: buying + selling });
   });
   topCompanies.sort((a,b) => b.total - a.total);
 

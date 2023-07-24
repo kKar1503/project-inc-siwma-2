@@ -11,11 +11,11 @@ const TopCompanies = ({ data }: TopCompaniesProps) => {
   const mapData = trimmedData.map((item, index) => ({
     id: index + 1,
     value: item.total,
-    label: item.total.toString(),
+    label: `${item.name}\n${item.total.toString()}`,
   }));
   return (
     <ModuleBase width='85%'>
-      <DataGraph data={mapData} format={trimmedData.map((item) => item.name)}
+      <DataGraph data={mapData} format={trimmedData.map(() => '')}
                        style={
                          {
                            fillColor: '#d7d7d7',

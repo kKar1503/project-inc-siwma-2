@@ -12,18 +12,18 @@ const TopCompanies = ({ data }: TopCompaniesProps) => {
   const buyData = trimmedData.map((item, index) => ({
     id: index + 1,
     value: item.buying,
-    label: item.buying.toString(),
+    label: `${item.name}\n${item.buying.toString()}`,
     isSecondary: false,
   }));
   const sellData = trimmedData.map((item, index) => ({
     id: index + 1,
     value: item.selling,
-    label: item.selling.toString(),
+    label: `${item.name}\n${item.selling.toString()}`,
     isSecondary: true,
   }));
   return (
     <ModuleBase width='85%'>
-      <DoubleDataGraph data1={buyData} data2={sellData} format={trimmedData.map((item) => item.name)}
+      <DoubleDataGraph data1={buyData} data2={sellData} format={trimmedData.map(() => '')}
                        legend={['Buying', 'Selling']}
                        style={
                          {
