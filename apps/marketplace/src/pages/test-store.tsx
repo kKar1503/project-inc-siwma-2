@@ -1,5 +1,4 @@
 import useProductStore from '@/stores/products';
-import { ListingItem } from '@inc/db';
 import { useState } from 'react';
 
 const ListingTable = () => {
