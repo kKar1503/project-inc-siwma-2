@@ -5,13 +5,8 @@ import { Company } from '@/utils/api/client/zod/companies';
 import DeleteCompanyModal from '@/components/modals/DeleteCompanyModal';
 import EditCompanyModal from '@/components/modals/EditCompanyModal';
 
-export type CompanyManagementProps = {
-  data: Company[];
-  count: number;
-};
-
 export type CompanyTableProps = {
-  data: CompanyManagementProps;
+  data: Company[];
   count: number;
   updateData: (lastIdPointer?: number, limit?: number) => void;
 };
@@ -34,47 +29,57 @@ const headCells: Header[] = [
     label: 'Bio',
   },
 ];
-
 const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
   const [id, setId] = useState<string>('');
   const [ids, setIds] = useState<string[]>([]);
-  const [lastIdPointer, setLastIdPointer] = useState<number>(0);
-  const [lastData, setLastData] = useState<Company[]>(data.data);
+  const [totalCount, setTotalCount] = useState<number>(count);
+  const [paginationState, setPaginationState] = useState<{
+    [key: number]: { lastIdPointer: number; limit: number };
+  }>({});
 
   // modals
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
   const companyRows = useMemo(
-    () => data.data.map((item) => createData(item.id, item.name, item.bio)),
+    () => data.map((item) => createData(item.id, item.name, item.bio)),
     [data]
   );
 
   useEffect(() => {
     setRows(companyRows);
-
-    if (companyRows.length > 0) {
-      const { id } = companyRows[companyRows.length - 1];
-      setLastIdPointer(parseInt(id, 10));
-    }
-  }, [companyRows, page, rowsPerPage]);
+    setTotalCount(count);
+  }, [companyRows, data, count, paginationState]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
-    setLastData(data.data);
-
     if (newPage === 0) {
+      // For the first page, reset lastIdPointer to 0 to fetch from the beginning
+      setPaginationState({
+        ...paginationState,
+        [newPage]: { lastIdPointer: 0, limit: rowsPerPage },
+      });
       updateData(0, rowsPerPage);
     } else if (newPage < page) {
-      const { id } = lastData[0];
-      const idPointer = parseInt(id, 10) - 1;
-
-      updateData(idPointer, rowsPerPage);
+      // For previous page, use the lastIdPointer of the previous page from paginationState
+      const prevPageData = paginationState[newPage];
+      if (prevPageData) {
+        const { lastIdPointer, limit } = prevPageData;
+        setPaginationState({ ...paginationState, [newPage]: { lastIdPointer, limit } });
+        updateData(lastIdPointer, limit);
+      }
     } else {
-      updateData(lastIdPointer, rowsPerPage);
+      // For next page, calculate the new lastIdPointer based on the last data item of the current page
+      const lastDataOfCurrentPage = rows[rows.length - 1];
+      const idPointer = parseInt(lastDataOfCurrentPage.id, 10);
+      setPaginationState({
+        ...paginationState,
+        [newPage]: { lastIdPointer: idPointer, limit: rowsPerPage },
+      });
+      updateData(idPointer, rowsPerPage);
     }
   };
 
@@ -82,13 +87,15 @@ const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
-
+    setPaginationState({ 0: { lastIdPointer: 0, limit: newRowsPerPage } });
     updateData(0, newRowsPerPage);
   };
 
   const handleDeleteRows = (rows: readonly BaseTableData[]) => {
     const ids = rows.map((row) => row.id);
     setIds(ids);
+    setPage(0);
+
     setOpenDeleteModal(true);
 
     return [];
@@ -97,6 +104,7 @@ const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
   const handleEditRow = (row: BaseTableData) => {
     const { id } = row;
     setId(id);
+    setPage(0);
     setOpenEditModal(true);
   };
 
@@ -114,7 +122,7 @@ const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-        totalCount={count}
+        totalCount={totalCount}
       />
       <DeleteCompanyModal
         open={openDeleteModal}

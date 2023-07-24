@@ -8,10 +8,7 @@ const fetchCompanies = async (lastIdPointer = 0, limit = 5) => {
 
   const parsedCompanies = companies.getAll.parse(response.data.data);
 
-  return {
-    data: parsedCompanies,
-    count: response.data.count,
-  };
+  return parsedCompanies;
 };
 
 export default fetchCompanies;
