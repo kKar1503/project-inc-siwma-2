@@ -15,27 +15,23 @@ type PendingInvitesTableProps = {
 
 type RowData = {
   id: string;
-  name: string;
   email: string;
   company: string;
+  mobileNumber: string;
 };
 
 const headers: Header[] = [
   {
-    key: 'id',
-    label: 'Id',
-  },
-  {
-    key: 'name',
-    label: 'Name',
+    key: 'company',
+    label: 'Company',
   },
   {
     key: 'email',
     label: 'Email',
   },
   {
-    key: 'company',
-    label: 'Company',
+    key: 'mobileNumber',
+    label: 'Mobile Number',
   },
 ];
 
@@ -44,9 +40,9 @@ const parseInvitesData = (invites: Invite[]) => {
   invites.forEach((invite) => {
     rows.push({
       id: invite.id,
-      name: invite.name,
       email: invite.email,
       company: invite.company.name,
+      mobileNumber: invite.mobileNumber || 'NULL',
     });
   });
   return rows;
