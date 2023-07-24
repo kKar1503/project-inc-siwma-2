@@ -207,19 +207,8 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
     };
   }, [isSm, isMd, isLg]);
 
-  if (companyData?.isLoading || companies?.isLoading) {
-    return <Spinner />;
-  }
-
-  if (companyData?.isError || companies?.isError) {
-    return (
-      <div>
-        An error occurred, please refresh the page try again
-        <br />
-        If the problem persists, please contact the administrator for assistance
-      </div>
-    );
-  }
+  const isQueryLoading = companyData?.isLoading || companies?.isLoading;
+  const isQueryError = companyData?.isError || companies?.isError;
 
   return (
     <Box>
@@ -244,91 +233,105 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
               ...modalStyles?.modalWidth,
             })}
           >
-            <Grid container spacing={2} direction="row">
-              <Grid item xs={12}>
+            {isQueryLoading || isQueryError ? (
+              <Spinner /> || (
                 <Typography
-                  id="transition-modal-title"
-                  sx={({ typography }) => ({
-                    fontSize: typography.h6.fontSize,
-                    fontWeight: typography.fontWeightBold,
+                  sx={({ palette }) => ({
+                    color: palette.error.main,
                   })}
                 >
-                  Edit an individual company
+                  An error occurred, please refresh the page try again
+                  <br />
+                  If the problem persists, please contact the administrator for assistance
                 </Typography>
-                <Typography
-                  id="transition-modal-description"
-                  sx={({ typography }) => ({
-                    fontSize: typography.body2.fontSize,
-                  })}
-                >
-                  Modify a company profile from the system
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  size="medium"
-                  variant="outlined"
-                  label="Company Name"
-                  value={name}
-                  sx={{ mb: 2 }}
-                  onChange={handleNameChange}
-                  error={Boolean(nameError)}
-                  helperText={nameError}
-                  fullWidth
-                />
-                <TextField
-                  size="medium"
-                  variant="outlined"
-                  label="Company Website"
-                  value={website}
-                  sx={{ mb: 2 }}
-                  onChange={handleWebsiteChange}
-                  error={Boolean(websiteError)}
-                  helperText={websiteError}
-                  fullWidth
-                />
-                <TextField
-                  rows={10}
-                  size="medium"
-                  variant="outlined"
-                  label="Company Bio"
-                  value={bio}
-                  onChange={handleBioChange}
-                  fullWidth
-                  multiline
-                />
-              </Grid>
-              <Grid item xs={6}>
-                {fileError && (
+              )
+            ) : (
+              <Grid container spacing={2} direction="row">
+                <Grid item xs={12}>
                   <Typography
-                    sx={({ palette }) => ({
-                      color: palette.error.main,
+                    id="transition-modal-title"
+                    sx={({ typography }) => ({
+                      fontSize: typography.h6.fontSize,
+                      fontWeight: typography.fontWeightBold,
                     })}
                   >
-                    {fileError}
+                    Edit an individual company
                   </Typography>
-                )}
-                <Upload
-                  id="companyImage"
-                  title="Company Logo (Optional)"
-                  description=""
-                  selectedFile={selectedCompanyFile}
-                  changeHandler={handleLogoChange}
-                  accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-                  maxWidth="200px"
-                  maxHeight="90px"
-                />
-                <Button
-                  variant="contained"
-                  type="submit"
-                  size="large"
-                  onClick={handleSubmit}
-                  fullWidth
-                >
-                  Edit Company
-                </Button>
+                  <Typography
+                    id="transition-modal-description"
+                    sx={({ typography }) => ({
+                      fontSize: typography.body2.fontSize,
+                    })}
+                  >
+                    Modify a company profile from the system
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    size="medium"
+                    variant="outlined"
+                    label="Company Name"
+                    value={name}
+                    sx={{ mb: 2 }}
+                    onChange={handleNameChange}
+                    error={Boolean(nameError)}
+                    helperText={nameError}
+                    fullWidth
+                  />
+                  <TextField
+                    size="medium"
+                    variant="outlined"
+                    label="Company Website"
+                    value={website}
+                    sx={{ mb: 2 }}
+                    onChange={handleWebsiteChange}
+                    error={Boolean(websiteError)}
+                    helperText={websiteError}
+                    fullWidth
+                  />
+                  <TextField
+                    rows={10}
+                    size="medium"
+                    variant="outlined"
+                    label="Company Bio"
+                    value={bio}
+                    onChange={handleBioChange}
+                    fullWidth
+                    multiline
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  {fileError && (
+                    <Typography
+                      sx={({ palette }) => ({
+                        color: palette.error.main,
+                      })}
+                    >
+                      {fileError}
+                    </Typography>
+                  )}
+                  <Upload
+                    id="companyImage"
+                    title="Company Logo (Optional)"
+                    description=""
+                    selectedFile={selectedCompanyFile}
+                    changeHandler={handleLogoChange}
+                    accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
+                    maxWidth="200px"
+                    maxHeight="90px"
+                  />
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    size="large"
+                    onClick={handleSubmit}
+                    fullWidth
+                  >
+                    Edit Company
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
+            )}
           </Box>
         </Fade>
       </Modal>
