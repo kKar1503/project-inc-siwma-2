@@ -22,6 +22,7 @@ export default apiHandler({
           name: true,
         },
       },
+      phone: true,
     },
   });
 
@@ -37,6 +38,7 @@ export default apiHandler({
       id: invite.companies.id.toString(),
       name: invite.companies.name,
     },
+    mobileNumber: invite.phone,
   };
 
   return res.status(200).json(formatAPIResponse(mappedInvite));

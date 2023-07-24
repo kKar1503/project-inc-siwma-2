@@ -7,7 +7,7 @@ import {
   NotFoundError,
   EmailTemplateNotFoundError,
 } from '@inc/errors';
-import { validateEmail, validateName } from '@/utils/api/validate';
+import { validateEmail, validateName, validatePhone } from '@/utils/api/validate';
 import sendEmails from '@inc/send-in-blue/sendEmails';
 import {
   getContentFor,
@@ -21,12 +21,16 @@ export default apiHandler({ allowAdminsOnly: true })
     // Creates a new invite
     // https://docs.google.com/document/d/1cASNJAtBQxIbkwbgcgrEnwZ0UaAsXN1jDoB2xcFvZc8/edit#heading=h.ifiq27spo70n
 
-    const { email, name, company } = inviteSchema.post.body.parse(req.body);
+    const { email, name, company, mobileNumber } = inviteSchema.post.body.parse(req.body);
 
     const companyId = parseToNumber(company, 'company');
 
     validateEmail(email);
     validateName(name);
+
+    if (mobileNumber) {
+      validatePhone(mobileNumber);
+    }
 
     const existingUser = await client.users.findFirst({
       where: {
@@ -51,6 +55,7 @@ export default apiHandler({ allowAdminsOnly: true })
         email,
         name,
         companyId,
+        phone: mobileNumber,
         token: tokenHash,
         expiry: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       },
@@ -160,6 +165,7 @@ export default apiHandler({ allowAdminsOnly: true })
             name: true,
           },
         },
+        phone: true,
       },
     });
 
@@ -171,6 +177,7 @@ export default apiHandler({ allowAdminsOnly: true })
         id: invite.companies.id.toString(),
         name: invite.companies.name,
       },
+      mobileNumber: invite.phone,
     }));
 
     return res.status(200).json(formatAPIResponse(mappedInvites));
