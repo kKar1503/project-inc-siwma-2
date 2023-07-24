@@ -1,5 +1,6 @@
-import { useState, useMemo, FormEvent } from 'react';
+import { useState, useMemo } from 'react';
 import Head from 'next/head';
+
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -48,14 +49,15 @@ const CreateParameter = () => {
   const [name, setName] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [type, setType] = useState('');
-  const [customOptions, setCustomOptions] = useState<string[]>([]);
+  const [options, setOptions] = useState<string[]>([]);
   const [dataType, setDataType] = useState('');
 
   const [nameError, setNameError] = useState('');
   const [displayNameError, setDisplayNameError] = useState('');
+  const [optionsError, setOptionsError] = useState('');
+
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
-  const [optionsError, setOptionsError] = useState('');
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -81,21 +83,27 @@ const CreateParameter = () => {
 
   const handleTypeChange = (e: SelectChangeEvent) => {
     setType(e.target.value);
-    setCustomOptions([]);
+    setOptions([]);
   };
 
-  const handleCustomOptionChange = (index: number, value: string) => {
-    const newOptions = [...customOptions];
+  const handleOptionChange = (index: number, value: string) => {
+    const newOptions = [...options];
     newOptions[index] = value;
-    setCustomOptions(newOptions);
+    setOptions(newOptions);
+
+    if (value.trim() === '') {
+      setOptionsError('Please enter an option');
+    } else {
+      setOptionsError('');
+    }
   };
 
-  const handleAddCustomOption = () => {
-    setCustomOptions([...customOptions, '']);
+  const handleAddOption = () => {
+    setOptions([...options, '']);
   };
 
-  const handleRemoveCustomOption = (indexToRemove: number) => {
-    setCustomOptions((prevOptions) => prevOptions.filter((_, index) => index !== indexToRemove));
+  const handleRemoveOption = (indexToRemove: number) => {
+    setOptions((prevOptions) => prevOptions.filter((_, index) => index !== indexToRemove));
   };
 
   const handleDataTypeChange = (e: SelectChangeEvent) => {
@@ -107,17 +115,21 @@ const CreateParameter = () => {
     if (type === 'TWO_CHOICES' || type === 'MANY_CHOICES') {
       return (
         <>
-          {customOptions.map((option, index) => (
+          {options.map((options, index) => (
             <TextField
               // key={`customOption_${index}`}
               label={`Option ${index + 1}`}
-              value={option}
-              onChange={(e) => handleCustomOptionChange(index, e.target.value)}
+              placeholder="Long"
+              value={options}
+              onChange={(e) => handleOptionChange(index, e.target.value)}
+              error={!!optionsError}
+              helperText={optionsError}
               variant="outlined"
               sx={({ spacing }) => ({
                 width: '100%',
                 mt: spacing(2),
               })}
+              InputLabelProps={{ shrink: true }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment
@@ -127,7 +139,7 @@ const CreateParameter = () => {
                       alignItems: 'center',
                     }}
                   >
-                    <IconButton onClick={() => handleRemoveCustomOption(index)} color="error">
+                    <IconButton onClick={() => handleRemoveOption(index)} color="error">
                       <DeleteIcon />
                     </IconButton>
                   </InputAdornment>
@@ -136,7 +148,7 @@ const CreateParameter = () => {
             />
           ))}
           <Button
-            onClick={handleAddCustomOption}
+            onClick={handleAddOption}
             variant="contained"
             sx={({ spacing, palette }) => ({
               width: '15%',
@@ -159,16 +171,17 @@ const CreateParameter = () => {
       displayName,
       type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
       dataType: dataType as 'string' | 'number' | 'boolean',
+      options,
     };
 
     await createParameter(paramBody);
   };
 
   const handleSubmit = async () => {
-    if (type === 'MANY_CHOICES' && customOptions.length < 3) {
+    if (type === 'MANY_CHOICES' && options.length < 3) {
       setOpenMany(true);
       setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
-    } else if (type === 'TWO_CHOICES' && customOptions.length < 2) {
+    } else if (type === 'TWO_CHOICES' && options.length < 2) {
       setOpenMany(true);
       setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
     } else {
@@ -338,7 +351,9 @@ const CreateParameter = () => {
                       name.trim() === '' ||
                       displayName.trim() === '' ||
                       type.trim() === '' ||
-                      dataType.trim() === ''
+                      dataType.trim() === '' ||
+                      ((type === 'MANY_CHOICES' || type === 'TWO_CHOICES') &&
+                        options.some((option) => option.trim() === ''))
                     }
                   >
                     Confirm
