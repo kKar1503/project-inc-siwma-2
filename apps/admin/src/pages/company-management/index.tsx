@@ -40,7 +40,7 @@ const CompanyManagement = () => {
     if (companies.data) {
       handleCompaniesChange(companies.data);
     }
-  }, [companies]);
+  }, [companies.data]);
 
   const updateCompanyData = async (lastIdPointer?: number, limit?: number) => {
     const updatedCompanies = await fetchCompanies(lastIdPointer, limit);
