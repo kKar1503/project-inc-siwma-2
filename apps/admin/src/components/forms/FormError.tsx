@@ -40,7 +40,7 @@ const FormError = ({ inputName, error, sx }: FormErrorProps) => {
   }
 
   return (
-    <Box sx={{ width: '100%', textAlign: 'right', marginY: 1, ...sx }}>
+    <Box sx={{ width: '100%', textAlign: 'right', height: '1rem', marginY: 1, ...sx }}>
       <Typography variant="subtitle2" color={palette.error[100]}>
         {errorMessage}
       </Typography>
