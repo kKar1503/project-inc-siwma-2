@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import ActiveGraph from '@/components/advertisementsDashboard/activeGraph';
 import ClicksPie from '@/components/advertisementsDashboard/clicksPie';
 import { useQueries, UseQueryResult } from 'react-query';
-import fetchAdClicksData, { FetchAdClicksDataResponse } from '@/middlewares/fetchAdClicksData';
+import fetchAdClicksData, { FetchAdClicksDataResponse } from '@/services/fetchAdClicksData';
 import { useMemo } from 'react';
 import Box from '@mui/material/Box';
 import CompanyForm from '@/components/advertisementsDashboard/companyForm';

@@ -4,13 +4,13 @@ import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 import AdsClickIcon from '@mui/icons-material/AdsClick';
 import InfoCard from '@/components/advertisementsDashboard/InfoCard';
 import { useQueries, UseQueryResult } from 'react-query';
-import fetchAdvertisements from '@/middlewares/advertisements/fetchAdvertisements';
-import fetchCompanies from '@/middlewares/companies/fetchCompanies';
+import fetchAdvertisements from '@/services/advertisements/fetchAdvertisements';
+import fetchCompanies from '@/services/companies/fetchCompanies';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { Company } from '@/utils/api/client/zod';
-import UpdateAdvertisement from '@/middlewares/advertisements/updateAdvertisement';
+import UpdateAdvertisement from '@/services/advertisements/updateAdvertisement';
 import { useState } from 'react';
-import deleteAdvertisement from '@/middlewares/advertisements/deleteAdvertisement';
+import deleteAdvertisement from '@/services/advertisements/deleteAdvertisement';
 import Spinner from '@/components/Spinner';
 
 export interface AdvertisementDashboardProps {
