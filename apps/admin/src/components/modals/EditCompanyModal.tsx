@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import { useResponsiveness } from '@inc/ui';
 import { Company } from '@/utils/api/client/zod/companies';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import Spinner from '@/components/fallbacks/Spinner';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -72,9 +72,11 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   const [websiteError, setWebsiteError] = useState<string>('');
   const [fileError, setFileError] = useState<string>('');
 
-  const checkCompanyDuplicate = (name: string) => {
-    if (companies.data) {
-      return companies.data.data.some((company: Company) => company.name === name);
+  const checkCompanyDuplicate = (companyData: Company) => {
+    if (companies.data && companyData) {
+      return companies.data.some(
+        (company: Company) => company.name === companyData.name && company.id !== companyData.id
+      );
     }
     return false;
   };
@@ -97,7 +99,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
       formIsValid = false;
     }
 
-    if (checkCompanyDuplicate(name)) {
+    if (companyData?.data && checkCompanyDuplicate(companyData?.data)) {
       setNameError('Company already exists');
       formIsValid = false;
     }

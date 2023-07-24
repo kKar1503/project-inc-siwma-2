@@ -5,7 +5,6 @@ import FileUpload, {
 } from '@/components/FileUpload/FileUploadBase';
 import { useResponsiveness } from '@inc/ui';
 import { PostCompanyRequestBody } from '@/utils/api/server/zod';
-import { useQuery } from 'react-query';
 import { Company } from '@/utils/api/client/zod/companies';
 import XLSX from 'xlsx';
 import Box from '@mui/material/Box';
@@ -16,7 +15,7 @@ import Badge from '@mui/material/Badge';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import createCompany from '@/middlewares/company-management/createCompany';
-import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
+import fetchCompaniesByName from '@/middlewares/company-management/fetchCompaniesByName';
 
 export type AddCompanyModalProps = {
   open: boolean;
@@ -24,26 +23,24 @@ export type AddCompanyModalProps = {
   updateData: () => void;
 };
 
-const useGetCompaniesQuery = () => {
-  const { data } = useQuery('companies', async () => fetchCompanies(), {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  return data;
-};
-
 const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) => {
-  const companies = useGetCompaniesQuery();
   const [file, setFile] = useState<File | null>(null);
   const [fileDetails, setFileDetails] = useState<PostCompanyRequestBody[]>([]);
   const [errors, setErrors] = useState<{ [error: string]: number }>({});
   const [fileError, setFileError] = useState('');
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
-  const checkCompanyDuplicate = (name: string) => {
+  const getCompaniesByName = async (name: string) => {
+    const data = await fetchCompaniesByName(name);
+
+    return data;
+  };
+
+  const checkCompanyDuplicate = async (name: string) => {
+    const companies = await getCompaniesByName(name);
+
     if (companies) {
-      return companies.data.some((company: Company) => company.name === name);
+      return companies.some((company: Company) => company.name === name);
     }
     return false;
   };
@@ -62,7 +59,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
     return false;
   };
 
-  const validateData = (data: PostCompanyRequestBody[]) => {
+  const validateData = async (data: PostCompanyRequestBody[]) => {
     setErrors({});
 
     const errorData: { [error: string]: number } = {}; // Object to store error messages and their counts
@@ -70,32 +67,34 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
       /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
     const validatedData: PostCompanyRequestBody[] = [];
 
-    data.forEach((companyData, index) => {
-      let error = '';
+    await Promise.all(
+      data.map(async (companyData, index) => {
+        let error = '';
 
-      if (!companyData.name || companyData.name.toString().trim().length === 0) {
-        error = 'Name is required';
-      }
+        if (!companyData.name || companyData.name.toString().trim().length === 0) {
+          error = 'Name is required';
+        }
 
-      if (checkCompanyDuplicate(companyData.name)) {
-        error = `Company already exists`;
-      }
+        if (await checkCompanyDuplicate(companyData.name)) {
+          error = `Company already exists`;
+        }
 
-      if (checkCompanyDuplicateInFile(companyData, validatedData, index)) {
-        error = `Company already exists in the file`;
-      }
+        if (checkCompanyDuplicateInFile(companyData, validatedData, index)) {
+          error = `Company already exists in the file`;
+        }
 
-      if (companyData.website && !websiteRegex.test(companyData.website)) {
-        error = 'Website is invalid. Use the format: https://www.example.com';
-      }
+        if (companyData.website && !websiteRegex.test(companyData.website)) {
+          error = 'Website is invalid. Use the format: https://www.example.com';
+        }
 
-      if (error) {
-        // Update errorData to store error messages and their counts
-        errorData[error] = (errorData[error] || 0) + 1;
-      } else {
-        validatedData.push(companyData);
-      }
-    });
+        if (error) {
+          // Update errorData to store error messages and their counts
+          errorData[error] = (errorData[error] || 0) + 1;
+        } else {
+          validatedData.push(companyData);
+        }
+      })
+    );
 
     if (Object.keys(errorData).length !== 0) {
       setErrors(errorData);
@@ -110,7 +109,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
     updateData();
   };
 
-  const handleExcelChange: FileUploadProps['changeHandler'] = (event) => {
+  const handleExcelChange: FileUploadProps['changeHandler'] = async (event) => {
     setFileError('');
 
     if (!event.target.files) return;
@@ -120,33 +119,29 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
     } else if (event.target.files.length > 1) {
       setFile(null);
       setFileError('Please Select Only One File');
-
       return;
     } else {
       setFile(null);
       setFileError('Please Select a File');
-
       return;
     }
 
     if (event.target.files[0].size > 64000000) {
       setFile(null);
       setFileError('Please Select a File Smaller Than 64 MB');
-
       return;
     }
 
     if (event.target.files[0].type !== AcceptedFileTypes.XLSX) {
       setFile(null);
       setFileError('Please upload a .xlsx File');
-
       return;
     }
 
     const reader = new FileReader();
     reader.readAsBinaryString(event.target.files[0]);
 
-    reader.onload = (e: ProgressEvent<FileReader>) => {
+    reader.onload = async (e: ProgressEvent<FileReader>) => {
       const data = e.target?.result;
       const workbook = XLSX.read(data, { type: 'binary' });
       const sheetName = workbook.SheetNames[0];
@@ -165,7 +160,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
         return data;
       });
 
-      const companiesData = validateData(mappedData);
+      const companiesData = await validateData(mappedData);
       setFileDetails(companiesData);
     };
   };

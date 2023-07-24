@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import createCompany from '@/middlewares/company-management/createCompany';
 import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
+import fetchCompaniesByName from '@/middlewares/company-management/fetchCompaniesByName';
 
 export type AddCompanyModalProps = {
   open: boolean;
@@ -42,9 +43,17 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
   const [websiteError, setWebsiteError] = useState<string>('');
   const [fileError, setFileError] = useState<string>('');
 
-  const checkCompanyDuplicate = (name: string) => {
+  const getCompaniesByName = async (name: string) => {
+    const data = await fetchCompaniesByName(name);
+
+    return data;
+  };
+
+  const checkCompanyDuplicate = async (name: string) => {
+    const companies = await getCompaniesByName(name);
+
     if (companies) {
-      return companies.data.some((company: Company) => company.name === name);
+      return companies.some((company: Company) => company.name === name);
     }
     return false;
   };
@@ -55,14 +64,14 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
     setFileError('');
   };
 
-  const formValidation = () => {
+  const formValidation = async () => {
     resetErrors();
 
     let formIsValid = true;
     const websiteRegex =
       /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
 
-    if (checkCompanyDuplicate(name)) {
+    if (await checkCompanyDuplicate(name)) {
       setNameError('Company already exists');
       formIsValid = false;
     }

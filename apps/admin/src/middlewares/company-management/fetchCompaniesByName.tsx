@@ -6,10 +6,7 @@ const fetchCompaniesByName = async (name?: string) => {
 
   const parsedCompanies = companies.getAll.parse(response.data.data);
 
-  return {
-    data: parsedCompanies,
-    count: response.data.count,
-  };
+  return parsedCompanies;
 };
 
 export default fetchCompaniesByName;
