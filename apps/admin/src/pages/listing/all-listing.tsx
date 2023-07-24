@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useResponsiveness } from '@inc/ui';
 import { useQueries, useMutation } from 'react-query';
 import apiClient from '@/utils/api/client/apiClient';
@@ -57,6 +57,11 @@ const AllListings = () => {
     },
   });
 
+  // Refetch data everytime rowsPerPage changes
+  useEffect(() => {
+    queries[0].refetch();
+  }, [rowsPerPage]);
+
   const { data } = queries[0];
   const listings = data?.listingsData;
 
@@ -83,8 +88,20 @@ const AllListings = () => {
   };
 
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Update rows per page
     setRowsPerPage(parseInt(event.target.value, 10));
-    // setPage(0);
+
+    // Calculate the updated page number
+    const page = Math.floor(lastIdPointer / parseInt(event.target.value, 10));
+
+    // Update page
+    setPage(page);
+
+    // Check if we need to update lastIdPointer
+    if (totalCount.current - (page + 1) * parseInt(event.target.value, 10) < 0) {
+      // Update lastIdPointer
+      setLastIdPointer(0);
+    }
   };
 
   const onEdit = () => {
