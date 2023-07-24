@@ -13,6 +13,7 @@ type FormInputProps = {
   required?: boolean;
   success?: boolean;
   isLoading?: boolean;
+  multiline?: boolean;
   sx?: React.ComponentProps<typeof TextField>['sx'];
 };
 
@@ -28,6 +29,7 @@ const FormInput = ({
   customValidation,
   required = false,
   success,
+  multiline,
   isLoading,
   sx,
 }: FormInputProps) => {
@@ -60,10 +62,19 @@ const FormInput = ({
         InputLabelProps={{
           required,
         }}
-        sx={{ width: '100%', ...sx }}
+        sx={{
+          width: '100%',
+          '& .MuiOutlinedInput-root': {
+            '& > fieldset': { borderColor: success ? 'success.main' : undefined },
+          },
+          ...sx,
+        }}
         error={!!errors[name]}
+        color={success ? 'success' : undefined}
         placeholder={placeholder}
         {...hookInput(name, label, customValidation)}
+        multiline={multiline}
+        maxRows={multiline ? Infinity : undefined}
       />
     )
   );

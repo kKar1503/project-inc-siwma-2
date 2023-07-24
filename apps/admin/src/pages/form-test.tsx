@@ -43,7 +43,6 @@ const FormTest = () => {
             label="Company Name"
             name="companyName"
             isLoading={false}
-            success={submitSuccess}
             required
           >
             {/** @ts-ignore */}
