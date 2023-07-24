@@ -10,17 +10,18 @@ import { useTableSort } from '@/stores/table';
 
 // ** Types Imports
 import type { TSortableField } from '@/utils/api/server/zod/listingTable';
+import type { ReactNode } from 'react';
 
 // ** Prop Types
 export interface HeaderCellProps {
-  displayText: string;
-  sortByValue: TSortableField;
+  children: ReactNode;
+  sortByValue?: TSortableField;
   sortable?: boolean;
 }
 
 const HeaderCell = (props: HeaderCellProps) => {
   // ** Props
-  const { displayText, sortByValue, sortable } = props;
+  const { children, sortByValue, sortable } = props;
 
   // ** Store
   const [sortStates, sortActions] = useTableSort();
@@ -31,28 +32,34 @@ const HeaderCell = (props: HeaderCellProps) => {
 
   // ** Handlers
   const handleSort = () => {
-    if (!sortable) {
-      return;
-    }
+    if (!sortable) return;
+
     if (sortByValue === sortBy) {
       sortActions.setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
-      if (sortDirection !== 'asc') {
-        sortActions.setSortDirection('asc');
-      }
-      sortActions.setSortBy(sortByValue);
+      if (sortDirection !== 'asc') sortActions.setSortDirection('asc');
+      if (sortByValue !== undefined) sortActions.setSortBy(sortByValue);
     }
   };
 
   return (
-    <TableCell align="left" padding="normal" sortDirection={isCurrentSort ? sortDirection : false}>
-      <TableSortLabel
-        active={isCurrentSort}
-        direction={isCurrentSort ? sortDirection : 'asc'}
-        onClick={() => handleSort()}
-      >
-        {displayText}
-      </TableSortLabel>
+    <TableCell
+      align="left"
+      padding="normal"
+      sortDirection={isCurrentSort ? sortDirection : false}
+      sx={{ WebkitUserSelect: 'none', msUserSelect: 'none', userSelect: 'none' }}
+    >
+      {sortable ? (
+        <TableSortLabel
+          active={isCurrentSort}
+          direction={isCurrentSort ? sortDirection : 'asc'}
+          onClick={() => handleSort()}
+        >
+          {children}
+        </TableSortLabel>
+      ) : (
+        children
+      )}
     </TableCell>
   );
 };
