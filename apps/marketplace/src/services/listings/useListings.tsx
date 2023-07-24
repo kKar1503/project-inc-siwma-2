@@ -43,6 +43,7 @@ const useListings = (
       options.sortBy,
       options.sortDirection,
     ],
+    refetchInterval: 1000 * 30,
   });
 
 export default useListings;
