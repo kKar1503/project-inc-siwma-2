@@ -50,6 +50,16 @@ const DisallowNonAuthenticatedFallback = () => {
 const DisallowAuthenticatedFallback = () => {
   const router = useRouter();
   useEffect(() => {
+    // Check if there is a redirect parameter in the router's query object
+    const redirect = router.query.redirect as string;
+
+    // If it exists, redirect the user to that URL
+    if (redirect) {
+      router.push(redirect);
+      return;
+    }
+
+    // It does not, so redirect the user to the root page
     router.push(`/`);
   }, [router]);
   return <SpinnerPage />;
@@ -76,7 +86,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
   const {
-    allowAuthenticated,
+    allowAuthenticated = true,
     allowNonAuthenticated,
     includeNavbar = true,
     renderSearchBar,
@@ -102,6 +112,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
         <AuthenticationGuard
           disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
           disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
+          loader={<SpinnerPage />}
           allowAuthenticated={allowAuthenticated}
           allowNonAuthenticated={allowNonAuthenticated}
         >
