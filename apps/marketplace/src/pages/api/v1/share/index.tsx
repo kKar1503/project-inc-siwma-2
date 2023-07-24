@@ -60,6 +60,28 @@ async function checkListingsExists($id: string | number) {
   return listing;
 }
 
+async function checkHashExists($hash: string) {
+  // Check if the listing exists
+  const hash = await PrismaClient.share.findMany({
+    where: {
+      hash: $hash,
+    },
+  });
+  return hash;
+}
+
+async function generateHash() {
+  // creates random hash
+  const value = compressInt(Math.random() * 64 ** 12);
+
+  // if hash exists, create new hash
+  const hashExists = await checkHashExists(value);
+  if (hashExists.length > 0) {
+    return generateHash();
+  }
+  return value;
+}
+
 export default apiHandler().post(async (req, res) => {
   const data = req.body;
 
@@ -72,19 +94,28 @@ export default apiHandler().post(async (req, res) => {
     throw err;
   });
 
-  console.log('listingsId', data.listings);
-
   // creates random hash
-  const value = compressInt(Math.random() * 64 ** 12);
-  console.log('value', value);
+  const hash = await generateHash();
 
-  // if hash collision occurs, try again
-  // if (value in db) {
-  //   value = compressInt(Math.random() * 64 ** 12);
-  // }
+  const hashedUrl = await PrismaClient.share.create({
+    data: {
+      hash,
+      owner: ownerId,
+    },
+  });
 
-  // store hash in db
-  // db[value] = url;
+  const hashedUrlID = hashedUrl.id;
 
-  res.status(200).json(formatAPIResponse({ 'post test': 'test' }));
+  // store listing id in db
+  const listingIds = await PrismaClient.sharesListings.createMany({
+    data: listings.map((id: number) => ({
+      hash: hashedUrlID,
+      listing: id,
+    })),
+  });
+
+  console.log(hashedUrl.id);
+  console.log(listingIds);
+
+  res.status(200).json(formatAPIResponse({ id: hashedUrl.id, hash }));
 });
