@@ -16,12 +16,10 @@
     "@mui/material": "^5.11.14",
     "@mui/utils": "^5.12.3",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-instantsearch-dom": "6.40.3"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@types/react": "18.0.28",
-    "@types/react-instantsearch-dom": "6.12.3",
     "typescript": "5.0.2"
   }
 }
