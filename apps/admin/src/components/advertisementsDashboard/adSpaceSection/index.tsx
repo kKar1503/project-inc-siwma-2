@@ -11,6 +11,7 @@ import { Company } from '@/utils/api/client/zod';
 import UpdateAdvertisement from '@/middlewares/advertisements/updateAdvertisement';
 import { useState } from 'react';
 import deleteAdvertisement from '@/middlewares/advertisements/deleteAdvertisement';
+import Spinner from '@/components/Spinner';
 
 export interface AdvertisementDashboardProps {
   totalClicks: number;
@@ -27,7 +28,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   ]);
 
   if (advertisementsQuery.isLoading || companiesQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
 
   if(advertisementsQuery.isError || companiesQuery.isError) {
@@ -47,6 +48,10 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   const advertisements: { [key: string]: Advertisment } = {};
 
   advertisementsQuery.data?.forEach((item) => {
+    if (item.id === undefined) {
+      // only happens when not admin
+      return;
+    }
     const mutatedAdvertisement = mutatedAdvertisements[item.id];
     switch (mutatedAdvertisement) {
       case undefined:
@@ -68,7 +73,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   const updateAdvertisementsTable = (updatedAdvertisements: Array<Advertisment | undefined>) => {
     const newAdvertisements = { ...mutatedAdvertisements };
     updatedAdvertisements.forEach((advertisement) => {
-      if (!advertisement) return;
+      if (!advertisement || !advertisement.id) return;
       newAdvertisements[advertisement.id] = advertisement;
     });
     setMutatedAdvertisements(newAdvertisements);
