@@ -37,6 +37,7 @@ export interface TableActions {
   setSortBy: (value: TSortableField) => void;
   setSortDirection: (value: TSortableDirection) => void;
   setPagination: (paginationData: Pagination) => void;
+  updatePagination: (paginationData: Partial<Pagination>) => void;
   addSelected: (listingId: number) => void;
   addManySelected: (listingIds: number[]) => void;
   removeSelected: (listingId: number) => void;
@@ -112,6 +113,15 @@ const useTableStore = create<TableStates & TableActions>()(
 
         set(paginationData);
       },
+      updatePagination: (pagination = {}) => {
+        const { limit, ...rest } = pagination;
+        const paginationData: Partial<TableStates> = { ...rest };
+        if (limit !== undefined && [10, 25, 50].indexOf(limit) !== -1) {
+          paginationData.limit = limit as TableDisplayLimit;
+        }
+
+        set(paginationData);
+      },
       addSelected: (listingId) => {
         set({
           selected: [...get().selected, listingId],
@@ -165,11 +175,24 @@ export const useTableStates = () =>
 
 export const useTablePagination = () =>
   useTableStore((state) => {
-    const { page, nextPage, prevPage, limit, totalPage, totalCount, setPagination } = state;
+    const {
+      page,
+      nextPage,
+      prevPage,
+      limit,
+      totalPage,
+      totalCount,
+      setPagination,
+      updatePagination,
+    } = state;
 
     const paginationStates = { page, nextPage, prevPage, limit, totalPage, totalCount };
+    const paginationActions = { setPagination, updatePagination };
 
-    return [paginationStates, setPagination] as [typeof paginationStates, typeof setPagination];
+    return [paginationStates, paginationActions] as [
+      typeof paginationStates,
+      typeof paginationActions
+    ];
   });
 
 export const useTableSelection = () =>
