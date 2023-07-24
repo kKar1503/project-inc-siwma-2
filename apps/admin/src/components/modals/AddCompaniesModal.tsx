@@ -83,8 +83,8 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
           error = `Company already exists in the file`;
         }
 
-        if (companyData.website && !websiteRegex.test(companyData.website)) {
-          error = 'Website is invalid. Use the format: https://www.example.com';
+        if (!companyData.website && !websiteRegex.test(companyData.website)) {
+          error = 'Website is invalid. Use the format: www.example.com';
         }
 
         if (error) {
