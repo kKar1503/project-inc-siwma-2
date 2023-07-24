@@ -1,5 +1,7 @@
 import { apiHandler } from '@/utils/api';
 import Pusher from 'pusher';
+import { chatSchema } from '@/utils/api/server/zod';
+import { MessageError } from '@inc/errors/src';
 
 const appId = process.env.app_id;
 const { key, secret, cluster } = process.env;
@@ -16,12 +18,18 @@ export const pusher = new Pusher({
   useTLS: true,
 });
 
-export default apiHandler().post(async (req, res) => {
-  const { message, sender } = req.body;
+export default apiHandler({ allowNonAuthenticated: true }).post(async (req, res) => {
+  const parseResult = chatSchema.messages.post.body.parse(req.body);
+  const { message, sender } = parseResult;
+
   const response = await pusher.trigger('chat', 'chat-event', {
     message,
     sender,
   });
 
-  res.json({ message: 'completed' });
+  if (response.status === 200) {
+    return res.status(200).end();
+  }
+
+  throw new MessageError();
 });
