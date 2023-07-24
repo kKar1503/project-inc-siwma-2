@@ -157,12 +157,12 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   };
 
   useEffect(() => {
-    if (companyData) {
-      setName(companyData.data?.name || '');
-      setWebsite(companyData.data?.website || '');
-      setBio(companyData.data?.bio || '');
+    if (companyData.data) {
+      setName(companyData.data.name || '');
+      setWebsite(companyData.data.website || '');
+      setBio(companyData.data.bio || '');
     }
-  }, [companyData]);
+  }, [companyData.data]);
 
   const modalStyles = useMemo(() => {
     if (isSm) {
