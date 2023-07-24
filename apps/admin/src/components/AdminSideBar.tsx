@@ -292,101 +292,121 @@ const AdminSideBar = () => {
         </Typography>
         <Divider />
         <List>
-          {menuItems.map((item) => (
-            <Box key={item.name}>
+  {menuItems.map((item) => (
+    <Box key={item.name}>
+      {item.dropdown ? ( 
+        <ListItemButton
+          onClick={() => handleClick(item.name)}
+          sx={{
+            backgroundColor: isCurrentRoute(item.link) ? blueBackground : 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            textDecoration: 'none',
+            color: 'inherit', 
+          }}
+        >
+          <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
+            <item.Icon
+              style={{
+                color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
+              }}
+            />
+          </Box>
+          <ListItemText
+            primary={item.name}
+            primaryTypographyProps={{
+              style: {
+                font: '0.9rem Roboto, sans-serif',
+              },
+            }}
+          />
+          {openDropdown === item.name ? <ExpandMore /> : <ChevronRight />}
+        </ListItemButton>
+      ) : (
+        <ListItemButton
+          component="a"
+          href={item.link}
+          onClick={() => handleClick(item.name)}
+          sx={{
+            backgroundColor: isCurrentRoute(item.link) ? blueBackground : 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            textDecoration: 'none', 
+            color: 'inherit', 
+          }}
+        >
+          <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
+            <item.Icon
+              style={{
+                color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
+              }}
+            />
+          </Box>
+          <ListItemText
+            primary={item.name}
+            primaryTypographyProps={{
+              style: {
+                font: '0.9rem Roboto, sans-serif',
+              },
+            }}
+          />
+        </ListItemButton>
+      )}
+      {item.dropdown && (
+        <Collapse in={openDropdown === item.name} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {item.dropdown.map((subitem) => (
               <ListItemButton
-                onClick={() => handleClick(item.name)}
+                key={subitem.name}
+                onClick={() => handleClick(subitem.link)}
                 sx={{
-                  backgroundColor: isCurrentRoute(item.link) ? blueBackground : 'transparent',
+                  backgroundColor: isCurrentSubRoute(subitem.link)
+                    ? blueBackground
+                    : 'transparent',
+                  pl: '2em',
                   display: 'flex',
                   alignItems: 'center',
+                  textDecoration: 'none', 
+                  color: 'inherit', 
                 }}
               >
                 <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
-                  <item.Icon
-                    style={{ color: isCurrentRoute(item.link) ? customBlue : palette.common.black }}
+                  <subitem.Icon
+                    style={{
+                      color: isCurrentSubRoute(subitem.link)
+                        ? customBlue
+                        : palette.common.black,
+                    }}
                   />
                 </Box>
                 <ListItemText
-          primary={
-            <Link 
-              href={item.link}
-              underline="none"
-              sx={{
-                color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
-                font: '0.9rem Roboto, sans-serif',
-                textDecoration: 'none',
-                '&:hover': {
-                  textDecoration: 'none',
-                },
-              }}
-            >
-              {item.name}
-            </Link>
-          }
-        />
-                {item.dropdown &&
-                  (openDropdown === item.name ? (
-                    <ExpandMore />
-                  ) : (
-                    <ChevronRight
-                      style={{
-                        color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
+                  primary={
+                    <Link
+                      href={subitem.link}
+                      underline="none"
+                      sx={{
+                        color: isCurrentSubRoute(subitem.link)
+                          ? customBlue
+                          : palette.common.black,
+                        font: '0.9rem Roboto, sans-serif',
+                        textDecoration: 'none',
+                        '&:hover': {
+                          textDecoration: 'none',
+                        },
                       }}
-                    />
-                  ))}
+                    >
+                      {subitem.name}
+                    </Link>
+                  }
+                />
               </ListItemButton>
-              {item.dropdown && (
-                <Collapse in={openDropdown === item.name} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {item.dropdown.map((subitem) => (
-                      <ListItemButton
-                        key={subitem.name}
-                        onClick={() => router.push(subitem.link)}
-                        sx={{
-                          backgroundColor: isCurrentRoute(item.link)
-                            ? blueBackground
-                            : 'transparent',
-                          pl: '2em',
-                          display: 'flex',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
-                          <subitem.Icon
-                            style={{
-                              color: isCurrentSubRoute(subitem.link)
-                                ? customBlue
-                                : palette.common.black,
-                            }}
-                          />
-                        </Box>
-                        <ListItemText
-                          primary={
-                            <Link
-                              href={subitem.link}
-                              underline="none"
-                              sx={{
-                                color: isCurrentSubRoute(subitem.link) ? customBlue : palette.common.black,
-                                font: '0.9rem Roboto, sans-serif',
-                                textDecoration: 'none',
-                                '&:hover': {
-                                  textDecoration: 'none',
-                                },
-                              }}
-                            >
-                              {subitem.name}
-                            </Link>
-                          }
-                        />
-                      </ListItemButton>
-                    ))}
-                  </List>
-                </Collapse>
-              )}
-            </Box>
-          ))}
-        </List>
+            ))}
+          </List>
+        </Collapse>
+      )}
+    </Box>
+  ))}
+</List>
       </Box>
       <Hidden mdDown implementation="css">
         <Box
