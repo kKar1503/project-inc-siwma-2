@@ -6,24 +6,24 @@ import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterForm, { SortProps } from '@/components/marketplace/filter/FilterForm';
-import { FilterOptions, SortingOptions } from '@/middlewares/searchListings';
+import { FilterOptions, SortingOptions } from '@/services/searchListings';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTranslation } from 'react-i18next';
 
-export interface titleProps {
+export interface TitleDisplayText {
   single: string;
   plural: string;
 }
 
-export interface HeaderProps {
-  title: titleProps;
+export interface HeaderDisplayText {
+  title: TitleDisplayText;
   noOfItems: number;
 }
 
 export type DisplayResultsProps = {
   children?: React.ReactNode;
   filter: boolean;
-  data: HeaderProps;
+  header: HeaderDisplayText;
   subHeader: boolean;
   filterOptions?: FilterOptions;
   setFilterOptions?: (filter: FilterOptions) => void;
@@ -56,7 +56,7 @@ const getSort = (sort: SortingOptions | undefined): SortProps => {
 const DisplayResults = ({
   children,
   filter,
-  data,
+  header: data,
   subHeader,
   filterOptions,
   setFilterOptions,
@@ -166,7 +166,7 @@ const DisplayResults = ({
                 mb: spacing(2),
               })}
             >
-              {subHeader && ( 
+              {subHeader && (
                 <Typography
                   sx={({ typography }) => ({
                     fontSize: isSm ? typography.h5 : typography.h4,

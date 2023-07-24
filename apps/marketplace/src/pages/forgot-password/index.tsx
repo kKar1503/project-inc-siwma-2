@@ -14,7 +14,7 @@ import { useTheme } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
 import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import forgetPW from '@/middlewares/forget-password';
+import forgetPW from '@/services/forget-password';
 import { validateEmail } from '@/utils/api/validate';
 
 const ForgetPassword = () => {

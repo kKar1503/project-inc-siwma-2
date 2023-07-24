@@ -29,6 +29,8 @@ const SUPPORTED_ENUMS = [
   'ContentType',
   'ReasonType',
   'LogType',
+  'UnitType',
+  'ConditionType'
 ];
 
 function isKnexInternalModel(typeName: string) {

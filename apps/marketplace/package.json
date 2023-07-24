@@ -17,6 +17,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@inc/db": "workspace:*",
+    "@inc/db-enums": "workspace:*",
     "@inc/errors": "workspace:*",
     "@inc/events": "workspace:*",
     "@inc/s3-simplified": "workspace:*",
@@ -29,7 +30,6 @@
     "@mui/styled-engine-sc": "^5.12.0",
     "@mui/utils": "^5.12.3",
     "@mui/x-data-grid": "^6.0.2",
-    "@prisma/client": "^4.12.0",
     "@prisma/nextjs-monorepo-workaround-plugin": "^4.13.0",
     "@types/bcrypt": "^5.0.0",
     "@types/react-swipeable-views": "^0.13.1",
@@ -47,6 +47,7 @@
     "react": "18.2.0",
     "react-autocomplete": "^1.8.1",
     "react-dom": "18.2.0",
+    "react-hook-form": "7.45.1",
     "react-i18next": "12.3.1",
     "react-icons": "^4.8.0",
     "react-instantsearch-dom": "6.40.1",
@@ -61,7 +62,8 @@
     "socket.io-client": "4.7.0",
     "styled-components": "^5.3.9",
     "victory": "^36.6.8",
-    "zod": "3.22.0-canary.20230522T011705"
+    "zod": "3.22.0-canary.20230522T011705",
+    "zustand": "4.3.9"
   },
   "devDependencies": {
     "@inc/configs": "workspace:*",
@@ -85,7 +87,6 @@
     "eslint-plugin-jest": "27.2.1",
     "eslint-plugin-react": "7.32.2",
     "html-loader": "4.2.0",
-    "prisma": "^4.12.0",
     "typescript": "5.0.2"
   }
 }
