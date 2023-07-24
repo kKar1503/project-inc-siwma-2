@@ -3,6 +3,7 @@ import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpl
 import { useResponsiveness } from '@inc/ui';
 import { Company } from '@/utils/api/client/zod/companies';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import Spinner from '@/components/fallbacks/Spinner';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
@@ -29,19 +30,27 @@ export type PutCompanyRequestBody = {
 };
 
 const useGetCompaniesByNameQuery = (name?: string) => {
-  const { data } = useQuery(['companies', name], async () => fetchCompaniesByName(name), {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  const { data, error, isError, isLoading } = useQuery(
+    ['companies', name],
+    async () => fetchCompaniesByName(name),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
-  return data;
+  return { data, error, isError, isLoading };
 };
 
 const useGetCompanyQuery = (companyId: string) => {
-  const { data } = useQuery(['company', companyId], async () => fetchCompany(companyId), {
-    enabled: companyId !== undefined,
-  });
-  return data;
+  const { data, error, isError, isLoading } = useQuery(
+    ['company', companyId],
+    async () => fetchCompany(companyId),
+    {
+      enabled: companyId !== undefined,
+    }
+  );
+  return { data, error, isError, isLoading };
 };
 
 const useUpdateCompanyMutation = (companyId: string, companyImage?: File) =>
@@ -50,14 +59,13 @@ const useUpdateCompanyMutation = (companyId: string, companyImage?: File) =>
   );
 
 const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyModalProps) => {
-  const queryClient = useQueryClient();
   const companyData = useGetCompanyQuery(company);
-  const companies = useGetCompaniesByNameQuery(companyData?.name);
+  const companies = useGetCompaniesByNameQuery(companyData.data?.name);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [name, setName] = useState<string>(companyData?.name || '');
-  const [website, setWebsite] = useState<string>(companyData?.website || '');
-  const [bio, setBio] = useState<string>(companyData?.bio || '');
+  const [name, setName] = useState<string>(companyData.data?.name || '');
+  const [website, setWebsite] = useState<string>(companyData.data?.website || '');
+  const [bio, setBio] = useState<string>(companyData.data?.bio || '');
   const [selectedCompanyFile, setSelectedCompanyFile] = useState<File | null>(null);
 
   const [nameError, setNameError] = useState<string>('');
@@ -65,8 +73,8 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   const [fileError, setFileError] = useState<string>('');
 
   const checkCompanyDuplicate = (name: string) => {
-    if (companies) {
-      return companies.data.some((company: Company) => company.name === name);
+    if (companies.data) {
+      return companies.data.data.some((company: Company) => company.name === name);
     }
     return false;
   };
@@ -150,17 +158,11 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
 
   useEffect(() => {
     if (companyData) {
-      setName(companyData?.name || '');
-      setWebsite(companyData?.website || '');
-      setBio(companyData?.bio || '');
+      setName(companyData.data?.name || '');
+      setWebsite(companyData.data?.website || '');
+      setBio(companyData.data?.bio || '');
     }
   }, [companyData]);
-
-  // useEffect(() => {
-  //   if (mutation.isSuccess) {
-  //     updateData();
-  //   }
-  // }, [mutation.isSuccess, queryClient, company, updateData]);
 
   const modalStyles = useMemo(() => {
     if (isSm) {
@@ -202,6 +204,20 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
       },
     };
   }, [isSm, isMd, isLg]);
+
+  if (companyData?.isLoading || companies?.isLoading) {
+    return <Spinner />;
+  }
+
+  if (companyData?.isError || companies?.isError) {
+    return (
+      <div>
+        An error occurred, please refresh the page try again
+        <br />
+        If the problem persists, please contact the administrator for assistance
+      </div>
+    );
+  }
 
   return (
     <Box>

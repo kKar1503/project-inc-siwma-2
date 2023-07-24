@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Company } from '@/utils/api/client/zod/companies';
 import { useQuery } from 'react-query';
 import fetchCompanies from '@/middlewares/company-management/fetchCompanies';
+import Spinner from '@/components/fallbacks/Spinner';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import CompanyTable from './companyTable';
@@ -14,7 +15,7 @@ export type CompanyManagementProps = {
 };
 
 const useGetCompaniesQuery = (lastIdPointer?: number, limit?: number) => {
-  const { data } = useQuery(
+  const { data, error, isError, isLoading } = useQuery(
     ['companies', lastIdPointer, limit],
     async () => fetchCompanies(lastIdPointer, limit),
     {
@@ -23,12 +24,12 @@ const useGetCompaniesQuery = (lastIdPointer?: number, limit?: number) => {
     }
   );
 
-  return data;
+  return { data, error, isError, isLoading };
 };
 
 const CompanyManagement = () => {
   const companies = useGetCompaniesQuery();
-  const count = companies?.count;
+  const count = companies.data?.count;
   const [companiesData, setCompaniesData] = useState<CompanyManagementProps>();
 
   const handleCompaniesChange = async (companies: CompanyManagementProps) => {
@@ -36,8 +37,8 @@ const CompanyManagement = () => {
   };
 
   useEffect(() => {
-    if (companies) {
-      handleCompaniesChange(companies);
+    if (companies.data) {
+      handleCompaniesChange(companies.data);
     }
   }, [companies]);
 
@@ -48,6 +49,20 @@ const CompanyManagement = () => {
       handleCompaniesChange(updatedCompanies);
     }
   };
+
+  if (companies?.isLoading) {
+    return <Spinner />;
+  }
+
+  if (companies?.isError) {
+    return (
+      <div>
+        An error occurred, please refresh the page try again
+        <br />
+        If the problem persists, please contact the administrator for assistance
+      </div>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ my: 2 }}>
