@@ -145,8 +145,12 @@ const ParameterTable = () => {
 
   const handleEditRow = (row: BaseTableData) => {
     const { id } = row;
-    const editUrl = `parameter/${id}/edit-parameter`;
+    const editUrl = `parameters/${id}/edit-parameter`;
     router.push(editUrl);
+  };
+
+  const handleCreateParameter = () => {
+    router.push(`parameters/create-parameter`);
   };
 
   const tableStyle = useMemo(() => {
@@ -210,14 +214,13 @@ const ParameterTable = () => {
             justifyContent: 'flex-end',
           }}
         >
-          <Link href="/parameter/create-parameter">
-            <Button
-              variant="contained"
-              sx={({ palette, spacing }) => ({ bgcolor: palette.primary[400], mb: spacing(1) })}
-            >
-              Create Parameter
-            </Button>
-          </Link>
+          <Button
+            variant="contained"
+            sx={({ palette, spacing }) => ({ bgcolor: palette.primary[400], mb: spacing(1) })}
+            onClick={handleCreateParameter}
+          >
+            Create Parameter
+          </Button>
         </Box>
         <BaseTable
           heading="Parameters"
