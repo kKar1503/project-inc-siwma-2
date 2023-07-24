@@ -58,6 +58,11 @@ const ShareFunctionPage = () => {
         boxStyle: {
           gap: spacing(3),
         },
+        scrollBox: {
+          height: '60vh',
+          overflow: 'auto',
+          width: '100%',
+        },
       };
     }
     if (isLg) {
@@ -70,6 +75,11 @@ const ShareFunctionPage = () => {
           display: 'flex',
           gap: spacing(3),
         },
+        scrollBox: {
+          height: '80vh',
+          overflow: 'auto',
+          width: '100%',
+        },
       };
     }
     return {
@@ -81,17 +91,21 @@ const ShareFunctionPage = () => {
         display: 'flex',
         gap: spacing(3),
       },
+      scrollBox: {
+        height: '80vh',
+        overflow: 'auto',
+        width: '100%',
+      },
     };
   }, [isSm, isMd, isLg]);
+  
   return (
     <main>
       <Box sx={spaceStyle.outerSpace}>
-        <Box
-          sx={spaceStyle.boxStyle}
-        >
+        <Box sx={spaceStyle.boxStyle}>
           {userDetails && <ProfileDetailCard data={userDetails} />}
           {/* map listing cards based on listing Ids */}
-          <Box sx={{ height: '70vh', overflow: 'auto', width: '100%' }}>
+          <Box sx={spaceStyle.scrollBox}>
             {listingIds?.map((id) => (
               <ListingCard key={id} listingId={id} />
             ))}

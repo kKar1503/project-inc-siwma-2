@@ -36,11 +36,11 @@ const ListingBadge = ({ type }: ListingBadgeProps) => {
   return (
     <Chip
       sx={({ palette }) => ({
-        // mr: spacing(1),
         bgcolor: getBadgeColor(palette),
         fontWeight: 'bold',
         color: palette.common.white,
-        height: isSm ? 24 : undefined,
+        height: isSm ? 24 : 34,
+        width: isSm ? 54 : 64,
       })}
       label={t(listingTypeMap[type])}
     />
