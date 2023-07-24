@@ -4,6 +4,7 @@ import { z } from 'zod';
 // -- Define properties -- //
 const id = z.string();
 const productId = z.string();
+const name = z.string().optional();
 const price = z.number();
 const quantity = z.number();
 const negotiable = z.boolean();
@@ -43,6 +44,7 @@ const purchased = z.boolean();
 const listing = z.object({
   id,
   productId,
+  name,
   price,
   quantity,
   negotiable,
