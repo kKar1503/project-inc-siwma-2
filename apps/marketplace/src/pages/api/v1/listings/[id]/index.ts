@@ -88,11 +88,9 @@ export default apiHandler()
     };
     // Return the result
 
-    const response = await formatSingleListingResponse(
-      completeListing,
-      userId,
-      queryParams.includeParameters
-    );
+    const response = await formatSingleListingResponse(completeListing, userId, {
+      ...queryParams,
+    });
 
     res.status(200).json(formatAPIResponse(response));
   })
@@ -115,10 +113,10 @@ export default apiHandler()
     // Validate the request body
     const data = listingSchema.put.body.parse(req.body);
 
-    if (data.listingItemId) {
+    if (data.productId) {
       // Check if the listing item exists
       const listingItem = await PrismaClient.listingItem.findUnique({
-        where: { id: data.listingItemId },
+        where: { id: data.productId },
       });
 
       if (!listingItem) {
@@ -126,7 +124,7 @@ export default apiHandler()
       }
 
       // Remove old parameters if the listingItemId has changed
-      if (data.listingItemId !== listing.listingItemId) {
+      if (data.productId !== listing.listingItemId) {
         await PrismaClient.listingsParametersValue.deleteMany({
           where: {
             listingId: id,
@@ -137,7 +135,7 @@ export default apiHandler()
 
     // Get valid parameters for the listing's category
     const validParameters = await getValidParametersForCategory(
-      data.listingItemId || listing.listingItemId
+      data.productId || listing.listingItemId
     );
 
     // Check that each paramId is a valid parameter for the category
@@ -153,7 +151,7 @@ export default apiHandler()
     const updatedListing = await PrismaClient.listing.update({
       where: { id },
       data: {
-        listingItemId: data.listingItemId,
+        listingItemId: data.productId,
         quantity: data.quantity,
         price: data.price,
         negotiable: data.negotiable,
@@ -239,13 +237,13 @@ export default apiHandler()
       handleBookmarks(UpdateType.RESTOCKED, listing);
     }
 
-    res
-      .status(200)
-      .json(
-        formatAPIResponse(
-          await formatSingleListingResponse(completeListing, userId, queryParams.includeParameters)
-        )
-      );
+    res.status(200).json(
+      formatAPIResponse(
+        await formatSingleListingResponse(completeListing, userId, {
+          ...queryParams,
+        })
+      )
+    );
   })
   .delete(async (req, res) => {
     const id = parseListingId(req.query.id as string);
