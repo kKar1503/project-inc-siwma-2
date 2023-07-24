@@ -27,12 +27,13 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
 
   // Throw error if advertisement not found
   if (!advertisement) throw new NotFoundError(`advertisement`);
-  const { companyId, ...advertisementContent } = advertisement;
+  const { companyId,  ...advertisementContent } = advertisement;
 
   // Return advertisement
   res.status(200).json(
     formatAPIResponse({
       ...advertisementContent,
+      id: id.toString(),
       companyId: companyId.toString(),
     })
   );
@@ -75,7 +76,13 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   // Return advertisement
-  res.status(201).json(formatAPIResponse(updated));
+  res.status(201).json(
+    formatAPIResponse({
+      ...updated,
+      id: id.toString(),
+      companyId: updated.companyId.toString(),
+    })
+  );
 };
 
 const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
