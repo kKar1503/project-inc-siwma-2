@@ -32,7 +32,7 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
-import fetchUser from '@/middlewares/fetchUser';
+import useUser from '@/middlewares/fetchUser';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useResponsiveness } from '@inc/ui';
@@ -143,7 +143,7 @@ const AdminSideBar = () => {
       error: userError,
       isError: isUserError,
       isFetched: isUserFetched,
-    } = fetchUser(loggedUserUuid);
+    } = useUser(loggedUserUuid);
 
   // function that fetches the user info from backend
   function getUserInfo() {
