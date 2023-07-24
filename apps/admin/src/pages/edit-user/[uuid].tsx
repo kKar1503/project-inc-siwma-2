@@ -57,7 +57,7 @@ const EditUser = () => {
       >
         <Box>
           <Typography variant="h5">Edit User</Typography>
-          <Typography variant="h6">Edit user details manullay below</Typography>
+          <Typography variant="h6">Edit user details manually below</Typography>
         </Box>
         {(isXs || isSm) && (
           <Button

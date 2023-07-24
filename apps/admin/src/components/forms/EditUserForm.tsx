@@ -383,7 +383,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextInput
-                label="Confrim Password"
+                label="Confirm Password"
                 placeholder="Confirm Password"
                 register={register}
                 field="oldPassword"
