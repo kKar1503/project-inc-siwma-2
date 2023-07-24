@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 // ** Next Imports
 import { useSession } from 'next-auth/react';
@@ -15,6 +15,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Grid from '@mui/material/Grid';
 import ChatIcon from '@mui/icons-material/Chat';
 import IconButton from '@mui/material/IconButton';
+import { useTheme } from '@mui/material/styles';
 
 // ** HooksImports
 import { useQuery } from 'react-query';
@@ -33,6 +34,7 @@ import fetchUser from '@/middlewares/fetchUser';
 import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
 
 // ** Custom Components Imports
+import { useResponsiveness } from '@inc/ui';
 import S3BoxImage from './S3BoxImage';
 import ListingBadge from './listing/ListingBadge';
 
@@ -111,6 +113,67 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
 
   const paramNames = useFetchParamNamesQuery(listingParamNames);
 
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const theme = useTheme();
+  const { spacing, typography, palette } = theme;
+
+  const cardStyle = useMemo(() => {
+    if (isSm || isMd) {
+      return {
+        title: {
+          fontSize: typography.subtitle1,
+          fontWeight: 'bold',
+        },
+        subtitle: {
+          fontSize: typography.subtitle2,
+        },
+        name: {
+          fontSize: typography.subtitle2,
+        },
+      };
+    }
+    if (isMd) {
+      return {
+        title: {
+          fontSize: typography.h6,
+          fontWeight: 'bold',
+        },
+        subtitle: {
+          fontSize: typography.subtitle1,
+        },
+        name: {
+          fontSize: typography.subtitle1,
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        title: {
+          fontSize: typography.h5,
+          fontWeight: 'bold',
+        },
+        subtitle: {
+          fontSize: typography.h5,
+        },
+        name: {
+          fontSize: typography.h6,
+        },
+      };
+    }
+    return {
+      title: {
+        fontSize: typography.h5,
+        fontWeight: 'bold',
+      },
+      subtitle: {
+        fontSize: typography.h5,
+      },
+      name: {
+        fontSize: typography.h6,
+      },
+    };
+  }, [isSm, isMd, isLg]);
+
   return (
     <Paper
       sx={({ spacing, shape }) => ({
@@ -123,13 +186,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
     >
       <Box sx={{ alignItems: 'center', display: 'flex' }}>
         <Box sx={{ flexGrow: 1, alignItems: 'center', display: 'flex' }}>
-          <Typography
-            sx={({ typography, spacing }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'bold',
-              mr: spacing(2),
-            })}
-          >
+          <Typography sx={cardStyle.title} mr={spacing(2)}>
             {listingDetails?.name}
           </Typography>
           {listingDetails?.type === 'BUY' && <ListingBadge type="buy" />}
@@ -140,7 +197,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
           <IconButton onClick={handleBookmarkListing} sx={{ color: '#FFB743' }}>
             {isBookmarked ? (
               <BookmarkIcon
-                fontSize="large"
+                fontSize={isSm ? 'medium' : 'large'}
                 sx={({ palette }) => ({
                   color: palette.warning[100],
                 })}
@@ -150,7 +207,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
                 sx={({ palette }) => ({
                   color: palette.common.black,
                 })}
-                fontSize="large"
+                fontSize={isSm ? 'medium' : 'large'}
               />
             )}
           </IconButton>
@@ -162,27 +219,17 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
               color: palette.common.black,
             })}
           >
-            <ChatIcon fontSize="large" />
+            <ChatIcon fontSize={isSm ? 'medium' : 'large'} />
           </IconButton>
         </Box>
       </Box>
 
-      <Typography
-        sx={({ typography, spacing }) => ({
-          fontSize: typography.h5,
-          my: spacing(2),
-        })}
-      >
+      <Typography my={spacing(2)} sx={cardStyle.subtitle}>
         ${listingDetails?.price}/{listingDetails?.unit}
       </Typography>
       <Box display="flex" alignItems="center">
         <Avatar />
-        <Typography
-          sx={({ spacing, typography }) => ({
-            ml: spacing(2),
-            fontSize: typography.h5,
-          })}
-        >
+        <Typography ml={spacing(2)} sx={cardStyle.subtitle}>
           {listingDetails?.owner.company.name}
         </Typography>
       </Box>
@@ -204,31 +251,14 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         })}
       >
         <Grid item>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'bold',
-            })}
-          >
-            Quantity
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
+          <Typography sx={cardStyle.title}>Quantity</Typography>
+          <Typography sx={cardStyle.name}>
             {listingDetails?.quantity}
             {listingDetails?.unit}
           </Typography>
         </Grid>
       </Grid>
-      <Typography
-        sx={({ spacing, typography }) => ({
-          fontSize: typography.h5,
-          fontWeight: 'bold',
-          mt: spacing(2),
-        })}
-      >
+      <Typography mt={spacing(2)} sx={cardStyle.title}>
         Dimensions (mm)
       </Typography>
       <Grid
@@ -243,42 +273,28 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
       >
         {listingDetails?.parameters?.map((id) => (
           <Grid item>
-            <Typography
-              sx={({ typography, palette }) => ({
-                fontSize: typography.h6,
-                color: palette.grey[500],
-              })}
-            >
-              {paramNames?.find((param) => param.id === id.paramId)?.name}
+            <Typography color={palette.grey[500]} sx={cardStyle.name}>
+              {paramNames?.find((param: { id: string }) => param.id === id.paramId)?.name}
             </Typography>
-            <Typography
-              sx={({ typography }) => ({
-                fontSize: typography.h6,
-              })}
-            >
-              {id.value}
-            </Typography>
+            <Typography sx={cardStyle.name}>{id.value}</Typography>
           </Grid>
         ))}
       </Grid>
-      <Typography
-        sx={({ spacing, typography }) => ({
-          fontSize: typography.h5,
-          fontWeight: 'bold',
-          my: spacing(2),
-        })}
-      >
+      <Typography my={spacing(2)} sx={cardStyle.title}>
         Cross Section
       </Typography>
       <Box>
         {/* throws error without the empty string */}
-        <S3BoxImage src={categoryDetails?.crossSectionImage || ''} />
+        <S3BoxImage
+          src={categoryDetails?.crossSectionImage || ''}
+          sx={{ objectFit: 'cover', width: '250px' }}
+        />
       </Box>
       <Grid
         container
         spacing={5}
         rowSpacing={1}
-        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        columnSpacing={{ xs: 3, sm: 4, md: 5 }}
         sx={({ spacing }) => ({
           display: 'flex',
           flexDirection: 'row',
@@ -286,89 +302,30 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         })}
       >
         <Grid item>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'bold',
-            })}
-          >
+          <Typography sx={cardStyle.title}>
             {/* no metal grade column? */}
             Metal Grade
           </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            S233
-          </Typography>
+          <Typography sx={cardStyle.name}>S233</Typography>
         </Grid>
         <Grid item>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'bold',
-            })}
-          >
+          <Typography sx={cardStyle.title}>
             {/* no certification column? */}
             Certification
           </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            Example Cert
-          </Typography>
+          <Typography sx={cardStyle.name}>Example Cert</Typography>
         </Grid>
         <Grid item>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'bold',
-            })}
-          >
-            Negotiable
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            {listingDetails?.negotiable ? 'Yes' : 'No'}
-          </Typography>
+          <Typography sx={cardStyle.title}>Negotiable</Typography>
+          <Typography sx={cardStyle.name}>{listingDetails?.negotiable ? 'Yes' : 'No'}</Typography>
         </Grid>
         <Grid item>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'bold',
-            })}
-          >
-            Category
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
-            {categoryDetails?.name}
-          </Typography>
+          <Typography sx={cardStyle.title}>Category</Typography>
+          <Typography sx={cardStyle.name}>{categoryDetails?.name}</Typography>
         </Grid>
         <Grid item>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h5,
-              fontWeight: 'bold',
-            })}
-          >
-            Posted on
-          </Typography>
-          <Typography
-            sx={({ typography }) => ({
-              fontSize: typography.h6,
-            })}
-          >
+          <Typography sx={cardStyle.title}>Posted on</Typography>
+          <Typography sx={cardStyle.name}>
             {listingDetails &&
               DateTime.fromISO(listingDetails.createdAt).toRelative({ locale: 'en-SG' })}
           </Typography>

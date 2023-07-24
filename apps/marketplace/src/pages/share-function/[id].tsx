@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 // ** Next Imports
 import { useRouter } from 'next/router';
@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 // ** MUI Imports
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
 
 // ** Custom Components Imports
 import ListingCard from '@/components/ListingCard';
@@ -19,6 +20,9 @@ import { useQuery } from 'react-query';
 
 // ** Middlewares
 import fetchCompany from '@/middlewares/fetchCompany';
+
+// ** Packages
+import { useResponsiveness } from '@inc/ui';
 
 const useGetUser = (userUuid: string) => {
   const { data } = useQuery('userData', async () => fetchCompany(userUuid), {
@@ -35,24 +39,55 @@ const ShareFunctionPage = () => {
   const [openShare, setOpenShare] = useState(false);
   const loggedUserUuid = useSession().data?.user.id as string;
   const userDetails = useGetUser(loggedUserUuid);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const theme = useTheme();
+  const { spacing } = theme;
   let listingIds;
 
   if (router.query.id) {
     listingIds = splitString(router.query.id as string);
   }
+
+  const spaceStyle = useMemo(() => {
+    if (isSm || isMd) {
+      return {
+        outerSpace: {
+          px: spacing(2),
+          mt: spacing(1),
+        },
+        boxStyle: {
+          gap: spacing(3),
+        },
+      };
+    }
+    if (isLg) {
+      return {
+        outerSpace: {
+          px: spacing(3),
+          mt: spacing(1),
+        },
+        boxStyle: {
+          display: 'flex',
+          gap: spacing(3),
+        },
+      };
+    }
+    return {
+      outerSpace: {
+        px: spacing(3),
+        mt: spacing(1),
+      },
+      boxStyle: {
+        display: 'flex',
+        gap: spacing(3),
+      },
+    };
+  }, [isSm, isMd, isLg]);
   return (
     <main>
-      <Box
-        sx={({ spacing }) => ({
-          px: spacing(5),
-          mt: spacing(2),
-        })}
-      >
+      <Box sx={spaceStyle.outerSpace}>
         <Box
-          sx={({ spacing }) => ({
-            display: 'flex',
-            gap: spacing(3),
-          })}
+          sx={spaceStyle.boxStyle}
         >
           {userDetails && <ProfileDetailCard data={userDetails} />}
           {/* map listing cards based on listing Ids */}
