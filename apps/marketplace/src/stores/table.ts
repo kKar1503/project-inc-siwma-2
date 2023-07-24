@@ -3,7 +3,11 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 // ** Types Imports
-import type { Pagination } from '@/utils/api/server/zod/listingTable';
+import type {
+  Pagination,
+  TSortableDirection,
+  TSortableField,
+} from '@/utils/api/server/zod/listingTable';
 
 export type TableMode = 'NORMAL' | 'SEARCH' | 'CATEGORY';
 export type TableDisplayLimit = 10 | 25 | 50;
@@ -12,6 +16,8 @@ export interface TableStates {
   mode: TableMode;
   searchString: string;
   categoryId: string;
+  sortBy: TSortableField;
+  sortDirection: TSortableDirection;
   page: number;
   nextPage: number | null;
   prevPage: number | null;
@@ -28,6 +34,8 @@ export interface TableActions {
   setCategoryMode: () => void;
   setSearchString: (value: string) => void;
   setCategoryId: (value: string) => void;
+  setSortBy: (value: TSortableField) => void;
+  setSortDirection: (value: TSortableDirection) => void;
   setPagination: (paginationData: Pagination) => void;
   addSelected: (listingId: number) => void;
   addManySelected: (listingIds: number[]) => void;
@@ -39,6 +47,8 @@ const initialState: TableStates = {
   mode: 'NORMAL',
   searchString: '',
   categoryId: '',
+  sortBy: 'createdAt',
+  sortDirection: 'desc',
   page: 0,
   nextPage: null,
   prevPage: null,
@@ -83,6 +93,16 @@ const useTableStore = create<TableStates & TableActions>()(
           categoryId,
         });
       },
+      setSortBy: (sortBy) => {
+        set({
+          sortBy,
+        });
+      },
+      setSortDirection: (sortDirection) => {
+        set({
+          sortDirection,
+        });
+      },
       setPagination: (pagination) => {
         const { limit, ...rest } = pagination;
         const paginationData: Partial<TableStates> = { ...rest };
@@ -120,3 +140,52 @@ const useTableStore = create<TableStates & TableActions>()(
 );
 
 export default useTableStore;
+
+export const useTableMode = () =>
+  useTableStore((state) => {
+    const { mode, setNormalMode, setCategoryMode, setSearchMode } = state;
+    const tableActions = {
+      setNormalMode,
+      setCategoryMode,
+      setSearchMode,
+    };
+    return [mode, tableActions] as [typeof mode, typeof tableActions];
+  });
+
+export const useTableStates = () =>
+  useTableStore((state) => {
+    const { searchString, categoryId, setSearchString, setCategoryId } = state;
+    const tableStates = { searchString, categoryId };
+    const tableActions = {
+      setSearchString,
+      setCategoryId,
+    };
+    return [tableStates, tableActions] as [typeof tableStates, typeof tableActions];
+  });
+
+export const useTablePagination = () =>
+  useTableStore((state) => {
+    const { page, nextPage, prevPage, limit, totalPage, totalCount, setPagination } = state;
+
+    const paginationStates = { page, nextPage, prevPage, limit, totalPage, totalCount };
+
+    return [paginationStates, setPagination] as [typeof paginationStates, typeof setPagination];
+  });
+
+export const useTableSelection = () =>
+  useTableStore((state) => {
+    const { selected, addSelected, addManySelected, removeSelected, clearSelected } = state;
+
+    const selectionActions = { addSelected, addManySelected, removeSelected, clearSelected };
+
+    return [selected, selectionActions] as [typeof selected, typeof selectionActions];
+  });
+
+export const useTableSort = () =>
+  useTableStore((state) => {
+    const { sortBy, setSortBy, sortDirection, setSortDirection } = state;
+    const sortStates = { sortBy, sortDirection };
+    const sortActions = { setSortBy, setSortDirection };
+
+    return [sortStates, sortActions] as [typeof sortStates, typeof sortActions];
+  });
