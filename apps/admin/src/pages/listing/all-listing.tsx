@@ -24,7 +24,7 @@ const AllListings = () => {
     {
       queryKey: ['listings', lastIdPointer],
       queryFn: async () => {
-        const data = await fetchListings({ lastIdPointer, limit: rowsPerPage });
+        const data = await fetchListings({ lastIdPointer, limit: rowsPerPage, includeName: true });
         console.log(data.totalCount);
         totalCount.current = data.totalCount;
         return data;
@@ -96,7 +96,15 @@ const AllListings = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', paddingX: 2 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        paddingX: 2,
+      }}
+    >
       <AllListingsTable
         data={listings || []}
         onDelete={handleDeleteListings}
@@ -108,7 +116,7 @@ const AllListings = () => {
         rowsPerPage={rowsPerPage}
         page={currPage}
       />
-       <SuccessModal
+      <SuccessModal
         title="Successfully Deleted!"
         content="Selected listing(s) have been successfully deleted"
         open={deleteListing}

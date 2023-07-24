@@ -54,7 +54,7 @@ const parsedListingsData = (listings: Listing[]) => {
   listings.forEach((listing) => {
     rows.push({
       id: listing.id,
-      listingName: listing.name,
+      listingName: listing.name || 'Unamed Product',
       price: listing.price,
       quantity: listing.quantity,
       type: listing.type,
