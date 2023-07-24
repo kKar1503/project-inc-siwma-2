@@ -358,6 +358,7 @@ const AdminSideBar = () => {
             {item.dropdown.map((subitem) => (
               <ListItemButton
                 key={subitem.name}
+                href={subitem.link}
                 onClick={() => handleClick(subitem.link)}
                 sx={{
                   backgroundColor: isCurrentSubRoute(subitem.link)
@@ -367,7 +368,7 @@ const AdminSideBar = () => {
                   display: 'flex',
                   alignItems: 'center',
                   textDecoration: 'none', 
-                  color: 'inherit', 
+                  color: 'inherit',   
                 }}
               >
                 <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
