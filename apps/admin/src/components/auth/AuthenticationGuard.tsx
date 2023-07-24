@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 
 // AuthenticationGuard Props
 export interface AuthenticationGuardProps {
@@ -25,8 +25,7 @@ const AuthenticationGuard = ({
   // We want to ensure that the user object is derived from a single source (The context),
   // so if the useUser() hook were to change, there won't be any unexpected issues
 
-  const { status } = useSession();
-  console.log({ status });
+  const { status, data } = useSession();
 
   // Everyone is allowed
   if (allowAuthenticated && allowNonAuthenticated) {
@@ -45,6 +44,17 @@ const AuthenticationGuard = ({
 
   // If we don't allow non-authenticated users, and the user is not authenticated, we return the fallback
   if (!allowNonAuthenticated && status === 'unauthenticated') {
+    return disallowNonAuthenticatedFallback ?? null;
+  }
+
+  // Check if the user is logged in and an admin
+  if (status === 'authenticated' && data?.user.permissions !== 1) {
+    // The user is not an admin
+    // Log them out and redirect them to the login page
+    signOut().then(() => {
+      window.location.href = `/login`;
+    });
+
     return disallowNonAuthenticatedFallback ?? null;
   }
 
