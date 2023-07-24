@@ -106,11 +106,10 @@ const BaseTable = (props: BaseTableProps) => {
     setSelected(result);
   };
 
-  const isSelected = (row: BaseTableData) => selected.indexOf(row) !== -1;
+  const isSelected = (row: BaseTableData) => selected.find((e) => e.id === row.id) !== undefined;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? rowsPerPage - rows.length : 0;
-  console.log({ emptyRows });
 
   return (
     <Box width="100%" height="100%">
