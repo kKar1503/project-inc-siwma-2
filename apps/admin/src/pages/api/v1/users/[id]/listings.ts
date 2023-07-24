@@ -89,7 +89,9 @@ export default apiHandler().get(async (req, res) => {
   // Format the listings
   const formattedListings = await Promise.all(
     sortedListings.map((listing) =>
-      formatSingleListingResponse(listing, requester, queryParams.includeParameters)
+      formatSingleListingResponse(listing, requester, {
+        ...queryParams,
+      })
     )
   );
 
