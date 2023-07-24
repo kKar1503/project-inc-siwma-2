@@ -5,50 +5,26 @@ import TopCompanies from '@/components/dataAnalytics/topCompanies';
 import TopCompaniesBuySell from '@/components/dataAnalytics/topCompaniesBuySell';
 import ActiveCategories from '@/components/dataAnalytics/activeCategories';
 import LineGraph from '@/components/dataAnalytics/lineGraph';
-import { useQueries, useQuery, UseQueryResult } from 'react-query';
+import { useQueries, UseQueryResult } from 'react-query';
 import fetchCategories from '@/services/categories/fetchCategories';
-import { CategoryResponseBody, CompanyResponseBody, Listing } from '@/utils/api/client/zod';
-import { useEffect, useMemo, useState } from 'react';
-import fetchCompanies from '@/services/companies/fetchCompanies';
+import { CategoryResponseBody } from '@/utils/api/client/zod';
+import { useMemo, useState } from 'react';
 import fetchListings from '@/services/listings/fetchListings';
-import SpinnerPage from '@/components/fallbacks/SpinnerPage';
+import DataStream from '@/hooks/DataStream';
 
-const numberPerFetch = 10;
-const ListingStream = (callback: (listings: Listing[]) => void) => {
-  const [index, setIndex] = useState<number>(0);
-  const listingQuery = useQuery(['listing', index], () => fetchListings({ lastListingId: index }), {
-    enabled: index !== -1,
-  });
 
-  useEffect(() => {
-    if (!listingQuery.isFetched || !listingQuery.isSuccess) return;
-    callback(listingQuery.data.listings);
-    const nextIndex = index + numberPerFetch;
-    setIndex((nextIndex >= listingQuery.data.totalCount) ? -1 : nextIndex);
-  }, [callback, index, listingQuery.isFetched, listingQuery.data, listingQuery.isSuccess]);
-
-  return {
-    isComplete: index === -1,
-  };
-};
-const mapData = (categories: UseQueryResult<CategoryResponseBody[]>, companies: UseQueryResult<CompanyResponseBody[]>) => {
+const mapData = (categories: UseQueryResult<CategoryResponseBody[]>) => {
   const activeCategories = categories.data?.filter(i => i.active).map((item) => ({
     category: item.name,
     value: item.id,
   })) || [];
   const topBuyingCategories = [18, 33, 12, 12, 25, 14, 12, 33];
   const topSellingCategories = [18, 33, 12, 12, 25, 14, 12, 33];
-  const topCompanies = [18 + 33, 12 + 12, 25 + 14, 12 + 33];
-  const topCompaniesBuySell = [18, 33, 12, 12, 25, 14, 12, 33];
   const buyingSellingData = [
-    { month: 1, value: 1, isBuying: true },
-    { month: 1, value: 2, isBuying: false },
-    { month: 2, value: 3, isBuying: true },
-    { month: 2, value: 1, isBuying: false },
-    { month: 3, value: 5, isBuying: true },
-    { month: 3, value: 4, isBuying: false },
-    { month: 4, value: 4, isBuying: true },
-    { month: 4, value: 1, isBuying: false },
+    { month: 1, value: 1, isBuying: true },    { month: 1, value: 2, isBuying: false },
+    { month: 2, value: 3, isBuying: true },    { month: 2, value: 1, isBuying: false },
+    { month: 3, value: 5, isBuying: true },    { month: 3, value: 4, isBuying: false },
+    { month: 4, value: 4, isBuying: true },    { month: 4, value: 1, isBuying: false },
     { month: 5, value: 6, isBuying: true },
     { month: 5, value: 13, isBuying: false },
     { month: 6, value: 2, isBuying: true },
@@ -66,7 +42,7 @@ const mapData = (categories: UseQueryResult<CategoryResponseBody[]>, companies: 
     { month: 12, value: 30, isBuying: true },
     { month: 12, value: 14, isBuying: false },
   ];
-  return { activeCategories, topBuyingCategories, topSellingCategories,buyingSellingData,topCompaniesBuySell, topCompanies };
+  return { activeCategories, topBuyingCategories, topSellingCategories,buyingSellingData };
 };
 
 const Analytics = () => {
@@ -76,17 +52,16 @@ const Analytics = () => {
   }>>(new Map());
   const [listingCategoryBin, setListingCategoryBin] = useState<Record<string, number>>({});
 
-  const [categoriesQuery, companies] = useQueries([
+  const [categoriesQuery] = useQueries([
     { queryKey: 'categories', queryFn: () => fetchCategories() },
-    { queryKey: 'companies', queryFn: () => fetchCompanies() },
   ]);
 
 
-  const listingQuery = ListingStream((listings) => {
-    console.log(listings);
+  const listingQuery = DataStream('listings', fetchListings, (data, nextIndex) => {
+    console.log(data);
     const listingCompanyBinLocal = listingCompanyBin;
     const listingCategoryBinLocal = listingCategoryBin;
-    listings.forEach(listing => {
+    data.listings.forEach(listing => {
       // company stuff
       const { company } = listing.owner;
       const buySell = listingCompanyBinLocal.get(company.name) || { buying: 0, selling: 0 };
@@ -97,6 +72,7 @@ const Analytics = () => {
         buySell.selling++;
       }
       listingCompanyBinLocal.set(company.name, buySell);
+
       // category stuff
       // const { company } = listing.owner;
       // const buySell = listingCompanyBinLocal.get(company.id) || { buying: 0, selling: 0 };
@@ -110,6 +86,8 @@ const Analytics = () => {
     });
     setListingCompanyBin(listingCompanyBinLocal);
     setListingCategoryBin(listingCategoryBinLocal);
+
+    return nextIndex < data.totalCount;
   });
 
 
@@ -118,13 +96,7 @@ const Analytics = () => {
     topBuyingCategories,
     topSellingCategories,
     buyingSellingData,
-  } = useMemo(() => mapData(categoriesQuery, companies), [categoriesQuery, companies]);
-
-  if (!listingQuery.isComplete || !categoriesQuery.isSuccess) {
-    return <SpinnerPage />;
-  }
-
-
+  } = useMemo(() => mapData(categoriesQuery), [categoriesQuery]);
 
   const topCompanies: Array<{ name: string, buying: number, selling: number, total: number }> = [];
   listingCompanyBin.forEach(({ buying, selling }, name) => {
