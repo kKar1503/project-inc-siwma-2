@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import fetchCategoryById from '@/middlewares/fetchCategoryById';
 import updateCategoryData from '@/middlewares/updateCategories';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useResponsiveness } from '@inc/ui';
 
 export type EditCategoryProps = {
   data: CategoryResponseBody[];
@@ -19,8 +20,8 @@ export type EditCategoryProps = {
 type PutCategoryRequestBody = {
   name: string;
   description: string;
-  image?: string;
-  crossSectionImage?: string;
+  image?: File;
+  crossSectionImage?: File;
   parameters?: { parameterId: number; required: boolean }[];
 };
 
@@ -31,12 +32,14 @@ const useGetCategoryQuery = (catId: string) => {
   return data;
 };
 
-const useUpdateUserMutation = (userUuid: string, categoryImage?: File) =>
+const useUpdateUserMutation = (userUuid: string, image?: File, crossSectionImage?: File) =>
   useMutation((updatedUserData: PutCategoryRequestBody) =>
-    updateCategoryData(updatedUserData, userUuid, categoryImage)
+    updateCategoryData(updatedUserData, userUuid, image, crossSectionImage)
   );
 
+
 const EditCategory = () => {
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const router = useRouter();
   const id = router.query.id as string;
   const queryClient = useQueryClient();
@@ -72,14 +75,20 @@ const EditCategory = () => {
     setCategoryDescription(event.target.value);
   };
 
-  const mutation = useUpdateUserMutation(id, selectedCatFile ?? undefined);
+  // const mutation = useUpdateUserMutation(id, selectedCatFile ?? undefined);
+  const mutation = useUpdateUserMutation(
+    id,
+    selectedCatFile ?? undefined,
+    selectedCrossSectionFile ?? undefined
+  );
+
 
   const handleConfirmClick = () => {
     const requestBody: PutCategoryRequestBody = {
       name: categoryName,
       description: categoryDescription,
-      image: '', 
-      crossSectionImage: '', 
+      image: selectedCatFile ?? undefined, 
+      crossSectionImage: selectedCrossSectionFile ?? undefined, 
       parameters: [], 
     };
 
@@ -104,7 +113,7 @@ const EditCategory = () => {
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
-      <Card sx={{ width: '80%', mt: 3 }}>
+      <Card sx={{ width: '95%', mt: isSm ? 1 : 3 }}>
         <Box sx={{ ml: 3, mt: 2 }}>
           <Typography variant="h6">Edit Category</Typography>
           <Typography variant="body1" gutterBottom component="div">
@@ -117,14 +126,22 @@ const EditCategory = () => {
         {/* where the details of category starts */}
         <Box sx={{ ml: 3 }}>
           <Typography variant="h6">Category Details</Typography>
-          <Box sx={{ display: 'flex', gap: '1%', mb: 2, mt: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: isSm ? 'column' : 'row',
+              gap: '2%',
+              mb: 2,
+              mt: 2,
+            }}
+          >
             <TextField
               label="Category Name"
               placeholder="Category Name"
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryNameChange}
               value={categoryName}
-              sx={{ width: '48%' }}
+              sx={{ width: isSm ? '94%' : '47%', mb: isSm ? 3 : 0 }}
             />
             <TextField
               label="Category Name (Chinese)"
@@ -132,7 +149,7 @@ const EditCategory = () => {
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryNameChineseChange}
               value={categoryNameChinese}
-              sx={{ width: '48%' }}
+              sx={{ width: isSm ? '94%' : '47%' }}
             />
           </Box>
           <Box>
@@ -142,7 +159,7 @@ const EditCategory = () => {
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryDescriptionChange}
               value={categoryDescription}
-              sx={{ width: '97%', my: 2 }}
+              sx={{ width: isSm ? '94%' : '96%', my: 2 }}
             />
           </Box>
         </Box>

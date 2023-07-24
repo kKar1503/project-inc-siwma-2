@@ -6,11 +6,64 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
-import { CategoryResponseBody } from '@/utils/api/client/zod';
+// import { CategoryResponseBody } from '@/utils/api/client/zod';
+import { PostCategoryRequestBody } from '@/utils/api/server/zod';
+import createCategories from '@/middlewares/createCategories';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { CategoriesParameters } from '@prisma/client';
+import { useResponsiveness } from '@inc/ui';
+import categories from '../api/v1/categories';
 
 export type CreateCategoryProps = {
-  data: CategoryResponseBody[];
+  name: string;
+  description: string;
+  image?: File;
+  crossSectionImage?: File;
+  parameters?: { parameterId: number; required: boolean }[];
 };
+
+// type PostCategoryRequestBody = {
+//   name: string;
+//   description: string;
+//   image?: File;
+//   crossSectionImage?: File;
+//   parameters?: { parameterId: number; required: boolean }[];
+// };
+
+// const categoryData = (data: CreateCategoryProps) =>
+//   createCategories(
+//     data.name,
+//     data.description,
+//     data.image,
+//     data.crossSectionImage,
+//     data.parameters
+//   );
+
+// const useCategoryDataQuery = (  ) => {
+//   const { data } = useQuery('category', async () => create(catId), {
+//     enabled: catId !== undefined,
+//   });
+//   return data;
+// };
+
+// write a use query for posting of category data
+// const usePostCategoryQuery = (categoryData: CreateCategoryProps) => {
+//   const { data } = useQuery(
+//     'category',
+//     async () =>
+//       createCategories(
+//         categoryData.name,
+//         categoryData.description,
+//         categoryData.image,
+//         categoryData.crossSectionImage,
+//         categoryData.parameters
+//       ),
+//     {
+//       enabled: categoryData !== undefined,
+//     }
+//   );
+//   return categoryData;
+// };
 
 const CreateCategory = () => {
   const [selectedCatFile, setSelectedCatFile] = useState<File | null>(null);
@@ -18,6 +71,25 @@ const CreateCategory = () => {
   const [categoryName, setCategoryName] = useState('');
   const [categoryNameChinese, setCategoryNameChinese] = useState('');
   const [categoryDescription, setCategoryDescription] = useState('');
+  const [categoryParameters, setCategoryParameters] = useState<CategoriesParameters[]>([]);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const queryClient = useQueryClient();
+
+const usePostCategoryMutation = useMutation((categoryData: CreateCategoryProps) =>
+  createCategories(
+    categoryData.name,
+    categoryData.description,
+    categoryData.image,
+    categoryData.crossSectionImage,
+    categoryData.parameters
+  ),
+  {
+    onSuccess: () => {
+      queryClient.invalidateQueries('category');
+    }
+  }
+);
 
   const handleCatFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -42,9 +114,22 @@ const CreateCategory = () => {
     setCategoryDescription(event.target.value);
   };
 
+  const handleConfirm = async () => {
+    const requestBody: CreateCategoryProps = {
+      name: categoryName,
+      description: categoryDescription,
+      image: selectedCatFile ?? undefined,
+      crossSectionImage: selectedCrossSectionFile ?? undefined,
+      parameters: categoryParameters,
+    };
+
+    await usePostCategoryMutation.mutateAsync(requestBody);
+    // Add any necessary logic after creating the category
+  };
+
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
-      <Card sx={{ width: '80%', mt: 3 }}>
+      <Card sx={{ width: '95%', mt: isSm ? 1 : 3 }}>
         <Box sx={{ ml: 3, mt: 2 }}>
           <Typography variant="h6">Create a Category</Typography>
           <Typography variant="body1" gutterBottom component="div">
@@ -57,14 +142,25 @@ const CreateCategory = () => {
         {/* where the details of category starts */}
         <Box sx={{ ml: 3 }}>
           <Typography variant="h6">Category Details</Typography>
-          <Box sx={{ display: 'flex', gap: '1%', mb: 2, mt: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: isSm ? 'column' : 'row',
+              gap: '2%',
+              mb: 2,
+              mt: 2,
+            }}
+          >
             <TextField
               label="Category Name"
               placeholder="Category Name"
               InputLabelProps={{ shrink: true }}
+              // InputProps={{
+              //   style: { fontSize: isSm ? '14px' : '16px' },
+              // }}
               onChange={handleCategoryNameChange}
               // value={categoryName}
-              sx={{ width: '48%' }}
+              sx={{ width: isSm ? '94%' : '47%', mb: isSm ? 3 : 0 }}
             />
             <TextField
               label="Category Name (Chinese)"
@@ -72,7 +168,7 @@ const CreateCategory = () => {
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryNameChineseChange}
               // value={categoryNameChinese}
-              sx={{ width: '48%' }}
+              sx={{ width: isSm ? '94%' : '47%' }}
             />
           </Box>
           <Box>
@@ -82,7 +178,7 @@ const CreateCategory = () => {
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryDescriptionChange}
               // value={categoryDescription}
-              sx={{ width: '97%', my: 2 }}
+              sx={{ width: isSm ? '94%' : '96%', my: 2 }}
             />
           </Box>
         </Box>
@@ -108,7 +204,7 @@ const CreateCategory = () => {
             maxHeight="200px"
           />
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', pr: 3, mb: 3 }}>
-            <Button variant="contained">
+            <Button variant="contained" onClick={handleConfirm}>
               Confirm
             </Button>
           </Box>

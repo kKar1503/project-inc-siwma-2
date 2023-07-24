@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import fetchCategories from '@/middlewares/fetchCategories';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
+import { useResponsiveness } from '@inc/ui';
 
 export type CategoryProps = {
   data: CategoryResponseBody[];
@@ -53,8 +54,20 @@ const CategoryTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
   const category = useCategoryPageQuery();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const router = useRouter();
+
+  let tableWidth = '90%';
+  if (isSm) { 
+    tableWidth = '100%';
+  } else if (isMd) {
+    tableWidth = '80%';
+  } else if (isLg) {
+    tableWidth = '80%';
+  } else {
+    tableWidth = '90%';
+  }
 
   const sortRows = (): void => {
     const rowsData: BaseTableData[] = [];
@@ -68,9 +81,18 @@ const CategoryTable = () => {
 
   const handleEdit = (row: BaseTableData) => {
     const { id } = row;
-    const editUrl = `/edit-category/${id}`;
+    const editUrl = `category/${id}/edit-category`;
     router.push(editUrl);
   };
+
+  const handleDelete = (rowsToDelete: readonly BaseTableData[]): BaseTableData[] => {
+    const idsToDelete = rowsToDelete.map((row) => row.id);
+    const newRows = rows.filter((item) => !idsToDelete.includes(item.id));
+    setRows(newRows);
+    return newRows; // Return the new rows after deletion
+  };
+
+
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -93,15 +115,16 @@ const CategoryTable = () => {
 
   return (
     <Container>
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-        <Box sx={{ width: '80%' }}>
+      <Box sx={{ mt: 3, alignItems: 'center' }}>
+        {/* <Box sx={{ width: '90%' }}> */}
+        <Box>
           <BaseTable
             heading="Categories"
             rows={pageRows}
             headers={headCells}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            onDelete={() => console.log('delete')}
+            onDelete={handleDelete}
             onEdit={handleEdit}
             onToggle={() => console.log('toggle')}
             page={page}

@@ -4,7 +4,8 @@ import categories from '@/utils/api/client/zod/categories';
 const updateCategoryData = async (
   requestBody: { name: string; description: string },
   catId: string,
-  image?: File
+  categoryImage?: File,
+  crossSectionImage?: File
 ) => {
   if (!catId) {
     return null;
@@ -12,12 +13,19 @@ const updateCategoryData = async (
 
   const response = await apiClient.put(`/v1/categories/${catId}`, requestBody);
   const parsedCategory = categories.update.parse(response.data.data[0]);
-
-  if (image) {
-    const formData = new FormData();
-    formData.append('file', image);
-    await apiClient.put(`/v1/categories/${catId}/images`, formData);
+  
+  if (categoryImage) {
+    const categoryFormData = new FormData();
+    categoryFormData.append('file', categoryImage);
+    await apiClient.put(`/v1/categories/${catId}/image`, categoryFormData);
   }
+
+  if (crossSectionImage) {
+    const crossSectionFormData = new FormData();
+    crossSectionFormData.append('file', crossSectionImage);
+    await apiClient.put(`/v1/categories/${catId}/cross-section-image`, crossSectionFormData);
+  }
+
 
   return parsedCategory;
 };
