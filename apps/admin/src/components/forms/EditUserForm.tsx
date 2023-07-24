@@ -241,7 +241,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container rowGap={1}>
+      <Grid container rowGap={1} marginTop={2}>
         <Grid item sm={12} md={4}>
           <Typography variant="body1">Profile Picture (Optional)</Typography>
           <Box
