@@ -1,6 +1,16 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { Box, SxProps, Theme } from '@mui/material';
-import Pusher from 'pusher-js';
+import Pusher, { Channel } from 'pusher-js';
+
+// ** Components Imports **
+import ChatHeader from '@/components/rtc/ChatHeader';
+import ChatSubHeader from '@/components/rtc/ChatSubHeader';
+import ChatBox from '@/components/rtc/ChatBox';
+import ChatTextBox from '@/components/rtc/ChatTextBox';
+import ChatList from '@/components/rtc/ChatList';
+
+// ** MUI Imports **
+import Box from '@mui/material/Box';
+import { SxProps, Theme } from '@mui/material/styles';
 
 // ** Types Imports **
 import type { ChatListProps } from '@/components/rtc/ChatList';
@@ -9,11 +19,13 @@ import type { Messages } from '@inc/types';
 import { useResponsiveness } from '@inc/ui';
 
 const ChatRoom = () => {
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [currentChannelId, setCurrentChannelId] = useState('');
   const [chats, setChats] = useState<ChatData[]>([]);
   const [messageToSend, setMessageToSend] = useState('');
-  const userIdRef = useRef('');
-  const roomIdRef = useRef('');
-  const userId = userIdRef.current;
+  // const userIdRef = useRef('');
+  // const roomIdRef = useRef('');
+  // const userId = userIdRef.current;
 
   // ** MUI **
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -58,8 +70,7 @@ const ChatRoom = () => {
     };
   }, [isLg, isMd, isSm]);
 
-  // Initialize Pusher
-  useEffect(() => {
+  function subscribeToChannel(channelId: string) {
     const { key, cluster } = process.env;
     if (key === undefined || cluster === undefined) {
       return;
@@ -68,19 +79,24 @@ const ChatRoom = () => {
       cluster,
     });
 
-    const channel = pusher.subscribe('chat-messages'); // TODO: Update channel name
+    setCurrentChannelId(channelId);
 
-    // Handle incoming messages and update the chat accordingly
+    const channel = pusher.subscribe(currentChannelId);
+
+    setChannels(pusher.allChannels());
+
     channel.bind('new-message', (data: Messages) => {
       setChats((chats) => [...chats, formatMessage(data)]);
     });
+  }
 
-    return () => {
-      // Unsubscribe and disconnect from Pusher when component unmounts
-      pusher.unsubscribe('chat-messages');
-      pusher.disconnect();
-    };
-  }, []);
+  useEffect(() => {
+    // Runs when the component is mounted
+    if (!currentChannelId && channels.length > 0) {
+      // If no channel is selected, select the first one in the list
+      setCurrentChannelId(channels[0].name);
+    }
+  }, [channels, currentChannelId]);
 
   // Function to send a new message through Pusher
   const sendMessage = () => {
@@ -91,8 +107,6 @@ const ChatRoom = () => {
       sender: userId,
     };
 
-    // Assuming you have an endpoint to create messages on the backend
-    // Replace 'YOUR_BACKEND_ENDPOINT' with the correct URL for creating messages
     fetch('/chat/messages', {
       method: 'POST',
       headers: {
@@ -115,7 +129,7 @@ const ChatRoom = () => {
     <Box id="chat-page" display="flex" sx={chatPageSx}>
       {/* render if isMd and isLg */}
       {/* if isSm, display chat list if roomId is '' (room not selected) */}
-      {(isMd || isLg || (isSm && roomId === '')) && (
+      {(isMd || isLg || (isSm && currentChannelId === '')) && (
         <Box
           sx={{
             width: isSm ? 1 / 1 : 1 / 3,
@@ -123,11 +137,11 @@ const ChatRoom = () => {
           }}
         >
           <ChatList
-            chats={rooms}
-            selectChat={roomId}
-            setSelectChat={(roomId) => {
-              setRoomId(roomId);
-              roomIdRef.current = roomId;
+            chats={channels}
+            selectChat={currentChannelId}
+            setSelectChat={(channelId) => {
+              setCurrentChannelId(channelId);
+              roomIdRef.current = channelId;
             }}
             onChange={(e) => {
               const element = e.currentTarget as HTMLInputElement;
@@ -137,7 +151,8 @@ const ChatRoom = () => {
         </Box>
       )}
       {/* if isSm, display  */}
-      {roomId !== '' && currentRoom !== null && (
+      {/* {roomId !== '' && currentChannelId !== null && ( */}
+      {currentChannelId !== null && (
         <Box
           id="chat-right-side-wrapper"
           sx={{
@@ -182,6 +197,6 @@ const ChatRoom = () => {
       )}
     </Box>
   );
-}
+};
 
 export default ChatRoom;
