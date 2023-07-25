@@ -1,8 +1,9 @@
+// ** Zustand Imports
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { ListingItem } from '@inc/db';
+import type { Product } from '@/utils/api/server/zod/products';
 
-export type ProductMap = Record<number, ListingItem>;
+export type ProductMap = Record<string, Product>;
 
 export interface ProductStates {
   initialized: Date | null;
@@ -11,13 +12,13 @@ export interface ProductStates {
 
 export interface ProductActions {
   resetProducts: () => void;
-  setProducts: (products: ListingItem[], initialized?: Date) => void;
-  addProduct: (product: ListingItem) => void;
-  addProducts: (products: ListingItem[]) => void;
-  removeProduct: (product: ListingItem) => void;
-  removeProducts: (products: ListingItem[]) => void;
-  removeProductById: (productId: number) => void;
-  removeProductsById: (productIds: number[]) => void;
+  setProducts: (products: Product[], initialized?: Date) => void;
+  addProduct: (product: Product) => void;
+  addProducts: (products: Product[]) => void;
+  removeProduct: (product: Product) => void;
+  removeProducts: (products: Product[]) => void;
+  removeProductById: (productId: string) => void;
+  removeProductsById: (productIds: string[]) => void;
 }
 
 const initialState: ProductStates = {
