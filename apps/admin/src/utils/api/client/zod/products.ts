@@ -3,11 +3,11 @@ import { z } from 'zod';
 // -- Define properties -- //
 const id = z.string();
 const name = z.string();
-const chineseName = z.string();
+const chineseName = z.string().nullable();
 const description = z.string();
 const categoryId = z.string();
 const unit = z.string();
-const chineseUnit = z.string();
+const chineseUnit = z.string().nullable();
 
 // -- Define listing schema -- //
 const product = z.object({
@@ -22,7 +22,7 @@ const product = z.object({
 
 // Listing items have been changed to products however it is still lisitng-items in the db
 // POST /products
-const createProduct = z.object({ productId: id });
+const createProduct = z.object({ listingItemId: id });
 
 // GET /products
 const getProducts = z.array(product);
