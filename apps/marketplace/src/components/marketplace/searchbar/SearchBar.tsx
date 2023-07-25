@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import { InstantSearch, connectSearchBox, connectHits } from 'react-instantsearch-dom';
+import {
+  InstantSearch,
+  connectSearchBox,
+  connectHits,
+  connectStateResults,
+} from 'react-instantsearch-dom';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
 const searchClient = instantMeiliSearch(
-  process.env.NEXT_PUBLIC_MEILI_URL!,
-  process.env.NEXT_PUBLIC_MEILI_MASTER_KEY
+  process.env.NEXT_PUBLIC_MEILI_URL as string,
+  process.env.NEXT_PUBLIC_MEILI_MASTER_KEY as string
 );
 
 // Debounce hook
@@ -35,9 +40,14 @@ const SearchBox = ({
   currentRefinement: string;
   refine: (s: string) => void;
 }) => {
-  const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState(currentRefinement);
   const debouncedSearchTerm = useDebounce(inputValue, 500);
+  const [loading, setLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [inputValue]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,12 +55,8 @@ const SearchBox = ({
   };
 
   useEffect(() => {
-    if (debouncedSearchTerm) {
-      refine(debouncedSearchTerm);
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
+    refine(debouncedSearchTerm);
+    setLoading(!!debouncedSearchTerm);
   }, [debouncedSearchTerm, refine]);
 
   const onSearchStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,15 +80,16 @@ const SearchBox = ({
             </InputAdornment>
           ),
           endAdornment: (
-            <React.Fragment>
+            <Box>
               {loading ? (
                 <Box display="flex" alignItems="center" sx={{ marginLeft: 1 }}>
                   {' '}
                   <CircularProgress color="inherit" size={20} />
                 </Box>
               ) : null}
-            </React.Fragment>
+            </Box>
           ),
+          inputRef
         }}
         sx={{
           position: 'absolute',
@@ -119,8 +126,9 @@ const CustomSearchBox = connectSearchBox(SearchBox);
 
 // Custom Hits widget
 interface Hit {
-  objectID: string;
+  id: string;
   name: string;
+  chineseName: string;
 }
 
 const Hits = ({ hits }: { hits: Hit[] }) => (
@@ -148,7 +156,7 @@ const Hits = ({ hits }: { hits: Hit[] }) => (
     {hits.map((hit) => (
       <Box
         component="p"
-        key={hit.objectID}
+        key={hit.id}
         sx={{
           '&:hover': {
             cursor: 'pointer',
@@ -158,7 +166,7 @@ const Hits = ({ hits }: { hits: Hit[] }) => (
           padding: '5px',
         }}
       >
-        {hit.name}
+        {`${hit.name} ${hit.chineseName}`}
       </Box>
     ))}
   </Box>
@@ -166,13 +174,24 @@ const Hits = ({ hits }: { hits: Hit[] }) => (
 
 const CustomHits = connectHits(Hits);
 
-const SearchBar = () => (
-  <InstantSearch searchClient={searchClient} indexName="listings">
-    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <CustomSearchBox />
-      <CustomHits />
-    </Box>
-  </InstantSearch>
-);
+const SearchBar = () => {
+  const [isInputEmpty, setIsInputEmpty] = useState(true);
+
+  const StateResults = connectStateResults(({ searchState }: any) => {
+    setIsInputEmpty(!searchState.query);
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <CustomSearchBox />
+        {!isInputEmpty && <CustomHits />}
+      </Box>
+    );
+  });
+
+  return (
+    <InstantSearch searchClient={searchClient} indexName="listings">
+      <StateResults />
+    </InstantSearch>
+  );
+};
 
 export default SearchBar;
