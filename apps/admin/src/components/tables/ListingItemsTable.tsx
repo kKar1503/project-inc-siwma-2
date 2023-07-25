@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import SearchBar from '@/components/SearchBar';
 import { Product } from '@/utils/api/client/zod/products';
 import Link from 'next/link';
@@ -58,13 +58,13 @@ const parsedListingItemsData = (listingItems: Product[]) => {
     const { data } = useQuery('cat', async () => fetchCategories());
     return data;
   };
-  
+
   const cat = GetCategoryPageQuery();
   listingItems.forEach((product) => {
     let catName = '';
     for (let i = 0; i < (cat?.length as number); i++) {
       if (product.categoryId === cat?.[i].id) {
-        catName = cat[i].name
+        catName = cat[i].name;
       }
     }
     rows.push({
@@ -84,31 +84,37 @@ const parsedListingItemsData = (listingItems: Product[]) => {
 const AllListingItemsTable: React.FC<ListingItemsTableProps> = ({ data, ...props }) => (
   <Box
     sx={{
-      width: '100%',
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-      borderRadius: '8px',
-      padding: 2,
-      marginY: 2,
-      backgroundColor: 'white',
+      maxHeight: '90%',
+      width: '95%',
+      margin: 'auto',
     }}
   >
-    <Typography variant="h5">Listing Items</Typography>
-    <Typography variant="body1">Management of Listing Items</Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-      <Link href="/listing/listingItemsForm">
-        <Button variant="contained">Create Listing Item</Button>
-      </Link>
-    </Box>
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-      {/* <SearchBar onSearch={handleSearch} /> */}
-    </Box>
-
     <BaseTable
       {...props}
       heading=""
       rows={parsedListingItemsData(data)}
       headers={headers}
       rowsPerPageOptions={[5, 10, 25]}
+      customHeader={
+        <Box sx={{ padding: 2, paddingTop: 3 }}>
+          <Grid container sx={{ flexGrow: 1 }}>
+            <Grid item xs={6}>
+              <Typography variant="h5">Listing Items</Typography>
+              <Typography variant="body1">Management of Listing Items</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                <Link href="/listing/listingItemsForm">
+                  <Button variant="contained">Create Listing Item</Button>
+                </Link>
+              </Box>
+            </Grid>
+          </Grid>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            {/* <SearchBar onSearch={handleSearch} /> */}
+          </Box>
+        </Box>
+      }
     />
   </Box>
 );

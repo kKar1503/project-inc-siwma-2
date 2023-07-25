@@ -121,11 +121,15 @@ const AllListingItems = () => {
   return (
     <Box
       sx={{
+        // display: 'flex',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // minHeight: '100vh',
+        // paddingX: 2,
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        paddingX: 2,
+        height: '100%',
       }}
     >
       <ListingItemsTable
