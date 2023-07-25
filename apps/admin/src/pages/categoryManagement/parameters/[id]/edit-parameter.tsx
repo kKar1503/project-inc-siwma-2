@@ -25,8 +25,10 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import updateParameter from '@/middlewares/updateParameter';
 import fetchParameterById from '@/middlewares/fetchParameterById';
+import fetchParameters from '@/middlewares/fetchParameters';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
+import SuccessModal from '@/components/modals/SuccessModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -41,31 +43,23 @@ export type ParameterProps = {
 };
 
 const useGetParameter = (parameterId: string) => {
-  const { data } = useQuery(
-    ['parameter', parameterId],
-    async () => fetchParameterById(parameterId),
-    {
-      enabled: parameterId !== undefined,
-    }
-  );
-
+  const { data } = useQuery('parameter', async () => fetchParameterById(parameterId), {
+    enabled: parameterId !== undefined,
+  });
   return data;
 };
 
-const useUpdateParamMutation = (parameterId: string) =>
-  useMutation((updatedParameterData: ParameterResponseBody) =>
-    updateParameter(updatedParameterData, parameterId)
-  );
-
 const EditParameter = () => {
-  const queryClient = useQueryClient();
-  const router = useRouter();
-  const id = router.query.id as string;
-  const parameterData = useGetParameter(id);
-
   const theme = useTheme();
   const { spacing } = theme;
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);  
+  
+  const router = useRouter();
+  const id = router.query.id as string;
+  const queryClient = useQueryClient();
+  const parameterData = useGetParameter(id);
+  console.log(parameterData);
+
   const [name, setName] = useState<string>(parameterData?.name || '');
   const [displayName, setDisplayName] = useState<string>(parameterData?.displayName || '');
   const [type, setType] = useState<string>(parameterData?.type || '');
@@ -80,6 +74,7 @@ const EditParameter = () => {
 
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
+  const [editItem, setEditItem] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -190,30 +185,48 @@ const EditParameter = () => {
     setOpenLeave(true);
   };
 
+  const useUpdateParamMutation = (parameterId: string) =>
+    useMutation(
+      (updatedParameterData: ParameterResponseBody) =>
+        updateParameter(updatedParameterData, parameterId),
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries('parameter');
+          setEditItem(true);
+        },
+      }
+    );
+
   const mutation = useUpdateParamMutation(id);
 
   const handleSubmit = () => {
+    if (type === 'MANY_CHOICES' && options.length < 3) {
+      setOpenMany(true);
+      setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
+    } else if (type === 'TWO_CHOICES' && options.length < 2) {
+      setOpenMany(true);
+      setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
+    }
     const requestBody: ParameterResponseBody = {
       id,
       name,
       displayName,
-      type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',      
+      type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
       options,
       dataType: dataType as 'string' | 'number' | 'boolean',
     };
-
     mutation.mutate(requestBody);
   };
 
-  // useEffect(() => {
-  //   if (parameterData) {
-  //     setName(parameterData?.name || '');
-  //     setDisplayName(parameterData?.displayName || '');
-  //     setType(parameterData?.type || '');
-  //     setOptions(parameterData?.options || '');
-  //     setDataType(parameterData?.dataType || '');
-  //   }
-  // }, [parameterData]);
+  useEffect(() => {
+    if (parameterData) {
+      setName(parameterData?.name || '');
+      setDisplayName(parameterData?.displayName || '');
+      setType(parameterData?.type || '');
+      setOptions(parameterData?.options || '');
+      setDataType(parameterData?.dataType || '');
+    }
+  }, [parameterData]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
@@ -327,7 +340,6 @@ const EditParameter = () => {
                     width: '100%',
                   })}
                 />
-
                 <FormControl
                   sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
                 >
@@ -379,19 +391,27 @@ const EditParameter = () => {
                       name.trim() === '' ||
                       displayName.trim() === '' ||
                       type.trim() === '' ||
-                      dataType.trim() === '' || 
+                      dataType.trim() === '' ||
                       dataType.trim() === '' ||
                       ((type === 'MANY_CHOICES' || type === 'TWO_CHOICES') &&
                         options.some((option) => option.trim() === ''))
                     }
                   >
-                    Confirm
+                    Update
                   </Button>
 
                   <OptionsErrorModal
                     open={openMany}
                     setOpen={setOpenMany}
                     errorMessage={optionsError}
+                  />
+                  <SuccessModal
+                    title="Successfully Edited!"
+                    content="Parameter has been successfully edited"
+                    open={editItem}
+                    setOpen={setEditItem}
+                    buttonText="Return"
+                    path="/categoryManagement/parameters"
                   />
                 </Box>
               </CardActions>

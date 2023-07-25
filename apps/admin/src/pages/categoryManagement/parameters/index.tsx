@@ -151,10 +151,6 @@ const ParameterTable = ({ data, updateData }: ParameterTableProps) => {
     router.push(`parameters/create-parameter`);
   };
 
-  const onToggle = () => {
-    // nothing to do
-  };
-
   const tableStyle = useMemo(() => {
     if (isSm) {
       return {
@@ -208,7 +204,7 @@ const ParameterTable = ({ data, updateData }: ParameterTableProps) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
           onDelete={handleDeleteRows}
           onEdit={handleEditRow}
-          onToggle={onToggle}
+          onToggle={() => console.log('toggle')}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}

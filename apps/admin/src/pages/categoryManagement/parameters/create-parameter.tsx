@@ -22,11 +22,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import createParameter from '@/middlewares/createParameter';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
+import SuccessModal from '@/components/modals/SuccessModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -47,7 +48,9 @@ const CreateParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [name, setName] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -61,6 +64,7 @@ const CreateParameter = () => {
 
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
+  const [createItem, setCreateItem] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -359,7 +363,7 @@ const CreateParameter = () => {
                         options.some((option) => option.trim() === ''))
                     }
                   >
-                    Confirm
+                    Create
                   </Button>
 
                   <OptionsErrorModal
@@ -371,6 +375,14 @@ const CreateParameter = () => {
               </CardActions>
             </Card>
           </Grid>
+          <SuccessModal
+            title="Successfully Created!"
+            content="Parameter has been successfully created"
+            open={createItem}
+            setOpen={setCreateItem}
+            buttonText="Return"
+            path="/categoryManagement/parameters"
+          />
         </Box>
       </Container>
     </>
