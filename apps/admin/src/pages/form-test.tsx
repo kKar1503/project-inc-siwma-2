@@ -10,6 +10,7 @@ import {
   FormTextInput,
   FormRadioSelect,
   RadioSelectOption,
+  FormDropdownSelector,
 } from '../components/forms';
 
 // /**
@@ -178,6 +179,17 @@ const FormTest = () => {
           >
             {/** @ts-ignore */}
             <FormRadioSelect options={pillSelectOptions} />
+          </FormInputGroup>
+          <FormInputGroup
+            sx={{ flex: 1 }}
+            label="Dropdown Select Input"
+            name="dropdownSelectInput"
+            isLoading={false}
+            success={submitSuccess}
+            required
+          >
+            {/** @ts-ignore */}
+            <FormDropdownSelector options={pillSelectOptions} placeholder="Sample Placeholder" />
           </FormInputGroup>
         </FormProvider>
         <Button type="submit" variant="outlined">
