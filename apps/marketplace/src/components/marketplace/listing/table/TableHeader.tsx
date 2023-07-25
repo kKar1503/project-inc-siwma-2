@@ -11,6 +11,7 @@ import HeaderCell from './HeaderCell';
 const TableHeader = () => (
   <TableHead>
     <TableRow>
+      <HeaderCell />
       <HeaderCell
         sortByValue="name"
         sortable
