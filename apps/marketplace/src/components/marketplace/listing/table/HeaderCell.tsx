@@ -2,26 +2,28 @@
 import React from 'react';
 
 // ** Mui Imports
-import TableCell from '@mui/material/TableCell';
+import TableCell, { TableCellProps } from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
+
+// ** Hooks Imports
+import { useTranslation } from 'react-i18next';
 
 // ** Store Imports
 import { useTableSort } from '@/stores/table';
 
 // ** Types Imports
 import type { TSortableField } from '@/utils/api/server/zod/listingTable';
-import type { ReactNode } from 'react';
 
 // ** Prop Types
 export interface HeaderCellProps {
-  children: ReactNode;
+  i18DisplayText?: string;
   sortByValue?: TSortableField;
   sortable?: boolean;
 }
 
-const HeaderCell = (props: HeaderCellProps) => {
+const HeaderCell = (props: HeaderCellProps & TableCellProps) => {
   // ** Props
-  const { children, sortByValue, sortable } = props;
+  const { i18DisplayText, sortByValue, sortable, ...tableCellProps } = props;
 
   // ** Store
   const [sortStates, sortActions] = useTableSort();
@@ -29,6 +31,9 @@ const HeaderCell = (props: HeaderCellProps) => {
 
   // ** Vars
   const isCurrentSort = sortable && sortByValue === sortBy;
+
+  // ** Hooks
+  const { t } = useTranslation();
 
   // ** Handlers
   const handleSort = () => {
@@ -44,10 +49,10 @@ const HeaderCell = (props: HeaderCellProps) => {
 
   return (
     <TableCell
-      align="left"
       padding="normal"
       sortDirection={isCurrentSort ? sortDirection : false}
       sx={{ WebkitUserSelect: 'none', msUserSelect: 'none', userSelect: 'none' }}
+      {...tableCellProps}
     >
       {sortable ? (
         <TableSortLabel
@@ -55,10 +60,10 @@ const HeaderCell = (props: HeaderCellProps) => {
           direction={isCurrentSort ? sortDirection : 'asc'}
           onClick={() => handleSort()}
         >
-          {children}
+          {i18DisplayText && t(i18DisplayText)}
         </TableSortLabel>
       ) : (
-        children
+        i18DisplayText && t(i18DisplayText)
       )}
     </TableCell>
   );
