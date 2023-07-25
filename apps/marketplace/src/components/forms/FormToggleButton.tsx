@@ -84,6 +84,8 @@ const FormToggleButton = ({
             placeholder={placeholder}
             defaultValue={defaultValues ? defaultValues[name] : undefined}
             sx={{
+              display: 'flex',
+              columnGap: 3,
               width: '100%',
               '.Mui-disabled': {
                 borderColor,
@@ -92,7 +94,7 @@ const FormToggleButton = ({
               ...sx,
             }}
           >
-            {options.map((option) => (
+            {options.map((option, index) => (
               <Button
                 key={option.value}
                 value={option.value}
@@ -100,6 +102,8 @@ const FormToggleButton = ({
                 disabled={option.value === field.value}
                 // eslint-disable-next-line no-nested-ternary
                 sx={{
+                  flex: 1,
+                  padding: 2,
                   '&:disabled': {
                     color: option.value === field.value ? 'white' : undefined,
                   },
