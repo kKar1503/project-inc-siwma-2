@@ -224,7 +224,7 @@ const ListingItemForm = () => {
           onClick={handleConfirm}
           sx={{ my: '10px' }}
         >
-          SUBMIT
+          UPDATE
         </Button>
       </Box>
       <SuccessModal
