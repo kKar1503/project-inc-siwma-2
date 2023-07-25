@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import Pusher, { Channel } from 'pusher-js';
 
 // ** Components Imports **
@@ -23,7 +23,6 @@ export type UserNameProps = {
 };
 
 const ChatRoom = ({ userId }: UserNameProps) => {
-
   const pusher = useMemo(() => {
     const key = process.env.NEXT_PUBLIC_PUSHER_KEY;
     const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
@@ -58,6 +57,17 @@ const ChatRoom = ({ userId }: UserNameProps) => {
     return formatted;
   }
 
+  const subscribeToChannel = useCallback((channelId: string) => {
+    // setCurrentChannelId(channelId);
+    setCurrentChannelId('chat'); // TODO: remove this, uncomment above line
+
+    const channel = pusher.subscribe(channelId);
+
+    channel.bind('new-message', (data: Messages) => {
+      setChats((prevChats) => [...prevChats, formatMessage(data)]);
+    });
+  }, [pusher]);
+
   const chatPageSx: SxProps<Theme> = useMemo(() => {
     if (isLg) {
       return {
@@ -88,28 +98,30 @@ const ChatRoom = ({ userId }: UserNameProps) => {
   }, [isLg, isMd, isSm]);
 
   useEffect(() => {
+    console.log('chat page mounted');
     // Runs when the component is mounted
 
-    setChannels(pusher.allChannels());
-    if (!currentChannelId && channels.length > 0) {
-      // If no channel is selected, select the first one in the list
-      setCurrentChannelId(channels[0].name);
-    }
+    const fetchChannels = async () => {
+      try {
+        // Fetch the channels from pusher
+        const channelsData = pusher.allChannels();
+        setChannels(channelsData);
 
-    // Load the messages for the selected channel
-  }, [channels, currentChannelId, pusher]);
+        if (!currentChannelId && channelsData.length > 0) {
+          // If no channel is selected, select the first one in the list
+          setCurrentChannelId(channelsData[0].name);
+        }
 
-  function subscribeToChannel(channelId: string) {
-    setCurrentChannelId(channelId);
+        console.log('subscribing to channel', currentChannelId);
+        // Subscribe to the default channel when the component is mounted
+        subscribeToChannel(currentChannelId);
+      } catch (error) {
+        console.error('Error fetching channels:', error);
+      }
+    };
 
-    const channel = pusher.subscribe(currentChannelId);
-
-    setChannels(pusher.allChannels());
-
-    channel.bind('new-message', (data: Messages) => {
-      setChats((chats) => [...chats, formatMessage(data)]);
-    });
-  }
+    fetchChannels();
+  }, [currentChannelId, pusher, subscribeToChannel]); // Only run this effect once when the component mounts
 
   // Function to send a new message through Pusher
   const sendMessage = () => {
@@ -152,14 +164,12 @@ const ChatRoom = ({ userId }: UserNameProps) => {
           <ChatList
             chats={channels}
             setSelectChat={(channelId) => {
-              setCurrentChannelId(channelId);
+              subscribeToChannel(channelId);
             }}
           />
         </Box>
       )}
-      {/* if isSm, display  */}
-      {/* {roomId !== '' && currentChannelId !== null && ( */}
-      {currentChannelId !== null && (
+      {currentChannelId !== '' && (
         <Box
           id="chat-right-side-wrapper"
           sx={{
