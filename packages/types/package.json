@@ -1,8 +1,0 @@
-{
-  "name": "@inc/types",
-  "version": "0.0.0",
-  "devDependencies": {
-    "socket.io": "^4.6.1",
-    "socket.io-client": "4.7.0"
-  }
-}

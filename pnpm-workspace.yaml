@@ -1,5 +1,0 @@
-packages:
-  - 'apps/*'
-  - 'packages/*'
-  - 'apps/calculators/*'
-  - 'packages/@types/*'

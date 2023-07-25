@@ -1,8 +1,0 @@
-{
-  "name": "@inc/configs",
-  "version": "0.0.0",
-  "files": [
-    "tsconfig.base.json",
-    "tsconfig.app.json"
-  ]
-}
