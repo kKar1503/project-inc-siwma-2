@@ -17,15 +17,30 @@ import type { ChatListProps } from '@/components/rtc/ChatList';
 import type { ChatData } from '@/components/rtc/ChatBox';
 import type { Messages } from '@inc/types';
 import { useResponsiveness } from '@inc/ui';
+import { useSession } from 'next-auth/react';
+
+const { key, cluster } = process.env;
+
+if (key === undefined || cluster === undefined) {
+  throw new Error('Pusher key/cluster not defined');
+}
+
+const pusher = new Pusher(key, {
+  cluster,
+});
 
 const ChatRoom = () => {
+  const session = useSession();
+  const user = session.data?.user
+
+  if (!user) {
+    throw new Error('User not defined');
+  }
+
   const [channels, setChannels] = useState<Channel[]>([]);
   const [currentChannelId, setCurrentChannelId] = useState('');
   const [chats, setChats] = useState<ChatData[]>([]);
   const [messageToSend, setMessageToSend] = useState('');
-  // const userIdRef = useRef('');
-  // const roomIdRef = useRef('');
-  // const userId = userIdRef.current;
 
   // ** MUI **
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -70,15 +85,19 @@ const ChatRoom = () => {
     };
   }, [isLg, isMd, isSm]);
 
-  function subscribeToChannel(channelId: string) {
-    const { key, cluster } = process.env;
-    if (key === undefined || cluster === undefined) {
-      return;
-    }
-    const pusher = new Pusher(key, {
-      cluster,
-    });
+  useEffect(() => {
+    // Runs when the component is mounted
 
+    setChannels(pusher.allChannels());
+    if (!currentChannelId && channels.length > 0) {
+      // If no channel is selected, select the first one in the list
+      setCurrentChannelId(channels[0].name);
+    }
+
+    // Load the messages for the selected channel
+  }, [channels, currentChannelId, pusher]);
+
+  function subscribeToChannel(channelId: string) {
     setCurrentChannelId(channelId);
 
     const channel = pusher.subscribe(currentChannelId);
@@ -90,21 +109,13 @@ const ChatRoom = () => {
     });
   }
 
-  useEffect(() => {
-    // Runs when the component is mounted
-    if (!currentChannelId && channels.length > 0) {
-      // If no channel is selected, select the first one in the list
-      setCurrentChannelId(channels[0].name);
-    }
-  }, [channels, currentChannelId]);
-
   // Function to send a new message through Pusher
   const sendMessage = () => {
     if (messageToSend.trim() === '') return;
 
     const newMessage = {
       message: messageToSend,
-      sender: userId,
+      sender: session.data?.user.id,
     };
 
     fetch('/chat/messages', {
@@ -138,14 +149,8 @@ const ChatRoom = () => {
         >
           <ChatList
             chats={channels}
-            selectChat={currentChannelId}
             setSelectChat={(channelId) => {
               setCurrentChannelId(channelId);
-              roomIdRef.current = channelId;
-            }}
-            onChange={(e) => {
-              const element = e.currentTarget as HTMLInputElement;
-              const { value } = element;
             }}
           />
         </Box>
@@ -168,28 +173,30 @@ const ChatRoom = () => {
             }}
           >
             <ChatHeader
-              profilePic={currentRoom.userImage}
-              username={currentRoom.username}
-              handleBack={() => setRoomId('')}
+              profilePic="/images/placeholder.png"
+              username="PLACEHOLDER"
+              handleBack={() => setCurrentChannelId('')}
             />
             <ChatSubHeader
-              itemPic={currentRoom.itemImage}
-              itemName={currentRoom.itemName}
-              available={currentRoom.inProgress}
-              itemPrice={currentRoom.itemPrice}
-              itemPriceIsUnit={currentRoom.itemPriceIsUnit}
+              itemPic="/images/placeholder.png"
+              itemName="PLACEHOLDER"
+              available
+              itemPrice={0}
+              itemPriceIsUnit
             />
             <ChatBox
-              roomData={messages}
-              loginId={userId}
+              roomData={chats}
+              loginId={session.data?.user.id}
               ChatText={
-                <ChatTextBox
-                  selectedFile={selectedFile}
-                  setSelectedFile={setSelectedFile}
-                  inputText={inputText}
-                  setInputText={setInputText}
-                  onClickSend={onClickSend}
-                />
+                <br />
+                // TODO: fix this
+                // <ChatTextBox
+                //   selectedFile={selectedFile}
+                //   setSelectedFile={setSelectedFile}
+                //   inputText={inputText}
+                //   setInputText={setInputText}
+                //   onClickSend={onClickSend}
+                // />
               }
             />
           </Box>
