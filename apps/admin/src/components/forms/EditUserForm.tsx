@@ -11,12 +11,23 @@ import editUser from '@/middlewares/editUser';
 import forgetPW from '@/middlewares/forget-password';
 import { useMutation } from 'react-query';
 import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
-import { FormDropdownSelector, FormInputGroup, FormTextInput } from '@/components/forms';
+import { FormInputGroup, FormSearchDropdown, FormTextInput } from '@/components/forms';
 
 type EditUserFormProps = {
   user: User | undefined;
   companies: Company[];
   openModal: (modal: string) => void;
+};
+
+type Inputs = {
+  company: { label: string; value: string };
+  name: string | undefined;
+  email: string | undefined;
+  mobileNumber: string | undefined;
+  bio: string | undefined;
+  password: string | undefined;
+  confirmPassword: string | undefined;
+  userComments: string | undefined;
 };
 
 const onErrorFn = (error: any) => {
@@ -49,9 +60,11 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
     return {
       name: user.name,
       email: user.email,
-      company: user.company.id,
+      company: { label: user.company.name, value: user.company.id },
       mobileNumber: user.mobileNumber,
       bio: user.bio || undefined,
+      password: undefined,
+      confirmPassword: undefined,
       userComments: user.comments || undefined,
     };
   };
@@ -110,28 +123,28 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
     }
   };
 
-  const onSubmit: SubmitHandler<PutUserRequestBody> = (data) => {
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
     try {
       // validations
       if (data.name !== undefined) validateName(data.name);
       if (data.email) validateEmail(data.email);
       if (data.mobileNumber) validatePhone(data.mobileNumber);
       if (data.password) {
-        if (data.password !== data.oldPassword) throw new Error('Passwords do not match.');
+        if (data.password !== data.confirmPassword) throw new Error('Passwords do not match.');
         validatePassword(data.password);
       }
+      if (!data.company) throw new Error('Company cannot be empty');
 
       setError(null);
       const newUserData = {
         name: data.name,
         email: data.email,
-        company: data.company,
+        company: data.company.value,
         mobileNumber: data.mobileNumber,
         bio: data.bio || undefined,
         password: data.password || undefined,
         userComments: data.userComments || undefined,
       };
-
       editUserMutation.mutate(newUserData);
     } catch (error: unknown) {
       if (error instanceof Error) setError(error);
@@ -245,7 +258,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
                   label=""
                   name="company"
                 >
-                  <FormDropdownSelector
+                  <FormSearchDropdown
                     options={parseOptions(companies)}
                     label=""
                     name="company"
@@ -305,11 +318,8 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">Confirm Password</Typography>
-                <FormInputGroup label="" name="oldPassword">
-                  {/* Instead of confirm password, oldPassword is used. That is because
-                  oldPassword is not used by admin and confirmPassword doesn't exits on PUT user
-                  request body. And I also don't want to create a new type */}
-                  <FormTextInput label="" name="oldPassword" placeholder="Confirm Password" />
+                <FormInputGroup label="" name="confirmPassword">
+                  <FormTextInput label="" name="confirmPassword" placeholder="Confirm Password" />
                 </FormInputGroup>
               </Grid>
               <Grid item xs={12}>
