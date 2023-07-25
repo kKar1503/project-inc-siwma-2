@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminFigure from '@/components/AdminFigure';
 import { AiOutlineUser } from 'react-icons/ai';
 import { MdStorefront } from 'react-icons/md';
@@ -15,6 +15,8 @@ import apiClient from '@/utils/api/client/apiClient';
 import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
 import SuccessModal from '@/components/modals/SuccessModal';
+import { useRouter } from 'next/router';
+import Spinner from '@/components/Spinner';
 
 const deleteInvitesMutationFn = async (emails: string[]) => {
   const promises = emails.map((email) => apiClient.delete(`/v1/invites/email/${email}`));
@@ -37,12 +39,22 @@ const createInviteMutationFn = async (data: PostInviteRequestBody) => {
 };
 
 const Page = () => {
+  const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const [isSm] = useResponsiveness(['sm']);
 
   const [deleteUser, setDeleteUser] = useState<boolean>(false);
   const [deleteInvite, setDeleteInvite] = useState<boolean>(false);
   const [toggleUser, setToggleUser] = useState<boolean>(false);
+
+  const InviteBox = styled('div')(({ theme }) => ({
+    width: isSm ? '100%' : '48%',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+    borderRadius: '8px',
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    backgroundColor: 'white',
+  }));
 
   const queries = useQueries([
     {
@@ -90,18 +102,30 @@ const Page = () => {
     },
   });
 
+  const isLoading = queries[0].isLoading || queries[1].isLoading || queries[2].isLoading;
+  const isFetched = queries[0].isFetched && queries[1].isFetched && queries[2].isFetched;
+  const isError = queries[0].isError || queries[1].isError || queries[2].isError;
+
   const companies = queries[0].data;
   const users = queries[1].data;
   const invites = queries[2].data;
 
-  const InviteBox = styled('div')(({ theme }) => ({
-    width: isSm ? '100%' : '48%',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-    borderRadius: '8px',
-    padding: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    backgroundColor: 'white',
-  }));
+  useEffect(() => {
+    if (!isFetched) {
+      return;
+    }
+    if (isError) {
+      router.push('/500');
+      return;
+    }
+    if (queries[0] === undefined || !queries[1] === undefined || !queries[2] === undefined) {
+      router.push('/500');
+    }
+  }, [queries, isFetched]);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   const handleClick = () => {
     setOpen(!open);
