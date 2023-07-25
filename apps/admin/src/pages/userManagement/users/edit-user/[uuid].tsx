@@ -6,8 +6,10 @@ import { useQueries } from 'react-query';
 import fetchCompanies from '@/middlewares/fetchCompanies';
 import fetchUser from '@/middlewares/fetchUser';
 import WarningModal from '@/components/modals/WarningModal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SuccessModal from '@/components/modals/SuccessModal';
+import Spinner from '@/components/fallbacks/Spinner';
+import { BaseError } from '@inc/errors';
 
 const EditUser = () => {
   const [isXs, isSm] = useResponsiveness(['xs', 'sm']);
@@ -26,8 +28,47 @@ const EditUser = () => {
     },
   ]);
 
+  const isLoading = queries[0].isLoading || queries[1].isLoading;
+  const isFetched = queries[0].isFetched && queries[1].isFetched;
+  const isError = queries[0].isError || queries[1].isError;
+
   const companies = queries[0].data;
   const user = queries[1].data;
+
+  useEffect(() => {
+    if (!isFetched) {
+      return;
+    }
+    if (isError) {
+      if (
+        'status' in (queries[0].error as BaseError) &&
+        (queries[0].error as BaseError).status === 404
+      ) {
+        router.replace('/404');
+        return;
+      }
+      router.replace('/500');
+      return;
+    }
+    if (queries[0].data === undefined || queries[1].data === undefined) {
+      router.replace('/500');
+    }
+  }, [queries, isFetched]);
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <Spinner />
+      </Box>
+    );
+  }
 
   const openModal = (modal: string) => {
     if (modal === 'success') setOpenSuccess(true);
