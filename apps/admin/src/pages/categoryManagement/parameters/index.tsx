@@ -175,30 +175,6 @@ const ParameterTable = () => {
     sortRows();
   }, [parameter]);
 
-  // useEffect(() => {
-  //   if (!parameter.isFetched) {
-  //     return
-  //   }
-
-  //   if (parameter.isError) {
-  //     if ('status' in (parameter.error as any) && (parameter.error as any).status === 404) {
-  //       router.replace('/404');
-  //       return;
-  //     }
-
-  //     router.replace('/500');
-  //     return;
-  //   }
-
-  //   if (parameter === undefined) {
-  //     router.replace('/500');
-  //   }
-  // }, [parameter.isFetched]);
-
-  // if (!parameter.isFetched) {
-  //   return <Spinner />;
-  // }
-
   return (
     <>
       <Head>
@@ -213,7 +189,7 @@ const ParameterTable = () => {
         >
           <Button
             variant="contained"
-            sx={({ palette, spacing }) => ({ bgcolor: palette.primary[400], mb: spacing(1) })}
+            sx={({ palette, spacing }) => ({ bgcolor: palette.primary[400], mb: spacing(1), mr:spacing(1) })}
             onClick={handleCreateParameter}
           >
             Create Parameter
