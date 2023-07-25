@@ -8,8 +8,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import fetchListing from '@/services/fetchListing';
 import fetchCatById from '@/services/fetchCatById';
+import fetchProducts from '@/services/fetchProducts';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { Category } from '@/utils/api/client/zod/categories';
+import { Product } from '@/utils/api/client/zod/products';
 import S3BoxImage from '@/components/S3BoxImage';
 
 interface TableRowData {
@@ -29,14 +31,17 @@ interface CompareDifferencesProps {
 const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   console.log('Product IDs:', productIds);
   useEffect(() => {
     const fetchListings = async () => {
       const listings = await Promise.all(productIds.map((id) => fetchListing(id)));
       const categories = await Promise.all(listings.map((listing) => fetchCatById(listing.id)));
+      const products = await Promise.all(listings.map((listing) => fetchProducts(listing.productId)));
       setCategory(categories);
       setListings(listings);
+      setProducts(products);
     };
     fetchListings();
   }, [productIds]);
@@ -68,9 +73,15 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
             : ''
         ),
       },
-      { id: 'row2', data: listings.map((listing) => `$ ${listing.price} / ${listing.unit}`) },
+       {
+        id: 'row2',
+        data: listings.map((listing, index) => `$ ${listing.price} / ${products[index].unit}`),
+      },
       { id: 'row3', data: listings.map((listing) => `${listing.quantity}`) },
-      { id: 'row4', data: listings.map((listing) => listing.description) },
+      {
+        id: 'row4',
+        data: products.map((product) => product.description),
+      },
       { id: 'row5', data: category.map((cat) => cat.name) },
       { id: 'row6', data: listings.map((listing) => (listing.negotiable ? 'Yes' : 'No')) },
       {
@@ -102,26 +113,24 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
           <TableRow>
             <TableCell>Key Specs</TableCell>
             {listings.map((listing, index) => (
-              <TableCell key={listing.id}>{listing.name}</TableCell>
+              <TableCell key={index}>{listing.name}</TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {tableData.sideHeaders.map((header, headerIndex) => (
-            <TableRow key={header}>
-              <TableCell>{header}</TableCell>
-              {tableData.rows.map((row, rowIndex) => {
-                const cellData = row.data[headerIndex];
-                const cellKey = `cell-${headerIndex}-${rowIndex}`;
-                return header === 'Cross Section Image' ? (
-                  <TableCell key={cellKey}>{cellData}</TableCell>
-                ) : (
-                  <TableCell key={cellKey}>{cellData}</TableCell>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableBody>
+  {tableData.sideHeaders.map((header, index) => (
+    <TableRow key={header}>
+      <TableCell>{header}</TableCell>
+      {tableData.rows[index]?.data.map((cellData, cellIndex) =>
+        header === 'Cross Section Image' ? (
+          <TableCell key={`cell-${index}-${cellIndex}`}>{cellData}</TableCell>
+        ) : (
+          <TableCell key={`cell-${index}-${cellIndex}`}>{cellData}</TableCell>
+        )
+      )}
+    </TableRow>
+  ))}
+</TableBody>
       </Table>
     </TableContainer>
   );

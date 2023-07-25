@@ -11,9 +11,8 @@ type CompareDifferencesProps = {
 };
 
 const Compare = ({ productIds }: CompareDifferencesProps) => {
-
     if (!productIds) {
-        productIds = []
+        productIds = [];
     }
     const theme = useTheme();
     const { spacing } = theme;
@@ -60,6 +59,7 @@ const Compare = ({ productIds }: CompareDifferencesProps) => {
                     Compare Differences
                 </Typography>
                 <CompareDifferences productIds={productIds}  />
+                 {/* <CompareDifferences productIds={["1","2"]}  /> */}
             </Box>
         </Container>
     );
