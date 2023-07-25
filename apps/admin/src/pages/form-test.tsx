@@ -4,6 +4,7 @@ import { FieldValues, Form, FormProvider, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { validateCompanyName } from '@/utils/api/validate';
 import FormNumberInput from '@/components/forms/FormNumberInput';
+import FormSearchDropdown from '@/components/forms/FormSearchDropdown';
 import { FormInputGroup, FormTextInput } from '../components/forms';
 
 // /**
@@ -19,6 +20,26 @@ import { FormInputGroup, FormTextInput } from '../components/forms';
 //   companyBio: data.bio,
 //   companyComments: data.comments,
 // });
+
+const dropdownOptions = [
+  { label: 'The Shawshank Redemption', year: 1994 },
+  { label: 'The Godfather', year: 1972 },
+  { label: 'The Godfather: Part II', year: 1974 },
+  { label: 'The Dark Knight', year: 2008 },
+  { label: '12 Angry Men', year: 1957 },
+  { label: "Schindler's List", year: 1993 },
+  { label: 'Pulp Fiction', year: 1994 },
+  {
+    label: 'The Lord of the Rings: The Return of the King',
+    year: 2003,
+  },
+  { label: 'The Good, the Bad and the Ugly', year: 1966 },
+  { label: 'Fight Club', year: 1999 },
+  {
+    label: 'The Lord of the Rings: The Fellowship of the Ring',
+    year: 2001,
+  },
+];
 
 const FormTest = () => {
   // -- States --//
@@ -125,6 +146,17 @@ const FormTest = () => {
           >
             {/** @ts-ignore */}
             <FormNumberInput />
+          </FormInputGroup>
+          <FormInputGroup
+            sx={{ flex: 1 }}
+            label="Dropdown"
+            name="dropdownInput"
+            isLoading={false}
+            success={submitSuccess}
+            required
+          >
+            {/** @ts-ignore */}
+            <FormSearchDropdown options={dropdownOptions} />
           </FormInputGroup>
         </FormProvider>
         <Button type="submit" variant="outlined">
