@@ -28,22 +28,27 @@ const ShareFunctionPage = () => {
   const router = useRouter();
   const [openShare, setOpenShare] = useState(false);
   // ** Fetches the share data based on the hash
-  const shareData = useShareFunc(router.query.id as string);
-  console.log(shareData.data?.ownerId);
+  const {
+    data: shareData,
+    error: shareError,
+    isError: isShareError,
+    isFetched: isShareFetched,
+  } = useShareFunc(router.query.id as string);
+
   const {
     data: userDetails,
     error: userError,
     isError: isUserError,
     isFetched: isUserFetched,
-  } = useUser(shareData.data?.ownerId as string);
+  } = useUser(shareData?.ownerId as string);
 
   // ** Effects
   useEffect(() => {
-    if (!isUserFetched) {
+    if (!isUserFetched || !isShareError) {
       return;
     }
 
-    if (isUserError) {
+    if (isUserError || isShareError) {
       if ('status' in (userError as any) && (userError as any).status === 404) {
         router.replace('/404');
         return;
@@ -53,10 +58,10 @@ const ShareFunctionPage = () => {
       return;
     }
 
-    if (userDetails === undefined) {
+    if (userDetails === undefined || shareData === undefined) {
       router.replace('/500');
     }
-  }, [isUserFetched]);
+  }, [isUserFetched, isShareFetched]);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
@@ -65,7 +70,7 @@ const ShareFunctionPage = () => {
   let listingIds;
 
   if (router.query.id) {
-    listingIds = shareData.data?.listingItems;
+    listingIds = shareData?.listingItems;
   }
 
   const spaceStyle = useMemo(() => {
@@ -118,14 +123,14 @@ const ShareFunctionPage = () => {
       },
     };
   }, [isSm, isMd, isLg]);
-console.log(userDetails);
+
   return (
     <main>
       <Box sx={spaceStyle.outerSpace}>
         <Box sx={spaceStyle.boxStyle}>
           {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
           {/* map listing cards based on listing Ids */}
-          {userDetails && (
+          {shareData && (
             <Box sx={spaceStyle.scrollBox}>
               {listingIds?.map((id) => (
                 <ListingCard key={id} listingId={id} />

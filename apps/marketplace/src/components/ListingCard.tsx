@@ -18,9 +18,6 @@ import ChatIcon from '@mui/icons-material/Chat';
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 
-// ** HooksImports
-import { useQuery } from 'react-query';
-
 // ** Image Imports
 import placeholder from 'public/images/listing-placeholder.svg';
 
@@ -31,7 +28,6 @@ import { DateTime } from 'luxon';
 import useFetchListing from '@/services/useFetchListing';
 import useFetchCatById from '@/services/useFetchCatById';
 import useFetchParamNames from '@/services/useFetchParamNames';
-import fetchListing from '@/services/fetchListing';
 import useUser from '@/services/users/useUser';
 import useProduct from '@/services/useProduct';
 import bookmarkListing from '@/services/bookmarks/bookmarkListing';
@@ -228,9 +224,6 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
       },
     };
   }, [isSm, isMd, isLg]);
-
-  console.log(listingDetails);
-  console.log(paramNames);
 
   return (
     <Paper
