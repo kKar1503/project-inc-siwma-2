@@ -65,6 +65,7 @@ const CompanyInvitesTable = ({ details }: InviteFileProps) => {
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={companyRows.length}
         heading="Company Profiles Preview"
+        sx={{ width: '80vh', height: '68vh' }}
       />
     </Box>
   );

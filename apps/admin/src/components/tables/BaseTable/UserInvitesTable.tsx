@@ -77,6 +77,7 @@ const UserInvitesTable = ({ details }: InviteFileProps) => {
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={userRows.length}
         heading="User Invites Preview"
+        sx={{width: '80vh', height: '68vh'}}
       />
     </Box>
   );

@@ -126,6 +126,7 @@ const BaseTable = (props: BaseTableProps) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
+          // minHeight: '65vh',
         }}
       >
         {customHeader ?? customHeader}
