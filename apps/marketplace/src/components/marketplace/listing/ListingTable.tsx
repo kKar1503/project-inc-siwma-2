@@ -1,17 +1,17 @@
+/* eslint-disable no-nested-ternary */
 // ** React Imports
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 // ** Mui Imports
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 
-// ** Hooks Imports
-import { useTranslation } from 'react-i18next';
+// ** Other imports
+import { useResponsiveness } from '@inc/ui';
 
 // ** Store Imports
 import useProductStore from '@/stores/products';
@@ -25,15 +25,22 @@ import {
 
 // ** Type Imports
 import type { Listing } from '@/utils/api/server/zod/listingTable';
+import type { SxProps } from '@mui/material/styles';
 
 // ** Custom Components Imports
 import TableHeader from './table/TableHeader';
 import TablePagination from './table/TablePagination';
-import ListingBadge from './table/ListingBadge';
+import SizedSkeletonRows from './table/SizedSkeletonRows';
+import DisplayRow from './table/DisplayRow';
+import CollapsibleRow from './table/CollapsibleRow';
+import AboveHeader from './table/AboveHeader';
 
 // ** ListingTable Props Types
 export type ListingTableProps = {
   listings: Listing[];
+  isLoading: boolean;
+  isProductFetching: boolean;
+  isParamFetching: boolean;
 };
 
 /**
@@ -48,12 +55,13 @@ export type ListingTableProps = {
  */
 const ListingTable = (props: ListingTableProps) => {
   // ** Props
-  const { listings } = props;
+  const { listings, isLoading, isProductFetching, isParamFetching } = props;
 
   // ** States
+  const [rowOpened, setRowOpened] = useState('');
 
   // ** Hooks
-  const { t } = useTranslation();
+  const [isSm] = useResponsiveness(['sm']);
   const [products, productInitializeTime, productActions] = useProductStore((state) => {
     const { products, initialized, ...actions } = state;
     return [state.products, state.initialized, actions];
@@ -64,66 +72,64 @@ const ListingTable = (props: ListingTableProps) => {
   });
   const [mode, modeActions] = useTableMode();
   const [tableStates, stateActions] = useTableStates();
-  const [pagination, setPagination] = useTablePagination();
   const [selected, selectionActions] = useTableSelection();
+  const [paginationStates] = useTablePagination();
+
+  // ** Vars
+  const { limit } = paginationStates;
 
   // ** Effects
-  useEffect(() => {
-    console.log('products');
-  }, [products]);
 
-  useEffect(() => {
-    console.log('product initialized');
-  }, [productInitializeTime]);
+  // ** Styles
+  const tableMaxWidthContainer = useMemo<SxProps>(() => {
+    if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)' };
+    return {};
+  }, [isSm]);
 
-  useEffect(() => {
-    console.log('product actions');
-  }, [productActions]);
-
-  useEffect(() => {
-    console.log('params');
-  }, [params]);
-
-  useEffect(() => {
-    console.log('params initialized');
-  }, [paramInitializeTime]);
-
-  useEffect(() => {
-    console.log('params actions');
-  }, [paramActions]);
-
-  useEffect(() => {
-    console.log(listings);
-  }, [listings]);
+  // ** Handlers
+  const handleCollapseCell = (rowId: string) => {
+    if (rowOpened === rowId) {
+      setRowOpened('');
+    } else {
+      setRowOpened(rowId);
+    }
+  };
 
   return (
-    <>
-      <h1>Hello World</h1>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 800 }}>
-          <TableHeader />
-          <TableBody>
-            {listings.map((row) => (
-              <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell component="th" scope="row">
-                  {row.id}
-                </TableCell>
-                <TableCell align="left">{row.price}</TableCell>
-                <TableCell align="left">{row.quantity}</TableCell>
-                <TableCell align="left">
-                  <Box sx={{ display: 'flex', gap: '8px' }}>
-                    <ListingBadge type={row.type === 'BUY' ? 'buy' : 'sell'} />{' '}
-                    {row.negotiable ? <ListingBadge type="negotiable" /> : null}
-                  </Box>
-                </TableCell>
-                <TableCell align="left">{row.createdAt}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination />
-    </>
+    <Box sx={{ ...tableMaxWidthContainer, mt: 3 }}>
+      <Paper sx={{ width: '100%', mb: 2 }} elevation={2}>
+        <AboveHeader header="Listings" />
+        <Divider sx={{ opacity: 0.3 }} />
+        <TableContainer>
+          <Table>
+            <TableHeader />
+            <TableBody>
+              {isLoading ? (
+                <SizedSkeletonRows size={limit} />
+              ) : (
+                listings.map((row) => (
+                  <>
+                    <DisplayRow
+                      row={row}
+                      rowOpened={rowOpened}
+                      isProductFetching={isProductFetching}
+                      handleCollapseCell={handleCollapseCell}
+                    />
+                    <CollapsibleRow
+                      row={row}
+                      rowOpened={rowOpened}
+                      isProductFetching={isProductFetching}
+                      isParamFetching={isParamFetching}
+                    />
+                  </>
+                ))
+              )}
+            </TableBody>
+          </Table>
+          <TablePagination />
+        </TableContainer>
+      </Paper>
+    </Box>
   );
 };
 
