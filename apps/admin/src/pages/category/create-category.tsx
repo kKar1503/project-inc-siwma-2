@@ -8,9 +8,9 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import createCategories from '@/middlewares/createCategories';
 import { useMutation, useQueryClient } from 'react-query';
-import { CategoriesParameters } from '@prisma/client';
 import { useResponsiveness } from '@inc/ui';
 import { useRouter } from 'next/router';
+import { CategoriesParameters } from '@inc/db';
 
 export type CreateCategoryProps = {
   name: string;
