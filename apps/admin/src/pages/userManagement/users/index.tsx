@@ -16,7 +16,7 @@ import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
 import SuccessModal from '@/components/modals/SuccessModal';
 import { useRouter } from 'next/router';
-import Spinner from '@/components/Spinner';
+import Spinner from '@/components/fallbacks/Spinner';
 
 const deleteInvitesMutationFn = async (emails: string[]) => {
   const promises = emails.map((email) => apiClient.delete(`/v1/invites/email/${email}`));
@@ -124,7 +124,18 @@ const Page = () => {
   }, [queries, isFetched]);
 
   if (isLoading) {
-    return <Spinner />;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <Spinner />
+      </Box>
+    );
   }
 
   const handleClick = () => {
