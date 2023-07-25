@@ -12,7 +12,7 @@ const useBookmarkUser = (uuid: string) =>
     queryFn: async () =>
       apiClient
         .patch(`/v1/users/${uuid}/bookmark`)
-        .then((res) => res.data.data.bookmarked as boolean),
+        .then((res) => res.data.data[0].bookmarked as boolean),
     enabled: false,
   });
 

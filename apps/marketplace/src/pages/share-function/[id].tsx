@@ -29,8 +29,7 @@ const ShareFunctionPage = () => {
   const [openShare, setOpenShare] = useState(false);
   // ** Fetches the share data based on the hash
   const shareData = useShareFunc(router.query.id as string);
-  const userDetails = useUser(shareData.data?.ownerId as string);
-  console.log(userDetails);
+  const userDetails = useUser(shareData.data?.ownerId as string).data;
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
@@ -97,7 +96,7 @@ const ShareFunctionPage = () => {
     <main>
       <Box sx={spaceStyle.outerSpace}>
         <Box sx={spaceStyle.boxStyle}>
-          {/* {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />} */}
+          {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
           {/* map listing cards based on listing Ids */}
           <Box sx={spaceStyle.scrollBox}>
             {listingIds?.map((id) => (
@@ -130,7 +129,7 @@ const ShareFunctionPage = () => {
             title="Share this listing!"
             content="Share this link with anyone!"
             // gets current link and allows user to copy it
-            link={process.env.FRONTEND_URL + router.asPath}
+            link={window.location.href}
           />
         </Box>
       </Box>
