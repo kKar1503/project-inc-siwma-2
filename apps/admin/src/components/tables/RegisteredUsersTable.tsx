@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
@@ -7,6 +7,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { User } from '@/utils/api/client/zod/users';
 import { useRouter } from 'next/router';
 import { Company } from '@/utils/api/client/zod';
+import useDebounce from '@/hooks/useDebounce';
 
 type RowData = {
   id: string;
@@ -71,6 +72,9 @@ const RegisteredUsersTable = ({
   const [tableData, setTableData] = useState<User[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+  const [query, setQuery] = useState<string>('');
+  const debouncedValue = useDebounce<string>(query, 500);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -108,9 +112,8 @@ const RegisteredUsersTable = ({
     setSelectedCompany('');
   };
 
-  const handleSearch = (query: string) => {
-    const filter = data.filter((user) => user.name.toLowerCase().includes(query.toLowerCase()));
-    setFilteredData(filter);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
   };
 
   const closeMenu = () => {
@@ -118,8 +121,13 @@ const RegisteredUsersTable = ({
   };
 
   const onEdit = (row: BaseTableData) => {
-    router.push(`/edit-user/${row.id}`);
+    router.push(`/userManagement/users/edit-user/${row.id}`);
   };
+
+  useEffect(() => {
+    const filter = data.filter((user) => user.name.toLowerCase().includes(query.toLowerCase()));
+    setFilteredData(filter);
+  }, [debouncedValue]);
 
   return (
     <Box
@@ -169,7 +177,7 @@ const RegisteredUsersTable = ({
           </Menu>
         </div>
 
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onChange={handleChange} />
       </Box>
 
       <BaseTable

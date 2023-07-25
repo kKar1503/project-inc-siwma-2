@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
@@ -6,6 +6,7 @@ import SearchBar from '@/components/SearchBar';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { Invite } from '@/utils/api/client/zod/invites';
 import { Company } from '@/utils/api/client/zod';
+import useDebounce from '@/hooks/useDebounce';
 
 type PendingInvitesTableProps = {
   data: Invite[];
@@ -56,6 +57,9 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
   const [tableData, setTableData] = useState<Invite[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+  const [query, setQuery] = useState<string>('');
+  const debouncedValue = useDebounce<string>(query, 500);
+
   useEffect(() => {
     setFilteredData(data);
   }, [data]);
@@ -67,12 +71,10 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
   }, [filteredData, page, rowsPerPage]);
 
   const handlePageChange = (event: unknown, newPage: number) => {
-    console.log('Page Change');
     setPage(newPage);
   };
 
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Rows Change');
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -97,11 +99,9 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
     setSelectedCompany('');
   };
 
-  const handleSearch = (query: string) => {
-    const filter = data.filter((user) => user.name.toLowerCase().includes(query.toLowerCase()));
-    setFilteredData(filter);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
   };
-
   const onEdit = () => {
     // nothing to do
   };
@@ -109,6 +109,11 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
   const onToggle = () => {
     // nothing to do
   };
+
+  useEffect(() => {
+    const filter = data.filter((user) => user.name.toLowerCase().includes(query.toLowerCase()));
+    setFilteredData(filter);
+  }, [debouncedValue]);
 
   return (
     <Box
@@ -157,7 +162,7 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
             ))}
           </Menu>
         </div>
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onChange={handleChange} />
       </Box>
       <BaseTable
         heading="Pending Invites"

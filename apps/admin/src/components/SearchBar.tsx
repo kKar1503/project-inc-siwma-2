@@ -1,44 +1,32 @@
 import { Input, Box, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { useRef } from 'react';
+import { ChangeEvent, useRef } from 'react';
 
 type SearchBarProps = {
-  onSearch: (query: string) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
-const SearchBar = ({ onSearch }: SearchBarProps) => {
-  const SearchBarRef = useRef<HTMLInputElement>(null);
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') {
-      if (SearchBarRef.current) {
-        console.log('here', SearchBarRef.current.value);
-        onSearch(SearchBarRef.current.value);
+const SearchBar = ({ onChange }: SearchBarProps) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+    }}
+  >
+    <Input
+      placeholder="Search..."
+      type="text"
+      startAdornment={
+        <InputAdornment position="start">
+          <SearchIcon
+            sx={{
+              color: 'gray',
+            }}
+          />
+        </InputAdornment>
       }
-    }
-  };
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
-      <Input
-        inputRef={SearchBarRef}
-        placeholder="Search..."
-        type="text"
-        startAdornment={
-          <InputAdornment position="start">
-            <SearchIcon
-              sx={{
-                color: 'gray',
-              }}
-            />
-          </InputAdornment>
-        }
-        onKeyDown={handleKeyDown}
-      />
-    </Box>
-  );
-};
+      onChange={onChange}
+    />
+  </Box>
+);
 export default SearchBar;
