@@ -122,7 +122,7 @@ const EditUser = () => {
           content="User details has been updated"
           buttonText="Continue"
           open={openSuccess}
-          setOpen={setOpenWarning}
+          setOpen={setOpenSuccess}
         />
         <SuccessModal
           title="Email Sent"
