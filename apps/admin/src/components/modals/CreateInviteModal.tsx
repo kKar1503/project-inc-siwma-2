@@ -6,12 +6,7 @@ import { Company } from '@/utils/api/client/zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { validateEmail, validateName, validatePhone } from '@/utils/api/validate';
 import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
-import {
-  FormDropdownSelector,
-  FormInputGroup,
-  FormSearchDropdown,
-  FormTextInput,
-} from '@/components/forms';
+import { FormDropdownSelector, FormInputGroup, FormTextInput } from '@/components/forms';
 
 export type CreateInviteModalProps = {
   data: Company[];

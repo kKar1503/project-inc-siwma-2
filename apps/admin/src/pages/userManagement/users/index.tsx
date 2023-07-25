@@ -213,6 +213,7 @@ const Page = () => {
             borderRadius: '8px',
             padding: 2,
             marginBottom: 2,
+            backgroundColor: 'white',
           }}
         >
           <Typography variant="h5">Create an individual Invite</Typography>
@@ -235,6 +236,7 @@ const Page = () => {
             borderRadius: '8px',
             padding: 2,
             marginBottom: 2,
+            backgroundColor: 'white',
           }}
         >
           <Typography variant="h5">Bulk invite users</Typography>
