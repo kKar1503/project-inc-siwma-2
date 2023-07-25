@@ -101,14 +101,15 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
   const productDetails = useProduct(listingDetails?.productId || 'null').data;
 
   const categoryDetails = useFetchCategoryQuery(productDetails?.categoryId || 'null');
+  console.log(listingDetails);
 
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(listingId);
 
   const listingParamNames: string[] = [];
 
-  listingDetails?.parameters?.map((id) => {
-    listingParamNames.push(id.paramId);
-    return id.paramId;
+  categoryDetails?.parameters?.map((id) => {
+    listingParamNames.push(id.parameterId);
+    return id.parameterId;
   });
 
   const paramNames = useFetchParamNamesQuery(listingParamNames);
@@ -272,10 +273,10 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
           flexDirection: 'row',
         })}
       >
-        {listingDetails?.parameters?.map((id) => (
+        {categoryDetails?.parameters?.map((id) => (
           <Grid item>
             <Typography color={palette.grey[500]} sx={cardStyle.name}>
-              {paramNames?.find((param: { id: string }) => param.id === id.paramId)?.name}
+              {paramNames?.find((param: { id: string }) => param.id === id.parameterId)?.name}
             </Typography>
             <Typography sx={cardStyle.name}>{id.value}</Typography>
           </Grid>
