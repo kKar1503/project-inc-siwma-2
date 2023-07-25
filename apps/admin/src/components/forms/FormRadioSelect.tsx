@@ -70,11 +70,11 @@ const FormRadioSelect = ({
       <Controller
         control={control}
         {...hookInput(name, label, customValidation)}
-        render={({ field: { ref, ...field }, fieldState: { error, invalid } }) => (
+        render={({ field: { ...field }, formState: { defaultValues } }) => (
           <RadioGroup
             aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="female"
             placeholder={placeholder}
+            defaultValue={defaultValues ? defaultValues[name] : undefined}
             sx={{
               width: '100%',
               '& .MuiOutlinedInput-root': {
@@ -82,6 +82,7 @@ const FormRadioSelect = ({
               },
               ...sx,
             }}
+            value={field.value}
             onChange={(e, value) => field.onChange(value)}
           >
             {options.map((option) => (
