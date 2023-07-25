@@ -5,7 +5,7 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import { userSchema } from '@/utils/api/server/zod';
 
 // ** Error Imports
-import { NotFoundError } from '@inc/errors/src';
+import { NotFoundError } from '@inc/errors';
 
 // ** Prisma Imports
 import PrismaClient from '@inc/db';
