@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Autocomplete, TextField } from '@mui/material';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
@@ -92,7 +93,12 @@ const FormSearchDropdown = ({
             }}
             defaultValue={defaultValues ? defaultValues[name] : undefined}
             renderInput={(params) => (
-              <TextField {...params} label={'Dropdown Option' + (required ? ' *' : '')} />
+              // @ts-ignore
+              <TextField
+                variant="outlined"
+                {...params}
+                label={`Dropdown Option${required ? ' *' : ''}`}
+              />
             )}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.value === value.value}
