@@ -24,7 +24,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import Modal from '@inc/ui/lib/components/Modal';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
-import createdAdvertisementData from '@/services/createAdvertisement';
+import createdAdvertisementData from '@/middlewares/createAdvertisement';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 
