@@ -37,10 +37,6 @@ const validateCompanyName = (company: string) => {
   if (company.trim().length === 0) {
     throw new InvalidCompanyNameError();
   }
-
-  if (!/^[A-Za-z\s]+$/.test(company)) {
-    throw new InvalidCompanyNameError();
-  }
 };
 
 const hasRepeatedLetters = (text: string): boolean => {
