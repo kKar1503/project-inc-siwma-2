@@ -50,61 +50,70 @@ const menuItems = [
     dropdown: [
       {
         name: 'Advertisement Dashboard',
-        link: '/advertisement/dashboard',
+        link: '/advertisement-dashboard',
         Icon: AssessmentIcon,
       },
       {
         name: 'Advertisement Upload',
-        link: '/advertisement/upload',
+        link: '/advertisement-upload',
         Icon: UploadIcon,
       },
     ],
   },
   {
     name: 'Category Management',
-    link: '/categoryManagement',
+    link: '/category-management',
     Icon: CategoryIcon,
     dropdown: [
       {
         name: 'Category',
-        link: '/categoryManagement/category',
+        link: '/category',
         Icon: BusinessIcon,
       },
       {
         name: 'Parameters',
-        link: '/categoryManagement/parameters',
+        link: '/parameters',
         Icon: FormatListNumberedRtlIcon,
       },
     ],
   },
   {
-    
     name: 'Listing',
     link: '/listing',
     Icon: FormatListBulletedIcon,
     dropdown: [
       {
-        name: 'Listing',
-        link: '/listing/listing',
+        name: 'All Listing',
+        link: '/all-listings',
         Icon: FormatListBulletedIcon,
       },
       {
         name: 'Listing Items',
-        link: '/listing/listing-items',
+        link: '/listing-items',
         Icon: FeaturedPlayListOutlinedIcon,
       },
     ],
   },
   {
     name: 'User Management',
-    link: '/userManagement',
+    link: '/user-management',
     Icon: SettingsAccessibilityIcon,
     dropdown: [
       {
         name: 'Companies',
-        link: '/userManagement/companies',
+        link: '/companies',
         Icon: ApartmentIcon,
-      }
+      },
+      {
+        name: 'Users',
+        link: '/users',
+        Icon: PeopleAltIcon,
+      },
+      {
+        name: 'Invites',
+        link: '/invites',
+        Icon: PersonAddIcon,
+      },
     ],
   },
 ];
