@@ -11,7 +11,6 @@ import {
   FormRadioSelect,
   RadioSelectOption,
   FormDropdownSelector,
-  FormToggleButton,
 } from '../components/forms';
 
 const dropdownOptions = [
@@ -49,7 +48,6 @@ const obtainDefaultValues = () => ({
   numberInput: '123',
   dropdownInput: dropdownOptions[0],
   pillSelectInput: pillSelectOptions[1].value,
-  toggleSelectInput: pillSelectOptions[1].value,
 });
 
 const FormTest = () => {
@@ -177,8 +175,8 @@ const FormTest = () => {
           </FormInputGroup>
           <FormInputGroup
             sx={{ flex: 1 }}
-            label="Radio Select Input"
-            name="radioSelectInput"
+            label="Pill Select Input"
+            name="pillSelectInput"
             isLoading={false}
             success={submitSuccess}
             required
@@ -196,17 +194,6 @@ const FormTest = () => {
           >
             {/** @ts-ignore */}
             <FormDropdownSelector options={pillSelectOptions} placeholder="Sample Placeholder" />
-          </FormInputGroup>
-          <FormInputGroup
-            sx={{ flex: 1 }}
-            label="Toggle Select Input"
-            name="toggleSelectInput"
-            isLoading={false}
-            success={submitSuccess}
-            required
-          >
-            {/** @ts-ignore */}
-            <FormToggleButton options={pillSelectOptions} placeholder="Sample Placeholder" />
           </FormInputGroup>
         </FormProvider>
         <Button type="submit" variant="outlined">

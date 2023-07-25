@@ -94,7 +94,11 @@ const FormSearchDropdown = ({
             defaultValue={defaultValues ? defaultValues[name] : undefined}
             renderInput={(params) => (
               // @ts-ignore
-              <TextField variant="outlined" {...params} label={`${label}${required ? ' *' : ''}`} />
+              <TextField
+                variant="outlined"
+                {...params}
+                label={`Dropdown Option${required ? ' *' : ''}`}
+              />
             )}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.value === value.value}
