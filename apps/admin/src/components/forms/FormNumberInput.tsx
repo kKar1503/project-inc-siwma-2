@@ -52,7 +52,7 @@ const FormNumberInput = ({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       pattern: {
-        value: /^(0|[0-9|-]\d*)(\.\d+)?$/,
+        value: /^-?\d+(\.\d+)?$/,
         message: 'Must be a valid number',
       },
       max: max
