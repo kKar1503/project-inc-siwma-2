@@ -3,6 +3,7 @@ import { Box, Button } from '@mui/material';
 import { FieldValues, Form, FormProvider, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { validateCompanyName } from '@/utils/api/validate';
+import FormNumberInput from '@/components/forms/FormNumberInput';
 import { FormInputGroup, FormTextInput } from '../components/forms';
 
 // /**
@@ -113,6 +114,17 @@ const FormTest = () => {
           >
             {/** @ts-ignore */}
             <FormTextInput />
+          </FormInputGroup>
+          <FormInputGroup
+            sx={{ flex: 1 }}
+            label="Number Input"
+            name="numberInput"
+            isLoading={false}
+            success={submitSuccess}
+            required
+          >
+            {/** @ts-ignore */}
+            <FormNumberInput />
           </FormInputGroup>
         </FormProvider>
         <Button type="submit" variant="outlined">
