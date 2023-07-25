@@ -105,17 +105,17 @@ export function sortOptions(sortByStr: string | undefined) {
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
   userId: string,
-  includeParameters: boolean
+  config?: {
+    includeParameters?: boolean;
+    includeName?: boolean;
+  }
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
-    name: listing.listingItem.name,
-    description: listing.listingItem.description,
+    productId: listing.listingItemId.toString(),
     price: listing.price.toNumber(),
-    unit: listing.listingItem.unit,
     quantity: listing.quantity.toNumber(),
     negotiable: listing.negotiable,
-    categoryId: listing.listingItem.categoryId.toString(),
     type: listing.type,
     owner: {
       id: listing.users.id,
@@ -143,7 +143,7 @@ export async function formatSingleListingResponse(
   };
 
   if (
-    includeParameters &&
+    config?.includeParameters &&
     listing.listingsParametersValue &&
     listing.listingsParametersValue.parameters
   ) {
@@ -153,6 +153,10 @@ export async function formatSingleListingResponse(
       paramId: parameter.parameterId.toString(),
       value: parameter.value,
     }));
+  }
+
+  if (config?.includeName) {
+    formattedListing.name = listing.listingItem.name;
   }
 
   return formattedListing;
@@ -245,7 +249,9 @@ export default apiHandler()
     // Format the listings
     const formattedListings = await Promise.all(
       sortedListings.map((listing) =>
-        formatSingleListingResponse(listing, userId, queryParams.includeParameters)
+        formatSingleListingResponse(listing, userId, {
+          ...queryParams,
+        })
       )
     );
 
@@ -259,7 +265,7 @@ export default apiHandler()
 
     // Check if the listing item exists
     const listingItem = await PrismaClient.listingItem.findUnique({
-      where: { id: data.listingItemId },
+      where: { id: data.productId },
     });
 
     if (!listingItem) {
@@ -285,7 +291,7 @@ export default apiHandler()
 
     const listing = await PrismaClient.listing.create({
       data: {
-        listingItemId: data.listingItemId,
+        listingItemId: data.productId,
         quantity: data.quantity,
         price: data.price,
         negotiable: data.negotiable,

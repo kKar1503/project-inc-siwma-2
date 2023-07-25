@@ -1,31 +1,49 @@
 import { z } from 'zod';
+import { zodParseToInteger } from '../../apiHelper';
 
-// -- Product properties -- //
-const id = z.string();
-const name = z.string();
-const chineseName = z.string().nullable();
-const unit = z.string();
-const chineseUnit = z.string().nullable();
-const description = z.string();
+const getProductQueryParameters = z.object({
+  lastIdPointer: z.string().transform(zodParseToInteger).optional(),
+  limit: z.string().transform(zodParseToInteger).optional().default('10'),
+  matching: z.string().optional(),
+  category: z.number().optional(),
+  sortBy: z.string().optional(),
+});
 
-// -- Category Properties -- //
-const category = z.object({
-  id: z.string(),
+// Listing items have been changed to products however it is still lisitng-items in the db
+
+/**
+ * We define a separate schema for the type of the request body
+ * Because we want to perform a type transformation
+ * But we when we perform z.infer<> we want to get the original type
+ */
+const productRequestBodyType = z.object({
   name: z.string(),
-  crossSectionImage: z.string(),
+  chineseName: z.string().optional(),
+  description: z.string(),
+  unit: z.string(),
+  chineseUnit: z.string().optional(),
+  categoryId: z.string(),
 });
 
-// -- Product Schema -- //
-export const productSchema = z.object({
-  id,
-  name,
-  chineseName,
-  unit,
-  chineseUnit,
-  description,
-  category,
+const productRequestBody = productRequestBodyType.extend({
+  categoryId: z.string().transform(zodParseToInteger),
 });
 
-export const productsSchema = z.array(productSchema);
+const putProductRequestBodyType = productRequestBodyType.partial();
+const putProductRequestBody = productRequestBody.partial();
 
-export type Product = z.infer<typeof productSchema>;
+export type GetProductQueryParameter = z.infer<typeof getProductQueryParameters>;
+export type PostProductRequestBody = z.infer<typeof productRequestBodyType>;
+export type PutProductRequestBody = z.infer<typeof putProductRequestBodyType>;
+
+export default {
+  get: {
+    query: getProductQueryParameters,
+  },
+  post: {
+    body: productRequestBody,
+  },
+  put: {
+    body: putProductRequestBody,
+  },
+};

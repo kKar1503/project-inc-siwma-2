@@ -1,0 +1,16 @@
+{
+  "extends": ["@inc/eslint-config-custom/react"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "next": {
+      "rootDir": "apps/marketplace/"
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "apps/marketplace/"
+      }
+    }
+  }
+}
