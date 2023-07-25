@@ -14,13 +14,9 @@ import ListingCard from '@/components/ListingCard';
 import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import ShareModal from '@/components/modal/ShareModal';
 
-// ** HooksImports
-import { useSession } from 'next-auth/react';
-import { useQuery } from 'react-query';
-
 // ** Services
-import fetchCompany from '@/services/fetchProfileCompany';
 import useUser from '@/services/users/useUser';
+import useShareFunc from '@/services/share-function/useShareFunc';
 
 // ** Packages
 import { useResponsiveness } from '@inc/ui';
@@ -28,15 +24,14 @@ import { useResponsiveness } from '@inc/ui';
 // ** i18n import
 import { useTranslation } from 'react-i18next';
 
-// function to seperate string based on -
-const splitString = (str: string) => str.split('-');
-
 const ShareFunctionPage = () => {
   const router = useRouter();
   const [openShare, setOpenShare] = useState(false);
-  const loggedUserUuid = useSession().data?.user.id as string;
-  const userDetails = useUser(loggedUserUuid);
+  // ** Fetches the share data based on the hash
+  const shareData = useShareFunc(router.query.id as string);
+  const userDetails = useUser(shareData.data?.ownerId as string);
   console.log(userDetails);
+
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
   const { spacing } = theme;
@@ -44,7 +39,7 @@ const ShareFunctionPage = () => {
   let listingIds;
 
   if (router.query.id) {
-    listingIds = splitString(router.query.id as string);
+    listingIds = shareData.data?.listingItems;
   }
 
   const spaceStyle = useMemo(() => {

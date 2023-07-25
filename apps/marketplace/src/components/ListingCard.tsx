@@ -31,6 +31,7 @@ import fetchListing from '@/services/fetchListing';
 import fetchCatById from '@/services/fetchCatById';
 import fetchParamNames from '@/services/fetchParamNames';
 import useUser from '@/services/users/useUser';
+import useProduct from '@/services/useProduct';
 import bookmarkListing from '@/services/bookmarks/bookmarkListing';
 
 // ** i18n import
@@ -96,8 +97,10 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
   };
 
   const listingDetails = useFetchListingQuery(listingId);
-  console.log(listingDetails);
-  const categoryDetails = useFetchCategoryQuery(listingDetails?.categoryId || 'null');
+
+  const productDetails = useProduct(listingDetails?.productId || 'null').data;
+
+  const categoryDetails = useFetchCategoryQuery(productDetails?.categoryId || 'null');
 
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(listingId);
 
@@ -223,7 +226,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
       </Box>
 
       <Typography my={spacing(2)} sx={cardStyle.subtitle}>
-        ${listingDetails?.price}/{listingDetails?.unit}
+        ${listingDetails?.price}/{productDetails?.unit}
       </Typography>
       <Box display="flex" alignItems="center">
         <Avatar />
@@ -252,7 +255,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
           <Typography sx={cardStyle.title}>{t('Quantity')}</Typography>
           <Typography sx={cardStyle.name}>
             {listingDetails?.quantity}
-            {listingDetails?.unit}
+            {productDetails?.unit}
           </Typography>
         </Grid>
       </Grid>
