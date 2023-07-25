@@ -14,8 +14,6 @@ type FormSearchDropdownProps = {
   required?: boolean;
   success?: boolean;
   isLoading?: boolean;
-  max?: number;
-  min?: number;
   sx?: React.ComponentProps<typeof TextField>['sx'];
 };
 
@@ -33,8 +31,6 @@ const FormSearchDropdown = ({
   required = false,
   success,
   isLoading,
-  max,
-  min,
   sx,
 }: FormSearchDropdownProps) => {
   // Use form context
