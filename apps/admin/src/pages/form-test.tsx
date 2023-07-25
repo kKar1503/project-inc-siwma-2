@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { validateCompanyName } from '@/utils/api/validate';
 import FormNumberInput from '@/components/forms/FormNumberInput';
 import FormSearchDropdown from '@/components/forms/FormSearchDropdown';
+import FormRadioSelect, { RadioSelectOption } from '@/components/forms/FormRadioSelect';
 import { FormInputGroup, FormTextInput } from '../components/forms';
 
 // /**
@@ -39,6 +40,11 @@ const dropdownOptions = [
     label: 'The Lord of the Rings: The Fellowship of the Ring',
     year: 2001,
   },
+];
+
+const pillSelectOptions: RadioSelectOption[] = [
+  { label: 'Option 1', value: 'option1' },
+  { label: 'Option 2', value: 'option2' },
 ];
 
 const FormTest = () => {
@@ -149,7 +155,7 @@ const FormTest = () => {
           </FormInputGroup>
           <FormInputGroup
             sx={{ flex: 1 }}
-            label="Dropdown"
+            label="Dropdown Input"
             name="dropdownInput"
             isLoading={false}
             success={submitSuccess}
@@ -157,6 +163,17 @@ const FormTest = () => {
           >
             {/** @ts-ignore */}
             <FormSearchDropdown options={dropdownOptions} />
+          </FormInputGroup>
+          <FormInputGroup
+            sx={{ flex: 1 }}
+            label="Pill Select Input"
+            name="pillSelectInput"
+            isLoading={false}
+            success={submitSuccess}
+            required
+          >
+            {/** @ts-ignore */}
+            <FormRadioSelect options={pillSelectOptions} />
           </FormInputGroup>
         </FormProvider>
         <Button type="submit" variant="outlined">
