@@ -109,7 +109,7 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
             ))}
           </TableRow>
         </TableHead>
-       <TableBody>
+      <TableBody>
   {tableData.sideHeaders.map((header, index) => (
     <TableRow key={header}>
       <TableCell>{header}</TableCell>

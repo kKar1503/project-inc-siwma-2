@@ -25,18 +25,14 @@ function formatResponse(response: Companies[]): CompanyResponseBody[] {
 export default apiHandler()
   .post(apiGuardMiddleware({ allowAdminsOnly: true }), async (req, res) => {
     const { name, website, comments } = companySchema.post.body.parse(req.body);
-
     if (!name || name.trim().length === 0) {
       throw new ParamError('name');
     }
-
     const websiteRegex =
       /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/g;
-
     if (website && !websiteRegex.test(website)) {
       throw new ParamError('website');
     }
-
     const response = await PrismaClient.companies.create({
       data: {
         name,
@@ -44,13 +40,12 @@ export default apiHandler()
         comments,
       },
     });
-
     res.status(201).json(formatAPIResponse({ companyId: response.id.toString() }));
   })
   .get(async (req, res) => {
     const isAdmin = req.token?.user.permissions === 1;
 
-    const { lastIdPointer = 0, limit = 10, name } = companySchema.get.query.parse(req.query);
+    const { lastIdPointer = 0, limit = 5, name } = companySchema.get.query.parse(req.query);
 
     const response = await PrismaClient.companies.findMany({
       select: {
@@ -74,5 +69,17 @@ export default apiHandler()
       take: limit === 0 ? undefined : limit,
     });
 
-    res.status(200).json(formatAPIResponse(formatResponse(response)));
+    const count = await PrismaClient.companies.count({
+      where: {
+        id: {
+          gt: lastIdPointer,
+        },
+        name: {
+          contains: name,
+        },
+      },
+    });
+
+    res.status(200).json(formatAPIResponse({ data: formatResponse(response), count }))
+
   });
