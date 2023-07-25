@@ -103,7 +103,10 @@ const S3ImagePreview = ({ close, title, src }: S3ImagePreviewProps) => {
                 >
                   {title}
                 </Typography>
-                <S3CardImage src={src} placeholder='Image Preview' />
+                {/* errors will be fixed for S3Images in another PR ignore for now TODO remove ignores */}
+                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                {/* @ts-ignore */}
+                <S3CardImage src={src} alt='Image Preview' placeholder='Image Preview' />
               </Box>
             </Box>
           </Box>

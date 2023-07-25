@@ -48,6 +48,18 @@ const RowBody = ({
 
   const labelId = `enhanced-table-checkbox-${index}`;
 
+
+  const linkDisplay = row.link?.toLowerCase()
+    .replace(`https://`, '')
+    .replace(`http://`, '')
+    .replace(`www.`, '')
+    .replace(/\/$/, '');
+  const linkDisplayLength = 20;
+  const linkPreview = linkDisplay.length > linkDisplayLength ? `${linkDisplay.substring(0, linkDisplayLength - 3)}...` : linkDisplay;
+
+  const descriptionDisplayLength = 150;
+  const descriptionPreview = row.description.length > descriptionDisplayLength ? `${row.description.substring(0, descriptionDisplayLength - 3)}...` : row.description;
+
   return (
     <TableRow
       hover
@@ -70,8 +82,9 @@ const RowBody = ({
       <TableCell align='left'>{row.companyName}</TableCell>
       <TableCell align='left'><ExternalImage src={row.image} display='View Image' onViewImage={onViewImage}
                                              displayInvalid='No Image' /></TableCell>
-      <TableCell align='left'>{row.description}</TableCell>
-      <TableCell align='left'><ExternalLink link={row.link} display={row.link} displayInvalid='No Link' /></TableCell>
+      <TableCell align='left'>{descriptionPreview}</TableCell>
+      <TableCell align='left'><ExternalLink link={row.link} display={linkPreview}
+                                            displayInvalid='No Link' /></TableCell>
       <TableCell align='left'>{row.active ? 'YES' : 'NO'}</TableCell>
       <TableCell align='left'>{parseDate(row.createdAt)}</TableCell>
       <TableCell align='left'>{parseDate(row.startDate)}</TableCell>
