@@ -26,9 +26,9 @@ type BaseTableProps = {
   totalCount: number;
   onPageChange: React.ComponentProps<typeof TablePagination>['onPageChange'];
   onRowsPerPageChange: React.ComponentProps<typeof TablePagination>['onRowsPerPageChange'];
-  onEdit: (row: BaseTableData) => void;
-  onToggle: (toggled: boolean, rows: readonly BaseTableData[]) => void;
-  onDelete: (rows: readonly BaseTableData[]) => BaseTableData[];
+  onEdit?: (row: BaseTableData) => void;
+  onToggle?: (toggled: boolean, rows: readonly BaseTableData[]) => void;
+  onDelete?: (rows: readonly BaseTableData[]) => BaseTableData[];
   rowsPerPage: number;
   page: number;
   sx?: React.ComponentProps<typeof Box>['sx'];
@@ -105,6 +105,8 @@ const BaseTable = (props: BaseTableProps) => {
   };
 
   const handleDelete = () => {
+    if (!onDelete) return;
+
     // Invoke the callback function
     const result = onDelete(selected);
 
@@ -133,9 +135,9 @@ const BaseTable = (props: BaseTableProps) => {
           heading={heading}
           selectedRows={selected}
           toggleColumn="enabled"
-          onEdit={() => onEdit(selected[0])}
-          onToggle={(e, toggled) => onToggle(toggled, selected)}
-          onDelete={handleDelete}
+          onEdit={onEdit ? () => onEdit(selected[0]) : undefined}
+          onToggle={onToggle ? (e, toggled) => onToggle(toggled, selected) : undefined}
+          onDelete={onDelete ? handleDelete : undefined}
         />
         <TableContainer sx={{ flexGrow: 1 }}>
           <Table width="100%" aria-labelledby="tableTitle" stickyHeader>
