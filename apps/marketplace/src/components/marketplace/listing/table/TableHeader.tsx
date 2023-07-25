@@ -5,28 +5,47 @@ import React from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-// ** Hooks Imports
-import { useTranslation } from 'react-i18next';
-
 // ** Custom Components Import
 import HeaderCell from './HeaderCell';
 
-const TableHeader = () => {
-  // ** Hooks
-  const { t } = useTranslation();
-
-  return (
-    <TableHead>
-      <TableRow>
-        <HeaderCell sortByValue="name" sortable>{`${t('TableListingName')}`}</HeaderCell>
-        <HeaderCell sortByValue="price" sortable>{`${t('TableListingPrice')}`}</HeaderCell>
-        <HeaderCell sortByValue="quantity" sortable>{`${t('TableListingQuantity')}`}</HeaderCell>
-        <HeaderCell>{`${t('TableListingType')}`}</HeaderCell>
-        <HeaderCell sortByValue="createdAt" sortable>{`${t('TableListingPosted')}`}</HeaderCell>
-        <HeaderCell>{`${t('TableActions')}`}</HeaderCell>
-      </TableRow>
-    </TableHead>
-  );
-};
+const TableHeader = () => (
+  <TableHead>
+    <TableRow>
+      <HeaderCell
+        sortByValue="name"
+        sortable
+        sx={{ minWidth: 190, width: 602 }}
+        i18DisplayText="TableListingName"
+      />
+      <HeaderCell
+        align="center"
+        sortByValue="price"
+        sortable
+        sx={{ minWidth: 110 }}
+        i18DisplayText="TableListingPrice"
+      />
+      <HeaderCell
+        align="center"
+        sortByValue="quantity"
+        sortable
+        sx={{ minWidth: 120 }}
+        i18DisplayText="TableListingQuantity"
+      />
+      <HeaderCell
+        align="center"
+        sx={{ minWidth: 180, width: 180 }}
+        i18DisplayText="TableListingType"
+      />
+      <HeaderCell
+        align="center"
+        sortByValue="createdAt"
+        sortable
+        sx={{ minWidth: 150, width: 150 }}
+        i18DisplayText="TableListingPosted"
+      />
+      <HeaderCell />
+    </TableRow>
+  </TableHead>
+);
 
 export default TableHeader;
