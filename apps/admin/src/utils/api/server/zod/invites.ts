@@ -21,6 +21,7 @@ const inviteCreationRequestBody = z.object({
   email: z.string(),
   name: z.string(),
   company: z.string(),
+  mobileNumber: z.string().optional(),
 });
 
 const getInvitesQuery = z.object({
