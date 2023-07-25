@@ -115,11 +115,11 @@ const Page = () => {
       return;
     }
     if (isError) {
-      router.push('/500');
+      router.replace('/500');
       return;
     }
     if (queries[0] === undefined || !queries[1] === undefined || !queries[2] === undefined) {
-      router.push('/500');
+      router.replace('/500');
     }
   }, [queries, isFetched]);
 
