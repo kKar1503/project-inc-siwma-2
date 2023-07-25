@@ -1,37 +1,58 @@
-import Head from 'next/head';
-import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
-import Box from '@mui/material/Box';
-import { useMemo } from 'react';
-import { useTheme } from '@mui/material/styles';
-import { useQuery } from 'react-query';
-import fetchCompany from '@/middlewares/fetchCompany';
-import { useRouter } from 'next/router';
-import { useResponsiveness } from '@inc/ui';
+// ** React Imports
+import { useEffect, useMemo } from 'react';
 
-const useGetUser = (userUuid: string) => {
-  const { data } = useQuery('userdata', async () => fetchCompany(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-  return data;
-};
+// ** Next Imports
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+
+// ** MUI Imports
+import Box from '@mui/material/Box';
+
+// ** Custom Components Imports
+import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
+
+// ** HooksImports
+import { useTheme } from '@mui/material/styles';
+import { useResponsiveness } from '@inc/ui';
+import useUser from '@/services/users/useUser';
 
 const ProfilePage = () => {
-  const id = useRouter().query.id as string;
-  const userDetails = useGetUser(id);
-
+  // ** Hooks
+  const router = useRouter();
+  const id = router.query.id as string;
+  const {
+    data: user,
+    error: userError,
+    isError: isUserError,
+    isFetched: isUserFetched,
+  } = useUser(id);
   const theme = useTheme();
   const { spacing } = theme;
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [isMd, isLg] = useResponsiveness(['md', 'lg']);
 
-  const spaceStyle = useMemo(() => {
-    if (isSm) {
-      return {
-        py: spacing(3),
-        px: '20px',
-        height: '100%;',
-        width: '100%',
-      };
+  // ** Effects
+  useEffect(() => {
+    if (!isUserFetched) {
+      return;
     }
+
+    if (isUserError) {
+      if ('status' in (userError as any) && (userError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (user === undefined) {
+      router.replace('/500');
+    }
+  }, [isUserFetched]);
+
+  // ** Styles
+  const spaceStyle = useMemo(() => {
     if (isMd) {
       return {
         py: spacing(3),
@@ -56,12 +77,12 @@ const ProfilePage = () => {
       height: '100%;',
       width: '100%',
     };
-  }, [isSm, isMd, isLg]);
+  }, [isMd, isLg]);
 
   return (
     <main>
       <Box sx={spaceStyle}>
-        {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
+        {user && <ProfileDetailCard data={user} visibleEditButton />}
         <Box
           sx={{
             width: isLg ? '73%' : '100%',
