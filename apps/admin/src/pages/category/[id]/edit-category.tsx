@@ -37,7 +37,6 @@ const useUpdateUserMutation = (userUuid: string, image?: File, crossSectionImage
     updateCategoryData(updatedUserData, userUuid, image, crossSectionImage)
   );
 
-
 const EditCategory = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const router = useRouter();
@@ -49,7 +48,9 @@ const EditCategory = () => {
   const [selectedCrossSectionFile, setSelectedCrossSectionFile] = useState<File | null>(null);
   const [categoryName, setCategoryName] = useState<string>(categoryData?.name || '');
   const [categoryNameChinese, setCategoryNameChinese] = useState<string>(categoryData?.name || '');
-  const [categoryDescription, setCategoryDescription] = useState<string>(categoryData?.description || '');
+  const [categoryDescription, setCategoryDescription] = useState<string>(
+    categoryData?.description || ''
+  );
 
   const handleCatFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -81,14 +82,13 @@ const EditCategory = () => {
     selectedCrossSectionFile ?? undefined
   );
 
-
   const handleConfirmClick = () => {
     const requestBody: PutCategoryRequestBody = {
       name: categoryName,
       description: categoryDescription,
-      image: selectedCatFile ?? undefined, 
-      crossSectionImage: selectedCrossSectionFile ?? undefined, 
-      parameters: [], 
+      image: selectedCatFile ?? undefined,
+      crossSectionImage: selectedCrossSectionFile ?? undefined,
+      parameters: [],
     };
 
     mutation.mutate(requestBody);

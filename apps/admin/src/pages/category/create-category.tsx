@@ -10,6 +10,7 @@ import createCategories from '@/middlewares/createCategories';
 import { useMutation, useQueryClient } from 'react-query';
 import { CategoriesParameters } from '@prisma/client';
 import { useResponsiveness } from '@inc/ui';
+import { useRouter } from 'next/router';
 
 export type CreateCategoryProps = {
   name: string;
@@ -27,23 +28,26 @@ const CreateCategory = () => {
   const [categoryDescription, setCategoryDescription] = useState('');
   const [categoryParameters, setCategoryParameters] = useState<CategoriesParameters[]>([]);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const router = useRouter();
 
   const queryClient = useQueryClient();
 
-const usePostCategoryMutation = useMutation((categoryData: CreateCategoryProps) =>
-  createCategories(
-    categoryData.name,
-    categoryData.description,
-    categoryData.image,
-    categoryData.crossSectionImage,
-    categoryData.parameters
-  ),
-  {
-    onSuccess: () => {
-      queryClient.invalidateQueries('category');
+  const usePostCategoryMutation = useMutation(
+    (categoryData: CreateCategoryProps) =>
+      createCategories(
+        categoryData.name,
+        categoryData.description,
+        categoryData.image,
+        categoryData.crossSectionImage,
+        categoryData.parameters
+      ),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('category');
+        router.push('/category');
+      },
     }
-  }
-);
+  );
 
   const handleCatFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -76,7 +80,7 @@ const usePostCategoryMutation = useMutation((categoryData: CreateCategoryProps) 
       crossSectionImage: selectedCrossSectionFile ?? undefined,
       parameters: categoryParameters,
     };
-
+    
     await usePostCategoryMutation.mutateAsync(requestBody);
   };
 

@@ -79,8 +79,6 @@ const CategoryTable = () => {
     return newRows;
   };
 
-
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
