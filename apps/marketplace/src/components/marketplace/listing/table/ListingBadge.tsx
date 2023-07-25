@@ -1,7 +1,7 @@
 import React from 'react';
 import { Chip, Palette } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 
 type ListingBadgeProps = {
   type: 'sell' | 'buy' | 'negotiable';
