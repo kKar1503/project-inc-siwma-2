@@ -79,7 +79,7 @@ export default apiHandler()
     const { orderBy } = sortOptions(queryParams.sortBy);
 
     // Get total count ignoring pagination
-    const totalCount = await PrismaClient.listing.count({
+    const totalCount = await PrismaClient.listingItem.count({
       where: getListingItemsWhere(queryParams),
     });
 

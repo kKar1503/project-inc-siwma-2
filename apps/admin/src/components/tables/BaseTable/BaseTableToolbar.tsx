@@ -44,6 +44,7 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
           bgcolor: (theme) =>
             alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
         }),
+        flexGrow: 0,
       }}
     >
       {numSelected > 0 ? (
