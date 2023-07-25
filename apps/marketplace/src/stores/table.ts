@@ -24,7 +24,7 @@ export interface TableStates {
   totalCount: number;
   totalPage: number;
   limit: TableDisplayLimit;
-  selected: number[];
+  selected: string[];
 }
 
 export interface TableActions {
@@ -38,9 +38,9 @@ export interface TableActions {
   setSortDirection: (value: TSortableDirection) => void;
   setPagination: (paginationData: Pagination) => void;
   updatePagination: (paginationData: Partial<Pagination>) => void;
-  addSelected: (listingId: number) => void;
-  addManySelected: (listingIds: number[]) => void;
-  removeSelected: (listingId: number) => void;
+  addSelected: (listingId: string) => void;
+  addManySelected: (listingIds: string[]) => void;
+  removeSelected: (listingId: string) => void;
   clearSelected: () => void;
 }
 
