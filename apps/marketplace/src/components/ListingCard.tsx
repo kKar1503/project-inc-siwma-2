@@ -26,12 +26,12 @@ import placeholder from 'public/images/listing-placeholder.svg';
 // ** Luxon Imports
 import { DateTime } from 'luxon';
 
-// ** Middlewares
-import fetchListing from '@/middlewares/fetchListing';
-import fetchCatById from '@/middlewares/fetchCatById';
-import fetchParamNames from '@/middlewares/fetchParamNames';
-import fetchUser from '@/middlewares/fetchUser';
-import bookmarkListing from '@/middlewares/bookmarks/bookmarkListing';
+// ** Services
+import fetchListing from '@/services/fetchListing';
+import fetchCatById from '@/services/fetchCatById';
+import fetchParamNames from '@/services/fetchParamNames';
+import useUser from '@/services/users/useUser';
+import bookmarkListing from '@/services/bookmarks/bookmarkListing';
 
 // ** i18n import
 import { useTranslation } from 'react-i18next';
@@ -40,8 +40,6 @@ import { useTranslation } from 'react-i18next';
 import { useResponsiveness } from '@inc/ui';
 import S3BoxImage from './S3BoxImage';
 import ListingBadge from './listing/ListingBadge';
-
-
 
 export type ListingCardProps = {
   listingId: string;
@@ -64,15 +62,9 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
     return data;
   };
 
-  const useGetUserQuery = (userUuid: string) => {
-    const { data } = useQuery(['user', userUuid], async () => fetchUser(userUuid));
-
-    return data;
-  };
-
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
-  const userDetails = useGetUserQuery(loggedUserUuid);
+  const userDetails = useUser(loggedUserUuid).data;
 
   const useFetchParamNamesQuery = (paramIds?: string[]) => {
     const { data } = useQuery(['paramNames', paramIds], async () => fetchParamNames(paramIds), {
@@ -104,7 +96,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
   };
 
   const listingDetails = useFetchListingQuery(listingId);
-
+  console.log(listingDetails);
   const categoryDetails = useFetchCategoryQuery(listingDetails?.categoryId || 'null');
 
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(listingId);

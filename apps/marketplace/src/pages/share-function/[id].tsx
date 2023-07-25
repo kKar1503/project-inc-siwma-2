@@ -18,22 +18,15 @@ import ShareModal from '@/components/modal/ShareModal';
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
 
-// ** Middlewares
-import fetchCompany from '@/middlewares/fetchCompany';
+// ** Services
+import fetchCompany from '@/services/fetchProfileCompany';
+import useUser from '@/services/users/useUser';
 
 // ** Packages
 import { useResponsiveness } from '@inc/ui';
 
 // ** i18n import
 import { useTranslation } from 'react-i18next';
-
-
-const useGetUser = (userUuid: string) => {
-  const { data } = useQuery('userData', async () => fetchCompany(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-  return data;
-};
 
 // function to seperate string based on -
 const splitString = (str: string) => str.split('-');
@@ -42,7 +35,8 @@ const ShareFunctionPage = () => {
   const router = useRouter();
   const [openShare, setOpenShare] = useState(false);
   const loggedUserUuid = useSession().data?.user.id as string;
-  const userDetails = useGetUser(loggedUserUuid);
+  const userDetails = useUser(loggedUserUuid);
+  console.log(userDetails);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
   const { spacing } = theme;
@@ -103,12 +97,12 @@ const ShareFunctionPage = () => {
       },
     };
   }, [isSm, isMd, isLg]);
-  
+
   return (
     <main>
       <Box sx={spaceStyle.outerSpace}>
         <Box sx={spaceStyle.boxStyle}>
-          {userDetails && <ProfileDetailCard data={userDetails} />}
+          {/* {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />} */}
           {/* map listing cards based on listing Ids */}
           <Box sx={spaceStyle.scrollBox}>
             {listingIds?.map((id) => (
