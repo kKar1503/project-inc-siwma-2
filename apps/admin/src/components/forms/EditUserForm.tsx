@@ -275,6 +275,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
                   Change Password
                 </Typography>
                 <button
+                  type="button"
                   style={{
                     display: 'inline',
                     background: 'none',
@@ -297,15 +298,11 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">Confirm Password</Typography>
-                <FormInputGroup label="Confirm Password" name="oldPassword">
+                <FormInputGroup label="" name="oldPassword">
                   {/* Instead of confirm password, oldPassword is used. That is because
                   oldPassword is not used by admin and confirmPassword doesn't exits on PUT user
                   request body. And I also don't want to create a new type */}
-                  <FormTextInput
-                    label="Confirm Password"
-                    name="oldPassword"
-                    placeholder="Confirm Password"
-                  />
+                  <FormTextInput label="" name="oldPassword" placeholder="Confirm Password" />
                 </FormInputGroup>
               </Grid>
               <Grid item xs={12}>
