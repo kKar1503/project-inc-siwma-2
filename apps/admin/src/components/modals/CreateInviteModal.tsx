@@ -1,22 +1,17 @@
-import {
-  Modal,
-  Fade,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  IconButton,
-  styled,
-  useTheme,
-  Autocomplete,
-} from '@mui/material';
+import { Modal, Fade, Box, Typography, Button, IconButton, useTheme } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useResponsiveness } from '@inc/ui';
 import { ReactNode, useMemo, useState } from 'react';
 import { Company } from '@/utils/api/client/zod';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { validateEmail, validateName } from '@/utils/api/validate';
+import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
+import { validateEmail, validateName, validatePhone } from '@/utils/api/validate';
 import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
+import {
+  FormDropdownSelector,
+  FormInputGroup,
+  FormSearchDropdown,
+  FormTextInput,
+} from '@/components/forms';
 
 export type CreateInviteModalProps = {
   data: Company[];
@@ -29,6 +24,7 @@ type Inputs = {
   name: string;
   email: string;
   company: string;
+  mobileNumber: string | undefined;
 };
 
 const ErrorText = ({ children }: { children: ReactNode }) => (
@@ -37,22 +33,21 @@ const ErrorText = ({ children }: { children: ReactNode }) => (
   </Typography>
 );
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  width: '100%',
-  marginBottom: theme.spacing(2),
-}));
+const parseOptions = (data: Company[]) =>
+  data.map((company) => ({ label: company.name, value: company.id }));
 
 const CreateInviteModal = ({ data, isOpen, setOpen, onSubmit }: CreateInviteModalProps) => {
   const { palette, spacing } = useTheme();
   const [error, setError] = useState<Error | null>(null);
   const [isXs, isSm, isMd] = useResponsiveness(['xs', 'sm', 'md']);
 
+  const formHook = useForm<Inputs>();
+
   const {
-    register,
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = formHook;
 
   const modalStyles = useMemo(() => {
     if (isXs) {
@@ -88,14 +83,16 @@ const CreateInviteModal = ({ data, isOpen, setOpen, onSubmit }: CreateInviteModa
     reset();
   };
 
-  const submitHandler: SubmitHandler<Inputs> = (formData) => {
+  const submitHandler: SubmitHandler<Inputs> = (data: Inputs) => {
     try {
+      const formData = data;
       validateName(formData.name);
       validateEmail(formData.email);
+      if (formData.mobileNumber && formData.mobileNumber.trim() !== '')
+        validatePhone(formData.mobileNumber);
+      formData.mobileNumber = undefined;
       setError(null);
-      const companyId = data.find((element) => element.name === formData.company)?.id;
-      if (!companyId) return;
-      onSubmit({ name: formData.name, email: formData.email, company: companyId });
+      onSubmit(formData);
       reset();
     } catch (error: unknown) {
       if (error instanceof Error) setError(error);
@@ -141,47 +138,35 @@ const CreateInviteModal = ({ data, isOpen, setOpen, onSubmit }: CreateInviteModa
             Invite an individual user to the system
           </Typography>
           <form onSubmit={handleSubmit(submitHandler)}>
-            <StyledTextField
-              label="Name"
-              variant="outlined"
-              {...register('name', { required: true })}
-            />
-            <StyledTextField
-              label="Email"
-              variant="outlined"
-              type="email"
-              {...register('email', { required: true })}
-            />
-            <Autocomplete
-              sx={{
-                marginBottom: spacing(2),
-              }}
-              options={data}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  label="Company"
-                  {...register('company', { required: true })}
-                />
-              )}
-            />
-            {errors.name && <ErrorText>Name is required!</ErrorText>}
-            {errors.email && <ErrorText> Email is required!</ErrorText>}
-            {errors.company && <ErrorText> Company is required!</ErrorText>}
-            {error && <ErrorText>{error.message}</ErrorText>}
-            <Button
-              type="submit"
-              sx={{
-                width: '100%',
-                py: '0.5rem',
-                my: '1rem',
-              }}
-              variant="outlined"
-            >
-              Send Invite
-            </Button>
+            <FormProvider {...formHook}>
+              <FormInputGroup label="Name" name="name" required>
+                <FormTextInput label="Name" name="name" />
+              </FormInputGroup>
+              <FormInputGroup label="Email" name="email" required>
+                <FormTextInput label="Email" name="email" />
+              </FormInputGroup>
+              <FormInputGroup label="Company" name="company" required>
+                <FormDropdownSelector options={parseOptions(data)} label="Company" name="company" />
+              </FormInputGroup>
+              <FormInputGroup label="Mobile Number" name="mobileNumber">
+                <FormTextInput label="Mobile Number" name="mobileNumber" />
+              </FormInputGroup>
+              {errors.name && <ErrorText>Name is required!</ErrorText>}
+              {errors.email && <ErrorText> Email is required!</ErrorText>}
+              {errors.company && <ErrorText> Company is required!</ErrorText>}
+              {error && <ErrorText>{error.message}</ErrorText>}
+              <Button
+                type="submit"
+                sx={{
+                  width: '100%',
+                  py: '0.5rem',
+                  my: '1rem',
+                }}
+                variant="outlined"
+              >
+                Send Invite
+              </Button>
+            </FormProvider>
           </form>
         </Box>
       </Fade>
