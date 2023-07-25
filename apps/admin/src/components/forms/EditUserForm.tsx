@@ -44,21 +44,26 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
   const [error, setError] = useState<Error | null>(null);
   const [isXs, isSm, isMd] = useResponsiveness(['xs', 'sm', 'md']);
 
-  const formHook = useForm();
+  const obtainDefaultValues = () => {
+    if (!user) return undefined;
+    return {
+      name: user.name,
+      email: user.email,
+      company: user.company.id,
+      mobileNumber: user.mobileNumber,
+      bio: user.bio || undefined,
+      userComments: user.comments || undefined,
+    };
+  };
+
+  const formHook = useForm({
+    defaultValues: obtainDefaultValues(),
+  });
   const { handleSubmit, reset } = formHook;
 
   // fill form
   useEffect(() => {
     if (user) {
-      const formData = {
-        name: user.name,
-        email: user.email,
-        company: user.company.id,
-        mobileNumber: user.mobileNumber,
-        bio: user.bio || undefined,
-        userComments: user.comments || undefined,
-      };
-      reset(formData);
       setProfilePic(user.profilePic);
     }
   }, [reset, user]);
