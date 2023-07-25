@@ -111,7 +111,7 @@ const AllListingItems = () => {
   };
 
   const onEdit = (row: BaseTableData) => {
-    router.replace(`/listing/editListingItemForm/${row.id}`);
+    router.replace(`/listing/edit-listing-item-form/${row.id}`);
   };
 
   const onToggle = () => {

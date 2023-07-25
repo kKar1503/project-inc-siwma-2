@@ -90,6 +90,7 @@ const ListingItemForm = () => {
         Create listing item
       </Typography>
       <Typography variant="body1">Create a listing item</Typography>
+      
       <Box>
         <TextField
           fullWidth
@@ -160,15 +161,21 @@ const ListingItemForm = () => {
           margin="normal"
           onChange={(e) => setChineseUnit(e.target.value)}
         />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          onClick={handleConfirm}
-          sx={{ my: '10px' }}
+        <Box
+          sx={({ spacing }) => ({
+            width: '98%',
+            mt: spacing(2),
+            display: 'flex',
+            justifyContent: 'flex-end',
+          })}
         >
+          <Button type="submit" variant="contained" onClick={handleConfirm} sx={({ spacing}) => ({
+            mb: spacing(2),
+          })}>
           SUBMIT
         </Button>
+        </Box>
+        
       </Box>
       <SuccessModal
         title="Successfully Created!"

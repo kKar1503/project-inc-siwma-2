@@ -104,7 +104,7 @@ const AllListingItemsTable: React.FC<ListingItemsTableProps> = ({ data, ...props
             </Grid>
             <Grid item xs={6}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                <Link href="/listing/listingItemsForm">
+                <Link href="/listing/listing-items-form">
                   <Button variant="contained">Create Listing Item</Button>
                 </Link>
               </Box>
