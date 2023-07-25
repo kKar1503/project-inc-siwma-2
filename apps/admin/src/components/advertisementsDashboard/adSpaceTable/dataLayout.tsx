@@ -26,5 +26,5 @@ export const headCells: readonly HeadCell[] = [
   },
   {
     label: 'End At',
-  }
+  },
 ];

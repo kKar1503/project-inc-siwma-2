@@ -8,7 +8,7 @@ export type ModuleBaseProps = {
   width?: string;
 }
 
-const ModuleBase = ({ children, noFlex,height,width }: ModuleBaseProps) => <Paper
+const ModuleBase = ({ children, noFlex, height, width }: ModuleBaseProps) => <Paper
   sx={{
     display: noFlex ? 'block' : 'flex',
     justifyContent: 'space-between',

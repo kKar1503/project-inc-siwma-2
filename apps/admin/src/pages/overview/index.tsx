@@ -86,7 +86,7 @@ const Analytics = () => {
     buying: number,
     selling: number,
     // eslint-disable-next-line prefer-spread
-  }>>(Array.apply(null, Array(12)).map(()=>({ buying: 0, selling: 0 })));
+  }>>(Array.apply(null, Array(12)).map(() => ({ buying: 0, selling: 0 })));
   const [productToCategoryAndName, setProductToCategoryAndName] = useState<Map<string, {
     name: string,
     categoryId: string
@@ -102,7 +102,6 @@ const Analytics = () => {
     const listingCompanyBinLocal = listingCompanyBin;
     const listingProductsBinLocal = listingProductsBin;
     const listingMonthsBinLocal = listingMonthsBin;
-    console.log(listingMonthsBin);
     data.listings.forEach(listing => {
       // company stuff
       {
@@ -121,7 +120,6 @@ const Analytics = () => {
         const { productId, createdAt } = listing;
         const buySellProducts = listingProductsBinLocal.get(productId) || { buying: 0, selling: 0 };
         const month = new Date(createdAt).getMonth();
-        console.log(month);
         const buySellMonth = listingMonthsBinLocal[month];
         if (listing.type === 'BUY') {
           buySellProducts.buying++;
@@ -153,13 +151,13 @@ const Analytics = () => {
 
 
   // useMemo (dependencies aren't exactly right, but it's intentional as the default suggested dependencies don't update - since no change in reference)
-  const categoryNames = useMemo(() => categoryMap(categoriesQuery), [categoriesQuery.isSuccess]);
+  const categoryNames = useMemo(() => categoryMap(categoriesQuery), [categoriesQuery, categoriesQuery.isSuccess]);
 
-  const topCompanies = useMemo(() => mapTopCompanies(listingCompanyBin), [listingProductsBin.size]);
+  const topCompanies = useMemo(() => mapTopCompanies(listingCompanyBin), [listingCompanyBin, listingCompanyBin.size]);
 
-  const topProducts = useMemo(() => mapTopProducts(listingProductsBin, productToCategoryAndName), [listingProductsBin.size, productToCategoryAndName.size]);
+  const topProducts = useMemo(() => mapTopProducts(listingProductsBin, productToCategoryAndName), [listingProductsBin, listingProductsBin.size, productToCategoryAndName, productToCategoryAndName.size]);
 
-  const topCategories = useMemo(() => mapTopCategories(topProducts, categoryNames), [topProducts.length, categoryNames]);
+  const topCategories = useMemo(() => mapTopCategories(topProducts, categoryNames), [topProducts, topProducts.length, categoryNames]);
 
   // Check on query states to see if we're done loading, if not, show loading indicator (using custom one instead of Spinner)
   const companyFinishedLoading = listingQuery.isComplete;

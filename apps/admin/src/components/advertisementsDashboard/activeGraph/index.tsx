@@ -15,19 +15,17 @@ const format = [
   { id: 10, display: 'Oct' },
   { id: 11, display: 'Nov' },
   { id: 12, display: 'Dec' },
-]
+];
 
 export interface ActiveGraphProps {
   data: number[];
 }
 
 const ActiveGraph = ({ data }: ActiveGraphProps) => {
-  const mapData = data.map((item, index) => {
-    return { id: index + 1, value: item, label: item.toString() };
-  });
+  const mapData = data.map((item, index) => ({ id: index + 1, value: item, label: item.toString() }));
   return (
     <ModuleBase>
-      <DataGraph data={mapData} format={format} style={{ fillColor: '#d7d7d7', hoverColor: '#ea3b59' }} >
+      <DataGraph data={mapData} format={format} style={{ fillColor: '#d7d7d7', hoverColor: '#ea3b59' }}>
         <Title title='Number of active ad-spaces per month' subtitle='Year 2022' />
       </DataGraph>
     </ModuleBase>

@@ -10,7 +10,7 @@ export interface ActiveCategoriesProps {
   title: string;
 }
 
-const PieChart = ({ data,title }: ActiveCategoriesProps) => {
+const PieChart = ({ data, title }: ActiveCategoriesProps) => {
   const formattedData = data.map((item) => ({
       x: item.name,
       y: item.total,
@@ -20,7 +20,7 @@ const PieChart = ({ data,title }: ActiveCategoriesProps) => {
   return (
     <ModuleBase noFlex width='85%'>
       {/* idk why but the other graphs have a small spacing at the top but this doesn't so im adding this for consistency */}
-      <br/>
+      <br />
       <Title title={`${title} (${formattedData.length})`} primarySize={20} x={-35} />
       <VictoryPie
         containerComponent={<VictoryContainer />}
@@ -42,10 +42,10 @@ const PieChart = ({ data,title }: ActiveCategoriesProps) => {
                 mutation: () => ({ active: false }),
               },
             ],
-              },
-            }]}
-            data={formattedData}
-          />
+          },
+        }]}
+        data={formattedData}
+      />
     </ModuleBase>
   );
 };

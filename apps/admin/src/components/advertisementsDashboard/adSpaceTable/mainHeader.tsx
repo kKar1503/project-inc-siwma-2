@@ -80,10 +80,10 @@ const MainHeader = ({
             </Tooltip>
           }
           {numSelected === 1 && <Tooltip title='Edit' onClick={onEdit}>
-              <IconButton>
-                <EditIcon />
-              </IconButton>
-            </Tooltip>}
+            <IconButton>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>}
           <Tooltip title='Delete' onClick={onDelete}>
             <IconButton>
               <DeleteIcon />

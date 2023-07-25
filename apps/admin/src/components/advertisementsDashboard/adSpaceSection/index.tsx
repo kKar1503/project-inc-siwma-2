@@ -16,6 +16,7 @@ import Spinner from '@/components/Spinner';
 export interface AdvertisementDashboardProps {
   totalClicks: number;
 }
+
 const mapCompanies = (companiesQuery: UseQueryResult<Company[]>) => companiesQuery.data || [];
 
 const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) => {
@@ -31,10 +32,10 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
     return <Spinner />;
   }
 
-  if(advertisementsQuery.isError || companiesQuery.isError) {
+  if (advertisementsQuery.isError || companiesQuery.isError) {
     return <div>
       An error occurred, please refresh the page try again
-      <br/>
+      <br />
       If the problem persists, please contact the administrator for assistance
     </div>;
   }
@@ -43,7 +44,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
     advertisementsQuery.refetch();
     companiesQuery.refetch();
     setMutatedAdvertisements({});
-  }
+  };
 
   const advertisements: { [key: string]: Advertisment } = {};
 
@@ -112,15 +113,15 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
         <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />
       </Grid>
       <Grid item xs={12} md={12} lg={12}>
-          <AdSpaceTable
-            ids={ids}
-            advertisements={advertisements}
-            companies={companies}
-            onDelete={onDelete}
-            onEdit={onEdit}
-            onSetActive={onSetActive}
-            onSetInactive={onSetInactive}
-          />
+        <AdSpaceTable
+          ids={ids}
+          advertisements={advertisements}
+          companies={companies}
+          onDelete={onDelete}
+          onEdit={onEdit}
+          onSetActive={onSetActive}
+          onSetInactive={onSetInactive}
+        />
       </Grid>
     </Grid>
   );

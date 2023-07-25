@@ -22,7 +22,7 @@ export interface DataGraphProps {
   children?: ReactNode;
 }
 
-const DataGraph = ({ data, format, style,children }: DataGraphProps) => {
+const DataGraph = ({ data, format, style, children }: DataGraphProps) => {
   const tickValues = format.map((item, index) => typeof item === 'string' ? index + 1 : item.id);
   const tickFormat = format.map((item) => typeof item === 'string' ? item : item.display);
   return (
@@ -81,7 +81,7 @@ const DataGraph = ({ data, format, style,children }: DataGraphProps) => {
               },
               {
                 target: 'data',
-                mutation: () => ({ style: { fill: style.hoverColor} }),
+                mutation: () => ({ style: { fill: style.hoverColor } }),
               },
             ],
             onMouseOut: () => [

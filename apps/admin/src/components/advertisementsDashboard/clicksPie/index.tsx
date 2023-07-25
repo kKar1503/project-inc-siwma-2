@@ -29,7 +29,7 @@ const Index = ({ data, totalClicks }: ClicksPieProps) => {
         <Grid item xs={1} />
         <Grid item xs={11}>
           <VictoryContainer>
-            <Title title='Total click distribution' subtitle='Number of clicks per ad-space' x={-40}   primarySize={20} />
+            <Title title='Total click distribution' subtitle='Number of clicks per ad-space' x={-40} primarySize={20} />
             <VictoryPie
               // origin={}
               standalone={false}
@@ -60,13 +60,13 @@ const Index = ({ data, totalClicks }: ClicksPieProps) => {
               style={{ fontSize: 65, fontWeight: 'bold' }}
               x={170} y={165}
               text={totalClicks}
-              />
-              <VictoryLabel
-                textAnchor='middle'
-                style={{ fontSize: 15, color: 'text.secondary' }}
-                x={170} y={205}
-                text='Clicks'
-              />
+            />
+            <VictoryLabel
+              textAnchor='middle'
+              style={{ fontSize: 15, color: 'text.secondary' }}
+              x={170} y={205}
+              text='Clicks'
+            />
           </VictoryContainer>
         </Grid>
       </Grid>

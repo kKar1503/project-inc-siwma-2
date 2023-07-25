@@ -16,13 +16,13 @@ const TopCompanies = ({ data }: TopCompaniesProps) => {
   return (
     <ModuleBase width='85%'>
       <DataGraph data={mapData} format={trimmedData.map(() => '')}
-                       style={
-                         {
-                           fillColor: '#d7d7d7',
-                           hoverColor: '#ea3b59',
-                         }
-                       }>
-        <Title title="Top 4 Companies with most posts" />
+                 style={
+                   {
+                     fillColor: '#d7d7d7',
+                     hoverColor: '#ea3b59',
+                   }
+                 }>
+        <Title title='Top 4 Companies with most posts' />
       </DataGraph>
     </ModuleBase>
   );

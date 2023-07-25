@@ -32,7 +32,7 @@ const TopCompanies = ({ data }: TopCompaniesProps) => {
                            hoverColor2: '#54a5f0',
                          }
                        }>
-        <Title title={`Top 4 Companies with most posts`} />
+        <Title title='Top 4 Companies with most posts' />
       </DoubleDataGraph>
     </ModuleBase>
   );

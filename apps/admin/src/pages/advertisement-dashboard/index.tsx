@@ -10,7 +10,7 @@ import CompanyForm from '@/components/advertisementsDashboard/companyForm';
 
 const mapData = (
   adClicksData: UseQueryResult<FetchAdClicksDataResponse>,
-  ) => {
+) => {
   const totalClicks = adClicksData.data?.data.reduce((acc, item) => acc + item.clicks, 0) ?? 0;
   const companyClicks = adClicksData.data?.data.map((item) => ({
     company: item.company,
@@ -33,27 +33,27 @@ const AdvertisementDashboard = () => {
   } = useMemo(() => mapData(adClicksData), [adClicksData]);
 
   return (
-      <Box style={{
-        marginTop: '1rem',
-        marginRight: '1rem',
-        marginLeft: '1rem',
-      }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={9}>
-            <AdSpaceSection totalClicks={totalClicks}/>
+    <Box style={{
+      marginTop: '1rem',
+      marginRight: '1rem',
+      marginLeft: '1rem',
+    }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={9}>
+          <AdSpaceSection totalClicks={totalClicks} />
 
-            <CompanyForm />
+          <CompanyForm />
+        </Grid>
+        <Grid item container xs={12} md={3} spacing={2}>
+          <Grid item xs={6} md={12}>
+            <ClicksPie data={companyClicks} totalClicks={totalClicks} />
           </Grid>
-          <Grid item container xs={12} md={3} spacing={2}>
-            <Grid item xs={6} md={12}>
-              <ClicksPie data={companyClicks} totalClicks={totalClicks} />
-            </Grid>
-            <Grid item xs={6} md={12}>
-              <ActiveGraph data={activeData} />
-            </Grid>
+          <Grid item xs={6} md={12}>
+            <ActiveGraph data={activeData} />
           </Grid>
         </Grid>
-      </Box>
+      </Grid>
+    </Box>
   );
 };
 

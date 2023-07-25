@@ -5,8 +5,8 @@ export interface TitleProps {
   subtitle?: string;
   x?: number;
   y?: number;
-  primarySize?:number;
-  secondaySize?:number;
+  primarySize?: number;
+  secondaySize?: number;
 }
 
 const Title = (

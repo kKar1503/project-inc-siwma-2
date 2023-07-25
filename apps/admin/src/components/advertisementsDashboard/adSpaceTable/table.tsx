@@ -67,11 +67,14 @@ export default function({
   };
 
   const handleClick = (event: MouseEvent<unknown>, element: Advertisment) => {
-    const selectedIndex = selected.indexOf(element.id);
+    const { id } = element;
+    // only happens when not admin
+    if (id === undefined) return;
+    const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, element.id);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -119,51 +122,51 @@ export default function({
         onSetInactive={handleSetInactive}
         onDelete={handleDelete}
         onEdit={handleEdit}
-        />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 550 }}
-            aria-labelledby='tableTitle'
-            size='medium'
-          >
-            <RowHeader
-              numSelected={selected.length}
-              onSelectAllClick={handleSelectAllClick}
-              rowCount={ids.length}
-            />
-            <TableBody>
-              {
-                visibleRowIds.map((row, index) => {
-                  const isSelected = selected.indexOf(row) !== -1;
-                  const advertisement = advertisements[row];
-                  return <RowBody row={{
-                    ...advertisement,
-                    companyName: advertisement.companyId? companyNames.get(advertisement.companyId) || '' : '',
-                  }} index={index} isSelected={isSelected} onSelect={handleClick} />;
-                })
-              }
-              {/* Add empty rows to the end of the table if there are fewer than rowsPerPage */}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53.25 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={rowPageOptions}
-          component='div'
-          count={ids.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+      />
+      <TableContainer>
+        <Table
+          sx={{ minWidth: 550 }}
+          aria-labelledby='tableTitle'
+          size='medium'
+        >
+          <RowHeader
+            numSelected={selected.length}
+            onSelectAllClick={handleSelectAllClick}
+            rowCount={ids.length}
+          />
+          <TableBody>
+            {
+              visibleRowIds.map((row, index) => {
+                const isSelected = selected.indexOf(row) !== -1;
+                const advertisement = advertisements[row];
+                return <RowBody row={{
+                  ...advertisement,
+                  companyName: advertisement.companyId ? companyNames.get(advertisement.companyId) || '' : '',
+                }} index={index} isSelected={isSelected} onSelect={handleClick} />;
+              })
+            }
+            {/* Add empty rows to the end of the table if there are fewer than rowsPerPage */}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: 53.25 * emptyRows,
+                }}
+              >
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={rowPageOptions}
+        component='div'
+        count={ids.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </ModuleBase>
   );
 }
