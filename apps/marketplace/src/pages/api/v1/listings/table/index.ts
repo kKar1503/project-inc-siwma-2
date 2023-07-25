@@ -96,6 +96,7 @@ export default apiHandler().get(async (req, res) => {
       quantity: true,
       type: true,
       createdAt: true,
+      listingItemId: true,
       users: {
         select: {
           id: true,
@@ -117,52 +118,17 @@ export default apiHandler().get(async (req, res) => {
     },
   });
 
-  // Map the parameters ids
-  // type JsonParameter = {
-  //   parameterId: number;
-  //   value: string;
-  // };
-  // type Parameter = Listing['parameters'][number];
-  // const paramIds = new Set<number>();
-  //
-  // listings.forEach((l, i) => {
-  //   if (
-  //     l.listingsParametersValue?.parameters &&
-  //     typeof l.listingsParametersValue?.parameters === 'object' &&
-  //     Array.isArray(l.listingsParametersValue?.parameters)
-  //   ) {
-  //     const parameters = l.listingsParametersValue?.parameters as JsonParameter[];
-  //     parameters.forEach((p) => {
-  //       paramIds.add(p.parameterId);
-  //     });
-  //   }
-  // });
-  //
-  // // Fetch the unique parameters and map them into an object
-  // const parameters = await PrismaClient.parameter
-  //   .findMany({
-  //     where: {
-  //       id: {
-  //         in: [...paramIds],
-  //       },
-  //     },
-  //     select: {
-  //       id: true,
-  //       type: true,
-  //       dataType: true,
-  //       name: true,
-  //     },
-  //   })
-  //   .then((p) => {
-  //     const map: Record<string, Pick<Parameter, Exclude<keyof Parameter, 'value'>>> = {};
-  //     p.forEach((p2) => {
-  //       map[p2.id.toString()] = { ...p2, id: p2.id.toString() };
-  //     });
-  //     return map;
-  //   });
-
   const formattedListings: Listing[] = listings.map((l) => {
-    const { listingsParametersValue, users, id, price, quantity, createdAt, ...rest } = l;
+    const {
+      listingsParametersValue,
+      users,
+      id,
+      price,
+      quantity,
+      createdAt,
+      listingItemId,
+      ...rest
+    } = l;
     const { profilePicture, companies, ...owner } = users;
     return {
       ...rest,
@@ -170,6 +136,7 @@ export default apiHandler().get(async (req, res) => {
       price: price.toNumber(),
       quantity: quantity.toNumber(),
       createdAt: createdAt.toISOString(),
+      product: listingItemId.toString(),
       owner: {
         ...owner,
         profilePic: profilePicture,
