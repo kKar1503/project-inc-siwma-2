@@ -55,7 +55,7 @@ export class ParamRequiredError extends ParamError {
 
   constructor(parameter: string) {
     super();
-    this.message = `Parameter '${parameter}' is required'`;
+    this.message = `Parameter '${parameter}' is required`;
     this.status = ParamRequiredError.status;
     this.code = ParamRequiredError.code;
   }

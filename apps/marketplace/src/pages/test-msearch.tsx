@@ -35,7 +35,7 @@ const getServerSideProps = async () => {
 const Hit = ({ hit }: any) => <Highlight attribute="name" hit={hit} />;
 
 const TestMSearch = () => (
-  <InstantSearch indexName="universities" searchClient={searchClient}>
+  <InstantSearch indexName="listings" searchClient={searchClient}>
     <SearchBox />
     <Hits hitComponent={Hit} />
   </InstantSearch>
