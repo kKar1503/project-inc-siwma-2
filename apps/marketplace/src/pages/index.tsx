@@ -46,7 +46,7 @@ const useGetAdvertisementsQuery = (permissions: number | undefined) => {
 
 const Marketplace = () => {
   const { data: session } = useSession();
-  const [isSm, isMd, isLg, isXl] = useResponsiveness(['sm', 'md', 'lg', 'xl']);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { typography } = useTheme();
   const { t } = useTranslation();
 
