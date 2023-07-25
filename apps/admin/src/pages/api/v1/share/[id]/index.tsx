@@ -4,6 +4,9 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 // ** Prisma Imports
 import PrismaClient from '@inc/db';
 
+// ** Error Imports
+import { NotFoundError } from '@inc/errors/src';
+
 export default apiHandler().get(async (req, res) => {
   const { id } = req.query;
 
@@ -12,6 +15,10 @@ export default apiHandler().get(async (req, res) => {
       hash: id as string,
     },
   });
+
+  if (shareData.length === 0) {
+    throw new NotFoundError('Share hash');
+  }
 
   const shareId = shareData[0].id;
 
@@ -23,6 +30,7 @@ export default apiHandler().get(async (req, res) => {
 
   const listingArr = [];
 
+  // push listing ids into array
   for (let i = 0; i < listingData.length; i++) {
     listingArr.push(listingData[i].listing.toString());
   }
