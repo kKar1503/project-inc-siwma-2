@@ -135,7 +135,7 @@ const AdminSideBar = () => {
     return {
       name: currentUser?.name || (''),
       email:currentUser?.email || (''),
-      imageUrl:currentUser?.profilePic ? `https://siwma-marketplace.s3.ap-southeast-1.amazonaws.com/${currentUser.profilePic}` : ('/images/placeholder.png') ,
+      imageUrl:currentUser?.profilePic ? currentUser.profilePic : ('/images/placeholder.png') ,
     };
   }
 

@@ -45,7 +45,6 @@ const nextConfig = {
             'www.google.com',
             'www.asiamediajournal.com',
             'via.placeholder.com',
-            'siwma-marketplace.s3.ap-southeast-1.amazonaws.com'
           ]
         : [],
   },
