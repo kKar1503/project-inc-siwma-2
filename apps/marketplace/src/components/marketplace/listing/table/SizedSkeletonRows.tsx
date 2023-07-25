@@ -45,19 +45,19 @@ const SizedSkeletonRows = (props: SizedSkeletonRowProps) => {
               width: 602,
             }}
           >
-            <Skeleton variant="rectangular" />
+            <Skeleton variant="text" />
           </TableCell>
           <TableCell align="center" sx={{ minWidth: 110 }}>
-            <Skeleton variant="rectangular" />
+            <Skeleton variant="text" />
           </TableCell>
           <TableCell align="center" sx={{ minWidth: 120 }}>
-            <Skeleton variant="rectangular" />
+            <Skeleton variant="text" />
           </TableCell>
           <TableCell align="center" sx={{ minWidth: 180, width: 180 }}>
-            <Skeleton variant="rectangular" />
+            <Skeleton variant="text" />
           </TableCell>
           <TableCell align="center" sx={{ minWidth: 150, width: 150 }}>
-            <Skeleton variant="rectangular" />
+            <Skeleton variant="text" />
           </TableCell>
           <ActionCell
             isBookmarked={false}
