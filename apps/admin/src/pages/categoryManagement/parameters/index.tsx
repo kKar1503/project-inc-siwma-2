@@ -87,20 +87,19 @@ const useParameterQuery = () => {
   return data;
 };
 
-const ParameterTable = ({ data, updateData }: ParameterTableProps) => {
+const ParameterTable = () => {
+  const router = useRouter();
+  const parameter = useParameterQuery();
+
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [ids, setIds] = useState<string[]>([]);
-  const [parameterData, setParameterData] = useState<Parameter[]>();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
-
-  const router = useRouter();
-  const parameter = useParameterQuery();
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -176,6 +175,30 @@ const ParameterTable = ({ data, updateData }: ParameterTableProps) => {
     sortRows();
   }, [parameter]);
 
+  // useEffect(() => {
+  //   if (!parameter.isFetched) {
+  //     return
+  //   }
+
+  //   if (parameter.isError) {
+  //     if ('status' in (parameter.error as any) && (parameter.error as any).status === 404) {
+  //       router.replace('/404');
+  //       return;
+  //     }
+
+  //     router.replace('/500');
+  //     return;
+  //   }
+
+  //   if (parameter === undefined) {
+  //     router.replace('/500');
+  //   }
+  // }, [parameter.isFetched]);
+
+  // if (!parameter.isFetched) {
+  //   return <Spinner />;
+  // }
+
   return (
     <>
       <Head>
@@ -211,12 +234,7 @@ const ParameterTable = ({ data, updateData }: ParameterTableProps) => {
           totalCount={rows.length}
         />
       </Container>
-      <DeleteParameterModal
-        open={openDeleteModal}
-        setOpen={setOpenDeleteModal}
-        parameters={ids}
-        // updateData={updateData}
-      />
+      <DeleteParameterModal open={openDeleteModal} setOpen={setOpenDeleteModal} parameters={ids} />
     </>
   );
 };

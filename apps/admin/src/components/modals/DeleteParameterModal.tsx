@@ -19,6 +19,7 @@ const DeleteParameters = ({ open, setOpen, parameters }: DeleteModalProps) => {
   if (rightButtonState === true) {
     deleteParam();
     setOpen(false);
+    // fetchData();
   }
 
   useEffect(() => {
