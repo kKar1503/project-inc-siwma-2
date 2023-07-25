@@ -18,21 +18,27 @@ import type { ChatData } from '@/components/rtc/ChatBox';
 import type { Messages } from '@inc/types';
 import { useResponsiveness } from '@inc/ui';
 
-const { key, cluster } = process.env;
-
-if (key === undefined || cluster === undefined) {
-  throw new Error('Pusher key/cluster not defined');
-}
-
-const pusher = new Pusher(key, {
-  cluster,
-});
-
 export type UserNameProps = {
   userId: string;
 };
 
 const ChatRoom = ({ userId }: UserNameProps) => {
+
+  const pusher = useMemo(() => {
+    const key = process.env.NEXT_PUBLIC_PUSHER_KEY;
+    const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
+
+    if (!key || !cluster) {
+      console.log(key);
+      console.log(cluster);
+      throw new Error('Missing Pusher key or cluster');
+    }
+
+    return new Pusher(key, {
+      cluster,
+    });
+  }, []);
+
   const [channels, setChannels] = useState<Channel[]>([]);
   const [currentChannelId, setCurrentChannelId] = useState('');
   const [chats, setChats] = useState<ChatData[]>([]);
@@ -111,7 +117,7 @@ const ChatRoom = ({ userId }: UserNameProps) => {
 
     const newMessage = {
       message: messageToSend,
-      sender: userId
+      sender: userId,
     };
 
     fetch('/chat/messages', {
@@ -174,7 +180,7 @@ const ChatRoom = ({ userId }: UserNameProps) => {
               handleBack={() => setCurrentChannelId('')}
             />
             <ChatSubHeader
-              itemPic="/images/placeholder.png"
+              itemPic={null}
               itemName="PLACEHOLDER"
               available
               itemPrice={0}

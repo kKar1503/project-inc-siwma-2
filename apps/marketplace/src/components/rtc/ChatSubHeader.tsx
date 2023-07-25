@@ -9,7 +9,7 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 
 export type ChatSubHeaderProps = {
-  itemPic: string;
+  itemPic: string | null;
   itemName: string;
   itemPrice: number;
   itemPriceIsUnit: boolean;
@@ -152,8 +152,10 @@ const ChatSubHeader = ({
         >
           <Image
             alt="company profile picture"
-            src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}/${itemPic}`}
+            src={itemPic || '/images/placeholder.png'}
             // variant="square"
+            width={70}
+            height={70}
             style={{
               borderRadius: 8,
             }}
