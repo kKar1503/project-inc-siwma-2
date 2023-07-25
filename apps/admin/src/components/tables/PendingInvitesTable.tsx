@@ -109,56 +109,59 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
   }, [debouncedValue]);
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-        borderRadius: '8px',
-        padding: 2,
-        marginY: 2,
-        backgroundColor: 'white',
-      }}
-    >
-      <Typography variant="h5">Pending Invites</Typography>
-      <Typography variant="body1">
-        Showing {filteredData.length === 0 ? 0 : rowsPerPage * page + 1}-
-        {filteredData.length < rowsPerPage * (page + 1)
-          ? filteredData.length
-          : rowsPerPage * (page + 1)}{' '}
-        of {filteredData.length} pending invites
-      </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginTop: 2,
-          marginBottom: 1,
-        }}
-      >
-        <div>
-          <Button onClick={handleClick} variant="text" startIcon={<FilterListIcon />}>
-            Filter
-          </Button>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
-            <MenuItem disabled={selectedCompany === ''} value="" onClick={clearFilter}>
-              Clear Filter
-            </MenuItem>
-            {companies.map((company) => (
-              <MenuItem
-                key={company.id}
-                value={company.id}
-                onClick={filterTable}
-                selected={company.id === selectedCompany.toString()}
-              >
-                {company.name}
-              </MenuItem>
-            ))}
-          </Menu>
-        </div>
-        <SearchBar onChange={handleChange} />
-      </Box>
+    <Box sx={{ marginBottom: 3 }}>
       <BaseTable
-        heading="Pending Invites"
+        sx={{
+          height: '100%',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+          borderRadius: '8px',
+        }}
+        heading=""
+        customHeader={
+          <Box
+            sx={{
+              padding: 2,
+            }}
+          >
+            <Typography variant="h5">Pending Invites</Typography>
+            <Typography variant="body1">
+              Showing {filteredData.length === 0 ? 0 : rowsPerPage * page + 1}-
+              {filteredData.length < rowsPerPage * (page + 1)
+                ? filteredData.length
+                : rowsPerPage * (page + 1)}{' '}
+              of {filteredData.length} pending invites
+            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: 2,
+              }}
+            >
+              <div>
+                <Button onClick={handleClick} variant="text" startIcon={<FilterListIcon />}>
+                  Filter
+                </Button>
+                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+                  <MenuItem disabled={selectedCompany === ''} value="" onClick={clearFilter}>
+                    Clear Filter
+                  </MenuItem>
+                  {companies.map((company) => (
+                    <MenuItem
+                      key={company.id}
+                      value={company.id}
+                      onClick={filterTable}
+                      selected={company.id === selectedCompany.toString()}
+                    >
+                      {company.name}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </div>
+              <SearchBar onChange={handleChange} />
+            </Box>
+          </Box>
+        }
         rows={parseInvitesData(tableData)}
         headers={headers}
         onPageChange={handlePageChange}
