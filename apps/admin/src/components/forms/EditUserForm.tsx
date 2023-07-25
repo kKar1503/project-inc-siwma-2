@@ -19,14 +19,20 @@ type EditUserFormProps = {
   openModal: (modal: string) => void;
 };
 
+const onErrorFn = (error: any) => {
+  alert(error.statusText);
+};
+
 const useForgetPasswordMutation = (successFn: () => void) =>
   useMutation('sendEmail', forgetPW, {
     onSuccess: successFn,
+    onError: onErrorFn,
   });
 
 const useEditUserMutation = (uuid: string, file: File | undefined, successFn?: () => void) =>
   useMutation((updatedUserData: PutUserRequestBody) => editUser(updatedUserData, uuid, file), {
     onSuccess: successFn,
+    onError: onErrorFn,
   });
 
 const parseOptions = (data: Company[]) =>
