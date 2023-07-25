@@ -6,8 +6,8 @@ import { MeiliSearch } from 'meilisearch';
 import universities from '../../world_universities_and_domains.json';
 
 const searchClient = instantMeiliSearch(
-  process.env.NEXT_PUBLIC_MEILI_URL!,
-  process.env.NEXT_PUBLIC_MEILI_MASTER_KEY
+  process.env.NEXT_PUBLIC_MEILI_URL as string,
+  process.env.NEXT_PUBLIC_MEILI_MASTER_KEY as string
 );
 
 const getServerSideProps = async () => {
