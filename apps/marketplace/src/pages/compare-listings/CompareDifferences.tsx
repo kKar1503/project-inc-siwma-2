@@ -112,11 +112,11 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
           {tableData.sideHeaders.map((header) => (
             <TableRow key={header}>
               <TableCell>{header}</TableCell>
-              {tableData.rows.find((row) => row.id === `row${tableData.sideHeaders.indexOf(header) + 2}`)?.data.map((cellData, cellIndex) =>
+              {tableData.rows.find((row) => row.id === `row${tableData.sideHeaders.indexOf(header) + 2}`)?.data.map((cellData) =>
                 header === 'Cross Section Image' ? (
-                  <TableCell key={`cell-${header}-${cellIndex}`}>{cellData}</TableCell>
+                  <TableCell key={`cell-${header}`}>{cellData}</TableCell>
                 ) : (
-                  <TableCell key={`cell-${header}-${cellIndex}`}>{cellData}</TableCell>
+                  <TableCell key={`cell-${header}`}>{cellData}</TableCell>
                 )
               )}
             </TableRow>
