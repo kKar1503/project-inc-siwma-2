@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Pusher, { Channel } from 'pusher-js';
 
 // ** Components Imports **
@@ -17,7 +17,6 @@ import type { ChatListProps } from '@/components/rtc/ChatList';
 import type { ChatData } from '@/components/rtc/ChatBox';
 import type { Messages } from '@inc/types';
 import { useResponsiveness } from '@inc/ui';
-import { useSession } from 'next-auth/react';
 
 const { key, cluster } = process.env;
 
@@ -29,14 +28,11 @@ const pusher = new Pusher(key, {
   cluster,
 });
 
-const ChatRoom = () => {
-  const session = useSession();
-  const user = session.data?.user
+export type UserNameProps = {
+  userId: string;
+};
 
-  if (!user) {
-    throw new Error('User not defined');
-  }
-
+const ChatRoom = ({ userId }: UserNameProps) => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [currentChannelId, setCurrentChannelId] = useState('');
   const [chats, setChats] = useState<ChatData[]>([]);
@@ -115,7 +111,7 @@ const ChatRoom = () => {
 
     const newMessage = {
       message: messageToSend,
-      sender: session.data?.user.id,
+      sender: userId
     };
 
     fetch('/chat/messages', {
@@ -186,7 +182,7 @@ const ChatRoom = () => {
             />
             <ChatBox
               roomData={chats}
-              loginId={session.data?.user.id}
+              loginId={userId}
               ChatText={
                 <br />
                 // TODO: fix this
