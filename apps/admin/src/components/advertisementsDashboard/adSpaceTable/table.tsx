@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -68,7 +68,7 @@ export default function({
     setSelected([]);
   };
 
-  const handleClick = (event: MouseEvent<unknown>, element: Advertisment) => {
+  const handleClick = (element: Advertisment) => {
     const { id } = element;
     // only happens when not admin
     if (id === undefined) return;

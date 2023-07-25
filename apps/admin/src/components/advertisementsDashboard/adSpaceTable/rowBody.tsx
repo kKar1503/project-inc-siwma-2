@@ -1,7 +1,6 @@
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
-import { MouseEvent } from 'react';
 import Button from '@mui/material/Button';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 
@@ -9,7 +8,7 @@ interface Props {
   row: Advertisment & { companyName: string };
   index: number;
   isSelected: boolean;
-  onSelect: (event: MouseEvent<unknown>, element: Advertisment) => void;
+  onSelect: (element: Advertisment) => void;
   onViewImage: (src: string | null) => void;
 }
 
@@ -52,7 +51,6 @@ const RowBody = ({
   return (
     <TableRow
       hover
-      onClick={(event: MouseEvent<unknown>) => onSelect(event, row)}
       role='checkbox'
       aria-checked={isSelected}
       tabIndex={-1}
@@ -60,7 +58,7 @@ const RowBody = ({
       selected={isSelected}
       sx={{ cursor: 'pointer' }}
     >
-      <TableCell padding='checkbox'>
+      <TableCell onClick={() => onSelect(row)} padding='checkbox'>
         <Checkbox
           color='primary'
           checked={isSelected}
