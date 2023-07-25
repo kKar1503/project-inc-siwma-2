@@ -69,10 +69,10 @@ jobs:
           envkey_NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
           envkey_NEXT_BUILD_OPTION: ${{ vars.NEXT_BUILD_OPTION }}
           envkey_NEXT_ESLINT_OPTION: ${{ vars.NEXT_ESLINT_OPTION }}
-          envkey_MEILI_MASTER_KEY: ${{ vars.MEILI_MASTER_KEY }}
-          envkey_NEXT_PUBLIC_MEILI_MASTER_KEY: ${{ vars.MEILI_MASTER_KEY }}
-          envkey_MEILI_URL: ${{ vars.MEILI_URL }}
-          envkey_NEXT_PUBLIC_MEILI_URL: ${{ vars.MEILI_URL }}
+          envkey_MEILI_MASTER_KEY: ${{ secrets.MEILI_MASTER_KEY }}
+          envkey_NEXT_PUBLIC_MEILI_MASTER_KEY: ${{ secrets.MEILI_MASTER_KEY }}
+          envkey_MEILI_URL: ${{ secrets.MEILI_URL }}
+          envkey_NEXT_PUBLIC_MEILI_URL: ${{ secrets.MEILI_URL }}
           directory: 'apps/marketplace'
           file_name: .env.local
           fail_on_empty: true
