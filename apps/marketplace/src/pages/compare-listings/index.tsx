@@ -57,6 +57,7 @@ const Compare = ({ productIds }: CompareDifferencesProps) => {
                     Compare Differences
                 </Typography>
                 <CompareDifferences productIds={validProductIds}  />
+                
             </Box>
         </Container>
     );
