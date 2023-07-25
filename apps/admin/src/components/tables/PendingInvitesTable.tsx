@@ -102,13 +102,6 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
   };
-  const onEdit = () => {
-    // nothing to do
-  };
-
-  const onToggle = () => {
-    // nothing to do
-  };
 
   useEffect(() => {
     const filter = data.filter((user) => user.name.toLowerCase().includes(query.toLowerCase()));
@@ -171,8 +164,6 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
         onDelete={onDelete}
-        onEdit={onEdit}
-        onToggle={onToggle}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
