@@ -14,7 +14,7 @@ type FormSearchDropdownProps = {
   required?: boolean;
   success?: boolean;
   isLoading?: boolean;
-  sx?: React.ComponentProps<typeof TextField>['sx'];
+  sx?: React.ComponentProps<typeof Autocomplete>['sx'];
 };
 
 /**
@@ -79,9 +79,7 @@ const FormSearchDropdown = ({
             renderInput={(params) => <TextField {...params} label="Dropdown Option" />}
             {...hookInput(name, label, customValidation)}
             onChange={(e, value) => field.onChange(value)}
-            onInputChange={(_, data) => {
-              if (data) field.onChange(data);
-            }}
+            onInputChange={(_, data) => field.onChange(data)}
           />
         )}
       />
