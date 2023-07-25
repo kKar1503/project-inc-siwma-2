@@ -1,11 +1,9 @@
-import React, { useState, useMemo, ReactNode } from 'react';
+import React, { useState, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -13,63 +11,38 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Divider from '@mui/material/Divider';
 import Badge from '@mui/material/Badge';
 import Image from 'next/image';
-import { DateTime } from 'luxon';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme, alpha } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
-type CategoryType = 'All' | 'Buying' | 'Selling';
-
 export type ChatListProps = {
-  id: string;
-  username: string;
-  category: CategoryType;
-  itemName: string;
-  inProgress: boolean;
-  time?: Date;
-  userImage: string;
-  unreadMessages: number;
-} & (
-  | {
-      latestMessage: string;
-      contentType: 'text' | 'file' | 'image';
-    }
-  | {
-      latestMessage: {
-        amount: number;
-        accepted: boolean;
-        content: string;
-      };
-      contentType: 'offer';
-    }
-);
+  name: string;
+};
 
 export type ChatListPageProps = {
   chats: ChatListProps[];
-  onChange: (e: React.FormEvent<HTMLInputElement>) => void;
-  selectChat: string;
   setSelectChat: (val: string) => void;
 };
 
-const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPageProps) => {
+const ChatList = ({ chats, setSelectChat }: ChatListPageProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography } = useTheme();
 
-  const [category, setCategory] = useState<CategoryType>('All');
+  // const [category, setCategory] = useState<CategoryType>('All');
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const greyTransparent = alpha(palette.common.black, 0.06);
   const { t } = useTranslation();
 
-  const handleCategoryChange = (event: SelectChangeEvent) => {
-    setCategory(event.target.value as CategoryType);
-  };
+  // const handleCategoryChange = (event: SelectChangeEvent) => {
+  //   setCategory(event.target.value as CategoryType);
+  // };
 
-  const filteredChats = useMemo(() => {
-    if (category === 'All') {
-      return chats;
-    }
-    return chats.filter((chat) => chat.category === category);
-  }, [chats, category]);
+  // const filteredChats = useMemo(() => {
+  //   if (category === 'All') {
+  //     return chats;
+  //   }
+  //   return chats.filter((chat) => chat.category === category);
+  // }, [chats, category]);
 
   const chatListStyles = useMemo(() => {
     if (isSm) {
@@ -240,7 +213,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
         fontSize: '0.7rem',
       },
     };
-  }, [isSm, isMd, isLg]);
+  }, [isSm, isMd, isLg, spacing, palette.common.black, typography.body1, typography.h6, typography.body2]);
 
   return (
     <Box
@@ -280,7 +253,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
             pl: spacing(1),
           }}
         >
-          <Select
+          {/* <Select
             value={category}
             onChange={handleCategoryChange}
             sx={{
@@ -304,7 +277,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
             <MenuItem value="All">{t('ALL CHATS')}</MenuItem>
             <MenuItem value="Buying">{t('BUYING')}</MenuItem>
             <MenuItem value="Selling">{t('SELLING')}</MenuItem>
-          </Select>
+          </Select> */}
         </FormControl>
 
         <TextField
@@ -340,17 +313,17 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
         />
       </Box>
       <List sx={{ overflowY: 'auto', height: 'calc(100% - 105px)' }}>
-        {filteredChats.map((chat, index) => (
+        {chats.map((chat, index) => (
           <Box>
             <ListItem
-              key={chat.id}
+              key={chat.name}
               onClick={() => {
-                setActiveItem(chat.id);
-                setSelectChat(chat.id);
+                setActiveItem(chat.name);
+                setSelectChat(chat.name);
               }}
               sx={{
                 cursor: 'pointer',
-                background: activeItem === chat.id ? palette.grey[300] : 'none',
+                background: activeItem === chat.name ? palette.grey[300] : 'none',
                 height: '100%',
                 '&:hover': {
                   background: greyTransparent,
@@ -358,14 +331,10 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
               }}
             >
               <ListItemAvatar>
-                <Badge overlap="circular" color="error" badgeContent={chat.unreadMessages}>
+                <Badge overlap="circular" color="error" badgeContent="">
                   <Image
                     style={{ borderRadius: '100%' }}
-                    src={
-                      chat.userImage === ''
-                        ? '/images/placeholder.png'
-                        : `https://${process.env.NEXT_PUBLIC_AWS_BUCKET}/${chat.userImage}`
-                    }
+                    src="/images/placeholder.png"
                     width={chatListStyles?.listImage?.width}
                     height={chatListStyles?.listImage?.height}
                     alt="pic"
@@ -385,9 +354,9 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                       ...chatListStyles?.companyText,
                     }}
                   >
-                    {chat.username}
+                    {chat.name}
                   </Typography>
-                  <Typography
+                  {/* <Typography
                     variant="body2"
                     sx={{
                       userSelect: 'none',
@@ -395,9 +364,9 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     }}
                   >
                     {chat.time ? DateTime.fromJSDate(chat.time).setLocale('en').toFormat('f') : ''}
-                  </Typography>
+                  </Typography> */}
                 </Box>
-                <Typography
+                {/* <Typography
                   variant="body1"
                   sx={{
                     fontWeight: 500,
@@ -411,8 +380,8 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                 >
                   {' '}
                   {chat.itemName}
-                </Typography>
-                <Typography
+                </Typography> */}
+                {/* <Typography
                   variant="body1"
                   sx={{
                     overflow: 'hidden',
@@ -469,7 +438,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                       {chat.latestMessage}
                     </Typography>
                   )}
-                </Typography>
+                </Typography> */}
                 <Typography
                   variant="body2"
                   sx={{
@@ -480,11 +449,11 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     ...chatListStyles?.progressText,
                   }}
                 >
-                  {chat.inProgress ? t('In progress') : ''}
+                  {/* {chat.inProgress ? t('In progress') : ''} */}
                 </Typography>
               </ListItemText>
             </ListItem>
-            {filteredChats.length !== index && (
+            {chats.length !== index && (
               <Divider
                 sx={{
                   borderColor: palette.grey[400],
