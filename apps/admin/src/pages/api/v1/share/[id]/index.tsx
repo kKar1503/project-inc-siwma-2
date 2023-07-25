@@ -6,7 +6,6 @@ import PrismaClient from '@inc/db';
 
 export default apiHandler().get(async (req, res) => {
   const { id } = req.query;
-  console.log(id);
 
   const shareData = await PrismaClient.share.findMany({
     where: {
