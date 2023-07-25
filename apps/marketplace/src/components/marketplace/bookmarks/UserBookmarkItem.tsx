@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 
 // ** Hooks Imports
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 
 // ** Type Imports
 import type { User } from '@/utils/api/client/zod/users';
