@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import CompareDifferences from './CompareDifferences';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import CompareDifferences from './CompareDifferences';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material';
 
@@ -11,9 +11,7 @@ type CompareDifferencesProps = {
 };
 
 const Compare = ({ productIds }: CompareDifferencesProps) => {
-    if (!productIds) {
-        productIds = [];
-    }
+    const validProductIds = productIds || [];
     const theme = useTheme();
     const { spacing } = theme;
     const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -58,8 +56,7 @@ const Compare = ({ productIds }: CompareDifferencesProps) => {
                 >
                     Compare Differences
                 </Typography>
-                <CompareDifferences productIds={productIds}  />
-                 {/* <CompareDifferences productIds={["1","2"]}  /> */}
+                <CompareDifferences productIds={validProductIds}  />
             </Box>
         </Container>
     );

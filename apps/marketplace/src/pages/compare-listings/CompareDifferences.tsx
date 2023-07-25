@@ -50,7 +50,6 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
 
   const tableData: TableData = {
     sideHeaders: [
-      'Dimensions',
       'Price ($)',
       'Stock',
       'Condition',
@@ -62,18 +61,6 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
     ],
     rows: [
       {
-        id: 'row1',
-        data: listings.map((listing) =>
-          listing.parameters
-            ? `Length: ${
-                listing.parameters.find((param) => param.paramId === '2')?.value
-              }, Width: ${
-                listing.parameters.find((param) => param.paramId === '4')?.value
-              }, Height: ${listing.parameters.find((param) => param.paramId === '21')?.value}`
-            : ''
-        ),
-      },
-       {
         id: 'row2',
         data: listings.map((listing, index) => `$ ${listing.price} / ${products[index].unit}`),
       },
@@ -109,23 +96,23 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
   return (
     <TableContainer component={Paper}>
       <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Key Specs</TableCell>
-            {listings.map((listing, index) => (
-              <TableCell key={index}>{listing.name}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
+      <TableHead>
+  <TableRow>
+    <TableCell>Key Specs</TableCell>
+    {products.map((product) => (
+      <TableCell key={product.id}>{product.name}</TableCell>
+    ))}
+  </TableRow>
+</TableHead>
+<TableBody>
   {tableData.sideHeaders.map((header, index) => (
-    <TableRow key={header}>
+    <TableRow key={header + '-' + tableData.rows[index]?.id}>
       <TableCell>{header}</TableCell>
       {tableData.rows[index]?.data.map((cellData, cellIndex) =>
         header === 'Cross Section Image' ? (
-          <TableCell key={`cell-${index}-${cellIndex}`}>{cellData}</TableCell>
+          <TableCell key={`cell-${header}-${tableData.rows[index]?.id}-${cellIndex}`}>{cellData}</TableCell>
         ) : (
-          <TableCell key={`cell-${index}-${cellIndex}`}>{cellData}</TableCell>
+          <TableCell key={`cell-${header}-${tableData.rows[index]?.id}-${cellIndex}`}>{cellData}</TableCell>
         )
       )}
     </TableRow>
