@@ -1,5 +1,6 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
+/* eslint-disable no-nested-ternary */
+import { FormControl, InputLabel, MenuItem, Select, useTheme } from '@mui/material';
+import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -13,8 +14,6 @@ type FormDropdownSelectorProps = {
   label: string;
   options: FormDropdownSelectorOption[];
   placeholder?: string;
-  // We do not know what the shape of the object will be
-  // eslint-disable-next-line react/forbid-prop-types
   customValidation?: RegisterOptions<FieldValues, string> | undefined;
   required?: boolean;
   success?: boolean;
@@ -38,10 +37,14 @@ const FormDropdownSelector = ({
   isLoading,
   sx,
 }: FormDropdownSelectorProps) => {
+  // Import color palette
+  const { palette } = useTheme();
+
   // Use form context
   const {
     register,
     formState: { errors },
+    control,
   } = useFormContext();
 
   // Hooks inputs to using react form hook
@@ -56,7 +59,6 @@ const FormDropdownSelector = ({
     });
 
   // Determine the border color
-  // eslint-disable-next-line no-nested-ternary
   const borderColor = errors[name] ? 'error.main' : success ? 'success.main' : undefined;
 
   return (
@@ -64,28 +66,56 @@ const FormDropdownSelector = ({
     isLoading ? (
       <Skeleton className="h-12" />
     ) : (
-      <FormControl fullWidth>
-        <InputLabel id={`${name}-input-label`}>{label}</InputLabel>
-        <Select
-          labelId={`${name}-input-label`}
-          sx={{
-            width: '100%',
-            ...sx,
-          }}
-          label={label}
-          {...hookInput(name, label, customValidation)}
-          onChange={(e) => {
-            console.log(e.target.value);
-          }}
-          error={!!errors[name]}
-          placeholder={placeholder}
-          variant="outlined"
-        >
-          {options.map((option) => (
-            <MenuItem value={option.value}>{option.label}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field: { ref, ...field }, formState: { defaultValues } }) => (
+          <FormControl
+            fullWidth
+            sx={{
+              '.MuiInputLabel-root': {
+                color: borderColor,
+              },
+            }}
+          >
+            <InputLabel
+              id={`${name}-input-label`}
+              color={errors[name] ? 'error' : success ? 'success' : undefined}
+            >
+              {label} {required ? ' *' : ''}
+            </InputLabel>
+            <Select
+              labelId={`${name}-input-label`}
+              sx={{
+                width: '100%',
+                '.MuiOutlinedInput-notchedOutline': {
+                  borderColor,
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor,
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor,
+                },
+                ...sx,
+              }}
+              label={label + (required ? ' *' : '')}
+              defaultValue={defaultValues ? defaultValues[name] : undefined}
+              {...hookInput(name, label, customValidation)}
+              onChange={(e) => {
+                console.log(e.target.value);
+              }}
+              error={!!errors[name]}
+              placeholder={placeholder}
+              variant="outlined"
+            >
+              {options.map((option) => (
+                <MenuItem value={option.value}>{option.label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      />
     )
   );
 };

@@ -13,37 +13,23 @@ import {
   FormDropdownSelector,
 } from '../components/forms';
 
-// /**
-//  * Maps default values into react-hook-form default values
-//  * @param {{name: string, image: string, website: string, bio: string, comments: string}} data The data to parse into default values
-//  * @returns A default value object for react-hook-form
-//  */
-// const obtainDefaultValues = (data) => ({
-//   id: data.id,
-//   companyName: data.name,
-//   companyLogo: data.image,
-//   companyWebsite: data.website,
-//   companyBio: data.bio,
-//   companyComments: data.comments,
-// });
-
 const dropdownOptions = [
-  { label: 'The Shawshank Redemption', year: 1994 },
-  { label: 'The Godfather', year: 1972 },
-  { label: 'The Godfather: Part II', year: 1974 },
-  { label: 'The Dark Knight', year: 2008 },
-  { label: '12 Angry Men', year: 1957 },
-  { label: "Schindler's List", year: 1993 },
-  { label: 'Pulp Fiction', year: 1994 },
+  { label: 'The Shawshank Redemption', value: 1 },
+  { label: 'The Godfather', value: 2 },
+  { label: 'The Godfather: Part II', value: 3 },
+  { label: 'The Dark Knight', value: 4 },
+  { label: '12 Angry Men', value: 5 },
+  { label: "Schindler's List", value: 6 },
+  { label: 'Pulp Fiction', value: 7 },
   {
     label: 'The Lord of the Rings: The Return of the King',
-    year: 2003,
+    year: 8,
   },
-  { label: 'The Good, the Bad and the Ugly', year: 1966 },
-  { label: 'Fight Club', year: 1999 },
+  { label: 'The Good, the Bad and the Ugly', value: 9 },
+  { label: 'Fight Club', value: 10 },
   {
     label: 'The Lord of the Rings: The Fellowship of the Ring',
-    year: 2001,
+    value: 11,
   },
 ];
 
@@ -52,13 +38,27 @@ const pillSelectOptions: RadioSelectOption[] = [
   { label: 'Option 2', value: 'option2' },
 ];
 
+/**
+ * Maps default values into react-hook-form default values
+ * @param {{name: string, image: string, website: string, bio: string, comments: string}} data The data to parse into default values
+ * @returns A default value object for react-hook-form
+ */
+const obtainDefaultValues = () => ({
+  companyName: 'Default Company Name',
+  numberInput: '123',
+  dropdownInput: dropdownOptions[0],
+  pillSelectInput: pillSelectOptions[1].value,
+});
+
 const FormTest = () => {
   // -- States --//
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [isErrored, setIsErrored] = useState(false);
 
   // Initialise react hook forms
-  const formHook = useForm();
+  const formHook = useForm({
+    defaultValues: obtainDefaultValues(),
+  });
 
   // Deconstruct the individual hooks from the object
   const {
@@ -104,7 +104,9 @@ const FormTest = () => {
 
       // Error all the input fields
       Object.keys(data.data).forEach((inputName) => {
-        setError(inputName, { message: errors[inputName].message });
+        setError(inputName as Parameters<typeof setError>['0'], {
+          message: errors[inputName].message,
+        });
       });
 
       return;

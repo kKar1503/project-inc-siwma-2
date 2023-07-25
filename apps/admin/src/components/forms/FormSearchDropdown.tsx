@@ -3,10 +3,15 @@ import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+type FormSearchDropdownOption = {
+  label: string;
+  value: string;
+};
+
 type FormSearchDropdownProps = {
   name: string;
   label: string;
-  options: React.ComponentProps<typeof Autocomplete>['options'];
+  options: FormSearchDropdownOption[];
   placeholder?: string;
   // We do not know what the shape of the object will be
   // eslint-disable-next-line react/forbid-prop-types
@@ -63,7 +68,7 @@ const FormSearchDropdown = ({
       <Controller
         name={name}
         control={control}
-        render={({ field: { ref, ...field }, fieldState: { error, invalid } }) => (
+        render={({ field: { ref, ...field }, formState: { defaultValues } }) => (
           <Autocomplete
             {...field}
             placeholder={placeholder}
@@ -71,15 +76,28 @@ const FormSearchDropdown = ({
             options={options}
             sx={{
               width: '100%',
-              '& .MuiOutlinedInput-root': {
+              '.MuiOutlinedInput-root': {
                 '& > fieldset': { borderColor },
+              },
+              '&.Mui-focused .MuiOutlinedInput-root': {
+                '& > fieldset': { borderColor },
+              },
+              '&:hover .MuiOutlinedInput-root': {
+                '& > fieldset': { borderColor },
+              },
+              '& label, & label.Mui-focused': {
+                color: borderColor,
               },
               ...sx,
             }}
-            renderInput={(params) => <TextField {...params} label="Dropdown Option" />}
+            defaultValue={defaultValues ? defaultValues[name] : undefined}
+            renderInput={(params) => (
+              <TextField {...params} label={'Dropdown Option' + (required ? ' *' : '')} />
+            )}
+            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
             {...hookInput(name, label, customValidation)}
             onChange={(e, value) => field.onChange(value)}
-            onInputChange={(_, data) => field.onChange(data)}
           />
         )}
       />
