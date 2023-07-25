@@ -49,7 +49,6 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
   return (
     <Box
       sx={{
-        flexGrow: 1,
         backgroundColor: 'white',
         borderBottom: 1,
         borderColor: (theme) => theme.palette.divider,
