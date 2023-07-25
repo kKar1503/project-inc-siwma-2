@@ -46,6 +46,7 @@ const Page = () => {
   const [deleteUser, setDeleteUser] = useState<boolean>(false);
   const [deleteInvite, setDeleteInvite] = useState<boolean>(false);
   const [toggleUser, setToggleUser] = useState<boolean>(false);
+  const [inviteUser, setInviteUser] = useState<boolean>(false);
 
   const InviteBox = styled('div')(({ theme }) => ({
     width: isSm ? '100%' : '48%',
@@ -74,11 +75,16 @@ const Page = () => {
     },
   ]);
 
+  const onErrorFn = (error: any) => {
+    alert(error.statusText);
+  };
+
   const { mutate: deleteUsers } = useMutation('deleteUsers', deleteUsersMutationFn, {
     onSuccess: () => {
       queries[1].refetch();
       setDeleteUser(true);
     },
+    onError: onErrorFn,
   });
 
   const { mutate: toggleUsers } = useMutation('toggleUsers', toggleUsersMutationFn, {
@@ -86,6 +92,7 @@ const Page = () => {
       queries[1].refetch();
       setToggleUser(true);
     },
+    onError: onErrorFn,
   });
 
   const { mutate: deleteInvites } = useMutation('deleteInvites', deleteInvitesMutationFn, {
@@ -93,13 +100,16 @@ const Page = () => {
       queries[2].refetch();
       setDeleteInvite(true);
     },
+    onError: onErrorFn,
   });
 
   const { mutate: createInvite } = useMutation('createInvite', createInviteMutationFn, {
     onSuccess: () => {
       queries[2].refetch();
       setOpen(!open);
+      setInviteUser(true);
     },
+    onError: onErrorFn,
   });
 
   const isLoading = queries[0].isLoading || queries[1].isLoading || queries[2].isLoading;
@@ -277,6 +287,13 @@ const Page = () => {
         content="Selected users have been successfully toggled"
         open={toggleUser}
         setOpen={setToggleUser}
+        buttonText="Return"
+      />
+      <SuccessModal
+        title="Successfully Invited"
+        content="The user has been invited."
+        open={inviteUser}
+        setOpen={setInviteUser}
         buttonText="Return"
       />
     </Box>
