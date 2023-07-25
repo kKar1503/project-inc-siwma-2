@@ -104,9 +104,11 @@ const FormTest = () => {
 
       // Error all the input fields
       Object.keys(data.data).forEach((inputName) => {
-        setError(inputName as Parameters<typeof setError>['0'], {
-          message: errors[inputName].message,
-        });
+        if (errors[inputName]) {
+          setError(inputName as Parameters<typeof setError>['0'], {
+            message: errors[inputName].message,
+          });
+        }
       });
 
       return;
