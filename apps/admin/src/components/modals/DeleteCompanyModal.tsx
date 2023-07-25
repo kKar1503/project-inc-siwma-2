@@ -14,6 +14,8 @@ const DeleteCompanyModal = ({ open, setOpen, companies, updateData }: ReportModa
   const [rightButtonState, setRightButtonState] = useState(false);
 
   const deleteCompany = async () => {
+    if (companies.length === 0) return;
+
     await Promise.all(companies.map((company) => deleteCompanies(company)));
 
     updateData();
