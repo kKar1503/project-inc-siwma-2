@@ -1,4 +1,5 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+/* eslint-disable no-nested-ternary */
+import { FormControl, InputLabel, MenuItem, Select, useTheme } from '@mui/material';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -13,8 +14,6 @@ type FormDropdownSelectorProps = {
   label: string;
   options: FormDropdownSelectorOption[];
   placeholder?: string;
-  // We do not know what the shape of the object will be
-  // eslint-disable-next-line react/forbid-prop-types
   customValidation?: RegisterOptions<FieldValues, string> | undefined;
   required?: boolean;
   success?: boolean;
@@ -38,6 +37,9 @@ const FormDropdownSelector = ({
   isLoading,
   sx,
 }: FormDropdownSelectorProps) => {
+  // Import color palette
+  const { palette } = useTheme();
+
   // Use form context
   const {
     register,
@@ -57,7 +59,6 @@ const FormDropdownSelector = ({
     });
 
   // Determine the border color
-  // eslint-disable-next-line no-nested-ternary
   const borderColor = errors[name] ? 'error.main' : success ? 'success.main' : undefined;
 
   return (
@@ -70,11 +71,28 @@ const FormDropdownSelector = ({
         control={control}
         render={({ field: { ref, ...field }, formState: { defaultValues } }) => (
           <FormControl fullWidth>
-            <InputLabel id={`${name}-input-label`}>{label}</InputLabel>
+            <InputLabel
+              id={`${name}-input-label`}
+              color={errors[name] ? 'error' : success ? 'success' : undefined}
+            >
+              {label} {required ? ' *' : ''}
+            </InputLabel>
             <Select
               labelId={`${name}-input-label`}
               sx={{
                 width: '100%',
+                '.MuiOutlinedInput-notchedOutline': {
+                  borderColor,
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor,
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor,
+                },
+                '& label, & label.Mui-focused': {
+                  color: borderColor,
+                },
                 ...sx,
               }}
               label={label}

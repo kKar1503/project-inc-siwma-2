@@ -76,20 +76,28 @@ const FormSearchDropdown = ({
             options={options}
             sx={{
               width: '100%',
-              '& .MuiOutlinedInput-root': {
+              '.MuiOutlinedInput-root': {
                 '& > fieldset': { borderColor },
+              },
+              '&.Mui-focused .MuiOutlinedInput-root': {
+                '& > fieldset': { borderColor },
+              },
+              '&:hover .MuiOutlinedInput-root': {
+                '& > fieldset': { borderColor },
+              },
+              '& label, & label.Mui-focused': {
+                color: borderColor,
               },
               ...sx,
             }}
             defaultValue={defaultValues ? defaultValues[name] : undefined}
-            renderInput={(params) => <TextField {...params} label="Dropdown Option" />}
+            renderInput={(params) => (
+              <TextField {...params} label={'Dropdown Option' + (required ? ' *' : '')} />
+            )}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.value === value.value}
             {...hookInput(name, label, customValidation)}
-            onChange={(e, value) => {
-              field.onChange(value);
-              console.log({ value });
-            }}
+            onChange={(e, value) => field.onChange(value)}
           />
         )}
       />
