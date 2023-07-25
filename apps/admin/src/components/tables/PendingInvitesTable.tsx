@@ -90,10 +90,9 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
   const filterTable = (event: React.MouseEvent<HTMLElement>) => {
     const selected = (event.target as HTMLInputElement).value;
     setSelectedCompany(selected);
-    const filter = data.filter((user) => user.company.id === selected.toString());
+    const filter = data.filter((invite) => invite.company.id === selected.toString());
     setFilteredData(filter);
   };
-
   const clearFilter = () => {
     setFilteredData(data);
     setSelectedCompany('');
@@ -104,7 +103,9 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
   };
 
   useEffect(() => {
-    const filter = data.filter((user) => user.name.toLowerCase().includes(query.toLowerCase()));
+    const filter = data.filter((invite) =>
+      invite.email.toLowerCase().includes(query.toLowerCase())
+    );
     setFilteredData(filter);
   }, [debouncedValue]);
 
