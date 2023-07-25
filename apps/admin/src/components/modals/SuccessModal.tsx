@@ -16,9 +16,9 @@ const SuccessModal = ({ open, setOpen, title, content, path, buttonText }: Succe
   const router = useRouter();
 
   if (rightButtonState === true) {
-    setRightButtonState(false);
-    setOpen(false);
     if (path) router.push(path);
+    setOpen(false);
+    setRightButtonState(false);
   }
 
   return (

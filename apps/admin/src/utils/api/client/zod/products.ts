@@ -22,7 +22,7 @@ const product = z.object({
 
 // Listing items have been changed to products however it is still lisitng-items in the db
 // POST /products
-const createProduct = z.object({ productId: id });
+const createProduct = z.object({ listingItemId: id });
 
 // GET /products
 const getProducts = z.array(product);
