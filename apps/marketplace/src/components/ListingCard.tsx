@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from 'react';
 
 // ** Next Imports
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 // ** MUI Imports
 import Box from '@mui/material/Box';
@@ -27,9 +28,9 @@ import placeholder from 'public/images/listing-placeholder.svg';
 import { DateTime } from 'luxon';
 
 // ** Services
-import fetchListing from '@/services/fetchListing';
-import fetchCatById from '@/services/fetchCatById';
-import fetchParamNames from '@/services/fetchParamNames';
+import useFetchListing from '@/services/useFetchListing';
+import useFetchCatById from '@/services/useFetchCatById';
+import useFetchParamNames from '@/services/useFetchParamNames';
 import useUser from '@/services/users/useUser';
 import useProduct from '@/services/useProduct';
 import bookmarkListing from '@/services/bookmarks/bookmarkListing';
@@ -47,33 +48,51 @@ export type ListingCardProps = {
 };
 
 const ListingCard = ({ listingId }: ListingCardProps) => {
-  const useFetchListingQuery = (listingId: string) => {
-    const { data } = useQuery(['user', listingId], async () => fetchListing(listingId, true), {
-      enabled: listingId !== undefined,
-    });
-
-    return data;
-  };
-
-  const useFetchCategoryQuery = (categoryId: string) => {
-    const { data } = useQuery(['category', categoryId], async () => fetchCatById(categoryId), {
-      enabled: categoryId !== undefined,
-    });
-
-    return data;
-  };
-
+  const router = useRouter();
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
-  const userDetails = useUser(loggedUserUuid).data;
 
-  const useFetchParamNamesQuery = (paramIds?: string[]) => {
-    const { data } = useQuery(['paramNames', paramIds], async () => fetchParamNames(paramIds), {
-      enabled: paramIds !== undefined,
-    });
+  // ** Query Calls
+  const {
+    data: userDetails,
+    error: userError,
+    isError: isUserError,
+    isFetched: isUserFetched,
+  } = useUser(loggedUserUuid);
 
-    return data;
-  };
+  const {
+    data: listingDetails,
+    error: listingError,
+    isError: isListingError,
+    isFetched: isListingFetched,
+  } = useFetchListing(listingId);
+
+  const {
+    data: productDetails,
+    error: productError,
+    isError: isProductError,
+    isFetched: isProductFetched,
+  } = useProduct(listingDetails?.productId || 'null');
+
+  const {
+    data: categoryDetails,
+    error: categoryError,
+    isError: isCategoryError,
+    isFetched: isCategoryFetched,
+  } = useFetchCatById(productDetails?.categoryId || 'null');
+
+  const listingParamNames: string[] = [];
+  categoryDetails?.parameters?.map((id) => {
+    listingParamNames.push(id.parameterId);
+    return id.parameterId;
+  });
+
+  const {
+    data: paramNames,
+    error: paramError,
+    isError: isParamError,
+    isFetched: isParamFetched,
+  } = useFetchParamNames(listingParamNames);
 
   const useBookmarkListing = (listingId: string) => {
     const bookmarkBool = userDetails?.bookmarks?.listings.includes(listingId);
@@ -96,28 +115,56 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
     };
   };
 
-  const listingDetails = useFetchListingQuery(listingId);
-
-  const productDetails = useProduct(listingDetails?.productId || 'null').data;
-
-  const categoryDetails = useFetchCategoryQuery(productDetails?.categoryId || 'null');
-  console.log(listingDetails);
-
   const { isBookmarked, handleBookmarkListing } = useBookmarkListing(listingId);
 
-  const listingParamNames: string[] = [];
+  // ** Query Error Handling
+  useEffect(() => {
+    if (
+      !isUserFetched ||
+      !isListingFetched ||
+      !isProductFetched ||
+      !isCategoryFetched ||
+      !isParamFetched
+    ) {
+      return;
+    }
 
-  categoryDetails?.parameters?.map((id) => {
-    listingParamNames.push(id.parameterId);
-    return id.parameterId;
-  });
+    if (isUserError || isListingError || isProductError || isCategoryError || isParamError) {
+      if ('status' in (userError as any) && (userError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+      if ('status' in (listingError as any) && (listingError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+      if ('status' in (productError as any) && (productError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+      if ('status' in (categoryError as any) && (categoryError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+      if ('status' in (paramError as any) && (paramError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
 
-  console.log(productDetails);
-  console.log(listingDetails);
-  console.log(categoryDetails);
-  console.log(listingParamNames);
-  const paramNames = useFetchParamNamesQuery(listingParamNames);
-  console.log(paramNames);
+      router.replace('/500');
+      return;
+    }
+
+    if (
+      userDetails === undefined ||
+      listingDetails === undefined ||
+      productDetails === undefined ||
+      categoryDetails === undefined ||
+      paramNames === undefined
+    ) {
+      router.replace('/500');
+    }
+  }, [isUserFetched, isListingFetched, isProductFetched, isCategoryFetched, isParamFetched]);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
