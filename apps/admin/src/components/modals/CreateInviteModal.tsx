@@ -6,7 +6,7 @@ import { Company } from '@/utils/api/client/zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { validateEmail, validateName, validatePhone } from '@/utils/api/validate';
 import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
-import { FormDropdownSelector, FormInputGroup, FormTextInput } from '@/components/forms';
+import { FormInputGroup, FormSearchDropdown, FormTextInput } from '@/components/forms';
 
 export type CreateInviteModalProps = {
   data: Company[];
@@ -18,7 +18,7 @@ export type CreateInviteModalProps = {
 type Inputs = {
   name: string;
   email: string;
-  company: string;
+  company: { label: string; value: string };
   mobileNumber: string | undefined;
 };
 
@@ -35,8 +35,13 @@ const CreateInviteModal = ({ data, isOpen, setOpen, onSubmit }: CreateInviteModa
   const { palette, spacing } = useTheme();
   const [error, setError] = useState<Error | null>(null);
   const [isXs, isSm, isMd] = useResponsiveness(['xs', 'sm', 'md']);
+  const companiesOptions = parseOptions(data);
 
-  const formHook = useForm<Inputs>();
+  const formHook = useForm<Inputs>({
+    defaultValues: {
+      company: companiesOptions[0],
+    },
+  });
 
   const {
     reset,
@@ -75,19 +80,23 @@ const CreateInviteModal = ({ data, isOpen, setOpen, onSubmit }: CreateInviteModa
 
   const handleClose = () => {
     setOpen(!isOpen);
+    setError(null);
     reset();
   };
 
   const submitHandler: SubmitHandler<Inputs> = (data: Inputs) => {
     try {
-      const formData = data;
-      validateName(formData.name);
-      validateEmail(formData.email);
-      if (formData.mobileNumber && formData.mobileNumber.trim() !== '')
-        validatePhone(formData.mobileNumber);
-      formData.mobileNumber = undefined;
+      validateName(data.name);
+      validateEmail(data.email);
+      if (data.mobileNumber) validatePhone(data.mobileNumber);
       setError(null);
-      onSubmit(formData);
+      const inviteData = {
+        name: data.name,
+        email: data.email,
+        company: data.company.value,
+        mobileNumber: data.mobileNumber || undefined,
+      };
+      onSubmit(inviteData);
       reset();
     } catch (error: unknown) {
       if (error instanceof Error) setError(error);
@@ -141,7 +150,7 @@ const CreateInviteModal = ({ data, isOpen, setOpen, onSubmit }: CreateInviteModa
                 <FormTextInput label="Email" name="email" />
               </FormInputGroup>
               <FormInputGroup label="Company" name="company" required>
-                <FormDropdownSelector options={parseOptions(data)} label="Company" name="company" />
+                <FormSearchDropdown options={companiesOptions} label="Company" name="company" />
               </FormInputGroup>
               <FormInputGroup label="Mobile Number" name="mobileNumber">
                 <FormTextInput label="Mobile Number" name="mobileNumber" />
