@@ -1,6 +1,6 @@
 import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
 import PrismaClient from '@inc/db';
-import type { Product } from '@/utils/api/server/zod/products';
+import type { Product } from '@/utils/api/server/zod/listingTablesProducts';
 
 export default apiHandler().get(async (req, res) => {
   // Obtain  query parameters

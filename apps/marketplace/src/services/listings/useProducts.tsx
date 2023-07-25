@@ -5,7 +5,7 @@ import apiClient from '@/utils/api/client/apiClient';
 import { useQuery } from 'react-query';
 
 // ** Types Imports
-import { productsSchema } from '@/utils/api/server/zod/products';
+import { productsSchema } from '@/utils/api/server/zod/listingTablesProducts';
 
 /**
  * Fetch products data for zustand store

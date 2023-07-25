@@ -1,7 +1,7 @@
 // ** Zustand Imports
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Product } from '@/utils/api/server/zod/products';
+import type { Product } from '@/utils/api/server/zod/listingTablesProducts';
 
 export type ProductMap = Record<string, Product>;
 
