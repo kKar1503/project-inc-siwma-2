@@ -53,7 +53,7 @@ module.exports = {
       },
     ],
     'max-classes-per-file': 'off',
-    '@typescript-eslint/no-shadow': 'off',
+    '@typescript-eslint/no-shadow': 'warn',
   },
   overrides: [
     {
