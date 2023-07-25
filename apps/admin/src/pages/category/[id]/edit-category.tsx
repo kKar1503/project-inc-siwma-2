@@ -75,7 +75,6 @@ const EditCategory = () => {
     setCategoryDescription(event.target.value);
   };
 
-  // const mutation = useUpdateUserMutation(id, selectedCatFile ?? undefined);
   const mutation = useUpdateUserMutation(
     id,
     selectedCatFile ?? undefined,
@@ -92,7 +91,6 @@ const EditCategory = () => {
       parameters: [], 
     };
 
-    // Call the mutation function
     mutation.mutate(requestBody);
   };
 

@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import fetchCategories from '@/middlewares/fetchCategories';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
-import { useResponsiveness } from '@inc/ui';
 
 export type CategoryProps = {
   data: CategoryResponseBody[];
@@ -54,20 +53,8 @@ const CategoryTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
   const category = useCategoryPageQuery();
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const router = useRouter();
-
-  let tableWidth = '90%';
-  if (isSm) { 
-    tableWidth = '100%';
-  } else if (isMd) {
-    tableWidth = '80%';
-  } else if (isLg) {
-    tableWidth = '80%';
-  } else {
-    tableWidth = '90%';
-  }
 
   const sortRows = (): void => {
     const rowsData: BaseTableData[] = [];
@@ -89,7 +76,7 @@ const CategoryTable = () => {
     const idsToDelete = rowsToDelete.map((row) => row.id);
     const newRows = rows.filter((item) => !idsToDelete.includes(item.id));
     setRows(newRows);
-    return newRows; // Return the new rows after deletion
+    return newRows;
   };
 
 
@@ -116,7 +103,6 @@ const CategoryTable = () => {
   return (
     <Container>
       <Box sx={{ mt: 3, alignItems: 'center' }}>
-        {/* <Box sx={{ width: '90%' }}> */}
         <Box>
           <BaseTable
             heading="Categories"

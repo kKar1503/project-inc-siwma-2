@@ -6,13 +6,10 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
-// import { CategoryResponseBody } from '@/utils/api/client/zod';
-import { PostCategoryRequestBody } from '@/utils/api/server/zod';
 import createCategories from '@/middlewares/createCategories';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { CategoriesParameters } from '@prisma/client';
 import { useResponsiveness } from '@inc/ui';
-import categories from '../api/v1/categories';
 
 export type CreateCategoryProps = {
   name: string;
@@ -21,49 +18,6 @@ export type CreateCategoryProps = {
   crossSectionImage?: File;
   parameters?: { parameterId: number; required: boolean }[];
 };
-
-// type PostCategoryRequestBody = {
-//   name: string;
-//   description: string;
-//   image?: File;
-//   crossSectionImage?: File;
-//   parameters?: { parameterId: number; required: boolean }[];
-// };
-
-// const categoryData = (data: CreateCategoryProps) =>
-//   createCategories(
-//     data.name,
-//     data.description,
-//     data.image,
-//     data.crossSectionImage,
-//     data.parameters
-//   );
-
-// const useCategoryDataQuery = (  ) => {
-//   const { data } = useQuery('category', async () => create(catId), {
-//     enabled: catId !== undefined,
-//   });
-//   return data;
-// };
-
-// write a use query for posting of category data
-// const usePostCategoryQuery = (categoryData: CreateCategoryProps) => {
-//   const { data } = useQuery(
-//     'category',
-//     async () =>
-//       createCategories(
-//         categoryData.name,
-//         categoryData.description,
-//         categoryData.image,
-//         categoryData.crossSectionImage,
-//         categoryData.parameters
-//       ),
-//     {
-//       enabled: categoryData !== undefined,
-//     }
-//   );
-//   return categoryData;
-// };
 
 const CreateCategory = () => {
   const [selectedCatFile, setSelectedCatFile] = useState<File | null>(null);
@@ -124,7 +78,6 @@ const usePostCategoryMutation = useMutation((categoryData: CreateCategoryProps) 
     };
 
     await usePostCategoryMutation.mutateAsync(requestBody);
-    // Add any necessary logic after creating the category
   };
 
   return (
@@ -155,11 +108,7 @@ const usePostCategoryMutation = useMutation((categoryData: CreateCategoryProps) 
               label="Category Name"
               placeholder="Category Name"
               InputLabelProps={{ shrink: true }}
-              // InputProps={{
-              //   style: { fontSize: isSm ? '14px' : '16px' },
-              // }}
               onChange={handleCategoryNameChange}
-              // value={categoryName}
               sx={{ width: isSm ? '94%' : '47%', mb: isSm ? 3 : 0 }}
             />
             <TextField
@@ -167,7 +116,6 @@ const usePostCategoryMutation = useMutation((categoryData: CreateCategoryProps) 
               placeholder="Category Name (Chinese)"
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryNameChineseChange}
-              // value={categoryNameChinese}
               sx={{ width: isSm ? '94%' : '47%' }}
             />
           </Box>
@@ -177,7 +125,6 @@ const usePostCategoryMutation = useMutation((categoryData: CreateCategoryProps) 
               placeholder="Your category description"
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryDescriptionChange}
-              // value={categoryDescription}
               sx={{ width: isSm ? '94%' : '96%', my: 2 }}
             />
           </Box>
