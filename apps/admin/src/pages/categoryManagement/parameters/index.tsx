@@ -25,8 +25,10 @@ export type ParameterProps = {
   dataType: DataType;
   active?: boolean;
 };
+
 export type ParameterTableProps = {
   data: ParameterResponseBody[];
+  updateData: any;
 };
 
 function createData(
@@ -85,7 +87,7 @@ const useParameterQuery = () => {
   return data;
 };
 
-const ParameterTable = () => {
+const ParameterTable = ({ data, updateData }: ParameterTableProps) => {
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -96,28 +98,13 @@ const ParameterTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
-  
+
   const router = useRouter();
   const parameter = useParameterQuery();
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const pageRows = rows.slice(startIndex, endIndex);
-
-  // const handleParametersChange = async (parameter: Parameter[]) => {
-  //   setParameterData(parameter);
-  // };
-
-  // useEffect(() => {
-  //   if (parameter) {
-  //     handleParametersChange(parameter);
-  //   }
-  // }, [parameter]);
-
-  // const updateParameterData = async () => {
-  //   const updatedParameters = await fetchParameters();
-  //   handleParametersChange(updatedParameters);
-  // };
 
   const sortRows = (): void => {
     const rowsData: BaseTableData[] = [];
@@ -135,7 +122,7 @@ const ParameterTable = () => {
       );
     });
     setRows(rowsData);
-  };  
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -150,6 +137,8 @@ const ParameterTable = () => {
     const ids = rows.map((row) => row.id);
     setIds(ids);
     setOpenDeleteModal(true);
+
+    return [];
   };
 
   const handleEditRow = (row: BaseTableData) => {
@@ -160,6 +149,10 @@ const ParameterTable = () => {
 
   const handleCreateParameter = () => {
     router.push(`parameters/create-parameter`);
+  };
+
+  const onToggle = () => {
+    // nothing to do
   };
 
   const tableStyle = useMemo(() => {
@@ -186,30 +179,6 @@ const ParameterTable = () => {
   useEffect(() => {
     sortRows();
   }, [parameter]);
-
-  // useEffect(() => {
-  //   if (!parameter.isFetched) {
-  //     return
-  //   }
-
-  //   if (parameter.isError) {
-  //     if ('status' in (parameter.error as any) && (parameter.error as any).status === 404) {
-  //       router.replace('/404');
-  //       return;
-  //     }
-
-  //     router.replace('/500');
-  //     return;
-  //   }
-
-  //   if (parameter === undefined) {
-  //     router.replace('/500');
-  //   }
-  // }, [parameter.isFetched]);
-
-  // if (!parameter.isFetched) {
-  //   return <SpinnerPage />;
-  // }
 
   return (
     <>
@@ -239,19 +208,19 @@ const ParameterTable = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
           onDelete={handleDeleteRows}
           onEdit={handleEditRow}
-          onToggle={() => console.log('toggle')}
+          onToggle={onToggle}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
           totalCount={rows.length}
         />
-        {/* <DeleteParameterModal
-          open={openDeleteModal}
-          setOpen={setOpenDeleteModal}
-          parameters={ids}
-          updateData={updateParameterData}
-        /> */}
       </Container>
+      <DeleteParameterModal
+        open={openDeleteModal}
+        setOpen={setOpenDeleteModal}
+        parameters={ids}
+        updateData={updateData}
+      />
     </>
   );
 };
