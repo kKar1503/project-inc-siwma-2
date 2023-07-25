@@ -25,7 +25,6 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import updateParameter from '@/middlewares/updateParameter';
 import fetchParameterById from '@/middlewares/fetchParameterById';
-import fetchParameters from '@/middlewares/fetchParameters';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';

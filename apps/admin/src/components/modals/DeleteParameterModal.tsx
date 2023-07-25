@@ -6,16 +6,14 @@ export type DeleteModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   parameters: string[];
-  updateData: () => void;
 };
 
-const DeleteParameters = ({ open, setOpen, parameters, updateData }: DeleteModalProps) => {
+const DeleteParameters = ({ open, setOpen, parameters }: DeleteModalProps) => {
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [rightButtonState, setRightButtonState] = useState(false);
 
   const deleteParam = async () => {
     await Promise.all(parameters.map((parameter) => deleteParameters(parameter)));
-    updateData();
   };
 
   if (rightButtonState === true) {

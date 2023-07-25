@@ -28,7 +28,7 @@ export type ParameterProps = {
 
 export type ParameterTableProps = {
   data: ParameterResponseBody[];
-  updateData: any;
+  updateData?: any;
 };
 
 function createData(
@@ -215,7 +215,7 @@ const ParameterTable = ({ data, updateData }: ParameterTableProps) => {
         open={openDeleteModal}
         setOpen={setOpenDeleteModal}
         parameters={ids}
-        updateData={updateData}
+        // updateData={updateData}
       />
     </>
   );
