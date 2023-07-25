@@ -104,14 +104,6 @@ const AllListings = () => {
     }
   };
 
-  const onEdit = () => {
-    // nothing to do
-  };
-
-  const onToggle = () => {
-    // nothing to do
-  };
-
   return (
     <Box
       sx={{
@@ -126,9 +118,7 @@ const AllListings = () => {
         onDelete={handleDeleteListings}
         onPageChange={handlePageChange}
         totalCount={totalCount.current}
-        onEdit={onEdit}
         onRowsPerPageChange={handleRowsPerPageChange}
-        onToggle={onToggle}
         rowsPerPage={rowsPerPage}
         page={currPage}
       />

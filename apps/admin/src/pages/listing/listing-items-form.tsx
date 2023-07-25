@@ -169,7 +169,7 @@ const ListingItemForm = () => {
                 }}
               >
                 {cat.map((categoryItem) => (
-                  <MenuItem value={categoryItem.id}>{categoryItem.name}</MenuItem>
+                  <MenuItem value={categoryItem.id} key={categoryItem.id}>{categoryItem.name}</MenuItem>
                 ))}
               </Select>
             </FormControl>
