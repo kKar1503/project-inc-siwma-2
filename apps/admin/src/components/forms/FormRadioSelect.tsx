@@ -87,6 +87,7 @@ const FormRadioSelect = ({
           >
             {options.map((option) => (
               <FormControlLabel
+                key={option.value}
                 value={option.value}
                 control={
                   <Radio
