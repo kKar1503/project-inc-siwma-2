@@ -38,6 +38,7 @@ const negotiable = z.boolean();
 const quantity = z.number();
 const type = z.nativeEnum(ListingType);
 const createdAt = z.string();
+const product = z.string();
 
 // -- Company Properties -- //
 const company = z.object({
@@ -68,6 +69,7 @@ export const listingSchema = z.object({
   type,
   createdAt,
   owner,
+  product,
   parameters: z.array(parameter),
 });
 
