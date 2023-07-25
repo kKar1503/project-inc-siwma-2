@@ -40,21 +40,9 @@ const BulkInvitesPage = () => {
   useEffect(() => {
     if (isBulkInvitesError) {
       if ('status' in (bulkInvitesError as any) && (bulkInvitesError as any).status === 404) {
-        // router.replace('/404');
-        console.log('Error 404');
-        return;
+        router.replace('/404');
+        
       }
-
-      // console.log('Error 500');
-      console.log((bulkInvitesError as any).data.errors[0].detail);
-
-      // router.replace('/500');
-      // return;
-    }
-
-    if (res === undefined) {
-      // router.replace('/500');
-      console.log('Undefined');
     }
   }, [bulkInvitesError, isBulkInvitesError, isBulkInvitesFetched, res]);
 
@@ -110,8 +98,11 @@ const BulkInvitesPage = () => {
   };
 
   const handleFileUpload = () => {
-    console.log('File uploading...');
-    setOpenConfirm(true);
+    if (!isBulkInvitesError && res?.status === 204) {
+      setOpenConfirm(true);
+    }
+    // Alert pops up when theres error in sending invites
+    alert('Error in sending invite');
   };
 
   return (
@@ -142,12 +133,11 @@ const BulkInvitesPage = () => {
                 handleFileChange(event);
               }}
               accept={[AcceptedFileTypes.XLSX]}
-              maxWidth={isLg ? '60%' : '95%'}
+              maxWidth={isLg ? '70%' : '95%'}
               maxHeight={isLg ? '100vh' : '70vh'}
             />
             <Box
               sx={{
-                // alignItems: 'flex-end',
                 justifyContent: isLg ? 'flex-end' : 'center',
               }}
             >
@@ -159,7 +149,7 @@ const BulkInvitesPage = () => {
           <Box sx={{ justifyContent: isLg ? 'flex-end' : 'center', m: 2, display: 'flex' }}>
             <Button
               variant="contained"
-              disabled={fileDetails.length === 0 || !isBulkInvitesError}
+              disabled={fileDetails.length === 0}
               sx={({ palette, spacing }) => ({
                 backgroundColor: palette.primary.main,
                 width: isLg ? '10%' : '95%',
