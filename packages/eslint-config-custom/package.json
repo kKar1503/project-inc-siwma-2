@@ -1,0 +1,9 @@
+{
+  "name": "@inc/eslint-config-custom",
+  "version": "0.0.0",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "react.js"
+  ]
+}

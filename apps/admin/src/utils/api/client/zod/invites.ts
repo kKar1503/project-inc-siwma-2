@@ -7,12 +7,14 @@ const company = z.object({
   id: z.string(),
   name: z.string(),
 });
+const mobileNumber = z.string().nullable();
 
 const invite = z.object({
   id,
   name,
   email,
   company,
+  mobileNumber,
 });
 
 // Response Schemas
