@@ -42,6 +42,10 @@ const headers: Header[] = [
     key: 'mobileNumber',
     label: 'Mobile Number',
   },
+  {
+    key: 'enabled',
+    label: 'Enabled',
+  },
 ];
 
 const parseUsersData = (users: User[]) => {
