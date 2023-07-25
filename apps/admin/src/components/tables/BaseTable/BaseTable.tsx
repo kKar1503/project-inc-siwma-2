@@ -20,6 +20,7 @@ export interface BaseTableData {
 type BaseTableProps = {
   heading: string;
   headers: Header[];
+  customHeader?: React.ReactNode;
   rows: BaseTableData[];
   rowsPerPageOptions: React.ComponentProps<typeof TablePagination>['rowsPerPageOptions'];
   totalCount: number;
@@ -30,6 +31,7 @@ type BaseTableProps = {
   onDelete: (rows: readonly BaseTableData[]) => BaseTableData[];
   rowsPerPage: number;
   page: number;
+  sx?: React.ComponentProps<typeof Box>['sx'];
 };
 
 /**
@@ -37,6 +39,7 @@ type BaseTableProps = {
  * @param heading - The heading of the table
  * @param rows - The data to display in the table
  * @param headers - The headers to display in the table
+ * @param customHeader - The custom header to display in the table
  * @param rowsPerPageOptions - The options for the rows per page dropdown
  * @param totalCount - The total number of rows (including the ones not displayed on the current page)
  * @param onPageChange - The callback for when the page changes
@@ -46,6 +49,7 @@ type BaseTableProps = {
  * @param onDelete - The callback for when the delete button is clicked (Should return an updated array of selected rows)
  * @param rowsPerPage - The number of rows per page
  * @param page - The current page
+ * @param sx - Styling
  */
 const BaseTable = (props: BaseTableProps) => {
   const [selected, setSelected] = useState<readonly BaseTableData[]>([]);
@@ -55,6 +59,7 @@ const BaseTable = (props: BaseTableProps) => {
     heading,
     rows,
     headers,
+    customHeader,
     rowsPerPageOptions,
     totalCount,
     onPageChange,
@@ -64,6 +69,7 @@ const BaseTable = (props: BaseTableProps) => {
     onDelete,
     rowsPerPage,
     page,
+    sx,
   } = props;
 
   /**
@@ -106,15 +112,23 @@ const BaseTable = (props: BaseTableProps) => {
     setSelected(result);
   };
 
-  const isSelected = (row: BaseTableData) => selected.indexOf(row) !== -1;
+  const isSelected = (row: BaseTableData) => selected.find((e) => e.id === row.id) !== undefined;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? rowsPerPage - rows.length : 0;
-  console.log({ emptyRows });
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box width="100%" height="100%" sx={sx}>
+      <Paper
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
+        {customHeader ?? customHeader}
         <BaseTableToolbar
           heading={heading}
           selectedRows={selected}
@@ -123,14 +137,8 @@ const BaseTable = (props: BaseTableProps) => {
           onToggle={(e, toggled) => onToggle(toggled, selected)}
           onDelete={handleDelete}
         />
-        <TableContainer>
-          <Table
-            sx={{
-              minWidth: 750,
-              minHeight: 'calc(100vh /2)',
-            }}
-            aria-labelledby="tableTitle"
-          >
+        <TableContainer sx={{ flexGrow: 1 }}>
+          <Table width="100%" aria-labelledby="tableTitle" stickyHeader>
             <BaseTableHead
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
@@ -200,6 +208,7 @@ const BaseTable = (props: BaseTableProps) => {
           </Table>
         </TableContainer>
         <TablePagination
+          sx={{ flexGrow: 0, overflow: 'initial' }}
           rowsPerPageOptions={rowsPerPageOptions}
           component="div"
           count={totalCount}
