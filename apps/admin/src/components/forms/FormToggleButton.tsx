@@ -101,6 +101,8 @@ const FormToggleButton = ({
                 onClick={() => field.onChange(option.value)}
                 disabled={option.value === field.value}
                 // eslint-disable-next-line no-nested-ternary
+                color={errors[name] ? 'error' : success ? 'success' : undefined}
+                // eslint-disable-next-line no-nested-ternary
                 sx={{
                   flex: 1,
                   padding: 2,
