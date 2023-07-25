@@ -55,7 +55,7 @@ const ListingItemForm = () => {
   const [LICategory, setCategory] = useState<string>(listingItemData?.categoryId || '');
   const [LIUnit, setUnit] = useState<string>(listingItemData?.unit || '');
   const [LICUnit, setChineseUnit] = useState<string>(listingItemData?.chineseUnit || '');
-  
+
   const useUpdateListingItemMutation = (listingItemId: string) =>
     useMutation(
       (updatedListingItemData: PutListingItemRequestBody) =>
@@ -217,15 +217,25 @@ const ListingItemForm = () => {
           margin="normal"
           onChange={handleChineseUnitChange}
         />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          onClick={handleConfirm}
-          sx={{ my: '10px' }}
+        <Box
+          sx={({ spacing }) => ({
+            width: '98%',
+            mt: spacing(2),
+            display: 'flex',
+            justifyContent: 'flex-end',
+          })}
         >
-          UPDATE
-        </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={handleConfirm}
+            sx={({ spacing }) => ({
+              mb: spacing(2),
+            })}
+          >
+            UPDATE
+          </Button>
+        </Box>
       </Box>
       <SuccessModal
         title="Successfully Edited!"
