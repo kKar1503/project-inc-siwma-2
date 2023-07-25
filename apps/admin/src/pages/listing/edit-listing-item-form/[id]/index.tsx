@@ -7,6 +7,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Grid,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -91,6 +92,11 @@ const ListingItemForm = () => {
     setChineseUnit(event.target.value);
   };
 
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    router.replace(`/listing/listing-items`);
+  };
+
   const mutation = useUpdateListingItemMutation(id);
 
   const handleConfirm = async () => {
@@ -138,10 +144,36 @@ const ListingItemForm = () => {
         backgroundColor: 'white',
       }}
     >
-      <Typography variant="h5" sx={{ pt: '10px' }}>
-        Edit listing item
-      </Typography>
-      <Typography variant="body1">Edit a listing item</Typography>
+      <Grid container sx={{ flexGrow: 1 }}>
+        <Grid item xs={6}>
+          <Typography variant="h5" sx={{ pt: '10px' }}>
+            Edit listing item
+          </Typography>
+          <Typography variant="body1">Edit a listing item</Typography>
+        </Grid>
+        <Grid item xs={6}>
+          <Box
+            sx={({ spacing }) => ({
+              width: '98%',
+              mt: spacing(2),
+              display: 'flex',
+              justifyContent: 'flex-end',
+            })}
+          >
+            <Button
+              type="submit"
+              variant="contained"
+              color="error"
+              onClick={handleCancel}
+              sx={({ spacing }) => ({
+                mb: spacing(2),
+              })}
+            >
+              CANCEL
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
       <Box>
         <TextField
           fullWidth

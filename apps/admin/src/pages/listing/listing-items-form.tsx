@@ -7,12 +7,14 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Grid,
 } from '@mui/material';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import fetchCategories from '@/services/fetchCategories';
 import createListingItem from '@/services/createListingItem';
 import SuccessModal from '@/components/modals/SuccessModal';
+import { useRouter } from 'next/router';
 
 const GetCategoryPageQuery = () => {
   const { data } = useQuery('cat', async () => fetchCategories());
@@ -38,6 +40,7 @@ const ListingItemForm = () => {
   const [LICUnit, setChineseUnit] = useState('');
 
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const cat = GetCategoryPageQuery();
 
@@ -58,6 +61,11 @@ const ListingItemForm = () => {
       },
     }
   );
+
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    router.replace(`/listing/listing-items`);
+  };
 
   const handleConfirm = async () => {
     console.log(LIName);
@@ -86,11 +94,37 @@ const ListingItemForm = () => {
         backgroundColor: 'white',
       }}
     >
-      <Typography variant="h5" sx={{ pt: '10px' }}>
-        Create listing item
-      </Typography>
-      <Typography variant="body1">Create a listing item</Typography>
-      
+      <Grid container sx={{ flexGrow: 1 }}>
+        <Grid item xs={6}>
+          <Typography variant="h5" sx={{ pt: '10px' }}>
+            Create listing item
+          </Typography>
+          <Typography variant="body1">Create a listing item</Typography>
+        </Grid>
+        <Grid item xs={6}>
+          <Box
+            sx={({ spacing }) => ({
+              width: '98%',
+              mt: spacing(2),
+              display: 'flex',
+              justifyContent: 'flex-end',
+            })}
+          >
+            <Button
+              type="submit"
+              variant="contained"
+              color="error"
+              onClick={handleCancel}
+              sx={({ spacing }) => ({
+                mb: spacing(2),
+              })}
+            >
+              CANCEL
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
+
       <Box>
         <TextField
           fullWidth
@@ -169,13 +203,27 @@ const ListingItemForm = () => {
             justifyContent: 'flex-end',
           })}
         >
-          <Button type="submit" variant="contained" onClick={handleConfirm} sx={({ spacing}) => ({
-            mb: spacing(2),
-          })}>
-          SUBMIT
-        </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={handleConfirm}
+            sx={({ spacing, palette }) => ({
+              mb: spacing(2),
+              '&.Mui-disabled': {
+                bgColor: palette.action.disabled,
+                color: palette.common.white,
+              },
+            })}
+            disabled={
+              LIName.trim() === '' ||
+              LIDescription.trim() === '' ||
+              LICategory.trim() === '' ||
+              LIUnit.trim() === ''
+            }
+          >
+            SUBMIT
+          </Button>
         </Box>
-        
       </Box>
       <SuccessModal
         title="Successfully Created!"
