@@ -232,6 +232,9 @@ const Page = () => {
         <Box
           sx={{
             width: isSm ? '100%' : '48%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
             borderRadius: '8px',
             padding: 2,

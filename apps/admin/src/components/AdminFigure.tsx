@@ -44,7 +44,7 @@ const AdminFigure = ({ title, value, color, icon }: AdminFigureProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          width: isSm ? '20%' : '30%',
+          minWidth: isSm ? '20%' : '30%',
         }}
       >
         <IconComponent
