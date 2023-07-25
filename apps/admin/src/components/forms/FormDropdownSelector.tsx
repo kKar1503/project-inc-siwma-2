@@ -70,7 +70,14 @@ const FormDropdownSelector = ({
         name={name}
         control={control}
         render={({ field: { ref, ...field }, formState: { defaultValues } }) => (
-          <FormControl fullWidth>
+          <FormControl
+            fullWidth
+            sx={{
+              '.MuiInputLabel-root': {
+                color: borderColor,
+              },
+            }}
+          >
             <InputLabel
               id={`${name}-input-label`}
               color={errors[name] ? 'error' : success ? 'success' : undefined}
@@ -90,12 +97,9 @@ const FormDropdownSelector = ({
                 '&:hover .MuiOutlinedInput-notchedOutline': {
                   borderColor,
                 },
-                '& label, & label.Mui-focused': {
-                  color: borderColor,
-                },
                 ...sx,
               }}
-              label={label}
+              label={label + (required ? ' *' : '')}
               defaultValue={defaultValues ? defaultValues[name] : undefined}
               {...hookInput(name, label, customValidation)}
               onChange={(e) => {
