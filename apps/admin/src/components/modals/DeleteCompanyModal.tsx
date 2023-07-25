@@ -5,7 +5,7 @@ import deleteCompanies from '@/middlewares/company-management/deleteCompanies';
 export type ReportModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  companies?: string[];
+  companies: string[];
   updateData: () => void;
 };
 
