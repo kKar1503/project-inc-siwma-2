@@ -4,26 +4,35 @@ import Title from '@/components/graphs/overlay/title';
 
 export interface LineGraphsProps {
   data: Array<{
-    month: number;
-    value: number;
-    isBuying: boolean;
+    buying: number,
+    selling: number,
   }>;
 }
 
 const LineGraph = ({ data }: LineGraphsProps) => {
-  const formattedData = data.map((item) => ({
-      x: item.month,
-      y: item.value,
-      label: `${item.value}`,
-      isBuying: item.isBuying,
-    }),
+  const formattedData = data.map((item, i) => {
+      const x = i + 1;
+      return {
+        buying: {
+          x,
+          y: item.buying,
+          label: `${item.buying}`,
+        },
+        selling: {
+          x,
+          y: item.selling,
+          label: `${item.selling}`,
+        },
+      };
+    },
   );
   return (
     <ModuleBase noFlex width='85%'>
       <VictoryChart
         theme={VictoryTheme.material}
+        minDomain={{ y: 0 }}
       >
-        <Title title='Number of Companies Buying and Selling' />
+        <Title title='Number of buying and selling posts' />
         <VictoryLine
           labelComponent={<VictoryTooltip />}
           style={{
@@ -41,7 +50,7 @@ const LineGraph = ({ data }: LineGraphsProps) => {
               ],
             },
           }]}
-          data={formattedData.filter((item) => item.isBuying)}
+          data={formattedData.map((item) => item.buying)}
         />
         <VictoryLine
           labelComponent={<VictoryTooltip />}
@@ -55,18 +64,34 @@ const LineGraph = ({ data }: LineGraphsProps) => {
               onClick: () => [
                 {
                   target: 'labels',
-                  mutation: ({active}) => ({ active: !active }),
+                  mutation: ({ active }) => ({ active: !active }),
                 },
               ],
 
             },
           }]}
-          data={formattedData.filter((item) => !item.isBuying)}
+          data={formattedData.map((item) => item.selling)}
         />
         <VictoryAxis
           theme={VictoryTheme.material}
           tickValues={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
           tickFormat={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+          style={{
+            ticks:
+              {
+                stroke: 'none',
+              },
+            tickLabels:
+              {
+                fontSize: 10,
+                padding: 5,
+              },
+          }}
+        />
+        <VictoryAxis
+          theme={VictoryTheme.material}
+          dependentAxis
+          tickFormat={x => x.toFixed(1)}
           style={{
             ticks:
               {
