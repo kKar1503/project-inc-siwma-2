@@ -98,16 +98,16 @@ const ActionCell = (props: ActionCellProps & TableCellProps) => {
       ) : (
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
           {bookmarked ? (
-            <IconButton size="small" color="warning" onClick={handleToggleBookmark}>
+            <IconButton size="medium" color="warning" onClick={handleToggleBookmark}>
               <BookmarkIcon />
             </IconButton>
           ) : (
-            <IconButton size="small" color="warning" onClick={handleToggleBookmark}>
+            <IconButton size="medium" color="warning" onClick={handleToggleBookmark}>
               <BookmarkBorderIcon />
             </IconButton>
           )}
           <IconButton
-            size="small"
+            size="medium"
             sx={({ palette }) => ({
               color: palette.grey[700],
             })}
@@ -119,7 +119,7 @@ const ActionCell = (props: ActionCellProps & TableCellProps) => {
             sx={({ palette }) => ({
               color: palette.grey[700],
               '&.Mui-checked': {
-                color: palette.grey[700],
+                color: palette.primary[300],
               },
             })}
             onChange={handleSelection}
