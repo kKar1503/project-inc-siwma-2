@@ -332,7 +332,9 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
         {listingDetails?.parameters?.map((id, count) => (
           <Grid item>
             <Typography color={palette.grey[500]} sx={cardStyle.name}>
-              {id.paramId === paramNames?.[count]?.id && paramNames?.[count]?.name}
+              {id.paramId === paramNames?.[count]?.id &&
+                paramNames?.[count]?.type === 'DIMENSION' &&
+                paramNames?.[count]?.name}
             </Typography>
             <Typography sx={cardStyle.name}>{id.value}</Typography>
           </Grid>
