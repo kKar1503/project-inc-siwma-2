@@ -31,6 +31,7 @@ import { DateTime } from 'luxon';
 import useFetchListing from '@/services/useFetchListing';
 import useFetchCatById from '@/services/useFetchCatById';
 import useFetchParamNames from '@/services/useFetchParamNames';
+import fetchListing from '@/services/fetchListing';
 import useUser from '@/services/users/useUser';
 import useProduct from '@/services/useProduct';
 import bookmarkListing from '@/services/bookmarks/bookmarkListing';
@@ -228,6 +229,9 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
     };
   }, [isSm, isMd, isLg]);
 
+  console.log(listingDetails);
+  console.log(paramNames);
+
   return (
     <Paper
       sx={({ spacing, shape }) => ({
@@ -241,7 +245,7 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
       <Box sx={{ alignItems: 'center', display: 'flex' }}>
         <Box sx={{ flexGrow: 1, alignItems: 'center', display: 'flex' }}>
           <Typography sx={cardStyle.title} mr={spacing(2)}>
-            {listingDetails?.name}
+            {productDetails?.name}
           </Typography>
           {listingDetails?.type === 'BUY' && <ListingBadge type="buy" />}
           {listingDetails?.type === 'SELL' && <ListingBadge type="sell" />}
@@ -355,20 +359,6 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
           my: spacing(2),
         })}
       >
-        <Grid item>
-          <Typography sx={cardStyle.title}>
-            {/* no metal grade column? */}
-            {t('Metal Grade')}
-          </Typography>
-          <Typography sx={cardStyle.name}>S233</Typography>
-        </Grid>
-        <Grid item>
-          <Typography sx={cardStyle.title}>
-            {/* no certification column? */}
-            {t('Certification')}
-          </Typography>
-          <Typography sx={cardStyle.name}>Example Cert</Typography>
-        </Grid>
         <Grid item>
           <Typography sx={cardStyle.title}>{t('Negotiable')}</Typography>
           <Typography sx={cardStyle.name}>{listingDetails?.negotiable ? 'Yes' : 'No'}</Typography>
