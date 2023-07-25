@@ -67,7 +67,7 @@ const FormToggleButton = ({
     ? palette.error[100]
     : success
     ? palette.success[100]
-    : undefined;
+    : palette.primary[300];
 
   return (
     // Render a skeleton if the component is in a loading state
@@ -85,9 +85,9 @@ const FormToggleButton = ({
             defaultValue={defaultValues ? defaultValues[name] : undefined}
             sx={{
               width: '100%',
-              '& .Mui-disabled': {
+              '.Mui-disabled': {
                 borderColor,
-                color: borderColor,
+                backgroundColor: borderColor,
               },
               ...sx,
             }}
@@ -99,7 +99,11 @@ const FormToggleButton = ({
                 onClick={() => field.onChange(option.value)}
                 disabled={option.value === field.value}
                 // eslint-disable-next-line no-nested-ternary
-                color={errors[name] ? 'error' : success ? 'success' : undefined}
+                sx={{
+                  '&:disabled': {
+                    color: option.value === field.value ? 'white' : undefined,
+                  },
+                }}
                 type="button"
               >
                 {option.label}
