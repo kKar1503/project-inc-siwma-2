@@ -4,19 +4,14 @@ import { FiImage, FiUpload } from 'react-icons/fi';
 import Image from 'next/image';
 import { Company } from '@/utils/api/client/zod/companies';
 import { useResponsiveness } from '@inc/ui';
-import { useForm, SubmitHandler, FormProvider, FieldValues } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { PutUserRequestBody } from '@/utils/api/server/zod/users';
 import { User } from '@/utils/api/client/zod/users';
 import editUser from '@/middlewares/editUser';
 import forgetPW from '@/middlewares/forget-password';
 import { useMutation } from 'react-query';
 import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
-import {
-  FormDropdownSelector,
-  FormInputGroup,
-  FormSearchDropdown,
-  FormTextInput,
-} from '@/components/forms';
+import { FormDropdownSelector, FormInputGroup, FormTextInput } from '@/components/forms';
 
 type EditUserFormProps = {
   user: User | undefined;
@@ -44,7 +39,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
   const [isXs, isSm, isMd] = useResponsiveness(['xs', 'sm', 'md']);
 
   const formHook = useForm();
-  const { register, control, handleSubmit, reset } = formHook;
+  const { handleSubmit, reset } = formHook;
 
   // fill form
   useEffect(() => {
@@ -125,6 +120,7 @@ const EditUserForm = ({ user, companies, openModal }: EditUserFormProps) => {
         password: data.password || undefined,
         userComments: data.userComments || undefined,
       };
+
       editUserMutation.mutate(newUserData);
     } catch (error: unknown) {
       if (error instanceof Error) setError(error);
