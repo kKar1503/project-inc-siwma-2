@@ -21,7 +21,7 @@ const BaseTableHead = (props: BaseTableHeadProps) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        <TableCell padding="checkbox" sx={{ backgroundColor: 'white' }}>
           <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -33,7 +33,7 @@ const BaseTableHead = (props: BaseTableHeadProps) => {
           />
         </TableCell>
         {columns.map((column) => (
-          <TableCell key={column.key} align="left">
+          <TableCell key={column.key} align="left" sx={{ backgroundColor: 'white' }}>
             {column.label}
           </TableCell>
         ))}

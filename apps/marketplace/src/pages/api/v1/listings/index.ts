@@ -105,7 +105,10 @@ export function sortOptions(sortByStr: string | undefined) {
 export async function formatSingleListingResponse(
   listing: ListingWithParameters,
   userId: string,
-  includeParameters: boolean
+  config?: {
+    includeParameters?: boolean;
+    includeName?: boolean;
+  }
 ): Promise<ListingResponseBody> {
   const formattedListing: ListingResponseBody = {
     id: listing.id.toString(),
@@ -140,7 +143,7 @@ export async function formatSingleListingResponse(
   };
 
   if (
-    includeParameters &&
+    config?.includeParameters &&
     listing.listingsParametersValue &&
     listing.listingsParametersValue.parameters
   ) {
@@ -150,6 +153,10 @@ export async function formatSingleListingResponse(
       paramId: parameter.parameterId.toString(),
       value: parameter.value,
     }));
+  }
+
+  if (config?.includeName) {
+    formattedListing.name = listing.listingItem.name;
   }
 
   return formattedListing;
@@ -242,7 +249,9 @@ export default apiHandler()
     // Format the listings
     const formattedListings = await Promise.all(
       sortedListings.map((listing) =>
-        formatSingleListingResponse(listing, userId, queryParams.includeParameters)
+        formatSingleListingResponse(listing, userId, {
+          ...queryParams,
+        })
       )
     );
 
