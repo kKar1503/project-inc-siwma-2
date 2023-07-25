@@ -47,7 +47,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         enableMouseEvents
       >
         {data.map((step, index) => (
-          <div>
+          <div key={step + index.toString()}>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
                 sx={{
