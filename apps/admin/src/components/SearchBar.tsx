@@ -1,6 +1,6 @@
 import { Input, Box, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { ChangeEvent, useRef } from 'react';
+import { ChangeEvent } from 'react';
 
 type SearchBarProps = {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -29,4 +29,5 @@ const SearchBar = ({ onChange }: SearchBarProps) => (
     />
   </Box>
 );
+
 export default SearchBar;
