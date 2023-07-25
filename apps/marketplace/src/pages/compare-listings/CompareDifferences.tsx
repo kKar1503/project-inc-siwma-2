@@ -6,8 +6,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import fetchListing from '@/middlewares/fetchListing';
-import fetchCatById from '@/middlewares/fetchCatById';
+import fetchListing from '@/services/fetchListing';
+import fetchCatById from '@/services/fetchCatById';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { Category } from '@/utils/api/client/zod/categories';
 import S3BoxImage from '@/components/S3BoxImage';
@@ -16,7 +16,6 @@ interface TableRowData {
   id: string;
   data: (string | JSX.Element)[];
 }
-
 
 interface TableData {
   sideHeaders: string[];
@@ -35,9 +34,7 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
   useEffect(() => {
     const fetchListings = async () => {
       const listings = await Promise.all(productIds.map((id) => fetchListing(id)));
-      const categories = await Promise.all(
-        listings.map((listing) => fetchCatById(listing.categoryId))
-      );
+      const categories = await Promise.all(listings.map((listing) => fetchCatById(listing.id)));
       setCategory(categories);
       setListings(listings);
     };
@@ -81,7 +78,7 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
         data: category.map((cat) => (
           <S3BoxImage
             sx={{
-              height: { xs: 50, sm: 75, md: 100, lg:   125 },
+              height: { xs: 50, sm: 75, md: 100, lg: 125 },
               display: 'block',
               width: { xs: 0, sm: 150, md: 200, lg: 250 },
               overflow: 'hidden',
@@ -105,25 +102,26 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
           <TableRow>
             <TableCell>Key Specs</TableCell>
             {listings.map((listing, index) => (
-              <TableCell key={index}>{listing.name}</TableCell>
+              <TableCell key={listing.id}>{listing.name}</TableCell>
             ))}
           </TableRow>
         </TableHead>
-      <TableBody>
-  {tableData.sideHeaders.map((header, index) => (
-    <TableRow key={header}>
-      <TableCell>{header}</TableCell>
-      {tableData.rows[index]?.data.map((cellData, cellIndex) =>
-        header === 'Cross Section Image' ? (
-          <TableCell key={`cell-${index}-${cellIndex}`}>{cellData}</TableCell>
-        ) : (
-          <TableCell key={`cell-${index}-${cellIndex}`}>{cellData}</TableCell>
-        )
-      )}
-    </TableRow>
-  ))}
-</TableBody>
-
+        <TableBody>
+          {tableData.sideHeaders.map((header, headerIndex) => (
+            <TableRow key={header}>
+              <TableCell>{header}</TableCell>
+              {tableData.rows.map((row, rowIndex) => {
+                const cellData = row.data[headerIndex];
+                const cellKey = `cell-${headerIndex}-${rowIndex}`;
+                return header === 'Cross Section Image' ? (
+                  <TableCell key={cellKey}>{cellData}</TableCell>
+                ) : (
+                  <TableCell key={cellKey}>{cellData}</TableCell>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableBody>
       </Table>
     </TableContainer>
   );
