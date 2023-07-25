@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
+import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -42,6 +42,7 @@ const FormDropdownSelector = ({
   const {
     register,
     formState: { errors },
+    control,
   } = useFormContext();
 
   // Hooks inputs to using react form hook
@@ -64,28 +65,35 @@ const FormDropdownSelector = ({
     isLoading ? (
       <Skeleton className="h-12" />
     ) : (
-      <FormControl fullWidth>
-        <InputLabel id={`${name}-input-label`}>{label}</InputLabel>
-        <Select
-          labelId={`${name}-input-label`}
-          sx={{
-            width: '100%',
-            ...sx,
-          }}
-          label={label}
-          {...hookInput(name, label, customValidation)}
-          onChange={(e) => {
-            console.log(e.target.value);
-          }}
-          error={!!errors[name]}
-          placeholder={placeholder}
-          variant="outlined"
-        >
-          {options.map((option) => (
-            <MenuItem value={option.value}>{option.label}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field: { ref, ...field }, formState: { defaultValues } }) => (
+          <FormControl fullWidth>
+            <InputLabel id={`${name}-input-label`}>{label}</InputLabel>
+            <Select
+              labelId={`${name}-input-label`}
+              sx={{
+                width: '100%',
+                ...sx,
+              }}
+              label={label}
+              defaultValue={defaultValues ? defaultValues[name] : undefined}
+              {...hookInput(name, label, customValidation)}
+              onChange={(e) => {
+                console.log(e.target.value);
+              }}
+              error={!!errors[name]}
+              placeholder={placeholder}
+              variant="outlined"
+            >
+              {options.map((option) => (
+                <MenuItem value={option.value}>{option.label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      />
     )
   );
 };
