@@ -1,5 +1,6 @@
 import { ReasonType, UserContacts } from '@inc/db-enums';
 import { z } from 'zod';
+import { zodParseToInteger } from '../../apiHelper';
 
 const getUsersQuery = z
   .object({
@@ -49,12 +50,18 @@ const forgetPasswordSchema = z.object({
   email: z.string(),
 });
 
+const shareListingsSchema = z.object({
+  ownerId: z.string(),
+  listings: z.array(z.string().transform(zodParseToInteger)),
+});
+
 export type GetUsersQueryParameter = z.infer<typeof getUsersQuery>;
 export type PostUserRequestBody = z.infer<typeof userCreationRequestBody>;
 export type PutUserRequestBody = z.infer<typeof updateUserDetailsSchema>;
 export type PostReportRequestBody = z.infer<typeof createReportSchema>;
 export type ResetPasswordRequestBody = z.infer<typeof resetPasswordSchema>;
 export type ForgetPasswordQueryParameter = z.infer<typeof forgetPasswordSchema>;
+export type ShareListingsRequestBody = z.infer<typeof shareListingsSchema>;
 
 export default {
   get: {
@@ -80,6 +87,11 @@ export default {
   forgetPassword: {
     post: {
       query: forgetPasswordSchema,
+    },
+  },
+  share: {
+    post: {
+      body: shareListingsSchema,
     },
   },
 };
