@@ -119,7 +119,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
       <Grid item xs={12} md={12} lg={12}>
         <S3ImagePreview close={() => {
           setPreviewImage(null);
-        }} title='Advertisement Image Preview' src={previewImage} />;
+        }} title='Advertisement Image Preview' src={previewImage} />
         <AdSpaceTable
           ids={ids}
           advertisements={advertisements}
@@ -133,8 +133,6 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
       </Grid>
     </Grid>
   );
-
-
 };
 
 export default AdvertisementDashboard;
