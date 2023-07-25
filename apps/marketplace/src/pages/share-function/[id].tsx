@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 // ** Next Imports
 import { useRouter } from 'next/router';
@@ -29,7 +29,34 @@ const ShareFunctionPage = () => {
   const [openShare, setOpenShare] = useState(false);
   // ** Fetches the share data based on the hash
   const shareData = useShareFunc(router.query.id as string);
-  const userDetails = useUser(shareData.data?.ownerId as string).data;
+  console.log(shareData.data?.ownerId);
+  const {
+    data: userDetails,
+    error: userError,
+    isError: isUserError,
+    isFetched: isUserFetched,
+  } = useUser(shareData.data?.ownerId as string);
+
+  // ** Effects
+  useEffect(() => {
+    if (!isUserFetched) {
+      return;
+    }
+
+    if (isUserError) {
+      if ('status' in (userError as any) && (userError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (userDetails === undefined) {
+      router.replace('/500');
+    }
+  }, [isUserFetched]);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
@@ -91,18 +118,20 @@ const ShareFunctionPage = () => {
       },
     };
   }, [isSm, isMd, isLg]);
-
+console.log(userDetails);
   return (
     <main>
       <Box sx={spaceStyle.outerSpace}>
         <Box sx={spaceStyle.boxStyle}>
           {userDetails && <ProfileDetailCard data={userDetails} visibleEditButton />}
           {/* map listing cards based on listing Ids */}
-          <Box sx={spaceStyle.scrollBox}>
-            {listingIds?.map((id) => (
-              <ListingCard key={id} listingId={id} />
-            ))}
-          </Box>
+          {userDetails && (
+            <Box sx={spaceStyle.scrollBox}>
+              {listingIds?.map((id) => (
+                <ListingCard key={id} listingId={id} />
+              ))}
+            </Box>
+          )}
         </Box>
         <Box
           sx={({ spacing }) => ({
