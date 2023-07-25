@@ -1,23 +1,17 @@
 /* eslint-disable no-alert */
-import { useState } from 'react';
+import * as XLSX from 'xlsx';
+import { useState, useEffect } from 'react';
 import FileUpload, {
   FileUploadProps,
   AcceptedFileTypes,
 } from '@/components/FileUpload/FileUploadBase';
 import CompanyInvitesTable from '@/components/tables/BaseTable/CompanyInvitesTable';
-import { Box, Button } from '@mui/material';
 import UserInvitesTable from '@/components/tables/BaseTable/UserInvitesTable';
+import { Box, Button } from '@mui/material';
 import { Modal, useResponsiveness } from '@inc/ui';
-import * as XLSX from 'xlsx';
-import { useQuery } from 'react-query';
-import bulkInvites from '@/middlewares/bulkInvites';
 import { useRouter } from 'next/router';
+import useBulkInvites from '@/middlewares/useBulkInvites';
 import { PostBulkInviteRequestBody } from '@/utils/api/server/zod/invites';
-
-const useBulkInvitesQuery = (file: PostBulkInviteRequestBody) => {
-  const { data } = useQuery('bulkInvites', async () => bulkInvites(file));
-  return data;
-};
 
 const BulkInvitesPage = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -26,6 +20,33 @@ const BulkInvitesPage = () => {
   const [fileDetails, setFileDetails] = useState<PostBulkInviteRequestBody>([]);
   const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
+  const {
+    data: res,
+    error: bulkInvitesError,
+    isError: isBulkInvitesError,
+    isFetched: isBulkInvitesFetched,
+  } = useBulkInvites(fileDetails);
+
+  useEffect(() => {
+    if (isBulkInvitesError) {
+      if ('status' in (bulkInvitesError as any) && (bulkInvitesError as any).status === 404) {
+        // router.replace('/404');
+        console.log('Error 404');
+        return;
+      }
+
+      // console.log('Error 500');
+      console.log((bulkInvitesError as any).data.errors[0].detail);
+
+      // router.replace('/500');
+      // return;
+    }
+
+    if (res === undefined) {
+      // router.replace('/500');
+      console.log('Undefined');
+    }
+  }, [bulkInvitesError, isBulkInvitesError, isBulkInvitesFetched, res]);
 
   if (rightButtonState === true) {
     router.push('/invites');
@@ -63,7 +84,6 @@ const BulkInvitesPage = () => {
       const sheet = workbook.Sheets[sheetName];
       const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as Array<string>;
       parsedData.shift();
-      console.log(parsedData);
 
       const mappedData = parsedData.map((x) => {
         const data = {
@@ -75,11 +95,9 @@ const BulkInvitesPage = () => {
         return data;
       });
 
-      setFileDetails(mappedData as PostBulkInviteRequestBody);
+      setFileDetails(mappedData);
     };
   };
-
-  const res = useBulkInvitesQuery(fileDetails);
 
   const handleFileUpload = () => {
     console.log('File uploading...');
@@ -124,6 +142,7 @@ const BulkInvitesPage = () => {
       <Box sx={{ justifyContent: isLg ? 'flex-end' : 'center', m: 2, display: 'flex' }}>
         <Button
           variant="contained"
+          disabled={fileDetails.length === 0 || !isBulkInvitesError}
           sx={({ palette, spacing }) => ({
             backgroundColor: palette.primary.main,
             width: isLg ? '10%' : '95%',
@@ -135,7 +154,7 @@ const BulkInvitesPage = () => {
         </Button>
       </Box>
 
-      {res === 204 ? (
+      {res?.status === 204 && isBulkInvitesError ? (
         <Modal
           open={openConfirm}
           setOpen={setOpenConfirm}

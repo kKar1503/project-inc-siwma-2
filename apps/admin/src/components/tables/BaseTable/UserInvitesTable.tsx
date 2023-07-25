@@ -63,7 +63,7 @@ const UserInvitesTable = ({ details }: InviteFileProps) => {
   };
 
   return (
-    <Box sx={{ my: 2 }}>
+    <Box sx={{ my: 2, mx: 1 }}>
       <BaseTable
         rows={tableData}
         headers={headCells}
