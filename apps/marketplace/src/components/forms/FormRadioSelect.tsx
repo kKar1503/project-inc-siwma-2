@@ -72,7 +72,6 @@ const FormRadioSelect = ({
         {...hookInput(name, label, customValidation)}
         render={({ field: { ...field }, formState: { defaultValues } }) => (
           <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
             placeholder={placeholder}
             defaultValue={defaultValues ? defaultValues[name] : undefined}
             sx={{
