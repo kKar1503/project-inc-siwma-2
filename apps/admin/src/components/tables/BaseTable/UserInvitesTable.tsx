@@ -4,6 +4,11 @@ import { PostBulkInviteRequestBody } from '@/utils/api/server/zod';
 import { Box } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 
+type BulkInvitesTableProps = {
+  details: PostBulkInviteRequestBody;
+  onDelete: (rows: readonly BaseTableData[]) => BaseTableData[];
+};
+
 export type InviteFileProps = {
   details: PostBulkInviteRequestBody;
 };
@@ -37,7 +42,7 @@ const headCells: Header[] = [
   },
 ];
 
-const UserInvitesTable = ({ details }: InviteFileProps) => {
+const UserInvitesTable = ({ details, onDelete }: BulkInvitesTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [tableData, setTableData] = useState<BaseTableData[]>([]);
@@ -69,7 +74,7 @@ const UserInvitesTable = ({ details }: InviteFileProps) => {
         headers={headCells}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        onDelete={() => console.log('delete') as any as BaseTableData[]}
+        onDelete={onDelete}
         onEdit={() => console.log('edit')}
         onToggle={() => console.log('toggle')}
         page={page}
@@ -77,7 +82,7 @@ const UserInvitesTable = ({ details }: InviteFileProps) => {
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={userRows.length}
         heading="User Invites Preview"
-        sx={{width: '80vh', height: '68vh'}}
+        sx={{ width: '80vh', height: '68vh' }}
       />
     </Box>
   );

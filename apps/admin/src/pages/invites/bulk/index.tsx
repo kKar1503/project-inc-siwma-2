@@ -22,6 +22,7 @@ import Head from 'next/head';
 // Hooks Imports
 import useBulkInvites from '@/middlewares/useBulkInvites';
 import { PostBulkInviteRequestBody } from '@/utils/api/server/zod/invites';
+import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 
 const BulkInvitesPage = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -41,7 +42,6 @@ const BulkInvitesPage = () => {
     if (isBulkInvitesError) {
       if ('status' in (bulkInvitesError as any) && (bulkInvitesError as any).status === 404) {
         router.replace('/404');
-        
       }
     }
   }, [bulkInvitesError, isBulkInvitesError, isBulkInvitesFetched, res]);
@@ -100,9 +100,19 @@ const BulkInvitesPage = () => {
   const handleFileUpload = () => {
     if (!isBulkInvitesError && res?.status === 204) {
       setOpenConfirm(true);
+      setFileDetails([]);
     }
     // Alert pops up when theres error in sending invites
     alert('Error in sending invite');
+  };
+
+  const handleDelete = (rows: readonly BaseTableData[]) => {
+    const updatedFileDetails = fileDetails.filter(
+      (detail) => !rows.some((row) => row.id === detail.company)
+    );
+    setFileDetails(updatedFileDetails);
+
+    return [];
   };
 
   return (
@@ -141,8 +151,8 @@ const BulkInvitesPage = () => {
                 justifyContent: isLg ? 'flex-end' : 'center',
               }}
             >
-              <CompanyInvitesTable details={fileDetails} />
-              <UserInvitesTable details={fileDetails} />
+              <CompanyInvitesTable details={fileDetails} onDelete={handleDelete} />
+              <UserInvitesTable details={fileDetails} onDelete={handleDelete} />
             </Box>
           </Box>
 

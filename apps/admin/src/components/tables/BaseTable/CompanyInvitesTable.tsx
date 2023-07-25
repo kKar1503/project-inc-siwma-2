@@ -1,9 +1,14 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { PostBulkInviteRequestBody } from '@/utils/api/server/zod/invites';
 
 import { useEffect, useMemo, useState } from 'react';
+
+type BulkInvitesTableProps = {
+  details: PostBulkInviteRequestBody;
+  onDelete: (rows: readonly BaseTableData[]) => BaseTableData[];
+};
 
 export type InviteFileProps = {
   details: PostBulkInviteRequestBody;
@@ -28,13 +33,13 @@ const headCells: Header[] = [
   },
 ];
 
-const CompanyInvitesTable = ({ details }: InviteFileProps) => {
+const CompanyInvitesTable = ({details, onDelete} : BulkInvitesTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [tableData, setTableData] = useState<BaseTableData[]>([]);
 
   const companyRows = useMemo(() => details.map((x) => createData(x.company, x.name)), [details]);
-
+  
   useEffect(() => {
     setTableData(
       companyRows.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1))
@@ -57,7 +62,7 @@ const CompanyInvitesTable = ({ details }: InviteFileProps) => {
         headers={headCells}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        onDelete={() => console.log('delete') as any as BaseTableData[]}
+        onDelete={onDelete}
         onEdit={() => console.log('edit')}
         onToggle={() => console.log('toggle')}
         page={page}
