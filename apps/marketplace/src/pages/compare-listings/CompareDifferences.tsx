@@ -28,6 +28,23 @@ interface CompareDifferencesProps {
   productIds: string[];
 }
 
+const S3BoxImageCell = ({ image }: { image: string }) => (
+  <TableCell>
+    <S3BoxImage
+      sx={{
+        height: { xs: 50, sm: 75, md: 100, lg: 125 },
+        display: 'block',
+        width: { xs: 0, sm: 150, md: 200, lg: 250 },
+        overflow: 'hidden',
+        opacity: '30%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      }}
+      src={image}
+    />
+  </TableCell>
+);
+
 const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
@@ -73,20 +90,7 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
       { id: 'row6', data: listings.map((listing) => (listing.negotiable ? 'Yes' : 'No')) },
       {
         id: 'row8',
-        data: category.map((cat) => (
-          <S3BoxImage
-            sx={{
-              height: { xs: 50, sm: 75, md: 100, lg: 125 },
-              display: 'block',
-              width: { xs: 0, sm: 150, md: 200, lg: 250 },
-              overflow: 'hidden',
-              opacity: '30%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}
-            src={cat.image}
-          />
-        )),
+        data: category.map((cat) => <S3BoxImageCell key={cat.id} image={cat.image} />),
       },
       { id: 'row9', data: listings.map((listing) => listing.type) },
       { id: 'row10', data: listings.map((listing) => listing.owner.company.name) },
@@ -96,28 +100,28 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
   return (
     <TableContainer component={Paper}>
       <Table>
-      <TableHead>
-  <TableRow>
-    <TableCell>Key Specs</TableCell>
-    {products.map((product) => (
-      <TableCell key={product.id}>{product.name}</TableCell>
-    ))}
-  </TableRow>
-</TableHead>
-<TableBody>
-  {tableData.sideHeaders.map((header, index) => (
-    <TableRow key={header + '-' + tableData.rows[index]?.id}>
-      <TableCell>{header}</TableCell>
-      {tableData.rows[index]?.data.map((cellData, cellIndex) =>
-        header === 'Cross Section Image' ? (
-          <TableCell key={`cell-${header}-${tableData.rows[index]?.id}-${cellIndex}`}>{cellData}</TableCell>
-        ) : (
-          <TableCell key={`cell-${header}-${tableData.rows[index]?.id}-${cellIndex}`}>{cellData}</TableCell>
-        )
-      )}
-    </TableRow>
-  ))}
-</TableBody>
+        <TableHead>
+          <TableRow>
+            <TableCell>Key Specs</TableCell>
+            {products.map((product) => (
+              <TableCell key={product.id}>{product.name}</TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tableData.sideHeaders.map((header) => (
+            <TableRow key={header}>
+              <TableCell>{header}</TableCell>
+              {tableData.rows.find((row) => row.id === `row${tableData.sideHeaders.indexOf(header) + 2}`)?.data.map((cellData, cellIndex) =>
+                header === 'Cross Section Image' ? (
+                  <TableCell key={`cell-${header}-${cellIndex}`}>{cellData}</TableCell>
+                ) : (
+                  <TableCell key={`cell-${header}-${cellIndex}`}>{cellData}</TableCell>
+                )
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
       </Table>
     </TableContainer>
   );

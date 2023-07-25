@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import CompareDifferences from './CompareDifferences';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material';
+import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import CompareDifferences from './CompareDifferences';
 
 type CompareDifferencesProps = {
   productIds: string[];
