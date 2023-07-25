@@ -12,6 +12,7 @@ import UpdateAdvertisement from '@/services/advertisements/updateAdvertisement';
 import { useState } from 'react';
 import deleteAdvertisement from '@/services/advertisements/deleteAdvertisement';
 import Spinner from '@/components/Spinner';
+import S3ImagePreview from '@/components/modal/S3ImagePreview';
 
 export interface AdvertisementDashboardProps {
   totalClicks: number;
@@ -20,6 +21,9 @@ export interface AdvertisementDashboardProps {
 const mapCompanies = (companiesQuery: UseQueryResult<Company[]>) => companiesQuery.data || [];
 
 const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) => {
+
+  const [previewImage, setPreviewImage] = useState<string  | null>(null);
+
   const [mutatedAdvertisements, setMutatedAdvertisements] = useState<{
     [key: string]: Advertisment | false;
   }>({});
@@ -113,6 +117,9 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
         <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />
       </Grid>
       <Grid item xs={12} md={12} lg={12}>
+        <S3ImagePreview close={() => {
+          setPreviewImage(null);
+        }} title='Advertisement Image Preview' src={previewImage} />;
         <AdSpaceTable
           ids={ids}
           advertisements={advertisements}
@@ -121,6 +128,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
           onEdit={onEdit}
           onSetActive={onSetActive}
           onSetInactive={onSetInactive}
+          onViewImage={(src) => { setPreviewImage(src); }}
         />
       </Grid>
     </Grid>

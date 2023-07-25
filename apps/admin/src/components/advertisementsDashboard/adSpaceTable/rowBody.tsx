@@ -10,14 +10,25 @@ interface Props {
   index: number;
   isSelected: boolean;
   onSelect: (event: MouseEvent<unknown>, element: Advertisment) => void;
+  onViewImage: (src: string | null) => void;
 }
 
 const ExternalLink = ({ link, display, displayInvalid }: {
   link: string | null;
   display: string,
-  displayInvalid?: string
+  displayInvalid?: string,
 }) => link ? (
   <Button onClick={() => window.open(link, '_blank')}>{display}</Button>
+) : (
+  <Button disabled>{displayInvalid}</Button>
+);
+const ExternalImage = ({ src, onViewImage, display, displayInvalid }: {
+  src: string | null;
+  display: string,
+  displayInvalid?: string,
+  onViewImage: (src: string | null) => void;
+}) => src && src !== '' ? (
+  <Button onClick={() => onViewImage(src)}>{display}</Button>
 ) : (
   <Button disabled>{displayInvalid}</Button>
 );
@@ -33,6 +44,7 @@ const RowBody = ({
                    index,
                    isSelected,
                    onSelect,
+                   onViewImage,
                  }: Props) => {
 
   const labelId = `enhanced-table-checkbox-${index}`;
@@ -58,8 +70,8 @@ const RowBody = ({
         />
       </TableCell>
       <TableCell align='left'>{row.companyName}</TableCell>
-      <TableCell align='left'><ExternalLink link={`https://s3.karlok.dev/${row.image}`} display='View Image'
-                                            displayInvalid='No Image' /></TableCell>
+      <TableCell align='left'><ExternalImage src={row.image} display='View Image' onViewImage={onViewImage}
+                                             displayInvalid='No Image' /></TableCell>
       <TableCell align='left'>{row.description}</TableCell>
       <TableCell align='left'><ExternalLink link={row.link} display={row.link} displayInvalid='No Link' /></TableCell>
       <TableCell align='left'>{row.active ? 'YES' : 'NO'}</TableCell>

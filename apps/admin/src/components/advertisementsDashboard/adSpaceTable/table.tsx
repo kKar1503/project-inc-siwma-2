@@ -21,6 +21,7 @@ export interface Props {
   onEdit: (element: string) => void;
   onSetActive: (elements: readonly string[]) => void;
   onSetInactive: (elements: readonly string[]) => void;
+  onViewImage: (src: string | null) => void;
 }
 
 // eslint-disable-next-line react/function-component-definition,func-names
@@ -32,6 +33,7 @@ export default function({
                           onEdit,
                           onSetActive,
                           onSetInactive,
+                          onViewImage,
                         }: Props) {
   const [selected, setSelected] = useState<readonly string[]>([]);
   const companyNames = useMemo(() => {
@@ -142,7 +144,7 @@ export default function({
                 return <RowBody row={{
                   ...advertisement,
                   companyName: advertisement.companyId ? companyNames.get(advertisement.companyId) || '' : '',
-                }} index={index} isSelected={isSelected} onSelect={handleClick} />;
+                }} index={index} isSelected={isSelected} onSelect={handleClick} onViewImage={onViewImage} />;
               })
             }
             {/* Add empty rows to the end of the table if there are fewer than rowsPerPage */}
