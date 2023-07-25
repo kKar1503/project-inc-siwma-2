@@ -24,13 +24,13 @@ const useMultipleUsers = (uuids: string[]) =>
     queryFn: async () => {
       const multipleUsersFetch = uuids.map((uuid) => fetchSingleUser(uuid));
       return Promise.allSettled(multipleUsersFetch).then((values) => {
-        const users: User[] = [];
+        const usersArray: User[] = [];
         values.forEach((v) => {
           if (v.status === 'fulfilled') {
-            users.push(v.value);
+            usersArray.push(v.value);
           }
         });
-        return users;
+        return usersArray;
       });
     },
     queryKey: ['users', uuids],

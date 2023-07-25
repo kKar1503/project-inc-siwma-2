@@ -341,7 +341,7 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
       </Box>
       <List sx={{ overflowY: 'auto', height: 'calc(100% - 105px)' }}>
         {filteredChats.map((chat, index) => (
-          <Box>
+          <Box key={chat.id}>
             <ListItem
               key={chat.id}
               onClick={() => {

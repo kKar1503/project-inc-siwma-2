@@ -116,14 +116,17 @@ export default apiHandler()
     if (password || oldPassword) {
       validatePassword(password as string);
 
-      // Compares password from database vs password from input
-      const samePassword = bcrypt.compareSync(
-        parsedBody.oldPassword as string,
-        getUserHashedPassword?.password as string
-      );
+      // Check if the user changing the password is not admin
+      if (!isAdmin) {
+        // Compares password from database vs password from input
+        const samePassword = bcrypt.compareSync(
+          parsedBody.oldPassword as string,
+          getUserHashedPassword?.password as string
+        );
 
-      if (!samePassword) {
-        throw new WrongPasswordError();
+        if (!samePassword) {
+          throw new WrongPasswordError();
+        }
       }
 
       // Hash password with bcrrypt and genSalt(10)
