@@ -1,20 +1,23 @@
 // ** React Imports
-import React from 'react';
+import React, { useMemo } from 'react';
 
 // ** MUI Imports
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
+import { alpha } from '@mui/material/styles';
 
 // ** Hooks Imports
 import { useResponsiveness } from '@inc/ui';
 
 // ** Store Imports
 import useProductStore from '@/stores/products';
+import { useTableSelection } from '@/stores/table';
 
 // ** Types Imports
 import type { Listing } from '@/utils/api/server/zod/listingTable';
+import type { SxProps } from '@mui/material/styles';
 
 // ** Custom Components Imports
 import CollapseCell from './CollapseCell';
@@ -39,9 +42,22 @@ const DisplayRow = (props: DisplayRowProps) => {
 
   // ** Stores
   const products = useProductStore((state) => state.products);
+  const [selections] = useTableSelection();
+
+  // ** Styles
+  const rowSelectedStyles = useMemo<SxProps>(() => {
+    if (selections.indexOf(row.id) !== -1)
+      return {
+        backgroundColor: alpha('#E7EEF9', 0.9),
+      };
+    return {};
+  }, [selections, row]);
 
   return (
-    <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+    <TableRow
+      key={row.id}
+      sx={{ '&:last-child td, &:last-child th': { border: 0 }, ...rowSelectedStyles }}
+    >
       <CollapseCell open={rowOpened === row.id} onChange={() => handleCollapseCell(row.id)} />
       <TableCell
         key={row.id}
@@ -49,7 +65,7 @@ const DisplayRow = (props: DisplayRowProps) => {
         scope="row"
         sx={{
           minWidth: 190,
-          width: 536,
+          width: 516,
           overflow: 'hidden',
           textOverflow: 'ellipsis',
         }}
@@ -81,7 +97,7 @@ const DisplayRow = (props: DisplayRowProps) => {
       <ActionCell
         key={row.id}
         listingId={row.id}
-        sx={{ width: isSm ? 66 : 150, minWidth: isSm ? 66 : 150 }}
+        sx={{ width: isSm ? 66 : 170, minWidth: isSm ? 66 : 170 }}
       />
     </TableRow>
   );
