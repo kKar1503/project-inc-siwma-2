@@ -17,6 +17,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@inc/db": "workspace:*",
+    "@inc/db-enums": "workspace:*",
     "@inc/errors": "workspace:*",
     "@inc/s3-simplified": "workspace:*",
     "@inc/send-in-blue": "workspace:*",
@@ -55,6 +56,7 @@
     "sib-api-v3-sdk": "^8.5.0",
     "styled-components": "^5.3.9",
     "victory": "^36.6.8",
+    "xlsx": "0.18.5",
     "zod": "3.22.0-canary.20230522T011705",
     "zustand": "4.3.9"
   },
