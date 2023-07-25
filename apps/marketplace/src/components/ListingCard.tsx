@@ -48,7 +48,7 @@ export type ListingCardProps = {
 
 const ListingCard = ({ listingId }: ListingCardProps) => {
   const useFetchListingQuery = (listingId: string) => {
-    const { data } = useQuery(['user', listingId], async () => fetchListing(listingId), {
+    const { data } = useQuery(['user', listingId], async () => fetchListing(listingId, true), {
       enabled: listingId !== undefined,
     });
 
@@ -112,7 +112,12 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
     return id.parameterId;
   });
 
+  console.log(productDetails);
+  console.log(listingDetails);
+  console.log(categoryDetails);
+  console.log(listingParamNames);
   const paramNames = useFetchParamNamesQuery(listingParamNames);
+  console.log(paramNames);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const theme = useTheme();
@@ -273,10 +278,10 @@ const ListingCard = ({ listingId }: ListingCardProps) => {
           flexDirection: 'row',
         })}
       >
-        {categoryDetails?.parameters?.map((id) => (
+        {listingDetails?.parameters?.map((id, count) => (
           <Grid item>
             <Typography color={palette.grey[500]} sx={cardStyle.name}>
-              {paramNames?.find((param: { id: string }) => param.id === id.parameterId)?.name}
+              {id.paramId === paramNames?.[count]?.id && paramNames?.[count]?.name}
             </Typography>
             <Typography sx={cardStyle.name}>{id.value}</Typography>
           </Grid>
