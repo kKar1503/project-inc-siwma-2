@@ -48,15 +48,6 @@ const Page = () => {
   const [toggleUser, setToggleUser] = useState<boolean>(false);
   const [inviteUser, setInviteUser] = useState<boolean>(false);
 
-  const InviteBox = styled('div')(({ theme }) => ({
-    width: isSm ? '100%' : '48%',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-    borderRadius: '8px',
-    padding: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    backgroundColor: 'white',
-  }));
-
   const queries = useQueries([
     {
       queryKey: 'companies',
@@ -212,7 +203,18 @@ const Page = () => {
           marginY: 2,
         }}
       >
-        <InviteBox>
+        <Box
+          sx={{
+            width: isSm ? '100%' : '48%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+            borderRadius: '8px',
+            padding: 2,
+            marginBottom: 2,
+          }}
+        >
           <Typography variant="h5">Create an individual Invite</Typography>
           <Typography variant="body1">Invite an individual user to the system</Typography>
           <Button
@@ -225,8 +227,16 @@ const Page = () => {
           >
             Send Invite
           </Button>
-        </InviteBox>
-        <InviteBox>
+        </Box>
+        <Box
+          sx={{
+            width: isSm ? '100%' : '48%',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+            borderRadius: '8px',
+            padding: 2,
+            marginBottom: 2,
+          }}
+        >
           <Typography variant="h5">Bulk invite users</Typography>
           <Typography variant="body1">
             Invite multiple users at once through a file import
@@ -241,7 +251,7 @@ const Page = () => {
           >
             Send Invite
           </Button>
-        </InviteBox>
+        </Box>
       </Box>
 
       <Box

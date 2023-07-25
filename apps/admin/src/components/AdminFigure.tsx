@@ -34,10 +34,10 @@ const AdminFigure = ({ title, value, color, icon }: AdminFigureProps) => {
           flexDirection: 'column',
         }}
       >
-        <Typography variant={isSm ? 'h3' : 'h2'} fontWeight="bold" color={color}>
+        <Typography variant={isSm ? 'h5' : 'h4'} fontWeight="bold" color={color}>
           {value}
         </Typography>
-        <Typography variant={isSm ? 'h5' : 'h4'}>{title}</Typography>
+        <Typography variant={isSm ? 'h6' : 'h5'}>{title}</Typography>
       </Box>
       <Box
         sx={{
