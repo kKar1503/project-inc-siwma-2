@@ -5,7 +5,7 @@ import { apiHandler, formatAPIResponse } from '@/utils/api';
 import PrismaClient from '@inc/db';
 
 // ** Error Imports
-import { NotFoundError } from '@inc/errors/src';
+import { NotFoundError } from '@inc/errors';
 
 export default apiHandler().get(async (req, res) => {
   const { id } = req.query;
