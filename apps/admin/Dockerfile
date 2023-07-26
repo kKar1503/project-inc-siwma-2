@@ -82,7 +82,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copying the standalone files & changing owners
-COPY --from=depsbuilder /app/apps/admin/public ./public
+COPY --from=depsbuilder /app/apps/admin/public ./apps/admin/public
 COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/admin/.next/standalone ./
 COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/admin/.next/static ./apps/admin/.next/static
 
