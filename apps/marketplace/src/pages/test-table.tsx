@@ -60,7 +60,7 @@ const ListingTableTest = () => {
         if (existingProducts.indexOf(l.product) === -1) productIds.add(l.product);
         l.parameters.forEach((p) => {
           const stringParamId = p.parameterId.toString();
-          if (existingParams.indexOf(stringParamId) === 1) paramIds.add(stringParamId);
+          if (existingParams.indexOf(stringParamId) === -1) paramIds.add(stringParamId);
         });
       });
 
