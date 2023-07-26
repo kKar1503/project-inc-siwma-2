@@ -34,7 +34,6 @@ const AdvertisementUpload = () => {
 
   return (
     <Box
-      marginLeft={isSmallOrMediumScreen ? 0 : '300px'}
       sx={{ boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)' }}
     >
       <Card>
@@ -47,7 +46,7 @@ const AdvertisementUpload = () => {
               selectedFile={selectedFile}
               changeHandler={handleFileChange}
               accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-              maxWidth='500px'
+              maxWidth='100%'
               maxHeight='500px'
               // maxFileSize={64 * 1024 * 1024} // 64MB in bytes
             />
