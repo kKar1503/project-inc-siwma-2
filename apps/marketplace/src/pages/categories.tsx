@@ -1,5 +1,7 @@
 import { useQuery } from 'react-query';
-import { Box, Typography, Grid, useTheme } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCategories from '@/services/fetchCategories';
 import { useRouter } from 'next/router';
@@ -13,17 +15,16 @@ export type CategoryPageType = {
 
 const useCategoryPageQuery = () => {
   const { data, error, isError, isFetched } = useQuery('cat', async () => fetchCategories());
-  return {data, error, isError, isFetched};
+  return { data, error, isError, isFetched };
 };
 
 const CategoriesPage = () => {
   const router = useRouter();
   const catData = useCategoryPageQuery();
-  const theme = useTheme();
 
   useEffect(() => {
     if (!catData.isFetched) {
-      return
+      return;
     }
 
     if (catData.isError) {
