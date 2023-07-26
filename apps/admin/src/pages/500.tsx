@@ -28,7 +28,7 @@ const ErrorPage = () => (
       >
         {`Something went wrong, and we don't know what it is.`}
       </Typography>
-      <Link href="/">
+      <Link href="/overview">
         <Button sx={({ spacing }) => ({ mt: spacing(2) })} variant="contained">
           Back to Home
         </Button>
