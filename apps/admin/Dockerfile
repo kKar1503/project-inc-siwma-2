@@ -7,9 +7,6 @@ COPY packages ./packages
 COPY static ./static
 COPY .npmrc nx.json package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# do some eslint magic
-RUN rm -f apps/marketplace/.eslintrc.json && mv apps/marketplace/.eslintrc.cli.json apps/marketplace/.eslintrc.json
-
 # DATABASE_URL for Prisma
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
@@ -85,7 +82,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copying the standalone files & changing owners
-COPY --from=depsbuilder /app/apps/admin/public ./public
+COPY --from=depsbuilder /app/apps/admin/public ./apps/admin/public
 COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/admin/.next/standalone ./
 COPY --from=depsbuilder --chown=nextjs:nodejs /app/apps/admin/.next/static ./apps/admin/.next/static
 

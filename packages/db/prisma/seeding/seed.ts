@@ -27,27 +27,33 @@ const main = async (): Promise<void> => {
   await Promise.allSettled([
     prismaClient.logs.deleteMany({}),
     prismaClient.parameter.deleteMany({}),
-    prismaClient.category.deleteMany({}),
-    prismaClient.companies.deleteMany({}),
-    prismaClient.users.deleteMany({}),
-    prismaClient.listing.deleteMany({}),
     prismaClient.rooms.deleteMany({}),
     prismaClient.offers.deleteMany({}),
     prismaClient.messages.deleteMany({}),
+    prismaClient.share.deleteMany({}),
+    prismaClient.sharesListings.deleteMany({}),
     prismaClient.advertisements.deleteMany({}),
     prismaClient.categoriesParameters.deleteMany({}),
     prismaClient.advertClicks.deleteMany({}),
     prismaClient.listingClicks.deleteMany({}),
     prismaClient.listingItem.deleteMany({}),
     prismaClient.companiesBookmarks.deleteMany({}),
+    prismaClient.companiesNotifications.deleteMany({}),
+    prismaClient.listingNotifications.deleteMany({}),
     prismaClient.invite.deleteMany({}),
     prismaClient.listingBookmarks.deleteMany({}),
     prismaClient.listingsParametersValue.deleteMany({}),
     prismaClient.userBookmarks.deleteMany({}),
+    prismaClient.userNotifications.deleteMany({}),
+    prismaClient.userReports.deleteMany({}),
     prismaClient.refreshTokens.deleteMany({}),
     prismaClient.accessTokens.deleteMany({}),
     prismaClient.sibkeys.deleteMany({}),
     prismaClient.passwordReset.deleteMany({}),
+    prismaClient.category.deleteMany({}),
+    prismaClient.companies.deleteMany({}),
+    prismaClient.users.deleteMany({}),
+    prismaClient.listing.deleteMany({}),
   ]);
 
   console.log('Database cleared');
@@ -55,23 +61,29 @@ const main = async (): Promise<void> => {
 
   await Promise.allSettled([
     prismaClient.$executeRaw`ALTER SEQUENCE public.access_tokens_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.advert_clicks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.advertisements_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.category_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.advert_clicks_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.listing_clicks_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.companies_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.companies_bookmarks_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.companies_notifications_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.companies_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.invite_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_bookmarks_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.listing_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.listing_clicks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_item_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.listing_notifications_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.listing_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.logs_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.messages_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.offers_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.parameter_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.refresh_tokens_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.user_bookmarks_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.password_reset_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.refresh_tokens_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.reviews_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.share_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.user_bookmarks_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.user_notifications_seq RESTART WITH 1;`,
+    prismaClient.$executeRaw`ALTER SEQUENCE public.user_reports RESTART WITH 1;`,
   ]);
 
   console.log('Sequences reset');
@@ -98,15 +110,31 @@ const main = async (): Promise<void> => {
   console.log(`Seeded ${usersCount} rows into public.users`);
   console.log('Seeding public.listingItem...');
 
+  const newListingItems = ListingItems.map((item, index) => {
+    return {
+      ...item,
+      createdAt: new Date(new Date().getTime() - index * 60 * 60 * 1000),
+      updatedAt: new Date(new Date().getTime() - index * 60 * 60 * 1000),
+    };
+  });
+
   const { count: listingItemsCount } = await prismaClient.listingItem.createMany({
-    data: ListingItems,
+    data: newListingItems,
   });
 
   console.log(`Seeded ${listingItemsCount} rows into public.users`);
   console.log('Seeding public.listing...');
 
+  const newListings = Listings.map((listing, index) => {
+    return {
+      ...listing,
+      createdAt: new Date(new Date().getTime() - index * 60 * 60 * 1000),
+      updatedAt: new Date(new Date().getTime() - index * 60 * 60 * 1000),
+    };
+  });
+
   const { count: listingCount } = await prismaClient.listing.createMany({
-    data: Listings,
+    data: newListings,
   });
 
   console.log(`Seeded ${listingCount} rows into public.listing`);
