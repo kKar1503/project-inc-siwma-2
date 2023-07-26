@@ -70,7 +70,11 @@ const CategoryTable = () => {
   const handleEdit = (row: BaseTableData) => {
     const { id } = row;
     const editUrl = `category/${id}/edit-category`;
-    router.push(editUrl);
+    router.replace(editUrl);
+  };
+
+  const onEdit = (row: BaseTableData) => {
+    router.push(`/category/${row.id}/edit-category`);
   };
 
   const handleDelete = (rowsToDelete: readonly BaseTableData[]): BaseTableData[] => {
@@ -124,26 +128,27 @@ const CategoryTable = () => {
   const pageRows = rows.slice(startIndex, endIndex);
 
   return (
-    <Container>
-      <Box sx={{ mt: 3, alignItems: 'center' }}>
-        <Box>
-          <BaseTable
-            heading="Categories"
-            rows={pageRows}
-            headers={headCells}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            onToggle={() => console.log('toggle')}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={[5, 10, 25]}
-            totalCount={rows.length}
-          />
-        </Box>
-      </Box>
-    </Container>
+    <Box sx={{ m: 4, alignItems: 'center' }}>
+      <BaseTable
+        sx={{
+          height: '100%',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+          borderRadius: '8px',
+        }}
+        heading="Categories"
+        rows={pageRows}
+        headers={headCells}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        onDelete={handleDelete}
+        onEdit={onEdit}
+        onToggle={() => console.log('toggle')}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[5, 10, 25]}
+        totalCount={rows.length}
+      />
+    </Box>
   );
 };
 
