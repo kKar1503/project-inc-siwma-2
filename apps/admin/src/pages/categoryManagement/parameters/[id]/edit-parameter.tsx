@@ -222,7 +222,7 @@ const EditParameter = () => {
       setName(parameterData?.name || '');
       setDisplayName(parameterData?.displayName || '');
       setType(parameterData?.type || '');
-      setOptions(parameterData?.options || '');
+      setOptions(parameterData?.options ?? []);
       setDataType(parameterData?.dataType || '');
     }
   }, [parameterData]);
