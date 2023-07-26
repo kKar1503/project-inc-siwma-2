@@ -189,7 +189,6 @@ const EditCategory = () => {
             selectedFile={selectedCatFile}
             changeHandler={handleCatFileChange}
             accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-            maxWidth="1070px"
             maxHeight="300px"
           />
         </Box>
@@ -201,7 +200,6 @@ const EditCategory = () => {
             selectedFile={selectedCrossSectionFile}
             changeHandler={handleCrossSectionFileChange}
             accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-            maxWidth="1070px"
             maxHeight="300px"
           />
         </Box>

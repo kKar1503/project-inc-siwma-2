@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import fetchCategories from '@/middlewares/fetchCategories';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
 import Spinner from '@/components/fallbacks/Spinner';
@@ -55,9 +55,12 @@ const CategoryTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
+    const [isDeleted, setIsDeleted] = useState(false);
+
   const category = useCategoryPageQuery();
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const sortRows = (): void => {
     const rowsData: BaseTableData[] = [];
@@ -73,15 +76,29 @@ const CategoryTable = () => {
     window.location.href = `/category/${row.id}/edit-category`;
   };
 
-  const handleDelete = async (rowsToDelete: readonly BaseTableData[]): Promise<void> => {
+  // const handleDelete = async (rowsToDelete: readonly BaseTableData[]): Promise<void> => {
+  //   const idsToDelete = rowsToDelete.map((row) => row.id);
+
+  //   try {
+  //     await Promise.all(idsToDelete.map((id) => deleteCategories(id)));
+
+  //     setRows((prevRows) => prevRows.filter((row) => !idsToDelete.includes(row.id)));
+  //   } catch (error) {
+  //     console.error('Error deleting categories:', error);
+  //   }
+  // };
+  const handleDelete = (rowsToDelete: readonly BaseTableData[]): BaseTableData[] => {
     const idsToDelete = rowsToDelete.map((row) => row.id);
 
     try {
-      await Promise.all(idsToDelete.map((id) => deleteCategories(id)));
+      Promise.all(idsToDelete.map((id) => deleteCategories(id)));
 
       setRows((prevRows) => prevRows.filter((row) => !idsToDelete.includes(row.id)));
+
+      return rows;
     } catch (error) {
       console.error('Error deleting categories:', error);
+      return [];
     }
   };
 
@@ -102,6 +119,13 @@ const CategoryTable = () => {
   useEffect(() => {
     sortRows();
   }, [category]);
+
+  useEffect(() => {
+    if (isDeleted) {
+      queryClient.invalidateQueries('cat');
+      setIsDeleted(false);
+    }
+  }, [isDeleted, queryClient]);
 
   useEffect(() => {
     if (!category.isFetched) {

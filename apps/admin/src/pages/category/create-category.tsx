@@ -144,8 +144,7 @@ const CreateCategory = () => {
             selectedFile={selectedCatFile}
             changeHandler={handleCatFileChange}
             accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-            maxWidth="1070px"
-            maxHeight="300px"
+            maxHeight='300px'
           />
           <Upload
             id="crossSectionImage"
@@ -154,8 +153,7 @@ const CreateCategory = () => {
             selectedFile={selectedCrossSectionFile}
             changeHandler={handleCrossSectionFileChange}
             accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-            maxWidth="1070px"
-            maxHeight="300px"
+            maxHeight='300px'
           />
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', pr: 3, mb: 3 }}>
             <Button variant="contained" onClick={handleConfirm}>
