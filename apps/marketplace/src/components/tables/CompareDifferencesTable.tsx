@@ -88,11 +88,11 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
       { id: 'row5', data: category.map((cat) => cat.name) },
       { id: 'row6', data: listings.map((listing) => (listing.negotiable ? 'Yes' : 'No')) },
       {
-        id: 'row8',
+        id: 'row7',
         data: category.map((cat) => <S3BoxImageCell key={cat.id} image={cat.image} />),
       },
-      { id: 'row9', data: listings.map((listing) => listing.type) },
-      { id: 'row10', data: listings.map((listing) => listing.owner.company.name) },
+      { id: 'row8', data: listings.map((listing) => listing.type) },
+      { id: 'row9', data: listings.map((listing) => listing.owner.company.name) },
     ],
   };
 
