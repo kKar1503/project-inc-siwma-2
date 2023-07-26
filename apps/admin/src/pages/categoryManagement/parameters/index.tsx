@@ -36,7 +36,7 @@ function createData(
   name: string,
   displayName: string,
   type: TableType,
-  options: string[],
+  options: string | number | boolean,
   dataType: DataType,
   active: boolean
 ): BaseTableData {
