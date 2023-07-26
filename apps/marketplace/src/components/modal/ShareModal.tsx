@@ -70,7 +70,7 @@ const ShareModal = ({ open, setOpen, title, content, link = '' }: ShareModalProp
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
-        onClose={setOpen}
+        onClose={() => setOpen(false)}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{
