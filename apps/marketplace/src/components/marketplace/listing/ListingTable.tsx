@@ -41,6 +41,7 @@ export type ListingTableProps = {
   isLoading: boolean;
   isProductFetching: boolean;
   isParamFetching: boolean;
+  sx?: SxProps;
 };
 
 /**
@@ -55,7 +56,7 @@ export type ListingTableProps = {
  */
 const ListingTable = (props: ListingTableProps) => {
   // ** Props
-  const { listings, isLoading, isProductFetching, isParamFetching } = props;
+  const { listings, isLoading, isProductFetching, isParamFetching, sx } = props;
 
   // ** States
   const [rowOpened, setRowOpened] = useState('');
@@ -96,7 +97,7 @@ const ListingTable = (props: ListingTableProps) => {
   };
 
   return (
-    <Box sx={{ ...tableMaxWidthContainer, mt: 3 }}>
+    <Box sx={{ ...tableMaxWidthContainer, mt: 3, ...sx }}>
       <Paper sx={{ width: '100%', mb: 2 }} elevation={2}>
         <AboveHeader
           header={mode === 'CATEGORY' ? 'Categorical Listings' : 'Listings'}
