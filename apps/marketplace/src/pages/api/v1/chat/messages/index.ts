@@ -2,6 +2,8 @@ import { apiHandler } from '@/utils/api';
 import Pusher from 'pusher';
 import { chatSchema } from '@/utils/api/server/zod';
 import { MessageError } from '@inc/errors/src';
+import PrismaClient from '@inc/db';
+import { ParamError, ParamInvalidError } from '@inc/errors';
 
 const appId = process.env.app_id;
 const key = process.env.NEXT_PUBLIC_PUSHER_KEY;
@@ -22,22 +24,50 @@ const pusher = new Pusher({
 
 // TODO: Remove allowNonAuthenticated, and get the user from JWT instead of body
 export default apiHandler({ allowNonAuthenticated: true })
-  .get(async (req, res) => {
-    // test EP, just creates a new channel with the name "yes"
-    // REMIND ME TO GET RID OF THIS ENTIRE EP, THANKS
-    const response = await pusher.trigger('chat', 'chat-event', {
-      message: 'yes',
-      sender: 'yes',
-      receiver: 'no',
-    });
+  // .get(async (req, res) => {
+  //   // test EP, just creates a new channel with the name "yes"
+  //   // REMIND ME TO GET RID OF THIS ENTIRE EP, THANKS
+  //   const response = await pusher.trigger('chat', 'chat-event', {
+  //     message: 'yes',
+  //     sender: 'yes',
+  //     receiver: 'no',
+  //   });
 
-    console.log(response);
-  })
+  //   console.log(response);
+  // })
   .post(async (req, res) => {
     const parseResult = chatSchema.messages.post.body.parse(req.body);
-    const { message, sender, receiver } = parseResult;
+    const { chatId, message, sender, receiver } = parseResult;
 
-    const response = await pusher.trigger('chat', 'chat-event', { // TODO: chat is the channel name, change it to the chat id
+    if (!chatId) {
+      throw new ParamError('chatId');
+    }
+
+    if (!message) {
+      throw new ParamError('message');
+    }
+
+    if (!sender) {
+      throw new ParamError('sender');
+    }
+
+    if (!receiver) {
+      throw new ParamError('receiver');
+    }
+
+    // Verify that chatId exists and that sender and receiver are part of the chat
+    const chat = await PrismaClient.rooms.findFirst({
+      where: {
+        id: chatId,
+        AND: [{ buyer: sender || receiver }, { seller: sender || receiver }],
+      },
+    });
+
+    if (!chat) {
+      throw new MessageError(); // TODO: Add a more specific error
+    }
+
+    const response = await pusher.trigger(chatId, 'chat-event', {
       message,
       sender,
       receiver,

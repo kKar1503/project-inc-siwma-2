@@ -29,6 +29,7 @@ const chatRequestQuery = z.object({
 });
 
 const chatMessagesRequestBody = z.object({
+  chatId: z.string(),
   message: z.string(),
   sender: z.string(),
   receiver: z.string(),
