@@ -190,7 +190,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
     if (isLg) {
       return {
         modalWidth: {
-          width: '55%',
+          width: '70%',
         },
         buttonTxt: {
           fontSize: '1rem',
@@ -290,7 +290,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                     fullWidth
                   />
                   <TextField
-                    rows={10}
+                    rows={15}
                     size="medium"
                     variant="outlined"
                     label="Company Bio"
@@ -317,8 +317,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                     selectedFile={selectedCompanyFile}
                     changeHandler={handleLogoChange}
                     accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-                    maxWidth="200px"
-                    maxHeight="90px"
+                    maxHeight="220px"
                   />
                   <Button
                     variant="contained"

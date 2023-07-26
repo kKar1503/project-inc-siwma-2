@@ -231,7 +231,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
                   fullWidth
                 />
                 <TextField
-                  rows={10}
+                  rows={15}
                   size="medium"
                   variant="outlined"
                   label="Comments"
