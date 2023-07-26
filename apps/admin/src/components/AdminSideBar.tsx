@@ -84,12 +84,12 @@ const menuItems = [
     dropdown: [
       {
         name: 'All Listing',
-        link: '/all-listings',
+        link: '/listing/all-listing',
         Icon: FormatListBulletedIcon,
       },
       {
         name: 'Listing Items',
-        link: '/listing-items',
+        link: '/listing/listing-items',
         Icon: FeaturedPlayListOutlinedIcon,
       },
     ],
