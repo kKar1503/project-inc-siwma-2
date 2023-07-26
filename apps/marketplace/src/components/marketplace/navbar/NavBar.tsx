@@ -8,7 +8,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
