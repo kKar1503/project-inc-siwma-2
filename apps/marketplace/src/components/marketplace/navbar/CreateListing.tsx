@@ -13,7 +13,7 @@ const AddListing = () => {
   const [isMd] = useResponsiveness(['md']);
 
   return (
-    <Link href="/create-listing" underline="none">
+    <Link href="/listings/create" underline="none">
       <Button
         variant="contained"
         sx={{

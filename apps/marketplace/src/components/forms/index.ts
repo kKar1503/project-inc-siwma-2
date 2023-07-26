@@ -11,3 +11,6 @@ export * from './FormDropdownSelector';
 
 export { default as FormToggleButton } from './FormToggleButton';
 export * from './FormToggleButton';
+
+export { default as FormCheckboxInput } from './FormCheckboxInput';
+export * from './FormCheckboxInput';
