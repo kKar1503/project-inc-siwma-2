@@ -74,5 +74,16 @@ export default apiHandler()
       take: limit === 0 ? undefined : limit,
     });
 
-    res.status(200).json(formatAPIResponse(formatResponse(response)));
+    const count = await PrismaClient.companies.count({
+      where: {
+        id: {
+          gt: lastIdPointer,
+        },
+        name: {
+          contains: name,
+        },
+      },
+    });
+
+    res.status(200).json(formatAPIResponse({ data: formatResponse(response), count }));
   });

@@ -131,21 +131,25 @@ const BulkInvitesPage = () => {
               flexDirection: isLg ? 'row' : 'column',
               gap: '32px',
               mx: 3,
+              my: 2,
               justifyContent: isLg ? 'flex-end' : 'center',
             }}
           >
-            <FileUpload
-              id="bulk-invites"
-              title="Bulk Add Companies & Invite Users"
-              description="Import an .xlsx file below to bulk add company profiles and bulk invite users"
-              selectedFile={file}
-              changeHandler={(event) => {
-                handleFileChange(event);
-              }}
-              accept={[AcceptedFileTypes.XLSX]}
-              maxWidth={isLg ? '70%' : '95%'}
-              maxHeight={isLg ? '100vh' : '70vh'}
-            />
+            <Box sx={{ bgcolor: '#FFF', my: 2, borderRadius: 2 }}>
+              <FileUpload
+                id="bulk-invites"
+                title="Bulk Add Companies & Invite Users"
+                description="Import an .xlsx file below to bulk add company profiles and bulk invite users"
+                selectedFile={file}
+                changeHandler={(event) => {
+                  handleFileChange(event);
+                }}
+                accept={[AcceptedFileTypes.XLSX]}
+                maxWidth={isLg ? '70%' : '95%'}
+                maxHeight={isLg ? '100vh' : '70vh'}
+              />
+            </Box>
+
             <Box
               sx={{
                 justifyContent: isLg ? 'flex-end' : 'center',
