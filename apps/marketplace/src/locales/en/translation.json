@@ -200,6 +200,12 @@
   "minutes ago": "minutes ago",
   "seconds ago": "seconds ago",
 
+  "TableListingName": "Name",
+  "TableListingPrice": "Price ($)",
+  "TableListingQuantity": "Quantity",
+  "TableListingType": "Tags",
+  "TableListingPosted": "Posted on",
+
   "Quantity": "Quantity",
   "Dimensions (mm)": "Dimensions (mm)",
   "Cross Section": "Cross Section",
