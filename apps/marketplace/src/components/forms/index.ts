@@ -8,3 +8,6 @@ export * from './FormRadioSelect';
 
 export { default as FormDropdownSelector } from './FormDropdownSelector';
 export * from './FormDropdownSelector';
+
+export { default as FormToggleButton } from './FormToggleButton';
+export * from './FormToggleButton';

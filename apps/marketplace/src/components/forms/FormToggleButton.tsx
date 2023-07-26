@@ -1,17 +1,17 @@
-import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { Button, ButtonGroup, useTheme } from '@mui/material';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-export type RadioSelectOption = {
+export type FormToggleButtonOption = {
   label: string;
   value: string;
 };
 
-type FormRadioSelectProps = {
+type FormToggleButtonProps = {
   name: string;
   label: string;
-  options: RadioSelectOption[];
+  options: FormToggleButtonOption[];
   placeholder?: string;
   // We do not know what the shape of the object will be
   // eslint-disable-next-line react/forbid-prop-types
@@ -21,7 +21,7 @@ type FormRadioSelectProps = {
   isLoading?: boolean;
   max?: number;
   min?: number;
-  sx?: React.ComponentProps<typeof RadioGroup>['sx'];
+  sx?: React.ComponentProps<typeof ButtonGroup>['sx'];
 };
 
 /**
@@ -29,7 +29,7 @@ type FormRadioSelectProps = {
  * @type {React.FC<PropTypes.InferProps<typeof propTypes>>}
  * @returns A input that works with react form hook
  */
-const FormRadioSelect = ({
+const FormToggleButton = ({
   name,
   label,
   options,
@@ -39,7 +39,10 @@ const FormRadioSelect = ({
   success,
   isLoading,
   sx,
-}: FormRadioSelectProps) => {
+}: FormToggleButtonProps) => {
+  // Import colour palette
+  const { palette } = useTheme();
+
   // Use form context
   const {
     register,
@@ -60,7 +63,11 @@ const FormRadioSelect = ({
 
   // Determine the border color
   // eslint-disable-next-line no-nested-ternary
-  const borderColor = errors[name] ? 'error.main' : success ? 'success.main' : undefined;
+  const borderColor = errors[name]
+    ? palette.error[100]
+    : success
+    ? palette.success[100]
+    : palette.primary[300];
 
   return (
     // Render a skeleton if the component is in a loading state
@@ -71,38 +78,48 @@ const FormRadioSelect = ({
         control={control}
         {...hookInput(name, label, customValidation)}
         render={({ field: { ...field }, formState: { defaultValues } }) => (
-          <RadioGroup
+          <ButtonGroup
+            variant="outlined"
+            aria-label="outlined button group"
             placeholder={placeholder}
             defaultValue={defaultValues ? defaultValues[name] : undefined}
             sx={{
+              display: 'flex',
+              columnGap: 3,
               width: '100%',
-              '& .MuiOutlinedInput-root': {
-                '& > fieldset': { borderColor },
+              '.Mui-disabled': {
+                borderColor,
+                backgroundColor: borderColor,
               },
               ...sx,
             }}
-            value={field.value}
-            onChange={(e, value) => field.onChange(value)}
           >
-            {options.map((option) => (
-              <FormControlLabel
+            {options.map((option, index) => (
+              <Button
                 key={option.value}
                 value={option.value}
-                control={
-                  <Radio
-                    sx={{
-                      color: borderColor,
-                    }}
-                  />
-                }
-                label={option.label}
-              />
+                onClick={() => field.onChange(option.value)}
+                disabled={option.value === field.value}
+                // eslint-disable-next-line no-nested-ternary
+                color={errors[name] ? 'error' : success ? 'success' : undefined}
+                // eslint-disable-next-line no-nested-ternary
+                sx={{
+                  flex: 1,
+                  padding: 2,
+                  '&:disabled': {
+                    color: option.value === field.value ? 'white' : undefined,
+                  },
+                }}
+                type="button"
+              >
+                {option.label}
+              </Button>
             ))}
-          </RadioGroup>
+          </ButtonGroup>
         )}
       />
     )
   );
 };
 
-export default FormRadioSelect;
+export default FormToggleButton;
