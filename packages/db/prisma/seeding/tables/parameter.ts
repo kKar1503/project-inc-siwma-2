@@ -206,6 +206,27 @@ const Parameters: IParameter[] = [
     name: 'Ratios for Local Buckling (Flange)',
     displayName: 'b/T',
   },
+  {
+    // 33
+    type: ParameterType.TWO_CHOICES,
+    dataType: DataType.string,
+    name: 'Grade (S275 S355)',
+    displayName: 'Grade',
+    options: ['S275', 'S355'],
+  },
+  {
+    type: ParameterType.MANY_CHOICES,
+    dataType: DataType.string,
+    name: 'Type (SHS UB CHS RHS UC PFC)',
+    displayName: 'Type',
+    options: ['SHS', 'UB', 'CHS', 'RHS', 'UC', 'PFC'],
+  },
+  {
+    type: ParameterType.OPEN_ENDED,
+    dataType: DataType.string,
+    name: 'Certification (Beams)',
+    displayName: 'Certification',
+  },
 ];
 
 export type { IParameter };

@@ -37,6 +37,6 @@ const ErrorPage = () => (
   </Box>
 );
 
-ErrorPage.includeNavbar = false;
+ErrorPage.includeSideBar = false;
 
 export default ErrorPage;

@@ -1,5 +1,3 @@
-// TODO: change the image and crossSectionImage to links to the images in the cloud
-
 interface ICategory {
   id?: number;
   name: string;
