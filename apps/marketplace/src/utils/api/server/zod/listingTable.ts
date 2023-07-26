@@ -21,7 +21,7 @@ export type TSortableDirection = (typeof SortableDirection)[keyof typeof Sortabl
 export const getQueryParameters = z.object({
   limit: z.string().transform(zodParseToInteger).optional().default('10'),
   page: z.string().transform(zodParseToInteger).optional().default('0'),
-  category: z.string().transform(zodParseToInteger).optional(),
+  categoryId: z.string().transform(zodParseToInteger).optional(),
   sortBy: z.nativeEnum(SortableFields).optional().default(SortableFields.CreatedAt),
   sortDirection: z.nativeEnum(SortableDirection).optional().default(SortableDirection.Dsc),
   // Currently unused:

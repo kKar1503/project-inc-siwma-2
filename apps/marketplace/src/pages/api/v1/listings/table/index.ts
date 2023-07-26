@@ -62,7 +62,7 @@ export default apiHandler().get(async (req, res) => {
   const total = await PrismaClient.listing.count({
     where: {
       listingItem: {
-        categoryId: queryParams.category,
+        categoryId: queryParams.categoryId,
       },
       deletedAt: {
         equals: null,
@@ -80,7 +80,7 @@ export default apiHandler().get(async (req, res) => {
   const listings = await PrismaClient.listing.findMany({
     where: {
       listingItem: {
-        categoryId: queryParams.category,
+        categoryId: queryParams.categoryId,
       },
       deletedAt: {
         equals: null,
