@@ -79,7 +79,10 @@ const ListingCreateEdit = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   // -- Data Validation -- //
-  if ((action !== 'create' && action !== 'edit') || Number.isNaN(id)) {
+  const isEditing = action === 'edit';
+  const isCreating = action === 'create';
+
+  if ((!isEditing && !isCreating) || Number.isNaN(id)) {
     // Redirect the user back to the home page
     router.push('/');
   }
@@ -87,7 +90,7 @@ const ListingCreateEdit = () => {
   console.log({ selectedListing });
 
   // Check if the provided id is valid
-  if (action === 'edit' && selectedListing.isError && !selectedListing.data) {
+  if (isEditing && selectedListing.isError && !selectedListing.data) {
     // Redirect the user back to the home page
     router.push('/');
   }
@@ -133,9 +136,9 @@ const ListingCreateEdit = () => {
 
   const categoryParameters = parameters.data;
 
-  const onSuccess = () => {
+  const onSuccess = (data: Parameters<typeof reset>[0]) => {
     // Success
-    reset();
+    reset(data, { keepValues: true });
     setSubmitSuccess(true);
     setOpenModal(true);
     // onSuccessChange();
@@ -163,10 +166,14 @@ const ListingCreateEdit = () => {
     clearErrors();
     setErrorMessage(undefined);
 
+    console.log({ openModal });
+
     // Deconstruct common values from data
     const { negotiable, price, product, quantity, listingType, ...$categoryParams } = data.data;
+    console.log({ $categoryParams });
+
     const categoryParams = Object.fromEntries(
-      $categoryParams?.map((e) => [`param-${e.paramId}`, e.value]) || []
+      Object.keys($categoryParams).map((e) => [e.replace('param-', ''), $categoryParams[e]]) || []
     );
 
     // -- Validation -- //
@@ -229,7 +236,7 @@ const ListingCreateEdit = () => {
     // -- Submission -- //
     // Prepare the data to be submitted
     const preparedData = {
-      negotiable,
+      negotiable: Boolean(negotiable),
       price: Number(price),
       productId: product.value,
       quantity: Number(quantity),
@@ -241,12 +248,12 @@ const ListingCreateEdit = () => {
     };
 
     // Check if the user is editing a listing
-    if (action === 'edit') {
+    if (isEditing) {
       // Edit listing
       await apiClient
         .put(`/v1/listings/${id}`, preparedData)
         .then(() => {
-          onSuccess();
+          onSuccess(data.data);
         })
         .catch((err) => {
           onError(data);
@@ -259,7 +266,7 @@ const ListingCreateEdit = () => {
     await apiClient
       .post('/v1/listings', preparedData)
       .then(() => {
-        onSuccess();
+        onSuccess(data.data);
       })
       .catch((err) => {
         onError(data);
@@ -315,8 +322,12 @@ const ListingCreateEdit = () => {
   return (
     <>
       <OnCreateModal
-        content="Your listing is now on the marketplace"
+        title={isEditing ? t('Successfully updated listing') || undefined : undefined}
+        content={
+          isEditing ? t('Your listing has been updated') : 'Your listing is now on the marketplace'
+        }
         open={openModal}
+        // onRightButtonPress={() => setOpenModal(false)}
         setOpen={setOpenModal}
       />
       <Box
