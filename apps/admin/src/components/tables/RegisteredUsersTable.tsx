@@ -125,7 +125,7 @@ const RegisteredUsersTable = ({
   };
 
   const onEdit = (row: BaseTableData) => {
-    router.push(`/userManagement/users/edit-user/${row.id}`);
+    router.push(`/users/edit-user/${row.id}`);
   };
 
   useEffect(() => {
