@@ -125,7 +125,7 @@ const RegisteredUsersTable = ({
   };
 
   const onEdit = (row: BaseTableData) => {
-    router.push(`/userManagement/users/edit-user/${row.id}`);
+    router.push(`/users/edit/${row.id}`);
   };
 
   useEffect(() => {
@@ -157,7 +157,7 @@ const RegisteredUsersTable = ({
               Showing {filteredData.length === 0 ? 0 : rowsPerPage * page + 1}-
               {filteredData.length < rowsPerPage * (page + 1)
                 ? filteredData.length
-                : rowsPerPage * (page + 1)}{' '}
+                : rowsPerPage * (page + 1)}
               of {filteredData.length} registered users
             </Typography>
             <Box

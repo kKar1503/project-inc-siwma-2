@@ -252,7 +252,7 @@ const Page = () => {
               marginTop: 2,
             }}
             variant="outlined"
-            onClick={() => router.push('/userManagement/invites')}
+            onClick={() => router.push('/invites/bulk')}
           >
             Send Invite
           </Button>
