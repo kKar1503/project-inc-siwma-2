@@ -50,8 +50,21 @@ const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
+  const truncateBio = (bio: string | null, maxWords: number) => {
+    if (!bio) return '';
+    const words = bio.split(' ');
+    if (words.length > maxWords) {
+      const truncatedWords = words.slice(0, maxWords);
+      return `${truncatedWords.join(' ')}...`;
+    }
+    return bio;
+  };
+
   const companyRows = useMemo(
-    () => data.map((item) => createData(item.id, item.name, item.emails.join(', '), item.bio)),
+    () =>
+      data.map((item) =>
+        createData(item.id, item.name, item.emails.join(', '), truncateBio(item.bio, 15))
+      ),
     [data]
   );
 
