@@ -37,5 +37,5 @@ export default apiHandler().get(async (req, res) => {
 
   res
     .status(200)
-    .json(formatAPIResponse({ ownerId: shareData[0].id.toString(), listingItems: listingArr }));
+    .json(formatAPIResponse({ ownerId: shareData[0].owner, listingItems: listingArr }));
 });
