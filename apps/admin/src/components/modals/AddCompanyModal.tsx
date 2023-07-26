@@ -149,7 +149,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
     if (isLg) {
       return {
         modalWidth: {
-          width: '55%',
+          width: '70%',
         },
         buttonTxt: {
           fontSize: '1rem',
@@ -257,8 +257,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
                   selectedFile={selectedCompanyFile}
                   changeHandler={handleLogoChange}
                   accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-                  maxWidth="200px"
-                  maxHeight="90px"
+                  maxHeight="220px"
                 />
                 <Button
                   variant="contained"
