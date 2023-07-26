@@ -46,6 +46,9 @@ const CreateCategory = () => {
         queryClient.invalidateQueries('category');
         router.push('/category');
       },
+      onError: (error) => {
+        router.push('/404');
+      },
     }
   );
 

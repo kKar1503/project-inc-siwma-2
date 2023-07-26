@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import fetchCategories from '@/middlewares/fetchCategories';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
+import Spinner from '@/components/fallbacks/Spinner';
 
 export type CategoryProps = {
   data: CategoryResponseBody[];
@@ -44,8 +45,8 @@ const headCells: Header[] = [
 ];
 
 const useCategoryPageQuery = () => {
-  const { data } = useQuery('cat', async () => fetchCategories());
-  return data;
+  const { data, error, isError, isFetched } = useQuery('cat', async () => fetchCategories());
+  return {data, error, isError, isFetched};
 };
 
 const CategoryTable = () => {
@@ -56,10 +57,34 @@ const CategoryTable = () => {
 
   const router = useRouter();
 
+  useEffect(() => {
+    if (!category.isFetched) {
+      return;
+    }
+
+    if (category.isError) {
+      if ('status' in (category.error as any) && (category.error as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (category === undefined) {
+      router.replace('/500');
+    }
+  }, [category.isFetched]);
+
+  if (!category.isFetched) {
+    return <Spinner />;
+  }
+
   const sortRows = (): void => {
     const rowsData: BaseTableData[] = [];
 
-    category?.forEach((item) => {
+    category.data?.forEach((item) => {
       rowsData.push(createData(item.id, item.name, item.active));
     });
 

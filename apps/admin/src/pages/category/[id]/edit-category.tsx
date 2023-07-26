@@ -12,6 +12,7 @@ import fetchCategoryById from '@/middlewares/fetchCategoryById';
 import updateCategoryData from '@/middlewares/updateCategories';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useResponsiveness } from '@inc/ui';
+import Spinner from '@/components/fallbacks/Spinner';
 
 export type EditCategoryProps = {
   data: CategoryResponseBody[];
@@ -26,10 +27,10 @@ type PutCategoryRequestBody = {
 };
 
 const useGetCategoryQuery = (catId: string) => {
-  const { data } = useQuery('category', async () => fetchCategoryById(catId), {
+  const { data, error, isError, isFetched } = useQuery('category', async () => fetchCategoryById(catId), {
     enabled: catId !== undefined,
   });
-  return data;
+  return {data, error, isError, isFetched};
 };
 
 const useUpdateUserMutation = (userUuid: string, image?: File, crossSectionImage?: File) =>
@@ -46,11 +47,35 @@ const EditCategory = () => {
   const categoryData = useGetCategoryQuery(id);
   const [selectedCatFile, setSelectedCatFile] = useState<File | null>(null);
   const [selectedCrossSectionFile, setSelectedCrossSectionFile] = useState<File | null>(null);
-  const [categoryName, setCategoryName] = useState<string>(categoryData?.name || '');
-  const [categoryNameChinese, setCategoryNameChinese] = useState<string>(categoryData?.name || '');
+  const [categoryName, setCategoryName] = useState<string>(categoryData.data?.name || '');
+  const [categoryNameChinese, setCategoryNameChinese] = useState<string>(categoryData.data?.name || '');
   const [categoryDescription, setCategoryDescription] = useState<string>(
-    categoryData?.description || ''
+    categoryData.data?.description || ''
   );
+
+  useEffect(() => {
+    if (!categoryData.isFetched) {
+      return;
+    }
+
+    if (categoryData.isError) {
+      if ('status' in (categoryData.error as any) && (categoryData.error as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (categoryData === undefined) {
+      router.replace('/500');
+    }
+  }, [categoryData.isFetched]);
+
+  if (!categoryData.isFetched) {
+    return <Spinner />;
+  }
 
   const handleCatFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -96,9 +121,9 @@ const EditCategory = () => {
 
   useEffect(() => {
     if (categoryData) {
-      setCategoryName(categoryData.name || '');
-      setCategoryNameChinese(categoryData.name || '');
-      setCategoryDescription(categoryData.description || '');
+      setCategoryName(categoryData.data?.name || '');
+      setCategoryNameChinese(categoryData.data?.name || '');
+      setCategoryDescription(categoryData.data?.description || '');
     }
   }, [categoryData]);
 
@@ -107,7 +132,10 @@ const EditCategory = () => {
       queryClient.invalidateQueries('category');
       router.push(`/category`);
     }
-  }, [mutation.isSuccess, queryClient, router, id]);
+    if (mutation.isError) {
+      router.push('/404');
+    }
+  }, [mutation.isSuccess, mutation.isError, queryClient, router, id]);
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
