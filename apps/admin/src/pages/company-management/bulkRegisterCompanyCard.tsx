@@ -1,5 +1,9 @@
 import React from 'react';
-import { Box, Button, Card, CardContent, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 import AddCompaniesModal from '@/components/modals/AddCompaniesModal';
 
 export type BulkRegisterCompanyCardProps = {
