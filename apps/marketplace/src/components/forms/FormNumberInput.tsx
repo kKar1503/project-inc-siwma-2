@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 import { FieldValues, RegisterOptions, ValidationRule, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -6,6 +6,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 type FormNumberInputProps = {
   name: string;
   label: string;
+  prefix?: string;
   placeholder?: string;
   // We do not know what the shape of the object will be
   // eslint-disable-next-line react/forbid-prop-types
@@ -26,6 +27,7 @@ type FormNumberInputProps = {
 const FormNumberInput = ({
   name,
   label,
+  prefix,
   placeholder,
   customValidation,
   required = false,
@@ -74,6 +76,9 @@ const FormNumberInput = ({
         label={label}
         InputLabelProps={{
           required,
+        }}
+        InputProps={{
+          startAdornment: <InputAdornment position="start">{prefix}</InputAdornment>,
         }}
         sx={{
           width: '100%',
