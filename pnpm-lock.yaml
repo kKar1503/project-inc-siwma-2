@@ -11,12 +11,6 @@ importers:
       '@types/node':
         specifier: 20.1.4
         version: 20.1.4
-      '@typescript-eslint/eslint-plugin':
-        specifier: 5.59.5
-        version: 5.59.5(@typescript-eslint/parser@5.59.5)(eslint@8.36.0)(typescript@5.0.2)
-      '@typescript-eslint/parser':
-        specifier: 5.59.5
-        version: 5.59.5(eslint@8.36.0)(typescript@5.0.2)
       esbuild:
         specifier: 0.17.19
         version: 0.17.19
@@ -26,39 +20,6 @@ importers:
       eslint:
         specifier: 8.36.0
         version: 8.36.0
-      eslint-config-airbnb:
-        specifier: 19.0.4
-        version: 19.0.4(eslint-plugin-import@2.27.5)(eslint-plugin-jsx-a11y@6.7.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.32.2)(eslint@8.36.0)
-      eslint-config-airbnb-typescript:
-        specifier: 17.0.0
-        version: 17.0.0(@typescript-eslint/eslint-plugin@5.59.5)(@typescript-eslint/parser@5.59.5)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
-      eslint-config-next:
-        specifier: 13.2.4
-        version: 13.2.4(eslint@8.36.0)(typescript@5.0.2)
-      eslint-config-prettier:
-        specifier: 8.7.0
-        version: 8.7.0(eslint@8.36.0)
-      eslint-import-resolver-typescript:
-        specifier: ^3.5.5
-        version: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
-      eslint-plugin-cypress:
-        specifier: 2.12.1
-        version: 2.12.1(eslint@8.36.0)
-      eslint-plugin-import:
-        specifier: 2.27.5
-        version: 2.27.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-typescript@3.5.5)(eslint@8.36.0)
-      eslint-plugin-jest:
-        specifier: 27.2.1
-        version: 27.2.1(@typescript-eslint/eslint-plugin@5.59.5)(eslint@8.36.0)(typescript@5.0.2)
-      eslint-plugin-jsx-a11y:
-        specifier: 6.7.1
-        version: 6.7.1(eslint@8.36.0)
-      eslint-plugin-react:
-        specifier: 7.32.2
-        version: 7.32.2(eslint@8.36.0)
-      eslint-plugin-react-hooks:
-        specifier: 4.6.0
-        version: 4.6.0(eslint@8.36.0)
       nx:
         specifier: 16.1.4
         version: 16.1.4
@@ -219,9 +180,6 @@ importers:
       '@inc/configs':
         specifier: workspace:*
         version: link:../../packages/configs
-      '@inc/eslint-config-custom':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config-custom
       '@inc/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -249,6 +207,45 @@ importers:
       '@types/react-swipeable-views-utils':
         specifier: ^0.13.4
         version: 0.13.4
+      '@typescript-eslint/eslint-plugin':
+        specifier: 5.59.5
+        version: 5.59.5(@typescript-eslint/parser@5.59.5)(eslint@8.36.0)(typescript@5.0.2)
+      '@typescript-eslint/parser':
+        specifier: 5.59.5
+        version: 5.59.5(eslint@8.36.0)(typescript@5.0.2)
+      eslint-config-airbnb:
+        specifier: 19.0.4
+        version: 19.0.4(eslint-plugin-import@2.27.5)(eslint-plugin-jsx-a11y@6.7.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.32.2)(eslint@8.36.0)
+      eslint-config-airbnb-typescript:
+        specifier: 17.0.0
+        version: 17.0.0(@typescript-eslint/eslint-plugin@5.59.5)(@typescript-eslint/parser@5.59.5)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
+      eslint-config-next:
+        specifier: 13.2.4
+        version: 13.2.4(eslint@8.36.0)(typescript@5.0.2)
+      eslint-config-prettier:
+        specifier: 8.7.0
+        version: 8.7.0(eslint@8.36.0)
+      eslint-import-resolver-typescript:
+        specifier: ^3.5.5
+        version: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
+      eslint-plugin-cypress:
+        specifier: 2.12.1
+        version: 2.12.1(eslint@8.36.0)
+      eslint-plugin-import:
+        specifier: 2.27.5
+        version: 2.27.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-typescript@3.5.5)(eslint@8.36.0)
+      eslint-plugin-jest:
+        specifier: 27.2.1
+        version: 27.2.1(@typescript-eslint/eslint-plugin@5.59.5)(eslint@8.36.0)(typescript@5.0.2)
+      eslint-plugin-jsx-a11y:
+        specifier: 6.7.1
+        version: 6.7.1(eslint@8.36.0)
+      eslint-plugin-react:
+        specifier: 7.32.2
+        version: 7.32.2(eslint@8.36.0)
+      eslint-plugin-react-hooks:
+        specifier: 4.6.0
+        version: 4.6.0(eslint@8.36.0)
       html-loader:
         specifier: 4.2.0
         version: 4.2.0(webpack@5.87.0)
@@ -436,9 +433,6 @@ importers:
       '@inc/configs':
         specifier: workspace:*
         version: link:../../packages/configs
-      '@inc/eslint-config-custom':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config-custom
       '@inc/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -472,6 +466,45 @@ importers:
       '@types/react-swipeable-views-utils':
         specifier: ^0.13.4
         version: 0.13.4
+      '@typescript-eslint/eslint-plugin':
+        specifier: 5.59.5
+        version: 5.59.5(@typescript-eslint/parser@5.59.5)(eslint@8.36.0)(typescript@5.0.2)
+      '@typescript-eslint/parser':
+        specifier: 5.59.5
+        version: 5.59.5(eslint@8.36.0)(typescript@5.0.2)
+      eslint-config-airbnb:
+        specifier: 19.0.4
+        version: 19.0.4(eslint-plugin-import@2.27.5)(eslint-plugin-jsx-a11y@6.7.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.32.2)(eslint@8.36.0)
+      eslint-config-airbnb-typescript:
+        specifier: 17.0.0
+        version: 17.0.0(@typescript-eslint/eslint-plugin@5.59.5)(@typescript-eslint/parser@5.59.5)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
+      eslint-config-next:
+        specifier: 13.2.4
+        version: 13.2.4(eslint@8.36.0)(typescript@5.0.2)
+      eslint-config-prettier:
+        specifier: 8.7.0
+        version: 8.7.0(eslint@8.36.0)
+      eslint-import-resolver-typescript:
+        specifier: ^3.5.5
+        version: 3.5.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.27.5)(eslint@8.36.0)
+      eslint-plugin-cypress:
+        specifier: 2.12.1
+        version: 2.12.1(eslint@8.36.0)
+      eslint-plugin-import:
+        specifier: 2.27.5
+        version: 2.27.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-typescript@3.5.5)(eslint@8.36.0)
+      eslint-plugin-jest:
+        specifier: 27.2.1
+        version: 27.2.1(@typescript-eslint/eslint-plugin@5.59.5)(eslint@8.36.0)(typescript@5.0.2)
+      eslint-plugin-jsx-a11y:
+        specifier: 6.7.1
+        version: 6.7.1(eslint@8.36.0)
+      eslint-plugin-react:
+        specifier: 7.32.2
+        version: 7.32.2(eslint@8.36.0)
+      eslint-plugin-react-hooks:
+        specifier: 4.6.0
+        version: 4.6.0(eslint@8.36.0)
       html-loader:
         specifier: 4.2.0
         version: 4.2.0(webpack@5.87.0)
@@ -528,8 +561,6 @@ importers:
       zod:
         specifier: ^3.21.4
         version: 3.21.4
-
-  packages/eslint-config-custom: {}
 
   packages/events:
     dependencies:
@@ -1847,13 +1878,13 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.11
+    dev: false
 
   /@babel/runtime@7.22.6:
     resolution: {integrity: sha512-wDb5pWm4WDdF6LFUde3Jl8WzPA+3ZbxYqkC6xAXuD3irdEHN1k0NfTRrJD8ZD378SJ61miMLCqIOXYhd8x+AJQ==}
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.11
-    dev: false
 
   /@babel/template@7.20.7:
     resolution: {integrity: sha512-8SegXApWe6VoNw0r9JHpSteLKTpTiLZ4rMlGIm9JQ18KiCtyQiAMEazujAHrUS5flrcqYZa75ukev3P6QmUwUw==}
@@ -3873,7 +3904,7 @@ packages:
   /broadcast-channel@3.7.0:
     resolution: {integrity: sha512-cIAKJXAxGJceNZGTZSBzMxzyOn72cVgPnKx4dc6LRjQgbaJUQqhy5rzL3zbMxkMWsGKkv2hSFkPRMEXfoMZ2Mg==}
     dependencies:
-      '@babel/runtime': 7.21.5
+      '@babel/runtime': 7.22.6
       detect-node: 2.1.0
       js-sha3: 0.8.0
       microseconds: 0.2.0
@@ -4636,14 +4667,6 @@ packages:
       - utf-8-validate
     dev: true
 
-  /enhanced-resolve@5.14.0:
-    resolution: {integrity: sha512-+DCows0XNwLDcUhbFJPdlQEVnT2zXlCv7hPxemTz86/O+B/hCQ+mb7ydkPKiflpVraqLPCAfu7lDy+hBXueojw==}
-    engines: {node: '>=10.13.0'}
-    dependencies:
-      graceful-fs: 4.2.11
-      tapable: 2.2.1
-    dev: true
-
   /enhanced-resolve@5.15.0:
     resolution: {integrity: sha512-LXYT42KJ7lpIKECr2mAXIaMldcNCh/7E0KBKOu4KSfkHmP+mZmSs+8V5gBAqisWBy0OO4W5Oyys0GO1Y8KtdKg==}
     engines: {node: '>=10.13.0'}
@@ -4911,7 +4934,7 @@ packages:
       eslint-plugin-import: '*'
     dependencies:
       debug: 4.3.4(supports-color@5.5.0)
-      enhanced-resolve: 5.14.0
+      enhanced-resolve: 5.15.0
       eslint: 8.36.0
       eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.36.0)
       eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.59.5)(eslint-import-resolver-typescript@3.5.5)(eslint@8.36.0)
@@ -5026,7 +5049,7 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
     dependencies:
-      '@babel/runtime': 7.21.5
+      '@babel/runtime': 7.22.6
       aria-query: 5.1.3
       array-includes: 3.1.6
       array.prototype.flatmap: 1.3.1
@@ -6284,7 +6307,7 @@ packages:
   /match-sorter@6.3.1:
     resolution: {integrity: sha512-mxybbo3pPNuA+ZuCUhm5bwNkXrJTbsk5VWbR5wiwz/GC6LIiegBGn2w3O08UG/jdbYLinw51fSQ5xNU1U3MgBw==}
     dependencies:
-      '@babel/runtime': 7.21.5
+      '@babel/runtime': 7.22.6
       remove-accents: 0.4.2
     dev: false
 
@@ -7157,7 +7180,7 @@ packages:
     peerDependencies:
       react: ^16.3.0
     dependencies:
-      '@babel/runtime': 7.21.5
+      '@babel/runtime': 7.22.6
       prop-types: 15.8.1
       react: 18.2.0
       warning: 4.0.3
@@ -7210,7 +7233,7 @@ packages:
       algoliasearch: '>= 3.1 < 5'
       react: '>= 16.3.0 < 19'
     dependencies:
-      '@babel/runtime': 7.21.5
+      '@babel/runtime': 7.22.6
       algoliasearch-helper: 3.13.5(algoliasearch@4.19.1)
       prop-types: 15.8.1
       react: 18.2.0
@@ -8867,6 +8890,7 @@ packages:
 
   /which@1.3.1:
     resolution: {integrity: sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ==}
+    hasBin: true
     dependencies:
       isexe: 2.0.0
     dev: false
@@ -8874,6 +8898,7 @@ packages:
   /which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
+    hasBin: true
     dependencies:
       isexe: 2.0.0
     dev: true
