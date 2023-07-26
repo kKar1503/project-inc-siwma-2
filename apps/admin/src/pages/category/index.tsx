@@ -1,7 +1,8 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
@@ -67,11 +68,6 @@ const CategoryTable = () => {
     setRows(rowsData);
   };
 
-  const handleEdit = (row: BaseTableData) => {
-    const { id } = row;
-    const editUrl = `category/${id}/edit-category`;
-    router.replace(editUrl);
-  };
 
   const onEdit = (row: BaseTableData) => {
     router.push(`/category/${row.id}/edit-category`);
@@ -87,6 +83,10 @@ const CategoryTable = () => {
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
+
+    const handleCreateCategory = () => {
+      router.push(`/category/create-category`);
+    };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
@@ -135,7 +135,27 @@ const CategoryTable = () => {
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
           borderRadius: '8px',
         }}
-        heading="Categories"
+        customHeader={
+          <Box sx={{ padding: 2, display: 'flex' }}>
+            <Box>
+              <Typography variant="h5">Categories</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginLeft: 'auto' }}>
+              <Button
+                variant="contained"
+                sx={({ palette, spacing }) => ({
+                  bgcolor: palette.primary[400],
+                  mb: spacing(1),
+                  mr: spacing(1),
+                })}
+                onClick={handleCreateCategory}
+              >
+                Create Category
+              </Button>
+            </Box>
+          </Box>
+        }
+        heading=""
         rows={pageRows}
         headers={headCells}
         onPageChange={handleChangePage}
