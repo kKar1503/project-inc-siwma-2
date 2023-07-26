@@ -17,11 +17,10 @@ export type ShareModalV2Props = {
   open: boolean;
   setOpen: (val: boolean) => void;
   title: string;
-  content: string;
   link?: string;
 };
 
-const ShareModalV2 = ({ open, setOpen, title, content, link = '' }: ShareModalV2Props) => {
+const ShareModalV2 = ({ open, setOpen, title, link = '' }: ShareModalV2Props) => {
   const [copyClicked, setCopyClicked] = useState(false);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
@@ -49,7 +48,7 @@ const ShareModalV2 = ({ open, setOpen, title, content, link = '' }: ShareModalV2
     if (isLg) {
       return {
         modalWidth: {
-          width: '35%',
+          width: '30%',
         },
         buttonTxt: {
           fontSize: '1rem',
@@ -97,7 +96,8 @@ const ShareModalV2 = ({ open, setOpen, title, content, link = '' }: ShareModalV2
           >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Box sx={{ width: 1 }}>
-                <Grid container sx={{ flexGrow: 1 }}>
+                <Box sx={({ spacing}) => ({pb: spacing(1)})}>
+                  <Grid container sx={{ flexGrow: 1 }}>
                   <Grid item xs={6}>
                     <Typography
                       id="transition-modal-title"
@@ -109,17 +109,6 @@ const ShareModalV2 = ({ open, setOpen, title, content, link = '' }: ShareModalV2
                     >
                       {title}
                     </Typography>
-                    <Box textAlign="center">
-                      <Typography
-                        id="transition-modal-description"
-                        sx={{
-                          fontSize: { xs: 'subtitle1', sm: 'h6' },
-                          textAlign: 'left',
-                        }}
-                      >
-                        {content}
-                      </Typography>
-                    </Box>
                   </Grid>
                   <Grid item xs={6}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -135,6 +124,8 @@ const ShareModalV2 = ({ open, setOpen, title, content, link = '' }: ShareModalV2
                     </Box>
                   </Grid>
                 </Grid>
+                </Box>
+                
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <OutlinedInput
                     fullWidth
@@ -160,8 +151,9 @@ const ShareModalV2 = ({ open, setOpen, title, content, link = '' }: ShareModalV2
                         bgcolor: palette.grey[100],
                       })}
                     >
-                      <IconButton>
-                        <WhatsAppIcon color="secondary" />
+                      <IconButton
+                      size='large'>
+                        <WhatsAppIcon sx={({palette}) => ({color: palette.secondary.main, fontSize: 'inherit'})}/>
                       </IconButton>
                     </Avatar>
                   </Box>
@@ -184,8 +176,9 @@ const ShareModalV2 = ({ open, setOpen, title, content, link = '' }: ShareModalV2
                               setCopyClicked(false);
                             }, 5000);
                           }}
+                          size='large'
                         >
-                          <ContentCopy sx={{ color: 'grey' }} />
+                          <ContentCopy sx={{ color: 'grey', fontSize: 'inherit' }} />
                         </IconButton>
                       </Avatar>
                     </Tooltip>
