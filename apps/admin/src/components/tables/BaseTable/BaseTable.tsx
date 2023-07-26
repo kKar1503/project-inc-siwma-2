@@ -85,10 +85,11 @@ const BaseTable = (props: BaseTableProps) => {
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, row: BaseTableData) => {
-    const selectedIndex = selected.indexOf(row);
+    const selectedIndex = selected.find((e) => e.id === row.id);
     let newSelected: readonly BaseTableData[] = [];
 
-    if (selectedIndex === -1) {
+    // !! FIXME: later
+    if (selectedIndex !== undefined) {
       newSelected = newSelected.concat(selected, row);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));

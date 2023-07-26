@@ -87,6 +87,7 @@ const CategoryTable = () => {
   //     console.error('Error deleting categories:', error);
   //   }
   // };
+  
   const handleDelete = (rowsToDelete: readonly BaseTableData[]): BaseTableData[] => {
     const idsToDelete = rowsToDelete.map((row) => row.id);
 
