@@ -55,7 +55,7 @@ const CategoryTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState<BaseTableData[]>([]);
-    const [isDeleted, setIsDeleted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const category = useCategoryPageQuery();
 
@@ -87,7 +87,7 @@ const CategoryTable = () => {
   //     console.error('Error deleting categories:', error);
   //   }
   // };
-  
+
   const handleDelete = (rowsToDelete: readonly BaseTableData[]): BaseTableData[] => {
     const idsToDelete = rowsToDelete.map((row) => row.id);
 
@@ -96,7 +96,7 @@ const CategoryTable = () => {
 
       setRows((prevRows) => prevRows.filter((row) => !idsToDelete.includes(row.id)));
 
-      return rows;
+      return [];
     } catch (error) {
       console.error('Error deleting categories:', error);
       return [];
