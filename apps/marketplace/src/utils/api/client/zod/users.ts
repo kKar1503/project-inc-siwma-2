@@ -67,7 +67,7 @@ const getUsers = user.array();
 
 const shareListingsSchema = z.object({
   ownerId: z.string(),
-  listings: z.array(z.string()),
+  listingItems: z.array(z.string()),
 });
 
 export type User = z.infer<typeof user>;

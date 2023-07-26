@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';

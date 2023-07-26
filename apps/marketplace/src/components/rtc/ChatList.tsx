@@ -14,7 +14,7 @@ import Divider from '@mui/material/Divider';
 import Badge from '@mui/material/Badge';
 import Image from 'next/image';
 import { DateTime } from 'luxon';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useTheme, alpha } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
