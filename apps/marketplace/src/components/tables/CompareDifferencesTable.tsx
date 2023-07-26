@@ -50,7 +50,6 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
   const [category, setCategory] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
 
-  console.log('Product IDs:', productIds);
   useEffect(() => {
     const fetchListings = async () => {
       const listings = await Promise.all(productIds.map((id) => fetchListing(id)));

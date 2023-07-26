@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useTheme } from '@mui/material';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import CompareDifferences from './CompareDifferences';
+import CompareDifferences from '@/components/tables/CompareDifferencesTable';
 
 type CompareDifferencesProps = {
   productIds: string[];
