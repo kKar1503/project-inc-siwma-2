@@ -87,6 +87,8 @@ const CreateCategory = () => {
     await usePostCategoryMutation.mutateAsync(requestBody);
   };
 
+  console.log(selectedCatFile);
+
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
       <Card sx={{ width: '95%', mt: isSm ? 1 : 3 }}>
@@ -116,15 +118,15 @@ const CreateCategory = () => {
               placeholder="Category Name"
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryNameChange}
-              sx={{ width: isSm ? '94%' : '47%', mb: isSm ? 3 : 0 }}
+              sx={{ width: isSm ? '94%' : '96%', mb: isSm ? 3 : 0 }}
             />
-            <TextField
+            {/* <TextField
               label="Category Name (Chinese)"
               placeholder="Category Name (Chinese)"
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryNameChineseChange}
               sx={{ width: isSm ? '94%' : '47%' }}
-            />
+            /> */}
           </Box>
           <Box>
             <TextField

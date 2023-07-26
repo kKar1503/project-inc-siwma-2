@@ -32,10 +32,10 @@ const headCells: Header[] = [
     key: 'name',
     label: 'Category Name',
   },
-  {
-    key: 'name',
-    label: 'Category Name (Chinese)',
-  },
+  // {
+  //   key: 'name',
+  //   label: 'Category Name (Chinese)',
+  // },
   {
     key: 'active',
     label: 'Status',

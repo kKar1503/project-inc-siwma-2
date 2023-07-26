@@ -159,16 +159,16 @@ const EditCategory = () => {
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryNameChange}
               value={categoryName}
-              sx={{ width: isSm ? '94%' : '47%', mb: isSm ? 3 : 0 }}
+              sx={{ width: isSm ? '94%' : '96%', mb: isSm ? 3 : 0 }}
             />
-            <TextField
+            {/* <TextField
               label="Category Name (Chinese)"
               placeholder="Category Name (Chinese)"
               InputLabelProps={{ shrink: true }}
               onChange={handleCategoryNameChineseChange}
               value={categoryNameChinese}
               sx={{ width: isSm ? '94%' : '47%' }}
-            />
+            /> */}
           </Box>
           <Box>
             <TextField
