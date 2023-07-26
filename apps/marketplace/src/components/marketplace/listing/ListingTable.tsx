@@ -98,7 +98,7 @@ const ListingTable = (props: ListingTableProps) => {
   return (
     <Box sx={{ ...tableMaxWidthContainer, mt: 3 }}>
       <Paper sx={{ width: '100%', mb: 2 }} elevation={2}>
-        <AboveHeader header="Listings" />
+        <AboveHeader header="Listings" listings={listings} />
         <Divider sx={{ opacity: 0.3 }} />
         <TableContainer>
           <Table>
