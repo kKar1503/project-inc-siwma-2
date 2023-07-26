@@ -1,6 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Head from 'next/head';
-
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -21,10 +20,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
-import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
-import { useQuery, useQueryClient } from 'react-query';
+import { ParameterResponseBody } from '@/utils/api/client/zod';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
-import createParameter from '@/middlewares/createParameter';
+import updateParameter from '@/middlewares/updateParameter';
+import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';
@@ -32,39 +32,48 @@ import SuccessModal from '@/components/modals/SuccessModal';
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
 
+export type EditParameterProps = {
+  parameter: string;
+  updateData: () => void;
+};
+
 export type ParameterProps = {
   data: ParameterResponseBody[];
 };
 
-const usePostParameter = (paramBody: ParameterResponseBody) => {
-  const { data } = useQuery(['parameter', paramBody], async () => createParameter(paramBody), {
-    enabled: paramBody !== undefined,
+const useGetParameter = (parameterId: string) => {
+  const { data } = useQuery('parameter', async () => fetchParameterById(parameterId), {
+    enabled: parameterId !== undefined,
   });
-
   return data;
 };
 
-const CreateParameter = () => {
+const EditParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);  
+  
   const router = useRouter();
+  const id = router.query.id as string;
   const queryClient = useQueryClient();
+  const parameterData = useGetParameter(id);
+  console.log(parameterData);
 
-  const [name, setName] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [type, setType] = useState('');
-  const [options, setOptions] = useState<string[]>([]);
-  const [dataType, setDataType] = useState('');
+  const [name, setName] = useState<string>(parameterData?.name || '');
+  const [displayName, setDisplayName] = useState<string>(parameterData?.displayName || '');
+  const [type, setType] = useState<string>(parameterData?.type || '');
+  const [options, setOptions] = useState<string[]>(
+    parameterData?.options && Array.isArray(parameterData?.options) ? parameterData.options : []
+  );
+  const [dataType, setDataType] = useState<string>(parameterData?.dataType || '');
 
-  const [nameError, setNameError] = useState('');
   const [displayNameError, setDisplayNameError] = useState('');
+  const [nameError, setNameError] = useState('');
   const [optionsError, setOptionsError] = useState('');
 
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
-  const [createItem, setCreateItem] = useState<boolean>(false);
+  const [editItem, setEditItem] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -111,11 +120,6 @@ const CreateParameter = () => {
 
   const handleRemoveOption = (indexToRemove: number) => {
     setOptions((prevOptions) => prevOptions.filter((_, index) => index !== indexToRemove));
-  };
-
-  const handleDataTypeChange = (e: SelectChangeEvent) => {
-    const selectedDataType = e.target.value;
-    setDataType(selectedDataType);
   };
 
   const renderCustomOptions = () => {
@@ -170,36 +174,65 @@ const CreateParameter = () => {
     return null;
   };
 
-  const postParameter = async () => {
-    const paramBody: ParameterResponseBody = {
-      id: '',
-      name,
-      displayName,
-      type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
-      dataType: dataType as 'string' | 'number' | 'boolean',
-      options,
-    };
-
-    await createParameter(paramBody);
-  };
-
-  const handleSubmit = async () => {
-    if (type === 'MANY_CHOICES' && options.length < 3) {
-      setOpenMany(true);
-      setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
-    } else if (type === 'TWO_CHOICES' && options.length < 2) {
-      setOpenMany(true);
-      setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
-    } else {
-      await postParameter();
-      router.push(`/categoryManagement/parameters`);
-    }
+  const handleDataTypeChange = (e: SelectChangeEvent) => {
+    const selectedDataType = e.target.value;
+    setDataType(selectedDataType);
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setOpenLeave(true);
   };
+
+  const useUpdateParamMutation = (parameterId: string) =>
+    useMutation(
+      (updatedParameterData: ParameterResponseBody) =>
+        updateParameter(updatedParameterData, parameterId),
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries('parameter');
+          setEditItem(true);
+        },
+      }
+    );
+
+  const mutation = useUpdateParamMutation(id);
+
+  const handleSubmit = () => {
+    if (type === 'MANY_CHOICES' && options.length < 3) {
+      setOpenMany(true);
+      setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
+    } else if (type === 'TWO_CHOICES' && options.length < 2) {
+      setOpenMany(true);
+      setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
+    }
+    const requestBody: ParameterResponseBody = {
+      id,
+      name,
+      displayName,
+      type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
+      options,
+      dataType: dataType as 'string' | 'number' | 'boolean',
+    };
+    mutation.mutate(requestBody);
+  };
+
+  useEffect(() => {
+    if (parameterData) {
+      setName(parameterData?.name || '');
+      setDisplayName(parameterData?.displayName || '');
+      setType(parameterData?.type || '');
+      setOptions(parameterData?.options ?? []);
+      setDataType(parameterData?.dataType || '');
+    }
+  }, [parameterData]);
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      queryClient.invalidateQueries('parameter');
+      router.push(`/parameters`);
+    }
+  }, [mutation.isSuccess, queryClient, router, id]);
 
   const tableStyle = useMemo(() => {
     if (isSm) {
@@ -229,7 +262,7 @@ const CreateParameter = () => {
   return (
     <>
       <Head>
-        <title>Create Parameter</title>
+        <title>Edit Parameter</title>
       </Head>
       <Container sx={tableStyle}>
         <Box>
@@ -250,8 +283,8 @@ const CreateParameter = () => {
                   subheaderTypographyProps={{
                     fontSize: 16,
                   }}
-                  title="Create Parameter"
-                  subheader="Enter values to create a new parameter"
+                  title="Edit Parameter"
+                  subheader="Edit values to a current parameter"
                 />
                 <Box
                   sx={({ spacing }) => ({
@@ -306,7 +339,6 @@ const CreateParameter = () => {
                     width: '100%',
                   })}
                 />
-
                 <FormControl
                   sx={({ spacing }) => ({ mr: spacing(3), width: '100%', mt: spacing(2) })}
                 >
@@ -359,11 +391,12 @@ const CreateParameter = () => {
                       displayName.trim() === '' ||
                       type.trim() === '' ||
                       dataType.trim() === '' ||
+                      dataType.trim() === '' ||
                       ((type === 'MANY_CHOICES' || type === 'TWO_CHOICES') &&
                         options.some((option) => option.trim() === ''))
                     }
                   >
-                    Create
+                    Update
                   </Button>
 
                   <OptionsErrorModal
@@ -371,22 +404,22 @@ const CreateParameter = () => {
                     setOpen={setOpenMany}
                     errorMessage={optionsError}
                   />
+                  <SuccessModal
+                    title="Successfully Edited!"
+                    content="Parameter has been successfully edited"
+                    open={editItem}
+                    setOpen={setEditItem}
+                    buttonText="Return"
+                    path="/parameters"
+                  />
                 </Box>
               </CardActions>
             </Card>
           </Grid>
-          <SuccessModal
-            title="Successfully Created!"
-            content="Parameter has been successfully created"
-            open={createItem}
-            setOpen={setCreateItem}
-            buttonText="Return"
-            path="/categoryManagement/parameters"
-          />
         </Box>
       </Container>
     </>
   );
 };
 
-export default CreateParameter;
+export default EditParameter;

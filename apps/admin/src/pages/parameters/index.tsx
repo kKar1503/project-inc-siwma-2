@@ -143,12 +143,12 @@ const ParameterTable = () => {
 
   const handleEditRow = (row: BaseTableData) => {
     const { id } = row;
-    const editUrl = `parameters/${id}/edit-parameter`;
+    const editUrl = `/parameters/${id}/edit-parameter`;
     router.push(editUrl);
   };
 
   const handleCreateParameter = () => {
-    router.push(`parameters/create-parameter`);
+    router.push(`/parameters/create-parameter`);
   };
 
   const tableStyle = useMemo(() => {
