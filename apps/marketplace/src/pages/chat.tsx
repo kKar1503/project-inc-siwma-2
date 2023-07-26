@@ -18,6 +18,8 @@ import type { ChatData } from '@/components/rtc/ChatBox';
 import type { Messages } from '@inc/types';
 import { useResponsiveness } from '@inc/ui';
 
+import apiClient from '@/utils/api/client/apiClient';
+
 export type UserNameProps = {
   userId: string;
 };
@@ -57,16 +59,19 @@ const ChatRoom = ({ userId }: UserNameProps) => {
     return formatted;
   }
 
-  const subscribeToChannel = useCallback((channelId: string) => {
-    // setCurrentChannelId(channelId);
-    setCurrentChannelId('chat'); // TODO: remove this, uncomment above line
+  const subscribeToChannel = useCallback(
+    (channelId: string) => {
+      // setCurrentChannelId(channelId);
+      setCurrentChannelId('chat'); // TODO: remove this, uncomment above line
 
-    const channel = pusher.subscribe(channelId);
+      const channel = pusher.subscribe(channelId);
 
-    channel.bind('new-message', (data: Messages) => {
-      setChats((prevChats) => [...prevChats, formatMessage(data)]);
-    });
-  }, [pusher]);
+      channel.bind('new-message', (data: Messages) => {
+        setChats((prevChats) => [...prevChats, formatMessage(data)]);
+      });
+    },
+    [pusher]
+  );
 
   const chatPageSx: SxProps<Theme> = useMemo(() => {
     if (isLg) {
@@ -98,14 +103,18 @@ const ChatRoom = ({ userId }: UserNameProps) => {
   }, [isLg, isMd, isSm]);
 
   useEffect(() => {
-    console.log('chat page mounted');
     // Runs when the component is mounted
 
     const fetchChannels = async () => {
       try {
-        // Fetch the channels from pusher
-        const channelsData = pusher.allChannels();
+        // Fetch the channels from backend at /chat/channels
+        const response = await apiClient.get(`/v1/chat/channels`);
+
+        const channelsData = response.data;
+
         setChannels(channelsData);
+
+        console.log('channelsData', channelsData);
 
         if (!currentChannelId && channelsData.length > 0) {
           // If no channel is selected, select the first one in the list
@@ -121,6 +130,11 @@ const ChatRoom = ({ userId }: UserNameProps) => {
     };
 
     fetchChannels();
+
+    return () => {
+      // Unsubscribe from the channel when the component unmounts
+      pusher.unsubscribe(currentChannelId);
+    };
   }, [currentChannelId, pusher, subscribeToChannel]); // Only run this effect once when the component mounts
 
   // Function to send a new message through Pusher

@@ -12,7 +12,7 @@ if (!appId || !key || !secret || !cluster) {
   throw new Error('Missing pusher env variables');
 }
 
-export const pusher = new Pusher({
+const pusher = new Pusher({
   appId,
   key,
   secret,
@@ -20,19 +20,30 @@ export const pusher = new Pusher({
   useTLS: true,
 });
 
-// TODO: Remove allowNonAuthenticated, and probably get the user from JWT instead of body
-export default apiHandler({ allowNonAuthenticated: true }).post(async (req, res) => {
-  const parseResult = chatSchema.messages.post.body.parse(req.body);
-  const { message, sender } = parseResult;
+// TODO: Remove allowNonAuthenticated, and get the user from JWT instead of body
+export default apiHandler({ allowNonAuthenticated: true })
+  .get(async (req, res) => {
+    // test EP, just creates a new channel with the name "yes"
+    const response = await pusher.trigger('chat', 'chat-event', {
+      message: 'yes',
+      sender: 'yes',
+    });
 
-  const response = await pusher.trigger('chat', 'chat-event', {
-    message,
-    sender,
+    console.log(response);
+  })
+  .post(async (req, res) => {
+    const parseResult = chatSchema.messages.post.body.parse(req.body);
+    const { message, sender, receiver } = parseResult;
+
+    const response = await pusher.trigger('chat', 'chat-event', { // TODO: chat is the channel name, change it to the chat id
+      message,
+      sender,
+      receiver,
+    });
+
+    if (response.status === 200) {
+      return res.status(200).end();
+    }
+
+    throw new MessageError();
   });
-
-  if (response.status === 200) {
-    return res.status(200).end();
-  }
-
-  throw new MessageError();
-});
