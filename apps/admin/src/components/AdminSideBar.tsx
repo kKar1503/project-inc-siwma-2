@@ -32,7 +32,9 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
+import useUser from '@/middlewares/fetchUser';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useResponsiveness } from '@inc/ui';
 
 const menuItems = [
@@ -42,54 +44,48 @@ const menuItems = [
     Icon: HomeIcon,
   },
   {
-    name: 'Data Analytics',
-    link: '/dataAnalytics',
-    Icon: BarChartIcon,
-  },
-  {
     name: 'Advertisement',
     link: '/advertisement',
     Icon: SpaceDashboardIcon,
     dropdown: [
       {
         name: 'Advertisement Dashboard',
-        link: '/advertisement/dashboard',
+        link: '/advertisement-dashboard',
         Icon: AssessmentIcon,
       },
       {
         name: 'Advertisement Upload',
-        link: '/advertisement/upload',
+        link: '/advertisement-upload',
         Icon: UploadIcon,
       },
     ],
   },
   {
     name: 'Category Management',
-    link: '/categoryManagement',
+    link: '/category-management',
     Icon: CategoryIcon,
     dropdown: [
       {
         name: 'Category',
-        link: '/categoryManagement/category',
+        link: '/category',
         Icon: BusinessIcon,
       },
       {
         name: 'Parameters',
-        link: '/categoryManagement/parameters',
+        link: '/parameters',
         Icon: FormatListNumberedRtlIcon,
       },
     ],
   },
   {
-    
-    name: 'Listing Management',
+    name: 'Listing',
     link: '/listing',
     Icon: FormatListBulletedIcon,
     dropdown: [
       {
         name: 'All Listing',
         link: '/listing/all-listing',
-        Icon: FeedOutlinedIcon,
+        Icon: FormatListBulletedIcon,
       },
       {
         name: 'Listing Items',
@@ -100,29 +96,31 @@ const menuItems = [
   },
   {
     name: 'User Management',
-    link: '/userManagement',
+    link: '/users',
     Icon: SettingsAccessibilityIcon,
     dropdown: [
       {
         name: 'Companies',
-        link: '/userManagement/companies',
+        link: '/companies',
         Icon: ApartmentIcon,
       },
       {
         name: 'Users',
-        link: '/userManagement/users',
+        link: '/users',
         Icon: PeopleAltIcon,
       },
       {
         name: 'Invites',
-        link: '/userManagement/invites',
+        link: '/invites/bulk',
         Icon: PersonAddIcon,
       },
     ],
   },
 ];
 
+
 const AdminSideBar = () => {
+  const loginUser = useSession();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [user, setUser] = useState({ name: '', email: '', imageUrl: '' });
@@ -132,20 +130,48 @@ const AdminSideBar = () => {
   const customBlue = '#2962ff';
   const blueBackground = '#EAEFFC';
 
+  const loggedUserUuid = loginUser.data?.user.id as string;
+
+    const {
+      data: currentUser,
+      error: userError,
+      isError: isUserError,
+      isFetched: isUserFetched,
+    } = useUser(loggedUserUuid);
+
   // function that fetches the user info from backend
   function getUserInfo() {
     return {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      imageUrl: '/images/admin-bg.png',
+      name: currentUser?.name || (''),
+      email:currentUser?.email || (''),
+      imageUrl:currentUser?.profilePic ? currentUser.profilePic : ('/images/placeholder.png') ,
     };
   }
 
   useEffect(() => {
+    if (!isUserFetched) {
+      return;
+    }
+
+    if (isUserError) {
+      if ('status' in (userError as any) && (userError as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (user === undefined) {
+      router.replace('/500');
+    }
     // Assume that `getUserInfo` is a function that fetches the user info from backend
-    const userInfo = getUserInfo();
-    setUser(userInfo);
-  }, []);
+    if (currentUser) {
+      const userInfo = getUserInfo();
+      setUser(userInfo);
+    }
+  }, [currentUser, isUserFetched]);
 
   useEffect(() => {
     menuItems.forEach((item) => {
@@ -230,6 +256,8 @@ const AdminSideBar = () => {
     };
   }, [isSm, isMd, isLg, typography]);
 
+
+
   const drawer = (
     <Box
       sx={{
@@ -273,92 +301,122 @@ const AdminSideBar = () => {
         </Typography>
         <Divider />
         <List>
-          {menuItems.map((item) => (
-            <Box key={item.name}>
+  {menuItems.map((item) => (
+    <Box key={item.name}>
+      {item.dropdown ? ( 
+        <ListItemButton
+          onClick={() => handleClick(item.name)}
+          sx={{
+            backgroundColor: isCurrentRoute(item.link) ? blueBackground : 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            textDecoration: 'none',
+            color: 'inherit', 
+          }}
+        >
+          <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
+            <item.Icon
+              style={{
+                color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
+              }}
+            />
+          </Box>
+          <ListItemText
+            primary={item.name}
+            primaryTypographyProps={{
+              style: {
+                font: '0.9rem Roboto, sans-serif',
+              },
+            }}
+          />
+          {openDropdown === item.name ? <ExpandMore /> : <ChevronRight />}
+        </ListItemButton>
+      ) : (
+        <ListItemButton
+          component="a"
+          href={item.link}
+          onClick={() => handleClick(item.name)}
+          sx={{
+            backgroundColor: isCurrentRoute(item.link) ? blueBackground : 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            textDecoration: 'none', 
+            color: 'inherit', 
+          }}
+        >
+          <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
+            <item.Icon
+              style={{
+                color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
+              }}
+            />
+          </Box>
+          <ListItemText
+            primary={item.name}
+            primaryTypographyProps={{
+              style: {
+                font: '0.9rem Roboto, sans-serif',
+              },
+            }}
+          />
+        </ListItemButton>
+      )}
+      {item.dropdown && (
+        <Collapse in={openDropdown === item.name} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {item.dropdown.map((subitem) => (
               <ListItemButton
-                onClick={() => handleClick(item.name)}
+                key={subitem.name}
+                href={subitem.link}
+                onClick={() => handleClick(subitem.link)}
                 sx={{
-                  backgroundColor: isCurrentRoute(item.link) ? blueBackground : 'transparent',
+                  backgroundColor: isCurrentSubRoute(subitem.link)
+                    ? blueBackground
+                    : 'transparent',
+                  pl: '2em',
                   display: 'flex',
                   alignItems: 'center',
+                  textDecoration: 'none', 
+                  color: 'inherit',   
                 }}
               >
                 <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
-                  <item.Icon
-                    style={{ color: isCurrentRoute(item.link) ? customBlue : palette.common.black }}
+                  <subitem.Icon
+                    style={{
+                      color: isCurrentSubRoute(subitem.link)
+                        ? customBlue
+                        : palette.common.black,
+                    }}
                   />
                 </Box>
                 <ListItemText
-                  primary={item.name}
-                  primaryTypographyProps={{
-                    style: {
-                      color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
-                      font: '0.9rem Roboto, sans-serif',
-                    },
-                  }}
-                />
-                {item.dropdown &&
-                  (openDropdown === item.name ? (
-                    <ExpandMore />
-                  ) : (
-                    <ChevronRight
-                      style={{
-                        color: isCurrentRoute(item.link) ? customBlue : palette.common.black,
+                  primary={
+                    <Link
+                      href={subitem.link}
+                      underline="none"
+                      sx={{
+                        color: isCurrentSubRoute(subitem.link)
+                          ? customBlue
+                          : palette.common.black,
+                        font: '0.9rem Roboto, sans-serif',
+                        textDecoration: 'none',
+                        '&:hover': {
+                          textDecoration: 'none',
+                        },
                       }}
-                    />
-                  ))}
+                    >
+                      {subitem.name}
+                    </Link>
+                  }
+                />
               </ListItemButton>
-              {item.dropdown && (
-                <Collapse in={openDropdown === item.name} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {item.dropdown.map((subitem) => (
-                      <ListItemButton
-                        key={subitem.name}
-                        onClick={() => router.push(subitem.link)}
-                        sx={{
-                          backgroundColor: isCurrentRoute(item.link)
-                            ? blueBackground
-                            : 'transparent',
-                          pl: '2em',
-                          display: 'flex',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
-                          <subitem.Icon
-                            style={{
-                              color: isCurrentSubRoute(subitem.link)
-                                ? customBlue
-                                : palette.common.black,
-                            }}
-                          />
-                        </Box>
-                        <ListItemText
-                          primary={
-                            <Link
-                              href={subitem.link}
-                              underline="none"
-                              sx={{
-                                color: isCurrentSubRoute(subitem.link) ? customBlue : palette.common.black,
-                                font: '0.9rem Roboto, sans-serif',
-                                textDecoration: 'none',
-                                '&:hover': {
-                                  textDecoration: 'none',
-                                },
-                              }}
-                            >
-                              {subitem.name}
-                            </Link>
-                          }
-                        />
-                      </ListItemButton>
-                    ))}
-                  </List>
-                </Collapse>
-              )}
-            </Box>
-          ))}
-        </List>
+            ))}
+          </List>
+        </Collapse>
+      )}
+    </Box>
+  ))}
+</List>
       </Box>
       <Hidden mdDown implementation="css">
         <Box

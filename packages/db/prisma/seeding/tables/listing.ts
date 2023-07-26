@@ -16,6 +16,7 @@ interface IListings {
 const Listings: IListings[] = [
   {
     price: new Prisma.Decimal(300),
+    negotiable: false,
     type: ListingType.SELL,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     listingItemId: 1,
@@ -37,6 +38,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(50),
+    negotiable: false,
     type: ListingType.BUY,
     owner: 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af',
     listingItemId: 4,
@@ -79,6 +81,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(10),
+    negotiable: false,
     type: ListingType.SELL,
     owner: '2a7f0665-57a8-454b-8518-ce2c4f003237',
     listingItemId: 23,
@@ -100,6 +103,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(100),
+    negotiable: false,
     type: ListingType.SELL,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     listingItemId: 27,
@@ -114,6 +118,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(342.14),
+    negotiable: false,
     type: ListingType.BUY,
     owner: '1965b49b-3e55-4493-bc69-5701cabf8baa',
     listingItemId: 33,
@@ -135,6 +140,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(3476.43),
+    negotiable: false,
     type: ListingType.BUY,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     listingItemId: 39,
@@ -156,6 +162,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(999),
+    negotiable: false,
     type: ListingType.BUY,
     owner: 'a43405b7-74d5-48d4-9155-3622ad3d2970',
     listingItemId: 40,
@@ -247,6 +254,7 @@ const Listings: IListings[] = [
   },
   {
     listingItemId: 6,
+    negotiable: false,
     quantity: 15,
     price: new Prisma.Decimal(800.2),
     type: ListingType.SELL,
@@ -310,6 +318,7 @@ const Listings: IListings[] = [
   },
   {
     listingItemId: 48,
+    negotiable: false,
     quantity: 15,
     price: new Prisma.Decimal(13.37),
     type: ListingType.SELL,
@@ -331,6 +340,7 @@ const Listings: IListings[] = [
   },
   {
     listingItemId: 42,
+    negotiable: false,
     quantity: 15,
     price: new Prisma.Decimal(100.12),
     type: ListingType.SELL,
@@ -338,6 +348,7 @@ const Listings: IListings[] = [
   },
   {
     listingItemId: 38,
+    negotiable: false,
     quantity: 15,
     price: new Prisma.Decimal(236.23),
     type: ListingType.BUY,
@@ -408,6 +419,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(143.23),
+    negotiable: false,
     type: ListingType.BUY,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     listingItemId: 9,
@@ -429,6 +441,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(123.23),
+    negotiable: false,
     type: ListingType.BUY,
     owner: '14f9a310-958c-4273-b4b3-4377804642a5',
     listingItemId: 4,
@@ -478,6 +491,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(133),
+    negotiable: false,
     type: ListingType.SELL,
     owner: 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26',
     listingItemId: 51,
@@ -534,6 +548,7 @@ const Listings: IListings[] = [
   },
   {
     listingItemId: 10,
+    negotiable: false,
     quantity: 15,
     price: new Prisma.Decimal(0.1),
     type: ListingType.SELL,
@@ -569,6 +584,7 @@ const Listings: IListings[] = [
   },
   {
     price: new Prisma.Decimal(123.23),
+    negotiable: false,
     type: ListingType.BUY,
     owner: '4521b840-8c2e-43ba-9c9e-11dc37a86a39',
     listingItemId: 44,
@@ -653,6 +669,7 @@ const Listings: IListings[] = [
   },
   {
     listingItemId: 10,
+    negotiable: false,
     quantity: 15,
     price: new Prisma.Decimal(300.1),
     type: ListingType.SELL,
@@ -681,6 +698,7 @@ const Listings: IListings[] = [
   },
   {
     listingItemId: 8,
+    negotiable: false,
     quantity: 15,
     price: new Prisma.Decimal(31.5),
     type: ListingType.SELL,
