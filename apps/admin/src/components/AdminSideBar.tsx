@@ -111,7 +111,7 @@ const menuItems = [
       },
       {
         name: 'Invites',
-        link: '/invites',
+        link: '/invites/bulk',
         Icon: PersonAddIcon,
       },
     ],
