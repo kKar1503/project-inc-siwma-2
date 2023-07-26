@@ -69,9 +69,8 @@ const CategoryTable = () => {
     setRows(rowsData);
   };
 
-
   const onEdit = (row: BaseTableData) => {
-    router.push(`/category/${row.id}/edit-category`);
+    window.location.href = `/category/${row.id}/edit-category`;
   };
 
   const handleDelete = async (rowsToDelete: readonly BaseTableData[]): Promise<void> => {
@@ -86,15 +85,13 @@ const CategoryTable = () => {
     }
   };
 
-
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-    const handleCreateCategory = () => {
-      router.push(`/category/create-category`);
-    };
+  const handleCreateCategory = () => {
+    window.location.href = `/category/create-category`;
+  };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
