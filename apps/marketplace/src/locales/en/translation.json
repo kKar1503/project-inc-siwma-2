@@ -198,5 +198,15 @@
   "days ago": "days ago",
   "hours ago": "hours ago",
   "minutes ago": "minutes ago",
-  "seconds ago": "seconds ago"
+  "seconds ago": "seconds ago",
+
+  "Quantity": "Quantity",
+  "Dimensions (mm)": "Dimensions (mm)",
+  "Cross Section": "Cross Section",
+  "Metal Grade": "Metal Grade",
+  "Certification": "Certification",
+  "Posted on": "Posted on",
+
+  "Share": "Share",
+  "share": "share"
 }
