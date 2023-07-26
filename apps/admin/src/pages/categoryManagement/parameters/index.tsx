@@ -3,6 +3,7 @@ import { Header } from '@/components/tables/BaseTable/BaseTableHead';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useState, useMemo, useEffect } from 'react';
@@ -177,30 +178,29 @@ const ParameterTable = () => {
 
   return (
     <>
-      <Head>
-        <title>Parameters</title>
-      </Head>
-      <Container sx={({ spacing }) => ({ py: spacing(3), tableStyle })}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Button
-            variant="contained"
-            sx={({ palette, spacing }) => ({
-              bgcolor: palette.primary[400],
-              mb: spacing(1),
-              mr: spacing(1),
-            })}
-            onClick={handleCreateParameter}
-          >
-            Create Parameter
-          </Button>
-        </Box>
+      <Box sx={{ m: 4, alignItems: 'center' }}>
         <BaseTable
-          heading="Parameters"
+          customHeader={
+            <Box sx={{ padding: 2, display: 'flex' }}>
+              <Box>
+                <Typography variant="h5">Parameter</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginLeft: 'auto' }}>
+                <Button
+                  variant="contained"
+                  sx={({ palette, spacing }) => ({
+                    bgcolor: palette.primary[400],
+                    mb: spacing(1),
+                    mr: spacing(1),
+                  })}
+                  onClick={handleCreateParameter}
+                >
+                  Create Parameter
+                </Button>
+              </Box>
+            </Box>
+          }
+          heading=""
           rows={pageRows}
           headers={headCells}
           onPageChange={handleChangePage}
@@ -213,7 +213,7 @@ const ParameterTable = () => {
           rowsPerPageOptions={[5, 10, 25]}
           totalCount={rows.length}
         />
-      </Container>
+      </Box>
       <DeleteParameterModal open={openDeleteModal} setOpen={setOpenDeleteModal} parameters={ids} />
     </>
   );
