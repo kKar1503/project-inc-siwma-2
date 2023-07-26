@@ -9,6 +9,7 @@ import { useQuery } from 'react-query';
 import fetchCategories from '@/middlewares/fetchCategories';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
 import Spinner from '@/components/fallbacks/Spinner';
+import deleteCategories from '@/middlewares/deleteCategory';
 
 export type CategoryProps = {
   data: CategoryResponseBody[];
@@ -73,12 +74,19 @@ const CategoryTable = () => {
     router.push(`/category/${row.id}/edit-category`);
   };
 
-  const handleDelete = (rowsToDelete: readonly BaseTableData[]): BaseTableData[] => {
+  const handleDelete = async (rowsToDelete: readonly BaseTableData[]): Promise<void> => {
     const idsToDelete = rowsToDelete.map((row) => row.id);
-    const newRows = rows.filter((item) => !idsToDelete.includes(item.id));
-    setRows(newRows);
-    return newRows;
+
+    try {
+      await Promise.all(idsToDelete.map((id) => deleteCategories(id)));
+
+      setRows((prevRows) => prevRows.filter((row) => !idsToDelete.includes(row.id)));
+    } catch (error) {
+      console.error('Error deleting categories:', error);
+    }
   };
+
+
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
