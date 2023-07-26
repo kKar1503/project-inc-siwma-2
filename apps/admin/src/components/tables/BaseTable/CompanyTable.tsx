@@ -5,16 +5,21 @@ import { Company } from '@/utils/api/client/zod/companies';
 import DeleteCompanyModal from '@/components/modals/DeleteCompanyModal';
 import EditCompanyModal from '@/components/modals/EditCompanyModal';
 
+export type CompanyWithEmails = Company & {
+  emails: string[];
+};
+
 export type CompanyTableProps = {
-  data: Company[];
+  data: CompanyWithEmails[];
   count: number;
   updateData: (lastIdPointer?: number, limit?: number) => void;
 };
 
-function createData(id: string, name: string, bio: string | null): BaseTableData {
+function createData(id: string, name: string, emails: string, bio: string | null): BaseTableData {
   return {
     id,
     name,
+    emails: emails || '',
     bio: bio || '',
   };
 }
@@ -24,6 +29,7 @@ const headCells: Header[] = [
     key: 'name',
     label: 'Company Name',
   },
+  { key: 'emails', label: 'Emails' },
   {
     key: 'bio',
     label: 'Bio',
@@ -45,7 +51,7 @@ const CompanyTable = ({ data, count, updateData }: CompanyTableProps) => {
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
   const companyRows = useMemo(
-    () => data.map((item) => createData(item.id, item.name, item.bio)),
+    () => data.map((item) => createData(item.id, item.name, item.emails.join(', '), item.bio)),
     [data]
   );
 
