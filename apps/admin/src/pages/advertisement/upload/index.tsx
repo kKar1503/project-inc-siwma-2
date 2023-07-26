@@ -29,13 +29,13 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 
 export type CreateAdvertisementProps = {
-  active: string;
+  active: boolean;
   startDate: string;
   endDate: string;
   description: string;
   link: string;
   companyId?: string;
-  image?: File;
+  image?: File; // Change the type to File and make it optional
 };
 
 const AdvertisementUpload = () => {
@@ -49,14 +49,14 @@ const AdvertisementUpload = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const [formValues, setFormValues] = useState({
+  const [formValues, setFormValues] = useState<CreateAdvertisementProps>({
     companyId: '',
     link: '',
     description: '',
     startDate: '',
     endDate: '',
     active: false,
-    image: '',
+    image: undefined,
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -67,6 +67,25 @@ const AdvertisementUpload = () => {
     endDate: '',
   });
 
+  // const usePostAdvertisementMutation = useMutation(
+  //   (formValues: CreateAdvertisementProps) =>
+  //     createdAdvertisementData(
+  //       formValues.active,
+  //       formValues.startDate,
+  //       formValues.endDate,
+  //       formValues.description,
+  //       formValues.link,
+  //       formValues.companyId,
+  //       formValues.image
+  //     ),
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries('category');
+  //       router.push('/category');
+  //     },
+  //   }
+  // );
+
   const usePostAdvertisementMutation = useMutation(
     (formValues: CreateAdvertisementProps) =>
       createdAdvertisementData(
@@ -76,12 +95,12 @@ const AdvertisementUpload = () => {
         formValues.description,
         formValues.link,
         formValues.companyId,
-        formValues.image // Pass the image File object here
+        formValues.image
       ),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('category');
-        router.push('/category');
+        setOpen(true); // Show the modal on successful API response
+        setLeftButtonState(true); // Set leftButtonState to true if needed
       },
     }
   );
@@ -142,12 +161,22 @@ const AdvertisementUpload = () => {
     }
   };
 
+  // const handleSubmit = async () => {
+  //   const errors = validateForm();
+  //   if (Object.values(errors).every((error) => error === '')) {
+  //     console.log('Form Data:', formValues);
+  //     setOpen(true);
+  //     setLeftButtonState(true);
+  //     await usePostAdvertisementMutation.mutateAsync(formValues);
+  //   } else {
+  //     setFormErrors(errors);
+  //   }
+  // };
+
   const handleSubmit = async () => {
     const errors = validateForm();
     if (Object.values(errors).every((error) => error === '')) {
       console.log('Form Data:', formValues);
-      setOpen(true); // Open the modal after successful form submission
-      setLeftButtonState(true); // Set leftButtonState to true if needed
       await usePostAdvertisementMutation.mutateAsync(formValues);
     } else {
       setFormErrors(errors);
