@@ -6,7 +6,7 @@ import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { LinearProgress } from '@mui/material';
 

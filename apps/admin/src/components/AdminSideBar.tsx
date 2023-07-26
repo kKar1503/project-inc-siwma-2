@@ -96,7 +96,7 @@ const menuItems = [
   },
   {
     name: 'User Management',
-    link: '/user-management',
+    link: '/users',
     Icon: SettingsAccessibilityIcon,
     dropdown: [
       {
