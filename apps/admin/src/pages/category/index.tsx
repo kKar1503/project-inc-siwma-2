@@ -46,7 +46,7 @@ const headCells: Header[] = [
 
 const useCategoryPageQuery = () => {
   const { data, error, isError, isFetched } = useQuery('cat', async () => fetchCategories());
-  return {data, error, isError, isFetched};
+  return { data, error, isError, isFetched };
 };
 
 const CategoryTable = () => {
@@ -56,30 +56,6 @@ const CategoryTable = () => {
   const category = useCategoryPageQuery();
 
   const router = useRouter();
-
-  useEffect(() => {
-    if (!category.isFetched) {
-      return;
-    }
-
-    if (category.isError) {
-      if ('status' in (category.error as any) && (category.error as any).status === 404) {
-        router.replace('/404');
-        return;
-      }
-
-      router.replace('/500');
-      return;
-    }
-
-    if (category === undefined) {
-      router.replace('/500');
-    }
-  }, [category.isFetched]);
-
-  if (!category.isFetched) {
-    return <Spinner />;
-  }
 
   const sortRows = (): void => {
     const rowsData: BaseTableData[] = [];
@@ -117,6 +93,30 @@ const CategoryTable = () => {
   useEffect(() => {
     sortRows();
   }, [category]);
+
+  useEffect(() => {
+    if (!category.isFetched) {
+      return;
+    }
+
+    if (category.isError) {
+      if ('status' in (category.error as any) && (category.error as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (category === undefined) {
+      router.replace('/500');
+    }
+  }, [category.isFetched]);
+
+  if (!category.isFetched) {
+    return <Spinner />;
+  }
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;

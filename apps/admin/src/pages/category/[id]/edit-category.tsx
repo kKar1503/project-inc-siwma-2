@@ -27,10 +27,14 @@ type PutCategoryRequestBody = {
 };
 
 const useGetCategoryQuery = (catId: string) => {
-  const { data, error, isError, isFetched } = useQuery('category', async () => fetchCategoryById(catId), {
-    enabled: catId !== undefined,
-  });
-  return {data, error, isError, isFetched};
+  const { data, error, isError, isFetched } = useQuery(
+    'category',
+    async () => fetchCategoryById(catId),
+    {
+      enabled: catId !== undefined,
+    }
+  );
+  return { data, error, isError, isFetched };
 };
 
 const useUpdateUserMutation = (userUuid: string, image?: File, crossSectionImage?: File) =>
@@ -48,34 +52,12 @@ const EditCategory = () => {
   const [selectedCatFile, setSelectedCatFile] = useState<File | null>(null);
   const [selectedCrossSectionFile, setSelectedCrossSectionFile] = useState<File | null>(null);
   const [categoryName, setCategoryName] = useState<string>(categoryData.data?.name || '');
-  const [categoryNameChinese, setCategoryNameChinese] = useState<string>(categoryData.data?.name || '');
+  const [categoryNameChinese, setCategoryNameChinese] = useState<string>(
+    categoryData.data?.name || ''
+  );
   const [categoryDescription, setCategoryDescription] = useState<string>(
     categoryData.data?.description || ''
   );
-
-  useEffect(() => {
-    if (!categoryData.isFetched) {
-      return;
-    }
-
-    if (categoryData.isError) {
-      if ('status' in (categoryData.error as any) && (categoryData.error as any).status === 404) {
-        router.replace('/404');
-        return;
-      }
-
-      router.replace('/500');
-      return;
-    }
-
-    if (categoryData === undefined) {
-      router.replace('/500');
-    }
-  }, [categoryData.isFetched]);
-
-  if (!categoryData.isFetched) {
-    return <Spinner />;
-  }
 
   const handleCatFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -126,6 +108,30 @@ const EditCategory = () => {
       setCategoryDescription(categoryData.data?.description || '');
     }
   }, [categoryData]);
+
+  useEffect(() => {
+    if (!categoryData.isFetched) {
+      return;
+    }
+
+    if (categoryData.isError) {
+      if ('status' in (categoryData.error as any) && (categoryData.error as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (categoryData === undefined) {
+      router.replace('/500');
+    }
+  }, [categoryData.isFetched]);
+
+  if (!categoryData.isFetched) {
+    return <Spinner />;
+  }
 
   useEffect(() => {
     if (mutation.isSuccess) {
