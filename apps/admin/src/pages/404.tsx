@@ -19,14 +19,14 @@ const ErrorPage = () => (
           fontSize: typography.h1,
         })}
       >
-        SOMETHING WENT WRONG!
+        OOPS!
       </Typography>
       <Typography
         sx={({ typography }) => ({
           fontSize: typography.body1,
         })}
       >
-        {`Something went wrong, and we don't know what it is.`}
+        This page you are looking for might have been removed or temporarily unavailable
       </Typography>
       <Link href="/overview">
         <Button sx={({ spacing }) => ({ mt: spacing(2) })} variant="contained">
@@ -37,6 +37,6 @@ const ErrorPage = () => (
   </Box>
 );
 
-ErrorPage.includeSideBar = false;
+ErrorPage.includeNavbar = false;
 
 export default ErrorPage;
