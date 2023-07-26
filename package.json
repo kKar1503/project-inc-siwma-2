@@ -17,6 +17,7 @@
     "build:s3": "nx run @inc/s3-simplified:build",
     "build:errors": "nx run @inc/errors:build",
     "build:send-in-blue": "nx run @inc/send-in-blue:build",
+    "cb": "nx run-many -t clean",
     "ci": "pnpm install --frozen-lockfile",
     "clean": "pnpx rimraf --glob */**/node_modules && pnpx rimraf node_modules",
     "lint": "nx run-many -t lint",
