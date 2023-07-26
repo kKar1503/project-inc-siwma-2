@@ -143,6 +143,18 @@ const CategoriesParameters: ICategoriesParameters[] = [
     categoryId: 2,
     parameterId: 31,
   },
+  {
+    categoryId: 2,
+    parameterId: 33,
+  },
+  {
+    categoryId: 2,
+    parameterId: 34,
+  },
+  {
+    categoryId: 2,
+    parameterId: 35,
+  },
 ];
 
 export type { ICategoriesParameters };
