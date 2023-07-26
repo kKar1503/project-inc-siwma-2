@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useResponsiveness } from '@inc/ui';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -17,19 +17,17 @@ import DeleteChat from '../modal/DeleteChat';
 
 export type ChatHeaderProps = {
   profilePic: string;
-  companyName: string;
-  available: boolean;
-  setSelectChat: React.Dispatch<React.SetStateAction<string>>;
+  username: string;
+  handleBack: () => void;
 };
 
-const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatHeaderProps) => {
+const ChatHeader = ({ profilePic, username, handleBack }: ChatHeaderProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
+  const { spacing, palette, typography } = useTheme();
   const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState<null | HTMLElement>(null);
   const [openReport, setOpenReport] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectInput, setSelectInput] = useState<string>('');
 
   const chatHeaderStyles = useMemo(() => {
     if (isSm) {
@@ -48,15 +46,6 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
           fontWeight: 500,
           marginLeft: spacing(1),
           flexGrow: 1,
-        },
-        statusButton: {
-          '&.Mui-disabled': {
-            fontSize: '0.6rem',
-            bgcolor: available ? palette.info.main : palette.success.main,
-            color: palette.common.white,
-            px: available ? spacing(0) : spacing(1),
-            py: spacing(0),
-          },
         },
         profilePic: {
           width: 28,
@@ -82,14 +71,6 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
           fontSize: typography.h6,
           marginLeft: spacing(2),
           flexGrow: 1,
-        },
-        statusButton: {
-          '&.Mui-disabled': {
-            fontSize: typography.subtitle2,
-            bgcolor: available ? palette.info.main : palette.success.main,
-            color: palette.common.white,
-            px: available ? spacing(3) : spacing(4),
-          },
         },
         profilePic: {
           width: 40,
@@ -117,14 +98,6 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
           marginLeft: spacing(2),
           flexGrow: 1,
         },
-        statusButton: {
-          '&.Mui-disabled': {
-            fontSize: typography.subtitle2,
-            bgcolor: available ? palette.info.main : palette.success.main,
-            color: palette.common.white,
-            px: available ? spacing(3) : spacing(4),
-          },
-        },
         profilePic: {
           width: 50,
           height: 50,
@@ -150,14 +123,6 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
         marginLeft: spacing(4),
         flexGrow: 1,
       },
-      statusButton: {
-        '&.Mui-disabled': {
-          fontSize: typography.subtitle2,
-          bgcolor: available ? palette.info.main : palette.success.main,
-          color: palette.common.white,
-          px: available ? spacing(3) : spacing(4),
-        },
-      },
       profilePic: {
         width: 50,
         height: 50,
@@ -173,9 +138,11 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
     setOpenMenu(null);
   };
 
-  const handleBack = () => {
-    setSelectChat('');
-  };
+  useEffect(() => {
+    if (!openReport) {
+      setOpenMenu(null);
+    }
+  }, [openReport]);
 
   return (
     <Box sx={chatHeaderStyles?.basePadding}>
@@ -185,13 +152,9 @@ const ChatHeader = ({ profilePic, companyName, available, setSelectChat }: ChatH
         })}
       >
         <ArrowBackIosIcon sx={chatHeaderStyles?.backButton} onClick={handleBack} />
-        {/* <Avatar alt="company profile picture" src={profilePic} sx={chatHeaderStyles?.profilePic} /> */}
-        {!isSm && <Avatar alt={t('company profile picture').toString()} src={profilePic} />}
+        {!isSm && <Avatar alt="User profile picture" src={profilePic} />}
       </IconButton>
-      <Typography sx={chatHeaderStyles?.companyName}>{companyName}</Typography>
-      <Button sx={chatHeaderStyles?.statusButton} disabled>
-        {available ? t('Available') : t('Sold')}
-      </Button>
+      <Typography sx={chatHeaderStyles?.companyName}>{username}</Typography>
       <IconButton
         aria-label={t('display more actions').toString()}
         edge="end"

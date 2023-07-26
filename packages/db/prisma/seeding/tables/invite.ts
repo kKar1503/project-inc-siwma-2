@@ -8,6 +8,7 @@ interface IInvite {
   expiry?: Date;
   companyId: number;
   createdAt?: Date;
+  phone?: string;
 }
 
 const Invite: IInvite[] = [];

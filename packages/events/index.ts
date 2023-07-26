@@ -15,12 +15,20 @@ export const EVENTS = {
       PART: 'clientPartRoom',
       CREATE: 'clientCreateRoom',
       DELETE: 'clientDeleteRoom',
+      GET: 'clientGetRooms',
     },
     MESSAGE: {
       SEND: 'clientSendMessage',
       DELETE: 'clientDeleteMessage',
       READ: 'clientReadMessage',
       SYNC: 'clientSyncMessage',
+      GET: 'clientGetMessages',
+    },
+    OFFER: {
+      MAKE: 'clientMakeOffer',
+      ACCEPT: 'clientAcceptOffer',
+      REJECT: 'clientRejectOffer',
+      CANCEL: 'clientCancelOffer',
     },
     TYPING: {
       START: 'clientStartType',
@@ -33,12 +41,20 @@ export const EVENTS = {
     ROOM: {
       CREATED: 'serverCreatedRoom',
       DELETED: 'serverDeletedRoom',
+      SYNC: 'serverSyncRooms',
     },
     MESSAGE: {
       ROOM: 'serverRoomMessage',
       DELETED: 'serverDeletedMessage',
       READ: 'serverReadMessage',
       SYNC: 'serverSyncMessage',
+      SYNC2: 'serverSyncMessage2',
+    },
+    OFFER: {
+      MAKE: 'serverMakeOffer',
+      ACCEPT: 'serverAcceptOffer',
+      REJECT: 'serverRejectOffer',
+      CANCEL: 'serverCancelOffer',
     },
     TYPING: {
       START: 'serverStartType',

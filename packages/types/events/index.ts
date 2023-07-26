@@ -6,38 +6,54 @@ type RoomId = string;
 type MessageId = number;
 type ListingId = number;
 
+export type MessageContent = (
+  | {
+      contentType: 'text' | 'file' | 'image';
+    }
+  | {
+      contentType: 'offer';
+      multiple: boolean;
+      offerAccepted: boolean;
+      amount: number;
+    }
+) & {
+  content: string;
+};
+
 export type ClientSendMessage = {
   roomId: RoomId;
   message: string;
-  time: Date;
+  time: string;
 };
 
 export type Room = {
   id: RoomId;
-  user: UserId;
+  username: string;
+  category: 'BUY' | 'SELL';
+  latestMessage?: MessageContent;
+  itemId: ListingId;
+  itemName: string;
+  itemPrice: number;
+  itemPriceIsUnit: boolean;
+  itemImage: string;
+  inProgress: boolean;
+  time?: string;
+  userImage: string;
+  unreadMessages: number;
 };
 
-export type ClientCreateRoom = {
-  sellerId: UserId;
+export type MakeOffer = {
+  userId: UserId;
+  roomId: RoomId;
   listingId: ListingId;
+  amount: number;
 };
 
-export type Messages = {
-  id: number;
-  author: string;
-  room: string;
-  read: boolean;
-  createdAt: Date;
-  contentType: 'text' | 'file' | 'image' | 'offer';
-  offer: number | null;
-  content: string;
-};
-
-export type MessageSync =
+export type DataSync<T> =
   | {
       status: 'in_progress';
       progress: number;
-      message: Messages;
+      data: T;
     }
   | {
       status: 'success';
@@ -47,8 +63,26 @@ export type MessageSync =
       err?: string;
     };
 
+export type ClientCreateRoom = {
+  sellerId: UserId;
+  buyerId: UserId;
+  listingId: ListingId;
+};
+
+export type Messages = {
+  id: number;
+  author: string;
+  room: string;
+  read: boolean;
+  createdAt: string;
+  message: MessageContent;
+};
+
+export type MessageSync = DataSync<Messages>;
+export type RoomSync = DataSync<Room>;
+
 // ** Types Declarations **
-export type LoadingState = 'idle' | 'iam' | 'sync';
+export type LoadingState = 'idle' | 'iam' | 'sync' | 'part';
 
 // EventParams keys must match all the available events above in the const object.
 type EventParams = {
@@ -63,11 +97,18 @@ type EventParams = {
   clientPartRoom: RoomId; // Has Ack
   clientCreateRoom: ClientCreateRoom; // Has Ack
   clientDeleteRoom: RoomId; // Has Ack
+  clientGetRooms: UserId; // Has Ack
   // Client Message Events
   clientSendMessage: ClientSendMessage; // Has Ack
   clientDeleteMessage: MessageId; // Has Ack
   clientReadMessage: RoomId; // Has Ack
   clientSyncMessage: MessageId; // Has Ack
+  clientGetMessages: RoomId; // Has Ack
+  // Client Offer Events
+  clientMakeOffer: MakeOffer; // Has Ack
+  clientAcceptOffer: MessageId; // Has Ack
+  clientRejectOffer: MessageId; // Has Ack
+  clientCancelOffer: MessageId; // Has Ack
   // Client Typing Events
   clientStartType: RoomId;
   clientStopType: RoomId;
@@ -76,11 +117,18 @@ type EventParams = {
   // Server Room Events
   serverCreatedRoom: Room;
   serverDeletedRoom: RoomId;
+  serverSyncRooms: RoomSync;
   // Server Message Events
   serverRoomMessage: Messages;
   serverDeletedMessage: MessageId;
   serverReadMessage: MessageId[];
   serverSyncMessage: MessageSync;
+  serverSyncMessage2: MessageSync;
+  // Server Offer Events
+  serverMakeOffer: MakeOffer;
+  serverAcceptOffer: MessageId;
+  serverRejectOffer: MessageId;
+  serverCancelOffer: MessageId;
   // Server Typing Events
   serverStartType: UserId;
   serverStopType: UserId;

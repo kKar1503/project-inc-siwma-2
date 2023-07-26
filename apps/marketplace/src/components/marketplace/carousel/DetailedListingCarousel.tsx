@@ -6,17 +6,12 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
+import S3BoxImage from '@/components/S3BoxImage';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-export interface Image {
-  id: string;
-  fileName: string;
-  url: string;
-}
-
 export type DetailedListingCarouselProps = {
-  data: Image[];
+  data: string[];
 };
 
 const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
@@ -37,7 +32,14 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
   };
 
   return (
-    <Box sx={{ maxHeight: 400, marginRight: 'auto', marginLeft: 'auto' }}>
+    <Box
+      sx={{
+        height: { xs: 200, sm: 300, md: 400, lg: 430 },
+        marginRight: 'auto',
+        marginLeft: 'auto',
+        overflowY: 'hidden',
+      }}
+    >
       <AutoPlaySwipeableViews
         axis="x"
         index={activeStep}
@@ -45,40 +47,38 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         enableMouseEvents
       >
         {data.map((step, index) => (
-          <div>
+          <div key={step + index.toString()}>
             {Math.abs(activeStep - index) <= 2 ? (
               <Box
                 sx={{
                   position: 'relative',
                 }}
               >
-                <Box
-                  component="img"
+                <S3BoxImage
                   sx={{
-                    height: 400,
+                    height: { xs: 200, sm: 300, md: 400, lg: 500 },
                     display: 'block',
-                    width: 1000,
+                    width: { xs: 0, sm: 600, md: 800, lg: 1000 },
                     overflow: 'hidden',
                     opacity: '30%',
                     marginLeft: 'auto',
                     marginRight: 'auto',
                   }}
-                  src={step.url}
+                  src={step as string}
                 />
-                <Box
-                  component="img"
+                <S3BoxImage
                   sx={{
                     display: 'block',
-                    height: 400,
+                    height: { xs: 200, sm: 300, md: 400, lg: 500 },
                     overflow: 'hidden',
                     width: 'auto',
                     position: 'relative',
-                    bottom: 400,
+                    bottom: { xs: 200, sm: 300, md: 400, lg: 500 },
                     marginLeft: 'auto',
                     marginRight: 'auto',
                     zIndex: 'tooltip',
                   }}
-                  src={step.url}
+                  src={step as string}
                 />
               </Box>
             ) : null}
@@ -88,7 +88,7 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
       <MobileStepper
         sx={{
           position: 'relative',
-          bottom: 440,
+          bottom: { xs: 240, sm: 340, md: 450, lg: 620 },
           backgroundColor: 'transparent',
         }}
         steps={maxSteps}
@@ -97,7 +97,12 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         nextButton={
           <Button
             size="small"
-            sx={{ borderRadius: 12, position: 'relative', bottom: 180, right: 780 }}
+            sx={{
+              borderRadius: 12,
+              position: 'relative',
+              bottom: { xs: 80, sm: 120, md: 170, lg: 170 },
+              right: { xs: 0, sm: 70, md: 165, lg: 80 },
+            }}
             onClick={handleNext}
             disabled={activeStep === maxSteps - 1}
           >
@@ -107,7 +112,12 @@ const DetailedListingCarousel = ({ data }: DetailedListingCarouselProps) => {
         backButton={
           <Button
             size="small"
-            sx={{ borderRadius: 12, position: 'relative', bottom: 180, left: 780 }}
+            sx={{
+              borderRadius: 12,
+              position: 'relative',
+              bottom: { xs: 80, sm: 120, md: 170, lg: 170 },
+              left: { xs: 0, sm: 70, md: 165, lg: 80 },
+            }}
             onClick={handleBack}
             disabled={activeStep === 0}
           >

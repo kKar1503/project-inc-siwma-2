@@ -19,6 +19,8 @@ interface IUsers {
   createdAt?: Date;
   bio?: string;
   comments?: string;
+  whatsappNumber?: string;
+  telegramUsername?: string;
 }
 
 const Users: IUsers[] = [
@@ -28,7 +30,7 @@ const Users: IUsers[] = [
     name: 'Elon Musk',
     phone: '69694202',
     // password: 'elonmusk69694202',
-    password: '$2a$10$ZwoAJSDF8MvePz43Qrr4Fe54yykNW9AKbQOCODSOXxEbwmiM5VMsy',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.email,
     companyId: 1,
     comments: 'Great place to buy metals online, trustworthy website!',
@@ -40,7 +42,7 @@ const Users: IUsers[] = [
     phone: '12356789',
     profilePicture: 'oni profile.jpg',
     // password: 'khantzaw12356789',
-    password: '$2a$10$J4/kfBSwnnBB/MCTm2Eau.z9dyAvNC3959LBjnFugphus88Njhpaq',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.phone,
     companyId: 2,
     comments: 'Excellent customer service, transaction was smooth overall',
@@ -51,7 +53,7 @@ const Users: IUsers[] = [
     name: 'Ng Ping How',
     phone: '91234568',
     // password: 'ngpinghow91234568',
-    password: '$2a$10$lwVN5OGtcVkVLXHo7u0rJuQI5Hykbz28IUiZV02okWRDExFK4MYme',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.whatsapp,
     companyId: 3,
   },
@@ -61,7 +63,7 @@ const Users: IUsers[] = [
     name: 'Fok Yanrui Javier',
     phone: '91287659',
     // password: 'fokyanruijavier91287659',
-    password: '$2a$10$2KP6I5Q6ZgXgMfkaCPROQO8ZtQZelVTwGzJxHh.NKNhTco7Mzfm/i',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.whatsapp,
     companyId: 4,
     comments: 'You can find whatever you want or need easily.',
@@ -72,7 +74,7 @@ const Users: IUsers[] = [
     name: 'Jonathan Tan',
     phone: '88493883',
     // password: 'jonathantan88493883',
-    password: '$2a$10$EnMcNxnC4tGyTDx2bUjAxOb/bl8vHy5FglvuLwLUxHdogqBNjQMoW',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.telegram,
     companyId: 5,
     comments:
@@ -84,7 +86,7 @@ const Users: IUsers[] = [
     name: 'Timothy Yeo',
     phone: '99440301',
     // password: 'timothyyeo99440301',
-    password: '$2a$10$MgbOnbGg8W4aicXJAUwCk.0ghi6HFpIGDE2OiBAQoY3zWo4beCIlm',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.facebook,
     companyId: 6,
     comments: 'Smooth deals, I recommed this app',
@@ -95,7 +97,7 @@ const Users: IUsers[] = [
     name: 'Andrew Tate',
     phone: '88908732',
     // password: 'andrewtate88908732',
-    password: '$2a$10$fAx3D4/WYtiXIvVpZSdaZ.xFUE/36YtLlkiRiAsqvdGDJBgWCQfVe',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.telegram,
     companyId: 7,
   },
@@ -105,7 +107,7 @@ const Users: IUsers[] = [
     name: 'Shelby Yeo',
     phone: '98838422',
     // password: 'shelbyyeo98838422',
-    password: '$2a$10$k/W5PfOr/6NZR2J9sGgj6OOEruIs0eHEQymtBZCZz2buBncfdgseq',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.telegram,
     companyId: 8,
   },
@@ -115,7 +117,7 @@ const Users: IUsers[] = [
     name: 'James Tan',
     phone: '95648321',
     // password: 'jamestan95648321',
-    password: '$2a$10$2YHXgekwSAEkvRTC4hqdI.OarT2e/NWXlDUcf4YtoKI2a.Uxgiyte',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.facebook,
     companyId: 9,
   },
@@ -125,7 +127,7 @@ const Users: IUsers[] = [
     name: 'Ong Hin Journ',
     phone: '94554371',
     // password: 'onghinjourn94554371',
-    password: '$2a$10$5orXiphhFk5XHx2L0NER3.xZmNzeWzdQkBP7rY629hYqx4AudMeJe',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.whatsapp,
     companyId: 10,
   },
@@ -140,6 +142,16 @@ const Users: IUsers[] = [
     contact: UserContacts.whatsapp,
     permissions: 1,
     companyId: 1,
+  },
+  {
+    id: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
+    email: 'test@ksapps.com',
+    name: 'karan',
+    phone: '87970222',
+    password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
+    contact: UserContacts.whatsapp,
+    permissions: 1,
+    companyId: 2,
   },
 ];
 

@@ -1,4 +1,4 @@
-import { DataType, ParameterType } from '@prisma/client';
+import { DataType, ParameterType } from '@inc/db-enums';
 import { z } from 'zod';
 
 // -- Define properties -- //
@@ -7,7 +7,7 @@ const name = z.string();
 const displayName = z.string();
 const type = z.nativeEnum(ParameterType);
 const dataType = z.nativeEnum(DataType);
-const active = z.boolean();
+const active = z.boolean().optional();
 const options = z.string().array();
 
 // -- Define schema -- //
