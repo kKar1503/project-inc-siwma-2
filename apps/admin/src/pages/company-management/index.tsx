@@ -6,9 +6,9 @@ import fetchCompaniesCount from '@/middlewares/company-management/fetchCompanies
 import Spinner from '@/components/fallbacks/Spinner';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import CompanyTable from './companyTable';
-import RegisterCompanyCard from './registerCompanyCard';
-import BulkRegisterCompanyCard from './bulkRegisterCompanyCard';
+import CompanyTable from '@/components/tables/BaseTable/CompanyTable';
+import RegisterCompanyCard from '@/components/cards/RegisterCompanyCard';
+import BulkRegisterCompanyCard from '@/components/cards/BulkRegisterCompanyCard';
 
 const useGetCompaniesQuery = (lastIdPointer?: number, limit?: number) => {
   const { data, error, isError, isLoading } = useQuery(

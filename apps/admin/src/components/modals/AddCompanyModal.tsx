@@ -267,7 +267,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
                   onClick={handleSubmit}
                   fullWidth
                 >
-                  Edit Company
+                  Add Company
                 </Button>
               </Grid>
             </Grid>
