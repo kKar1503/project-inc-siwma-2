@@ -102,36 +102,22 @@ const EditCategory = () => {
   };
 
   useEffect(() => {
-    if (categoryData) {
-      setCategoryName(categoryData.data?.name || '');
-      setCategoryNameChinese(categoryData.data?.name || '');
-      setCategoryDescription(categoryData.data?.description || '');
-    }
-  }, [categoryData]);
-
-  useEffect(() => {
-    if (!categoryData.isFetched) {
-      return;
-    }
-
-    if (categoryData.isError) {
-      if ('status' in (categoryData.error as any) && (categoryData.error as any).status === 404) {
-        router.replace('/404');
-        return;
+    if (categoryData.isFetched) {
+      if (categoryData.isError) {
+        if ('status' in (categoryData.error as any) && (categoryData.error as any).status === 404) {
+          router.replace('/404');
+        } else {
+          router.replace('/500');
+        }
+      } else if (categoryData.data === undefined) {
+        router.replace('/500');
+      } else {
+        setCategoryName(categoryData.data?.name || '');
+        setCategoryNameChinese(categoryData.data?.name || '');
+        setCategoryDescription(categoryData.data?.description || '');
       }
-
-      router.replace('/500');
-      return;
     }
-
-    if (categoryData === undefined) {
-      router.replace('/500');
-    }
-  }, [categoryData.isFetched]);
-
-  if (!categoryData.isFetched) {
-    return <Spinner />;
-  }
+  }, [categoryData.isFetched, categoryData.isError, categoryData.data, router]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
