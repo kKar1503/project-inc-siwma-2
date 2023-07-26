@@ -176,6 +176,7 @@ const CategoryTable = () => {
                   bgcolor: palette.primary[400],
                   mb: spacing(1),
                   mr: spacing(1),
+                  width: { xs: '60%', sm: '100%', md: '100%', lg: '100%' },
                 })}
                 onClick={handleCreateCategory}
               >
