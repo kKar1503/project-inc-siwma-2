@@ -36,7 +36,7 @@ function createData(
   name: string,
   displayName: string,
   type: TableType,
-  options: string | number | boolean,
+  options: string,
   dataType: DataType,
   active: boolean
 ): BaseTableData {
@@ -114,7 +114,7 @@ const ParameterTable = () => {
           item.name,
           item.displayName,
           item.type,
-          item.options ?? [],
+          item.options?.toString() ?? '',
           item.dataType,
           item.active ?? false
         )
@@ -189,7 +189,11 @@ const ParameterTable = () => {
         >
           <Button
             variant="contained"
-            sx={({ palette, spacing }) => ({ bgcolor: palette.primary[400], mb: spacing(1), mr:spacing(1) })}
+            sx={({ palette, spacing }) => ({
+              bgcolor: palette.primary[400],
+              mb: spacing(1),
+              mr: spacing(1),
+            })}
             onClick={handleCreateParameter}
           >
             Create Parameter
