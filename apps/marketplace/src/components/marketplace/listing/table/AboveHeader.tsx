@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // ** NextJs Imports
 import { useRouter } from 'next/router';
@@ -28,6 +28,9 @@ import useProductStore from '@/stores/products';
 import useParamStore from '@/stores/parameters';
 import { DateTime } from 'luxon';
 
+// ** Custom Components Imports
+import ShareModalV2 from '@/components/modal/ShareModalV2';
+
 // ** AboveHeader Props Types
 export interface AboveHeaderProps {
   header: string;
@@ -37,6 +40,9 @@ export interface AboveHeaderProps {
 const AboveHeader = (props: AboveHeaderProps) => {
   // ** Props
   const { header, listings } = props;
+
+  // ** States
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   // ** Stores
   const [selections, selectionActions] = useTableSelection();
@@ -142,83 +148,92 @@ const AboveHeader = (props: AboveHeaderProps) => {
     }
 
     if (shareUrl !== undefined) {
-      // Create a popup here
+      setShareModalOpen(true);
+      selectionActions.clearSelected();
       return;
     }
 
     if (isShareUrlFetched && shareUrl === undefined)
       // How you even reach here??!?!?!?!?!
       router.replace('/500');
-  });
+  }, [isShareUrlFetching]);
 
   return (
-    <Toolbar
-      sx={{
-        px: { sm: 3 },
-        py: 2,
-      }}
-    >
-      <Box sx={{ display: 'flex', flexDirection: 'column', flex: '1 1 100%' }}>
-        <Typography variant="h4" id="listing-table-header" component="h1">
-          {header}
-        </Typography>
-
-        <Typography
-          variant="body2"
-          sx={{
-            mt: 1,
-            visibility: hasSelections ? 'visible' : 'hidden',
-          }}
-          id="search-count"
-          component="span"
-        >
-          {`${selections.length} listings selected`}
-        </Typography>
-      </Box>
-      <Tooltip title="Share">
-        <IconButton
-          sx={{ ml: 1 }}
-          disabled={!hasSelections}
-          onClick={() => handleGenerateShareUrl()}
-        >
-          <ShareIcon fontSize="medium" color={hasSelections ? 'primary' : 'disabled'} />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Download">
-        <IconButton sx={{ ml: 1 }} disabled={!hasSelections} onClick={() => handleDownload()}>
-          <DownloadIcon fontSize="medium" color={hasSelections ? 'primary' : 'disabled'} />
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={
-          !hasSelections || selections.length > 3
-            ? 'Cannot compare more than 3 listings'
-            : 'Compare'
-        }
+    <>
+      <Toolbar
+        sx={{
+          px: { sm: 3 },
+          py: 2,
+        }}
       >
-        <span>
+        <Box sx={{ display: 'flex', flexDirection: 'column', flex: '1 1 100%' }}>
+          <Typography variant="h4" id="listing-table-header" component="h1">
+            {header}
+          </Typography>
+
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 1,
+              visibility: hasSelections ? 'visible' : 'hidden',
+            }}
+            id="search-count"
+            component="span"
+          >
+            {`${selections.length} listings selected`}
+          </Typography>
+        </Box>
+        <Tooltip title="Share">
           <IconButton
             sx={{ ml: 1 }}
-            disabled={!hasSelections || selections.length > 3}
-            onClick={() => handleCompareListings()}
+            disabled={!hasSelections}
+            onClick={() => handleGenerateShareUrl()}
           >
-            <CompareIcon
-              fontSize="medium"
-              color={!hasSelections || selections.length > 3 ? 'disabled' : 'primary'}
-            />
+            <ShareIcon fontSize="medium" color={hasSelections ? 'primary' : 'disabled'} />
           </IconButton>
-        </span>
-      </Tooltip>
-      <Tooltip title="Clear Selections">
-        <IconButton
-          sx={{ ml: 1 }}
-          disabled={!hasSelections}
-          onClick={() => selectionActions.clearSelected()}
+        </Tooltip>
+        <Tooltip title="Download">
+          <IconButton sx={{ ml: 1 }} disabled={!hasSelections} onClick={() => handleDownload()}>
+            <DownloadIcon fontSize="medium" color={hasSelections ? 'primary' : 'disabled'} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip
+          title={
+            !hasSelections || selections.length > 3
+              ? 'Cannot compare more than 3 listings'
+              : 'Compare'
+          }
         >
-          <ClearIcon fontSize="medium" color={hasSelections ? 'primary' : 'disabled'} />
-        </IconButton>
-      </Tooltip>
-    </Toolbar>
+          <span>
+            <IconButton
+              sx={{ ml: 1 }}
+              disabled={!hasSelections || selections.length > 3}
+              onClick={() => handleCompareListings()}
+            >
+              <CompareIcon
+                fontSize="medium"
+                color={!hasSelections || selections.length > 3 ? 'disabled' : 'primary'}
+              />
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Tooltip title="Clear Selections">
+          <IconButton
+            sx={{ ml: 1 }}
+            disabled={!hasSelections}
+            onClick={() => selectionActions.clearSelected()}
+          >
+            <ClearIcon fontSize="medium" color={hasSelections ? 'primary' : 'disabled'} />
+          </IconButton>
+        </Tooltip>
+      </Toolbar>
+      <ShareModalV2
+        key={shareUrl}
+        open={shareModalOpen}
+        setOpen={setShareModalOpen}
+        link={`${window.location.origin}/share-function/${shareUrl}`}
+      />
+    </>
   );
 };
 
