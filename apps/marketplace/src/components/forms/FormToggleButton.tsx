@@ -11,6 +11,7 @@ export type FormToggleButtonOption = {
 type FormToggleButtonProps = {
   name: string;
   label: string;
+  labelComponent?: React.ReactNode;
   options: FormToggleButtonOption[];
   placeholder?: string;
   // We do not know what the shape of the object will be
@@ -32,6 +33,7 @@ type FormToggleButtonProps = {
 const FormToggleButton = ({
   name,
   label,
+  labelComponent,
   options,
   placeholder,
   customValidation,
@@ -74,50 +76,53 @@ const FormToggleButton = ({
     isLoading ? (
       <Skeleton className="h-12" />
     ) : (
-      <Controller
-        control={control}
-        {...hookInput(name, label, customValidation)}
-        render={({ field: { ...field }, formState: { defaultValues } }) => (
-          <ButtonGroup
-            variant="outlined"
-            aria-label="outlined button group"
-            placeholder={placeholder}
-            defaultValue={defaultValues ? defaultValues[name] : undefined}
-            sx={{
-              display: 'flex',
-              columnGap: 3,
-              width: '100%',
-              '.Mui-disabled': {
-                borderColor,
-                backgroundColor: borderColor,
-              },
-              ...sx,
-            }}
-          >
-            {options.map((option, index) => (
-              <Button
-                key={option.value}
-                value={option.value}
-                onClick={() => field.onChange(option.value)}
-                disabled={option.value === field.value}
-                // eslint-disable-next-line no-nested-ternary
-                color={errors[name] ? 'error' : success ? 'success' : undefined}
-                // eslint-disable-next-line no-nested-ternary
-                sx={{
-                  flex: 1,
-                  padding: 2,
-                  '&:disabled': {
-                    color: option.value === field.value ? 'white' : undefined,
-                  },
-                }}
-                type="button"
-              >
-                {option.label}
-              </Button>
-            ))}
-          </ButtonGroup>
-        )}
-      />
+      <>
+        {labelComponent}
+        <Controller
+          control={control}
+          {...hookInput(name, label, customValidation)}
+          render={({ field: { ...field }, formState: { defaultValues } }) => (
+            <ButtonGroup
+              variant="outlined"
+              aria-label="outlined button group"
+              placeholder={placeholder}
+              defaultValue={defaultValues ? defaultValues[name] : undefined}
+              sx={{
+                display: 'flex',
+                columnGap: 3,
+                width: '100%',
+                '.Mui-disabled': {
+                  borderColor,
+                  backgroundColor: borderColor,
+                },
+                ...sx,
+              }}
+            >
+              {options.map((option, index) => (
+                <Button
+                  key={option.value}
+                  value={option.value}
+                  onClick={() => field.onChange(option.value)}
+                  disabled={option.value === field.value}
+                  // eslint-disable-next-line no-nested-ternary
+                  color={errors[name] ? 'error' : success ? 'success' : undefined}
+                  // eslint-disable-next-line no-nested-ternary
+                  sx={{
+                    flex: 1,
+                    padding: 2,
+                    '&:disabled': {
+                      color: option.value === field.value ? 'white' : undefined,
+                    },
+                  }}
+                  type="button"
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </ButtonGroup>
+          )}
+        />
+      </>
     )
   );
 };

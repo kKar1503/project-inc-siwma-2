@@ -126,7 +126,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
               }}
             >
               {getLayout(
-                <Box>
+                <Box height="100dvh" display="flex" flexDirection="column">
                   <I18nextProvider i18n={i18n}>
                     {includeNavbar && <NavBar renderSearchBar={renderSearchBar} />}
                     <Component {...pageProps} />

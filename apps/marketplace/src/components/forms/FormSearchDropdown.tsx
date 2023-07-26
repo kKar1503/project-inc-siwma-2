@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Autocomplete, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -19,6 +20,7 @@ type FormSearchDropdownProps = {
   customValidation?: RegisterOptions<FieldValues, string> | undefined;
   required?: boolean;
   success?: boolean;
+  resetFlag?: string;
   isLoading?: boolean;
   sx?: React.ComponentProps<typeof Autocomplete>['sx'];
 };
@@ -36,13 +38,14 @@ const FormSearchDropdown = ({
   customValidation,
   required = false,
   success,
+  resetFlag,
   isLoading,
   sx,
 }: FormSearchDropdownProps) => {
   // Use form context
   const {
     register,
-    formState: { errors },
+    formState: { errors, defaultValues },
     control,
   } = useFormContext();
 
@@ -69,7 +72,8 @@ const FormSearchDropdown = ({
       <Controller
         name={name}
         control={control}
-        render={({ field: { ref, ...field }, formState: { defaultValues } }) => (
+        key={resetFlag}
+        render={({ field: { ref, ...field } }) => (
           <Autocomplete
             {...field}
             placeholder={placeholder}
@@ -91,13 +95,16 @@ const FormSearchDropdown = ({
               },
               ...sx,
             }}
-            defaultValue={defaultValues ? defaultValues[name] : undefined}
+            defaultValue={() => {
+              const result = defaultValues ? defaultValues[name] : undefined;
+              return result;
+            }}
             renderInput={(params) => (
               // @ts-ignore
               <TextField variant="outlined" {...params} label={`${label}${required ? ' *' : ''}`} />
             )}
             getOptionLabel={(option) => option.label}
-            isOptionEqualToValue={(option, value) => option.value === value.value}
+            isOptionEqualToValue={(option, value) => String(option.value) === String(value?.value)}
             {...hookInput(name, label, customValidation)}
             onChange={(e, value) => field.onChange(value)}
           />
