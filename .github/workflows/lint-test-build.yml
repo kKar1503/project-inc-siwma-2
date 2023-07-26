@@ -84,13 +84,7 @@ jobs:
           directory: 'apps/admin'
           file_name: .env.local
           fail_on_empty: true
-
-      - name: Replace eslint config files
-        run: |
-          rm -rf ./apps/marketplace/.eslintrc.json ./apps/admin/.eslintrc.json
-          cp ./apps/marketplace/.eslintrc.cli.json ./apps/marketplace/.eslintrc.json
-          cp ./apps/admin/.eslintrc.cli.json ./apps/admin/.eslintrc.json
-
+    
       - name: Build
         id: build-id
         run: pnpm build
