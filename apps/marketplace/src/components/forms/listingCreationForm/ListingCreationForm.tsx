@@ -28,6 +28,7 @@ type ListingCreationFormProps = {
   submitSuccess: boolean;
   onSubmit: (data: FieldValues) => void;
   formHook: ReturnType<typeof useForm>;
+  resetFlag: string;
   errorMessage?: string;
 };
 
@@ -40,6 +41,7 @@ const ListingCreationForm = ({
   submitSuccess,
   onSubmit,
   formHook,
+  resetFlag,
   errorMessage,
 }: ListingCreationFormProps) => {
   // -- Hooks -- //
@@ -66,7 +68,7 @@ const ListingCreationForm = ({
           required
         >
           {/** @ts-ignore */}
-          <FormToggleButton options={listingTypeOptions} placeholder="Sample Placeholder" />
+          <FormToggleButton options={listingTypeOptions} placeholder="Listing Type Selection" />
         </FormInputGroup>
         <FormInputGroup
           sx={{ flex: 1 }}
@@ -84,6 +86,7 @@ const ListingCreationForm = ({
                 value: e.id,
               })) || []
             }
+            resetFlag={resetFlag}
           />
         </FormInputGroup>
 

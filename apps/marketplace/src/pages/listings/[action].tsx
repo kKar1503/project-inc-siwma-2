@@ -12,16 +12,47 @@ import fetchParams from '@/services/fetchParamNames';
 import ListingCreationForm from '@/components/forms/listingCreationForm/ListingCreationForm';
 import apiClient from '@/utils/api/client/apiClient';
 import OnCreateModal from '@/components/modal/OnCreateModal';
+import fetchListing from '@/services/fetchListing';
+import { Listing, Parameter, Product } from '@/utils/api/client/zod';
 
 /**
  * Maps default values into react-hook-form default values
  * @returns A default value object for react-hook-form
  */
+const obtainDefaultValues = (data: Listing, product: Product) => {
+  const params = Object.fromEntries(
+    data.parameters?.map((e) => [`param-${e.paramId}`, e.value]) || []
+  );
+
+  const result = {
+    negotiable: data.negotiable,
+    price: data.price,
+    product: {
+      label: product.name || 'Unamed Product',
+      value: product.id,
+    },
+    quantity: data.quantity,
+    listingType: data.type,
+    ...params,
+  };
+
+  console.log({ params, result });
+
+  return result;
+};
+
 // const obtainDefaultValues = () => ({
-//   companyName: 'Default Company Name',
-//   numberInput: '123',
-//   dropdownInput: dropdownOptions[0],
-//   pillSelectInput: pillSelectOptions[1].value,
+//   '2': '147',
+//   '9': '102',
+//   '10': '30',
+//   negotiable: true,
+//   price: 80,
+//   product: {
+//     label: 'Stainless Steel Round Bar',
+//     value: '2',
+//   },
+//   quantity: 15,
+//   listingType: 'SELL',
 // });
 
 const ListingCreateEdit = () => {
@@ -29,18 +60,23 @@ const ListingCreateEdit = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [openModal, setOpenModal] = useState<boolean>(false);
-
-  // -- Queries -- //
-  const products = useQuery('products', async () => fetchProducts());
-  const categories = useQuery('categories', async () => fetchCategories(true));
-  const isLoading = products.isLoading || categories.isLoading;
-
-  // Responsive breakpoints
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [resetFlag, setResetFlag] = useState<string>('');
 
   // Get route params
   const router = useRouter();
   const { id, action } = router.query;
+
+  // -- Queries -- //
+  const products = useQuery('products', async () => fetchProducts());
+  const categories = useQuery('categories', async () => fetchCategories(true));
+  const selectedListing = useQuery('listing', async () => fetchListing(id as string), {
+    enabled: action === 'edit' && id !== undefined,
+  });
+
+  const isLoading = products.isLoading || categories.isLoading || selectedListing.isLoading;
+
+  // Responsive breakpoints
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   // -- Data Validation -- //
   if ((action !== 'create' && action !== 'edit') || Number.isNaN(id)) {
@@ -48,9 +84,23 @@ const ListingCreateEdit = () => {
     router.push('/');
   }
 
+  console.log({ selectedListing });
+
+  // Check if the provided id is valid
+  if (action === 'edit' && selectedListing.isError && !selectedListing.data) {
+    // Redirect the user back to the home page
+    router.push('/');
+  }
+
+  // Find the product that the listing is for
+  const product = products.data?.find((e) => e.id === selectedListing.data?.productId);
+
   // Initialise react hook forms
   const formHook = useForm({
-    // defaultValues: obtainDefaultValues(),
+    defaultValues:
+      selectedListing.data && product
+        ? obtainDefaultValues(selectedListing.data, product)
+        : undefined,
   });
 
   // Deconstruct the individual hooks from the object
@@ -79,7 +129,31 @@ const ListingCreateEdit = () => {
     }
   );
 
+  console.log({ values: getValues() });
+
   const categoryParameters = parameters.data;
+
+  const onSuccess = () => {
+    // Success
+    reset();
+    setSubmitSuccess(true);
+    setOpenModal(true);
+    // onSuccessChange();
+  };
+
+  const onError = (
+    data: Parameters<React.ComponentProps<typeof ListingCreationForm>['onSubmit']>['0']
+  ) => {
+    // An error occurred
+    // Display a error message
+    setErrorMessage(
+      t('An error occurred while creating the listing, please try again later') || ''
+    );
+
+    // Error all the input fields
+    // @ts-ignore
+    Object.keys(data.data).forEach((inputName) => setError(inputName, {}));
+  };
 
   const onSubmit = async (
     data: Parameters<React.ComponentProps<typeof ListingCreationForm>['onSubmit']>['0']
@@ -90,7 +164,10 @@ const ListingCreateEdit = () => {
     setErrorMessage(undefined);
 
     // Deconstruct common values from data
-    const { negotiable, price, product, quantity, listingType, ...categoryParams } = data.data;
+    const { negotiable, price, product, quantity, listingType, ...$categoryParams } = data.data;
+    const categoryParams = Object.fromEntries(
+      $categoryParams?.map((e) => [`param-${e.paramId}`, e.value]) || []
+    );
 
     // -- Validation -- //
     // Initialise an array of errors
@@ -163,27 +240,29 @@ const ListingCreateEdit = () => {
       })),
     };
 
+    // Check if the user is editing a listing
+    if (action === 'edit') {
+      // Edit listing
+      await apiClient
+        .put(`/v1/listings/${id}`, preparedData)
+        .then(() => {
+          onSuccess();
+        })
+        .catch((err) => {
+          onError(data);
+        });
+
+      return;
+    }
+
     // Create listing
-    const result = await apiClient
+    await apiClient
       .post('/v1/listings', preparedData)
       .then(() => {
-        // Success
-        reset();
-        setSubmitSuccess(true);
-        setOpenModal(true);
-        // onSuccessChange();
+        onSuccess();
       })
       .catch((err) => {
-        // An error occurred
-        // Display a error message
-        setErrorMessage(
-          t('An error occurred while creating the listing, please try again later') || ''
-        );
-
-        // Error all the input fields
-        Object.keys(data.data).forEach((inputName) => {
-          setError(inputName, {});
-        });
+        onError(data);
       });
   };
 
@@ -215,8 +294,23 @@ const ListingCreateEdit = () => {
     }
 
     // Reset the category parameters
+    // @ts-ignore
     unregister(parameterIds);
   }, [selectedProduct]);
+
+  // Update the default values when the data loads
+  useEffect(() => {
+    if (id && selectedListing.data && product && !isLoading) {
+      console.log('resetting');
+      // Update the default values
+      reset(obtainDefaultValues(selectedListing.data, product), {
+        keepValues: false,
+      });
+
+      // Reset the reset flag
+      setResetFlag(Math.random().toString());
+    }
+  }, [selectedListing.data, product]);
 
   return (
     <>
@@ -256,6 +350,7 @@ const ListingCreateEdit = () => {
           <Box>
             <ListingCreationForm
               categoryParameters={categoryParameters}
+              // @ts-ignore
               formHook={formHook}
               isLoading={isLoading}
               onSubmit={onSubmit}
@@ -264,6 +359,7 @@ const ListingCreateEdit = () => {
               selectedProduct={selectedProduct}
               submitSuccess={submitSuccess}
               errorMessage={errorMessage}
+              resetFlag={resetFlag}
             />
           </Box>
         </Box>
