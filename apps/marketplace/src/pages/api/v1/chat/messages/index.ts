@@ -24,9 +24,11 @@ const pusher = new Pusher({
 export default apiHandler({ allowNonAuthenticated: true })
   .get(async (req, res) => {
     // test EP, just creates a new channel with the name "yes"
+    // REMIND ME TO GET RID OF THIS ENTIRE EP, THANKS
     const response = await pusher.trigger('chat', 'chat-event', {
       message: 'yes',
       sender: 'yes',
+      receiver: 'no',
     });
 
     console.log(response);
