@@ -101,7 +101,7 @@ const menuItems = [
     dropdown: [
       {
         name: 'Companies',
-        link: '/companies',
+        link: '/company-management',
         Icon: ApartmentIcon,
       },
       {
