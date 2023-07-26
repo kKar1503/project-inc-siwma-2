@@ -184,18 +184,22 @@ const CreateParameter = () => {
   };
 
   const handleSubmit = async () => {
-    if (type === 'MANY_CHOICES' && options.length < 3) {
-      setOpenMany(true);
-      setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
-    } else if (type === 'TWO_CHOICES' && options.length < 2) {
-      setOpenMany(true);
-      setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
-    } else {
-      await postParameter();
-      router.push(`/parameters`);
+    try {
+      if (type === 'MANY_CHOICES' && options.length < 3) {
+        setOpenMany(true);
+        setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
+      } else if (type === 'TWO_CHOICES' && options.length < 2) {
+        setOpenMany(true);
+        setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
+      } else {
+        await postParameter();
+        router.push(`/parameters`);
+      }
+    } catch (error) {
+      router.push('/404');
     }
   };
-
+  
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setOpenLeave(true);

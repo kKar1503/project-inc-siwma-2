@@ -28,6 +28,7 @@ import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -42,30 +43,35 @@ export type ParameterProps = {
 };
 
 const useGetParameter = (parameterId: string) => {
-  const { data } = useQuery('parameter', async () => fetchParameterById(parameterId), {
-    enabled: parameterId !== undefined,
-  });
-  return data;
+  const { data, error, isError, isFetched } = useQuery(
+    'parameter',
+    async () => fetchParameterById(parameterId),
+    {
+      enabled: parameterId !== undefined,
+    }
+  );
+  return { data, error, isError, isFetched };
 };
 
 const EditParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);  
-  
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
   const router = useRouter();
   const id = router.query.id as string;
   const queryClient = useQueryClient();
   const parameterData = useGetParameter(id);
-  console.log(parameterData);
 
-  const [name, setName] = useState<string>(parameterData?.name || '');
-  const [displayName, setDisplayName] = useState<string>(parameterData?.displayName || '');
-  const [type, setType] = useState<string>(parameterData?.type || '');
+  const [name, setName] = useState<string>(parameterData.data?.name || '');
+  const [displayName, setDisplayName] = useState<string>(parameterData.data?.displayName || '');
+  const [type, setType] = useState<string>(parameterData.data?.type || '');
   const [options, setOptions] = useState<string[]>(
-    parameterData?.options && Array.isArray(parameterData?.options) ? parameterData.options : []
+    parameterData.data?.options && Array.isArray(parameterData.data?.options)
+      ? parameterData.data?.options
+      : []
   );
-  const [dataType, setDataType] = useState<string>(parameterData?.dataType || '');
+  const [dataType, setDataType] = useState<string>(parameterData.data?.dataType || '');
 
   const [displayNameError, setDisplayNameError] = useState('');
   const [nameError, setNameError] = useState('');
@@ -218,19 +224,35 @@ const EditParameter = () => {
   };
 
   useEffect(() => {
-    if (parameterData) {
-      setName(parameterData?.name || '');
-      setDisplayName(parameterData?.displayName || '');
-      setType(parameterData?.type || '');
-      setOptions(parameterData?.options ?? []);
-      setDataType(parameterData?.dataType || '');
+    if (parameterData.isFetched) {
+      if (parameterData.isError) {
+        if (
+          'status' in (parameterData.error as any) &&
+          (parameterData.error as any).status === 404
+        ) {
+          router.replace('/404');
+        } else {
+          router.replace('/500');
+        }
+      } else if (parameterData.data === undefined) {
+        router.replace('/500');
+      } else {
+        setName(parameterData.data?.name || '');
+        setDisplayName(parameterData.data?.displayName || '');
+        setType(parameterData.data?.type || '');
+        setOptions(parameterData.data?.options ?? []);
+        setDataType(parameterData.data?.dataType || '');
+      }
     }
-  }, [parameterData]);
+  }, [parameterData.isFetched, parameterData.isError, parameterData.data, router]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
       queryClient.invalidateQueries('parameter');
       router.push(`/parameters`);
+    }
+    if (mutation.isError) {
+      router.push('/404');
     }
   }, [mutation.isSuccess, queryClient, router, id]);
 
