@@ -82,7 +82,7 @@ const ListingCreateEdit = () => {
   const isEditing = action === 'edit';
   const isCreating = action === 'create';
 
-  if ((!isEditing && !isCreating) || Number.isNaN(id)) {
+  if (isEditing && Number.isNaN(id)) {
     // Redirect the user back to the home page
     router.push('/');
   }
@@ -307,7 +307,9 @@ const ListingCreateEdit = () => {
 
   // Update the default values when the data loads
   useEffect(() => {
-    if (id && selectedListing.data && product && !isLoading) {
+    console.log({ id, selectedListing, product, isLoading });
+    console.log(id && selectedListing.data && product);
+    if (id && selectedListing.data && product) {
       console.log('resetting');
       // Update the default values
       reset(obtainDefaultValues(selectedListing.data, product), {
@@ -317,7 +319,7 @@ const ListingCreateEdit = () => {
       // Reset the reset flag
       setResetFlag(Math.random().toString());
     }
-  }, [selectedListing.data, product]);
+  }, [selectedListing.isSuccess, products.isSuccess]);
 
   return (
     <>
