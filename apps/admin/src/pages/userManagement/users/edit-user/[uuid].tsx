@@ -4,7 +4,7 @@ import { useResponsiveness } from '@inc/ui';
 import { useRouter } from 'next/router';
 import { useQueries } from 'react-query';
 import fetchCompanies from '@/middlewares/fetchCompanies';
-import fetchUser from '@/middlewares/fetchUser';
+import fetchUserById from '@/middlewares/fetchUserById';
 import WarningModal from '@/components/modals/WarningModal';
 import { useEffect, useState } from 'react';
 import SuccessModal from '@/components/modals/SuccessModal';
@@ -23,7 +23,7 @@ const EditUser = () => {
     { queryKey: 'getCompanies', queryFn: fetchCompanies },
     {
       queryKey: ['getUser', uuid],
-      queryFn: () => fetchUser(uuid as string),
+      queryFn: () => fetchUserById(uuid as string),
       enabled: uuid !== undefined,
     },
   ]);
