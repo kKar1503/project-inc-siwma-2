@@ -59,10 +59,7 @@ const SizedSkeletonRows = (props: SizedSkeletonRowProps) => {
           <TableCell align="center" sx={{ minWidth: 150, width: 150 }}>
             <Skeleton variant="text" />
           </TableCell>
-          <ActionCell
-            isBookmarked={false}
-            sx={{ width: isSm ? 66 : 150, minWidth: isSm ? 66 : 150 }}
-          />
+          <ActionCell listingId="0" sx={{ width: isSm ? 66 : 150, minWidth: isSm ? 66 : 150 }} />
         </TableRow>
       ))}
     </>
