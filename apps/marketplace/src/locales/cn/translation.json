@@ -202,5 +202,14 @@
   "TableListingPrice": "价钱 ($)",
   "TableListingQuantity": "货量",
   "TableListingType": "标签",
-  "TableListingPosted": "发布日期"
+  "TableListingPosted": "发布日期",
+
+  "Quantity": "数量",
+  "Dimensions (mm)": "尺寸 (毫米)",
+  "Cross Section": "横截面",
+  "Metal Grade": "金属等级",
+  "Certification": "认证",
+  "Posted on": "发布日期",
+  "Share": "分享",
+  "share": "分享"
 }

@@ -204,5 +204,15 @@
   "TableListingPrice": "Price ($)",
   "TableListingQuantity": "Quantity",
   "TableListingType": "Tags",
-  "TableListingPosted": "Posted on"
+  "TableListingPosted": "Posted on",
+
+  "Quantity": "Quantity",
+  "Dimensions (mm)": "Dimensions (mm)",
+  "Cross Section": "Cross Section",
+  "Metal Grade": "Metal Grade",
+  "Certification": "Certification",
+  "Posted on": "Posted on",
+
+  "Share": "Share",
+  "share": "share"
 }
