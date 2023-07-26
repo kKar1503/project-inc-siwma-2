@@ -28,6 +28,7 @@ type ListingCreationFormProps = {
   submitSuccess: boolean;
   onSubmit: (data: FieldValues) => void;
   formHook: ReturnType<typeof useForm>;
+  errorMessage?: string;
 };
 
 const ListingCreationForm = ({
@@ -39,6 +40,7 @@ const ListingCreationForm = ({
   submitSuccess,
   onSubmit,
   formHook,
+  errorMessage,
 }: ListingCreationFormProps) => {
   // -- Hooks -- //
   const [isSm] = useResponsiveness(['sm']);
@@ -57,8 +59,8 @@ const ListingCreationForm = ({
       <FormProvider {...formHook}>
         <FormInputGroup
           sx={{ flex: 1 }}
-          label="Toggle Select Input"
-          name="toggleSelectInput"
+          label="Listing Type"
+          name="listingType"
           isLoading={isLoading}
           success={submitSuccess}
           required
@@ -205,15 +207,27 @@ const ListingCreationForm = ({
               <FormNumberInput min={0} />
             </FormInputGroup>
           </Box>
-          <FormInputGroup
-            label="Negotiable"
-            name="negotiable"
-            isLoading={isLoading}
-            success={submitSuccess}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
           >
-            {/** @ts-ignore */}
-            <FormCheckboxInput options={[{ label: 'Negotiable', value: true }]} />
-          </FormInputGroup>
+            <FormInputGroup
+              label="Negotiable"
+              name="negotiable"
+              isLoading={isLoading}
+              success={submitSuccess}
+              hideError
+            >
+              {/** @ts-ignore */}
+              <FormCheckboxInput options={[{ label: 'Negotiable', value: true }]} />
+            </FormInputGroup>
+            <Typography variant="body1" fontWeight="medium" color="red">
+              {errorMessage}
+            </Typography>
+          </Box>
         </Box>
       </FormProvider>
       <Box

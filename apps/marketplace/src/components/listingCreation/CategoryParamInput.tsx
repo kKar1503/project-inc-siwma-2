@@ -103,7 +103,7 @@ const CategoryParamInput = ({
     <FormInputGroup
       sx={{ flex: 1, ...sx }}
       label={parameter.displayName}
-      name={parameter.name}
+      name={parameter.id.toString()}
       isLoading={isLoading}
       success={submitSuccess}
       required={required}

@@ -5,16 +5,16 @@ import { useRouter } from 'next/router';
 export type OnCreateModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  listingID: string;
+  content: string;
   title?: string;
 };
 
-const OnCreateModal = ({ open, setOpen, listingID, title }: OnCreateModalProps) => {
+const OnCreateModal = ({ open, setOpen, content, title }: OnCreateModalProps) => {
   const [rightButtonState, setRightButtonState] = useState(false);
   const router = useRouter();
 
   if (rightButtonState === true) {
-    router.push(`/listing/${listingID}`);
+    router.push(`/`);
   }
 
   return (
@@ -24,7 +24,7 @@ const OnCreateModal = ({ open, setOpen, listingID, title }: OnCreateModalProps) 
       buttonColor="#00C853"
       icon="success"
       title={title || 'Successfully created listing!'}
-      content="Your listing is now updated on the marketplace."
+      content={content}
       leftButtonText={null}
       rightButtonText="return"
       leftButtonState={false}
