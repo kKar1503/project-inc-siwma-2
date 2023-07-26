@@ -65,7 +65,8 @@
         "exceptAfterSingleLine": true
       }
     ],
-    "max-classes-per-file": "off"
+    "max-classes-per-file": "off",
+    "react-hooks/exhaustive-deps": "off"
   },
   "overrides": [
     {

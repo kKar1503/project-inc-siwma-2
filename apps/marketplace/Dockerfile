@@ -1,8 +1,11 @@
-FROM node:18.15.0-alpine3.17 as depsbuilder
+FROM node:18.16.0-alpine3.18 as depsbuilder
 
 WORKDIR /app
 
-COPY . .
+COPY apps/marketplace ./apps/marketplace
+COPY packages ./packages
+COPY static ./static
+COPY .npmrc nx.json package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # DATABASE_URL for Prisma
 ARG DATABASE_URL
@@ -13,10 +16,6 @@ ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
-
-# Chat Server URL
-ARG CHAT_SERVER_URL
-ENV NEXT_PUBLIC_CHAT_SERVER_URL=$CHAT_SERVER_URL
 
 # Build Options
 ARG NEXT_BUILD_OPTION
@@ -37,7 +36,7 @@ RUN pnpx nx run @inc/marketplace:build:prod
 
 # ===================================================================
 
-FROM node:18.15.0-alpine3.17 as runner
+FROM node:18.16.0-alpine3.18 as runner
 
 WORKDIR /app
 ENV NODE_ENV production
@@ -72,14 +71,11 @@ ENV SIB_SENDER_EMAIL=$SIB_SENDER_EMAIL
 # Frontend URL
 ARG FRONTEND_URL
 ENV FRONTEND_URL=$FRONTEND_URL
+ENV NEXT_PUBLIC_FRONTEND_URL=$FRONTEND_URL
 
 # Challenge for Notifications
 ARG CHALLENGE_API_KEY
 ENV CHALLENGE_API_KEY=$CHALLENGE_API_KEY
-
-# Chat Server URL
-ARG CHAT_SERVER_URL
-ENV NEXT_PUBLIC_CHAT_SERVER_URL=$CHAT_SERVER_URL
 
 # Adding user & usergroup for NextJS's node server
 RUN addgroup --system --gid 1001 nodejs

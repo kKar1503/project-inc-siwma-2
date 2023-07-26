@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { UserContacts } from '@inc/db-enums';
 import listingSchemas from './listings';
+import { zodParseToInteger } from '../../apiHelper';
 
 const id = z.string();
 const name = z.string();
@@ -64,6 +65,11 @@ const updateUser = user;
 const deleteUser = z.object({});
 const getUsers = user.array();
 
+const shareListingsSchema = z.object({
+  ownerId: z.string(),
+  listings: z.array(z.string()),
+});
+
 export type User = z.infer<typeof user>;
 
 export default {
@@ -75,4 +81,5 @@ export default {
   toggle: toggleUser,
   bookmark: bookmarkUser,
   getListings: listingSchemas.getAll,
+  shareListings: shareListingsSchema,
 };

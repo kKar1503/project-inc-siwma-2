@@ -2,7 +2,7 @@ import React from 'react';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
 
