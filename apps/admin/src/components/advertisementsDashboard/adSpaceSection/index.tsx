@@ -1,7 +1,6 @@
 import AdSpaceTable from '@/components/advertisementsDashboard/adSpaceTable';
 import Grid from '@mui/material/Grid';
 import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
-import AdsClickIcon from '@mui/icons-material/AdsClick';
 import InfoCard from '@/components/advertisementsDashboard/InfoCard';
 import { useQueries, UseQueryResult } from 'react-query';
 import fetchAdvertisements from '@/services/advertisements/fetchAdvertisements';
@@ -95,7 +94,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   };
 
   const onEdit = (id: string) => {
-
+    window.open(`/advertisement/edit/${id}`, '_blank')
   };
 
   const onSetActive = (ids: readonly string[]) => {
@@ -114,7 +113,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
                   value={active.length.toString()} />
       </Grid>
       <Grid item xs={6} md={6} lg={6}>
-        {/*<InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />*/}
+        {/* <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} /> */}
       </Grid>
       <Grid item xs={12} md={12} lg={12}>
         <S3ImagePreview close={() => {
