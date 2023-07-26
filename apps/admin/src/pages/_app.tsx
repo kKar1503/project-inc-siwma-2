@@ -102,7 +102,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           allowNonAuthenticated={allowNonAuthenticated}
         >
           <QueryClientProvider client={queryClient}>
-            <Box display="flex" flexDirection="row">
+            <Box display="flex" flexDirection="row" height="100dvh">
               {includeSideBar && (
                 <Box width={isMobileOrTablet ? '0px' : '290px'} overflow="auto">
                   <ThemeProvider theme={backgroundColor}>
@@ -110,7 +110,11 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
                   </ThemeProvider>
                 </Box>
               )}
-              <Box flex="1" paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}>
+              <Box
+                flex="1"
+                paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}
+                overflow="auto"
+              >
                 {getLayout(<Component {...pageProps} />)}
               </Box>
             </Box>
