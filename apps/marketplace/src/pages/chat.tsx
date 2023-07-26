@@ -42,7 +42,8 @@ const ChatRoom = ({ userId }: UserNameProps) => {
 
   const [channels, setChannels] = useState<Channel[]>([]);
   const [currentChannelId, setCurrentChannelId] = useState('');
-  const [chats, setChats] = useState<ChatData[]>([]);
+  const [currentChat, setCurrentChat]  = useState<ChatListProps | null>(null);
+  const [chats, setChats] = useState<ChatListProps[]>([]);
   const [messageToSend, setMessageToSend] = useState('');
 
   // ** MUI **
@@ -164,10 +165,77 @@ const ChatRoom = ({ userId }: UserNameProps) => {
       });
   };
 
+  // return (
+  //   <Box id="chat-page" display="flex" sx={chatPageSx}>
+  //     {/* render if isMd and isLg */}
+  //     {/* if isSm, display chat list if currentChannelId is '' (room not selected) */}
+  //     {(isMd || isLg || (isSm && currentChannelId === '')) && (
+  //       <Box
+  //         sx={{
+  //           width: isSm ? 1 / 1 : 1 / 3,
+  //           overflow: 'hidden',
+  //         }}
+  //       >
+  //         <ChatList
+  //           chats={channels}
+  //           setSelectChat={(channelId) => {
+  //             subscribeToChannel(channelId);
+  //           }}
+  //         />
+  //       </Box>
+  //     )}
+  //     {currentChannelId !== '' && (
+  //       <Box
+  //         id="chat-right-side-wrapper"
+  //         sx={{
+  //           width: isSm ? 1 / 1 : 2 / 3,
+  //           height: '100%',
+  //           overflow: 'hidden',
+  //         }}
+  //       >
+  //         <Box
+  //           id="chat-right-side"
+  //           sx={{
+  //             height: '100%',
+  //           }}
+  //         >
+  //           <ChatHeader
+  //             profilePic="/images/placeholder.png"
+  //             username="PLACEHOLDER"
+  //             handleBack={() => setCurrentChannelId('')}
+  //           />
+  //           <ChatSubHeader
+  //             itemPic={null}
+  //             itemName="PLACEHOLDER"
+  //             available
+  //             itemPrice={0}
+  //             itemPriceIsUnit
+  //           />
+  //           <ChatBox
+  //             roomData={chats}
+  //             loginId={userId}
+  //             ChatText={
+  //               <br />
+  //               // TODO: fix this
+  //               // <ChatTextBox
+  //               //   selectedFile={selectedFile}
+  //               //   setSelectedFile={setSelectedFile}
+  //               //   inputText={inputText}
+  //               //   setInputText={setInputText}
+  //               //   onClickSend={onClickSend}
+  //               // />
+  //             }
+  //           />
+  //         </Box>
+  //       </Box>
+  //     )}
+  //   </Box>
+  // );
+
   return (
     <Box id="chat-page" display="flex" sx={chatPageSx}>
       {/* render if isMd and isLg */}
-      {/* if isSm, display chat list if roomId is '' (room not selected) */}
+      {/* if isSm, display chat list if currentChannelId is '' (room not selected) */}
       {(isMd || isLg || (isSm && currentChannelId === '')) && (
         <Box
           sx={{
@@ -176,14 +244,21 @@ const ChatRoom = ({ userId }: UserNameProps) => {
           }}
         >
           <ChatList
-            chats={channels}
-            setSelectChat={(channelId) => {
-              subscribeToChannel(channelId);
+            chats={chats}
+            selectChat={currentChannelId}
+            setSelectChat={(currentChannelId) => {
+              setCurrentChannelId(currentChannelId);
+              // currentChannelIdRef.current = currentChannelId;
+            }}
+            onChange={(e) => {
+              const element = e.currentTarget as HTMLInputElement;
+              const { value } = element;
             }}
           />
         </Box>
       )}
-      {currentChannelId !== '' && (
+      {/* if isSm, display  */}
+      {currentChannelId !== '' && currentChat !== null && (
         <Box
           id="chat-right-side-wrapper"
           sx={{
@@ -199,30 +274,32 @@ const ChatRoom = ({ userId }: UserNameProps) => {
             }}
           >
             <ChatHeader
-              profilePic="/images/placeholder.png"
-              username="PLACEHOLDER"
+              profilePic={currentChat.userImage}
+              username={currentChat.username}
               handleBack={() => setCurrentChannelId('')}
             />
             <ChatSubHeader
-              itemPic={null}
-              itemName="PLACEHOLDER"
-              available
-              itemPrice={0}
-              itemPriceIsUnit
+              itemPic={currentChat.itemImage}
+              itemName={currentChat.itemName}
+              available={currentChat.inProgress}
+              itemPrice={currentChat.itemPrice}
+              itemPriceIsUnit={currentChat.itemPriceIsUnit}
+              onCreateOffer={onCreateOffer}
             />
             <ChatBox
-              roomData={chats}
+              roomData={messages}
               loginId={userId}
+              onAcceptOffer={onAcceptOffer}
+              onRejectOffer={onRejectOffer}
+              onCancelOffer={onCancelOffer}
               ChatText={
-                <br />
-                // TODO: fix this
-                // <ChatTextBox
-                //   selectedFile={selectedFile}
-                //   setSelectedFile={setSelectedFile}
-                //   inputText={inputText}
-                //   setInputText={setInputText}
-                //   onClickSend={onClickSend}
-                // />
+                <ChatTextBox
+                  selectedFile={selectedFile}
+                  setSelectedFile={setSelectedFile}
+                  inputText={inputText}
+                  setInputText={setInputText}
+                  onClickSend={onClickSend}
+                />
               }
             />
           </Box>
