@@ -7,9 +7,6 @@ COPY packages ./packages
 COPY static ./static
 COPY .npmrc nx.json package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# do some eslint magic
-RUN rm -f apps/marketplace/.eslintrc.json && mv apps/marketplace/.eslintrc.cli.json apps/marketplace/.eslintrc.json
-
 # DATABASE_URL for Prisma
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL

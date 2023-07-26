@@ -8,7 +8,6 @@ interface IListingItems {
   categoryId: number;
   createdAt?: Date;
   updatedAt?: Date;
-  deletedAt?: Date;
 }
 
 const ListingItems: IListingItems[] = [

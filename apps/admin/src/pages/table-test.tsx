@@ -32,7 +32,7 @@ function createData(
 const headCells: Header[] = [
   {
     key: 'name',
-    label: 'Dessert (100g serving)',
+    label: 'Dessert (100g serving)',
   },
   {
     key: 'calories',
@@ -40,15 +40,15 @@ const headCells: Header[] = [
   },
   {
     key: 'fat',
-    label: 'Fat (g)',
+    label: 'Fat (g)',
   },
   {
     key: 'carbs',
-    label: 'Carbs (g)',
+    label: 'Carbs (g)',
   },
   {
     key: 'protein',
-    label: 'Protein (g)',
+    label: 'Protein (g)',
   },
   {
     key: 'enabled',

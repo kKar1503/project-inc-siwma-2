@@ -21,7 +21,7 @@ import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
 import updateUser from '@/services/users/updateUser';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
