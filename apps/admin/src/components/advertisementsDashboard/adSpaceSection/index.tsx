@@ -114,7 +114,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
                   value={active.length.toString()} />
       </Grid>
       <Grid item xs={6} md={6} lg={6}>
-        <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />
+        {/*<InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} />*/}
       </Grid>
       <Grid item xs={12} md={12} lg={12}>
         <S3ImagePreview close={() => {

@@ -41,17 +41,15 @@ const AdvertisementDashboard = () => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={9}>
           <AdSpaceSection totalClicks={totalClicks} />
-
-          <CompanyForm />
         </Grid>
-        <Grid item container xs={12} md={3} spacing={2}>
-          <Grid item xs={6} md={12}>
-            <ClicksPie data={companyClicks} totalClicks={totalClicks} />
-          </Grid>
-          <Grid item xs={6} md={12}>
-            <ActiveGraph data={activeData} />
-          </Grid>
-        </Grid>
+        {/*<Grid item container xs={12} md={3} spacing={2}>*/}
+        {/*  <Grid item xs={6} md={12}>*/}
+        {/*    <ClicksPie data={companyClicks} totalClicks={totalClicks} />*/}
+        {/*  </Grid>*/}
+        {/*  <Grid item xs={6} md={12}>*/}
+        {/*    <ActiveGraph data={activeData} />*/}
+        {/*  </Grid>*/}
+        {/*</Grid>*/}
       </Grid>
     </Box>
   );
