@@ -12,7 +12,7 @@ import PrismaClient from '@inc/db';
 
 export function compressInt(value: number, base = 64) {
   const BASE64_CHARS_FOR_NUMBER =
-    '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-$';
+    '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-';
 
   let compressedNum = '';
   let residual = Math.floor(value);

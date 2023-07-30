@@ -10,7 +10,7 @@ import users from '@/utils/api/client/zod/users';
 /**
  * Fetch a full user data
  */
-const useUser = (uuid: string) =>
+const useUser = (uuid: string | undefined) =>
   useQuery({
     queryFn: async () =>
       apiClient

@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import IconButton from '@mui/material/IconButton';
 import ContentCopy from '@mui/icons-material/ContentCopy';
+import Done from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Tooltip from '@mui/material/Tooltip';
@@ -16,11 +17,10 @@ import { Avatar, Grid } from '@mui/material';
 export type ShareModalV2Props = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  title: string;
   link?: string;
 };
 
-const ShareModalV2 = ({ open, setOpen, title, link = '' }: ShareModalV2Props) => {
+const ShareModalV2 = ({ open, setOpen, link = '' }: ShareModalV2Props) => {
   const [copyClicked, setCopyClicked] = useState(false);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
@@ -71,7 +71,7 @@ const ShareModalV2 = ({ open, setOpen, title, link = '' }: ShareModalV2Props) =>
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
-        onClose={setOpen}
+        onClose={() => setOpen(false)}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{
@@ -96,36 +96,36 @@ const ShareModalV2 = ({ open, setOpen, title, link = '' }: ShareModalV2Props) =>
           >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Box sx={{ width: 1 }}>
-                <Box sx={({ spacing}) => ({pb: spacing(1)})}>
+                <Box sx={({ spacing }) => ({ pb: spacing(1) })}>
                   <Grid container sx={{ flexGrow: 1 }}>
-                  <Grid item xs={6}>
-                    <Typography
-                      id="transition-modal-title"
-                      variant="h6"
-                      component="h2"
-                      sx={{
-                        fontSize: '24px',
-                      }}
-                    >
-                      {title}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <Avatar
-                        sx={({ palette }) => ({
-                          bgcolor: palette.grey[100],
-                        })}
+                    <Grid item xs={6}>
+                      <Typography
+                        id="transition-modal-title"
+                        variant="h6"
+                        component="h2"
+                        sx={{
+                          fontSize: '24px',
+                        }}
                       >
-                        <IconButton>
-                          <CloseIcon sx={{ color: 'black' }} />
-                        </IconButton>
-                      </Avatar>
-                    </Box>
+                        Share
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Avatar
+                          sx={({ palette }) => ({
+                            bgcolor: palette.grey[100],
+                          })}
+                        >
+                          <IconButton onClick={() => setOpen(false)}>
+                            <CloseIcon sx={{ color: 'black' }} />
+                          </IconButton>
+                        </Avatar>
+                      </Box>
+                    </Grid>
                   </Grid>
-                </Grid>
                 </Box>
-                
+
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <OutlinedInput
                     fullWidth
@@ -152,8 +152,20 @@ const ShareModalV2 = ({ open, setOpen, title, link = '' }: ShareModalV2Props) =>
                       })}
                     >
                       <IconButton
-                      size='large'>
-                        <WhatsAppIcon sx={({palette}) => ({color: palette.secondary.main, fontSize: 'inherit'})}/>
+                        size="large"
+                        onClick={() => {
+                          const uri = encodeURI(
+                            `https://wa.me/?text=Check out these listings from the SIWMA marketplace!\n${link}`
+                          );
+                          window.open(uri, '_blank', 'noreferrer');
+                        }}
+                      >
+                        <WhatsAppIcon
+                          sx={({ palette }) => ({
+                            color: palette.secondary.main,
+                            fontSize: 'inherit',
+                          })}
+                        />
                       </IconButton>
                     </Avatar>
                   </Box>
@@ -174,11 +186,21 @@ const ShareModalV2 = ({ open, setOpen, title, link = '' }: ShareModalV2Props) =>
                             setCopyClicked(true);
                             setTimeout(() => {
                               setCopyClicked(false);
-                            }, 5000);
+                            }, 3000);
                           }}
-                          size='large'
+                          disabled={copyClicked}
+                          size="large"
                         >
-                          <ContentCopy sx={{ color: 'grey', fontSize: 'inherit' }} />
+                          {copyClicked ? (
+                            <Done
+                              sx={({ palette }) => ({
+                                color: palette.success[300],
+                                fontSize: 'inherit',
+                              })}
+                            />
+                          ) : (
+                            <ContentCopy sx={{ color: 'grey', fontSize: 'inherit' }} />
+                          )}
                         </IconButton>
                       </Avatar>
                     </Tooltip>
