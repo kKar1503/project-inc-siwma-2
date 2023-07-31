@@ -245,7 +245,7 @@ const ChatRoom = ({ userId }: UserNameProps) => {
         >
           <ChatList
             chats={chats}
-            selectChat={currentChannelId}
+            // selectChat={currentChannelId}
             setSelectChat={(currentChannelId) => {
               setCurrentChannelId(currentChannelId);
               // currentChannelIdRef.current = currentChannelId;

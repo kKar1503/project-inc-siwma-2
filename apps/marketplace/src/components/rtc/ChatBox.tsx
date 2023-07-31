@@ -7,7 +7,8 @@ import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
+import { useResponsiveness } from '@inc/ui';
+import { useTheme, alpha } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import type { MessageContent } from '@inc/types';
 
@@ -25,7 +26,11 @@ export type ChatBoxProps = {
   ChatText: JSX.Element;
 };
 
-const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
+const ChatBox = ({
+  loginId,
+  roomData,
+  ChatText,
+}: ChatBoxProps) => {
   const { t } = useTranslation();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const endRef = useRef<HTMLDivElement>(null);
