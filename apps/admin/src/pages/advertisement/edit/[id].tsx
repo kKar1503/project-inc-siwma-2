@@ -6,6 +6,7 @@ import fetchAdvertisements from '@/services/advertisements/fetchAdvertisements';
 import Spinner from '@/components/fallbacks/Spinner';
 import updateAdvertisement from '@/services/advertisements/updateAdvertisement';
 import Index from '@/components/advertisementsDashboard/edit/form';
+import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
 
 const AdvertisementUpload = () => {
   const router = useRouter();
@@ -26,13 +27,18 @@ const AdvertisementUpload = () => {
     >
       <Card>
         <CardContent>
-          <Index advertisement={advertisement} onSubmit={async (advertisement, selectedFile) => {
-            const result = await updateAdvertisement(
-              id as string,
-              advertisement,
-              selectedFile,
-            );
-            return !!result;
+          <Index advertisement={advertisement}
+                 onSubmit={async (advertisement: Partial<PostAdvertisementRequestBody>, selectedFile: File | undefined) => {
+                   const result = await updateAdvertisement(
+                     id as string,
+                     {
+                       ...advertisement,
+                       startDate: new Date(advertisement.startDate || '').toISOString(),
+                       endDate: new Date(advertisement.endDate || '').toISOString(),
+                     },
+                     selectedFile,
+                   );
+                   return !!result;
           }} />
         </CardContent>
       </Card>

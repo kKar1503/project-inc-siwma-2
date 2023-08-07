@@ -8,11 +8,13 @@ import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import { Switch, Typography } from '@mui/material';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
+import { useRouter } from 'next/router';
 
 const Index = ({ advertisement, onSubmit }: {
   advertisement: Advertisment;
   onSubmit: (body: Partial<PostAdvertisementRequestBody>, image: File | undefined) => Promise<boolean>;
 }) => {
+  const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [open, setOpen] = useState(false);
   const [leftButtonState, setLeftButtonState] = useState(false);
@@ -23,8 +25,8 @@ const Index = ({ advertisement, onSubmit }: {
     companyId: advertisement.companyId,
     link: advertisement.link,
     description: advertisement.description,
-    startDate: advertisement.startDate,
-    endDate: advertisement.endDate,
+    startDate: new Date(advertisement.startDate || '').toISOString().split('T')[0],
+    endDate: new Date(advertisement.endDate || '').toISOString().split('T')[0],
     active: advertisement.active,
   });
 
@@ -78,6 +80,7 @@ const Index = ({ advertisement, onSubmit }: {
 
   const handleRightButtonClick = () => {
     setOpen(false);
+    router.push('/advertisement-dashboard');
   };
 
   const sx = useMemo(() => {
@@ -214,7 +217,7 @@ const Index = ({ advertisement, onSubmit }: {
           >
             <TextField
               type='date'
-              value={new Date(formValues.startDate || '').toString()}
+              value={formValues.startDate}
               name='startDate'
               label='startDate'
               onChange={handleChange}
@@ -236,7 +239,7 @@ const Index = ({ advertisement, onSubmit }: {
 
             <TextField
               type='date'
-              value={new Date(formValues.endDate || '').toString()}
+              value={formValues.endDate}
               name='endDate'
               label='endDate'
               onChange={handleChange}
