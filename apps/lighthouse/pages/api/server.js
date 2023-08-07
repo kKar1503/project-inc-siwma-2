@@ -6,16 +6,18 @@ const crawl = require('./crawler');
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // update to match the domain you will make the request from
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
 app.get('/crawl', async (req, res) => {
-  const result = await crawl();
-  res.json(result);
+  try {
+    const result = await crawl();
+    res.json([result]);
+  } catch (error) {
+    console.error('Error in /crawl route', error);
+    res.status(500).send('Error during crawling');
+  }
 });
 
 app.listen(3001, function () {
