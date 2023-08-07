@@ -1,27 +1,15 @@
-import React, { useState } from 'react';
-import { Box, Card, CardContent, useMediaQuery, useTheme } from '@mui/material';
-import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
+import React from 'react';
+import { Box, Card, CardContent } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import fetchAdvertisements from '@/services/advertisements/fetchAdvertisements';
 import Spinner from '@/components/fallbacks/Spinner';
 import updateAdvertisement from '@/services/advertisements/updateAdvertisement';
-import Form from './form';
+import Index from '@/components/advertisementsDashboard/edit/form';
 
 const AdvertisementUpload = () => {
-
   const router = useRouter();
   const { id } = router.query;
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const theme = useTheme();
-  const isSmallOrMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-  const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-    }
-  };
-
 
   const advertisementQuery = useQuery(['advertisement', id], () => fetchAdvertisements(id));
 
@@ -38,25 +26,13 @@ const AdvertisementUpload = () => {
     >
       <Card>
         <CardContent>
-          <Box sx={{ marginBottom: '16px' }}>
-            <Upload
-              id='advetismetn image upload'
-              title='Advertisement Image Upload'
-              description='Select a JPG or PNG file to upload as an advertisement image.'
-              selectedFile={selectedFile}
-              changeHandler={handleFileChange}
-              accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-              maxWidth='100%'
-              maxHeight='500px'
-              // maxFileSize={64 * 1024 * 1024} // 64MB in bytes
-            />
-          </Box>
-          <Form advertisement={advertisement} onSubmit={(advertisement) => {
-            updateAdvertisement(
+          <Index advertisement={advertisement} onSubmit={async (advertisement, selectedFile) => {
+            const result = await updateAdvertisement(
               id as string,
               advertisement,
-              selectedFile || undefined,
+              selectedFile,
             );
+            return !!result;
           }} />
         </CardContent>
       </Card>

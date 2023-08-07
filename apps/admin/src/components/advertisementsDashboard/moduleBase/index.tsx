@@ -1,4 +1,4 @@
-import Paper from '@mui/material/Paper';
+import Paper, { PaperProps } from '@mui/material/Paper';
 import { ReactNode } from 'react';
 
 export type ModuleBaseProps = {
@@ -6,9 +6,9 @@ export type ModuleBaseProps = {
   noFlex?: boolean;
   height?: string;
   width?: string;
-}
+} & PaperProps;
 
-const ModuleBase = ({ children, noFlex, height, width }: ModuleBaseProps) => <Paper
+const ModuleBase = ({ children, noFlex, height, width, sx, ...others }: ModuleBaseProps) => <Paper
   sx={{
     display: noFlex ? 'block' : 'flex',
     justifyContent: 'space-between',
@@ -19,7 +19,9 @@ const ModuleBase = ({ children, noFlex, height, width }: ModuleBaseProps) => <Pa
     py: '0.5rem',
     height,
     width,
+    ...sx,
   }}
+  {...others}
 >
   {children}
 </Paper>;
