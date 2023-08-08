@@ -5,7 +5,7 @@ import { useQuery } from 'react-query';
 import fetchAdvertisements from '@/services/advertisements/fetchAdvertisements';
 import Spinner from '@/components/fallbacks/Spinner';
 import updateAdvertisement from '@/services/advertisements/updateAdvertisement';
-import Index from '@/components/advertisementsDashboard/edit/form';
+import AdvertisementForm from '@/components/advertisementsDashboard/edit/form';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
 
 const AdvertisementUpload = () => {
@@ -27,7 +27,7 @@ const AdvertisementUpload = () => {
     >
       <Card>
         <CardContent>
-          <Index advertisement={advertisement}
+          <AdvertisementForm advertisement={advertisement}
                  onSubmit={async (advertisement: Partial<PostAdvertisementRequestBody>, selectedFile: File | undefined) => {
                    const result = await updateAdvertisement(
                      id as string,

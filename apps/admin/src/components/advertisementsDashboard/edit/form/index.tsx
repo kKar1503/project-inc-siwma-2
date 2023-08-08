@@ -10,9 +10,9 @@ import { Switch, Typography } from '@mui/material';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import { useRouter } from 'next/router';
 
-const Index = ({ advertisement, onSubmit }: {
+const AdvertisementForm = ({ advertisement, onSubmit }: {
   advertisement: Advertisment;
-  onSubmit: (body: Partial<PostAdvertisementRequestBody>, image: File | undefined) => Promise<boolean>;
+  onSubmit: (body: PostAdvertisementRequestBody, image: File | undefined) => Promise<boolean>;
 }) => {
   const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -21,13 +21,13 @@ const Index = ({ advertisement, onSubmit }: {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 
-  const [formValues, setFormValues] = useState<Partial<PostAdvertisementRequestBody>>({
+  const [formValues, setFormValues] = useState<PostAdvertisementRequestBody>({
     companyId: advertisement.companyId,
     link: advertisement.link,
     description: advertisement.description,
     startDate: new Date(advertisement.startDate || '').toISOString().split('T')[0],
     endDate: new Date(advertisement.endDate || '').toISOString().split('T')[0],
-    active: advertisement.active,
+    active: advertisement.active || true,
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -288,4 +288,4 @@ const Index = ({ advertisement, onSubmit }: {
   );
 };
 
-export default Index;
+export default AdvertisementForm;
