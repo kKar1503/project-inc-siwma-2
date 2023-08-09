@@ -1,16 +1,16 @@
 import { TCategory } from '@/types/category';
-import { Card, CardContent, Typography, CardMedia, CardActionArea, SxProps } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
+import React from 'react';
 import S3CardImage from '@/components/S3CardImage';
 import { useResponsiveness } from '@inc/ui';
 import placeholder from 'public/images/category-placeholder.svg';
 import { useTranslation } from 'react-i18next';
 
 const CategoryCard: React.FC<TCategory> = ({
-  id,
-  name,
-  description,
-  image,
+                                             id,
+                                             name,
+                                             description,
+                                             image,
   crossSectionImage,
   active,
   parameters,
@@ -25,7 +25,7 @@ const CategoryCard: React.FC<TCategory> = ({
           height={isSm ? 140 : 180}
           src={image}
           title={name}
-          alt={name}
+          allowClickThrough
           placeholder={placeholder.src}
         />
         <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
