@@ -1,5 +1,5 @@
 // ** React / Next Imports **
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
 // ** Components Imports **
@@ -8,21 +8,6 @@ import ChatSubHeader from '@/components/rtc/ChatSubHeader';
 import ChatBox from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
 import ChatList from '@/components/rtc/ChatList';
-
-// ** Chat Related Imports **
-import { io } from 'socket.io-client';
-import {
-  acceptOffer,
-  cancelOffer,
-  createRoom,
-  getMessage,
-  getRooms,
-  joinRoom,
-  makeOffer,
-  partRoom,
-  rejectOffer,
-  sendMessage,
-} from '@/chat/emitters';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
@@ -47,15 +32,6 @@ function formatMessage(message: Messages): ChatData {
     messageContent,
     createdAt: new Date(createdAt),
   };
-  if (messageContent.contentType === 'offer') {
-    if (messageContent.offerAccepted) {
-      formatted.offerState = 'accepted';
-    } else if (messageContent.content === '') {
-      formatted.offerState = 'pending';
-    } else {
-      formatted.offerState = 'rejected';
-    }
-  }
 
   return formatted;
 }
@@ -68,11 +44,6 @@ type RoomData = ChatListProps & {
 };
 
 const ChatRoom = () => {
-  // ** Socket Initialization
-  const socket = useRef(
-    io(process.env.NEXT_PUBLIC_CHAT_SERVER_URL, { transports: ['websocket'], autoConnect: false })
-  );
-
   // ** Hooks **
   const { data } = useSession();
   const router = useRouter();
@@ -134,125 +105,6 @@ const ChatRoom = () => {
     );
   };
 
-  // ** Update Message List **
-  const updateOffer = (messageId: number, newContent: string, accepted: boolean) => {
-    setMessages((prev) =>
-      prev.map((message) => {
-        console.log('iterating rooms', message);
-        if (message.id !== messageId) {
-          return message;
-        }
-        const newMessage = { ...message };
-
-        if (newMessage.messageContent.contentType === 'offer') {
-          newMessage.messageContent.content = newContent;
-          newMessage.messageContent.offerAccepted = accepted;
-          newMessage.offerState = accepted ? 'accepted' : 'rejected';
-        }
-
-        return newMessage;
-      })
-    );
-  };
-
-  // ** useChat **
-  const { isConnected, loading, setLoading } = useChat(socket.current, connect, {
-    userId,
-    currentRoom: roomIdRef,
-    roomSyncCallback: (roomSync) => {
-      switch (roomSync.status) {
-        case 'success': {
-          console.log('Sync success');
-          break;
-        }
-        case 'error': {
-          console.log(`Sync error: ${roomSync.err}`);
-          break;
-        }
-        case 'in_progress': {
-          console.log('Sync in progress');
-          console.log(roomSync.progress);
-          console.log(roomSync.data);
-          const { time, latestMessage, category, ...rest } = roomSync.data;
-
-          let latestMessageDataString = '';
-          const latestMessageDataObj = {
-            amount: 0,
-            accepted: false,
-            content: '',
-          };
-
-          if (latestMessage !== undefined) {
-            if (latestMessage.contentType === 'offer') {
-              latestMessageDataObj.amount = latestMessage.amount;
-              latestMessageDataObj.accepted = latestMessage.offerAccepted;
-              latestMessageDataObj.content = latestMessage.content;
-            } else {
-              latestMessageDataString = latestMessage.content;
-            }
-          }
-
-          const contentType = latestMessage?.contentType ?? 'text';
-
-          const roomsData = {
-            ...rest,
-            contentType,
-            time: time ? new Date(time) : undefined,
-            category: category === 'BUY' ? 'Buying' : 'Selling',
-            latestMessage: contentType === 'offer' ? latestMessageDataObj : latestMessageDataString,
-          } as RoomData;
-          setRooms((curr) => [...curr, roomsData]);
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    },
-    messageCallback: (message) => {
-      setMessages((curr) => [...curr, formatMessage(message)]);
-      updateChatList(message);
-    },
-    messageUnreadCallback: (messageUnread) => {
-      updateChatList(messageUnread);
-    },
-    messageSyncCallback: (messageSync) => {
-      switch (messageSync.status) {
-        case 'success': {
-          console.log('Sync success');
-          break;
-        }
-        case 'error': {
-          console.log(`Sync error: ${messageSync.err}`);
-          break;
-        }
-        case 'in_progress': {
-          console.log('Sync in progress');
-          setMessages((curr) => [...curr, formatMessage(messageSync.data)]);
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    },
-    offerCallback: (messageId, offerState) => {
-      switch (offerState) {
-        case 'accept': {
-          updateOffer(messageId, '(Accepted)', true);
-          break;
-        }
-        case 'reject': {
-          updateOffer(messageId, '(Rejected)', false);
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    },
-  });
-
   // ** useEffect **
   useEffect(() => {
     if (data !== undefined && data !== null) {
@@ -273,120 +125,6 @@ const ChatRoom = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (isConnected && domLoaded && !queryChecked) {
-      if (
-        router.query.listing !== undefined &&
-        ((router.query.buyer !== undefined && router.query.seller === undefined) ||
-          (router.query.buyer === undefined && router.query.seller !== undefined))
-      ) {
-        const { listing, buyer, seller } = router.query;
-        if (buyer !== undefined) {
-          createRoom(
-            socket.current,
-            {
-              buyerId: buyer as string,
-              sellerId: userId,
-              listingId: parseInt(listing as string, 10),
-            },
-            (ack) => {
-              setQueryChecked(true);
-              if (ack.success) {
-                console.log('createRoom', ack.data);
-                setRoomId(ack.data.id);
-              } else {
-                console.log('createRoom', ack.err);
-              }
-            }
-          );
-        } else {
-          createRoom(
-            socket.current,
-            {
-              buyerId: userId,
-              sellerId: seller as string,
-              listingId: parseInt(listing as string, 10),
-            },
-            (ack) => {
-              setQueryChecked(true);
-              if (ack.success) {
-                console.log('createRoom', ack.data);
-                setRoomId(ack.data.id);
-              } else {
-                console.log('createRoom', ack.err);
-              }
-            }
-          );
-        }
-      } else {
-        setQueryChecked(true);
-      }
-    }
-  }, [isConnected, domLoaded]);
-
-  useEffect(() => {
-    if (isConnected && loading === 'idle' && domLoaded && queryChecked && !roomSynced) {
-      setRoomSynced(true);
-      getRooms(socket.current, userId, (ack) => {
-        if (ack.success) {
-          console.log('getRooms', ack.data);
-        } else {
-          console.log('getRooms', ack.err);
-        }
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, loading, domLoaded, roomSynced, queryChecked]);
-
-  useEffect(() => {
-    if (isConnected && loading === 'idle' && domLoaded && queryChecked && roomId !== '') {
-      if (messageSynced !== roomId) {
-        if (messageSynced === '') {
-          joinRoom(socket.current, roomId, (ack) => {
-            if (ack.success) {
-              setMessageSynced(roomId);
-              setMessages([]);
-              getMessage(socket.current, roomId, (ack) => {
-                if (ack.success) {
-                  console.log('getMessage', ack.data);
-                } else {
-                  console.log('getMessage', ack.err);
-                }
-              });
-            } else {
-              console.log('joinRoom', ack.err);
-            }
-          });
-        } else {
-          setLoading('part');
-          partRoom(socket.current, messageSynced, (ack) => {
-            if (ack.success) {
-              joinRoom(socket.current, roomId, (ack) => {
-                setLoading('idle');
-                if (ack.success) {
-                  setMessageSynced(roomId);
-                  setMessages([]);
-                  getMessage(socket.current, roomId, (ack) => {
-                    if (ack.success) {
-                      console.log('getMessage', ack.data);
-                    } else {
-                      console.log('getMessage', ack.err);
-                    }
-                  });
-                } else {
-                  console.log('joinRoom', ack.err);
-                }
-              });
-            } else {
-              console.log('partRoom', ack.err);
-            }
-          });
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, loading, domLoaded, roomId, queryChecked]);
 
   // ** Memos **
   const currentRoom = useMemo<RoomData | null>(() => {
@@ -432,135 +170,29 @@ const ChatRoom = () => {
     };
   }, [isLg, isMd, isSm]);
 
+  // TODO: IMPLEMENT
+  // const onClickSend: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+  //   e.preventDefault();
+  //   if (inputText !== '') {
+  //     console.log('onClickSend', inputText);
+  //     sendMessage(
+  //       socket.current,
+  //       { message: inputText, roomId, time: new Date().toISOString() },
+  //       (ack) => {
+  //         if (ack.success) {
+  //           console.log('sendMessage', ack.data);
+  //           setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
+  //           updateChatList(ack.data as Messages);
+  //           setInputText('');
+  //         } else {
+  //           console.log('sendMessage', ack.err);
+  //         }
+  //       }
+  //     );
+  //   }
+  // };
   const onClickSend: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    if (inputText !== '') {
-      console.log('onClickSend', inputText);
-      sendMessage(
-        socket.current,
-        { message: inputText, roomId, time: new Date().toISOString() },
-        (ack) => {
-          if (ack.success) {
-            console.log('sendMessage', ack.data);
-            setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
-            updateChatList(ack.data as Messages);
-            setInputText('');
-          } else {
-            console.log('sendMessage', ack.err);
-          }
-        }
-      );
-    }
-  };
-
-  const onCreateOffer = (val: number) => {
-    // TODO: need to have a better way to assert the dp to 2
-    const amount = parseFloat(val.toFixed(2));
-
-    if (currentRoom !== null) {
-      const { itemId: listingId, id: roomId } = currentRoom;
-
-      makeOffer(socket.current, { amount, userId, roomId, listingId }, (ack) => {
-        if (ack.success) {
-          console.log('makeOffer', ack.data);
-          setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
-          updateChatList(ack.data as Messages);
-        } else {
-          console.log('makeOffer', ack.err);
-        }
-      });
-    }
-  };
-
-  const onAcceptOffer = (id: number) => {
-    acceptOffer(socket.current, id, (ack) => {
-      if (ack.success) {
-        console.log('acceptOffer', ack.data);
-        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
-        updateChatList(ack.data as Messages);
-      } else {
-        console.log('acceptOffer', ack.err);
-      }
-    });
-  };
-
-  const onRejectOffer = (id: number) => {
-    rejectOffer(socket.current, id, (ack) => {
-      if (ack.success) {
-        console.log('rejectOffer', ack.data);
-        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
-        updateChatList(ack.data as Messages);
-      } else {
-        console.log('rejectOffer', ack.err);
-      }
-    });
-  };
-
-  const onCancelOffer = (id: number) => {
-    cancelOffer(socket.current, id, (ack) => {
-      if (ack.success) {
-        console.log('cancelOffer', ack.data);
-        const indexToRemove = messages.findIndex((room) => room.id === ack.data);
-
-        if (indexToRemove !== -1) {
-          let removedMessage: ChatData[];
-          setMessages((curr) => {
-            const newMessages = [...curr];
-            removedMessage = newMessages.splice(indexToRemove, 1);
-            return newMessages;
-          });
-
-          if (indexToRemove === messages.length - 1) {
-            const newLatestMessage = messages[indexToRemove - 1];
-            setRooms((curr) =>
-              curr.map((room) => {
-                console.log('iterating rooms', room);
-
-                if (room.contentType === 'offer') {
-                  if (room.latestMessage.content !== removedMessage[0].messageContent.content) {
-                    return room;
-                  }
-                } else {
-                  return room;
-                }
-
-                console.log('updating room', room);
-
-                const newRoom = {
-                  ...room,
-                  contentType: newLatestMessage.messageContent.contentType,
-                } as RoomData;
-
-                let latestMessageDataString = '';
-                const latestMessageDataObj = {
-                  amount: 0,
-                  accepted: false,
-                  content: '',
-                };
-
-                if (newLatestMessage.messageContent.contentType === 'offer') {
-                  latestMessageDataObj.amount = newLatestMessage.messageContent.amount;
-                  latestMessageDataObj.accepted = newLatestMessage.messageContent.offerAccepted;
-                  latestMessageDataObj.content = newLatestMessage.messageContent.content;
-                } else {
-                  latestMessageDataString = newLatestMessage.messageContent.content;
-                }
-
-                newRoom.time = new Date(newLatestMessage.createdAt);
-                newRoom.latestMessage =
-                  newLatestMessage.messageContent.contentType === 'offer'
-                    ? latestMessageDataObj
-                    : latestMessageDataString;
-
-                return newRoom;
-              })
-            );
-          }
-        }
-      } else {
-        console.log('cancelOffer', ack.err);
-      }
-    });
   };
 
   return (
@@ -615,14 +247,10 @@ const ChatRoom = () => {
               available={currentRoom.inProgress}
               itemPrice={currentRoom.itemPrice}
               itemPriceIsUnit={currentRoom.itemPriceIsUnit}
-              onCreateOffer={onCreateOffer}
             />
             <ChatBox
               roomData={messages}
               loginId={userId}
-              onAcceptOffer={onAcceptOffer}
-              onRejectOffer={onRejectOffer}
-              onCancelOffer={onCancelOffer}
               ChatText={
                 <ChatTextBox
                   selectedFile={selectedFile}
