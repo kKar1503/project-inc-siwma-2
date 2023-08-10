@@ -1,7 +1,5 @@
-import { TextField } from '@mui/material';
+import { Skeleton, TextField } from '@mui/material';
 import { FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 type FormInputProps = {
   name: string;
@@ -54,7 +52,7 @@ const FormInput = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton className="h-12" />
+      <Skeleton sx={{ height: '3rem' }} />
     ) : (
       <TextField
         type="text"

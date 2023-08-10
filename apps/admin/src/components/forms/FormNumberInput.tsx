@@ -1,7 +1,5 @@
-import { InputAdornment, TextField } from '@mui/material';
+import { InputAdornment, Skeleton, TextField } from '@mui/material';
 import { FieldValues, RegisterOptions, ValidationRule, useFormContext } from 'react-hook-form';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 type FormNumberInputProps = {
   name: string;
@@ -69,7 +67,7 @@ const FormNumberInput = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton className="h-12" />
+      <Skeleton sx={{ height: '3rem' }} />
     ) : (
       <TextField
         type="number"

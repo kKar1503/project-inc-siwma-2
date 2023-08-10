@@ -1,7 +1,5 @@
-import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { FormControlLabel, Radio, RadioGroup, Skeleton } from '@mui/material';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 export type RadioSelectOption = {
   label: string;
@@ -65,7 +63,7 @@ const FormRadioSelect = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton className="h-12" />
+      <Skeleton sx={{ height: '3rem' }} />
     ) : (
       <Controller
         control={control}

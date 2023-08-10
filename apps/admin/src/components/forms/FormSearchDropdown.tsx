@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Autocomplete, TextField } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Autocomplete, Skeleton, TextField } from '@mui/material';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 type FormSearchDropdownOption = {
   label: string;
@@ -67,7 +64,7 @@ const FormSearchDropdown = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton className="h-12" />
+      <Skeleton sx={{ height: '3rem' }} />
     ) : (
       <Controller
         name={name}

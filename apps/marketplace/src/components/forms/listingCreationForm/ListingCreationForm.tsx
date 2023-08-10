@@ -223,6 +223,9 @@ const ListingCreationForm = ({
               isLoading={isLoading}
               success={submitSuccess}
               hideError
+              sx={{
+                minWidth: '10rem',
+              }}
             >
               {/** @ts-ignore */}
               <FormCheckboxInput options={[{ label: 'Negotiable', value: true }]} />

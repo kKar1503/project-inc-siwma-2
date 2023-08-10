@@ -1,7 +1,5 @@
-import { Button, ButtonGroup, useTheme } from '@mui/material';
+import { Button, ButtonGroup, Skeleton, useTheme } from '@mui/material';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 export type FormToggleButtonOption = {
   label: string;
@@ -74,7 +72,7 @@ const FormToggleButton = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton className="h-12" />
+      <Skeleton sx={{ height: '3rem' }} />
     ) : (
       <>
         {labelComponent}
