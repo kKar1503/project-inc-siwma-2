@@ -1,32 +1,43 @@
+// ** React Imports
 import React, { useEffect, useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import Typography from '@mui/material/Typography';
-import { useSession } from 'next-auth/react';
+
+// ** React Query
 import { useQuery } from 'react-query';
 
+// ** Next Imports
+import { useSession } from 'next-auth/react';
+
+// ** MUI Imports
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { useTheme, SxProps } from '@mui/material/styles';
+
+// ** Custom Components Imports
 import Carousel from '@/components/marketplace/carousel/AdvertisementCarousel';
 import CategoryCard from '@/components/marketplace/listing/Categories';
-
-import fetchCategories from '@/services/fetchCategories';
-import fetchAdvertisements from '@/services/fetchAdvertisements';
-
-import { useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
-import { Button, useTheme } from '@mui/material';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { useTranslation } from 'react-i18next';
 import ListingTable from '@/components/marketplace/listing/ListingTable';
+
+// ** Services
 import useProducts from '@/services/listings/useProducts';
 import useParameters from '@/services/listings/useParameters';
 import useListings from '@/services/listings/useListings';
 import useUser from '@/services/users/useUser';
-import { useTablePagination, useTableSort } from '@/stores/table';
 import useBookmarkStore from '@/stores/bookmarks';
 import useParamStore from '@/stores/parameters';
+import { useTablePagination, useTableSort } from '@/stores/table';
 import useProductStore from '@/stores/products';
-import { SxProps } from '@mui/material/styles';
+import fetchCategories from '@/services/fetchCategories';
+import fetchAdvertisements from '@/services/fetchAdvertisements';
+
+// ** Packages
+import { useResponsiveness } from '@inc/ui';
+
+// ** i18n import
+import { useTranslation } from 'react-i18next';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
