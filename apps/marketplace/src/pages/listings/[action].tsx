@@ -206,7 +206,7 @@ const ListingCreateEdit = () => {
         if (
           (categoryParameters?.find((e) => e.id === key)?.dataType === 'number' &&
             Number.isNaN(categoryParams[key])) ||
-          categoryParams[key] <= 0
+          categoryParams[key] < 1
         ) {
           // Parameter is not a number
           errors[key] = new Error(
