@@ -230,6 +230,7 @@ const Marketplace = () => {
                 fontSize: typography.body1,
                 fontWeight: 500,
                 // textTransform: 'none',
+                padding: '4px 4px 0px 4px',
                 zIndex: 99,
               }}
             >
