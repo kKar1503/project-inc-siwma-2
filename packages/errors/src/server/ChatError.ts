@@ -60,3 +60,15 @@ export class ChatRoomExistsError extends ChatError {
     this.code = ChatRoomExistsError.code;
   }
 }
+
+export class MessageError extends ChatError {
+  public static readonly status = 500;
+  public static readonly code = 5005;
+
+  constructor() {
+    super();
+    this.message = `Error sending message`;
+    this.status = MessageError.status;
+    this.code = MessageError.code;
+  }
+}
