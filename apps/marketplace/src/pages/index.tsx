@@ -14,7 +14,8 @@ import fetchAdvertisements from '@/services/fetchAdvertisements';
 
 import { useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
-import { useTheme } from '@mui/material';
+import { Button, useTheme } from '@mui/material';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useTranslation } from 'react-i18next';
 import ListingTable from '@/components/marketplace/listing/ListingTable';
 import useProducts from '@/services/listings/useProducts';
@@ -210,9 +211,19 @@ const Marketplace = () => {
             }}
           >
             <Typography sx={headerStyles?.switchTxt}>{t('Categories')}</Typography>
-            <Link href="/categories" sx={headerStyles?.switchTxt}>
+            <Button
+              variant="text"
+              endIcon={<ChevronRightIcon />}
+              href="/categories"
+              sx={{
+                fontSize: typography.body1,
+                fontWeight: 500,
+                // textTransform: 'none',
+                zIndex: 99,
+              }}
+            >
               {t('View All Categories')}
-            </Link>
+            </Button>
           </Box>
         </Box>
         <Box display="flex" justifyContent="center" paddingTop="2em" sx={{ mb: 4 }}>
