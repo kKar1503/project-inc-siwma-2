@@ -223,6 +223,22 @@ const ListingCreateEdit = () => {
       // There was an error
       // Error all the input fields
       Object.keys(data.data).forEach((inputName) => {
+        console.log(data.data);
+        console.log(inputName);
+
+        // for category parameters
+        if (inputName.includes('param-')) {
+          // slice the param- prefix
+          const name = inputName.replace('param-', '');
+
+          if (errors[name]) {
+            setError(inputName as Parameters<typeof setError>['0'], {
+              message: errors[name].message,
+            });
+          }
+        }
+
+        // for other inputs
         if (errors[inputName]) {
           setError(inputName as Parameters<typeof setError>['0'], {
             message: errors[inputName].message,
