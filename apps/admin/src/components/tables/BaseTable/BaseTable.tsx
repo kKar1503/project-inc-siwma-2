@@ -85,20 +85,20 @@ const BaseTable = (props: BaseTableProps) => {
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, row: BaseTableData) => {
-    const selectedIndex = selected.indexOf(row);
-    let newSelected: readonly BaseTableData[] = [];
+    const selectedRow = selected.find((e) => e.id === row.id);
+    const selectedRowIndex = selected.indexOf(row);
+    let newSelected: BaseTableData[] = [...selected];
 
-    if (selectedIndex === -1) {
+    // !! FIXME: later
+    // Select the row if it is not selected
+    if (selectedRow === undefined) {
       newSelected = newSelected.concat(selected, row);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+    }
+
+    // Unselect the row if it was selected
+    if (selectedRow) {
+      // Remove the object from the array
+      newSelected.splice(selectedRowIndex, 1);
     }
 
     setSelected(newSelected);

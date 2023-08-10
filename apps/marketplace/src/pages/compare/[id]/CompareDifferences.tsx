@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import fetchListing from '@/services/fetchListing';
 import fetchCatById from '@/services/fetchCatById';
-import fetchProducts from '@/services/fetchProducts';
+import fetchProduct from '@/services/fetchProduct';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { Category } from '@/utils/api/client/zod/categories';
 import { Product } from '@/utils/api/client/zod/products';
@@ -54,7 +54,9 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
     const fetchListings = async () => {
       const listings = await Promise.all(productIds.map((id) => fetchListing(id)));
       const categories = await Promise.all(listings.map((listing) => fetchCatById(listing.id)));
-      const products = await Promise.all(listings.map((listing) => fetchProducts(listing.productId)));
+      const products = await Promise.all(
+        listings.map((listing) => fetchProduct(listing.productId))
+      );
       setCategory(categories);
       setListings(listings);
       setProducts(products);
@@ -111,13 +113,15 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
           {tableData.sideHeaders.map((header) => (
             <TableRow key={header}>
               <TableCell>{header}</TableCell>
-              {tableData.rows.find((row) => row.id === `row${tableData.sideHeaders.indexOf(header) + 2}`)?.data.map((cellData) =>
-                header === 'Cross Section Image' ? (
-                  <TableCell key={`cell-${header}`}>{cellData}</TableCell>
-                ) : (
-                  <TableCell key={`cell-${header}`}>{cellData}</TableCell>
-                )
-              )}
+              {tableData.rows
+                .find((row) => row.id === `row${tableData.sideHeaders.indexOf(header) + 2}`)
+                ?.data.map((cellData) =>
+                  header === 'Cross Section Image' ? (
+                    <TableCell key={`cell-${header}`}>{cellData}</TableCell>
+                  ) : (
+                    <TableCell key={`cell-${header}`}>{cellData}</TableCell>
+                  )
+                )}
             </TableRow>
           ))}
         </TableBody>
