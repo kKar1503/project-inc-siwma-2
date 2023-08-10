@@ -12,7 +12,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@inc/utils": "workspace:*",
-    "@mui/icons-material": "^5.11.16",
+    "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.11.14",
     "@mui/utils": "^5.12.3",
     "react": "18.2.0",

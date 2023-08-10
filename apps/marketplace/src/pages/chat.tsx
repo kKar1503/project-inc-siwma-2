@@ -80,24 +80,8 @@ const ChatRoom = () => {
         }
         const newRoom = { ...room };
 
-        let latestMessageDataString = '';
-        const latestMessageDataObj = {
-          amount: 0,
-          accepted: false,
-          content: '',
-        };
-
-        if (message.message.contentType === 'offer') {
-          latestMessageDataObj.amount = message.message.amount;
-          latestMessageDataObj.accepted = message.message.offerAccepted;
-          latestMessageDataObj.content = message.message.content;
-        } else {
-          latestMessageDataString = message.message.content;
-        }
-
         newRoom.time = new Date(message.createdAt);
-        newRoom.latestMessage =
-          message.message.contentType === 'offer' ? latestMessageDataObj : latestMessageDataString;
+        newRoom.latestMessage = message.message.content;
         newRoom.contentType = message.message.contentType;
 
         return newRoom;
@@ -170,29 +154,31 @@ const ChatRoom = () => {
     };
   }, [isLg, isMd, isSm]);
 
-  // TODO: IMPLEMENT
-  // const onClickSend: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-  //   e.preventDefault();
-  //   if (inputText !== '') {
-  //     console.log('onClickSend', inputText);
-  //     sendMessage(
-  //       socket.current,
-  //       { message: inputText, roomId, time: new Date().toISOString() },
-  //       (ack) => {
-  //         if (ack.success) {
-  //           console.log('sendMessage', ack.data);
-  //           setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
-  //           updateChatList(ack.data as Messages);
-  //           setInputText('');
-  //         } else {
-  //           console.log('sendMessage', ack.err);
-  //         }
-  //       }
-  //     );
-  //   }
-  // };
   const onClickSend: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
+
+    if (inputText !== '') {
+      const newMessage = {
+        message: inputText,
+        sender: userId,
+      };
+
+      fetch('/chat/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newMessage),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Message sent successfully, no need to handle anything here as
+          // the new message will be received through Pusher and updated in the chat.
+        })
+        .catch((error) => {
+          console.error('Error sending message:', error);
+        });
+    }
   };
 
   return (

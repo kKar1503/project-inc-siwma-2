@@ -10,12 +10,6 @@ export type MessageContent = (
   | {
       contentType: 'text' | 'file' | 'image';
     }
-  | {
-      contentType: 'offer';
-      multiple: boolean;
-      offerAccepted: boolean;
-      amount: number;
-    }
 ) & {
   content: string;
 };
