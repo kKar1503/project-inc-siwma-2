@@ -217,7 +217,7 @@ const Marketplace = () => {
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center',
+              alignItems: 'flex-end',
               width: '100%',
             }}
           >
