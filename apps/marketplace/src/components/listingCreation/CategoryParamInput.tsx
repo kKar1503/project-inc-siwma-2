@@ -26,7 +26,7 @@ const CategoryParamInput = ({
     switch (parameter.dataType) {
       case DataType.number:
         // @ts-ignore
-        return <FormNumberInput />;
+        return <FormNumberInput min={0} />;
       case DataType.boolean:
         return (
           // @ts-ignore
@@ -103,7 +103,7 @@ const CategoryParamInput = ({
     <FormInputGroup
       sx={{ flex: 1, ...sx }}
       label={parameter.displayName}
-      name={`param-${parameter.id.toString()}`}
+      name={`${parameter.id.toString()}`}
       isLoading={isLoading}
       success={submitSuccess}
       required={required}
