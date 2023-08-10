@@ -9,11 +9,7 @@ import { useResponsiveness } from '@inc/ui';
 import placeholder from 'public/images/category-placeholder.svg';
 import { useTranslation } from 'react-i18next';
 
-const CategoryCard: React.FC<TCategory> = ({
-                                             id,
-                                             name,
-                                             image,
-}) => {
+const CategoryCard: React.FC<TCategory> = ({ id, name, image }) => {
   const [isSm] = useResponsiveness(['sm']);
   const { t } = useTranslation();
 
