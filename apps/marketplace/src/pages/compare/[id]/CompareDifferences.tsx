@@ -14,7 +14,6 @@ import { Category } from '@/utils/api/client/zod/categories';
 import { Product } from '@/utils/api/client/zod/products';
 import S3BoxImage from '@/components/S3BoxImage';
 import { useQuery } from 'react-query';
-import useDebounce from '@/hooks/useDebounce';
 
 interface TableRowData {
   id: string;
@@ -38,7 +37,6 @@ const S3BoxImageCell = ({ image }: { image: string }) => (
         display: 'block',
         width: { xs: 0, sm: 150, md: 200, lg: 250 },
         overflow: 'hidden',
-        opacity: '30%',
         marginLeft: 'auto',
         marginRight: 'auto',
       }}
@@ -60,18 +58,6 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
     }
   );
 
-  //   const selectedCat = useQuery(
-  //   'getCompareCat',
-  //   async () => Promise.all(listings.map((listing) => fetchCatById(listing.id))),
-  //   {
-  //     enabled: listings.length !== 0,
-  //   }
-  // );
-  console.log('Listings:', listings);
-  console.log('Products:', products);
-  console.log('Category:', category);
-  // console.log(listings.map((listing) => listing.productId));
-
   const selectedProduct = useQuery(
     'getCompareProduct',
     async () => Promise.all(listings.map((listing) => fetchProduct(listing.productId))),
@@ -87,15 +73,6 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       enabled: !selectedProduct.isLoading && products.length !== 0,
     }
   );
-
-  // const fetchListings = async () => {
-  //   const listings = await Promise.all(listingIds.map((id) => fetchListing(id)));
-  //   const categories = await Promise.all(listings.map((listing) => fetchCatById(listing.id)));
-  //   const products = await Promise.all(listings.map((listing) => fetchProduct(listing.productId)));
-  //   setCategory(categories);
-  //   setListings(selectedListing.data);
-  //   setProducts(products);
-  // };
 
   useEffect(() => {
     if (selectedListing.data !== undefined) {
@@ -113,7 +90,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
     sideHeaders: [
       'Price ($)',
       'Stock',
-      'Condition',
+      'Description',
       'Category',
       'Negotiable',
       'Cross Section Image',
@@ -130,7 +107,10 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       },
       {
         id: 'row3',
-        data: listings.length !== 0 ? listings.map((listing) => `${listing.quantity}`) : [],
+        data:
+          listings.length !== 0 && products.length !== 0
+            ? listings.map((listing, index) => `${listing.quantity} ${products[index].unit}`)
+            : [],
       },
       {
         id: 'row4',
