@@ -15,6 +15,7 @@ import fetchAdvertisements from '@/services/fetchAdvertisements';
 import { useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
 import { useTheme } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
 import { useTranslation } from 'react-i18next';
 import ListingTable from '@/components/marketplace/listing/ListingTable';
 import useProducts from '@/services/listings/useProducts';
@@ -222,6 +223,17 @@ const Marketplace = () => {
                 <CategoryCard {...category} />
               </Grid>
             ))}
+
+            {
+              // Skeleton loading
+              (categories && categories.length === 0) ??
+                Array.from({ length: 6 }).map((_, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Grid item xl={2} lg={3} md={4} xs={6} key={`skele-${index}`}>
+                    <Skeleton height={isSm ? 280 : 370} />
+                  </Grid>
+                ))
+            }
           </Grid>
         </Box>
       </Box>
