@@ -294,7 +294,7 @@ const ListingCreateEdit = () => {
   // Unregister the category parameters when the selected product changes (So that they don't affect validation)
   useEffect(() => {
     // Obtain ids of the parameters
-    const parameterIds = selectedCategory?.parameters?.map((e) => e.parameterId);
+    const parameterIds = selectedCategory?.parameters?.map((e) => `param-${e.parameterId}`);
 
     if (!parameterIds) {
       return;
