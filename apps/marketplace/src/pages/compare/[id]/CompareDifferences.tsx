@@ -14,6 +14,7 @@ import { Category } from '@/utils/api/client/zod/categories';
 import { Product } from '@/utils/api/client/zod/products';
 import S3BoxImage from '@/components/S3BoxImage';
 import { useQuery } from 'react-query';
+import { useRouter } from 'next/router';
 
 interface TableRowData {
   id: string;
@@ -49,6 +50,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const router = useRouter();
 
   const selectedListing = useQuery(
     'getCompareListing',
@@ -85,6 +87,41 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       setCategory(selectedCat.data);
     }
   }, [selectedListing.data, selectedProduct.data, selectedCat.data]);
+
+  // ** Error Handling
+  useEffect(() => {
+    if (!selectedListing.isFetched || !selectedProduct.isFetched || !selectedCat.isFetched) {
+      return;
+    }
+
+    if (selectedListing.isError || selectedProduct.isError || selectedCat.isError) {
+      if (
+        'status' in
+          ((selectedListing.isError as any) ||
+            (selectedProduct.isError as any) ||
+            (selectedCat.isError as any)) &&
+        (
+          (selectedListing.isError as any) ||
+          (selectedProduct.isError as any) ||
+          (selectedCat.isError as any)
+        ).status === 404
+      ) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (
+      selectedListing === undefined ||
+      selectedProduct === undefined ||
+      selectedCat === undefined
+    ) {
+      router.replace('/500');
+    }
+  }, [selectedListing.isFetched, selectedProduct.isFetched, selectedCat.isFetched]);
 
   const tableData: TableData = {
     sideHeaders: [

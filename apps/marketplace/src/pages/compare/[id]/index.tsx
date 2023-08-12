@@ -14,8 +14,6 @@ const Compare = () => {
     listingIds = urlParts[1].split(',');
   }
 
-  console.log('Product IDs:', listingIds);
-
   const theme = useTheme();
   const { spacing } = theme;
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
