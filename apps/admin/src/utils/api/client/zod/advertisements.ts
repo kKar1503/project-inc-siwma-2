@@ -24,7 +24,7 @@ const advertisement = z.object({
   endDate,
 });
 
-const createAdvertisement = z.object({ companyId });
+const createAdvertisement = z.object({ advertisementId : z.string() });
 const getAdvertisements = advertisement.array();
 const getAdvertisement = advertisement;
 const updateAdvertisement = advertisement;
