@@ -4,7 +4,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Skeleton from '@mui/material/Skeleton';
-import { useTheme } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 
 export type FormDropdownSelectorOption = {

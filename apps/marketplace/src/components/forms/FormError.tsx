@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useFormContext } from 'react-hook-form';
 
 type FormErrorProps = {

@@ -3,7 +3,7 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Skeleton from '@mui/material/Skeleton';
-import { useTheme } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 
 export type FormCheckboxInputOptions = {
