@@ -190,6 +190,8 @@ const ListingCreateEdit = () => {
     // Validate quantity
     if (quantity < 0) {
       errors.quantity = new Error('Quantity must be a positive whole number');
+    } else if (!/^\d+$/.test(quantity)) {
+      errors.quantity = new Error('Quantity must be a whole number');
     }
 
     // Validate category parameters
