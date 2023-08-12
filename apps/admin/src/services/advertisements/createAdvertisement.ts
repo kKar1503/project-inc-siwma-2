@@ -7,9 +7,7 @@ const createAdvertisement = async (data: PostAdvertisementRequestBody, image?: F
   advertisementId: string;
 }> => {
   const response = await apiClient.post(`v1/advertisements/`, data);
-  console.log(response.data.data[0]);
   const advertisement = advertisements.create.parse(response.data.data[0]);
-  console.log(advertisement);
   if (!image) return advertisement;
   await updateImage(image, advertisement.advertisementId);
   return advertisement;
