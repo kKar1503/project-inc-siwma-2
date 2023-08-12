@@ -1,4 +1,7 @@
-import { FormControlLabel, Radio, RadioGroup, Skeleton } from '@mui/material';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Skeleton from '@mui/material/Skeleton';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 
 export type RadioSelectOption = {
