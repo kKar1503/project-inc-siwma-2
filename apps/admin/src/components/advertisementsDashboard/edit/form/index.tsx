@@ -6,12 +6,30 @@ import { Modal, useResponsiveness } from '@inc/ui';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
-import { Switch, Typography } from '@mui/material';
+import Select from '@mui/material/Select';
+import Switch from '@mui/material/Switch';
+import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import { useRouter } from 'next/router';
+import { useQuery } from 'react-query';
+import fetchCompanies from '@/services/companies/fetchCompanies';
+import Spinner from '@/components/fallbacks/Spinner';
 
-const AdvertisementForm = ({ advertisement, onSubmit }: {
-  advertisement: Advertisment;
+const getDefaultValue = (advertisement?: Advertisment): PostAdvertisementRequestBody => ({
+  companyId: advertisement?.companyId || '',
+  link: advertisement?.link || '',
+  description: advertisement?.description || '',
+  startDate: new Date(advertisement?.startDate || '').toISOString().split('T')[0],
+  endDate: new Date(advertisement?.endDate || '').toISOString().split('T')[0],
+  active: advertisement ? !!advertisement.active : true,
+});
+
+const AdvertisementForm = ({ advertisement, onSubmit, validate }: {
+  advertisement?: Advertisment;
+  validate: (values: PostAdvertisementRequestBody) => { [key: string]: string };
   onSubmit: (body: PostAdvertisementRequestBody, image: File | undefined) => Promise<boolean>;
 }) => {
   const router = useRouter();
@@ -21,22 +39,24 @@ const AdvertisementForm = ({ advertisement, onSubmit }: {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 
-  const [formValues, setFormValues] = useState<PostAdvertisementRequestBody>({
-    companyId: advertisement.companyId,
-    link: advertisement.link,
-    description: advertisement.description,
-    startDate: new Date(advertisement.startDate || '').toISOString().split('T')[0],
-    endDate: new Date(advertisement.endDate || '').toISOString().split('T')[0],
-    active: advertisement.active || true,
-  });
+  const [formValues, setFormValues] = useState<PostAdvertisementRequestBody>(getDefaultValue(advertisement));
 
   const [formErrors, setFormErrors] = useState({
     endpointError: '',
-    companyId: '',
     link: '',
     description: '',
     startDate: '',
     endDate: '',
+  });
+
+  const companiesQuery = useQuery('companies', async () => {
+    const companies = await fetchCompanies();
+    // mapping stuff
+    const idToName: { [key: string]: string } = {};
+    companies.forEach((company) => {
+      idToName[company.id] = company.name;
+    });
+    return idToName;
   });
 
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
@@ -45,38 +65,32 @@ const AdvertisementForm = ({ advertisement, onSubmit }: {
     }
   };
 
-  const validateForm = () => {
-    if (formValues.companyId === undefined) {
-      // error
-      // auto fix error
-      formValues.companyId = advertisement.companyId;
-    }
-
-    return {
+  const setErrors = (errors: { [key: string]: string }) => {
+    setFormErrors({
       endpointError: '',
-      companyId: '',
       link: '',
       description: '',
       startDate: '',
       endDate: '',
-    };
+      ...errors,
+    });
   };
-
   const handleClickOpen = () => {
     // Validate form before opening the modal
-    const errors = validateForm();
-    if (Object.values(errors).every((error) => error === '')) {
-      onSubmit(formValues, selectedFile || undefined).then((success) => {
-        setOpen(success);
-        setFormErrors({
-          ...formErrors,
-          endpointError: 'An error occurred while updating the advertisement.',
-        });
-      });
-    } else {
-      setFormErrors(errors);
+    const errors = validate(formValues);
+    if (Object.keys(errors).length !== 0) {
+      setErrors(errors);
+      return;
     }
+
+    onSubmit(formValues, selectedFile || undefined).then((success) => {
+      setOpen(success);
+      setErrors({ endpointError: 'An error occurred while updating the advertisement.' });
+    }).catch((error) => {
+      setErrors({ endpointError: error.message });
+    });
   };
+
 
   const handleRightButtonClick = () => {
     setOpen(false);
@@ -157,6 +171,30 @@ const AdvertisementForm = ({ advertisement, onSubmit }: {
             width: '100%',
           })}
         >
+          {companiesQuery.isSuccess ? <FormControl sx={{ m: 2, minWidth: '100%' }}>
+            <InputLabel id='company-label'>Company</InputLabel>
+            <Select
+              labelId='company-label'
+              id='company-dropdown'
+              value={formValues.companyId}
+              label='Age'
+              name='companyId'
+              onChange={((event) => {
+                const { name, value } = event.target;
+                console.log(event.target);
+                setFormValues((prevValues) => ({
+                  ...prevValues,
+                  [name]: value,
+                }));
+              })}
+            >
+              {
+                Object.keys(companiesQuery.data).map((key) =>
+                  <MenuItem id={key} value={key}>{companiesQuery.data[key]}</MenuItem>,
+                )
+              }
+            </Select>
+          </FormControl> : <Spinner />}
           <TextField
             label='Link'
             variant='outlined'
