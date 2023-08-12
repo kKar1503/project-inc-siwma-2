@@ -7,7 +7,9 @@ import fetchCategories from '@/services/fetchCategories';
 import { useRouter } from 'next/router';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 import Spinner from '@/components/fallbacks/Spinner';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { SxProps } from '@mui/material/styles';
+import { useResponsiveness } from '@inc/ui';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -21,6 +23,12 @@ const useCategoryPageQuery = () => {
 const CategoriesPage = () => {
   const router = useRouter();
   const catData = useCategoryPageQuery();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const maxWidthContainer = useMemo<SxProps>(() => {
+    if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)' };
+    return {};
+  }, [isSm]);
 
   useEffect(() => {
     if (!catData.isFetched) {
@@ -50,9 +58,9 @@ const CategoriesPage = () => {
     <Box
       sx={{
         mx: 'auto',
-        width: '90%',
         height: 'full',
         maxHeight: 'xl',
+        ...maxWidthContainer,
       }}
     >
       <Box
