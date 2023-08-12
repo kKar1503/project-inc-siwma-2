@@ -135,6 +135,6 @@ export default apiHandler()
       });
 
       // Return the result
-      res.status(201).json({ parameterId: result.id });
+      res.status(201).json({ parameterId: result.id.toString() });
     }
   );
