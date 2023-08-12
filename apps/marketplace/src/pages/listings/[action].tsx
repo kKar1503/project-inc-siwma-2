@@ -80,14 +80,11 @@ const ListingCreateEdit = () => {
 
   // -- Data Validation -- //
   const isEditing = action === 'edit';
-  const isCreating = action === 'create';
 
   if (isEditing && Number.isNaN(id)) {
     // Redirect the user back to the home page
     router.push('/');
   }
-
-  console.log({ selectedListing });
 
   // Check if the provided id is valid
   if (isEditing && selectedListing.isError && !selectedListing.data) {
@@ -132,8 +129,6 @@ const ListingCreateEdit = () => {
     }
   );
 
-  console.log({ values: getValues() });
-
   const categoryParameters = parameters.data;
 
   const onSuccess = (data: Parameters<typeof reset>[0]) => {
@@ -166,11 +161,8 @@ const ListingCreateEdit = () => {
     clearErrors();
     setErrorMessage(undefined);
 
-    console.log({ openModal });
-
     // Deconstruct common values from data
     const { negotiable, price, product, quantity, listingType, ...$categoryParams } = data.data;
-    console.log({ $categoryParams });
 
     const categoryParams = Object.fromEntries(
       Object.keys($categoryParams).map((e) => [e.replace('param-', ''), $categoryParams[e]]) || []
@@ -293,10 +285,10 @@ const ListingCreateEdit = () => {
 
   // Unregister the category parameters when the selected product changes (So that they don't affect validation)
   useEffect(() => {
-    // Obtain ids of the parameters
-    const parameterIds = selectedCategory?.parameters?.map((e) => `param-${e.parameterId}`);
+    // Obtain the name of the parameter inputs
+    const parameters = Object.keys(getValues()).filter((e) => e.startsWith('param-'));
 
-    if (!parameterIds) {
+    if (!parameters) {
       return;
     }
 
@@ -307,10 +299,7 @@ const ListingCreateEdit = () => {
 
   // Update the default values when the data loads
   useEffect(() => {
-    console.log({ id, selectedListing, product, isLoading });
-    console.log(id && selectedListing.data && product);
     if (id && selectedListing.data && product) {
-      console.log('resetting');
       // Update the default values
       reset(obtainDefaultValues(selectedListing.data, product), {
         keepValues: false,
