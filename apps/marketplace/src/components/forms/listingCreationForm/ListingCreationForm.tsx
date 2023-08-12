@@ -45,8 +45,9 @@ const ListingCreationForm = ({
   errorMessage,
 }: ListingCreationFormProps) => {
   // -- Hooks -- //
-  const [isSm] = useResponsiveness(['sm']);
+  const [isSm, isMd] = useResponsiveness(['sm', 'md']);
   const { control } = formHook;
+  const isMdWidth = isMd ? '25%' : '30%';
 
   return (
     <Form
@@ -145,7 +146,7 @@ const ListingCreationForm = ({
                   }
                   sx={{
                     flex: 'none',
-                    minWidth: isSm ? '45%' : '15%',
+                    minWidth: isSm ? '45%' : isMdWidth,
                     width: isSm ? '100%' : '15%',
                   }}
                 />
