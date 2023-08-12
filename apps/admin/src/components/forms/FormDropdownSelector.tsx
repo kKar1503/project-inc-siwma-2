@@ -1,5 +1,10 @@
 /* eslint-disable no-nested-ternary */
-import { FormControl, InputLabel, MenuItem, Select, Skeleton, useTheme } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Skeleton from '@mui/material/Skeleton';
+import { useTheme } from '@mui/material';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 
 export type FormDropdownSelectorOption = {

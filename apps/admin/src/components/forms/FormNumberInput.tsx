@@ -1,5 +1,7 @@
-import { InputAdornment, Skeleton, TextField } from '@mui/material';
-import { FieldValues, RegisterOptions, ValidationRule, useFormContext } from 'react-hook-form';
+import InputAdornment from '@mui/material/InputAdornment';
+import Skeleton from '@mui/material/Skeleton';
+import TextField from '@mui/material/TextField';
+import { FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 
 type FormNumberInputProps = {
   name: string;

@@ -1,12 +1,9 @@
-import {
-  Button,
-  ButtonGroup,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Skeleton,
-  useTheme,
-} from '@mui/material';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Skeleton from '@mui/material/Skeleton';
+import { useTheme } from '@mui/material';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 
 export type FormCheckboxInputOptions = {

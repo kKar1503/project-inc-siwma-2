@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Autocomplete, Skeleton, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import Skeleton from '@mui/material/Skeleton';
+import TextField from '@mui/material/TextField';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 
 type FormSearchDropdownOption = {

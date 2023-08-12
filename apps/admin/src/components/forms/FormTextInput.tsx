@@ -1,4 +1,5 @@
-import { Skeleton, TextField } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
+import TextField from '@mui/material/TextField';
 import { FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 
 type FormInputProps = {
