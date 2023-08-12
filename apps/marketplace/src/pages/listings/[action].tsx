@@ -294,7 +294,7 @@ const ListingCreateEdit = () => {
 
     // Reset the category parameters
     // @ts-ignore
-    unregister(parameterIds);
+    unregister(parameters);
   }, [selectedProduct]);
 
   // Update the default values when the data loads
