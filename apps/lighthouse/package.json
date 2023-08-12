@@ -14,7 +14,7 @@
     "lighthouse": "^10.2.0",
     "next": "13.4.12",
     "postcss": "^8.4.27",
-    "puppeteer": "^20.4.0",
+    "puppeteer": "^20.9.0",
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",

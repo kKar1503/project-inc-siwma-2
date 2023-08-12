@@ -10,10 +10,13 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get('/crawl', async (req, res) => {
+app.use(express.json());
+
+app.post('/crawl', async (req, res) => {
+  const { urls } = req.body;
   try {
-    const result = await crawl();
-    res.json([result]);
+    const results = await crawl(urls);
+    res.json(results);
   } catch (error) {
     console.error('Error in /crawl route', error);
     res.status(500).send('Error during crawling');

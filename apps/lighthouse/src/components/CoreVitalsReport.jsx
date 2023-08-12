@@ -3,7 +3,7 @@ import ScoreDoughnut from './ScoreDoughnut';
 
 const CoreVitalsReport = ({ onRescan, reportData, isLoading, fetchReportData }) => {
   const [selectedCategory, setSelectedCategory] = useState('Overview');
-  const categories = ['Overview', 'Performance', 'Accessibility', 'Best Practices'];
+  const categories = ['Overview', 'Performance'];
 
   const getCategoryColumns = (category) => {
     if (!reportData || reportData.length === 0 || !reportData[0].categories[category]) {
@@ -16,19 +16,16 @@ const CoreVitalsReport = ({ onRescan, reportData, isLoading, fetchReportData }) 
 
   const getCategoryData = (routeData, category) => {
     if (category === 'Overview') {
-      const doughnuts = categories.slice(1).map((cat) => {
-        if (routeData.categories[cat]) {
-          return (
-            <div className="mr-2" style={{ flex: '0 0 auto' }}>
-              <ScoreDoughnut key={cat} score={routeData.categories[cat].score} category={cat} />
-            </div>
-          );
-        }
-        return null;
-      });
+      const performanceScore = routeData.categories['Performance']
+        ? routeData.categories['Performance'].score
+        : 0;
+      const doughnut = (
+        <div className="mr-2" style={{ flex: '0 0 auto' }}>
+          <ScoreDoughnut score={performanceScore} category="Performance" />
+        </div>
+      );
 
-      const overviewData = [routeData.route, <div className="flex">{doughnuts}</div>];
-
+      const overviewData = [routeData.route, <div className="flex">{doughnut}</div>];
       return overviewData;
     }
 
