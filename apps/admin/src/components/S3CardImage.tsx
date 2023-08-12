@@ -1,19 +1,17 @@
 import CardMedia, { CardMediaProps } from '@mui/material/CardMedia';
-import S3BoxImage  from '@/components/S3BoxImage';
+import S3BoxImage, { S3ImageProps } from '@/components/S3BoxImage';
 
-type CardMediaXProps = CardMediaProps & {
-  src: string;
-  placeholder: string;
-  alt: string;
+type CardMediaXProps = CardMediaProps & S3ImageProps & {
   height: number;
 };
 
 /**
  * Extends the CardMedia component from material UI
  */
-const CardMediaX = ({ src, alt, placeholder, height }: CardMediaXProps) => (
+const CardMediaX = ({ src, placeholder, height, allowClickThrough }: CardMediaXProps) => (
   <CardMedia component='div' style={{ position: 'relative', width: '100%', height }}>
-    <S3BoxImage src={src} placeholderImg={placeholder} maxHeight='100%' maxWidth='100%' style={{ objectFit: 'cover' }} />
+    <S3BoxImage src={src} placeholderImg={placeholder} maxHeight='100%' maxWidth='100%' style={{ objectFit: 'cover' }}
+                allowClickThrough={allowClickThrough} />
   </CardMedia>
 );
 
