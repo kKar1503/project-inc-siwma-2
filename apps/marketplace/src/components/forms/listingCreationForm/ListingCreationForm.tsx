@@ -126,7 +126,6 @@ const ListingCreationForm = ({
               sx={{
                 display: 'flex',
                 flexDirection: isSm ? 'column' : 'row',
-                justifyContent: 'space-between',
                 alignItems: 'end',
                 marginBottom: 3,
                 flexWrap: 'wrap',
@@ -145,8 +144,9 @@ const ListingCreationForm = ({
                     selectedCategory?.parameters?.find((f) => e.id === f.parameterId)?.required
                   }
                   sx={{
+                    flex: 'none',
                     minWidth: isSm ? '45%' : '15%',
-                    width: isSm ? '100%' : undefined,
+                    width: isSm ? '100%' : '15%',
                   }}
                 />
               ))}
