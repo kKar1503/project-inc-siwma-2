@@ -8,14 +8,15 @@ const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetc
   enabled: !!imgKey && imgKey !== '',
 });
 
-export type S3BoxImageProps = BoxProps & { src: string; placeholderImg?: string };
+export type S3ImageProps = BoxProps & { src: string; placeholderImg?: string; allowClickThrough?: boolean };
+export type S3BoxImageProps = BoxProps & S3ImageProps;
 
 const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   e.preventDefault();
   e.stopPropagation();
 };
 
-const S3BoxImage = ({ src, placeholderImg, children, ...others }: S3BoxImageProps) => {
+const S3BoxImage = ({ src, placeholderImg, children, allowClickThrough, ...others }: S3BoxImageProps) => {
   const imgData = useImageQuery(src);
   const [image, setImage] = useState<{ url: string | undefined; name: string | undefined }>({
     url: undefined,
@@ -38,7 +39,7 @@ const S3BoxImage = ({ src, placeholderImg, children, ...others }: S3BoxImageProp
       href={image.url || placeholderImg || '/images/catPlaceholder.png'}
       download={image.name}
       onClick={onClick}
-      style={{ cursor: 'default', textDecoration: 'none' }}
+      style={{ cursor: 'default', textDecoration: 'none', pointerEvents: allowClickThrough ? 'none' : undefined }}
     >
       <Box
         component='img'
