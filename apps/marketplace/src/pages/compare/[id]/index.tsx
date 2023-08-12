@@ -7,14 +7,14 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import CompareDifferences from './CompareDifferences';
 
 const Compare = () => {
-  let productIds: string[] = [];
+  let listingIds: string[] = [];
   const urlParts = window.location.pathname.split('/compare/');
 
   if (urlParts.length > 1 && urlParts[1] !== '') {
-    productIds = urlParts[1].split(',');
+    listingIds = urlParts[1].split(',');
   }
 
-  console.log('Product IDs:', productIds);
+  console.log('Product IDs:', listingIds);
 
   const theme = useTheme();
   const { spacing } = theme;
@@ -60,7 +60,7 @@ const Compare = () => {
         >
           Compare Differences
         </Typography>
-        <CompareDifferences productIds={productIds} />
+        <CompareDifferences listingIds={listingIds} />
       </Box>
     </Container>
   );
