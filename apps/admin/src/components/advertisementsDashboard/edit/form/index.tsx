@@ -12,18 +12,21 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import Alert from '@mui/material/Alert';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import fetchCompanies from '@/services/companies/fetchCompanies';
 import Spinner from '@/components/fallbacks/Spinner';
+import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 
 const getDefaultValue = (advertisement?: Advertisment): PostAdvertisementRequestBody => ({
   companyId: advertisement?.companyId || '',
   link: advertisement?.link || '',
   description: advertisement?.description || '',
-  startDate: new Date(advertisement?.startDate || '').toISOString().split('T')[0],
-  endDate: new Date(advertisement?.endDate || '').toISOString().split('T')[0],
+  startDate: (advertisement ? new Date(advertisement?.startDate || '') : new Date()).toISOString().split('T')[0],
+  endDate: (advertisement ? new Date(advertisement?.endDate || '') : new Date()).toISOString().split('T')[0],
   active: advertisement ? !!advertisement.active : true,
 });
 
@@ -37,11 +40,13 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate }: {
   const [open, setOpen] = useState(false);
   const [leftButtonState, setLeftButtonState] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [processingSubmit, setProcessingSubmit] = useState(false);
 
 
   const [formValues, setFormValues] = useState<PostAdvertisementRequestBody>(getDefaultValue(advertisement));
 
   const [formErrors, setFormErrors] = useState({
+    companyId: '',
     endpointError: '',
     link: '',
     description: '',
@@ -67,6 +72,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate }: {
 
   const setErrors = (errors: { [key: string]: string }) => {
     setFormErrors({
+      companyId: '',
       endpointError: '',
       link: '',
       description: '',
@@ -82,11 +88,14 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate }: {
       setErrors(errors);
       return;
     }
-
+    setProcessingSubmit(true);
     onSubmit(formValues, selectedFile || undefined).then((success) => {
+      setProcessingSubmit(false);
       setOpen(success);
-      setErrors({ endpointError: 'An error occurred while updating the advertisement.' });
+      if (!success)
+        setErrors({ endpointError: 'An error occurred while updating the advertisement.' });
     }).catch((error) => {
+      setProcessingSubmit(false);
       setErrors({ endpointError: error.message });
     });
   };
@@ -140,6 +149,9 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate }: {
       [name]: value,
     }));
   };
+
+  if (processingSubmit) return <SpinnerPage />;
+
   return (
     <Box
       sx={({ spacing, palette }) => ({
@@ -148,6 +160,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate }: {
         m: spacing(3),
       })}
     >
+      {formErrors.endpointError && <Alert severity='error'>{formErrors.endpointError}</Alert>}
       <Box>
         <Upload
           id='advertisement image upload'
@@ -181,7 +194,6 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate }: {
               name='companyId'
               onChange={((event) => {
                 const { name, value } = event.target;
-                console.log(event.target);
                 setFormValues((prevValues) => ({
                   ...prevValues,
                   [name]: value,
@@ -194,6 +206,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate }: {
                 )
               }
             </Select>
+            {formErrors.companyId !== '' && <FormHelperText error>{formErrors.companyId}</FormHelperText>}
           </FormControl> : <Spinner />}
           <TextField
             label='Link'
