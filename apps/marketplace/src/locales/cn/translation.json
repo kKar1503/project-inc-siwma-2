@@ -263,5 +263,6 @@
   "Your company e-mail": "您公司电邮",
   "Your password": "您的密码",
   "Remember me": "记住我的登录信息",
-  "Forgot your password?": "忘记密码?"
+  "Forgot your password?": "忘记密码?",
+  "Invalid email or password!":"电邮或密码无效!"
 }

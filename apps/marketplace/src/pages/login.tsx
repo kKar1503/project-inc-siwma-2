@@ -228,7 +228,7 @@ const LoginForm = () => {
                     my: spacing(2),
                   })}
                 >
-                  Invalid email or password!
+                  {t('Invalid email or password!')}
                 </Typography>
               )}
               <Grid

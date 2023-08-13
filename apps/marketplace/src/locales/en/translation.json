@@ -262,9 +262,10 @@
   "Please sign in to your account": "Please sign in to your account",
   "Sign In": "Sign In",
   "E-mail": "E-mail",
-  "Password":"Password",
+  "Password": "Password",
   "Your company e-mail": "Your company e-mail",
-  "Your password":"Your password",
-  "Remember me":"Remember me",
-  "Forgot your password?":"Forgot your password?"
+  "Your password": "Your password",
+  "Remember me": "Remember me",
+  "Forgot your password?": "Forgot your password?",
+  "Invalid email or password!": "Invalid email or password!"
 }
