@@ -27,6 +27,7 @@ import useBookmarkStore from '@/stores/bookmarks';
 import useParamStore from '@/stores/parameters';
 import useProductStore from '@/stores/products';
 import { SxProps } from '@mui/material/styles';
+import CategoryCardSkeleton from '@/components/marketplace/listing/CategoriesSkeleton';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -230,7 +231,7 @@ const Marketplace = () => {
                 Array.from({ length: 6 }).map((_, index) => (
                   // eslint-disable-next-line react/no-array-index-key
                   <Grid item xl={2} lg={3} md={4} xs={6} key={`skele-${index}`}>
-                    <Skeleton height={isSm ? 280 : 370} />
+                    <CategoryCardSkeleton />
                   </Grid>
                 ))
             }
