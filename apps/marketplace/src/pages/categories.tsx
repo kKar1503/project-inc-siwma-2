@@ -8,6 +8,8 @@ import { useRouter } from 'next/router';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 import Spinner from '@/components/fallbacks/Spinner';
 import { useEffect } from 'react';
+import Skeleton from '@mui/material/Skeleton';
+import CategoryCardSkeleton from '@/components/marketplace/listing/CategoryCardSkeleton';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -84,6 +86,17 @@ const CategoriesPage = () => {
               <CategoryCard {...category} />
             </Grid>
           ))}
+
+          {
+            // Skeleton loading
+            (catData?.data && catData.data.length === 0) ??
+              Array.from({ length: 6 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Grid item xl={2} lg={3} md={4} xs={6} key={`skele-${index}`}>
+                  <CategoryCardSkeleton />
+                </Grid>
+              ))
+          }
         </Grid>
       </Grid>
     </Box>
