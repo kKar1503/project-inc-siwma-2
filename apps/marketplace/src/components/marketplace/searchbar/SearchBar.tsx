@@ -10,6 +10,7 @@ import {
   connectHits,
   connectStateResults,
 } from 'react-instantsearch-dom';
+import { useTranslation } from 'react-i18next';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
 const searchClient = instantMeiliSearch(
@@ -44,6 +45,7 @@ const SearchBox = ({
   const debouncedSearchTerm = useDebounce(inputValue, 500);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -68,7 +70,7 @@ const SearchBox = ({
       <TextField
         value={inputValue}
         onChange={onSearchStateChange}
-        placeholder="Search"
+        placeholder={t('searchForListings') as string}
         fullWidth
         type="submit"
         title="Search"
@@ -89,7 +91,7 @@ const SearchBox = ({
               ) : null}
             </Box>
           ),
-          inputRef
+          inputRef,
         }}
         sx={{
           position: 'absolute',
