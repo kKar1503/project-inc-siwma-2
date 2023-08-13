@@ -49,6 +49,7 @@
   "Document File": "文档文件",
   "Edit Listing": "编辑商品",
   "Edit Profile": "编辑个人资料",
+  "Edit profile": "编辑个人资料",
   "EN": "英",
   "Enter an alternative amount to offer for the listing below.": "请在下面输入一个备选的报价金额。",
   "Enter the details of the listing below": "请在下面输入商品的详细信息",
@@ -211,5 +212,26 @@
   "Certification": "认证",
   "Posted on": "发布日期",
   "Share": "分享",
-  "share": "分享"
+  "share": "分享",
+
+  "Please enter your full name": "请输入您的全名",
+  "Name cannot contain numbers": "姓名不能包含数字",
+  "Invalid name": "无效姓名",
+
+  "Please enter a mobile number": "请输入手机号码",
+  "Please enter a valid Singapore phone number": "请输入有效的新加坡电话号码",
+  "Invalid phone number":"无效电话号码",
+
+  "Please enter an email address": "请输入您的电邮",
+  "Please enter a valid email address": "请输入有效的电邮",
+  "Invalid email": "无效电邮",
+
+  "Please enter a bio": "请输入简历",
+  "Invalid bio": "无效简历",
+
+  "Invalid whatsapp number":"无效的 Whatsapp 号码",
+  "Invalid telegram username":"无效的 Telegram 用户名",
+  "Please enter your telegram username": "请输入您的 Telegram 用户名",
+  "Please enter a telegram username":"请输入 Telegram 用户名",
+  "Your Full Name":"您的姓名"
 }

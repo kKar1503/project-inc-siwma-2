@@ -259,7 +259,7 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
                 fontWeight: 'bold',
               })}
             >
-              Edit profile
+              {t('Edit profile')}
             </Button>
           )}
         </Box>

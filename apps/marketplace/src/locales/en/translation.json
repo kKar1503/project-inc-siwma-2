@@ -50,6 +50,7 @@
   "Document File": "Document File",
   "Edit Listing": "Edit Listing",
   "Edit Profile": "Edit Profile",
+  "Edit profile": "Edit profile",
   "EN": "EN",
   "Enter an alternative amount to offer for the listing below.": "Enter an alternative amount to offer for the listing below.",
   "Enter the details of the listing below": "Enter the details of the listing below",
@@ -214,5 +215,26 @@
   "Posted on": "Posted on",
 
   "Share": "Share",
-  "share": "share"
+  "share": "share",
+
+  "Please enter your full name": "Please enter your full name",
+  "Name cannot contain numbers": "Name cannot contain numbers",
+  "Invalid name": "Invalid name",
+
+  "Please enter a mobile number": "Please enter a mobile number",
+  "Please enter a valid Singapore phone number": "Please enter a valid Singapore phone number",
+  "Invalid phone number": "Invalid phone number",
+
+  "Please enter an email address": "Please enter an email address",
+  "Please enter a valid email address": "Please enter a valid email address",
+  "Invalid email": "Invalid email",
+  
+  "Please enter a bio": "Please enter a bio",
+  "Invalid bio": "Invalid bio",
+
+  "Invalid whatsapp number": "Invalid whatsapp number",
+  "Invalid telegram username": "Invalid telegram username",
+  "Please enter your telegram username": "Please enter your telegram username",
+  "Please enter a telegram username": "Please enter a telegram username",
+  "Your Full Name": "Your Full Name"
 }
