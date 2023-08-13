@@ -10,6 +10,7 @@ import Spinner from '@/components/fallbacks/Spinner';
 import { useEffect, useMemo } from 'react';
 import { SxProps } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
+import { useTranslation } from 'react-i18next';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -24,6 +25,7 @@ const CategoriesPage = () => {
   const router = useRouter();
   const catData = useCategoryPageQuery();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { t } = useTranslation();
 
   const maxWidthContainer = useMemo<SxProps>(() => {
     if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)' };
@@ -75,7 +77,7 @@ const CategoriesPage = () => {
             fontWeight: 700,
           })}
         >
-          More Metal Types
+          {t(['Categories'])}
         </Typography>
       </Box>
 
