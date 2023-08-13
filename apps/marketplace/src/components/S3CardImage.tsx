@@ -10,7 +10,7 @@ type CardMediaXProps = CardMediaProps & S3ImageProps & {
  */
 const CardMediaX = ({ src, placeholder, height, allowClickThrough }: CardMediaXProps) => (
   <CardMedia component='div' style={{ position: 'relative', width: '100%', height }}>
-    <S3BoxImage src={src} placeholderImg={placeholder} maxHeight='100%' maxWidth='100%' style={{ objectFit: 'cover' }}
+    <S3BoxImage src={src} placeholderImg={placeholder} height='100%' width='100%' style={{ objectFit: 'cover' }}
                 allowClickThrough={allowClickThrough} />
   </CardMedia>
 );
