@@ -15,6 +15,7 @@ import { Product } from '@/utils/api/client/zod/products';
 import S3BoxImage from '@/components/S3BoxImage';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
+import { AxiosError } from 'axios';
 
 interface TableRowData {
   id: string;
@@ -88,24 +89,14 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
     }
   }, [selectedListing.data, selectedProduct.data, selectedCat.data]);
 
+  const queries = [selectedListing, selectedProduct, selectedCat];
+  const isError = queries.some((query) => query.isError);
+  const statuses = queries.map((query) => (query.error as AxiosError)?.status);
+
   // ** Error Handling
   useEffect(() => {
-    if (!selectedListing.isFetched || !selectedProduct.isFetched || !selectedCat.isFetched) {
-      return;
-    }
-
-    if (selectedListing.isError || selectedProduct.isError || selectedCat.isError) {
-      if (
-        'status' in
-          ((selectedListing.isError as any) ||
-            (selectedProduct.isError as any) ||
-            (selectedCat.isError as any)) &&
-        (
-          (selectedListing.isError as any) ||
-          (selectedProduct.isError as any) ||
-          (selectedCat.isError as any)
-        ).status === 404
-      ) {
+    if (isError) {
+      if (statuses.includes(404) || statuses.includes(422)) {
         router.replace('/404');
         return;
       }
@@ -121,7 +112,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
     ) {
       router.replace('/500');
     }
-  }, [selectedListing.isFetched, selectedProduct.isFetched, selectedCat.isFetched]);
+  }, [queries, isError, statuses]);
 
   const tableData: TableData = {
     sideHeaders: [
