@@ -8,6 +8,7 @@ import { t } from 'i18next';
 import { FieldValues, Form, FormProvider, useForm } from 'react-hook-form';
 import { useResponsiveness } from '@inc/ui';
 import { Category, Parameter, Product } from '@/utils/api/client/zod';
+import { useTranslation } from 'react-i18next';
 import FormInputGroup from '../FormInputGroup';
 import FormToggleButton, { FormToggleButtonOption } from '../FormToggleButton';
 import FormSearchDropdown from '../FormSearchDropdown';
@@ -15,8 +16,8 @@ import FormNumberInput from '../FormNumberInput';
 import FormCheckboxInput from '../FormCheckboxInput';
 
 const listingTypeOptions: FormToggleButtonOption[] = [
-  { label: 'BUYING', value: 'BUY' },
-  { label: 'SELLING', value: 'SELL' },
+  { label: t('BUYING'), value: 'BUY' },
+  { label: t('SELLING'), value: 'SELL' },
 ];
 
 type ListingCreationFormProps = {
@@ -47,6 +48,7 @@ const ListingCreationForm = ({
   // -- Hooks -- //
   const [isSm] = useResponsiveness(['sm']);
   const { control } = formHook;
+  const { t } = useTranslation();
 
   return (
     <Form
@@ -72,7 +74,7 @@ const ListingCreationForm = ({
         </FormInputGroup>
         <FormInputGroup
           sx={{ flex: 1 }}
-          label="Product"
+          label={t('Product')}
           name="product"
           isLoading={isLoading}
           success={submitSuccess}
@@ -102,7 +104,7 @@ const ListingCreationForm = ({
               text={selectedProduct?.chineseName}
             />
             <ProductDetail header={t('Unit')} text={selectedProduct?.unit} />
-            <ProductDetail header={t('Chinese Unit')} text={selectedProduct?.chineseUnit} />
+            <ProductDetail header={t('Unit (Chinese)')} text={selectedProduct?.chineseUnit} />
             <ProductDetail header={t('Category')} text={selectedCategory?.name} />
           </Box>
           <ProductDetail header={t('Description')} text={selectedProduct?.description} />
@@ -189,7 +191,7 @@ const ListingCreationForm = ({
           >
             <FormInputGroup
               sx={{ flex: 1 }}
-              label="Price"
+              label={t('Price')}
               name="price"
               isLoading={isLoading}
               success={submitSuccess}
@@ -200,7 +202,7 @@ const ListingCreationForm = ({
             </FormInputGroup>
             <FormInputGroup
               sx={{ flex: 1 }}
-              label="Quantity"
+              label={t('Quantity')}
               name="quantity"
               isLoading={isLoading}
               success={submitSuccess}
@@ -225,7 +227,7 @@ const ListingCreationForm = ({
               hideError
             >
               {/** @ts-ignore */}
-              <FormCheckboxInput options={[{ label: 'Negotiable', value: true }]} />
+              <FormCheckboxInput options={[{ label: t('Negotiable'), value: true }]} />
             </FormInputGroup>
             <Typography variant="body1" fontWeight="medium" color="red">
               {errorMessage}
@@ -241,10 +243,10 @@ const ListingCreationForm = ({
         }}
       >
         <Button type="button" variant="contained" color="error" sx={{ p: 2, flex: 1 }}>
-          Cancel
+          {t('cancel')}
         </Button>
         <Button type="submit" variant="contained" sx={{ p: 2, flex: 1 }}>
-          Create Listing
+          {t('Create Listing')}
         </Button>
       </Box>
     </Form>

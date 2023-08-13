@@ -39,7 +39,8 @@
   "Create Next App": "创建下一个应用",
   "CREATE LISTING": "创建商品",
   "Create Listing": "创建商品",
-  "Create a new listing to be shared on your profile.": "创建一个新的商品才能在你的简介上分享。",
+  "Create a listing": "创建商品",
+  "Create a buy or a sell listing to be shared on your profile": "创建一个新的商品才能在你的简介上分享。",
   "CSV File": "CSV 文件",
   "Current Password": "目前的密码",
   "Delete chat": "删除聊天",
@@ -220,7 +221,7 @@
 
   "Please enter a mobile number": "请输入手机号码",
   "Please enter a valid Singapore phone number": "请输入有效的新加坡电话号码",
-  "Invalid phone number":"无效电话号码",
+  "Invalid phone number": "无效电话号码",
 
   "Please enter an email address": "请输入您的电邮",
   "Please enter a valid email address": "请输入有效的电邮",
@@ -229,15 +230,29 @@
   "Please enter a bio": "请输入简历",
   "Invalid bio": "无效简历",
 
-  "Invalid whatsapp number":"无效的 Whatsapp 号码",
-  "Invalid telegram username":"无效的 Telegram 用户名",
+  "Invalid whatsapp number": "无效的 Whatsapp 号码",
+  "Invalid telegram username": "无效的 Telegram 用户名",
   "Please enter your telegram username": "请输入您的 Telegram 用户名",
-  "Please enter a telegram username":"请输入 Telegram 用户名",
-  "Your Full Name":"您的姓名",
+  "Please enter a telegram username": "请输入 Telegram 用户名",
+  "Your Full Name": "您的姓名",
 
-  "New password and confirm new password must be the same":"新密码和确认新密码必须相同",
-  "New password must be at least 8 characters long":"新密码长度必须至少为 8 个字符",
-  "Current password is incorrect":"目前的密码不正确",
-  "Please fill in all fields":"请填写所有信息"
+  "New password and confirm new password must be the same": "新密码和确认新密码必须相同",
+  "New password must be at least 8 characters long": "新密码长度必须至少为 8 个字符",
+  "Current password is incorrect": "目前的密码不正确",
+  "Please fill in all fields": "请填写所有信息",
 
+  "Product": "商品",
+  "Product Info": "商品信息",
+  "Product Name": "商品名称",
+  "Product Name (Chinese)": "商品名称 (中文)",
+  "Unit": "单位",
+  "Unit (Chinese)": "单位 (中文)",
+  "Information on the Selected Product": "关于所选产品的信息",
+  "Category Parameters": "分类参数",
+  "Enter the parameters specific to the chosen category": "请输入所选分类的特定参数",
+  "No Product Selected": "未选择商品",
+  "Cross Section Image": "横截面图像",
+  "Length": "长度",
+  "Grade": "金属等级",
+  "Type": "类型"
 }

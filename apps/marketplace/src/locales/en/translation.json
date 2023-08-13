@@ -39,6 +39,7 @@
   "Create Next App": "Create Next App",
   "CREATE LISTING": "CREATE LISTING",
   "Create Listing": "Create Listing",
+  "Create a listing": "Create a listing",
   "Create a new listing to be shared on your profile.": "Create a new listing to be shared on your profile.",
   "CSV File": "CSV File",
   "Current Password": "Current Password",
@@ -241,5 +242,21 @@
   "New password and confirm new password must be the same": "New password and confirm new password must be the same",
   "New password must be at least 8 characters long": "New password must be at least 8 characters long",
   "Current password is incorrect": "Current password is incorrect",
-  "Please fill in all fields": "Please fill in all fields"
+  "Please fill in all fields": "Please fill in all fields",
+
+  "Product": "Product",
+  "Product Info": "Product Info",
+  "Product Name": "Product Name",
+  "Product Name (Chinese)": "Product Name (Chinese)",
+  "Unit": "Unit",
+  "Unit (Chinese)": "Unit (Chinese)",
+  "Information on the Selected Product": "Information on the Selected Product",
+  "Category Parameters": "Category Parameters",
+  "Enter the parameters specific to the chosen category": "Enter the parameters specific to the chosen category",
+  "No Product Selected": "No Product Selected",
+  "Cross Section Image": "Cross Section Image",
+  "Length": "Length",
+  "Grade": "Grade",
+  "Type":"Type"
+
 }

@@ -3,6 +3,7 @@ import { Parameter } from '@/utils/api/client/zod';
 import { Typography } from '@mui/material';
 import { t } from 'i18next';
 import { DataType, ParameterType } from '@inc/db-enums';
+import { useTranslation } from 'react-i18next';
 import { FormDropdownSelector, FormInputGroup, FormTextInput, FormToggleButton } from '../forms';
 import FormNumberInput from '../forms/FormNumberInput';
 
@@ -21,6 +22,7 @@ const CategoryParamInput = ({
   required,
   sx,
 }: CategoryParamInputProps) => {
+  const { t } = useTranslation();
   // Determine the input component to use
   const renderInputComponent = () => {
     switch (parameter.dataType) {
@@ -33,7 +35,7 @@ const CategoryParamInput = ({
           <FormToggleButton
             labelComponent={
               <Typography variant="body1" fontWeight="medium">
-                {parameter.displayName}
+                {t(parameter.displayName)}
               </Typography>
             }
             options={[
@@ -61,7 +63,7 @@ const CategoryParamInput = ({
         <FormToggleButton
           labelComponent={
             <Typography variant="body1" fontWeight="medium" sx={{ marginBottom: '0.5rem' }}>
-              {parameter.displayName}
+              {t(parameter.displayName)}
             </Typography>
           }
           options={parameter.options.map((e) => ({
@@ -102,7 +104,7 @@ const CategoryParamInput = ({
   return (
     <FormInputGroup
       sx={{ flex: 1, ...sx }}
-      label={parameter.displayName}
+      label={t(parameter.displayName)}
       name={`param-${parameter.id.toString()}`}
       isLoading={isLoading}
       success={submitSuccess}
