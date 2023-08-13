@@ -27,7 +27,7 @@ import useBookmarkStore from '@/stores/bookmarks';
 import useParamStore from '@/stores/parameters';
 import useProductStore from '@/stores/products';
 import { SxProps } from '@mui/material/styles';
-import CategoryCardSkeleton from '@/components/marketplace/listing/CategoriesSkeleton';
+import CategoryCardSkeleton from '@/components/marketplace/listing/CategoryCardSkeleton';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
