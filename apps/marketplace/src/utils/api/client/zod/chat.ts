@@ -37,7 +37,7 @@ const getChatRoom = z.object({
   seller: user,
   buyer: user,
   listing,
-  latestMessage: getChatMessage.nullable(),
+  latestMessage: getChatMessage,
   unreadMessagesCount: z.number(),
   createdAt: z.string().datetime(),
 });

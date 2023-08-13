@@ -19,7 +19,7 @@ import { useTheme, alpha } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
 type CategoryType = 'All' | 'Buying' | 'Selling';
-
+  
 export type ChatListProps = {
   id: string;
   username: string;
@@ -29,20 +29,10 @@ export type ChatListProps = {
   time?: Date;
   userImage: string;
   unreadMessages: number;
-} & (
-  | {
-      latestMessage: string;
-      contentType: 'text' | 'file' | 'image';
-    }
-  | {
-      latestMessage: {
-        amount: number;
-        accepted: boolean;
-        content: string;
-      };
-      contentType: 'offer';
-    }
-);
+} & {
+  latestMessage: string;
+  contentType: 'text' | 'file' | 'image';
+};
 
 export type ChatListPageProps = {
   chats: ChatListProps[];
@@ -423,52 +413,14 @@ const ChatList = ({ chats, onChange, selectChat, setSelectChat }: ChatListPagePr
                     ...chatListStyles?.latestMessage,
                   }}
                 >
-                  {chat.contentType === 'offer' ? (
-                    <>
-                      <Typography
-                        component="span"
-                        sx={{
-                          userSelect: 'none',
-                        }}
-                      >
-                        {t('Offer: ')}
-                      </Typography>
-                      <Typography
-                        component="span"
-                        sx={{
-                          userSelect: 'none',
-                        }}
-                      >{`$${chat.latestMessage.amount} `}</Typography>
-                      {chat.latestMessage.accepted ? (
-                        <Typography
-                          component="span"
-                          sx={{
-                            userSelect: 'none',
-                          }}
-                        >
-                          {t('(Accepted)')}
-                        </Typography>
-                      ) : (
-                        <Typography
-                          component="span"
-                          sx={{
-                            userSelect: 'none',
-                          }}
-                        >
-                          {t(chat.latestMessage.content)}
-                        </Typography>
-                      )}
-                    </>
-                  ) : (
-                    <Typography
-                      component="span"
-                      sx={{
-                        userSelect: 'none',
-                      }}
-                    >
-                      {chat.latestMessage}
-                    </Typography>
-                  )}
+                  <Typography
+                    component="span"
+                    sx={{
+                      userSelect: 'none',
+                    }}
+                  >
+                    {chat.latestMessage}
+                  </Typography>
                 </Typography>
                 <Typography
                   variant="body2"

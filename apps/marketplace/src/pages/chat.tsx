@@ -23,7 +23,7 @@ import type { Messages } from '@inc/types';
 
 // ** Hooks Imports **
 import { useResponsiveness } from '@inc/ui';
-import useChat from '@/hooks/useChat';
+import fetchChatList from '@/services/fetchChatList';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
@@ -46,7 +46,6 @@ type RoomData = ChatListProps & {
 };
 
 const ChatRoom = () => {
-
   // useEffect(() => {
   //     const pusher = new Pusher('APP_KEY', {
   //       cluster: 'APP_CLUSTER',
@@ -71,7 +70,6 @@ const ChatRoom = () => {
   //     }
   //   }, []);
 
-
   // ** Hooks **
   const { data } = useSession();
   const router = useRouter();
@@ -85,7 +83,6 @@ const ChatRoom = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   // ** Socket Related **z
-  const [connect, setConnect] = useState(false);
   const [roomId, setRoomId] = useState('');
   const [rooms, setRooms] = useState<RoomData[]>([]);
   const [messages, setMessages] = useState<ChatData[]>([]);
@@ -93,49 +90,52 @@ const ChatRoom = () => {
   // ** States **
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState('');
-  const [domLoaded, setDomLoaded] = useState(false);
-  const [roomSynced, setRoomSynced] = useState(false);
-  const [messageSynced, setMessageSynced] = useState('');
-  const [queryChecked, setQueryChecked] = useState(false);
 
   // ** Update Chat List **
-  const updateChatList = (message: Messages) => {
-    setRooms((prev) =>
-      prev.map((room) => {
-        console.log('iterating rooms', room);
-        if (room.id !== message.room) {
-          return room;
-        }
-        const newRoom = { ...room };
+  // const updateChatList = (message: Messages) => {
+  //   setRooms((prev) =>
+  //     prev.map((room) => {
+  //       console.log('iterating rooms', room);
+  //       if (room.id !== message.room) {
+  //         return room;
+  //       }
+  //       const newRoom = { ...room };
 
-        newRoom.time = new Date(message.createdAt);
-        newRoom.latestMessage = message.message.content;
-        newRoom.contentType = message.message.contentType;
+  //       newRoom.time = new Date(message.createdAt);
+  //       newRoom.latestMessage = ''; // TODO
+  //       newRoom.contentType = message.message.contentType;
 
-        return newRoom;
-      })
-    );
-  };
+  //       return newRoom;
+  //     })
+  //   );
+  // };
 
   // ** useEffect **
   useEffect(() => {
-    if (data !== undefined && data !== null) {
-      console.log('userId acquired from user session');
-      userIdRef.current = data.user.id;
-      setDomLoaded(true);
-      setConnect(true);
+    if (data === undefined || data === null) {
+      console.log('no userId found');
+      router.push('/login');
       return;
     }
 
-    userIdRef.current = 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26';
+    userIdRef.current = data.user.id;
 
-    setConnect(true);
-    setDomLoaded(true);
-    // TODO, to change back to following
-    // console.log('userId cannot be found, redirecting to signin page');
-    // router.push('/login');
+    fetchChatList().then((chatList) => {
+      const formattedRooms = chatList.map((chat) => {
+        const { latestMessage, ...rest } = chat;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        const formatted: RoomData = {
+          ...rest,
+          latestMessage: '',
+          contentType: 'text',
+        };
+
+        return formatted;
+      });
+    });
+
+    // Get rooms from backend and parse them with zod
+    fetch('/api/rooms');
   }, []);
 
   // ** Memos **
@@ -190,7 +190,7 @@ const ChatRoom = () => {
         message: inputText,
       };
 
-      fetch(`/chat/messages/{roomId}`, {
+      fetch(`/chat/messages/${roomId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

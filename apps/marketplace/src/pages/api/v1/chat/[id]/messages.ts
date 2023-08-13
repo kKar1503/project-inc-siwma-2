@@ -98,6 +98,7 @@ export default apiHandler()
     }
 
     // Verify that chatId exists and that sender and receiver are part of the chat
+    // Sender and receiver are guaranteed to not be the same during chat creation, don't need to check here
     const chat = await PrismaClient.rooms.findFirst({
       where: {
         id,
