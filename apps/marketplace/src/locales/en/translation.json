@@ -228,7 +228,7 @@
   "Please enter an email address": "Please enter an email address",
   "Please enter a valid email address": "Please enter a valid email address",
   "Invalid email": "Invalid email",
-  
+
   "Please enter a bio": "Please enter a bio",
   "Invalid bio": "Invalid bio",
 
@@ -236,5 +236,10 @@
   "Invalid telegram username": "Invalid telegram username",
   "Please enter your telegram username": "Please enter your telegram username",
   "Please enter a telegram username": "Please enter a telegram username",
-  "Your Full Name": "Your Full Name"
+  "Your Full Name": "Your Full Name",
+
+  "New password and confirm new password must be the same": "New password and confirm new password must be the same",
+  "New password must be at least 8 characters long": "New password must be at least 8 characters long",
+  "Current password is incorrect": "Current password is incorrect",
+  "Please fill in all fields": "Please fill in all fields"
 }

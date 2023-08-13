@@ -233,5 +233,11 @@
   "Invalid telegram username":"无效的 Telegram 用户名",
   "Please enter your telegram username": "请输入您的 Telegram 用户名",
   "Please enter a telegram username":"请输入 Telegram 用户名",
-  "Your Full Name":"您的姓名"
+  "Your Full Name":"您的姓名",
+
+  "New password and confirm new password must be the same":"新密码和确认新密码必须相同",
+  "New password must be at least 8 characters long":"新密码长度必须至少为 8 个字符",
+  "Current password is incorrect":"目前的密码不正确",
+  "Please fill in all fields":"请填写所有信息"
+
 }
