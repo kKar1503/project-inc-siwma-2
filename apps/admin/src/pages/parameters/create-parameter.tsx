@@ -28,6 +28,7 @@ import createParameter from '@/middlewares/createParameter';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import ErrorModal from '@/components/modals/ErrorModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -65,6 +66,7 @@ const CreateParameter = () => {
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
   const [createItem, setCreateItem] = useState<boolean>(false);
+  const [openError, setError] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -196,10 +198,10 @@ const CreateParameter = () => {
         router.push(`/parameters`);
       }
     } catch (error) {
-      router.push('/404');
+      setError(true);
     }
   };
-  
+
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setOpenLeave(true);
@@ -384,6 +386,14 @@ const CreateParameter = () => {
             content="Parameter has been successfully created"
             open={createItem}
             setOpen={setCreateItem}
+            buttonText="Return"
+            path="/parameters"
+          />
+          <ErrorModal
+            title="Error"
+            content="An error has occured"
+            open={openError}
+            setOpen={setError}
             buttonText="Return"
             path="/parameters"
           />

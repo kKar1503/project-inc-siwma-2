@@ -28,6 +28,7 @@ import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import ErrorModal from '@/components/modals/ErrorModal';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
@@ -80,6 +81,7 @@ const EditParameter = () => {
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<boolean>(false);
+  const [openError, setError] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -199,6 +201,9 @@ const EditParameter = () => {
           queryClient.invalidateQueries('parameter');
           setEditItem(true);
         },
+        onError: (error) => {
+          setError(true);
+        }
       }
     );
 
@@ -244,7 +249,7 @@ const EditParameter = () => {
         setDataType(parameterData.data?.dataType || '');
       }
     }
-  }, [parameterData.isFetched, parameterData.isError, parameterData.data, router]);
+  }, [parameterData.isFetched, parameterData.isError, parameterData.data]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
@@ -252,9 +257,9 @@ const EditParameter = () => {
       router.push(`/parameters`);
     }
     if (mutation.isError) {
-      router.push('/404');
+      setError(true);
     }
-  }, [mutation.isSuccess, queryClient, router, id]);
+  }, [mutation.isSuccess, mutation.isError, id]);
 
   const tableStyle = useMemo(() => {
     if (isSm) {
@@ -431,6 +436,14 @@ const EditParameter = () => {
                     content="Parameter has been successfully edited"
                     open={editItem}
                     setOpen={setEditItem}
+                    buttonText="Return"
+                    path="/parameters"
+                  />
+                  <ErrorModal
+                    title="Error"
+                    content="An error has occured."
+                    open={openError}
+                    setOpen={setError}
                     buttonText="Return"
                     path="/parameters"
                   />
