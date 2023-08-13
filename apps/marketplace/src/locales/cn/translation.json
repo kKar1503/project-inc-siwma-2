@@ -254,5 +254,14 @@
   "Cross Section Image": "横截面图像",
   "Length": "长度",
   "Grade": "金属等级",
-  "Type": "类型"
+  "Type": "类型",
+
+  "Please sign in to your account": "请登录您的账号",
+  "Sign In": "登录",
+  "E-mail": "电邮",
+  "Password": "密码",
+  "Your company e-mail": "您公司电邮",
+  "Your password": "您的密码",
+  "Remember me": "记住我的登录信息",
+  "Forgot your password?": "忘记密码?"
 }

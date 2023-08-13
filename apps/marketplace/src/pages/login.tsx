@@ -18,6 +18,8 @@ import { useRouter } from 'next/router';
 import { FormEvent, useMemo, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useResponsiveness, useTogglePasswordVisibility } from '@inc/ui';
+import { useTranslation } from 'react-i18next';
+import ChangeLanguageButton from '../components/marketplace/navbar/ChangeLanguageButton';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -28,6 +30,10 @@ const LoginForm = () => {
   const { spacing, shape, shadows, palette } = useTheme();
   const { showPassword, handleTogglePassword } = useTogglePasswordVisibility();
   const router = useRouter();
+  const { t } = useTranslation();
+
+  const yourCompanyEmail = t('Your company e-mail');
+  const yourPassword = t('Your password');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -148,24 +154,31 @@ const LoginForm = () => {
             <Box
               sx={({ spacing }) => ({
                 mb: spacing(2),
+                display: 'flex',
+                alignItems: 'center',
               })}
             >
-              <Typography
-                sx={({ spacing, typography }) => ({
-                  fontSize: typography.h5,
-                  mt: spacing(3),
-                  fontWeight: 'bold',
-                })}
-              >
-                Sign In
-              </Typography>
-              <Typography
-                sx={({ typography }) => ({
-                  fontSize: typography.body1,
-                })}
-              >
-                Please sign in to your account
-              </Typography>
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  sx={({ spacing, typography }) => ({
+                    fontSize: typography.h5,
+                    mt: spacing(3),
+                    fontWeight: 'bold',
+                  })}
+                >
+                  {t('Sign In')}
+                </Typography>
+                <Typography
+                  sx={({ typography }) => ({
+                    fontSize: typography.body1,
+                  })}
+                >
+                  {t('Please sign in to your account')}
+                </Typography>
+              </Box>
+              <Box>
+                <ChangeLanguageButton />
+              </Box>
             </Box>
 
             <Box component="form" onSubmit={handleSubmit}>
@@ -173,8 +186,8 @@ const LoginForm = () => {
                 fullWidth
                 name="email"
                 id="email"
-                label="E-mail"
-                placeholder="Your company e-mail"
+                label={t('E-mail')}
+                placeholder={yourCompanyEmail}
                 value={email}
                 type="email"
                 variant="standard"
@@ -187,8 +200,8 @@ const LoginForm = () => {
                 fullWidth
                 name="password"
                 id="password"
-                label="Password"
-                placeholder="Your password"
+                label={t('Password')}
+                placeholder={yourPassword}
                 value={password}
                 type={showPassword ? 'text' : 'password'}
                 variant="standard"
@@ -227,7 +240,7 @@ const LoginForm = () => {
                 <Grid item xs>
                   <FormControlLabel
                     control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
+                    label={t('Remember me')}
                   />
                 </Grid>
                 <Grid item>
@@ -238,13 +251,13 @@ const LoginForm = () => {
                         color: palette.primary.main,
                       })}
                     >
-                      Forgot your password?
+                      {t('Forgot your password?')}
                     </Typography>
                   </Link>
                 </Grid>
               </Grid>
               <Button type="submit" fullWidth variant="contained">
-                SIGN IN
+                {t('Sign In')}
               </Button>
             </Box>
           </Box>
