@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import useUserStore from '@/context/UserDataContext';
 import CreateListing from './CreateListing';
 
 import Profile from './Profile';
@@ -29,6 +30,12 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
   const { t } = useTranslation();
   const userName = user.data?.user.name;
   const userId = user.data?.user.id;
+  const userData = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
+
+  useEffect(() => {
+    setUser({ userName, userId });
+  }, []);
 
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography, zIndex } = useTheme();
@@ -162,7 +169,7 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
                 </Box>
 
                 <Box sx={{ mr: spacing(2) }}>
-                  <Profile userName={userName} userId={userId} />
+                  <Profile userName={userData.userName} userId={userData.userId} />
                 </Box>
 
                 {!isSm && <CreateListing />}
