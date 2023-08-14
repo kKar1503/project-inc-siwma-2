@@ -28,7 +28,7 @@ const CategoriesPage = () => {
   const { t } = useTranslation();
 
   const maxWidthContainer = useMemo<SxProps>(() => {
-    if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)' };
+    if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)', pb: '20px' };
     return {};
   }, [isSm]);
 
@@ -58,7 +58,9 @@ const CategoriesPage = () => {
 
   return (
     <Box
+      id="categories"
       sx={{
+        padding: 10,
         mx: 'auto',
         height: 'full',
         maxHeight: 'xl',
@@ -90,7 +92,7 @@ const CategoriesPage = () => {
           }}
         >
           {catData?.data?.map((category) => (
-            <Grid item xl={2} lg={3} md={4} sm={6} xs={6} key={category.name}>
+            <Grid item xl={6} lg={3} md={4} sm={6} xs={6} key={category.name}>
               <CategoryCard {...category} />
             </Grid>
           ))}
