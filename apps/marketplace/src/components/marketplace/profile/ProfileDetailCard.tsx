@@ -70,6 +70,10 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
     data: bookmarked,
   } = useBookmarkUser(profileUserUuid);
 
+  const handleClick = () => {
+    window.location.href = `mailto:${data.email}`;
+  };
+
   // ** Effects
   useEffect(() => {
     if (!init && currentUser !== undefined) {
@@ -171,11 +175,25 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
         >
           {data?.name.charAt(0)}
         </S3Avatar>
-        <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          {data?.name}
+        </Typography>
+        <Typography variant="body1" sx={{ wordWrap: 'break-word' }}>
           {data?.company.name}
         </Typography>
-        <Typography sx={{ wordWrap: 'break-word' }}>{data?.email}</Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            wordWrap: 'break-word',
+            '&:hover': {
+              color: 'blue',
+              cursor: 'pointer',
+            },
+          }}
+          onClick={handleClick}
+        >
+          {data?.email}
+        </Typography>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
