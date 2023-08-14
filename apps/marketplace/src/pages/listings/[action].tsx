@@ -344,7 +344,7 @@ const ListingCreateEdit = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          paddingY: 4,
+          paddingY: 3,
         }}
       >
         <Box
