@@ -37,6 +37,13 @@ const ListingItemForm = () => {
   const [LIUnit, setUnit] = useState('');
   const [LICUnit, setChineseUnit] = useState('');
 
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [nameChineseError, setNameChineseError] = useState<string | null>(null);
+  const [descriptionError, setDescriptionError] = useState<string | null>(null);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [unitError, setUnitError] = useState<string | null>(null);
+  const [unitChineseError, setUnitChineseError] = useState<string | null>(null);
+
   const queryClient = useQueryClient();
 
   const cat = GetCategoryPageQuery();
@@ -60,6 +67,52 @@ const ListingItemForm = () => {
   );
 
   const handleConfirm = async () => {
+    // Validate input data
+    let hasError = false;
+    if (!LIName) {
+      setNameError('Listing Item Name is required');
+      hasError = true;
+    } else {
+      setNameError(null);
+    }
+
+    if (!LIChineseName) {
+      setNameChineseError('Listing Item Name (Chinese)  is required');
+      hasError = true;
+    } else {
+      setNameChineseError(null);
+    }
+
+    if (!LIDescription) {
+      setDescriptionError('Description is required');
+      hasError = true;
+    } else {
+      setDescriptionError(null);
+    }
+
+    if (!LICategory) {
+      setCategoryError('Category is required');
+      hasError = true;
+    } else {
+      setCategoryError(null);
+    }
+
+    if (!LIUnit) {
+      setUnitError('Unit is required');
+      hasError = true;
+    } else {
+      setUnitError(null);
+    }
+    if (!LICUnit) {
+      setUnitChineseError('Unit (Chinese) is required');
+      hasError = true;
+    } else {
+      setUnitChineseError(null);
+    }
+
+    if (hasError) {
+      return;
+    }
     console.log(LIName);
     const requestBody: CreateListingItemProps = {
       name: LIName,
@@ -90,7 +143,7 @@ const ListingItemForm = () => {
         Create listing item
       </Typography>
       <Typography variant="body1">Create a listing item</Typography>
-      
+
       <Box>
         <TextField
           fullWidth
@@ -101,6 +154,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setName(e.target.value)}
+          error={!!nameError}
+          helperText={nameError}
         />
         <TextField
           fullWidth
@@ -111,6 +166,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setChineseName(e.target.value)}
+          error={!!nameChineseError}
+          helperText={nameChineseError}
         />
         <TextField
           fullWidth
@@ -121,6 +178,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setDescription(e.target.value)}
+          error={!!descriptionError}
+          helperText={descriptionError}
         />
         {cat && (
           <Box sx={{ py: '15px' }}>
@@ -135,9 +194,16 @@ const ListingItemForm = () => {
                 }}
               >
                 {cat.map((categoryItem) => (
-                  <MenuItem value={categoryItem.id} key={categoryItem.id}>{categoryItem.name}</MenuItem>
+                  <MenuItem value={categoryItem.id} key={categoryItem.id}>
+                    {categoryItem.name}
+                  </MenuItem>
                 ))}
               </Select>
+              {categoryError && (
+                <Typography variant="caption" color="error">
+                  {categoryError}
+                </Typography>
+              )}
             </FormControl>
           </Box>
         )}
@@ -150,6 +216,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setUnit(e.target.value)}
+          error={!!unitError}
+          helperText={unitError}
         />
         <TextField
           fullWidth
@@ -160,6 +228,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setChineseUnit(e.target.value)}
+          error={!!unitChineseError}
+          helperText={unitChineseError}
         />
         <Box
           sx={({ spacing }) => ({
@@ -169,13 +239,17 @@ const ListingItemForm = () => {
             justifyContent: 'flex-end',
           })}
         >
-          <Button type="submit" variant="contained" onClick={handleConfirm} sx={({ spacing}) => ({
-            mb: spacing(2),
-          })}>
-          SUBMIT
-        </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={handleConfirm}
+            sx={({ spacing }) => ({
+              mb: spacing(2),
+            })}
+          >
+            SUBMIT
+          </Button>
         </Box>
-        
       </Box>
       <SuccessModal
         title="Successfully Created!"
