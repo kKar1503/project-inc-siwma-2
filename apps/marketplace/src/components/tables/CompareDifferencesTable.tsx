@@ -58,6 +58,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
     async () => Promise.all(listingIds.map((id) => fetchListing(id))),
     {
       enabled: listingIds !== undefined,
+      retry: false
     }
   );
 
@@ -66,6 +67,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
     async () => Promise.all(listings.map((listing) => fetchProduct(listing.productId))),
     {
       enabled: !selectedListing.isLoading && listings.length !== 0,
+      retry: false,
     }
   );
 
@@ -74,6 +76,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
     async () => Promise.all(products.map((category) => fetchCatById(category.categoryId))),
     {
       enabled: !selectedProduct.isLoading && products.length !== 0,
+      retry: false,
     }
   );
 
