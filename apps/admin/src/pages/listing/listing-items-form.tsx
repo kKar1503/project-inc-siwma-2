@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useRouter } from 'next/router';
 import fetchCategories from '@/services/fetchCategories';
 import createListingItem from '@/services/createListingItem';
 import SuccessModal from '@/components/modals/SuccessModal';
@@ -43,6 +44,8 @@ const ListingItemForm = () => {
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [unitError, setUnitError] = useState<string | null>(null);
   const [unitChineseError, setUnitChineseError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const queryClient = useQueryClient();
 
@@ -124,6 +127,10 @@ const ListingItemForm = () => {
     };
     console.log(requestBody);
     await usePostListingItemMutation.mutateAsync(requestBody);
+  };
+
+  const handleCancel = async () => {
+    router.push('/listing/listing-items');
   };
 
   return (
@@ -233,12 +240,23 @@ const ListingItemForm = () => {
         />
         <Box
           sx={({ spacing }) => ({
-            width: '98%',
+            width: '100%',
             mt: spacing(2),
             display: 'flex',
             justifyContent: 'flex-end',
           })}
         >
+          <Button
+            variant="contained"
+            onClick={handleCancel}
+            sx={({ spacing, palette }) => ({
+              mb: spacing(2),
+              mr: spacing(3),
+              backgroundColor: palette.error.main,
+            })}
+          >
+            CANCEL
+          </Button>
           <Button
             type="submit"
             variant="contained"

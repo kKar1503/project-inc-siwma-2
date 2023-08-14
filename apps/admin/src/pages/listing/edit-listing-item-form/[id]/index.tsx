@@ -10,12 +10,12 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useRouter } from 'next/router';
 import fetchCategories from '@/services/fetchCategories';
 import SuccessModal from '@/components/modals/SuccessModal';
 import { ProductResponseBody } from '@/utils/api/client/zod';
 import fetchListingItemById from '@/services/fetchListingItemById';
 import updateListingItemData from '@/services/updateListingItem';
-import { useRouter } from 'next/router';
 
 export type EditListingItemProps = {
   data: ProductResponseBody[];
@@ -159,6 +159,10 @@ const ListingItemForm = () => {
     mutation.mutate(requestBody);
   };
 
+  const handleCancel = async () => {
+    router.push('/listing/listing-items');
+  };
+
   useEffect(() => {
     if (listingItemData) {
       setName(listingItemData.name || '');
@@ -289,12 +293,23 @@ const ListingItemForm = () => {
         />
         <Box
           sx={({ spacing }) => ({
-            width: '98%',
+            width: '100%',
             mt: spacing(2),
             display: 'flex',
             justifyContent: 'flex-end',
           })}
         >
+          <Button
+            variant="contained"
+            onClick={handleCancel}
+            sx={({ spacing, palette }) => ({
+              mb: spacing(2),
+              mr: spacing(3),
+              backgroundColor: palette.error.main,
+            })}
+          >
+            CANCEL
+          </Button>
           <Button
             type="submit"
             variant="contained"
