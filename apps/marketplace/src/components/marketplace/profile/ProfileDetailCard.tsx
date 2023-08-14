@@ -166,10 +166,14 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
 
       <CardContent>
         <S3Avatar
-          sx={({ spacing }) => ({ mb: spacing(1), bgcolor: red[500] })}
+          sx={({ spacing }) => ({
+            mb: spacing(1),
+            bgcolor: red[500],
+            pb: '2px',
+          })}
           src={`${data?.profilePic}`}
         >
-          {data?.name.charAt(0)}
+          {data?.name.charAt(0).toUpperCase()}
         </S3Avatar>
         <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
         <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
