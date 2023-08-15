@@ -3,6 +3,20 @@ const puppeteer = require('puppeteer');
 module.exports = async function crawl(urls) {
   const browser = await puppeteer.launch();
   const { port } = new URL(browser.wsEndpoint());
+  const page = await browser.newPage();
+
+  // Navigate to the login page.
+  await page.goto('http://localhost:3002/login/');
+
+  // Type the email and password.
+  await page.type('#email', 'xavier@example.com');
+  await page.type('#password', 'password');
+
+  // Click the login button.
+  await Promise.all([
+    page.click('button[type="submit"]'), // Assuming the login button has a type of "submit".
+    page.waitForNavigation({ waitUntil: 'networkidle0' }), // Wait for navigation.
+  ]);
 
   const { default: lighthouse } = await import('lighthouse');
   const results = [];
