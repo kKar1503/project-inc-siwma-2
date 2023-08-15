@@ -6,12 +6,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import fetchListing from '@/services/fetchListing';
 import fetchCatById from '@/services/fetchCatById';
 import fetchProduct from '@/services/fetchProduct';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { Category } from '@/utils/api/client/zod/categories';
 import { Product } from '@/utils/api/client/zod/products';
+import useParamStore from '@/stores/parameters';
 import S3BoxImage from '@/components/S3BoxImage';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
@@ -52,13 +56,14 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
   const [category, setCategory] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const router = useRouter();
+  const params = useParamStore((state) => state.params);
 
   const selectedListing = useQuery(
     'getCompareListing',
     async () => Promise.all(listingIds.map((id) => fetchListing(id))),
     {
       enabled: listingIds !== undefined,
-      retry: false
+      retry: false,
     }
   );
 
@@ -127,6 +132,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       'Cross Section Image',
       'Type',
       'Company',
+      'Parameters',
     ],
     rows: [
       {
@@ -155,6 +161,46 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       },
       { id: 'row8', data: listings.map((listing) => listing.type) },
       { id: 'row9', data: listings.map((listing) => listing.owner.company.name) },
+      {
+        id: 'row10',
+        data: listings.map((listing) => (
+          <Grid container spacing={2} ml={3}>
+            {listing.parameters &&
+              listing.parameters.map(({ paramId, value }) => {
+                const displayName = params[paramId]?.displayName;
+                const type = params[paramId]?.type;
+
+                console.log('paramId:', paramId);
+                console.log('displayName:', displayName);
+                console.log('value:', value);
+                console.log('type:', type);
+
+                let unit = '';
+
+                if (type === 'WEIGHT') {
+                  unit = ' kg';
+                } else if (type === 'DIMENSION') {
+                  if (displayName === 'Length') {
+                    unit = ' m';
+                  } else {
+                    unit = ' mm';
+                  }
+                }
+
+                // console.log('unit:', unit);
+
+                return (
+                  <Grid item xl={3} lg={3} md={3} sm={2} xs={2} direction="row" key={paramId}>
+                    <Box>
+                      <Typography sx={{ fontWeight: 'bold', mb: 1 }}>{displayName}</Typography>
+                      <Typography>{`${value}${unit}`}</Typography>
+                    </Box>
+                  </Grid>
+                );
+              })}
+          </Grid>
+        )),
+      },
     ],
   };
 
