@@ -24,7 +24,7 @@ const CategoryCard: React.FC<TCategory> = ({ id, name, image }) => {
           allowClickThrough
           placeholder={placeholder.src}
         />
-        <Divider sx={{ width: '100%' }} />
+        <Divider sx={{ width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.2)', height: '2px' }} />
         <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
           <Typography sx={{ padding: '0' }} gutterBottom variant="h6" component="div">
             {t([name])}
