@@ -11,6 +11,9 @@ import { alpha } from '@mui/material/styles';
 // ** Hooks Imports
 import { useResponsiveness } from '@inc/ui';
 
+// ** i18n Imports
+import { useTranslation } from 'react-i18next';
+
 // ** Store Imports
 import useProductStore from '@/stores/products';
 import { useTableSelection } from '@/stores/table';
@@ -39,6 +42,8 @@ const DisplayRow = (props: DisplayRowProps) => {
 
   // ** Hooks
   const [isSm] = useResponsiveness(['sm']);
+  const { i18n } = useTranslation();
+  const { language } = i18n;
 
   // ** Stores
   const products = useProductStore((state) => state.products);
@@ -52,6 +57,21 @@ const DisplayRow = (props: DisplayRowProps) => {
       };
     return {};
   }, [selections, row]);
+
+  // ** Vars
+  // Row Product Name Display
+  const productName = (row: Listing) => {
+    if (isProductFetching) {
+      return <Skeleton variant="text" />;
+    }
+    if (products[row.product] === undefined) {
+      return 'Product name not found';
+    }
+    if (language === 'cn') {
+      return products[row.product].chineseName;
+    }
+    return products[row.product].name;
+  };
 
   return (
     <TableRow
@@ -70,16 +90,7 @@ const DisplayRow = (props: DisplayRowProps) => {
           textOverflow: 'ellipsis',
         }}
       >
-        {
-          /* eslint-disable-next-line no-nested-ternary */
-          isProductFetching ? (
-            <Skeleton variant="text" />
-          ) : products[row.product] === undefined ? (
-            'Product name not found'
-          ) : (
-            products[row.product].name
-          )
-        }
+        {productName(row)}
       </TableCell>
       <TableCell key={row.id} align="center" sx={{ minWidth: 110 }}>
         {row.price}
