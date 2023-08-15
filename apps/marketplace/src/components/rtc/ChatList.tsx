@@ -19,7 +19,7 @@ import { useTheme, alpha } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
 type CategoryType = 'All' | 'Buying' | 'Selling';
-  
+
 export type ChatListProps = {
   id: string;
   username: string;
@@ -27,11 +27,11 @@ export type ChatListProps = {
   itemName: string;
   inProgress: boolean;
   time?: Date;
-  userImage: string;
+  userImage: string | null;
   unreadMessages: number;
 } & {
-  latestMessage: string;
-  contentType: 'text' | 'file' | 'image';
+  latestMessage: string | null;
+  contentType: 'text' | 'file' | 'image' | null;
 };
 
 export type ChatListPageProps = {

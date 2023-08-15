@@ -10,6 +10,7 @@ import ChatSubHeader from '@/components/rtc/ChatSubHeader';
 import ChatBox from '@/components/rtc/ChatBox';
 import ChatTextBox from '@/components/rtc/ChatTextBox';
 import ChatList from '@/components/rtc/ChatList';
+import placeholder from 'public/images/listing-placeholder.svg';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
@@ -125,9 +126,20 @@ const ChatRoom = () => {
         const { latestMessage, ...rest } = chat;
 
         const formatted: RoomData = {
-          ...rest,
-          latestMessage: '',
-          contentType: 'text',
+          id: chat.id,
+          username: chat.buyer.name,
+          category: 'All', // TODO: implement
+          itemName: chat.listing.name,
+          itemImage: '', // TODO: implement
+          inProgress: true,
+          time: new Date(chat.latestMessage.createdAt),
+          userImage: chat.buyer.profilePicture,
+          unreadMessages: 0,
+          latestMessage: chat.latestMessage.content || null,
+          contentType: null, // TODO: implement
+          itemId: parseInt(chat.listing.id, 10),
+          itemPrice: chat.listing.price,
+          itemPriceIsUnit: chat.listing.unit === 'unit', // TODO: check if this is correct
         };
 
         return formatted;
@@ -250,7 +262,7 @@ const ChatRoom = () => {
             }}
           >
             <ChatHeader
-              profilePic={currentRoom.userImage}
+              profilePic={currentRoom.userImage ? currentRoom.userImage : placeholder.src}
               username={currentRoom.username}
               handleBack={() => setRoomId('')}
             />
