@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, use, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import Card from '@mui/material/Card';
@@ -22,10 +22,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import { useResponsiveness } from '@inc/ui';
+import fetchUsers from '@/services/users/fetchUsers';
 import updateUser from '@/services/users/updateUser';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
@@ -37,6 +38,15 @@ const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
   useMutation((updatedUserData: PutUserRequestBody) =>
     updateUser(updatedUserData, userUuid, profilePicture)
   );
+
+const useGetUsersQuery = () => {
+  const { data, error, isError, isLoading } = useQuery('users', async () => fetchUsers(), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  return { data, error, isError, isLoading };
+};
 
 const EditProfile = () => {
   const user = useSession();
@@ -68,7 +78,38 @@ const EditProfile = () => {
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const { t } = useTranslation();
 
+  const users = useGetUsersQuery();
   const mutation = useUpdateUserMutation(loggedUserUuid, image);
+
+  const checkNameDuplicate = (name: string) => {
+    const duplicate = users.data?.find((user) => user.name === name);
+
+    if (duplicate) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const checkNumberDuplicate = (number: string) => {
+    const duplicate = users.data?.find((user) => user.mobileNumber === number);
+
+    if (duplicate) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const checkEmailDuplicate = (email: string) => {
+    const duplicate = users.data?.find((user) => user.email === email);
+
+    if (duplicate) {
+      return true;
+    }
+
+    return false;
+  };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -77,6 +118,8 @@ const EditProfile = () => {
       setNameError('Please enter your full name');
     } else if (/\d/.test(newName)) {
       setNameError('Name cannot contain numbers');
+    } else if (checkNameDuplicate(newName)) {
+      setNameError('Name already exists');
     } else {
       setNameError('');
     }
@@ -91,6 +134,7 @@ const EditProfile = () => {
       setMobileNumberError('Please enter a mobile number');
       return;
     }
+
     try {
       validatePhone(formattedInput);
       setMobileNumberError('');
