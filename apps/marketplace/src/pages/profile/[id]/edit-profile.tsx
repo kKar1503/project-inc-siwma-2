@@ -39,8 +39,10 @@ import S3Avatar from '@/components/S3Avatar';
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
 
-const useUpdateProfilePicMutation = (userUUID: string) =>
-  useMutation((profilePic: File) => updateProfilePic(userUUID, profilePic));
+const useUpdateProfilePicMutation = (userUUID: string, SuccessFn: () => void) =>
+  useMutation((profilePic: File) => updateProfilePic(userUUID, profilePic), {
+    onSuccess: SuccessFn,
+  });
 
 const EditProfile = () => {
   const user = useSession();
@@ -72,7 +74,7 @@ const EditProfile = () => {
   const { t } = useTranslation();
 
   const mutation = useUpdateUserMutation(loggedUserUuid);
-  const profilePicMutation = useUpdateProfilePicMutation(loggedUserUuid);
+  const profilePicMutation = useUpdateProfilePicMutation(loggedUserUuid, () => refetch());
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -234,7 +236,6 @@ const EditProfile = () => {
   useEffect(() => {
     if (profilePicture) {
       profilePicMutation.mutate(profilePicture);
-      refetch();
     }
   }, [profilePicture]);
 
