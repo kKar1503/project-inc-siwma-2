@@ -135,6 +135,11 @@ const EditProfile = () => {
       return;
     }
 
+    if (checkNumberDuplicate(formattedInput)) {
+      setMobileNumberError('Number already exists');
+      return;
+    }
+
     try {
       validatePhone(formattedInput);
       setMobileNumberError('');
