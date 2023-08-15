@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import Card from '@mui/material/Card';
+import { red } from '@mui/material/colors';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -23,6 +24,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import { useResponsiveness } from '@inc/ui';
 import updateUser from '@/services/users/updateUser';
+import updateProfilePic from '@/services/users/updateProfilePic';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useMutation } from 'react-query';
@@ -32,24 +34,25 @@ import { validateName, validateEmail, validatePhone } from '@/utils/api/validate
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
+import S3Avatar from '@/components/S3Avatar';
 
-const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
-  useMutation((updatedUserData: PutUserRequestBody) =>
-    updateUser(updatedUserData, userUuid, profilePicture)
-  );
+const useUpdateUserMutation = (userUuid: string) =>
+  useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
+
+const useUpdateProfilePicMutation = (userUUID: string) =>
+  useMutation((profilePic: File) => updateProfilePic(userUUID, profilePic));
 
 const EditProfile = () => {
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
-  const { data: userDetails } = useUser(id);
+  const { data: userDetails, refetch } = useUser(id);
   const theme = useTheme();
   const { spacing } = theme;
   const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [image, setImage] = useState<File | undefined>(undefined);
+  const [imageUrl, setImageUrl] = useState<string>('');
   const [name, setName] = useState<string>(userDetails?.name || '');
   const [nameError, setNameError] = useState('');
   const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
@@ -68,7 +71,8 @@ const EditProfile = () => {
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const { t } = useTranslation();
 
-  const mutation = useUpdateUserMutation(loggedUserUuid, image);
+  const mutation = useUpdateUserMutation(loggedUserUuid);
+  const profilePicMutation = useUpdateProfilePicMutation(loggedUserUuid);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -223,13 +227,14 @@ const EditProfile = () => {
       setContactMethod(userDetails?.contactMethod);
       setWhatsappNumber(userDetails?.whatsappNumber || '');
       setTelegramUsername(userDetails?.telegramUsername || '');
+      setImageUrl(userDetails.profilePic || '');
     }
   }, [userDetails]);
 
   useEffect(() => {
     if (profilePicture) {
-      setImageUrl(URL.createObjectURL(profilePicture));
-      setImage(profilePicture);
+      profilePicMutation.mutate(profilePicture);
+      refetch();
     }
   }, [profilePicture]);
 
@@ -350,11 +355,14 @@ const EditProfile = () => {
                     alignItems: 'center',
                   })}
                 >
-                  {imageUrl && profilePicture && (
-                    <Box>
-                      <Avatar src={imageUrl} />
-                    </Box>
-                  )}
+                  <Box>
+                    <S3Avatar
+                      sx={({ spacing }) => ({ mb: spacing(1), bgcolor: red[500] })}
+                      src={imageUrl}
+                    >
+                      {userDetails?.name.charAt(0)}
+                    </S3Avatar>
+                  </Box>
                   <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
                     <Box
                       sx={{
