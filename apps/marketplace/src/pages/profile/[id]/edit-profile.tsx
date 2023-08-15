@@ -156,14 +156,20 @@ const EditProfile = () => {
 
     if (newEmail.trim() === '') {
       setEmailError('Please enter an email address');
-    } else {
-      try {
-        validateEmail(newEmail);
-        setEmailError('');
-      } catch (error) {
-        if (error instanceof InvalidEmailError) {
-          setEmailError('Please enter a valid email address');
-        }
+      return;
+    }
+
+    if (checkEmailDuplicate(newEmail)) {
+      setEmailError('Email already exists');
+      return;
+    }
+
+    try {
+      validateEmail(newEmail);
+      setEmailError('');
+    } catch (error) {
+      if (error instanceof InvalidEmailError) {
+        setEmailError('Please enter a valid email address');
       }
     }
   };
