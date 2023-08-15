@@ -186,8 +186,8 @@ const ListingCreateEdit = () => {
     }
 
     // Validate quantity
-    if (quantity < 0) {
-      errors.quantity = new Error('Quantity cannot be negative');
+    if (quantity <= 0) {
+    errors.quantity = new Error('Quantity must be greater than 0');
     }
 
     // Validate category parameters
