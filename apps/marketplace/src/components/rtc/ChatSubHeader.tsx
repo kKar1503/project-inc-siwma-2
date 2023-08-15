@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
-import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
+import S3Avatar from '@/components/S3Avatar';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 
@@ -150,9 +150,9 @@ const ChatSubHeader = ({
             ...chatSubHeaderStyles?.avatar,
           })}
         >
-          <Image
+          <S3Avatar
             alt="company profile picture"
-            src={`https://${process.env.NEXT_PUBLIC_AWS_BUCKET}/${itemPic}`}
+            src={itemPic}
             // variant="square"
             style={{
               borderRadius: 8,
