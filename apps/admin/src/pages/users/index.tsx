@@ -5,7 +5,7 @@ import { MdStorefront } from 'react-icons/md';
 import CreateInviteModal from '@/components/modals/CreateInviteModal';
 import RegisteredUsersTable from '@/components/tables/RegisteredUsersTable';
 import PendingInvitesTable from '@/components/tables/PendingInvitesTable';
-import { Box, Button, Grid, Typography, styled } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import { useResponsiveness } from '@inc/ui';
 import { useQueries, useMutation } from 'react-query';
 import fetchCompanies from '@/middlewares/fetchCompanies';
