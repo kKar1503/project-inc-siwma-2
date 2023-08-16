@@ -18,8 +18,6 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import TelegramIcon from '@mui/icons-material/Telegram';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Link from '@mui/material/Link';
 
 // ** Types Imports
@@ -199,59 +197,6 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
       </CardContent>
 
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
-      <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>{t('Linked accounts')}:</Typography>
-        {data?.contactMethod === 'telegram' && (
-          <Box
-            sx={({ spacing }) => ({
-              mt: spacing(1),
-              display: 'flex',
-              alignItems: 'center',
-            })}
-          >
-            <TelegramIcon
-              sx={({ spacing, palette }) => ({
-                borderRadius: spacing(2),
-                pr: '2px',
-                color: palette.common.white,
-                backgroundColor: '#229ED9',
-              })}
-            />
-            <Typography
-              sx={({ spacing }) => ({
-                ml: spacing(1),
-              })}
-            >
-              {data?.telegramUsername}
-            </Typography>
-          </Box>
-        )}
-        {data?.contactMethod === 'whatsapp' && (
-          <Box
-            sx={({ spacing }) => ({
-              mt: spacing(1),
-              display: 'flex',
-              alignItems: 'center',
-            })}
-          >
-            <WhatsAppIcon
-              sx={({ spacing, palette }) => ({
-                borderRadius: spacing(2),
-                p: '1px',
-                color: palette.common.white,
-                backgroundColor: palette.secondary.main,
-              })}
-            />
-            <Typography
-              sx={({ spacing }) => ({
-                ml: spacing(1),
-              })}
-            >
-              +65 {data?.whatsappNumber}
-            </Typography>
-          </Box>
-        )}
-      </CardContent>
 
       <CardActions
         sx={({ spacing }) => ({
