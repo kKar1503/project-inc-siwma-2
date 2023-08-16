@@ -123,7 +123,11 @@ const ChatRoom = () => {
 
     fetchChatList().then((chatList) => {
       const formattedRooms = chatList.map((chat) => {
-        const { latestMessage, ...rest } = chat;
+        let latestMessage: string | null = null;
+
+        if (chat.latestMessage && chat.latestMessage.content) {
+          latestMessage = chat.latestMessage.content;
+        }
 
         const formatted: RoomData = {
           id: chat.id,
@@ -132,10 +136,10 @@ const ChatRoom = () => {
           itemName: chat.listing.name,
           itemImage: '', // TODO: implement
           inProgress: true,
-          time: new Date(chat.latestMessage.createdAt),
+          time: new Date(chat.createdAt), // TODO: check if this is correct
           userImage: chat.buyer.profilePicture,
           unreadMessages: 0,
-          latestMessage: chat.latestMessage.content || null,
+          latestMessage,
           contentType: null, // TODO: implement
           itemId: parseInt(chat.listing.id, 10),
           itemPrice: chat.listing.price,

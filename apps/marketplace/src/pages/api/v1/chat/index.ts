@@ -80,12 +80,14 @@ export default apiHandler()
       include: {
         usersRoomsBuyerTousers: true,
         usersRoomsSellerTousers: true,
+        listingRoomsListingTolisting: true,
       },
     });
 
     const rooms = result.map((room) => {
       const buyer = room.usersRoomsBuyerTousers;
       const seller = room.usersRoomsSellerTousers;
+      const listing = room.listingRoomsListingTolisting;
 
       return {
         id: room.id,
@@ -102,14 +104,19 @@ export default apiHandler()
           enabled: seller.enabled,
         },
         listing: {
-          id: room.listing,
+          id: listing.id.toString(),
+          name: listing.type, // TODO: check if this is correct
+          price: listing.price,
+          unit: '', // TODO: replace with unit
+          type: listing.type,
+          open: listing.deletedAt === null, // TODO: check if this is correct
+          purchased: listing.deletedAt !== null, // TODO: check if this is correct
         },
-        latestMessage: null,
-        unreadMessagesCount: 0,
+        unreadMessagesCount: 0, // TODO: implement
         createdAt: room.createdAt,
       };
     });
 
     // Return the result
-    res.status(200).json(formatAPIResponse({ rooms }));
+    res.status(200).json(formatAPIResponse(rooms));
   });
