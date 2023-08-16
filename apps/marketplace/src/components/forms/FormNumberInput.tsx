@@ -69,7 +69,7 @@ const FormNumberInput = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton height={56} />
+      <Skeleton height="3.5rem" />
     ) : (
       <TextField
         type="number"
