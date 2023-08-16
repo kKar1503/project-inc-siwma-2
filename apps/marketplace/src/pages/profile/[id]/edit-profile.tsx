@@ -158,7 +158,7 @@ const EditProfile = () => {
     setWhatsappNumber(formattedInput);
 
     if (formattedInput === '') {
-      setMobileNumberError('Please enter a mobile number');
+      setWhatsappError('Please enter a mobile number');
     } else {
       try {
         validatePhone(formattedInput);
