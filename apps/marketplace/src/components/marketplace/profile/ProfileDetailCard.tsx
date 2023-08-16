@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 // ** Next Imports
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 // ** MUI Imports
@@ -21,6 +20,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import Link from '@mui/material/Link';
 
 // ** Types Imports
 import type { User } from '@/utils/api/client/zod/users';
@@ -69,10 +69,6 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
     isError: bookmarkIsError,
     data: bookmarked,
   } = useBookmarkUser(profileUserUuid);
-
-  const handleClick = () => {
-    window.location.href = `mailto:${data.email}`;
-  };
 
   // ** Effects
   useEffect(() => {
@@ -181,19 +177,20 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
         <Typography variant="body1" sx={{ wordWrap: 'break-word' }}>
           {data?.company.name}
         </Typography>
-        <Typography
-          variant="body2"
+        <Link
           sx={{
             wordWrap: 'break-word',
+            textDecoration: 'none',
+            color: 'black',
             '&:hover': {
               color: 'blue',
               cursor: 'pointer',
             },
           }}
-          onClick={handleClick}
+          href={`mailto:${data?.email}`}
         >
           {data?.email}
-        </Typography>
+        </Link>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
