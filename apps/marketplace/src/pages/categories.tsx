@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 import Spinner from '@/components/fallbacks/Spinner';
 import { useEffect } from 'react';
+import NoInternetConnection from '@/components/NoInternet';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -86,6 +87,7 @@ const CategoriesPage = () => {
           ))}
         </Grid>
       </Grid>
+      <NoInternetConnection />
     </Box>
   );
 };

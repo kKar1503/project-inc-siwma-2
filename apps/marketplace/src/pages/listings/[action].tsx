@@ -14,6 +14,7 @@ import apiClient from '@/utils/api/client/apiClient';
 import OnCreateModal from '@/components/modal/OnCreateModal';
 import fetchListing from '@/services/fetchListing';
 import { Listing, Parameter, Product } from '@/utils/api/client/zod';
+import NoInternetConnection from '@/components/NoInternet';
 
 /**
  * Maps default values into react-hook-form default values
@@ -377,6 +378,7 @@ const ListingCreateEdit = () => {
           </Box>
         </Box>
       </Box>
+      <NoInternetConnection />
     </>
   );
 };

@@ -32,6 +32,7 @@ import { validateName, validateEmail, validatePhone } from '@/utils/api/validate
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
+import NoInternetConnection from '@/components/NoInternet';
 
 const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
   useMutation((updatedUserData: PutUserRequestBody) =>
@@ -586,6 +587,7 @@ const EditProfile = () => {
           </Grid>
         </Box>
       </Grid>
+      <NoInternetConnection />
     </>
   );
 };
