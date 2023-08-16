@@ -31,18 +31,18 @@ export type ChatListProps = {
   unreadMessages: number;
 } & (
   | {
-      latestMessage: string;
-      contentType: 'text' | 'file' | 'image';
-    }
+  latestMessage: string;
+  contentType: 'text' | 'file' | 'image';
+}
   | {
-      latestMessage: {
-        amount: number;
-        accepted: boolean;
-        content: string;
-      };
-      contentType: 'offer';
-    }
-);
+  latestMessage: {
+    amount: number;
+    accepted: boolean;
+    content: string;
+  };
+  contentType: 'offer';
+}
+  );
 
 export type ChatListPageProps = {
   chats: ChatListProps[];
