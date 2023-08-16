@@ -5,12 +5,12 @@ module.exports = async function crawl(urls) {
   const { port } = new URL(browser.wsEndpoint());
   const page = await browser.newPage();
 
-  // Navigate to the login page.
-  await page.goto('http://localhost:3002/login/');
+  // // Navigate to the login page.
+  // await page.goto('http://localhost:3002/login/');
 
-  // Type the email and password.
-  await page.type('#email', 'xavier@example.com');
-  await page.type('#password', 'password');
+  // // Type the email and password.
+  // await page.type('#email', 'xavier@example.com');
+  // await page.type('#password', 'password');
 
   // Click the login button.
   await Promise.all([

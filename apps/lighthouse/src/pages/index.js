@@ -11,36 +11,37 @@ export default function Home({ reportData }) {
 // This function runs at request time, and its return value populates the `reportData` prop.
 export async function getServerSideProps() {
   const urls = [
-    'http://localhost:3002/',
-    'http://localhost:3002/archived/chat',
-    'http://localhost:3002/login/',
-    'http://localhost:3002/bookmarks',
-    'http://localhost:3002/categories',
-    // 'http://localhost:3002/category/[cat]'
-    'http://localhost:3002/chat',
-    // 'http://localhost:3002/compare/[id]/CompareDifferences'
-    // 'http://localhost:3002/compare/[id]/index'
-    'http://localhost:3002/compare-listings/index',
-    'http://localhost:3002/forgot-password/index',
-    'http://localhost:3002/forgot-password/success/index',
-    'http://localhost:3002/index',
-    // 'http://localhost:3002/listings/[action]'
-    'http://localhost:3002/profile/change-password',
-    // 'http://localhost:3002/profile/[id]/edit-profile'
-    // 'http://localhost:3002/profile/[id]'
-    'http://localhost:3002/register/index',
-    'http://localhost:3002/register/success/index',
-    'http://localhost:3002/reset-password/success/index',
-    // 'http://localhost:3002/reset-password/[uuid]'
-    // 'http://localhost:3002/share/[id]'
-    // 'http://localhost:3002/share-function/[id]'
-    'http://localhost:3002/test-chat',
-    'http://localhost:3002/test-modal',
-    'http://localhost:3002/test-notification',
-    'http://localhost:3002/test-table',
-    // 'http://localhost:3002/_app'
-    // 'http://localhost:3002/_document'
+    `${process.env.FRONTEND_URL}/`,
+    `${process.env.FRONTEND_URL}/archived/chat`,
+    `${process.env.FRONTEND_URL}/login/`,
+    `${process.env.FRONTEND_URL}/bookmarks`,
+    `${process.env.FRONTEND_URL}/categories`,
+    // `${process.env.FRONTEND_URL}/category/[cat]`
+    `${process.env.FRONTEND_URL}/chat`,
+    // `${process.env.FRONTEND_URL}/compare/[id]/CompareDifferences`
+    // `${process.env.FRONTEND_URL}/compare/[id]/index`
+    `${process.env.FRONTEND_URL}/compare-listings/index`,
+    `${process.env.FRONTEND_URL}/forgot-password/index`,
+    `${process.env.FRONTEND_URL}/forgot-password/success/index`,
+    `${process.env.FRONTEND_URL}/index`,
+    // `${process.env.FRONTEND_URL}/listings/[action]`
+    `${process.env.FRONTEND_URL}/profile/change-password`,
+    // `${process.env.FRONTEND_URL}/profile/[id]/edit-profile`
+    // `${process.env.FRONTEND_URL}/profile/[id]`
+    `${process.env.FRONTEND_URL}/register/index`,
+    `${process.env.FRONTEND_URL}/register/success/index`,
+    `${process.env.FRONTEND_URL}/reset-password/success/index`,
+    // `${process.env.FRONTEND_URL}/reset-password/[uuid]`
+    // `${process.env.FRONTEND_URL}/share/[id]`
+    // `${process.env.FRONTEND_URL}/share-function/[id]`
+    `${process.env.FRONTEND_URL}/test-chat`,
+    `${process.env.FRONTEND_URL}/test-modal`,
+    `${process.env.FRONTEND_URL}/test-notification`,
+    `${process.env.FRONTEND_URL}/test-table`,
+    // `${process.env.FRONTEND_URL}/_app`
+    // `${process.env.FRONTEND_URL}/_document`
   ];
+
 
   try {
     const response = await fetch('http://localhost:3001/crawl', {
