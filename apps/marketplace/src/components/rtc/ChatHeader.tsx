@@ -7,8 +7,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import S3Avatar from '@/components/S3Avatar';
 import Menu from '@mui/material/Menu';
 import Divider from '@mui/material/Divider';
 import MoreIcon from '@mui/icons-material/MoreVert';
@@ -152,7 +151,7 @@ const ChatHeader = ({ profilePic, username, handleBack }: ChatHeaderProps) => {
         })}
       >
         <ArrowBackIosIcon sx={chatHeaderStyles?.backButton} onClick={handleBack} />
-        {!isSm && <Avatar alt="User profile picture" src={profilePic} />}
+        {!isSm && <S3Avatar alt="User profile picture" src={profilePic} />}
       </IconButton>
       <Typography sx={chatHeaderStyles?.companyName}>{username}</Typography>
       <IconButton
