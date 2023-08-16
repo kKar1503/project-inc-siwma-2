@@ -44,10 +44,6 @@ const CategoriesPage = () => {
     }
   }, [catData.isFetched]);
 
-  if (!catData.isFetched) {
-    return <Spinner />;
-  }
-
   return (
     <Box
       sx={{
