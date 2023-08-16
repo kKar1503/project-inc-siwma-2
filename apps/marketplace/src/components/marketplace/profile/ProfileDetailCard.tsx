@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 // ** Next Imports
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 // ** MUI Imports
@@ -19,6 +18,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import Link from '@mui/material/Link';
 
 // ** Types Imports
 import type { User } from '@/utils/api/client/zod/users';
@@ -169,11 +169,26 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
         >
           {data?.name.charAt(0)}
         </S3Avatar>
-        <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          {data?.name}
+        </Typography>
+        <Typography variant="body1" sx={{ wordWrap: 'break-word' }}>
           {data?.company.name}
         </Typography>
-        <Typography sx={{ wordWrap: 'break-word' }}>{data?.email}</Typography>
+        <Link
+          sx={{
+            wordWrap: 'break-word',
+            textDecoration: 'none',
+            color: 'black',
+            '&:hover': {
+              color: 'blue',
+              cursor: 'pointer',
+            },
+          }}
+          href={`mailto:${data?.email}`}
+        >
+          {data?.email}
+        </Link>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
