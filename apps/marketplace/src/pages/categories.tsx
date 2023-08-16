@@ -92,7 +92,7 @@ const CategoriesPage = () => {
           }}
         >
           {catData?.data?.map((category) => (
-            <Grid item xl={6} lg={3} md={4} sm={6} xs={6} key={category.name}>
+            <Grid item xl={3} lg={3} md={4} sm={6} xs={12} key={category.name}>
               <CategoryCard {...category} />
             </Grid>
           ))}
