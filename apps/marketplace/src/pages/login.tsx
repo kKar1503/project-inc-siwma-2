@@ -176,7 +176,7 @@ const LoginForm = () => {
                 name="email"
                 id="email"
                 label={t('E-mail')}
-                placeholder= {t('Your company e-mail')}
+                placeholder= {t('Your company e-mail').toString()}
                 value={email}
                 type="email"
                 variant="standard"
@@ -190,7 +190,7 @@ const LoginForm = () => {
                 name="password"
                 id="password"
                 label={t('Password')}
-                placeholder= {t('Your password')}
+                placeholder= {t('Your password').toString()}
                 value={password}
                 type={showPassword ? 'text' : 'password'}
                 variant="standard"
