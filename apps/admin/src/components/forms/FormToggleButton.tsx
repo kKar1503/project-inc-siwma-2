@@ -75,7 +75,7 @@ const FormToggleButton = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton sx={{ height: '3rem' }} />
+      <Skeleton height="3.65rem" />
     ) : (
       <>
         {labelComponent}

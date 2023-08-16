@@ -66,7 +66,12 @@ const FormRadioSelect = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton sx={{ height: '3rem' }} />
+      // Renders a skeleton for each option
+      <>
+        {options.map(() => (
+          <Skeleton height="2.62rem" />
+        ))}
+      </>
     ) : (
       <Controller
         control={control}

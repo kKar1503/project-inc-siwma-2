@@ -1,31 +1,44 @@
+// ** React Imports
 import React, { useEffect, useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import Typography from '@mui/material/Typography';
-import { useSession } from 'next-auth/react';
+
+// ** React Query
 import { useQuery } from 'react-query';
 
+// ** Next Imports
+import { useSession } from 'next-auth/react';
+
+// ** MUI Imports
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { useTheme, SxProps } from '@mui/material/styles';
+
+// ** Custom Components Imports
 import Carousel from '@/components/marketplace/carousel/AdvertisementCarousel';
 import CategoryCard from '@/components/marketplace/listing/Categories';
-
-import fetchCategories from '@/services/fetchCategories';
-import fetchAdvertisements from '@/services/fetchAdvertisements';
-
-import { useResponsiveness } from '@inc/ui';
 import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
-import { useTheme } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 import ListingTable from '@/components/marketplace/listing/ListingTable';
+
+// ** Services
 import useProducts from '@/services/listings/useProducts';
 import useParameters from '@/services/listings/useParameters';
 import useListings from '@/services/listings/useListings';
 import useUser from '@/services/users/useUser';
-import { useTablePagination, useTableSort } from '@/stores/table';
 import useBookmarkStore from '@/stores/bookmarks';
 import useParamStore from '@/stores/parameters';
+import { useTablePagination, useTableSort } from '@/stores/table';
 import useProductStore from '@/stores/products';
-import { SxProps } from '@mui/material/styles';
+import CategoryCardSkeleton from '@/components/marketplace/listing/CategoryCardSkeleton';
+import fetchCategories from '@/services/fetchCategories';
+import fetchAdvertisements from '@/services/fetchAdvertisements';
+
+// ** Packages
+import { useResponsiveness } from '@inc/ui';
+
+// ** i18n import
+import { useTranslation } from 'react-i18next';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -205,14 +218,25 @@ const Marketplace = () => {
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center',
+              alignItems: 'flex-end',
               width: '100%',
             }}
           >
             <Typography sx={headerStyles?.switchTxt}>{t('Categories')}</Typography>
-            <Link href="/categories" sx={headerStyles?.switchTxt}>
+            <Button
+              variant="text"
+              endIcon={<ChevronRightIcon />}
+              href="/categories"
+              sx={{
+                fontSize: typography.body1,
+                fontWeight: 500,
+                // textTransform: 'none',
+                padding: '4px 4px 0px 4px',
+                zIndex: 99,
+              }}
+            >
               {t('View All Categories')}
-            </Link>
+            </Button>
           </Box>
         </Box>
         <Box display="flex" justifyContent="center" paddingTop="2em" sx={{ mb: 4 }}>
@@ -222,6 +246,17 @@ const Marketplace = () => {
                 <CategoryCard {...category} />
               </Grid>
             ))}
+
+            {
+              // Skeleton loading
+              (categories && categories.length === 0) ??
+                Array.from({ length: 6 }).map((_, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Grid item xl={2} lg={3} md={4} xs={6} key={`skele-${index}`}>
+                    <CategoryCardSkeleton />
+                  </Grid>
+                ))
+            }
           </Grid>
         </Box>
       </Box>

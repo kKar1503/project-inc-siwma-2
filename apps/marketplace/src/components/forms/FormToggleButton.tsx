@@ -75,7 +75,7 @@ const FormToggleButton = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton sx={{ height: '3rem' }} />
+      <Skeleton height="3.65rem" />
     ) : (
       <>
         {labelComponent}
@@ -111,6 +111,11 @@ const FormToggleButton = ({
                   sx={{
                     flex: 1,
                     padding: 2,
+                    '&:not(:last-child)': {
+                      '&:not(.Mui-disabled)': {
+                        borderRight: `1px solid ${palette.primary[100]}`,
+                      },
+                    },
                     '&:disabled': {
                       color: option.value === field.value ? 'white' : undefined,
                     },
