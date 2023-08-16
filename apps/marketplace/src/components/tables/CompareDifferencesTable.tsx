@@ -13,6 +13,9 @@ import { Listing } from '@/utils/api/client/zod/listings';
 import { Category } from '@/utils/api/client/zod/categories';
 import { Product } from '@/utils/api/client/zod/products';
 import S3BoxImage from '@/components/S3BoxImage';
+import { useQuery } from 'react-query';
+import { useRouter } from 'next/router';
+import { AxiosError } from 'axios';
 
 interface TableRowData {
   id: string;
@@ -25,7 +28,7 @@ interface TableData {
 }
 
 interface CompareDifferencesProps {
-  productIds: string[];
+  listingIds: string[];
 }
 
 const S3BoxImageCell = ({ image }: { image: string }) => (
@@ -36,7 +39,6 @@ const S3BoxImageCell = ({ image }: { image: string }) => (
         display: 'block',
         width: { xs: 0, sm: 150, md: 200, lg: 250 },
         overflow: 'hidden',
-        opacity: '30%',
         marginLeft: 'auto',
         marginRight: 'auto',
       }}
@@ -45,32 +47,81 @@ const S3BoxImageCell = ({ image }: { image: string }) => (
   </TableCell>
 );
 
-const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
+const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const router = useRouter();
+
+  const selectedListing = useQuery(
+    'getCompareListing',
+    async () => Promise.all(listingIds.map((id) => fetchListing(id))),
+    {
+      enabled: listingIds !== undefined,
+      retry: false
+    }
+  );
+
+  const selectedProduct = useQuery(
+    'getCompareProduct',
+    async () => Promise.all(listings.map((listing) => fetchProduct(listing.productId))),
+    {
+      enabled: !selectedListing.isLoading && listings.length !== 0,
+      retry: false,
+    }
+  );
+
+  const selectedCat = useQuery(
+    'getCompareCat',
+    async () => Promise.all(products.map((category) => fetchCatById(category.categoryId))),
+    {
+      enabled: !selectedProduct.isLoading && products.length !== 0,
+      retry: false,
+    }
+  );
 
   useEffect(() => {
-    const fetchListings = async () => {
-      const listings = await Promise.all(productIds.map((id) => fetchListing(id)));
-      const categories = await Promise.all(listings.map((listing) => fetchCatById(listing.id)));
-      const products = await Promise.all(
-        listings.map((listing) => fetchProduct(listing.productId))
-      );
-      setCategory(categories);
-      setListings(listings);
-      setProducts(products);
-    };
-    fetchListings();
-  }, [productIds]);
-  console.log('Listings:', listings);
-  console.log('Category:', category);
+    if (selectedListing.data !== undefined) {
+      setListings(selectedListing.data);
+    }
+    if (selectedProduct.data !== undefined) {
+      setProducts(selectedProduct.data);
+    }
+    if (selectedCat.data !== undefined) {
+      setCategory(selectedCat.data);
+    }
+  }, [selectedListing.data, selectedProduct.data, selectedCat.data]);
+
+  const queries = [selectedListing, selectedProduct, selectedCat];
+  const isError = queries.some((query) => query.isError);
+  const statuses = queries.map((query) => (query.error as AxiosError)?.status);
+
+  // ** Error Handling
+  useEffect(() => {
+    if (isError) {
+      if (statuses.includes(404) || statuses.includes(422)) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (
+      selectedListing === undefined ||
+      selectedProduct === undefined ||
+      selectedCat === undefined
+    ) {
+      router.replace('/500');
+    }
+  }, [queries, isError, statuses]);
 
   const tableData: TableData = {
     sideHeaders: [
       'Price ($)',
       'Stock',
-      'Condition',
+      'Description',
       'Category',
       'Negotiable',
       'Cross Section Image',
@@ -80,9 +131,18 @@ const CompareDifferences = ({ productIds }: CompareDifferencesProps) => {
     rows: [
       {
         id: 'row2',
-        data: listings.map((listing, index) => `$ ${listing.price} / ${products[index].unit}`),
+        data:
+          listings.length !== 0 && products.length !== 0
+            ? listings.map((listing, index) => `$ ${listing.price} / ${products[index].unit}`)
+            : [],
       },
-      { id: 'row3', data: listings.map((listing) => `${listing.quantity}`) },
+      {
+        id: 'row3',
+        data:
+          listings.length !== 0 && products.length !== 0
+            ? listings.map((listing, index) => `${listing.quantity} ${products[index].unit}`)
+            : [],
+      },
       {
         id: 'row4',
         data: products.map((product) => product.description),
