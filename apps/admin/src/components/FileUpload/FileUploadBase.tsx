@@ -110,7 +110,7 @@ const FileUpload = ({
                 <Typography variant="body1" textAlign="center">
                   {selectedFile != null
                     ? selectedFile.name
-                    : 'Click to upload or drag and drop .xslx or .csv (MAX. 64MB)'}
+                    : 'Click to upload or drag and drop (MAX. 64MB)'}
                 </Typography>
               </Box>
             </label>

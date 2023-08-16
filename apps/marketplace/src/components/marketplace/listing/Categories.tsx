@@ -1,33 +1,26 @@
 import { TCategory } from '@/types/category';
-import { Card, CardContent, Typography, CardMedia, CardActionArea, SxProps } from '@mui/material';
-import React, { useMemo } from 'react';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import React from 'react';
 import S3CardImage from '@/components/S3CardImage';
 import { useResponsiveness } from '@inc/ui';
 import placeholder from 'public/images/category-placeholder.svg';
 import { useTranslation } from 'react-i18next';
 
-const CategoryCard: React.FC<TCategory> = ({
-  id,
-  name,
-  description,
-  image,
-  crossSectionImage,
-  active,
-  parameters,
-}) => {
+const CategoryCard: React.FC<TCategory> = ({ id, name, image }) => {
   const [isSm] = useResponsiveness(['sm']);
   const { t } = useTranslation();
 
   return (
     <Card>
-      <CardActionArea
-        href={`/searchResult?search=&sortBy=recent_newest&category=${id}&negotiable=&minPrice=&maxPrice=`}
-      >
+      <CardActionArea href={`/category/${name}-${id}`}>
         <S3CardImage
           height={isSm ? 140 : 180}
           src={image}
           title={name}
-          alt={name}
+          allowClickThrough
           placeholder={placeholder.src}
         />
         <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>

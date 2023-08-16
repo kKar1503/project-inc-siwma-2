@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import {
-  zodParseToInteger,
-} from '../../apiHelper';
+import { zodParseToInteger } from '../../apiHelper';
 
 const getProductQueryParameters = z.object({
   lastIdPointer: z.string().transform(zodParseToInteger).optional(),

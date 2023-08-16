@@ -40,7 +40,7 @@ import { useResponsiveness } from '@inc/ui';
 const menuItems = [
   {
     name: 'Overview',
-    link: '/overview',
+    link: '/',
     Icon: HomeIcon,
   },
   {
@@ -101,7 +101,7 @@ const menuItems = [
     dropdown: [
       {
         name: 'Companies',
-        link: '/companies',
+        link: '/company-management',
         Icon: ApartmentIcon,
       },
       {

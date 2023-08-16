@@ -196,5 +196,20 @@
   "days ago": "天前",
   "hours ago": "小时前",
   "minutes ago": "分钟前",
-  "seconds ago": "秒前"
+  "seconds ago": "秒前",
+
+  "TableListingName": "商品",
+  "TableListingPrice": "价钱 ($)",
+  "TableListingQuantity": "货量",
+  "TableListingType": "标签",
+  "TableListingPosted": "发布日期",
+
+  "Quantity": "数量",
+  "Dimensions (mm)": "尺寸 (毫米)",
+  "Cross Section": "横截面",
+  "Metal Grade": "金属等级",
+  "Certification": "认证",
+  "Posted on": "发布日期",
+  "Share": "分享",
+  "share": "分享"
 }
