@@ -13,7 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import useUserStore from '@/context/UserDataContext';
+import useUserDataStore from '@/stores/userData';
 import CreateListing from './CreateListing';
 
 import Profile from './Profile';
@@ -30,8 +30,8 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
   const { t } = useTranslation();
   const userName = user.data?.user.name;
   const userId = user.data?.user.id;
-  const userData = useUserStore((state) => state.user);
-  const setUser = useUserStore((state) => state.setUser);
+  const userData = useUserDataStore((state) => state.user);
+  const setUser = useUserDataStore((state) => state.setUser);
 
   useEffect(() => {
     setUser({ userName, userId });

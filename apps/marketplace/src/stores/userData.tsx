@@ -10,9 +10,9 @@ interface UpadateState {
   setUser: (value: UserData) => void;
 }
 
-const useUserStore = create<UpadateState>((set) => ({
+const useUserDataStore = create<UpadateState>((set) => ({
   user: { userName: undefined, userId: undefined },
   setUser: (value: UserData) => set({ user: value }),
 }));
 
-export default useUserStore;
+export default useUserDataStore;
