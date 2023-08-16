@@ -59,6 +59,7 @@ const EditProfile = () => {
   const [nameError, setNameError] = useState('');
   const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
   const [mobileNumberError, setMobileNumberError] = useState('');
+  const [uploadError, setUploadError] = useState<boolean>(false);
   const [email, setEmail] = useState<string>(userDetails?.email || '');
   const [emailError, setEmailError] = useState('');
   const [bio, setBio] = useState<string>(userDetails?.bio || '');
@@ -235,9 +236,16 @@ const EditProfile = () => {
 
   useEffect(() => {
     if (profilePicture) {
+      setUploadError(false);
       profilePicMutation.mutate(profilePicture);
     }
   }, [profilePicture]);
+
+  useEffect(() => {
+    if (profilePicMutation.isError) {
+      setUploadError(true);
+    }
+  }, [profilePicMutation.isError]);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -385,6 +393,9 @@ const EditProfile = () => {
                         />
                       </Button>
                     </Box>
+                    {uploadError && (
+                      <Typography color="red">An error occurred when uploading photo.</Typography>
+                    )}
                   </Box>
                 </Box>
               </CardContent>
