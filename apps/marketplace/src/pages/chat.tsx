@@ -43,7 +43,7 @@ type RoomData = ChatListProps & {
   itemId: number;
   itemPrice: number;
   itemPriceIsUnit: boolean;
-  itemImage: string;
+  itemImage: string | null;
 };
 
 const ChatRoom = () => {
@@ -134,7 +134,7 @@ const ChatRoom = () => {
           username: chat.buyer.name,
           category: 'All', // TODO: implement
           itemName: chat.listing.name,
-          itemImage: '', // TODO: implement
+          itemImage: null, // TODO: implement
           inProgress: true,
           time: new Date(chat.createdAt), // TODO: check if this is correct
           userImage: chat.buyer.profilePicture,
@@ -148,10 +148,9 @@ const ChatRoom = () => {
 
         return formatted;
       });
-    });
 
-    // Get rooms from backend and parse them with zod
-    fetch('/api/rooms');
+      setRooms(formattedRooms);
+    });
   }, []);
 
   // ** Memos **
@@ -271,7 +270,7 @@ const ChatRoom = () => {
               handleBack={() => setRoomId('')}
             />
             <ChatSubHeader
-              itemPic={currentRoom.itemImage}
+              itemPic={currentRoom.itemImage ? currentRoom.itemImage : placeholder.src}
               itemName={currentRoom.itemName}
               available={currentRoom.inProgress}
               itemPrice={currentRoom.itemPrice}
