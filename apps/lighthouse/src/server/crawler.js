@@ -5,24 +5,28 @@ module.exports = async function crawl(urls) {
   const { port } = new URL(browser.wsEndpoint());
   const page = await browser.newPage();
 
-  // // Navigate to the login page.
-  // await page.goto('http://localhost:3002/login/');
+  // Log in before navigating to the protected pages
+  // Log in before navigating to the protected pages
+  const loginPage = `${process.env.FRONTEND_URL}/login/`;
+  await page.goto(loginPage);
+  await page.waitForSelector('#email'); // Wait for the email input field to appear
+  await page.type('#email', 'xavier@example.com'); // Replace 'your_email' with your actual email
 
-  // // Type the email and password.
-  // await page.type('#email', 'xavier@example.com');
-  // await page.type('#password', 'password');
+  await page.waitForSelector('#password'); // Wait for the password input field to appear
+  await page.type('#password', 'password'); // Replace 'your_password' with your actual password
 
-  // Click the login button.
-  await Promise.all([
-    page.click('button[type="submit"]'), // Assuming the login button has a type of "submit".
-    page.waitForNavigation({ waitUntil: 'networkidle0' }), // Wait for navigation.
-  ]);
+  await page.click('button[type="submit"]');
+  await page.waitForNavigation({ waitUntil: 'networkidle0' });
 
   const { default: lighthouse } = await import('lighthouse');
   const results = [];
 
   for (const url of urls) {
     try {
+      // Navigate to the target page
+      await page.goto(url);
+      // Add any necessary page interactions or waiting as needed
+
       const { lhr } = await lighthouse(url, {
         port,
         output: 'json',
