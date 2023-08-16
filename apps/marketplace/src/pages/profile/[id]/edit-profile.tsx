@@ -10,16 +10,9 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import TelegramIcon from '@mui/icons-material/Telegram';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
 import Input from '@mui/material/Input';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import { useResponsiveness } from '@inc/ui';
 import updateUser from '@/services/users/updateUser';
@@ -59,13 +52,6 @@ const EditProfile = () => {
   const [emailError, setEmailError] = useState('');
   const [bio, setBio] = useState<string>(userDetails?.bio || '');
   const [bioError, setBioError] = useState('');
-  const [telegramUsername, setTelegramUsername] = useState<string>(
-    userDetails?.telegramUsername || ''
-  );
-  const [telegramError, setTelegramError] = useState('');
-  const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.whatsappNumber || '');
-  const [whatsappError, setWhatsappError] = useState('');
-  const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const { t } = useTranslation();
 
@@ -131,47 +117,6 @@ const EditProfile = () => {
     }
   };
 
-  const handleContactChange = (e: SelectChangeEvent) => {
-    const selectedContact = e.target.value;
-    setContactMethod(selectedContact);
-
-    if (selectedContact === 'whatsapp') {
-      setTelegramUsername('');
-    } else if (selectedContact === 'telegram') {
-      setWhatsappNumber('');
-    }
-  };
-
-  const handleTelegramChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTelegram = e.target.value;
-    setTelegramUsername(newTelegram);
-
-    if (newTelegram.trim() === '') {
-      setTelegramError('Please enter your telegram username');
-    } else {
-      setTelegramError('');
-    }
-  };
-
-  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const formattedInput = input.replace(/\D/g, '');
-    setWhatsappNumber(formattedInput);
-
-    if (formattedInput === '') {
-      setMobileNumberError('Please enter a mobile number');
-    } else {
-      try {
-        validatePhone(formattedInput);
-        setWhatsappError('');
-      } catch (error) {
-        if (error instanceof InvalidPhoneNumberError) {
-          setWhatsappError('Please enter a valid Singapore phone number');
-        }
-      }
-    }
-  };
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
@@ -184,18 +129,11 @@ const EditProfile = () => {
         throw new Error('Invalid bio');
       }
 
-      if (telegramError !== '') {
-        throw new Error('Invalid telegram username');
-      }
-
       const updatedUserData: PutUserRequestBody = {
         name,
         mobileNumber,
         email,
         bio,
-        telegramUsername,
-        whatsappNumber,
-        contactMethod: contactMethod as 'whatsapp' | 'email' | 'phone' | 'telegram' | 'facebook',
       };
       mutation.mutate(updatedUserData);
       router.push(`/profile/${id}`);
@@ -204,14 +142,11 @@ const EditProfile = () => {
         setNameError('Invalid name');
       } else if (error instanceof InvalidPhoneNumberError) {
         setMobileNumberError('Invalid phone number');
-        setWhatsappError('Invalid whatsapp number');
       } else if (error instanceof InvalidEmailError) {
         setEmailError('Invalid email');
       } else if ((error as Error).message === 'Invalid bio') {
         setBioError('Invalid bio');
-      } else if ((error as Error).message === 'Invalid telegram username') {
-        setTelegramError('Please enter a telegram username');
-      }
+      } 
     }
   };
 
@@ -221,9 +156,6 @@ const EditProfile = () => {
       setMobileNumber(userDetails?.mobileNumber);
       setEmail(userDetails?.email);
       setBio(userDetails?.bio || '');
-      setContactMethod(userDetails?.contactMethod);
-      setWhatsappNumber(userDetails?.whatsappNumber || '');
-      setTelegramUsername(userDetails?.telegramUsername || '');
     }
   }, [userDetails]);
 
@@ -456,99 +388,6 @@ const EditProfile = () => {
                   helperText={bioError}
                 />
               </CardContent>
-              <Divider
-                variant="middle"
-                sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
-              />
-              <CardContent>
-                <Typography sx={{ fontWeight: 'bold' }}>{t('Connections')}</Typography>
-                <Typography>{t('Link your messaging accounts here')}</Typography>
-                <Box
-                  sx={({ spacing }) => ({
-                    mt: spacing(2),
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  })}
-                >
-                  <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
-                    <InputLabel>{t('Contact')}</InputLabel>
-                    <Select
-                      label={t('Contact')}
-                      value={contactMethod}
-                      onChange={handleContactChange}
-                    >
-                      <MenuItem value="telegram">Telegram</MenuItem>
-                      <MenuItem value="whatsapp">Whatsapp</MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  {contactMethod === 'whatsapp' && (
-                    <TextField
-                      label={`Whatsapp ${t('Number')}`}
-                      placeholder="8123 4567"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment
-                            position="start"
-                            sx={({ palette }) => ({
-                              color: palette.common.black,
-                            })}
-                          >
-                            <WhatsAppIcon
-                              sx={({ spacing, palette }) => ({
-                                borderRadius: spacing(2),
-                                p: '1px',
-                                color: palette.common.white,
-                                backgroundColor: palette.secondary.main,
-                              })}
-                            />
-                            +65
-                          </InputAdornment>
-                        ),
-                        inputProps: {
-                          maxLength: 8,
-                          pattern: '[0-9]*',
-                        },
-                      }}
-                      value={whatsappNumber}
-                      onChange={handleWhatsappChange}
-                      error={!!whatsappError}
-                      helperText={whatsappError}
-                    />
-                  )}
-
-                  {contactMethod === 'telegram' && (
-                    <TextField
-                      label={`Telegram ${t('Username')}`}
-                      placeholder="account_username"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment
-                            position="start"
-                            sx={({ palette }) => ({
-                              color: palette.common.black,
-                            })}
-                          >
-                            <TelegramIcon
-                              sx={({ spacing, palette }) => ({
-                                borderRadius: spacing(2),
-                                pr: '1px',
-                                color: palette.common.white,
-                                backgroundColor: palette.primary[500],
-                              })}
-                            />
-                            @
-                          </InputAdornment>
-                        ),
-                      }}
-                      value={telegramUsername}
-                      onChange={handleTelegramChange}
-                      error={!!telegramError}
-                      helperText={telegramError}
-                    />
-                  )}
-                </Box>
-              </CardContent>
 
               <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
                 <Box
@@ -574,9 +413,7 @@ const EditProfile = () => {
                       name.trim() === '' ||
                       mobileNumber.trim() === '' ||
                       email.trim() === '' ||
-                      bio.trim() === '' ||
-                      (contactMethod === 'whatsapp' && whatsappNumber.trim() === '') ||
-                      (contactMethod === 'telegram' && telegramUsername.trim() === '')
+                      bio.trim() === '' 
                     }
                   >
                     {t('Save Changes')}
