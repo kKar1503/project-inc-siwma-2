@@ -7,6 +7,7 @@ import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import AllListingsTable from '@/components/tables/AllListingsTable';
 import { Box } from '@mui/material';
 import SuccessModal from '@/components/modals/SuccessModal';
+import NoInternetConnection from '@/components/NoInternet';
 
 const deleteListingsMutationFn = async (ids: string[]) => {
   const promises = ids.map((id) => apiClient.delete(`/v1/listings/${id}`));
@@ -130,6 +131,7 @@ const AllListings = () => {
         buttonText="Return"
         path="/listing/all-listing"
       />
+      <NoInternetConnection />
     </Box>
   );
 };

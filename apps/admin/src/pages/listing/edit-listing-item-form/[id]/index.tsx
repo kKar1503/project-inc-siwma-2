@@ -16,6 +16,7 @@ import { ProductResponseBody } from '@/utils/api/client/zod';
 import fetchListingItemById from '@/services/fetchListingItemById';
 import updateListingItemData from '@/services/updateListingItem';
 import { useRouter } from 'next/router';
+import NoInternetConnection from '@/components/NoInternet';
 
 export type EditListingItemProps = {
   data: ProductResponseBody[];
@@ -245,6 +246,7 @@ const ListingItemForm = () => {
         buttonText="Return"
         path="/listing/listing-items"
       />
+      <NoInternetConnection />
     </Box>
   );
 };

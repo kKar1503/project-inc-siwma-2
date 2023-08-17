@@ -28,6 +28,7 @@ import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import NoInternetConnection from '@/components/NoInternet';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -419,6 +420,7 @@ const EditParameter = () => {
           </Grid>
         </Box>
       </Container>
+      <NoInternetConnection />
     </>
   );
 };

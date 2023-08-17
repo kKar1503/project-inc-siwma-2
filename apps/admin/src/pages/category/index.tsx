@@ -10,6 +10,7 @@ import fetchCategories from '@/middlewares/fetchCategories';
 import { CategoryResponseBody } from '@/utils/api/client/zod';
 import Spinner from '@/components/fallbacks/Spinner';
 import deleteCategories from '@/middlewares/deleteCategory';
+import NoInternetConnection from '@/components/NoInternet';
 
 export type CategoryProps = {
   data: CategoryResponseBody[];
@@ -199,6 +200,7 @@ const CategoryTable = () => {
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={rows.length}
       />
+      <NoInternetConnection />
     </Box>
   );
 };

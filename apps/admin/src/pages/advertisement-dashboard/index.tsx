@@ -1,6 +1,7 @@
 import AdSpaceSection from '@/components/advertisementsDashboard/adSpaceSection';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import NoInternetConnection from '@/components/NoInternet';
 
 const AdvertisementDashboard = () => (
     <Box style={{
@@ -21,6 +22,7 @@ const AdvertisementDashboard = () => (
         {/*  </Grid> */}
         {/* </Grid> */}
       </Grid>
+      <NoInternetConnection />
     </Box>
   );
 

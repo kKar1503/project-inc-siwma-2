@@ -13,6 +13,7 @@ import fetchListings from '@/services/listings/fetchListings';
 import DataStream from '@/hooks/DataStream';
 import fetchProducts from '@/services/products/fetchProducts';
 import CircularProgress from '@mui/material/CircularProgress';
+import NoInternetConnection from '@/components/NoInternet';
 
 const categoryMap = (query: UseQueryResult<CategoryResponseBody[]>): Record<string, {
   name: string,
@@ -215,6 +216,7 @@ const Analytics = () => {
         </Grid>
 
       </Grid>
+      <NoInternetConnection />
     </Box>
   );
 };

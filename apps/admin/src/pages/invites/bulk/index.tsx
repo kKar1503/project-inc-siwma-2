@@ -23,6 +23,7 @@ import Head from 'next/head';
 import useBulkInvites from '@/middlewares/useBulkInvites';
 import { PostBulkInviteRequestBody } from '@/utils/api/server/zod/invites';
 import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
+import NoInternetConnection from '@/components/NoInternet';
 
 const BulkInvitesPage = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -195,6 +196,7 @@ const BulkInvitesPage = () => {
           )}
         </Box>
       </main>
+      <NoInternetConnection />
     </>
   );
 };

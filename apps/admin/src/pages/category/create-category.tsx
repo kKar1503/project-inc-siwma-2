@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useResponsiveness } from '@inc/ui';
 import { useRouter } from 'next/router';
 import { CategoriesParameters } from '@inc/db';
+import NoInternetConnection from '@/components/NoInternet';
 
 export type CreateCategoryProps = {
   name: string;
@@ -164,6 +165,7 @@ const CreateCategory = () => {
           </Box>
         </Box>
       </Card>
+      <NoInternetConnection />
     </Box>
   );
 };

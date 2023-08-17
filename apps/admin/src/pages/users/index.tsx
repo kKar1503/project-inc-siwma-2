@@ -17,6 +17,7 @@ import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
 import SuccessModal from '@/components/modals/SuccessModal';
 import { useRouter } from 'next/router';
 import Spinner from '@/components/fallbacks/Spinner';
+import NoInternetConnection from '@/components/NoInternet';
 
 const deleteInvitesMutationFn = async (emails: string[]) => {
   const promises = emails.map((email) => apiClient.delete(`/v1/invites/email/${email}`));
@@ -311,6 +312,7 @@ const Page = () => {
         setOpen={setInviteUser}
         buttonText="Return"
       />
+      <NoInternetConnection />
     </Box>
   );
 };
