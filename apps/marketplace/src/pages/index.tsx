@@ -199,7 +199,6 @@ const Marketplace = () => {
         hasAdvertisements && <Carousel data={advertisementsData} />
       )}
 
-      {/* {hasAdvertisements && (<Carousel data={advertisementsData} />)} */}
       <Box sx={{ ...maxWidthContainer }}>
         <Box display="flex" justifyContent="space-between" paddingTop="2em">
           <Box
