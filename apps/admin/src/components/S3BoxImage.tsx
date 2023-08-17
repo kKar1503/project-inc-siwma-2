@@ -40,6 +40,7 @@ const S3BoxImage = ({ src, placeholderImg, children, allowClickThrough, ...other
       download={image.name}
       onClick={onClick}
       style={{ cursor: 'default', textDecoration: 'none', pointerEvents: allowClickThrough ? 'none' : undefined }}
+      tabIndex={-1}
     >
       <Box
         component='img'
