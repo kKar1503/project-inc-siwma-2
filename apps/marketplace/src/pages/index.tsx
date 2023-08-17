@@ -41,18 +41,11 @@ const useGetCategoriesQuery = () => {
   return data;
 };
 
-const useGetAdvertisementsQuery = (permissions: number | undefined) => {
-  const { data } = useQuery(
-    ['advertisements', permissions],
-    async () => fetchAdvertisements(permissions!),
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  return data;
-};
+const useGetAdvertisementsQuery = (permissions: number | undefined) =>
+  useQuery(['advertisements', permissions], async () => fetchAdvertisements(permissions!), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
 const Marketplace = () => {
   const { data: session } = useSession();
@@ -149,6 +142,7 @@ const Marketplace = () => {
   const { t } = useTranslation();
 
   const categories = useGetCategoriesQuery();
+
   const mockAdvertisements = [
     {
       id: '1',
@@ -166,8 +160,11 @@ const Marketplace = () => {
       companyId: 'company-2',
     },
   ];
-  const advertisementsData = useGetAdvertisementsQuery(session?.user.permissions);
-  const hasAdvertisements = advertisementsData && advertisementsData.length > 0;
+
+  const { data: advertisementsData, isLoading: advertisementIsLoading } = useGetAdvertisementsQuery(
+    session?.user.permissions
+  );
+  const hasAdvertisements = mockAdvertisements && mockAdvertisements.length > 0;
 
   const headerStyles = useMemo(() => {
     if (isSm) {
@@ -210,13 +207,17 @@ const Marketplace = () => {
     return {};
   }, [isSm]);
 
+  const [isLoadingMockData, setIsLoadingMockData] = useState(true); // Initialize as true to simulate loading
+
   return (
     <>
-      {hasAdvertisements ? (
-        <Carousel data={mockAdvertisements} />
+      {isLoadingMockData ? (
+        <Skeleton variant="rectangular" height="100%" />
       ) : (
-        <Skeleton variant="rectangular" height={200} animation="wave" />
+        hasAdvertisements && <Carousel data={mockAdvertisements} />
       )}
+
+      {/* {hasAdvertisements && (<Carousel data={advertisementsData} />)} */}
       <Box sx={{ ...maxWidthContainer }}>
         <Box display="flex" justifyContent="space-between" paddingTop="2em">
           <Box
