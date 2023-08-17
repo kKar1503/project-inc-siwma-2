@@ -113,7 +113,7 @@ export default apiHandler()
     if (mobileNumber) {
       validatePhone(mobileNumber);
     }
-    if (password || oldPassword) {
+    if (password != null || oldPassword != null) {
       validatePassword(password as string);
 
       // Check if the user changing the password is not admin
