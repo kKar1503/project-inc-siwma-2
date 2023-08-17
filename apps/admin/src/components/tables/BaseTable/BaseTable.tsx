@@ -92,7 +92,7 @@ const BaseTable = (props: BaseTableProps) => {
     // !! FIXME: later
     // Select the row if it is not selected
     if (selectedRow === undefined) {
-      newSelected = newSelected.concat(selected, row);
+      newSelected = newSelected.concat(row);
     }
 
     // Unselect the row if it was selected
