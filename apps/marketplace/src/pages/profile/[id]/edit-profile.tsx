@@ -26,6 +26,7 @@ import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@i
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
 import { Avatar } from '@mui/material';
+import useUserDataStore from '@/stores/userData';
 
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
@@ -36,6 +37,7 @@ const useUpdateProfilePicMutation = (userUUID: string, SuccessFn: () => void) =>
   });
 
 const EditProfile = () => {
+  const setUser = useUserDataStore((state) => state.setUser);
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
@@ -141,6 +143,7 @@ const EditProfile = () => {
       };
       mutation.mutate(updatedUserData);
       router.push(`/profile/${id}`);
+      setUser({ userName: name, userId: id });
     } catch (error) {
       if (error instanceof InvalidNameError) {
         setNameError('Invalid name');
