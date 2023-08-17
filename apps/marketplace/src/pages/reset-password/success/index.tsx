@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { useResponsiveness } from '@inc/ui';
+import NoInternetConnection from '@/components/NoInternet';
 
 const ResetPassword = () => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -136,6 +137,7 @@ const ResetPassword = () => {
           </Box>
         </Container>
       </Box>
+      <NoInternetConnection />
     </Box>
   );
 };

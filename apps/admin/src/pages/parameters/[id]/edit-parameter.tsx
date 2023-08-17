@@ -51,8 +51,8 @@ const useGetParameter = (parameterId: string) => {
 const EditParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);  
-  
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
   const router = useRouter();
   const id = router.query.id as string;
   const queryClient = useQueryClient();
@@ -213,6 +213,7 @@ const EditParameter = () => {
       type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
       options,
       dataType: dataType as 'string' | 'number' | 'boolean',
+      unit: 'unit', // Temporary, please change this later
     };
     mutation.mutate(requestBody);
   };
