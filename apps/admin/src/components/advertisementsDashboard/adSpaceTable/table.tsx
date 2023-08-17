@@ -54,7 +54,8 @@ export default function({
     handleChangePage,
     handleChangeRowsPerPage,
     rowPageOptions,
-  } = usePagination(4);
+    emptyRows,
+  } = usePagination(4, ids.length);
 
   const visibleRowIds = useMemo(
     () => {
@@ -95,8 +96,6 @@ export default function({
     setSelected(newSelected);
   };
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = Math.max(0, (1 + page) * rowsPerPage - ids.length);
 
 
   const handleDelete = () => {
