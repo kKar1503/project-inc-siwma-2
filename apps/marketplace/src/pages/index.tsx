@@ -1,44 +1,31 @@
-// ** React Imports
 import React, { useEffect, useMemo, useState } from 'react';
-
-// ** React Query
-import { useQuery } from 'react-query';
-
-// ** Next Imports
-import { useSession } from 'next-auth/react';
-
-// ** MUI Imports
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { useTheme, SxProps } from '@mui/material/styles';
+import { useSession } from 'next-auth/react';
+import { useQuery } from 'react-query';
 
-// ** Custom Components Imports
 import Carousel from '@/components/marketplace/carousel/AdvertisementCarousel';
 import CategoryCard from '@/components/marketplace/listing/Categories';
-import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
-import ListingTable from '@/components/marketplace/listing/ListingTable';
 
-// ** Services
+import fetchCategories from '@/services/fetchCategories';
+import fetchAdvertisements from '@/services/fetchAdvertisements';
+
+import { useResponsiveness } from '@inc/ui';
+import Skeleton from '@mui/material/Skeleton';
+import { useTheme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import ListingTable from '@/components/marketplace/listing/ListingTable';
 import useProducts from '@/services/listings/useProducts';
 import useParameters from '@/services/listings/useParameters';
 import useListings from '@/services/listings/useListings';
 import useUser from '@/services/users/useUser';
+import { useTablePagination, useTableSort } from '@/stores/table';
 import useBookmarkStore from '@/stores/bookmarks';
 import useParamStore from '@/stores/parameters';
-import { useTablePagination, useTableSort } from '@/stores/table';
 import useProductStore from '@/stores/products';
-import CategoryCardSkeleton from '@/components/marketplace/listing/CategoryCardSkeleton';
-import fetchCategories from '@/services/fetchCategories';
-import fetchAdvertisements from '@/services/fetchAdvertisements';
-
-// ** Packages
-import { useResponsiveness } from '@inc/ui';
-
-// ** i18n import
-import { useTranslation } from 'react-i18next';
+import { SxProps } from '@mui/material/styles';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -162,7 +149,25 @@ const Marketplace = () => {
   const { t } = useTranslation();
 
   const categories = useGetCategoriesQuery();
+  const mockAdvertisements = [
+    {
+      id: '1',
+      link: 'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80',
+      description: 'Advertisement 1',
+      image:
+        'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80',
+      companyId: 'company-1',
+    },
+    {
+      id: '2',
+      link: 'ad-link-2',
+      description: 'Advertisement 2',
+      image: 'image2.jpg',
+      companyId: 'company-2',
+    },
+  ];
   const advertisementsData = useGetAdvertisementsQuery(session?.user.permissions);
+  const hasAdvertisements = advertisementsData && advertisementsData.length > 0;
 
   const headerStyles = useMemo(() => {
     if (isSm) {
@@ -207,10 +212,10 @@ const Marketplace = () => {
 
   return (
     <>
-      {advertisementsData?.length ? (
-        <Carousel data={advertisementsData} />
+      {hasAdvertisements ? (
+        <Carousel data={mockAdvertisements} />
       ) : (
-        <AdvertisementsPlaceholder />
+        <Skeleton variant="rectangular" height={200} animation="wave" />
       )}
       <Box sx={{ ...maxWidthContainer }}>
         <Box display="flex" justifyContent="space-between" paddingTop="2em">
@@ -218,25 +223,14 @@ const Marketplace = () => {
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'flex-end',
+              alignItems: 'center',
               width: '100%',
             }}
           >
             <Typography sx={headerStyles?.switchTxt}>{t('Categories')}</Typography>
-            <Button
-              variant="text"
-              endIcon={<ChevronRightIcon />}
-              href="/categories"
-              sx={{
-                fontSize: typography.body1,
-                fontWeight: 500,
-                // textTransform: 'none',
-                padding: '4px 4px 0px 4px',
-                zIndex: 99,
-              }}
-            >
+            <Link href="/categories" sx={headerStyles?.switchTxt}>
               {t('View All Categories')}
-            </Button>
+            </Link>
           </Box>
         </Box>
         <Box display="flex" justifyContent="center" paddingTop="2em" sx={{ mb: 4 }}>
@@ -246,17 +240,6 @@ const Marketplace = () => {
                 <CategoryCard {...category} />
               </Grid>
             ))}
-
-            {
-              // Skeleton loading
-              (categories && categories.length === 0) ??
-                Array.from({ length: 6 }).map((_, index) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <Grid item xl={2} lg={3} md={4} xs={6} key={`skele-${index}`}>
-                    <CategoryCardSkeleton />
-                  </Grid>
-                ))
-            }
           </Grid>
         </Box>
       </Box>
