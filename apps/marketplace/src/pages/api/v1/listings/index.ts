@@ -329,10 +329,6 @@ export default apiHandler()
       throw new ParamError('listing item');
     }
 
-    if (!(await client.getIndex('listings'))) {
-      await client.createIndex('listings');
-    }
-
     const parameters: Array<TMeilisearchListingParameter> = [];
 
     (
