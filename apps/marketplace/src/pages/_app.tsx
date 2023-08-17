@@ -113,7 +113,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
 
       return () => clearTimeout(timer);
     }
-    return () => {};
+    return;
   }, [showSpinner]);
 
   useEffect(() => {
