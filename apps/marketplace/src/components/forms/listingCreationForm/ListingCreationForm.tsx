@@ -16,8 +16,8 @@ import FormNumberInput from '../FormNumberInput';
 import FormCheckboxInput from '../FormCheckboxInput';
 
 const listingTypeOptions: FormToggleButtonOption[] = [
-  { label: t('BUYING'), value: 'BUY' },
-  { label: t('SELLING'), value: 'SELL' },
+  { label: 'BUYING', value: 'BUY' },
+  { label: 'SELLING', value: 'SELL' },
 ];
 
 type ListingCreationFormProps = {
