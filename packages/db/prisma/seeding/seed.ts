@@ -74,8 +74,6 @@ const main = async (): Promise<void> => {
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_notifications_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.listing_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.logs_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.messages_seq RESTART WITH 1;`,
-    prismaClient.$executeRaw`ALTER SEQUENCE public.offers_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.parameter_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.password_reset_seq RESTART WITH 1;`,
     prismaClient.$executeRaw`ALTER SEQUENCE public.refresh_tokens_seq RESTART WITH 1;`,
@@ -151,14 +149,20 @@ const main = async (): Promise<void> => {
     data: Offers,
   });
 
+  await prismaClient.$executeRaw`ALTER SEQUENCE public.offers_seq RESTART WITH ${offersCount};`;
+
   console.log(`Seeded ${offersCount} rows into public.offers`);
+  console.log('Updated public.offers_seq');
   console.log('Seeding public.messages...');
 
   const { count: messagesCount } = await prismaClient.messages.createMany({
     data: Messages,
   });
 
+  await prismaClient.$executeRaw`ALTER SEQUENCE public.messages_seq RESTART WITH ${messagesCount};`;
+
   console.log(`Seeded ${messagesCount} rows into public.messages`);
+  console.log('Seeding public.messages_seq...');
   console.log('Seeding public.parameter...');
 
   const { count: parameterCount } = await prismaClient.parameter.createMany({
