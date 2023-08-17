@@ -16,8 +16,6 @@ import fetchListing from '@/services/fetchListing';
 import { Listing, Product } from '@/utils/api/client/zod';
 import type { SxProps } from '@mui/material/styles';
 import NoInternetConnection from '@/components/NoInternet';
-import ErrorPage from '@/pages/404';
-import NavBar from '@/components/marketplace/navbar/NavBar';
 
 /**
  * Maps default values into react-hook-form default values
@@ -334,12 +332,11 @@ const ListingCreateEdit = () => {
 
   // if neither edit nor create, render 404 page
   if (!isEditing && !isCreating) {
-    return <ErrorPage />;
+    router.push('/404');
   }
 
   return (
     <>
-      <NavBar renderSearchBar={undefined} />
       <OnCreateModal
         title={isEditing ? t('Successfully updated listing') || undefined : undefined}
         content={
@@ -398,7 +395,5 @@ const ListingCreateEdit = () => {
     </>
   );
 };
-
-ListingCreateEdit.includeNavbar = false;
 
 export default ListingCreateEdit;
