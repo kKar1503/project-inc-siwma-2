@@ -1,4 +1,4 @@
-import { DataType, ParameterType } from '@inc/db-enums';
+import { DataType, ParameterType, UnitType } from '@inc/db-enums';
 import { z } from 'zod';
 
 // -- Define properties -- //
@@ -8,6 +8,7 @@ const displayName = z.string();
 const type = z.nativeEnum(ParameterType);
 const dataType = z.nativeEnum(DataType);
 const active = z.boolean().optional();
+const unit = z.nativeEnum(UnitType);
 const options = z.string().array();
 
 // -- Define schema -- //
@@ -18,6 +19,7 @@ const parameter = z.object({
   type,
   dataType,
   active,
+  unit,
   options: options.optional(),
 });
 

@@ -39,6 +39,7 @@ import { useResponsiveness } from '@inc/ui';
 
 // ** i18n import
 import { useTranslation } from 'react-i18next';
+import NoInternetConnection from '@/components/NoInternet';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -266,6 +267,7 @@ const Marketplace = () => {
         isParamFetching={isParamsFetching || pageLoading}
         listings={listings?.listings || []}
       />
+      <NoInternetConnection />
     </>
   );
 };

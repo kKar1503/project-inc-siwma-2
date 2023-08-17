@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
 import { Avatar } from '@mui/material';
 import useUserDataStore from '@/stores/userData';
+import NoInternetConnection from '@/components/NoInternet';
 
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
@@ -446,6 +447,7 @@ const EditProfile = () => {
           </Grid>
         </Box>
       </Grid>
+      <NoInternetConnection />
     </>
   );
 };
