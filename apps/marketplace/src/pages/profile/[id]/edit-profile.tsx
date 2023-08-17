@@ -177,6 +177,7 @@ const EditProfile = () => {
     try {
       validateName(name);
       validatePhone(mobileNumber);
+      validatePhone(whatsappNumber);
       validateEmail(email);
 
       if (bioError !== '') {
@@ -202,8 +203,14 @@ const EditProfile = () => {
       if (error instanceof InvalidNameError) {
         setNameError('Invalid name');
       } else if (error instanceof InvalidPhoneNumberError) {
-        setMobileNumberError('Invalid phone number');
-        setWhatsappError('Invalid whatsapp number');
+        if (whatsappError !== '' && mobileNumberError !== '') {
+          setMobileNumberError('Invalid phone number');
+          setWhatsappError('Invalid whatsapp number');
+        } else if (whatsappError !== '') {
+          setWhatsappError('Invalid whatsapp number');
+        } else {
+          setMobileNumberError('Invalid phone number');
+        }
       } else if (error instanceof InvalidEmailError) {
         setEmailError('Invalid email');
       } else if ((error as Error).message === 'Invalid bio') {
