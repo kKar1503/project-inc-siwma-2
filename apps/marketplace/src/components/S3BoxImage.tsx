@@ -16,7 +16,7 @@ const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   e.stopPropagation();
 };
 
-const S3BoxImage = ({ src, placeholderImg, children, allowClickThrough, ...others }: S3BoxImageProps) => {
+const S3BoxImage = ({ src, placeholderImg, children, allowClickThrough, onError, ...others }: S3BoxImageProps) => {
   const imgData = useImageQuery(src);
   const [image, setImage] = useState<{ url: string | undefined; name: string | undefined }>({
     url: undefined,
@@ -33,6 +33,9 @@ const S3BoxImage = ({ src, placeholderImg, children, allowClickThrough, ...other
     if (url !== undefined) return () => URL.revokeObjectURL(url);
   }, [imgData.data, imgData.isFetched, imgData.isSuccess]);
 
+  const onImgError = onError || (() => {
+    setImage({ url: undefined, name: undefined });
+  });
 
   return (
     <Link
@@ -45,6 +48,7 @@ const S3BoxImage = ({ src, placeholderImg, children, allowClickThrough, ...other
       <Box
         component='img'
         src={image.url || placeholderImg || '/images/catPlaceholder.png'}
+        onError={onImgError}
         {...others}
       >
         {children}

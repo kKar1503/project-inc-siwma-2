@@ -16,13 +16,12 @@ const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   e.stopPropagation();
 };
 
-const S3Avatar = ({ src, alt, placeholderImg, children, allowClickThrough, ...others }: S3AvatarProps) => {
+const S3Avatar = ({ src, alt, placeholderImg, children, allowClickThrough, onError, ...others }: S3AvatarProps) => {
   const imgData = useImageQuery(src);
   const [image, setImage] = useState<{ url: string | undefined; name: string | undefined }>({
     url: undefined,
     name: undefined,
   });
-
 
   useEffect(() => {
     if (!imgData.isSuccess) return;
@@ -34,6 +33,10 @@ const S3Avatar = ({ src, alt, placeholderImg, children, allowClickThrough, ...ot
     if (url !== undefined) return () => URL.revokeObjectURL(url);
   }, [imgData.data, imgData.isFetched, imgData.isSuccess]);
 
+  const onImgError = onError || (() => {
+    setImage({ url: undefined, name: undefined });
+  });
+
   return (
     <Link
       href={image.url || placeholderImg || '/images/placeholder.png'}
@@ -41,7 +44,7 @@ const S3Avatar = ({ src, alt, placeholderImg, children, allowClickThrough, ...ot
       onClick={onClick}
       style={{ cursor: 'default', textDecoration: 'none', pointerEvents: allowClickThrough ? 'none' : undefined }}
     >
-      <Avatar src={image.url || placeholderImg || '/images/placeholder.png'} {...others}>
+      <Avatar src={image.url || placeholderImg || '/images/placeholder.png'} onError={onImgError} {...others}>
         {children}
       </Avatar>
     </Link>
