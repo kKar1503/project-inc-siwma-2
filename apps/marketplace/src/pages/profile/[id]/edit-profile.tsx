@@ -2,11 +2,9 @@ import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import Card from '@mui/material/Card';
-import { red } from '@mui/material/colors';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -27,7 +25,7 @@ import { validateName, validateEmail, validatePhone } from '@/utils/api/validate
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
-import S3Avatar from '@/components/S3Avatar';
+import { Avatar } from '@mui/material';
 
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
@@ -162,15 +160,13 @@ const EditProfile = () => {
       setMobileNumber(userDetails?.mobileNumber);
       setEmail(userDetails?.email);
       setBio(userDetails?.bio || '');
-      setImageUrl(userDetails.profilePic || '');
+      setImageUrl(`https://s3.karlok.dev/${userDetails.profilePic}` || '');
     }
   }, [userDetails]);
 
   useEffect(() => {
-    if (profilePicture) {
-      setUploadError(false);
-      profilePicMutation.mutate(profilePicture);
-    }
+    if (!profilePicture) return;
+    setImageUrl(URL.createObjectURL(profilePicture));
   }, [profilePicture]);
 
   useEffect(() => {
@@ -178,6 +174,12 @@ const EditProfile = () => {
       setUploadError(true);
     }
   }, [profilePicMutation.isError]);
+
+  const uploadProfile = () => {
+    if (!profilePicture) return;
+    setUploadError(false);
+    profilePicMutation.mutate(profilePicture);
+  };
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -297,12 +299,7 @@ const EditProfile = () => {
                   })}
                 >
                   <Box>
-                    <S3Avatar
-                      sx={({ spacing }) => ({ mb: spacing(1), bgcolor: red[500] })}
-                      src={imageUrl}
-                    >
-                      {userDetails?.name.charAt(0)}
-                    </S3Avatar>
+                    <Avatar src={imageUrl} />
                   </Box>
                   <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
                     <Box
@@ -323,6 +320,9 @@ const EditProfile = () => {
                           inputProps={{ accept: 'image/*' }}
                           sx={{ display: 'none' }}
                         />
+                      </Button>
+                      <Button onClick={uploadProfile} variant="contained" sx={{ marginX: 2 }}>
+                        Save
                       </Button>
                     </Box>
                     {uploadError && (
