@@ -1,4 +1,4 @@
-import { DataType, ParameterType } from '@inc/db-enums';
+import { DataType, ParameterType, UnitType } from '@inc/db-enums';
 import { z } from 'zod';
 
 /**
@@ -10,6 +10,7 @@ const paramsRequestBody = z.object({
   displayName: z.string().min(1),
   type: z.nativeEnum(ParameterType),
   dataType: z.nativeEnum(DataType),
+  unit: z.nativeEnum(UnitType),
   options: z.string().array().optional(),
 });
 
