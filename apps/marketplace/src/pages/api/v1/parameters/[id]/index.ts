@@ -1,6 +1,6 @@
 import { apiHandler } from '@/utils/api';
-import PrismaClient from '@inc/db';
-import { NotFoundError } from '@inc/errors';
+import PrismaClient, { UnitType } from '@inc/db';
+import { NotFoundError, ParamInvalidError } from '@inc/errors';
 import { paramSchema } from '@/utils/api/server/zod';
 import { formatParamResponse, validateOptions } from '..';
 
@@ -58,6 +58,11 @@ export default apiHandler({
     // Validate parameter options
     if (data.type != null) {
       validateOptions({ type: data.type, options: data.options });
+    }
+
+    // Ensure that the unit passed in is valid
+    if (data.unit && !Object.values(UnitType).includes(data.unit)) {
+      throw new ParamInvalidError('unit', data.unit, Object.values(UnitType));
     }
 
     // Update the parameter in the database
