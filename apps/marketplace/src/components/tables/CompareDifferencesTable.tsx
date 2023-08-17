@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import fetchListing from '@/services/fetchListing';
 import fetchCatById from '@/services/fetchCatById';
 import fetchProduct from '@/services/fetchProduct';
+import useParameters from '@/services/listings/useParameters';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { Category } from '@/utils/api/client/zod/categories';
 import { Product } from '@/utils/api/client/zod/products';
@@ -55,8 +56,12 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+
+  const [parameters, addParams] = useParamStore((state) => [state.params, state.addParams]);
+  const [paramIdsToFetch, setParamIdsToFetch] = useState<string[]>([]);
+  const { data: params } = useParameters(paramIdsToFetch);
+
   const router = useRouter();
-  const params = useParamStore((state) => state.params);
 
   const selectedListing = useQuery(
     'getCompareListing',
@@ -96,6 +101,30 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       setCategory(selectedCat.data);
     }
   }, [selectedListing.data, selectedProduct.data, selectedCat.data]);
+
+  useEffect(() => {
+    if (listings !== undefined) {
+      const existingParams = Object.keys(parameters);
+      const paramIds = new Set<string>();
+
+      listings.forEach((listing) => {
+        listing.parameters?.forEach(({ paramId }) => {
+          const stringParamId = paramId.toString();
+          if (existingParams.indexOf(stringParamId) === -1) paramIds.add(stringParamId);
+        });
+      });
+
+      if (paramIds.size !== 0) {
+        setParamIdsToFetch([...paramIds]);
+      }
+    }
+  }, [listings]);
+
+  useEffect(() => {
+    if (params !== undefined && params.length !== 0) {
+      addParams(params);
+    }
+  }, [params, paramIdsToFetch]);
 
   const queries = [selectedListing, selectedProduct, selectedCat];
   const isError = queries.some((query) => query.isError);
@@ -166,10 +195,14 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
         data: listings.map((listing) => (
           <Grid container spacing={2} ml={3}>
             {listing.parameters &&
+              params &&
+              params.length !== 0 &&
               listing.parameters.map(({ paramId, value }) => {
-                const displayName = params[paramId]?.displayName;
-                const type = params[paramId]?.type;
+                const data = params.find((param) => param.id === paramId);
 
+                if (data === undefined) return null;
+
+                const { displayName, type } = data;
                 console.log('paramId:', paramId);
                 console.log('displayName:', displayName);
                 console.log('value:', value);
@@ -187,7 +220,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
                   }
                 }
 
-                // console.log('unit:', unit);
+                console.log('unit:', unit);
 
                 return (
                   <Grid item xl={3} lg={3} md={3} sm={2} xs={2} direction="row" key={paramId}>
