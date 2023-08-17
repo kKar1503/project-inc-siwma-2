@@ -106,14 +106,19 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   }, []);
 
   useEffect(() => {
-    if (showSpinner) {
-      const timer = setTimeout(() => {
-        setShowSpinner(false);
-      }, 0);
+    let timer: NodeJS.Timeout | null = null;
 
-      return () => clearTimeout(timer);
+    if (showSpinner) {
+      timer = setTimeout(() => {
+        setShowSpinner(false);
+      }, 5000);
     }
-    return;
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, [showSpinner]);
 
   useEffect(() => {
