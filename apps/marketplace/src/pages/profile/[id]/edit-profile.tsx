@@ -32,6 +32,7 @@ import { validateName, validateEmail, validatePhone } from '@/utils/api/validate
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
+import { useLoadingBar } from '@/context/loadingBarContext';
 
 const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
   useMutation((updatedUserData: PutUserRequestBody) =>
@@ -67,6 +68,7 @@ const EditProfile = () => {
   const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const { t } = useTranslation();
+  const { loadingBarRef } = useLoadingBar();
 
   const mutation = useUpdateUserMutation(loggedUserUuid, image);
 
@@ -213,6 +215,14 @@ const EditProfile = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (!userDetails) {
+      loadingBarRef.current?.continuousStart();
+    } else {
+      loadingBarRef.current?.complete();
+    }
+  }, [userDetails]);
 
   useEffect(() => {
     if (userDetails) {

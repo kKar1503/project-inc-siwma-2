@@ -58,6 +58,7 @@
     "react-router-dom": "6.14.0",
     "react-swipeable-views": "^0.14.0",
     "react-swipeable-views-utils": "^0.14.0",
+    "react-top-loading-bar": "2.3.1",
     "sib-api-v3-sdk": "^8.5.0",
     "socket.io-client": "4.7.0",
     "styled-components": "^5.3.9",

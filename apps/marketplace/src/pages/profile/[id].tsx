@@ -16,6 +16,8 @@ import { useTheme } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
 import useUser from '@/services/users/useUser';
 
+import { useLoadingBar } from '@/context/loadingBarContext';
+
 const ProfilePage = () => {
   // ** Hooks
   const router = useRouter();
@@ -29,8 +31,17 @@ const ProfilePage = () => {
   const theme = useTheme();
   const { spacing } = theme;
   const [isMd, isLg] = useResponsiveness(['md', 'lg']);
+  const { loadingBarRef } = useLoadingBar();
 
   // ** Effects
+  useEffect(() => {
+    if (!isUserFetched) {
+      loadingBarRef.current?.continuousStart();
+    } else {
+      loadingBarRef.current?.complete();
+    }
+  }, [isUserFetched]);
+
   useEffect(() => {
     if (!isUserFetched) {
       return;

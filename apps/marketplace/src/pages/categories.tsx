@@ -7,20 +7,37 @@ import fetchCategories from '@/services/fetchCategories';
 import { useRouter } from 'next/router';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 import Spinner from '@/components/fallbacks/Spinner';
-import { useEffect } from 'react';
+import { RefObject, useEffect } from 'react';
+import { useLoadingBar } from '@/context/loadingBarContext';
+import { LoadingBarRef } from 'react-top-loading-bar';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
 };
 
-const useCategoryPageQuery = () => {
-  const { data, error, isError, isFetched } = useQuery('cat', async () => fetchCategories());
+const useCategoryPageQuery = (loadingBarRef: RefObject<LoadingBarRef>) => {
+  const { data, error, isError, isFetched } = useQuery(
+    'cat',
+    async () => {
+      loadingBarRef.current?.continuousStart();
+      const categories = await fetchCategories();
+      loadingBarRef.current?.complete();
+      return categories;
+    },
+    {
+      onError: () => {
+        loadingBarRef.current?.complete();
+      },
+    }
+  );
+
   return { data, error, isError, isFetched };
 };
 
 const CategoriesPage = () => {
   const router = useRouter();
-  const catData = useCategoryPageQuery();
+  const { loadingBarRef } = useLoadingBar();
+  const catData = useCategoryPageQuery(loadingBarRef);
 
   useEffect(() => {
     if (!catData.isFetched) {

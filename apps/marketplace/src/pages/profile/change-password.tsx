@@ -19,6 +19,7 @@ import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import { useTranslation } from 'react-i18next';
+import { useLoadingBar } from '@/context/loadingBarContext';
 
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
@@ -36,6 +37,7 @@ const ChangePassword = () => {
   const [currentPasswordError, setCurrentPasswordError] = useState(false);
   const [currentPasswordErrorText, setCurrentPasswordErrorText] = useState('');
   const [openLeave, setOpenLeave] = useState(false);
+  const { loadingBarRef } = useLoadingBar();
 
   const loggedUserUuid = useSession().data?.user.id as string;
 
@@ -45,6 +47,13 @@ const ChangePassword = () => {
   const { palette } = useTheme();
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    loadingBarRef.current?.continuousStart();
+    setTimeout(() => {
+      loadingBarRef.current?.complete();
+    }, 1000);
+  }, []);
 
   useEffect(() => {
     if (newPassword !== confirmNewPassword) {

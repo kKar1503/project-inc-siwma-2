@@ -14,6 +14,7 @@ import apiClient from '@/utils/api/client/apiClient';
 import OnCreateModal from '@/components/modal/OnCreateModal';
 import fetchListing from '@/services/fetchListing';
 import { Listing, Parameter, Product } from '@/utils/api/client/zod';
+import { useLoadingBar } from '@/context/loadingBarContext';
 
 /**
  * Maps default values into react-hook-form default values
@@ -61,17 +62,57 @@ const ListingCreateEdit = () => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [resetFlag, setResetFlag] = useState<string>('');
+  const { loadingBarRef } = useLoadingBar();
 
   // Get route params
   const router = useRouter();
   const { id, action } = router.query;
 
   // -- Queries -- //
-  const products = useQuery('products', async () => fetchProducts());
-  const categories = useQuery('categories', async () => fetchCategories(true));
-  const selectedListing = useQuery('listing', async () => fetchListing(id as string), {
-    enabled: action === 'edit' && id !== undefined,
-  });
+  const products = useQuery(
+    'products',
+    async () => {
+      loadingBarRef.current?.continuousStart();
+      const result = await fetchProducts();
+      loadingBarRef.current?.complete();
+      return result;
+    },
+    {
+      onError: () => {
+        loadingBarRef.current?.complete();
+      },
+    }
+  );
+  const categories = useQuery(
+    'categories',
+    async () => {
+      loadingBarRef.current?.continuousStart();
+      const result = await fetchCategories(true);
+      loadingBarRef.current?.complete();
+      return result;
+    },
+    {
+      onError: () => {
+        loadingBarRef.current?.complete();
+      },
+    }
+  );
+
+  const selectedListing = useQuery(
+    'listing',
+    async () => {
+      loadingBarRef.current?.continuousStart();
+      const result = await fetchListing(id as string);
+      loadingBarRef.current?.complete();
+      return result;
+    },
+    {
+      enabled: action === 'edit' && id !== undefined,
+      onError: () => {
+        loadingBarRef.current?.complete();
+      },
+    }
+  );
 
   const isLoading = products.isLoading || categories.isLoading || selectedListing.isLoading;
 
