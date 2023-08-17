@@ -143,28 +143,10 @@ const Marketplace = () => {
 
   const categories = useGetCategoriesQuery();
 
-  const mockAdvertisements = [
-    {
-      id: '1',
-      link: 'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80',
-      description: 'Advertisement 1',
-      image:
-        'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80',
-      companyId: 'company-1',
-    },
-    {
-      id: '2',
-      link: 'ad-link-2',
-      description: 'Advertisement 2',
-      image: 'image2.jpg',
-      companyId: 'company-2',
-    },
-  ];
-
   const { data: advertisementsData, isLoading: advertisementIsLoading } = useGetAdvertisementsQuery(
     session?.user.permissions
   );
-  const hasAdvertisements = mockAdvertisements && mockAdvertisements.length > 0;
+  const hasAdvertisements = advertisementsData && advertisementsData.length > 0;
 
   const headerStyles = useMemo(() => {
     if (isSm) {
@@ -207,14 +189,14 @@ const Marketplace = () => {
     return {};
   }, [isSm]);
 
-  const [isLoadingMockData, setIsLoadingMockData] = useState(true); // Initialize as true to simulate loading
-
   return (
     <>
-      {isLoadingMockData ? (
-        <Skeleton variant="rectangular" height="100%" />
+      {advertisementIsLoading ? (
+        <Box>
+          <Skeleton variant="rectangular" height="300px" />
+        </Box>
       ) : (
-        hasAdvertisements && <Carousel data={mockAdvertisements} />
+        hasAdvertisements && <Carousel data={advertisementsData} />
       )}
 
       {/* {hasAdvertisements && (<Carousel data={advertisementsData} />)} */}
