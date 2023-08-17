@@ -7,6 +7,7 @@ type FormNumberInputProps = {
   name: string;
   label: string;
   prefix?: string;
+  suffix?: string;
   placeholder?: string;
   // We do not know what the shape of the object will be
   // eslint-disable-next-line react/forbid-prop-types
@@ -28,6 +29,7 @@ const FormNumberInput = ({
   name,
   label,
   prefix,
+  suffix,
   placeholder,
   customValidation,
   required = false,
@@ -69,7 +71,7 @@ const FormNumberInput = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton className="h-12" />
+      <Skeleton height="3.5rem" />
     ) : (
       <TextField
         type="number"
@@ -79,6 +81,7 @@ const FormNumberInput = ({
         }}
         InputProps={{
           startAdornment: <InputAdornment position="start">{prefix}</InputAdornment>,
+          endAdornment: <InputAdornment position="end">{suffix}</InputAdornment>,
         }}
         sx={{
           width: '100%',
