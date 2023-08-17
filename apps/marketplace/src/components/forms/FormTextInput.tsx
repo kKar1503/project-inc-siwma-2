@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 import { FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -14,6 +14,7 @@ type FormInputProps = {
   success?: boolean;
   isLoading?: boolean;
   multiline?: boolean;
+  suffix?: string;
   sx?: React.ComponentProps<typeof TextField>['sx'];
 };
 
@@ -30,6 +31,7 @@ const FormInput = ({
   required = false,
   success,
   multiline,
+  suffix,
   isLoading,
   sx,
 }: FormInputProps) => {
@@ -68,6 +70,9 @@ const FormInput = ({
             '& > fieldset': { borderColor: success ? 'success.main' : undefined },
           },
           ...sx,
+        }}
+        InputProps={{
+          endAdornment: <InputAdornment position="end">{suffix}</InputAdornment>,
         }}
         error={!!errors[name]}
         color={success ? 'success' : undefined}
