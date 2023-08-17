@@ -187,13 +187,15 @@ const ListingCreateEdit = () => {
     const errors: { [key: string]: Error } = {};
 
     // Validate price
-    if (price < 0) {
-      errors.price = new Error('Price cannot be negative');
+    if (price < 0 || Number.isNaN(price)) {
+      errors.price = new Error('Price must be a positive number');
+    } else if (!/^(\d+(\.\d{1,2})?)$/.test(price)) {
+      errors.price = new Error('Price must be in a valid format (e.g., 1.00)');
     }
 
     // Validate quantity
     if (quantity < 0) {
-      errors.quantity = new Error('Quantity cannot be negative');
+      errors.quantity = new Error('Quantity must be a positive number');
     }
 
     // Validate category parameters
