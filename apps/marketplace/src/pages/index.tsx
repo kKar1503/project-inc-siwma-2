@@ -30,6 +30,7 @@ import useBookmarkStore from '@/stores/bookmarks';
 import useParamStore from '@/stores/parameters';
 import { useTablePagination, useTableSort } from '@/stores/table';
 import useProductStore from '@/stores/products';
+import CategoryCardSkeleton from '@/components/marketplace/listing/CategoryCardSkeleton';
 import fetchCategories from '@/services/fetchCategories';
 import fetchAdvertisements from '@/services/fetchAdvertisements';
 
@@ -246,6 +247,17 @@ const Marketplace = () => {
                 <CategoryCard {...category} />
               </Grid>
             ))}
+
+            {
+              // Skeleton loading
+              (categories && categories.length === 0) ??
+                Array.from({ length: 6 }).map((_, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Grid item xl={2} lg={3} md={4} xs={6} key={`skele-${index}`}>
+                    <CategoryCardSkeleton />
+                  </Grid>
+                ))
+            }
           </Grid>
         </Box>
       </Box>
