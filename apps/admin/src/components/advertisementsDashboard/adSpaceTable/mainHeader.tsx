@@ -5,7 +5,9 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import MinusIcon from '@mui/icons-material/Remove';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import PlusIcon from '@mui/icons-material/Add';
 import { MouseEventHandler } from 'react';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
@@ -15,6 +17,8 @@ interface Props {
   selected: readonly string[];
   onDelete: MouseEventHandler<HTMLDivElement>;
   onEdit: MouseEventHandler<HTMLDivElement>;
+  onAdd: MouseEventHandler<HTMLDivElement>;
+  refetchData: () => void;
   onSetActive: MouseEventHandler<HTMLDivElement>;
   onSetInactive: MouseEventHandler<HTMLDivElement>;
 }
@@ -23,9 +27,11 @@ const MainHeader = ({
                       advertisements,
                       selected,
                       onDelete,
+                      onAdd,
                       onEdit,
                       onSetActive,
                       onSetInactive,
+                      refetchData,
                     }: Props) => {
 
   const numSelected = selected.length;
@@ -64,18 +70,18 @@ const MainHeader = ({
       {isElementSelected ? (
         <>
           {
-            selected.find(id => advertisements[id].active) &&
-            <Tooltip title='Make Inactive' onClick={onSetInactive}>
+            selected.find(id => !advertisements[id].active) &&
+            <Tooltip title='Make Active' onClick={onSetActive}>
               <IconButton>
-                <MinusIcon fontSize='large' />
+                <VisibilityIcon fontSize='large' />
               </IconButton>
             </Tooltip>
           }
           {
-            selected.find(id => !advertisements[id].active) &&
-            <Tooltip title='Make Active' onClick={onSetActive}>
+            selected.find(id => advertisements[id].active) &&
+            <Tooltip title='Make Inactive' onClick={onSetInactive}>
               <IconButton>
-                <PlusIcon fontSize='large' />
+                <VisibilityOffIcon fontSize='large' />
               </IconButton>
             </Tooltip>
           }
@@ -90,7 +96,19 @@ const MainHeader = ({
             </IconButton>
           </Tooltip>
         </>
-      ) : null}
+        )
+        : <>
+          <Tooltip title='Create Advertisement' onClick={onAdd}>
+            <IconButton>
+              <PlusIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Refresh Data' onClick={refetchData}>
+            <IconButton>
+              <RefreshIcon />
+            </IconButton>
+          </Tooltip>
+        </>}
     </Toolbar>
   );
 };

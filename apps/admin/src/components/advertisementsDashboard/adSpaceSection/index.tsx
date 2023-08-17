@@ -27,8 +27,8 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
     [key: string]: Advertisment | false;
   }>({});
   const [advertisementsQuery, companiesQuery] = useQueries([
-    { queryKey: 'advertisements', queryFn: () => fetchAdvertisements() },
-    { queryKey: 'companies', queryFn: () => fetchCompanies() },
+    { queryKey: 'advertisements', queryFn: () => fetchAdvertisements(), refetchOnWindowFocus: false, refetchOnReconnect: false },
+    { queryKey: 'companies', queryFn: () => fetchCompanies(), refetchOnWindowFocus: false, refetchOnReconnect: false },
   ]);
 
   if (advertisementsQuery.isLoading || companiesQuery.isLoading) {
@@ -96,6 +96,9 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   const onEdit = (id: string) => {
     window.open(`/advertisement/edit/${id}`, '_blank')
   };
+  const onAdd = () => {
+    window.open(`/advertisement-upload`, '_blank');
+  };
 
   const onSetActive = (ids: readonly string[]) => {
     Promise.all(ids.map((id) => UpdateAdvertisement(id, { active: true }, undefined))).then(updateAdvertisementsTable);
@@ -125,6 +128,8 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
           companies={companies}
           onDelete={onDelete}
           onEdit={onEdit}
+          onAdd={onAdd}
+          refetchData={refetchData}
           onSetActive={onSetActive}
           onSetInactive={onSetInactive}
           onViewImage={(src) => { setPreviewImage(src); }}

@@ -19,9 +19,11 @@ export interface Props {
   advertisements: { [key: string]: Advertisment; };
   onDelete: (elements: readonly string[]) => void;
   onEdit: (element: string) => void;
+  onAdd: () => void;
   onSetActive: (elements: readonly string[]) => void;
   onSetInactive: (elements: readonly string[]) => void;
   onViewImage: (src: string | null) => void;
+  refetchData: () => void;
 }
 
 // eslint-disable-next-line react/function-component-definition,func-names
@@ -31,9 +33,11 @@ export default function({
                           advertisements,
                           onDelete,
                           onEdit,
+                          onAdd,
                           onSetActive,
                           onSetInactive,
                           onViewImage,
+                          refetchData,
                         }: Props) {
   const [selected, setSelected] = useState<readonly string[]>([]);
   const companyNames = useMemo(() => {
@@ -105,6 +109,10 @@ export default function({
     setSelected([]);
   };
 
+  const handleAdd = () => {
+    onAdd();
+  };
+
   const handleSetActive = () => {
     onSetActive(selected);
     setSelected([]);
@@ -124,6 +132,8 @@ export default function({
         onSetInactive={handleSetInactive}
         onDelete={handleDelete}
         onEdit={handleEdit}
+        onAdd={handleAdd}
+        refetchData={refetchData}
       />
       <TableContainer>
         <Table
