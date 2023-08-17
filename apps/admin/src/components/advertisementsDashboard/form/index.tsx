@@ -38,6 +38,12 @@ interface AdvertisementFormDataEmpty {
   active: 'active';
 }
 
+interface AdvertisementFormProps {
+  advertisement: Advertisment | undefined;
+  onSubmit: (body: PostAdvertisementRequestBody, image: File | undefined) => Promise<void>;
+  companyDict: { [key: string]: string };
+}
+
 const parseToPostAdvertisementRequestBody = (values: AdvertisementFormData): PostAdvertisementRequestBody => ({
   companyId: values.companyId.value,
   link: values.link,
@@ -68,12 +74,7 @@ const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
   active: 'active',
 };
 
-const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
-  advertisement?: Advertisment;
-  validate: (values: PostAdvertisementRequestBody) => { [key: string]: string };
-  onSubmit: (body: PostAdvertisementRequestBody, image: File | undefined) => Promise<boolean>;
-  companyDict: { [key: string]: string };
-}) => {
+const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: AdvertisementFormProps) => {
   const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -92,19 +93,13 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
   };
 
   const onHandleSubmit = async (values: AdvertisementFormData) => {
-    console.log('attempted to submit');
-    console.log('raw ',values);
     const advertisementData = parseToPostAdvertisementRequestBody(values);
-
-
-    console.log('parsed ',advertisementData);
-    const result = await onSubmit(advertisementData, selectedFile || undefined);
-    console.log('result: ', result);
+    return onSubmit(advertisementData, selectedFile || undefined);
   };
+
   const onHandleError = async () => {
     // This function just needs to exist, no logic needed
   };
-
 
   const handleRightButtonClick = () => {
     router.push('/advertisement-dashboard');
@@ -149,7 +144,6 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
         m: spacing(3),
       })}
     >
-      {/* {formErrors.endpointError && <Alert severity='error'>{formErrors.endpointError}</Alert>} */}
       <Box>
         <Upload
           id='advertisement image upload'
@@ -229,7 +223,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
                 name='link'
                 required
               >
-              <FormTextInput
+                <FormTextInput
                 label='Link'
                 name='link'
                 required
