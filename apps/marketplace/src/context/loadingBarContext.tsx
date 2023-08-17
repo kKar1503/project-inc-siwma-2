@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useMemo } from 'react';
 import { LoadingBarRef } from 'react-top-loading-bar';
 
 interface LoadingBarContextType {
@@ -20,6 +20,9 @@ interface Props {
   loadingBarRef: React.RefObject<LoadingBarRef>;
 }
 
-export const LoadingBarProvider: React.FC<Props> = ({ children, loadingBarRef }) => (
-  <LoadingBarContext.Provider value={{ loadingBarRef }}>{children}</LoadingBarContext.Provider>
-);
+export const LoadingBarProvider: React.FC<Props> = ({ children, loadingBarRef }) => {
+  // Use useMemo to prevent the context value from changing on every render
+  const contextValue = useMemo(() => ({ loadingBarRef }), [loadingBarRef]);
+
+  return <LoadingBarContext.Provider value={contextValue}>{children}</LoadingBarContext.Provider>;
+};

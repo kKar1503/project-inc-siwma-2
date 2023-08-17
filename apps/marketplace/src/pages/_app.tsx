@@ -3,8 +3,7 @@
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
-import { useRouter } from 'next/router';
-import Router from 'next/router';
+import { useRouter, Router } from 'next/router';
 import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { LoadingBarProvider } from '@/context/loadingBarContext';
 import React, { useEffect, useMemo } from 'react';
@@ -23,7 +22,7 @@ import { Noto_Sans_SC } from 'next/font/google';
 
 // -- Type declarations --//
 // Page type
-interface PageType extends React.FunctionComponent<any> {
+interface PageType extends React.FunctionComponent<unknown> {
   getLayout: (page: JSX.Element) => JSX.Element;
   allowAuthenticated: boolean;
   allowNonAuthenticated: boolean;
@@ -97,7 +96,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const referrer = window.document.referrer;
+      const { referrer } = window.document;
       const isExternal = !referrer || !referrer.includes(window.location.hostname);
       setIsExternalNavigation(isExternal);
       if (isExternal) {
@@ -114,6 +113,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
 
       return () => clearTimeout(timer);
     }
+    return () => {};
   }, [showSpinner]);
 
   useEffect(() => {
@@ -173,7 +173,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           <AuthenticationGuard
             disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
             disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
-            loader={showSpinner ? <SpinnerPage /> : <></>}
+            loader={showSpinner ? <SpinnerPage /> : <div />}
             allowAuthenticated={allowAuthenticated}
             allowNonAuthenticated={allowNonAuthenticated}
           >
