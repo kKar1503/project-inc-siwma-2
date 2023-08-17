@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Box, Divider, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import fetchProducts from '@/services/fetchProducts';
@@ -13,7 +13,7 @@ import ListingCreationForm from '@/components/forms/listingCreationForm/ListingC
 import apiClient from '@/utils/api/client/apiClient';
 import OnCreateModal from '@/components/modal/OnCreateModal';
 import fetchListing from '@/services/fetchListing';
-import { Listing, Parameter, Product } from '@/utils/api/client/zod';
+import { Listing, Product } from '@/utils/api/client/zod';
 import type { SxProps } from '@mui/material/styles';
 import NoInternetConnection from '@/components/NoInternet';
 
@@ -329,6 +329,11 @@ const ListingCreateEdit = () => {
       setResetFlag(Math.random().toString());
     }
   }, [selectedListing.isSuccess, products.isSuccess]);
+
+  // if neither edit nor create, render 404 page
+  if (!isEditing && !isCreating) {
+    router.push('/404');
+  }
 
   return (
     <>
