@@ -122,6 +122,7 @@ export class DuplicateError extends QueryError {
     this.message = `A record with the same ${parameter} already exists`;
     this.status = DuplicateError.status;
     this.code = DuplicateError.code;
+    this.meta = { key: parameter };
   }
 }
 
