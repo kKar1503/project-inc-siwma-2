@@ -114,12 +114,12 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={6} md={6} lg={6}>
-        <InfoCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon}
-                  value={active.length.toString()} />
-      </Grid>
-      <Grid item xs={6} md={6} lg={6}>
+      <Grid item xs={0} md={0} lg={6}>
         {/* <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} /> */}
+      </Grid>
+      <Grid item xs={12} md={12} lg={6}>
+        <InfoCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon}
+                  value={active.length.toString()} scale='40%' />
       </Grid>
       <Grid item xs={12} md={12} lg={12}>
         <S3ImagePreview close={() => {

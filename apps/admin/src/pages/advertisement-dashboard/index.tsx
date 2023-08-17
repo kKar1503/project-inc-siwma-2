@@ -9,7 +9,7 @@ const AdvertisementDashboard = () => (
       marginLeft: '1rem',
     }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={9}>
+        <Grid item xs={12} md={12}>
           <AdSpaceSection totalClicks={0} />
         </Grid>
         {/* <Grid item container xs={12} md={3} spacing={2}> */}
