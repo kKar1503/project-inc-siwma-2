@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import { FormEvent, useMemo, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useResponsiveness, useTogglePasswordVisibility } from '@inc/ui';
+import NoInternetConnection from '@/components/NoInternet';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -252,6 +253,7 @@ const LoginForm = () => {
           </Box>
         </Container>
       </Box>
+      <NoInternetConnection />
     </Box>
   );
 };
