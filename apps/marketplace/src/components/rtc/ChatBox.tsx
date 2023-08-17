@@ -7,8 +7,8 @@ import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import { useTheme } from '@mui/material/styles';
+import { useResponsiveness } from '@inc/ui';
+import { useTheme, alpha } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import type { MessageContent } from '@inc/types';
 
@@ -25,14 +25,21 @@ export type ChatBoxProps = {
   roomData: ChatData[];
   loginId: string;
   ChatText: JSX.Element;
-  setAcceptOffer: React.Dispatch<React.SetStateAction<'pending' | 'accepted' | 'rejected'>>;
-  setDeleteOffer: React.Dispatch<React.SetStateAction<boolean>>;
+  onAcceptOffer: (id: number) => void;
+  onRejectOffer: (id: number) => void;
+  onCancelOffer: (id: number) => void;
 };
 
-const ChatBox = ({ loginId, roomData, ChatText, setAcceptOffer, setDeleteOffer }: ChatBoxProps) => {
+const ChatBox = ({
+  loginId,
+  roomData,
+  ChatText,
+  onAcceptOffer,
+  onCancelOffer,
+  onRejectOffer,
+}: ChatBoxProps) => {
   const { t } = useTranslation();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const { spacing, shape, shadows, palette, typography } = useTheme();
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -138,7 +145,7 @@ const ChatBox = ({ loginId, roomData, ChatText, setAcceptOffer, setDeleteOffer }
                       {message.messageContent.content}
                     </Typography>
                   )}
-                  {message.messageContent.contentType === 'offer' && (
+                  {/* {message.messageContent.contentType === 'offer' && (
                     <Box>
                       <Typography
                         sx={({ palette }) => ({
@@ -166,7 +173,7 @@ const ChatBox = ({ loginId, roomData, ChatText, setAcceptOffer, setDeleteOffer }
                         {message.messageContent.amount.toFixed(2)}
                       </Typography>
                     </Box>
-                  )}
+                  )} */}
                   {message.offerState === 'accepted' &&
                     message.messageContent.contentType === 'offer' && (
                       <Box>
@@ -302,9 +309,12 @@ const ChatBox = ({ loginId, roomData, ChatText, setAcceptOffer, setDeleteOffer }
                                 fontSize: 'body1',
                                 letterSpacing: '0.15px',
                                 backgroundColor: palette.error[300],
+                                ':hover': {
+                                  backgroundColor: palette.error[500],
+                                },
                                 width: '100%',
                               })}
-                              onClick={() => setDeleteOffer(true)}
+                              onClick={() => onCancelOffer(message.id)}
                             >
                               {t('cancel')}
                             </Button>
@@ -323,8 +333,12 @@ const ChatBox = ({ loginId, roomData, ChatText, setAcceptOffer, setDeleteOffer }
                                   letterSpacing: '0.15px',
                                   mr: spacing(2),
                                   borderColor: palette.error[300],
+                                  ':hover': {
+                                    backgroundColor: alpha(palette.error[300], 0.2),
+                                    borderColor: palette.error[500],
+                                  },
                                 })}
-                                onClick={() => setAcceptOffer('rejected')}
+                                onClick={() => onRejectOffer(message.id)}
                               >
                                 {t('Decline')}
                               </Button>
@@ -338,8 +352,11 @@ const ChatBox = ({ loginId, roomData, ChatText, setAcceptOffer, setDeleteOffer }
                                   fontSize: 'body1',
                                   letterSpacing: '0.15px',
                                   backgroundColor: palette.primary.main,
+                                  ':hover': {
+                                    backgroundColor: palette.primary[500],
+                                  },
                                 })}
-                                onClick={() => setAcceptOffer('accepted')}
+                                onClick={() => onAcceptOffer(message.id)}
                               >
                                 {t('Accept')}
                               </Button>

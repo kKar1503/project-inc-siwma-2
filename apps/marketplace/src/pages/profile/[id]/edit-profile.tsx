@@ -1,8 +1,6 @@
-import { useState, useEffect, ChangeEvent, FormEvent, useMemo } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
-import ProfileDetailCard, {
-  ProfileDetailCardProps,
-} from '@/components/marketplace/profile/ProfileDetailCard';
+import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCard';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
@@ -12,73 +10,41 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import TelegramIcon from '@mui/icons-material/Telegram';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Input from '@mui/material/Input';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
-import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import updateUser from '@/middlewares/updateUser';
+import { useResponsiveness } from '@inc/ui';
+import updateUser from '@/services/users/updateUser';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import { useQuery, useMutation } from 'react-query';
+import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
-import fetchCompany from '@/middlewares/fetchCompany';
 import { PutUserRequestBody } from '@/utils/api/server/zod';
 import { validateName, validateEmail, validatePhone } from '@/utils/api/validate';
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
-import fetchProfilesReview from '@/middlewares/fetchProfilesReview';
 import { useTranslation } from 'react-i18next';
+import useUser from '@/services/users/useUser';
+import useUserDataStore from '@/stores/userData';
 
-export type ProfilePageProps = {
-  data: ProfileDetailCardProps;
-};
-
-const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', () => fetchCompany(userUuid), {
-    enabled: userUuid !== undefined,
-  });
-  return data;
-};
-
-const useGetReview = (userUuid: string, sortBy?: string) => {
-  const { data } = useQuery(
-    ['reviewdata', userUuid, sortBy],
-    async () => {
-      if (sortBy) {
-        return fetchProfilesReview(userUuid, sortBy);
-      }
-      return fetchProfilesReview(userUuid);
-    },
-    {
-      enabled: userUuid !== undefined || sortBy !== undefined,
-    }
+const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
+  useMutation((updatedUserData: PutUserRequestBody) =>
+    updateUser(updatedUserData, userUuid, profilePicture)
   );
 
-  return data;
-};
-
-const useUpdateUserMutation = (userUuid: string) =>
-  useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
-
 const EditProfile = () => {
+  const setUser = useUserDataStore((state) => state.setUser);
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
-  const userDetails = useGetUserQuery(id);
-  const userReviews = useGetReview(id);
-  const mutation = useUpdateUserMutation(loggedUserUuid);
+  const { data: userDetails } = useUser(id);
   const theme = useTheme();
   const { spacing } = theme;
   const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [image, setImage] = useState<File | undefined>(undefined);
   const [name, setName] = useState<string>(userDetails?.name || '');
   const [nameError, setNameError] = useState('');
   const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
@@ -87,15 +53,10 @@ const EditProfile = () => {
   const [emailError, setEmailError] = useState('');
   const [bio, setBio] = useState<string>(userDetails?.bio || '');
   const [bioError, setBioError] = useState('');
-  const [telegramUsername, setTelegramUsername] = useState<string>(
-    userDetails?.telegramUsername || ''
-  );
-  const [telegramError, setTelegramError] = useState('');
-  const [whatsappNumber, setWhatsappNumber] = useState<string>(userDetails?.whatsappNumber || '');
-  const [whatsappError, setWhatsappError] = useState('');
-  const [contactMethod, setContactMethod] = useState<string>(userDetails?.contactMethod || '');
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const { t } = useTranslation();
+
+  const mutation = useUpdateUserMutation(loggedUserUuid, image);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -157,47 +118,6 @@ const EditProfile = () => {
     }
   };
 
-  const handleContactChange = (e: SelectChangeEvent) => {
-    const selectedContact = e.target.value;
-    setContactMethod(selectedContact);
-
-    if (selectedContact === 'whatsapp') {
-      setTelegramUsername('');
-    } else if (selectedContact === 'telegram') {
-      setWhatsappNumber('');
-    }
-  };
-
-  const handleTelegramChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTelegram = e.target.value;
-    setTelegramUsername(newTelegram);
-
-    if (newTelegram.trim() === '') {
-      setTelegramError('Please enter your telegram username');
-    } else {
-      setTelegramError('');
-    }
-  };
-
-  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const formattedInput = input.replace(/\D/g, '');
-    setWhatsappNumber(formattedInput);
-
-    if (formattedInput === '') {
-      setMobileNumberError('Please enter a mobile number');
-    } else {
-      try {
-        validatePhone(formattedInput);
-        setWhatsappError('');
-      } catch (error) {
-        if (error instanceof InvalidPhoneNumberError) {
-          setWhatsappError('Please enter a valid Singapore phone number');
-        }
-      }
-    }
-  };
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
@@ -210,34 +130,25 @@ const EditProfile = () => {
         throw new Error('Invalid bio');
       }
 
-      if (telegramError !== '') {
-        throw new Error('Invalid telegram username');
-      }
-
       const updatedUserData: PutUserRequestBody = {
         name,
         mobileNumber,
         email,
         bio,
-        telegramUsername,
-        whatsappNumber,
-        contactMethod: contactMethod as 'whatsapp' | 'email' | 'phone' | 'telegram' | 'facebook',
       };
       mutation.mutate(updatedUserData);
       router.push(`/profile/${id}`);
+      setUser({ userName: name, userId: id });
     } catch (error) {
       if (error instanceof InvalidNameError) {
         setNameError('Invalid name');
       } else if (error instanceof InvalidPhoneNumberError) {
         setMobileNumberError('Invalid phone number');
-        setWhatsappError('Invalid whatsapp number');
       } else if (error instanceof InvalidEmailError) {
         setEmailError('Invalid email');
       } else if ((error as Error).message === 'Invalid bio') {
         setBioError('Invalid bio');
-      } else if ((error as Error).message === 'Invalid telegram username') {
-        setTelegramError('Please enter a telegram username');
-      }
+      } 
     }
   };
 
@@ -247,15 +158,13 @@ const EditProfile = () => {
       setMobileNumber(userDetails?.mobileNumber);
       setEmail(userDetails?.email);
       setBio(userDetails?.bio || '');
-      setContactMethod(userDetails?.contactMethod);
-      setWhatsappNumber(userDetails?.whatsappNumber || '');
-      setTelegramUsername(userDetails?.telegramUsername || '');
     }
   }, [userDetails]);
 
   useEffect(() => {
     if (profilePicture) {
       setImageUrl(URL.createObjectURL(profilePicture));
+      setImage(profilePicture);
     }
   }, [profilePicture]);
 
@@ -314,7 +223,7 @@ const EditProfile = () => {
       </Head>
 
       <Grid sx={gridCols}>
-        {userDetails && <ProfileDetailCard data={userDetails} reviewData={userReviews} />}
+        {userDetails && <ProfileDetailCard data={userDetails} />}
         <Box
           sx={{
             display: 'flex',
@@ -393,8 +302,13 @@ const EditProfile = () => {
                     </Box>
                     <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
                       <Button variant="contained" component="label">
-                        {t('Upload Profile Photo')}
-                        <input accept="image/*" type="file" hidden onChange={handleFileSelect} />
+                        Upload Profile Photo
+                        <Input
+                          type="file"
+                          onChange={handleFileSelect}
+                          inputProps={{ accept: 'image/*' }}
+                          sx={{ display: 'none' }}
+                        />
                       </Button>
                     </Box>
                   </Box>
@@ -476,99 +390,6 @@ const EditProfile = () => {
                   helperText={bioError}
                 />
               </CardContent>
-              <Divider
-                variant="middle"
-                sx={({ palette }) => ({ color: palette.divider, height: '1px' })}
-              />
-              <CardContent>
-                <Typography sx={{ fontWeight: 'bold' }}>{t('Connections')}</Typography>
-                <Typography>{t('Link your messaging accounts here')}</Typography>
-                <Box
-                  sx={({ spacing }) => ({
-                    mt: spacing(2),
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                  })}
-                >
-                  <FormControl sx={({ spacing }) => ({ minWidth: 120, mr: spacing(3) })}>
-                    <InputLabel>{t('Contact')}</InputLabel>
-                    <Select
-                      label={t('Contact')}
-                      value={contactMethod}
-                      onChange={handleContactChange}
-                    >
-                      <MenuItem value="telegram">Telegram</MenuItem>
-                      <MenuItem value="whatsapp">Whatsapp</MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  {contactMethod === 'whatsapp' && (
-                    <TextField
-                      label={`Whatsapp ${t('Number')}`}
-                      placeholder="8123 4567"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment
-                            position="start"
-                            sx={({ palette }) => ({
-                              color: palette.common.black,
-                            })}
-                          >
-                            <WhatsAppIcon
-                              sx={({ spacing, palette }) => ({
-                                borderRadius: spacing(2),
-                                p: '1px',
-                                color: palette.common.white,
-                                backgroundColor: palette.secondary.main,
-                              })}
-                            />
-                            +65
-                          </InputAdornment>
-                        ),
-                        inputProps: {
-                          maxLength: 8,
-                          pattern: '[0-9]*',
-                        },
-                      }}
-                      value={whatsappNumber}
-                      onChange={handleWhatsappChange}
-                      error={!!whatsappError}
-                      helperText={whatsappError}
-                    />
-                  )}
-
-                  {contactMethod === 'telegram' && (
-                    <TextField
-                      label={`Telegram ${t('Username')}`}
-                      placeholder="account_username"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment
-                            position="start"
-                            sx={({ palette }) => ({
-                              color: palette.common.black,
-                            })}
-                          >
-                            <TelegramIcon
-                              sx={({ spacing, palette }) => ({
-                                borderRadius: spacing(2),
-                                pr: '1px',
-                                color: palette.common.white,
-                                backgroundColor: palette.primary[500],
-                              })}
-                            />
-                            @
-                          </InputAdornment>
-                        ),
-                      }}
-                      value={telegramUsername}
-                      onChange={handleTelegramChange}
-                      error={!!telegramError}
-                      helperText={telegramError}
-                    />
-                  )}
-                </Box>
-              </CardContent>
 
               <CardActions sx={{ display: 'flex', flexDirection: 'column', mt: 'auto' }}>
                 <Box
@@ -594,9 +415,7 @@ const EditProfile = () => {
                       name.trim() === '' ||
                       mobileNumber.trim() === '' ||
                       email.trim() === '' ||
-                      bio.trim() === '' ||
-                      (contactMethod === 'whatsapp' && whatsappNumber.trim() === '') ||
-                      (contactMethod === 'telegram' && telegramUsername.trim() === '')
+                      bio.trim() === '' 
                     }
                   >
                     {t('Save Changes')}

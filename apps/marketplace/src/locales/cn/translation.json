@@ -55,7 +55,6 @@
   "Excel File": "Excel 文件",
   "File": "文件",
   "Filter": "筛选",
-  "Filter reviews": "筛选评论",
   "FROM BUYERS": "来自买家",
   "FROM SELLERS": "来自卖家",
   "General Information": "基本信息",
@@ -105,8 +104,6 @@
   "Recommended": "推荐",
   "Report": "举报",
   "Report User": "举报用户",
-  "Review": "评论",
-  "Reviews": "评论",
   "Save Changes": "保存",
   "Search Filter": "搜索筛选",
   "Search messages, listings, usernames": "搜索消息、商品、用户名",
@@ -175,8 +172,6 @@
   "Posted By": "发布者",
   "Company": "公司",
   "CHAT NOW": "开始聊天",
-  "ADD A REVIEW": "添加评论",
-  "No Reviews available for this listing": "此商品中没有任何评论",
 
   "Offer Accepted": "接受报价",
   "Offer Declined": "拒绝报价",
@@ -191,8 +186,30 @@
   "Price - Low to High": "价格 - 从低到高",
   "Price - High to Low": "价格 - 从高到低",
 
-  "Displaying":"显示",
-  "search result":"个搜索",
-  "for":"结果",
-  "No more listings available":"No more listings available"
+  "Displaying": "显示",
+  "search result": "个搜索",
+  "for": "结果",
+  "No more listings available": "没有更多的商品了",
+
+  "months ago": "个月前",
+  "weeks ago": "个周前",
+  "days ago": "天前",
+  "hours ago": "小时前",
+  "minutes ago": "分钟前",
+  "seconds ago": "秒前",
+
+  "TableListingName": "商品",
+  "TableListingPrice": "价钱 ($)",
+  "TableListingQuantity": "货量",
+  "TableListingType": "标签",
+  "TableListingPosted": "发布日期",
+
+  "Quantity": "数量",
+  "Dimensions (mm)": "尺寸 (毫米)",
+  "Cross Section": "横截面",
+  "Metal Grade": "金属等级",
+  "Certification": "认证",
+  "Posted on": "发布日期",
+  "Share": "分享",
+  "share": "分享"
 }

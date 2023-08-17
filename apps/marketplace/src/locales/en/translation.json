@@ -56,7 +56,6 @@
   "Excel File": "Excel File",
   "File": "File",
   "Filter": "Filter",
-  "Filter reviews": "Filter reviews",
   "FROM BUYERS": "FROM BUYERS",
   "FROM SELLERS": "FROM SELLERS",
   "General Information": "General Information",
@@ -106,8 +105,6 @@
   "Recommended": "Recommended",
   "Report": "Report",
   "Report User": "Report User",
-  "Review": "Review",
-  "Reviews": "Reviews",
   "Save Changes": "Save Changes",
   "Search Filter": "Search Filter",
   "Search messages, listings, usernames": "Search messages, listings, usernames",
@@ -177,8 +174,6 @@
   "Posted By": "Posted By",
   "Company": "Company",
   "CHAT NOW": "CHAT NOW",
-  "ADD A REVIEW": "ADD A REVIEW",
-  "No Reviews available for this listing": "No Reviews available for this listing",
 
   "Offer Accepted": "Offer Accepted",
   "Offer Declined": "Offer Declined",
@@ -196,5 +191,28 @@
   "Displaying": "Displaying",
   "search result": "search result",
   "for": "for",
-  "No more listings available":"没有更多的商品了"
+  "No more listings available": "No more listings available",
+
+  "months ago": "months ago",
+  "weeks ago": "weeks ago",
+  "days ago": "days ago",
+  "hours ago": "hours ago",
+  "minutes ago": "minutes ago",
+  "seconds ago": "seconds ago",
+
+  "TableListingName": "Name",
+  "TableListingPrice": "Price ($)",
+  "TableListingQuantity": "Quantity",
+  "TableListingType": "Tags",
+  "TableListingPosted": "Posted on",
+
+  "Quantity": "Quantity",
+  "Dimensions (mm)": "Dimensions (mm)",
+  "Cross Section": "Cross Section",
+  "Metal Grade": "Metal Grade",
+  "Certification": "Certification",
+  "Posted on": "Posted on",
+
+  "Share": "Share",
+  "share": "share"
 }

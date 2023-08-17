@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model AccessTokens {
   id            Int           @id(map: "access_tokens_pk") @default(sequence(maxValue: 2147483647))
   token         String        @unique(map: "access_tokens_token_unique")
@@ -25,6 +26,7 @@ model AccessTokens {
   @@map("access_tokens")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model AdvertClicks {
   id              Int            @id(map: "clicks_pk") @default(sequence(maxValue: 2147483647))
   advertisementId Int            @map("advertisement_id")
@@ -37,6 +39,7 @@ model AdvertClicks {
   @@map("advert_clicks")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Advertisements {
   id           Int            @id(map: "advertisements_pk") @default(sequence(maxValue: 2147483647))
   companyId    Int            @map("company_id")
@@ -54,6 +57,7 @@ model Advertisements {
   @@map("advertisements")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model CategoriesParameters {
   categoryId  Int       @map("category_id")
   parameterId Int       @map("parameter_id")
@@ -67,6 +71,7 @@ model CategoriesParameters {
   @@map("categories_parameters")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Category {
   id                   Int                    @id(map: "category_pk") @default(sequence(maxValue: 2147483647))
   name                 String
@@ -77,11 +82,12 @@ model Category {
   createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
   categoriesParameters CategoriesParameters[]
-  listings             Listing[]
+  listingItems         ListingItem[]
 
   @@map("category")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Companies {
   id                     Int                      @id(map: "companies_pk") @default(sequence(maxValue: 2147483647))
   bio                    String?                  @default("")
@@ -100,6 +106,7 @@ model Companies {
   @@map("companies")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model CompaniesBookmarks {
   id        Int       @id(map: "companies_bookmarks_pk") @default(sequence(maxValue: 2147483647))
   userId    String    @map("user_id") @db.Uuid
@@ -112,6 +119,7 @@ model CompaniesBookmarks {
   @@map("companies_bookmarks")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model CompaniesNotifications {
   id                 Int       @id(map: "companies_notifications_pk") @default(sequence(maxValue: 2147483647))
   userId             String    @map("user_id") @db.Uuid
@@ -124,6 +132,7 @@ model CompaniesNotifications {
   @@map("companies_notifications")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Invite {
   id        Int       @id(map: "invite_pk") @default(sequence(maxValue: 2147483647))
   name      String
@@ -138,36 +147,32 @@ model Invite {
   @@map("invite")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Listing {
-  id                                          Int                       @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
-  name                                        String
-  description                                 String
-  price                                       Decimal                   @default(0) @db.Decimal
-  unitPrice                                   Boolean                   @default(false) @map("unit_price")
-  negotiable                                  Boolean                   @default(true)
-  categoryId                                  Int                       @map("category_id")
-  type                                        ListingType
-  owner                                       String                    @db.Uuid
-  createdAt                                   DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                                   DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  archived                                    Boolean                   @default(false)
-  deletedAt                                   DateTime?                 @map("deleted_at") @db.Timestamptz(6)
-  multiple                                    Boolean                   @default(false)
-  hashedUrl                                   String?                   @unique(map: "listing_un") @map("hashed_url")
-  category                                    Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_fk")
-  users                                       Users                     @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
-  listingBookmarks                            ListingBookmarks[]
-  listingClicksListingClicksListingTolistings ListingClicks[]           @relation("listingClicksListingTolisting")
-  listingImages                               ListingImages[]
-  listingNotifications                        ListingNotifications[]
-  listingsParametersValues                    ListingsParametersValue[]
-  offersOffersListingTolistings               Offers[]                  @relation("offersListingTolisting")
-  reviewsReviewsListingTolistings             Reviews[]                 @relation("reviewsListingTolisting")
-  roomsRoomsListingTolistings                 Rooms[]                   @relation("roomsListingTolisting")
+  id                                            Int                      @id(map: "listing_pk") @default(sequence(maxValue: 2147483647))
+  price                                         Decimal                  @default(0) @db.Decimal
+  negotiable                                    Boolean                  @default(true)
+  quantity                                      Decimal                  @default(0) @db.Decimal
+  type                                          ListingType              @default(BUY)
+  owner                                         String                   @db.Uuid
+  createdAt                                     DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                                     DateTime                 @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt                                     DateTime?                @map("deleted_at") @db.Timestamptz(6)
+  listingItemId                                 Int                      @map("listing_item_id")
+  listingItem                                   ListingItem              @relation(fields: [listingItemId], references: [id], onDelete: Cascade, map: "listing_fk")
+  users                                         Users                    @relation(fields: [owner], references: [id], onDelete: Cascade, map: "listing_fk_1")
+  listingBookmarks                              ListingBookmarks[]
+  listingClicksListingClicksListingTolistings   ListingClicks[]          @relation("listingClicksListingTolisting")
+  listingNotifications                          ListingNotifications[]
+  listingsParametersValue                       ListingsParametersValue?
+  offers                                        Offers[]
+  roomsRoomsListingTolistings                   Rooms[]                  @relation("roomsListingTolisting")
+  sharesListingsSharesListingsListingTolistings SharesListings[]         @relation("sharesListingsListingTolisting")
 
   @@map("listing")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ListingBookmarks {
   id        Int      @id(map: "listing_bookmarks_pk") @default(sequence(maxValue: 2147483647))
   userId    String   @map("user_id") @db.Uuid
@@ -180,29 +185,36 @@ model ListingBookmarks {
   @@map("listing_bookmarks")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ListingClicks {
   id                                   Int      @id(map: "listing_clicks_pk") @default(sequence(maxValue: 2147483647))
   listing                              Int
   user                                 String   @db.Uuid
   createdAt                            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  listingListingClicksListingTolisting Listing  @relation("listingClicksListingTolisting", fields: [listing], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "listing_clicks_fk")
+  listingListingClicksListingTolisting Listing  @relation("listingClicksListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "listing_clicks_fk")
   users                                Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listing_clicks_fk_1")
 
   @@map("listing_clicks")
 }
 
-model ListingImages {
-  id        Int      @id(map: "listing_images_pk") @default(sequence(maxValue: 2147483647))
-  listingId Int      @map("listing_id")
-  image     String
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-  order     Int
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listing_images_fk")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ListingItem {
+  id          Int       @id(map: "listing_item_pk") @default(sequence())
+  name        String
+  chineseName String?   @map("chinese_name")
+  description String
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  unit        String
+  chineseUnit String?   @map("chinese_unit")
+  categoryId  Int       @map("category_id")
+  listings    Listing[]
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "listing_item_fk")
 
-  @@map("listing_images")
+  @@map("listing_item")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ListingNotifications {
   id                 Int      @id(map: "listing_notifications_pk") @default(sequence(maxValue: 2147483647))
   userId             String   @map("user_id") @db.Uuid
@@ -216,18 +228,18 @@ model ListingNotifications {
 }
 
 model ListingsParametersValue {
-  listingId   Int       @map("listing_id")
-  parameterId Int       @map("parameter_id")
-  value       String
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  listing     Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk")
-  parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk_1")
+  listingId  Int      @id(map: "listings_parameters_values_pk") @map("listing_id")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  parameters Json
+  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "listings_parameters_value_fk")
 
-  @@id([listingId, parameterId], map: "listings_parameters_value_pk")
+  @@index([listingId], map: "idx_listingid")
+  @@index([parameters], map: "idx_parameters_gin", type: Gin)
   @@map("listings_parameters_value")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Logs {
   id         Int      @id(map: "logs_pk") @default(sequence(maxValue: 2147483647))
   logLevel   LogType  @map("log_level")
@@ -237,6 +249,7 @@ model Logs {
   @@map("logs")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Messages {
   id          Int         @id(map: "messages_pk") @default(sequence(maxValue: 2147483647))
   author      String      @db.Uuid
@@ -253,33 +266,35 @@ model Messages {
   @@map("messages")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Offers {
-  id                            Int        @id(map: "offers_pk") @default(sequence(maxValue: 2147483647))
-  listing                       Int
-  amount                        Decimal    @default(0.00) @db.Decimal
-  accepted                      Boolean    @default(false)
-  messages                      Messages[]
-  listingOffersListingTolisting Listing    @relation("offersListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "offers_fk")
+  id        Int        @id(map: "offers_pk") @default(sequence(maxValue: 2147483647))
+  listingId Int        @map("listing_id")
+  amount    Decimal    @default(0.00) @db.Decimal
+  accepted  Boolean    @default(false)
+  messages  Messages[]
+  listing   Listing    @relation(fields: [listingId], references: [id], onDelete: Cascade, map: "offers_fk")
 
   @@map("offers")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Parameter {
-  id                       Int                       @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
-  type                     ParameterType
-  dataType                 DataType                  @map("data_type")
-  name                     String
-  displayName              String                    @map("display_name")
-  active                   Boolean                   @default(true)
-  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                DateTime                  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  options                  String[]
-  categoriesParameters     CategoriesParameters[]
-  listingsParametersValues ListingsParametersValue[]
+  id                   Int                    @id(map: "parameter_pk") @default(sequence(maxValue: 2147483647))
+  type                 ParameterType
+  dataType             DataType               @map("data_type")
+  name                 String
+  displayName          String                 @map("display_name")
+  active               Boolean                @default(true)
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
+  options              String[]
+  categoriesParameters CategoriesParameters[]
 
   @@map("parameter")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model PasswordReset {
   id        Int      @default(sequence(maxValue: 2147483647))
   user      String   @db.Uuid
@@ -290,6 +305,7 @@ model PasswordReset {
   @@map("password_reset")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model RefreshTokens {
   id           Int            @id(map: "refresh_tokens_pk") @default(sequence(maxValue: 2147483647))
   token        String         @unique(map: "refresh_tokens_token_unique")
@@ -307,19 +323,7 @@ model RefreshTokens {
   @@map("refresh_tokens")
 }
 
-model Reviews {
-  id                             Int      @id(map: "reviews_pk") @default(sequence(maxValue: 2147483647))
-  review                         String
-  rating                         Int      @db.Int2
-  user                           String   @db.Uuid
-  listing                        Int
-  createdAt                      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  users                          Users    @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk")
-  listingReviewsListingTolisting Listing  @relation("reviewsListingTolisting", fields: [listing], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_fk_1")
-
-  @@map("reviews")
-}
-
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Rooms {
   id                           String     @id(map: "rooms_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   seller                       String     @db.Uuid
@@ -334,6 +338,29 @@ model Rooms {
   @@map("rooms")
 }
 
+model Share {
+  id             Int              @id(map: "share_pk") @default(sequence())
+  hash           String           @db.String(12)
+  owner          String           @db.Uuid
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime         @default(now()) @map("updated_at") @db.Timestamptz(6)
+  users          Users            @relation(fields: [owner], references: [id], onDelete: Cascade, map: "share_fk")
+  sharesListings SharesListings[]
+
+  @@map("share")
+}
+
+model SharesListings {
+  hash                                  Int
+  listing                               Int
+  share                                 Share   @relation(fields: [hash], references: [id], onDelete: Cascade, map: "shares_listings_fk")
+  listingSharesListingsListingTolisting Listing @relation("sharesListingsListingTolisting", fields: [listing], references: [id], onDelete: Cascade, map: "shares_listings_fk_1")
+
+  @@id([hash, listing], map: "newtable_pk")
+  @@map("shares_listings")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Sibkeys {
   key            String @id(map: "sibkeys_pk")
   remainingCount Int    @default(300) @map("remaining_count")
@@ -343,6 +370,7 @@ model Sibkeys {
   @@map("sibkeys")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model UserBookmarks {
   id                                  Int      @id(map: "user_bookmarks_pk") @default(sequence(maxValue: 2147483647))
   userId                              String   @map("user_id") @db.Uuid
@@ -355,6 +383,7 @@ model UserBookmarks {
   @@map("user_bookmarks")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model UserNotifications {
   id                                      Int      @id(map: "user_notifications_pk") @default(sequence(maxValue: 2147483647))
   userId                                  String   @map("user_id") @db.Uuid
@@ -367,6 +396,7 @@ model UserNotifications {
   @@map("user_notifications")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model UserReports {
   id        Int        @id(map: "user_reports_pk") @default(sequence(maxValue: 2147483647))
   user      String     @db.Uuid
@@ -377,6 +407,7 @@ model UserReports {
   @@map("user_reports")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Users {
   id                                                  String                   @id(map: "users_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email                                               String                   @unique(map: "users_un")
@@ -404,9 +435,9 @@ model Users {
   messages                                            Messages[]
   passwordResets                                      PasswordReset[]
   refreshTokens                                       RefreshTokens[]
-  reviews                                             Reviews[]
   roomsRoomsSellerTousers                             Rooms[]                  @relation("roomsSellerTousers")
   roomsRoomsBuyerTousers                              Rooms[]                  @relation("roomsBuyerTousers")
+  shares                                              Share[]
   userBookmarksUserBookmarksUserIdTousers             UserBookmarks[]          @relation("userBookmarksUserIdTousers")
   userBookmarksUserBookmarksTargetUserTousers         UserBookmarks[]          @relation("userBookmarksTargetUserTousers")
   userNotificationsUserNotificationsUserIdTousers     UserNotifications[]      @relation("userNotificationsUserIdTousers")
@@ -414,6 +445,12 @@ model Users {
   companies                                           Companies                @relation(fields: [companyId], references: [id], onDelete: Cascade, map: "users_fk")
 
   @@map("users")
+}
+
+enum ConditionType {
+  good
+  bad
+  excellent
 }
 
 enum ContentType {
@@ -453,6 +490,12 @@ enum ReasonType {
   Suspicious_Account          @map("Suspicious Account")
   Cancelling_on_deal          @map("Cancelling on deal")
   Inaccurate_Listings         @map("Inaccurate Listings")
+}
+
+enum UnitType {
+  kg
+  m
+  unit
 }
 
 enum UserContacts {

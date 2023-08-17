@@ -22,7 +22,12 @@ export default apiHandler()
         id: true,
         name: true,
         email: true,
-        companyId: true,
+        companies: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         createdAt: true,
         enabled: true,
         profilePicture: true,
@@ -46,7 +51,10 @@ export default apiHandler()
       id: user.id,
       name: user.name,
       email: user.email,
-      company: user.companyId.toString(),
+      company: {
+        id: user.companies.id.toString(),
+        name: user.companies.name,
+      },
       createdAt: user.createdAt,
       enabled: user.enabled,
       profilePic: user.profilePicture,
@@ -105,17 +113,20 @@ export default apiHandler()
     if (mobileNumber) {
       validatePhone(mobileNumber);
     }
-    if (password || oldPassword) {
+    if (password != null || oldPassword != null) {
       validatePassword(password as string);
 
-      // Compares password from database vs password from input
-      const samePassword = bcrypt.compareSync(
-        parsedBody.oldPassword as string,
-        getUserHashedPassword?.password as string
-      );
+      // Check if the user changing the password is not admin
+      if (!isAdmin) {
+        // Compares password from database vs password from input
+        const samePassword = bcrypt.compareSync(
+          parsedBody.oldPassword as string,
+          getUserHashedPassword?.password as string
+        );
 
-      if (!samePassword) {
-        throw new WrongPasswordError();
+        if (!samePassword) {
+          throw new WrongPasswordError();
+        }
       }
 
       // Hash password with bcrrypt and genSalt(10)
@@ -180,13 +191,19 @@ export default apiHandler()
         bio,
         comments: userComments,
       },
+      include: {
+        companies: true,
+      },
     });
 
     const mappedUser = {
       id: user.id,
       name: user.name,
       email: user.email,
-      company: user.companyId.toString(),
+      company: {
+        id: user.companies.id.toString(),
+        name: user.companies.name,
+      },
       createdAt: user.createdAt,
       enabled: user.enabled,
       profilePic: user.profilePicture,

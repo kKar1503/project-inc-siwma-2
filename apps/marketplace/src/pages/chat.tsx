@@ -11,7 +11,18 @@ import ChatList from '@/components/rtc/ChatList';
 
 // ** Chat Related Imports **
 import { io } from 'socket.io-client';
-import { getMessage, getRooms, joinRoom, partRoom, sendMessage } from '@/chat/emitters';
+import {
+  acceptOffer,
+  cancelOffer,
+  createRoom,
+  getMessage,
+  getRooms,
+  joinRoom,
+  makeOffer,
+  partRoom,
+  rejectOffer,
+  sendMessage,
+} from '@/chat/emitters';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
@@ -31,12 +42,30 @@ import { useTranslation } from 'react-i18next';
 
 function formatMessage(message: Messages): ChatData {
   const { createdAt, message: messageContent, ...rest } = message;
-  return {
+  const formatted: ChatData = {
     ...rest,
     messageContent,
     createdAt: new Date(createdAt),
   };
+  if (messageContent.contentType === 'offer') {
+    if (messageContent.offerAccepted) {
+      formatted.offerState = 'accepted';
+    } else if (messageContent.content === '') {
+      formatted.offerState = 'pending';
+    } else {
+      formatted.offerState = 'rejected';
+    }
+  }
+
+  return formatted;
 }
+
+type RoomData = ChatListProps & {
+  itemId: number;
+  itemPrice: number;
+  itemPriceIsUnit: boolean;
+  itemImage: string;
+};
 
 const ChatRoom = () => {
   // ** Socket Initialization
@@ -59,19 +88,16 @@ const ChatRoom = () => {
   // ** Socket Related **z
   const [connect, setConnect] = useState(false);
   const [roomId, setRoomId] = useState('');
-  const [rooms, setRooms] = useState<ChatListProps[]>([]);
+  const [rooms, setRooms] = useState<RoomData[]>([]);
   const [messages, setMessages] = useState<ChatData[]>([]);
 
   // ** States **
-  const [makeOffer, setMakeOffer] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState('');
   const [domLoaded, setDomLoaded] = useState(false);
   const [roomSynced, setRoomSynced] = useState(false);
   const [messageSynced, setMessageSynced] = useState('');
-  const [acceptOffer, setAcceptOffer] = useState<'pending' | 'accepted' | 'rejected'>('pending');
-  const [deleteOffer, setDeleteOffer] = useState<boolean>(false);
-
+  const [queryChecked, setQueryChecked] = useState(false);
 
   // ** Update Chat List **
   const updateChatList = (message: Messages) => {
@@ -108,8 +134,29 @@ const ChatRoom = () => {
     );
   };
 
+  // ** Update Message List **
+  const updateOffer = (messageId: number, newContent: string, accepted: boolean) => {
+    setMessages((prev) =>
+      prev.map((message) => {
+        console.log('iterating rooms', message);
+        if (message.id !== messageId) {
+          return message;
+        }
+        const newMessage = { ...message };
+
+        if (newMessage.messageContent.contentType === 'offer') {
+          newMessage.messageContent.content = newContent;
+          newMessage.messageContent.offerAccepted = accepted;
+          newMessage.offerState = accepted ? 'accepted' : 'rejected';
+        }
+
+        return newMessage;
+      })
+    );
+  };
+
   // ** useChat **
-  const { isConnected, loading } = useChat(socket.current, connect, {
+  const { isConnected, loading, setLoading } = useChat(socket.current, connect, {
     userId,
     currentRoom: roomIdRef,
     roomSyncCallback: (roomSync) => {
@@ -153,7 +200,7 @@ const ChatRoom = () => {
             time: time ? new Date(time) : undefined,
             category: category === 'BUY' ? 'Buying' : 'Selling',
             latestMessage: contentType === 'offer' ? latestMessageDataObj : latestMessageDataString,
-          } as ChatListProps;
+          } as RoomData;
           setRooms((curr) => [...curr, roomsData]);
           break;
         }
@@ -189,6 +236,21 @@ const ChatRoom = () => {
         }
       }
     },
+    offerCallback: (messageId, offerState) => {
+      switch (offerState) {
+        case 'accept': {
+          updateOffer(messageId, '(Accepted)', true);
+          break;
+        }
+        case 'reject': {
+          updateOffer(messageId, '(Rejected)', false);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    },
   });
 
   // ** useEffect **
@@ -201,17 +263,70 @@ const ChatRoom = () => {
       return;
     }
 
-    userIdRef.current = 'd44b8403-aa90-4d92-a4c6-d0a1e2fad0af';
+    userIdRef.current = 'c9f22ccc-0e8e-42bd-9388-7f18a5520c26';
+
     setConnect(true);
     setDomLoaded(true);
     // TODO, to change back to following
     // console.log('userId cannot be found, redirecting to signin page');
     // router.push('/login');
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (isConnected && loading === 'idle' && domLoaded && !roomSynced) {
+    if (isConnected && domLoaded && !queryChecked) {
+      if (
+        router.query.listing !== undefined &&
+        ((router.query.buyer !== undefined && router.query.seller === undefined) ||
+          (router.query.buyer === undefined && router.query.seller !== undefined))
+      ) {
+        const { listing, buyer, seller } = router.query;
+        if (buyer !== undefined) {
+          createRoom(
+            socket.current,
+            {
+              buyerId: buyer as string,
+              sellerId: userId,
+              listingId: parseInt(listing as string, 10),
+            },
+            (ack) => {
+              setQueryChecked(true);
+              if (ack.success) {
+                console.log('createRoom', ack.data);
+                setRoomId(ack.data.id);
+              } else {
+                console.log('createRoom', ack.err);
+              }
+            }
+          );
+        } else {
+          createRoom(
+            socket.current,
+            {
+              buyerId: userId,
+              sellerId: seller as string,
+              listingId: parseInt(listing as string, 10),
+            },
+            (ack) => {
+              setQueryChecked(true);
+              if (ack.success) {
+                console.log('createRoom', ack.data);
+                setRoomId(ack.data.id);
+              } else {
+                console.log('createRoom', ack.err);
+              }
+            }
+          );
+        }
+      } else {
+        setQueryChecked(true);
+      }
+    }
+  }, [isConnected, domLoaded]);
+
+  useEffect(() => {
+    if (isConnected && loading === 'idle' && domLoaded && queryChecked && !roomSynced) {
       setRoomSynced(true);
       getRooms(socket.current, userId, (ack) => {
         if (ack.success) {
@@ -222,10 +337,10 @@ const ChatRoom = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, loading, domLoaded, roomSynced]);
+  }, [isConnected, loading, domLoaded, roomSynced, queryChecked]);
 
   useEffect(() => {
-    if (isConnected && loading === 'idle' && domLoaded && roomId !== '') {
+    if (isConnected && loading === 'idle' && domLoaded && queryChecked && roomId !== '') {
       if (messageSynced !== roomId) {
         if (messageSynced === '') {
           joinRoom(socket.current, roomId, (ack) => {
@@ -244,9 +359,11 @@ const ChatRoom = () => {
             }
           });
         } else {
+          setLoading('part');
           partRoom(socket.current, messageSynced, (ack) => {
             if (ack.success) {
               joinRoom(socket.current, roomId, (ack) => {
+                setLoading('idle');
                 if (ack.success) {
                   setMessageSynced(roomId);
                   setMessages([]);
@@ -269,7 +386,22 @@ const ChatRoom = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, loading, domLoaded, roomId]);
+  }, [isConnected, loading, domLoaded, roomId, queryChecked]);
+
+  // ** Memos **
+  const currentRoom = useMemo<RoomData | null>(() => {
+    if (roomId === '') {
+      return null;
+    }
+
+    for (let i = 0; i < rooms.length; i++) {
+      if (rooms[i].id === roomId) {
+        return rooms[i];
+      }
+    }
+
+    return null;
+  }, [roomId, rooms]);
 
   const chatPageSx: SxProps<Theme> = useMemo(() => {
     if (isLg) {
@@ -321,6 +453,116 @@ const ChatRoom = () => {
     }
   };
 
+  const onCreateOffer = (val: number) => {
+    // TODO: need to have a better way to assert the dp to 2
+    const amount = parseFloat(val.toFixed(2));
+
+    if (currentRoom !== null) {
+      const { itemId: listingId, id: roomId } = currentRoom;
+
+      makeOffer(socket.current, { amount, userId, roomId, listingId }, (ack) => {
+        if (ack.success) {
+          console.log('makeOffer', ack.data);
+          setMessages((curr) => [...curr, formatMessage(ack.data as Messages)]);
+          updateChatList(ack.data as Messages);
+        } else {
+          console.log('makeOffer', ack.err);
+        }
+      });
+    }
+  };
+
+  const onAcceptOffer = (id: number) => {
+    acceptOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('acceptOffer', ack.data);
+        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
+        updateChatList(ack.data as Messages);
+      } else {
+        console.log('acceptOffer', ack.err);
+      }
+    });
+  };
+
+  const onRejectOffer = (id: number) => {
+    rejectOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('rejectOffer', ack.data);
+        updateOffer(ack.data.id, ack.data.message.content, ack.data.message.offerAccepted);
+        updateChatList(ack.data as Messages);
+      } else {
+        console.log('rejectOffer', ack.err);
+      }
+    });
+  };
+
+  const onCancelOffer = (id: number) => {
+    cancelOffer(socket.current, id, (ack) => {
+      if (ack.success) {
+        console.log('cancelOffer', ack.data);
+        const indexToRemove = messages.findIndex((room) => room.id === ack.data);
+
+        if (indexToRemove !== -1) {
+          let removedMessage: ChatData[];
+          setMessages((curr) => {
+            const newMessages = [...curr];
+            removedMessage = newMessages.splice(indexToRemove, 1);
+            return newMessages;
+          });
+
+          if (indexToRemove === messages.length - 1) {
+            const newLatestMessage = messages[indexToRemove - 1];
+            setRooms((curr) =>
+              curr.map((room) => {
+                console.log('iterating rooms', room);
+
+                if (room.contentType === 'offer') {
+                  if (room.latestMessage.content !== removedMessage[0].messageContent.content) {
+                    return room;
+                  }
+                } else {
+                  return room;
+                }
+
+                console.log('updating room', room);
+
+                const newRoom = {
+                  ...room,
+                  contentType: newLatestMessage.messageContent.contentType,
+                } as RoomData;
+
+                let latestMessageDataString = '';
+                const latestMessageDataObj = {
+                  amount: 0,
+                  accepted: false,
+                  content: '',
+                };
+
+                if (newLatestMessage.messageContent.contentType === 'offer') {
+                  latestMessageDataObj.amount = newLatestMessage.messageContent.amount;
+                  latestMessageDataObj.accepted = newLatestMessage.messageContent.offerAccepted;
+                  latestMessageDataObj.content = newLatestMessage.messageContent.content;
+                } else {
+                  latestMessageDataString = newLatestMessage.messageContent.content;
+                }
+
+                newRoom.time = new Date(newLatestMessage.createdAt);
+                newRoom.latestMessage =
+                  newLatestMessage.messageContent.contentType === 'offer'
+                    ? latestMessageDataObj
+                    : latestMessageDataString;
+
+                return newRoom;
+              })
+            );
+          }
+        }
+      } else {
+        console.log('cancelOffer', ack.err);
+      }
+    });
+  };
+
   return (
     <Box id="chat-page" display="flex" sx={chatPageSx}>
       {/* render if isMd and isLg */}
@@ -347,7 +589,7 @@ const ChatRoom = () => {
         </Box>
       )}
       {/* if isSm, display  */}
-      {roomId !== '' && (
+      {roomId !== '' && currentRoom !== null && (
         <Box
           id="chat-right-side-wrapper"
           sx={{
@@ -363,24 +605,24 @@ const ChatRoom = () => {
             }}
           >
             <ChatHeader
-              profilePic=""
-              companyName="Hi Metals PTE LTD"
-              available
-              setSelectChat={setRoomId}
+              profilePic={currentRoom.userImage}
+              username={currentRoom.username}
+              handleBack={() => setRoomId('')}
             />
             <ChatSubHeader
-              itemPic="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL_EC6uxEAq3Q5aEvC5gcyZ1RdcAU74WY-GA&usqp=CAU"
-              itemName="Hi Metals PTE LTD"
-              available
-              itemPrice={200.8}
-              makeOffer={makeOffer}
-              setMakeOffer={setMakeOffer}
+              itemPic={currentRoom.itemImage}
+              itemName={currentRoom.itemName}
+              available={currentRoom.inProgress}
+              itemPrice={currentRoom.itemPrice}
+              itemPriceIsUnit={currentRoom.itemPriceIsUnit}
+              onCreateOffer={onCreateOffer}
             />
             <ChatBox
               roomData={messages}
               loginId={userId}
-              setAcceptOffer={setAcceptOffer}
-              setDeleteOffer={setDeleteOffer}
+              onAcceptOffer={onAcceptOffer}
+              onRejectOffer={onRejectOffer}
+              onCancelOffer={onCancelOffer}
               ChatText={
                 <ChatTextBox
                   selectedFile={selectedFile}

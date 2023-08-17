@@ -1,11 +1,15 @@
 import { z } from 'zod';
-import { UserContacts } from '@prisma/client';
+import { UserContacts } from '@inc/db-enums';
 import listingSchemas from './listings';
+import { zodParseToInteger } from '../../apiHelper';
 
 const id = z.string();
 const name = z.string();
 const email = z.string();
-const company = z.string();
+const company = z.object({
+  id: z.string(),
+  name: z.string(),
+});
 const createdAt = z.string().datetime();
 const enabled = z.boolean();
 const profilePic = z.string().nullable();
@@ -13,7 +17,7 @@ const comments = z.string().nullable().optional(); // Only returned for admins
 const mobileNumber = z.string();
 const whatsappNumber = z.string().nullable();
 const telegramUsername = z.string().nullable();
-const contactMethod = z.nativeEnum(UserContacts);
+const contactMethod = z.enum(['whatsapp', 'phone', 'telegram', 'facebook', 'email']);
 const bio = z.string().nullable();
 const bookmarks = z
   .object({
@@ -61,6 +65,11 @@ const updateUser = user;
 const deleteUser = z.object({});
 const getUsers = user.array();
 
+const shareListingsSchema = z.object({
+  ownerId: z.string(),
+  listingItems: z.array(z.string()),
+});
+
 export type User = z.infer<typeof user>;
 
 export default {
@@ -72,4 +81,5 @@ export default {
   toggle: toggleUser,
   bookmark: bookmarkUser,
   getListings: listingSchemas.getAll,
+  shareListings: shareListingsSchema,
 };

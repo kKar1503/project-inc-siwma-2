@@ -4,10 +4,13 @@ import PrismaClient from '@inc/db';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { APIRequestType } from '@/types/api-types';
 import { advertisementSchema } from '@/utils/api/server/zod';
+import { Advertisment } from '@/utils/api/client/zod/advertisements';
 
 export const select = (isAdmin: boolean) => ({
   companyId: true,
   image: true,
+  id: isAdmin,
+  createdAt: isAdmin,
   endDate: isAdmin,
   startDate: isAdmin,
   active: isAdmin,
@@ -72,11 +75,29 @@ const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) =
   });
 
   const mappedAdvertisements = advertisements.map((advertisement) => {
-    const { companyId, ...advertisementContent } = advertisement;
-    return {
+    const { companyId, id, startDate, endDate, createdAt, ...advertisementContent } = advertisement;
+    const ad: Partial<Advertisment> = {
       ...advertisementContent,
       companyId: companyId.toString(),
     };
+
+    if (id !== undefined) {
+      ad.id = id.toString();
+    }
+
+    if (startDate !== undefined) {
+      ad.startDate = startDate.toString();
+    }
+
+    if (endDate !== undefined) {
+      ad.endDate = endDate.toString();
+    }
+
+    if (createdAt !== undefined) {
+      ad.createdAt = createdAt.toString();
+    }
+
+    return ad;
   });
 
   // Return advertisements

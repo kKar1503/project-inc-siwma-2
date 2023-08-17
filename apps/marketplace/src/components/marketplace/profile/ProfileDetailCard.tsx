@@ -1,10 +1,16 @@
-import { useTranslation } from 'react-i18next';
-import Link from 'next/link';
+// ** React Imports
+import React, { useEffect, useMemo, useState } from 'react';
+
+// ** Next Imports
+import { useRouter } from 'next/router';
+
+// ** MUI Imports
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
+import S3Avatar from '@/components/S3Avatar';
+import { red } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -12,86 +18,91 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import TelegramIcon from '@mui/icons-material/Telegram';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import { StarsRating, useResponsiveness } from '@inc/ui';
-import { useTheme } from '@mui/material/styles';
-import { useEffect, useMemo, useState } from 'react';
-import fetchUser from '@/middlewares/fetchUser';
-import bookmarkUser from '@/middlewares/bookmarks/bookmarkUser';
-import { useQuery } from 'react-query';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import { ReviewResponseBody } from '@/utils/api/client/zod/reviews';
+import Link from '@mui/material/Link';
 
-export type ProfileDetailCardProps =
-  | {
-      email: string;
-      id: string;
-      name: string;
-      enabled: boolean;
-      createdAt: string;
-      profilePic: string | null;
-      companyName: string;
-      mobileNumber: string;
-      whatsappNumber: string | null;
-      telegramUsername: string | null;
-      contactMethod: 'email' | 'whatsapp' | 'telegram' | 'facebook' | 'phone';
-      bio: string | null;
-      comments?: string | null | undefined;
-    }
-  | null
-  | undefined;
+// ** Types Imports
+import type { User } from '@/utils/api/client/zod/users';
+
+// ** Hooks Imports
+import { useResponsiveness } from '@inc/ui';
+import { useTheme } from '@mui/material/styles';
+import { useSession } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
+import useUser from '@/services/users/useUser';
+import useBookmarkUser from '@/services/bookmarks/useBookmarkUser';
 
 export type ProfileDetailCardData = {
-  data: ProfileDetailCardProps;
-  reviewData: ReviewResponseBody | undefined;
+  data: User;
   visibleEditButton?: boolean;
 };
 
-const useGetUserQuery = (userUuid: string) => {
-  const { data } = useQuery('user', async () => fetchUser(userUuid), {
-    enabled: userUuid !== undefined,
-  });
+/**
+ * Left side of profile page showing the profile detail card containing the user profile
+ * details.
+ */
+const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) => {
+  // ** States
+  const [init, setInit] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
-  return data;
-};
-
-const useBookmarkUserQuery = (userUuid: string, bookmarkedUsers: string[] | undefined) => {
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-
-  const handleBookmarkUser = async () => {
-    await bookmarkUser(userUuid);
-    setIsBookmarked((prevState) => !prevState);
-  };
-
-  useEffect(() => {
-    if (bookmarkedUsers) {
-      const bookmarked = bookmarkedUsers.includes(userUuid);
-      setIsBookmarked(bookmarked);
-    }
-  }, [bookmarkedUsers, userUuid]);
-
-  return {
-    isBookmarked,
-    handleBookmarkUser,
-  };
-};
-
-const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetailCardData) => {
+  // ** Hooks
   const user = useSession();
   const { spacing } = useTheme();
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [isLg] = useResponsiveness(['lg']);
   const { t } = useTranslation();
+  const router = useRouter();
 
-  const styleProfileCard = useMemo(() => {
-    if (isSm || isMd) {
-      return {
-        width: '100%',
-        height: '100%',
-        mb: spacing(3),
-      };
+  // ** Vars
+  const loggedUserUuid = user.data?.user.id as string;
+  const profileUserUuid = data?.id as string;
+  const isOwnProfile = loggedUserUuid === profileUserUuid;
+  const userId = router.query.id as string;
+
+  // ** Queries
+  const { data: currentUser } = useUser(loggedUserUuid);
+  const {
+    refetch: toggleBookmark,
+    isFetching: bookmarkFetching,
+    isFetched: bookmarkFetched,
+    isError: bookmarkIsError,
+    data: bookmarked,
+  } = useBookmarkUser(profileUserUuid);
+
+  // ** Effects
+  useEffect(() => {
+    if (!init && currentUser !== undefined) {
+      setInit(true);
+
+      const bookmarkedUsers = currentUser?.bookmarks?.users;
+      setIsBookmarked(
+        bookmarkedUsers !== undefined && bookmarkedUsers.indexOf(profileUserUuid) !== -1
+      );
     }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!bookmarkFetched || bookmarkFetching) {
+      return;
+    }
+
+    if (bookmarkIsError) {
+      router.replace('/500');
+      return;
+    }
+
+    if (bookmarked !== undefined) {
+      setIsBookmarked(bookmarked);
+      return;
+    }
+
+    // It should never reach here.
+    // If it reaches here it means the data is undefined, which should not happen
+    // for this component
+    router.replace('/500');
+  }, [bookmarkFetching, bookmarkFetched]);
+
+  // ** Styles
+  const styleProfileCard = useMemo(() => {
     if (isLg) {
       return {
         width: '25%',
@@ -104,21 +115,7 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
       height: '100%',
       mb: spacing(3),
     };
-  }, [isSm, isMd, isLg]);
-
-  const loggedUserUuid = user.data?.user.id as string;
-  const currentUser = useGetUserQuery(loggedUserUuid);
-  const profileUserUuid = data?.id as string;
-  const bookmarkedUsers = currentUser?.bookmarks?.users;
-  const isOwnProfile = loggedUserUuid === profileUserUuid;
-
-  const router = useRouter();
-  const userId = router.query.id as string;
-
-  const { isBookmarked, handleBookmarkUser } = useBookmarkUserQuery(
-    profileUserUuid,
-    bookmarkedUsers
-  );
+  }, [isLg]);
 
   return (
     <Card sx={styleProfileCard}>
@@ -133,7 +130,11 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
           loggedUserUuid !== userId && (
             <IconButton
               aria-label="bookmark"
-              onClick={handleBookmarkUser}
+              onClick={() => {
+                if (!bookmarkFetching) {
+                  toggleBookmark();
+                }
+              }}
               sx={({ spacing }) => ({
                 p: spacing(0),
               })}
@@ -162,39 +163,32 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
       <Divider variant="middle" sx={{ height: '1px' }} />
 
       <CardContent>
-        <Link style={{ textDecoration: 'none' }} href={`/profile/${data?.id}`}>
-          <Avatar sx={({ spacing }) => ({ mb: spacing(1) })}>{data?.profilePic}</Avatar>
-        </Link>
-        <Typography sx={{ fontWeight: 'bold' }}>{data?.name}</Typography>
-        <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
-          {data?.companyName}
-        </Typography>
-        <Typography sx={{ wordWrap: 'break-word' }}>{data?.email}</Typography>
-
-        <Box
-          sx={({ spacing }) => ({
-            mt: spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-          })}
+        <S3Avatar
+          sx={({ spacing }) => ({ mb: spacing(1), bgcolor: red[500] })}
+          src={`${data?.profilePic}`}
         >
-          <Typography
-            sx={({ spacing }) => ({
-              mr: spacing(1),
-            })}
-          >
-            {/* {rating.toFixed(1)} */}
-            {reviewData?.avgRating.toFixed(1)}
-          </Typography>
-          <StarsRating rating={reviewData?.avgRating as number} />
-          <Typography
-            sx={({ spacing }) => ({
-              ml: spacing(1),
-            })}
-          >
-            ({reviewData?.count} {reviewData?.count === 1 ? t('Review') : t('Reviews')})
-          </Typography>
-        </Box>
+          {data?.name.charAt(0)}
+        </S3Avatar>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          {data?.name}
+        </Typography>
+        <Typography variant="body1" sx={{ wordWrap: 'break-word' }}>
+          {data?.company.name}
+        </Typography>
+        <Link
+          sx={{
+            wordWrap: 'break-word',
+            textDecoration: 'none',
+            color: 'black',
+            '&:hover': {
+              color: 'blue',
+              cursor: 'pointer',
+            },
+          }}
+          href={`mailto:${data?.email}`}
+        >
+          {data?.email}
+        </Link>
       </CardContent>
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
       <CardContent>
@@ -203,59 +197,6 @@ const ProfileDetailCard = ({ data, reviewData, visibleEditButton }: ProfileDetai
       </CardContent>
 
       <Divider variant="middle" sx={({ palette }) => ({ color: palette.divider, height: '1px' })} />
-      <CardContent>
-        <Typography sx={{ fontWeight: 'bold' }}>{t('Linked accounts')}:</Typography>
-        {data?.contactMethod === 'telegram' && (
-          <Box
-            sx={({ spacing }) => ({
-              mt: spacing(1),
-              display: 'flex',
-              alignItems: 'center',
-            })}
-          >
-            <TelegramIcon
-              sx={({ spacing, palette }) => ({
-                borderRadius: spacing(2),
-                pr: '2px',
-                color: palette.common.white,
-                backgroundColor: '#229ED9',
-              })}
-            />
-            <Typography
-              sx={({ spacing }) => ({
-                ml: spacing(1),
-              })}
-            >
-              {data?.telegramUsername}
-            </Typography>
-          </Box>
-        )}
-        {data?.contactMethod === 'whatsapp' && (
-          <Box
-            sx={({ spacing }) => ({
-              mt: spacing(1),
-              display: 'flex',
-              alignItems: 'center',
-            })}
-          >
-            <WhatsAppIcon
-              sx={({ spacing, palette }) => ({
-                borderRadius: spacing(2),
-                p: '1px',
-                color: palette.common.white,
-                backgroundColor: palette.secondary.main,
-              })}
-            />
-            <Typography
-              sx={({ spacing }) => ({
-                ml: spacing(1),
-              })}
-            >
-              +65 {data?.mobileNumber}
-            </Typography>
-          </Box>
-        )}
-      </CardContent>
 
       <CardActions
         sx={({ spacing }) => ({
