@@ -203,10 +203,6 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
                 if (data === undefined) return null;
 
                 const { displayName, type } = data;
-                console.log('paramId:', paramId);
-                console.log('displayName:', displayName);
-                console.log('value:', value);
-                console.log('type:', type);
 
                 let unit = '';
 
@@ -219,8 +215,6 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
                     unit = ' mm';
                   }
                 }
-
-                console.log('unit:', unit);
 
                 return (
                   <Grid item xl={3} lg={3} md={3} sm={2} xs={2} direction="row" key={paramId}>
