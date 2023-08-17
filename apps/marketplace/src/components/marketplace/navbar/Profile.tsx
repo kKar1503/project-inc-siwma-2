@@ -63,13 +63,13 @@ const Profile = ({ userName, userId }: UserNameProps) => {
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right',
+          horizontal: 'left',
         }}
         id="primary-search-account-menu"
         keepMounted
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'left',
         }}
         open={isMenuOpen}
         onClose={handleMenuClose}
@@ -90,7 +90,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
               display: 'block',
               position: 'absolute',
               top: 0,
-              right: 14,
+              right: 174,
               width: 10,
               height: 10,
               bgcolor: 'background.paper',
