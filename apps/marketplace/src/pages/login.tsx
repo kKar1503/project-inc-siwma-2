@@ -8,6 +8,7 @@ import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
+import { useTranslation } from 'react-i18next';
 import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -18,6 +19,7 @@ import { useRouter } from 'next/router';
 import { FormEvent, useMemo, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useResponsiveness, useTogglePasswordVisibility } from '@inc/ui';
+import NoInternetConnection from '@/components/NoInternet';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -28,6 +30,7 @@ const LoginForm = () => {
   const { spacing, shape, shadows, palette } = useTheme();
   const { showPassword, handleTogglePassword } = useTogglePasswordVisibility();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -157,14 +160,14 @@ const LoginForm = () => {
                   fontWeight: 'bold',
                 })}
               >
-                Sign In
+                {t('Sign In')}
               </Typography>
               <Typography
                 sx={({ typography }) => ({
                   fontSize: typography.body1,
                 })}
               >
-                Please sign in to your account
+                {t('Please sign in to your account')}
               </Typography>
             </Box>
 
@@ -173,8 +176,8 @@ const LoginForm = () => {
                 fullWidth
                 name="email"
                 id="email"
-                label="E-mail"
-                placeholder="Your company e-mail"
+                label={t('E-mail')}
+                placeholder= {t('Your company e-mail').toString()}
                 value={email}
                 type="email"
                 variant="standard"
@@ -187,8 +190,8 @@ const LoginForm = () => {
                 fullWidth
                 name="password"
                 id="password"
-                label="Password"
-                placeholder="Your password"
+                label={t('Password')}
+                placeholder= {t('Your password').toString()}
                 value={password}
                 type={showPassword ? 'text' : 'password'}
                 variant="standard"
@@ -227,7 +230,7 @@ const LoginForm = () => {
                 <Grid item xs>
                   <FormControlLabel
                     control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
+                    label= {t('Remember me')}
                   />
                 </Grid>
                 <Grid item>
@@ -238,18 +241,19 @@ const LoginForm = () => {
                         color: palette.primary.main,
                       })}
                     >
-                      Forgot your password?
+                      {t('Forgot your password?')}
                     </Typography>
                   </Link>
                 </Grid>
               </Grid>
               <Button type="submit" fullWidth variant="contained">
-                SIGN IN
+                {t('SIGN IN')}
               </Button>
             </Box>
           </Box>
         </Container>
       </Box>
+      <NoInternetConnection />
     </Box>
   );
 };
