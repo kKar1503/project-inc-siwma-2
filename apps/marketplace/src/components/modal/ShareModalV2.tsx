@@ -12,7 +12,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Tooltip from '@mui/material/Tooltip';
 import { useResponsiveness } from '@inc/ui';
-import { Avatar, Grid } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import Grid from '@mui/material/Grid';
 
 export type ShareModalV2Props = {
   open: boolean;
