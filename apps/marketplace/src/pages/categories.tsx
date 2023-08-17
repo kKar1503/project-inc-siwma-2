@@ -7,9 +7,13 @@ import fetchCategories from '@/services/fetchCategories';
 import { useRouter } from 'next/router';
 import CategoryCard from '@/components/marketplace/listing/Categories';
 import Spinner from '@/components/fallbacks/Spinner';
-import { RefObject, useEffect } from 'react';
 import { useLoadingBar } from '@/context/loadingBarContext';
 import { LoadingBarRef } from 'react-top-loading-bar';
+import { RefObject, useEffect, useMemo } from 'react';
+import CategoryCardSkeleton from '@/components/marketplace/listing/CategoryCardSkeleton';
+import { SxProps } from '@mui/material/styles';
+import { useResponsiveness } from '@inc/ui';
+import { useTranslation } from 'react-i18next';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -38,6 +42,13 @@ const CategoriesPage = () => {
   const router = useRouter();
   const { loadingBarRef } = useLoadingBar();
   const catData = useCategoryPageQuery(loadingBarRef);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const { t } = useTranslation();
+
+  const maxWidthContainer = useMemo<SxProps>(() => {
+    if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)', pb: '20px' };
+    return {};
+  }, [isSm]);
 
   useEffect(() => {
     if (!catData.isFetched) {
@@ -59,17 +70,15 @@ const CategoriesPage = () => {
     }
   }, [catData.isFetched]);
 
-  if (!catData.isFetched) {
-    return <Spinner />;
-  }
-
   return (
     <Box
+      id="categories"
       sx={{
+        padding: 10,
         mx: 'auto',
-        width: '90%',
         height: 'full',
         maxHeight: 'xl',
+        ...maxWidthContainer,
       }}
     >
       <Box
@@ -84,7 +93,7 @@ const CategoriesPage = () => {
             fontWeight: 700,
           })}
         >
-          More Metal Types
+          {t(['Categories'])}
         </Typography>
       </Box>
 
@@ -97,10 +106,21 @@ const CategoriesPage = () => {
           }}
         >
           {catData?.data?.map((category) => (
-            <Grid item xl={2} lg={3} md={4} sm={6} xs={6} key={category.name}>
+            <Grid item xl={3} lg={3} md={4} sm={6} xs={12} key={category.name}>
               <CategoryCard {...category} />
             </Grid>
           ))}
+
+          {
+            // Skeleton loading
+            (catData?.data && catData.data.length === 0) ??
+              Array.from({ length: 6 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Grid item xl={2} lg={3} md={4} xs={6} key={`skele-${index}`}>
+                  <CategoryCardSkeleton />
+                </Grid>
+              ))
+          }
         </Grid>
       </Grid>
     </Box>
