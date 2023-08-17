@@ -5,7 +5,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
 import MessageIcon from '@mui/icons-material/Message';
-import Link from '@mui/material/Link';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
 import { useResponsiveness, SearchBar } from '@inc/ui';
@@ -15,7 +14,6 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import useUserDataStore from '@/stores/userData';
 import CreateListing from './CreateListing';
-
 import Profile from './Profile';
 import MobileDrawer from './MobileDrawer';
 import ChangeLanguageButton from './ChangeLanguageButton';
@@ -102,7 +100,12 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
             {/* end of mobile drawer icon */}
 
             {!isSm && (
-              <Box onClick={() => handleUrl('/')}>
+              <Box
+                onClick={() => handleUrl('/')}
+                sx={{
+                  cursor: 'pointer',
+                }}
+              >
                 <Typography
                   noWrap
                   sx={{
@@ -120,7 +123,7 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
               </Box>
             )}
             {!isSm && (
-              <Link href="/categories" underline="none">
+              <Box onClick={() => handleUrl('/categories')}>
                 <Typography
                   noWrap
                   sx={{
@@ -128,12 +131,14 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
                     justifyContent: 'center',
                     width: isMd ? '90px' : '100px',
                     fontSize: typography.subtitle2,
+                    color: palette.primary.main,
                     mx: isLg ? spacing(1) : spacing(2),
+                    cursor: 'pointer',
                   }}
                 >
                   {t('All Categories')}
                 </Typography>
-              </Link>
+              </Box>
             )}
             {isSm && <SearchBar handleSearch={handleSearch} />}
 

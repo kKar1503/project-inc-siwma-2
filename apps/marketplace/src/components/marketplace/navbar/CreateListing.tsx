@@ -1,19 +1,27 @@
 import React from 'react';
-import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useResponsiveness } from '@inc/ui';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import { useRouter } from 'next/router';
 
 const AddListing = () => {
   const { t } = useTranslation();
   const { palette, typography } = useTheme();
+  const router = useRouter();
 
   const [isMd] = useResponsiveness(['md']);
 
+  const handleUrl = (url: string) => {
+    if (router.pathname !== url) {
+      router.push(url);
+    }
+  };
+
   return (
-    <Link href="/listings/create" underline="none">
+    <Box onClick={() => handleUrl('/listings/create')}>
       <Button
         variant="contained"
         sx={{
@@ -27,7 +35,7 @@ const AddListing = () => {
           {t('ADD LISTINGS')}
         </Typography>
       </Button>
-    </Link>
+    </Box>
   );
 };
 export default AddListing;

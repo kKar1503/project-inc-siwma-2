@@ -109,7 +109,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
     if (showSpinner) {
       const timer = setTimeout(() => {
         setShowSpinner(false);
-      }, 5000);
+      }, 0);
 
       return () => clearTimeout(timer);
     }
