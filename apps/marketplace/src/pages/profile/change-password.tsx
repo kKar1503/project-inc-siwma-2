@@ -72,6 +72,14 @@ const ChangePassword = () => {
       setCurrentPasswordErrorText('');
     }
   }, [newPassword, confirmNewPassword, mutation.isError]);
+  
+    useEffect(() => {
+    if (mutation.isSuccess) {
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    }
+  }, [mutation.isSuccess]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
