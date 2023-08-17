@@ -198,7 +198,11 @@ const ListingCreationForm = ({
               required
             >
               {/** @ts-ignore */}
-              <FormNumberInput prefix="S$" min={0} suffix={`/ ${selectedProduct?.unit}`} />
+              <FormNumberInput
+                prefix="S$"
+                min={0}
+                suffix={selectedProduct ? `/ ${selectedProduct?.unit}` : undefined}
+              />
             </FormInputGroup>
             <FormInputGroup
               sx={{ flex: 1 }}
