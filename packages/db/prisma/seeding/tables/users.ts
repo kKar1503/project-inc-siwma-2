@@ -146,7 +146,7 @@ const Users: IUsers[] = [
   {
     id: 'ba9243d0-8d5e-48bf-b28e-d21cfb9fd126',
     email: 'test@ksapps.com',
-    name: 'karan',
+    name: 'Karandeep Singh',
     phone: '87970222',
     password: '$2a$10$P70WFifUqlyENCxFZi7Cu.VnmJRrz7Kup2SnqUonZlsdDCVqOSCiC',
     contact: UserContacts.whatsapp,
