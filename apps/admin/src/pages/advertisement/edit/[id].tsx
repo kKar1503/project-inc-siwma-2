@@ -7,6 +7,7 @@ import Spinner from '@/components/fallbacks/Spinner';
 import updateAdvertisement from '@/services/advertisements/updateAdvertisement';
 import AdvertisementForm from '@/components/advertisementsDashboard/edit/form';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
+import fetchCompanies from '@/services/companies/fetchCompanies';
 
 const validate = (values: PostAdvertisementRequestBody): { [key: string]: string } => {
   const errors: { [key: string]: string } = {};
@@ -21,14 +22,25 @@ const validate = (values: PostAdvertisementRequestBody): { [key: string]: string
   return errors;
 };
 
+const companiesQuery = async () => {
+  const companies = await fetchCompanies();
+  // mapping stuff
+  const idToName: { [key: string]: string } = {};
+  companies.forEach((company) => {
+    idToName[company.id] = company.name;
+  });
+  return idToName;
+};
+
 const AdvertisementUpload = () => {
   const router = useRouter();
   const { id } = router.query;
 
   const advertisementQuery = useQuery(['advertisement', id], () => fetchAdvertisements(id));
 
+  const companyQuery = useQuery('companies', companiesQuery);
 
-  if (!advertisementQuery.isSuccess) {
+  if (!advertisementQuery.isSuccess || !companyQuery.isSuccess) {
     return <Spinner />;
   }
 
@@ -42,6 +54,7 @@ const AdvertisementUpload = () => {
         <CardContent>
           <AdvertisementForm advertisement={advertisement}
                              validate={validate}
+                             companyDict={companyQuery.data}
                              onSubmit={async (advertisement: PostAdvertisementRequestBody, selectedFile: File | undefined) => {
                                const result = await updateAdvertisement(
                                  id as string,

@@ -3,6 +3,9 @@ import { Box, Card, CardContent } from '@mui/material';
 import AdvertisementForm from '@/components/advertisementsDashboard/edit/form';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
 import createAdvertisement from '@/services/advertisements/createAdvertisement';
+import { useQuery } from 'react-query';
+import fetchCompanies from '@/services/companies/fetchCompanies';
+import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 
 const validate = (values: PostAdvertisementRequestBody): { [key: string]: string } => {
   const errors: { [key: string]: string } = {};
@@ -23,27 +26,49 @@ const validate = (values: PostAdvertisementRequestBody): { [key: string]: string
   return errors;
 };
 
-const AdvertisementUpload = () => (
-  <Box
-    sx={{ boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)' }}
-  >
-    <Card>
-      <CardContent>
-        <AdvertisementForm validate={validate}
-                           onSubmit={async (advertisement: PostAdvertisementRequestBody, selectedFile: File | undefined) => {
-                             const result = await createAdvertisement(
-                               {
-                                 ...advertisement,
-                                 startDate: new Date(advertisement.startDate || '').toISOString(),
-                                 endDate: new Date(advertisement.endDate || '').toISOString(),
-                               },
-                               selectedFile,
-                             );
-                             return !!result;
-                           }} />
-      </CardContent>
-    </Card>
-  </Box>
-);
+const companiesQuery = async () => {
+  const companies = await fetchCompanies();
+  // mapping stuff
+  const idToName: { [key: string]: string } = {};
+  companies.forEach((company) => {
+    idToName[company.id] = company.name;
+  });
+  return idToName;
+};
+
+const onSubmit = async (advertisement: PostAdvertisementRequestBody, selectedFile: File | undefined) => {
+  const result = await createAdvertisement(
+    {
+      ...advertisement,
+      startDate: new Date(advertisement.startDate || '').toISOString(),
+      endDate: new Date(advertisement.endDate || '').toISOString(),
+    },
+    selectedFile,
+  );
+  return !!result;
+};
+
+const AdvertisementUpload = () => {
+  const companyQuery = useQuery('companies', companiesQuery);
+
+  if (!companyQuery.isSuccess) {
+    return <SpinnerPage />;
+  }
+
+  return (
+    <Box
+      sx={{ boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)' }}
+    >
+      <Card>
+        <CardContent>
+          <AdvertisementForm validate={validate}
+                             onSubmit={onSubmit}
+                             companyDict={companyQuery.data || {}}
+          />
+        </CardContent>
+      </Card>
+    </Box>
+  );
+};
 
 export default AdvertisementUpload;
