@@ -1,4 +1,5 @@
 import { Button, ButtonGroup, useTheme } from '@mui/material';
+import { border } from '@mui/system';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -74,7 +75,7 @@ const FormToggleButton = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton className="h-12" />
+      <Skeleton height="3.65rem" />
     ) : (
       <>
         {labelComponent}
@@ -110,6 +111,11 @@ const FormToggleButton = ({
                   sx={{
                     flex: 1,
                     padding: 2,
+                    '&:not(:last-child)': {
+                      '&:not(.Mui-disabled)': {
+                        borderRight: `1px solid ${palette.primary[100]}`,
+                      },
+                    },
                     '&:disabled': {
                       color: option.value === field.value ? 'white' : undefined,
                     },
