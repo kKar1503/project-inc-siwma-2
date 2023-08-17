@@ -199,7 +199,7 @@ model ListingClicks {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ListingItem {
-  id          Int       @id(map: "listing_item_pk") @default(sequence())
+  id          Int       @id(map: "listing_item_pk") @default(sequence(maxValue: 2147483647))
   name        String
   chineseName String?   @map("chinese_name")
   description String
@@ -288,6 +288,7 @@ model Parameter {
   active               Boolean                @default(true)
   createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
+  unit                 UnitType               @default(unit)
   options              String[]
   categoriesParameters CategoriesParameters[]
 
@@ -339,7 +340,7 @@ model Rooms {
 }
 
 model Share {
-  id             Int              @id(map: "share_pk") @default(sequence())
+  id             Int              @id(map: "share_pk") @default(sequence(maxValue: 2147483647))
   hash           String           @db.String(12)
   owner          String           @db.Uuid
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -495,6 +496,7 @@ enum ReasonType {
 enum UnitType {
   kg
   m
+  mm
   unit
 }
 
