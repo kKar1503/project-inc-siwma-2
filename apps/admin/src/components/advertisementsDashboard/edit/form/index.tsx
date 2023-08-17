@@ -14,16 +14,59 @@ import FormSearchDropdown from '@/components/forms/FormSearchDropdown';
 import FormTextInput from '@/components/forms/FormTextInput';
 import FormToggleButton from '@/components/forms/FormToggleButton';
 import FormDatePicker from '@/components/forms/FormDatePicker';
+import FormInputGroup from '@/components/forms/FormInputGroup';
+import { DateTime } from 'luxon';
 
-const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: { [key: string]: string }) => ({
-  companyId: advertisement ? companyDict[advertisement.companyId] : undefined,
-  // companyId: advertisement ? advertisement.companyId : undefined,
-  link: advertisement?.link || '',
-  description: advertisement?.description || '',
-  startDate: (advertisement ? new Date(advertisement?.startDate || '') : new Date()).toISOString().split('T')[0],
-  endDate: (advertisement ? new Date(advertisement?.endDate || '') : new Date()).toISOString().split('T')[0],
-  active: (advertisement ? !!advertisement.active : true) ? 'active' : 'inactive',
+interface AdvertisementFormData {
+  companyId: {
+    label: string;
+    value: string;
+  };
+  link: string;
+  description: string;
+  startDate: DateTime;
+  endDate: DateTime;
+  active: 'active' | 'inactive';
+}
+
+interface AdvertisementFormDataEmpty {
+  companyId: undefined;
+  link: '';
+  description: '';
+  startDate: DateTime;
+  endDate: DateTime;
+  active: 'active';
+}
+
+const parseToPostAdvertisementRequestBody = (values: AdvertisementFormData): PostAdvertisementRequestBody => ({
+  companyId: values.companyId.value,
+  link: values.link,
+  description: values.description,
+  startDate: values.startDate.toISODate() as string,
+  endDate: values.endDate.toISODate() as string,
+  active: values.active === 'active',
 });
+
+const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
+  [key: string]: string
+}): AdvertisementFormData | AdvertisementFormDataEmpty => advertisement ? {
+  companyId: {
+    label: companyDict[advertisement.companyId],
+    value: advertisement.companyId,
+  },
+  link: advertisement.link,
+  description: advertisement.description,
+  startDate: DateTime.fromISO(advertisement.startDate as string),
+  endDate: DateTime.fromISO(advertisement.endDate as string),
+  active: advertisement.active ? 'active' : 'inactive',
+} : {
+  companyId: undefined,
+  link: '',
+  description: '',
+  startDate: DateTime.now(),
+  endDate: DateTime.now(),
+  active: 'active',
+};
 
 const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
   advertisement?: Advertisment;
@@ -33,47 +76,37 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
 }) => {
   const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [open, setOpen] = useState(false);
-  const [leftButtonState, setLeftButtonState] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [processingSubmit, setProcessingSubmit] = useState(false);
 
   const formHook = useForm({
     defaultValues: getDefaultValue(advertisement, companyDict),
   });
-  const { control, handleSubmit, formState } = formHook;
 
-  console.log(formState);
+  const { control, handleSubmit, formState } = formHook;
+  const { isSubmitting, isSubmitSuccessful } = formState;
+
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFile(event.target.files[0]);
     }
   };
 
-  const onHandleSubmit = (values?: unknown) => {
+  const onHandleSubmit = async (values: AdvertisementFormData) => {
     console.log('attempted to submit');
-    console.log(values);
-    // Validate form before opening the modal
-    // const errors = validate(formValues);
-    // if (Object.keys(errors).length !== 0) {
-    //   setErrors(errors);
-    //   return;
-    // }
-    // setProcessingSubmit(true);
-    // onSubmit(formValues, selectedFile || undefined).then((success) => {
-    //   setProcessingSubmit(false);
-    //   setOpen(success);
-    //   if (!success)
-    //     setErrors({ endpointError: 'An error occurred while updating the advertisement.' });
-    // }).catch((error) => {
-    //   setProcessingSubmit(false);
-    //   setErrors({ endpointError: error.message });
-    // });
+    console.log('raw ',values);
+    const advertisementData = parseToPostAdvertisementRequestBody(values);
+
+
+    console.log('parsed ',advertisementData);
+    const result = await onSubmit(advertisementData, selectedFile || undefined);
+    console.log('result: ', result);
+  };
+  const onHandleError = async () => {
+    // This function just needs to exist, no logic needed
   };
 
 
   const handleRightButtonClick = () => {
-    setOpen(false);
     router.push('/advertisement-dashboard');
   };
 
@@ -106,7 +139,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
   }, [isSm, isMd, isLg]);
 
 
-  if (processingSubmit) return <SpinnerPage />;
+  if (isSubmitting) return <SpinnerPage />;
 
   return (
     <Box
@@ -148,23 +181,24 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
               justifyContent: 'flex-end',
             })}
           >
-            <Modal
-              open={open}
-              setOpen={setOpen}
+            {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
+            <Modal setOpen={(): void => {
+            }}
+                   open={isSubmitSuccessful}
               buttonColor='#0000FF'
               icon='info'
               title='Confirmation'
               content='Advertisement has been successfully edited!'
               rightButtonText='Back to Dashboard'
               rightButtonState={false}
-              leftButtonState={leftButtonState}
-              setLeftButtonState={setLeftButtonState}
               setRightButtonState={handleRightButtonClick}
             />
           </Box>
 
           <Form
-            onSubmit={onHandleSubmit}
+            onSubmit={() => {
+              // this is never called
+            }}
             control={control}
             style={{
               display: 'flex',
@@ -174,6 +208,11 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
             }}
           >
             <FormProvider {...formHook}>
+              <FormInputGroup
+                label='Company'
+                name='companyId'
+                required
+              >
               <FormSearchDropdown
                 options={Object.keys(companyDict).map((key) => ({
                   label: companyDict[key],
@@ -184,16 +223,32 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
                 required
               />
 
+              </FormInputGroup>
+              <FormInputGroup
+                label='Link'
+                name='link'
+                required
+              >
               <FormTextInput
                 label='Link'
                 name='link'
                 required
               />
+              </FormInputGroup>
+              <FormInputGroup
+                label='Advertisement Description'
+                name='description'
+              >
               <FormTextInput
                 label='Advertisement Description'
                 name='description'
                 multiline
               />
+              </FormInputGroup>
+              <FormInputGroup
+                label='Active status'
+                name='active'
+              >
               <FormToggleButton name='active' label='Active' options={[{
                 label: 'Active',
                 value: 'active',
@@ -201,6 +256,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
                 label: 'Inactive',
                 value: 'inactive',
               }]} />
+              </FormInputGroup>
               <Box
                 sx={({ spacing }) => ({
                   width: '100%',
@@ -209,11 +265,17 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
                   justifyContent: 'flex-start',
                 })}
               >
+                <FormInputGroup
+                  name='startDate'
+                  label='Start Date'
+                  required
+                >
                 <FormDatePicker
                   name='startDate'
                   label='Start Date'
                   required
                 />
+                </FormInputGroup>
 
                 <Typography
                   sx={({ spacing, typography }) => ({
@@ -224,12 +286,17 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
                 >
                   一
                 </Typography>
-
+                <FormInputGroup
+                  name='endDate'
+                  label='End Date'
+                  required
+                >
                 <FormDatePicker
                   name='endDate'
                   label='End Date'
                   required
                 />
+                </FormInputGroup>
               </Box>
 
               <Box
@@ -239,11 +306,9 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
                   width: '100%',
                 }}
               >
-                <Button type='button' variant='contained' color='error' sx={{ p: 2, flex: 1 }}>
-                  Cancel
-                </Button>
-                <Button type='submit' variant='contained' sx={{ p: 2, flex: 1 }}>
-                  Create Listing
+                <Button type='submit' onClick={handleSubmit(onHandleSubmit, onHandleError)} variant='contained'
+                        sx={{ p: 2, flex: 1 }}>
+                  {advertisement ? 'Edit Advertisement' : 'Create Advertisement'}
                 </Button>
               </Box>
             </FormProvider>
