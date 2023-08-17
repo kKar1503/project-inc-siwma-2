@@ -12,6 +12,7 @@ import { useState } from 'react';
 import deleteAdvertisement from '@/services/advertisements/deleteAdvertisement';
 import Spinner from '@/components/Spinner';
 import S3ImagePreview from '@/components/modal/S3ImagePreview';
+import { useRouter } from 'next/router';
 
 export interface AdvertisementDashboardProps {
   totalClicks: number;
@@ -20,6 +21,8 @@ export interface AdvertisementDashboardProps {
 const mapCompanies = (companiesQuery: UseQueryResult<Company[]>) => companiesQuery.data || [];
 
 const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) => {
+
+  const router = useRouter();
 
   const [previewImage, setPreviewImage] = useState<string  | null>(null);
 
@@ -94,10 +97,10 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   };
 
   const onEdit = (id: string) => {
-    window.open(`/advertisement/edit/${id}`, '_blank')
+    router.push(`/advertisement/edit/${id}`);
   };
   const onAdd = () => {
-    window.open(`/advertisement-upload`, '_blank');
+    router.push(`/advertisement-upload`);
   };
 
   const onSetActive = (ids: readonly string[]) => {
