@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Modal, useResponsiveness } from '@inc/ui';
@@ -6,7 +6,6 @@ import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
 import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import { useRouter } from 'next/router';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
@@ -16,13 +15,14 @@ import FormTextInput from '@/components/forms/FormTextInput';
 import FormToggleButton from '@/components/forms/FormToggleButton';
 import FormDatePicker from '@/components/forms/FormDatePicker';
 
-const getDefaultValue = (advertisement?: Advertisment): Partial<PostAdvertisementRequestBody> => ({
-  companyId: advertisement?.companyId,
+const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: { [key: string]: string }) => ({
+  companyId: advertisement ? companyDict[advertisement.companyId] : undefined,
+  // companyId: advertisement ? advertisement.companyId : undefined,
   link: advertisement?.link || '',
   description: advertisement?.description || '',
   startDate: (advertisement ? new Date(advertisement?.startDate || '') : new Date()).toISOString().split('T')[0],
   endDate: (advertisement ? new Date(advertisement?.endDate || '') : new Date()).toISOString().split('T')[0],
-  active: advertisement ? !!advertisement.active : true,
+  active: (advertisement ? !!advertisement.active : true) ? 'active' : 'inactive',
 });
 
 const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
@@ -39,42 +39,18 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
   const [processingSubmit, setProcessingSubmit] = useState(false);
 
   const formHook = useForm({
-    defaultValues: getDefaultValue(advertisement),
+    defaultValues: getDefaultValue(advertisement, companyDict),
   });
-  const { control } = formHook;
+  const { control, handleSubmit, formState } = formHook;
 
-
-  // const [formValues, setFormValues] = useState<Partial<PostAdvertisementRequestBody>>(getDefaultValue(advertisement));
-
-  // const [formErrors, setFormErrors] = useState({
-  //   companyId: '',
-  //   endpointError: '',
-  //   link: '',
-  //   description: '',
-  //   startDate: '',
-  //   endDate: '',
-  // });
-
-
-
+  console.log(formState);
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFile(event.target.files[0]);
     }
   };
 
-  // const setErrors = (errors: { [key: string]: string }) => {
-  //   setFormErrors({
-  //     companyId: '',
-  //     endpointError: '',
-  //     link: '',
-  //     description: '',
-  //     startDate: '',
-  //     endDate: '',
-  //     ...errors,
-  //   });
-  // };
-  const handleSubmit = (values?: unknown) => {
+  const onHandleSubmit = (values?: unknown) => {
     console.log('attempted to submit');
     console.log(values);
     // Validate form before opening the modal
@@ -129,21 +105,6 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
     };
   }, [isSm, isMd, isLg]);
 
-  // const handleSwitchChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   const { checked } = event.target;
-  //   setFormValues((prevValues) => ({
-  //     ...prevValues,
-  //     active: checked,
-  //   }));
-  // };
-  //
-  // const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = event.target;
-  //   setFormValues((prevValues) => ({
-  //     ...prevValues,
-  //     [name]: value,
-  //   }));
-  // };
 
   if (processingSubmit) return <SpinnerPage />;
 
@@ -203,7 +164,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
           </Box>
 
           <Form
-            onSubmit={handleSubmit}
+            onSubmit={onHandleSubmit}
             control={control}
             style={{
               display: 'flex',
@@ -212,8 +173,6 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
               width: '100%',
             }}
           >
-
-
             <FormProvider {...formHook}>
               <FormSearchDropdown
                 options={Object.keys(companyDict).map((key) => ({
@@ -237,10 +196,10 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
               />
               <FormToggleButton name='active' label='Active' options={[{
                 label: 'Active',
-                value: 'true',
+                value: 'active',
               }, {
                 label: 'Inactive',
-                value: 'false',
+                value: 'inactive',
               }]} />
               <Box
                 sx={({ spacing }) => ({
@@ -272,21 +231,22 @@ const AdvertisementForm = ({ advertisement, onSubmit, validate, companyDict }: {
                   required
                 />
               </Box>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  columnGap: 3,
+                  width: '100%',
+                }}
+              >
+                <Button type='button' variant='contained' color='error' sx={{ p: 2, flex: 1 }}>
+                  Cancel
+                </Button>
+                <Button type='submit' variant='contained' sx={{ p: 2, flex: 1 }}>
+                  Create Listing
+                </Button>
+              </Box>
             </FormProvider>
-            <Box
-              sx={{
-                display: 'flex',
-                columnGap: 3,
-                width: '100%',
-              }}
-            >
-              <Button type='button' variant='contained' color='error' sx={{ p: 2, flex: 1 }}>
-                Cancel
-              </Button>
-              <Button type='submit' variant='contained' sx={{ p: 2, flex: 1 }}>
-                Create Listing
-              </Button>
-            </Box>
           </Form>
         </Box>
       </ModuleBase>
