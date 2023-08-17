@@ -29,6 +29,9 @@ const createParameter = z.object({ parameterId: id });
 // GET /parameters
 const getParameters = z.array(parameter);
 
+// GET /parameters
+const getParameter = parameter;
+
 // GET /parameters/types
 const getParameterTypes = z.array(type);
 
@@ -50,6 +53,7 @@ export type Parameter = z.infer<typeof parameter>;
 export default {
   create: createParameter,
   getAll: getParameters,
+  getById: getParameter,
   getTypes: getParameterTypes,
   getDataTypes: getParameterDataTypes,
   update: updateParameter,
