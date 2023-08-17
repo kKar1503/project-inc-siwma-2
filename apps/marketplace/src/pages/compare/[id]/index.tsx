@@ -1,14 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useTheme } from '@mui/material';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import CompareDifferences from '@/components/tables/CompareDifferencesTable';
+import { useLoadingBar } from '@/context/loadingBarContext';
 
 const Compare = () => {
   let listingIds: string[] = [];
   const urlParts = window.location.pathname.split('/compare/');
+  const { loadingBarRef } = useLoadingBar();
 
   if (urlParts.length > 1 && urlParts[1] !== '') {
     listingIds = urlParts[1].split(',');
@@ -41,6 +43,14 @@ const Compare = () => {
       px: '20px',
     };
   }, [isSm, isMd, isLg]);
+
+  useEffect(() => {
+    if (!urlParts) {
+      loadingBarRef.current?.continuousStart();
+    } else {
+      loadingBarRef.current?.complete();
+    }
+  }, [urlParts]);
 
   return (
     <Container>

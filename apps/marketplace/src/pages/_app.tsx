@@ -86,7 +86,6 @@ const notoSansSC = Noto_Sans_SC({
 });
 
 const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppProps) => {
-  console.log('App component rendered');
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
@@ -98,13 +97,24 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const isExternal = !window.document.referrer.includes(window.location.hostname);
-      console.log('Referrer:', window.document.referrer);
-      console.log('Hostname:', window.location.hostname);
-      console.log('Is External Navigation:', isExternal);
+      const referrer = window.document.referrer;
+      const isExternal = !referrer || !referrer.includes(window.location.hostname);
       setIsExternalNavigation(isExternal);
+      if (isExternal) {
+        setShowSpinner(true);
+      }
     }
   }, []);
+
+  useEffect(() => {
+    if (showSpinner) {
+      const timer = setTimeout(() => {
+        setShowSpinner(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSpinner]);
 
   useEffect(() => {
     const startLoading = () => {
@@ -114,12 +124,10 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
           return;
         }
         ref.current?.continuousStart();
-      }, 1000); // 1 second delay
+      }, 1000);
     };
 
     const finishLoading = () => {
-      console.log('routeChangeComplete or routeChangeError event triggered');
-      console.log('Finish Loading');
       setIsExternalNavigation(false);
       setShowSpinner(false);
       ref.current?.complete();
