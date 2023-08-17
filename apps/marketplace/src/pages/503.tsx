@@ -28,11 +28,6 @@ const ErrorPage = () => (
       >
         Service unavailable, please check network connection.
       </Typography>
-      <Link href="/login">
-        <Button sx={({ spacing }) => ({ mt: spacing(2) })} variant="contained">
-          Back to home
-        </Button>
-      </Link>
     </Box>
   </Box>
 );
