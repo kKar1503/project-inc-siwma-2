@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import { ReactNode, Children, useEffect, ComponentType, useRef } from 'react';
 
 // TODO: fix typing for props of parent and child
@@ -51,8 +51,9 @@ InfiniteScrollProps<TParent, TChild>) => {
 
   const handleScroll = (e) => {
     if (
-      childRef.current && e.target.documentElement.scrollTop + window.innerHeight <=
-        e.target.documentElement.scrollHeight - childRef.current.clientHeight * 2 ||
+      (childRef.current &&
+        e.target.documentElement.scrollTop + window.innerHeight <=
+          e.target.documentElement.scrollHeight - childRef.current.clientHeight * 2) ||
       loading
     )
       return;
