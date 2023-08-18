@@ -22,7 +22,6 @@ const usePagination = (pageSize: number, numberOfRows: number) => {
 
   useEffect(() => {
     const focusedElement = page * rowsPerPage;
-    console.log(numberOfRows, rowsPerPage, page, focusedElement);
     if (focusedElement >= numberOfRows) {
       const newPage = Math.max(Math.floor(numberOfRows / rowsPerPage) - 1, 0);
       setPage(newPage);
