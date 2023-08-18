@@ -28,28 +28,20 @@ export default apiHandler().put(async (req, res) => {
   }
 
   const files = await getFilesFromRequest(req);
-  let { profilePicture } = userExists;
   if (files.length === 0) throw new ParamError('profile picture');
 
-  const createObject = async () => {
-    const s3Object = fileToS3Object(files[0]);
-    return bucket.createObject(s3Object);
-  };
-  const deleteObject = async () => {
-    if (!userExists.profilePicture) return;
-    await bucket.deleteObject(userExists.profilePicture);
-  };
+  const [s3Object] = await Promise.all([
+    bucket.createObject(fileToS3Object(files[0])),
+    userExists.profilePicture !== null ? bucket.deleteObject(userExists.profilePicture) : null,
+  ]);
 
-  const [profilePictureObject] = await Promise.all([createObject(), deleteObject()]);
-
-  profilePicture = profilePictureObject.Id;
 
   const user = await client.users.update({
     where: {
       id,
     },
     data: {
-      profilePicture,
+      profilePicture: s3Object.Id,
     },
   });
 

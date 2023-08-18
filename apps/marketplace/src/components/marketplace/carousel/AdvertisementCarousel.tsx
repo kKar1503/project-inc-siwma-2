@@ -37,7 +37,7 @@ const AdvertisementCarousel = ({ data }: AdvertisementCarouselProps) => {
   };
 
   return (
-    <Box sx={{ maxWidth: 'max', maxHeight: 300, overflowY: 'hidden', }}>
+    <Box sx={{ maxHeight: '300px'}}>
       <AutoPlaySwipeableViews
         axis="x"
         index={activeStep}
