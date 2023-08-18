@@ -8,6 +8,7 @@ import AdvertisementForm from 'src/components/advertisementsDashboard/form';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
 import fetchCompanies from '@/services/companies/fetchCompanies';
 import createAdvertisement from '@/services/advertisements/createAdvertisement';
+import { useRouter } from 'next/router';
 
 const companiesQuery = async () => {
   const companies = await fetchCompanies();
@@ -25,7 +26,7 @@ const advertisementsQuery = async (id:string) => {
 
 
 const AdvertisementFormPage = ({ edit }: { edit: string | false }) => {
-
+  const router = useRouter();
   const isEdit = edit !== false;
   const id = isEdit ? edit : '';
 
@@ -42,6 +43,10 @@ const AdvertisementFormPage = ({ edit }: { edit: string | false }) => {
       refetchOnWindowFocus: false,
     },
   ]);
+
+  if (isEdit && advertisementQuery.isError) {
+    router.push('/404');
+  }
 
   if (!companyQuery.isSuccess || (isEdit && !advertisementQuery.isSuccess)) {
     return <Spinner />;
