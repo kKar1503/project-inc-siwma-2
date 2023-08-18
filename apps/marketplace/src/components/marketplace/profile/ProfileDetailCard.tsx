@@ -169,7 +169,8 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
           sx={({ spacing }) => ({
             mb: spacing(1),
             bgcolor: red[500],
-            pb: '2px',
+            textAlign: 'center',
+            alignItems: 'center',
           })}
           src={`${data?.profilePic}`}
         >
