@@ -25,6 +25,8 @@ import { validateName, validateEmail, validatePhone } from '@/utils/api/validate
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
+import useUserDataStore from '@/stores/userData';
+import NoInternetConnection from '@/components/NoInternet';
 
 const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
   useMutation((updatedUserData: PutUserRequestBody) =>
@@ -32,6 +34,7 @@ const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
   );
 
 const EditProfile = () => {
+  const setUser = useUserDataStore((state) => state.setUser);
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
@@ -136,6 +139,7 @@ const EditProfile = () => {
       };
       mutation.mutate(updatedUserData);
       router.push(`/profile/${id}`);
+      setUser({ userName: name, userId: id });
     } catch (error) {
       if (error instanceof InvalidNameError) {
         setNameError('Invalid name');
@@ -423,6 +427,7 @@ const EditProfile = () => {
           </Grid>
         </Box>
       </Grid>
+      <NoInternetConnection />
     </>
   );
 };

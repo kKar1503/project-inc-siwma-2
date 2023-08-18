@@ -14,8 +14,9 @@ import Box from '@mui/material/Box';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n/i18n';
 import { MaterialDesignContent, SnackbarOrigin, SnackbarProvider } from 'notistack';
-import { styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { Noto_Sans_SC } from 'next/font/google';
+import I18Fix from '@/components/marketplace/I18Fix';
 
 // -- Type declarations --//
 // Page type
@@ -128,8 +129,14 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
               {getLayout(
                 <Box height="100dvh" display="flex" flexDirection="column">
                   <I18nextProvider i18n={i18n}>
-                    {includeNavbar && <NavBar renderSearchBar={renderSearchBar} />}
-                    <Component {...pageProps} />
+                    {includeNavbar
+                      ? <>
+                        <NavBar renderSearchBar={renderSearchBar} />
+                        <Component {...pageProps} />
+                      </>
+                      : <I18Fix>
+                        <Component {...pageProps} />
+                      </I18Fix>}
                   </I18nextProvider>
                 </Box>
               )}

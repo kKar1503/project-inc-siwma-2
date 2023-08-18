@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
-import { LinearProgress } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 
 export type ComponentProps = {
   open: boolean;

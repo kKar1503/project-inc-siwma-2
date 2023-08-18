@@ -1,4 +1,5 @@
-import { Box, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 const AdvertisementsPlaceholder = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: '2em' }}>
