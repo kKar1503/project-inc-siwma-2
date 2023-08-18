@@ -80,7 +80,7 @@ const CategoryTable = () => {
 
       setRows((prevRows) => prevRows.filter((row) => !idsToDelete.includes(row.id)));
 
-      setIsDeleted(true); // Set this to trigger the effect for invalidating query
+      setIsDeleted(true); // Set this to trigger the effect for delete
 
       return [];
     } catch (error) {
