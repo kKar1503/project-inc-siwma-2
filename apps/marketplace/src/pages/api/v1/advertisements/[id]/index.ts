@@ -3,13 +3,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
 import { NotFoundError } from '@inc/errors/src';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import s3Connection from '@/utils/s3Connection';
+import s3Bucket from '@/utils/s3Bucket';
 import { select, where } from '@api/v1/advertisements';
 import { APIRequestType } from '@/types/api-types';
 import { advertisementSchema } from '@/utils/api/server/zod';
-import process from 'process';
 
-const AWS_BUCKET = process.env.AWS_BUCKET as string;
 const GET = async (req: NextApiRequest & APIRequestType, res: NextApiResponse) => {
   // Validate query params
   const id = parseToNumber(req.query.id as string, 'id');
@@ -110,10 +108,8 @@ const DELETE = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   // Delete image from s3
-  const deleteImage = async () => {
-    const bucket = await s3Connection.getBucket(AWS_BUCKET);
-    await bucket.deleteObject(advertisement.image);
-  };
+  const deleteImage = async () => s3Bucket.deleteObject(advertisement.image);
+
 
   // Wait for both promises to resolve
   await Promise.all([prismaPromise, deleteImage]);

@@ -6,7 +6,11 @@ import Box, { BoxProps } from '@mui/material/Box';
 
 const useImageQuery = (imgKey: string) => useQuery(['image', imgKey], () => fetchS3Image(imgKey));
 
-export type S3ImageProps = BoxProps & { src: string; placeholderImg?: string; allowClickThrough?: boolean };
+export type S3ImageProps = BoxProps & {
+  src: string;
+  placeholderImg?: string;
+  allowClickThrough?: boolean;
+};
 export type S3BoxImageProps = BoxProps & S3ImageProps;
 
 const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -14,7 +18,13 @@ const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   // e.stopPropagation();
 };
 
-const S3BoxImage = ({ src, placeholderImg, children, allowClickThrough, ...others }: S3BoxImageProps) => {
+const S3BoxImage = ({
+  src,
+  placeholderImg,
+  children,
+  allowClickThrough,
+  ...others
+}: S3BoxImageProps) => {
   const { data } = useImageQuery(src);
   const [image, setImage] = useState<
     { url: string; name: string | undefined | null } | undefined
@@ -37,7 +47,12 @@ const S3BoxImage = ({ src, placeholderImg, children, allowClickThrough, ...other
       href={image.url}
       download={image.name}
       onClick={onClick}
-      style={{ cursor: 'default', textDecoration: 'none', pointerEvents: allowClickThrough ? 'none' : undefined }}
+      style={{
+        cursor: 'default',
+        textDecoration: 'none',
+        pointerEvents: allowClickThrough ? 'none' : undefined,
+      }}
+      tabIndex={-1}
     >
       <Box component="img" src={image.url} {...others}>
         {children}
