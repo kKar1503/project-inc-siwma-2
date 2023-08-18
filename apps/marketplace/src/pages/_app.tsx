@@ -17,8 +17,11 @@ import { useTheme } from '@mui/material/styles';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n/i18n';
 import { MaterialDesignContent, SnackbarOrigin, SnackbarProvider } from 'notistack';
-import { styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { Noto_Sans_SC } from 'next/font/google';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
+import I18Fix from '@/components/marketplace/I18Fix';
 
 // -- Type declarations --//
 // Page type
@@ -171,40 +174,50 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   }, [isSm, isMd, isLg]);
 
   return (
-    <ThemeComponent fonts={notoSansSC.style.fontFamily}>
-      <LoadingBar color={palette.primary.main} ref={ref} style={{ zIndex: 9999 }} />
-      <LoadingBarProvider loadingBarRef={ref}>
-        <SessionProvider session={session}>
-          <AuthenticationGuard
-            disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
-            disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
-            loader={showSpinner ? <SpinnerPage /> : <div />}
-            allowAuthenticated={allowAuthenticated}
-            allowNonAuthenticated={allowNonAuthenticated}
-          >
-            <QueryClientProvider client={queryClient}>
-              <SnackbarProvider
-                style={{ width: '100%', height: '0%' }}
-                maxSnack={3}
-                anchorOrigin={alertStyle}
-                Components={{
-                  default: StyledMaterialDesignContent,
-                }}
-              >
-                {getLayout(
-                  <Box height="100dvh" display="flex" flexDirection="column">
-                    <I18nextProvider i18n={i18n}>
-                      {includeNavbar && <NavBar renderSearchBar={renderSearchBar} />}
-                      <Component {...pageProps} />
-                    </I18nextProvider>
-                  </Box>
-                )}
-              </SnackbarProvider>
-            </QueryClientProvider>
-          </AuthenticationGuard>
-        </SessionProvider>
-      </LoadingBarProvider>
-    </ThemeComponent>
+    <LocalizationProvider dateAdapter={AdapterLuxon}>
+      <ThemeComponent fonts={notoSansSC.style.fontFamily}>
+        <LoadingBar color={palette.primary.main} ref={ref} style={{ zIndex: 9999 }} />
+        <LoadingBarProvider loadingBarRef={ref}>
+          <SessionProvider session={session}>
+            <AuthenticationGuard
+              disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
+              disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
+              loader={showSpinner ? <SpinnerPage /> : <div />}
+              allowAuthenticated={allowAuthenticated}
+              allowNonAuthenticated={allowNonAuthenticated}
+            >
+              <QueryClientProvider client={queryClient}>
+                <SnackbarProvider
+                  style={{ width: '100%', height: '0%' }}
+                  maxSnack={3}
+                  anchorOrigin={alertStyle}
+                  Components={{
+                    default: StyledMaterialDesignContent,
+                  }}
+                >
+                  {getLayout(
+                    <Box height="100dvh" display="flex" flexDirection="column">
+                      <I18nextProvider i18n={i18n}>
+                        {includeNavbar ? (
+                          <>
+                            <NavBar renderSearchBar={renderSearchBar} />
+                            <Component {...pageProps} />
+                          </>
+                        ) : (
+                          <I18Fix>
+                            <Component {...pageProps} />
+                          </I18Fix>
+                        )}
+                      </I18nextProvider>
+                    </Box>
+                  )}
+                </SnackbarProvider>
+              </QueryClientProvider>
+            </AuthenticationGuard>
+          </SessionProvider>
+        </LoadingBarProvider>
+      </ThemeComponent>
+    </LocalizationProvider>
   );
 };
 

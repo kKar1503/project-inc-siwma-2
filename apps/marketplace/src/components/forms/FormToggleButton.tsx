@@ -1,8 +1,8 @@
-import { Button, ButtonGroup, useTheme } from '@mui/material';
-import { border } from '@mui/system';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Skeleton from '@mui/material/Skeleton';
+import { useTheme } from '@mui/material/styles';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 export type FormToggleButtonOption = {
   label: string;

@@ -14,6 +14,7 @@ import CategoryCardSkeleton from '@/components/marketplace/listing/CategoryCardS
 import { SxProps } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
 import { useTranslation } from 'react-i18next';
+import NoInternetConnection from '@/components/NoInternet';
 
 export type CategoryPageType = {
   data: CategoryResponseBody[];
@@ -123,6 +124,7 @@ const CategoriesPage = () => {
           }
         </Grid>
       </Grid>
+      <NoInternetConnection />
     </Box>
   );
 };

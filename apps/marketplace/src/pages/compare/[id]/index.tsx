@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import CompareDifferences from '@/components/tables/CompareDifferencesTable';
 import { useLoadingBar } from '@/context/loadingBarContext';
+import NoInternetConnection from '@/components/NoInternet';
 
 const Compare = () => {
   let listingIds: string[] = [];
@@ -70,6 +71,7 @@ const Compare = () => {
         </Typography>
         <CompareDifferences listingIds={listingIds} />
       </Box>
+      <NoInternetConnection />
     </Container>
   );
 };

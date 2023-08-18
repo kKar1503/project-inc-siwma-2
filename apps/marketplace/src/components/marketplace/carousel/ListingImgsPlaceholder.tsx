@@ -1,4 +1,5 @@
-import { Box, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import placeholder from 'public/images/listing-placeholder.svg';
 import Image from 'next/image';
 

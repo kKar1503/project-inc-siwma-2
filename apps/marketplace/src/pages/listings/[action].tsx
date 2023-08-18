@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Box, Divider, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import fetchProducts from '@/services/fetchProducts';
@@ -13,9 +15,10 @@ import ListingCreationForm from '@/components/forms/listingCreationForm/ListingC
 import apiClient from '@/utils/api/client/apiClient';
 import OnCreateModal from '@/components/modal/OnCreateModal';
 import fetchListing from '@/services/fetchListing';
-import { Listing, Parameter, Product } from '@/utils/api/client/zod';
 import { useLoadingBar } from '@/context/loadingBarContext';
+import { Listing, Product } from '@/utils/api/client/zod';
 import type { SxProps } from '@mui/material/styles';
+import NoInternetConnection from '@/components/NoInternet';
 
 /**
  * Maps default values into react-hook-form default values
@@ -236,7 +239,7 @@ const ListingCreateEdit = () => {
 
     // Validate quantity
     if (quantity <= 0) {
-    errors.quantity = new Error('Quantity must be greater than 0');
+      errors.quantity = new Error('Quantity must be greater than 0');
     }
 
     // Validate category parameters
@@ -370,6 +373,11 @@ const ListingCreateEdit = () => {
     }
   }, [selectedListing.isSuccess, products.isSuccess]);
 
+  // if neither edit nor create, render 404 page
+  if (!isEditing && !isCreating) {
+    router.push('/404');
+  }
+
   return (
     <>
       <OnCreateModal
@@ -426,6 +434,7 @@ const ListingCreateEdit = () => {
           </Box>
         </Box>
       </Box>
+      <NoInternetConnection />
     </>
   );
 };

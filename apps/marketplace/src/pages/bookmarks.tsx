@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
 import useMultipleUsers from '@/services/users/useMultipleUsers';
+import NoInternetConnection from '@/components/NoInternet';
 
 import { useLoadingBar } from '@/context/loadingBarContext';
 
@@ -86,6 +87,7 @@ const Bookmarks = () => {
           <UserBookmarks users={bookmarkedUsers} updateBookmarkData={refetchUser} />
         )}
       </Grid>
+      <NoInternetConnection />
     </Container>
   );
 };

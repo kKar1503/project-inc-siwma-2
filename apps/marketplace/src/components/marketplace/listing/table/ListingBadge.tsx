@@ -1,5 +1,6 @@
 import React from 'react';
-import { Chip, Palette } from '@mui/material';
+import Chip from '@mui/material/Chip';
+import { Palette } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useResponsiveness } from '@inc/ui';
 

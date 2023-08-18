@@ -15,6 +15,7 @@ import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCar
 import { useTheme } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
 import useUser from '@/services/users/useUser';
+import NoInternetConnection from '@/components/NoInternet';
 
 import { useLoadingBar } from '@/context/loadingBarContext';
 
@@ -106,6 +107,7 @@ const ProfilePage = () => {
           {/* nth here */}
         </Box>
       </Box>
+      <NoInternetConnection />
     </main>
   );
 };

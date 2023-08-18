@@ -2,7 +2,9 @@
 import S3BoxImage from '@/components/S3BoxImage';
 import CategoryParamInput from '@/components/listingCreation/CategoryParamInput';
 import ProductDetail from '@/components/listingCreation/ProductDetail';
-import { Typography, Divider, Button } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 import { Box } from '@mui/system';
 import { t } from 'i18next';
 import { FieldValues, Form, FormProvider, useForm } from 'react-hook-form';
@@ -225,6 +227,9 @@ const ListingCreationForm = ({
               isLoading={isLoading}
               success={submitSuccess}
               hideError
+              sx={{
+                minWidth: '10rem',
+              }}
             >
               {/** @ts-ignore */}
               <FormCheckboxInput options={[{ label: 'Negotiable', value: true }]} />

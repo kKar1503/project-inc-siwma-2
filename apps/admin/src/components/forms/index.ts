@@ -2,6 +2,7 @@ export { default as FormError } from './FormError';
 export { default as FormInputGroup } from './FormInputGroup';
 export { default as FormTextInput } from './FormTextInput';
 export { default as FormSearchDropdown } from './FormSearchDropdown';
+export { default as FormDatePicker } from './FormDatePicker';
 
 export { default as FormRadioSelect } from './FormRadioSelect';
 export * from './FormRadioSelect';
