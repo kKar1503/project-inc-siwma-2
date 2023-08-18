@@ -1,8 +1,8 @@
 import { apiHandler, formatAPIResponse, parseArray, parseToNumber } from '@/utils/api';
-import PrismaClient, { Parameter } from '@inc/db';
+import PrismaClient, { Parameter, UnitType } from '@inc/db';
 import { ParameterType } from '@inc/db-enums';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
-import { ParamSizeError } from '@inc/errors';
+import { ParamInvalidError, ParamSizeError } from '@inc/errors';
 import { paramSchema, ParamsRequestBody } from '@/utils/api/server/zod';
 import { ParameterResponseBody } from '@/utils/api/client/zod';
 
@@ -29,6 +29,7 @@ export function formatParamResponse(
     type: parameter.type,
     dataType: parameter.dataType,
     active: parameter.active,
+    unit: parameter.unit,
     ...(parameter.options.length > 0 && { options: parameter.options }),
   }));
 
@@ -55,6 +56,7 @@ function buildQueryOptions({ ids, isAdmin }: { ids: number[] | undefined; isAdmi
       dataType: true,
       options: true,
       active: true,
+      unit: true,
     },
   };
 
@@ -126,6 +128,11 @@ export default apiHandler()
 
       // Validate parameter options
       validateOptions(data);
+
+      // Ensure that the unit passed in is valid
+      if (data.unit && !Object.values(UnitType).includes(data.unit)) {
+        throw new ParamInvalidError('unit', data.unit, Object.values(UnitType));
+      }
 
       // Insert the parameter into the database
       const result = await PrismaClient.parameter.create({

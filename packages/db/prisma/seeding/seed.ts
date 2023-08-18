@@ -149,7 +149,7 @@ const main = async (): Promise<void> => {
     data: Offers,
   });
 
-  await prismaClient.$executeRaw`ALTER SEQUENCE public.offers_seq RESTART WITH ${offersCount};`;
+  await prismaClient.$executeRawUnsafe(`ALTER SEQUENCE public.offers_seq RESTART WITH ${offersCount};`);
 
   console.log(`Seeded ${offersCount} rows into public.offers`);
   console.log('Updated public.offers_seq');
@@ -159,10 +159,10 @@ const main = async (): Promise<void> => {
     data: Messages,
   });
 
-  await prismaClient.$executeRaw`ALTER SEQUENCE public.messages_seq RESTART WITH ${messagesCount};`;
+  await prismaClient.$executeRawUnsafe(`ALTER SEQUENCE public.messages_seq RESTART WITH ${messagesCount};`);
 
   console.log(`Seeded ${messagesCount} rows into public.messages`);
-  console.log('Seeding public.messages_seq...');
+  console.log('Updated public.messages_seq...');
   console.log('Seeding public.parameter...');
 
   const { count: parameterCount } = await prismaClient.parameter.createMany({
