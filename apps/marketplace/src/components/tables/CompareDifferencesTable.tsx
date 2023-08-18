@@ -202,19 +202,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
 
                 if (data === undefined) return null;
 
-                const { displayName, type } = data;
-
-                let unit = '';
-
-                if (type === 'WEIGHT') {
-                  unit = ' kg';
-                } else if (type === 'DIMENSION') {
-                  if (displayName === 'Length') {
-                    unit = ' m';
-                  } else {
-                    unit = ' mm';
-                  }
-                }
+                const { displayName, unit } = data;
 
                 return (
                   <Grid item xl={3} lg={3} md={3} sm={2} xs={2} direction="row" key={paramId}>
