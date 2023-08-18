@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Parameter } from '@/utils/api/client/zod';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
 import { DataType, ParameterType } from '@inc/db-enums';
 import { FormDropdownSelector, FormInputGroup, FormTextInput, FormToggleButton } from '../forms';
