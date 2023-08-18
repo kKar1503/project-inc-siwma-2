@@ -42,3 +42,9 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default apiHandler({ allowAdminsOnly: true }).put(PUT);
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
