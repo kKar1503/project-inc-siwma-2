@@ -14,7 +14,7 @@ import Box from '@mui/material/Box';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n/i18n';
 import { MaterialDesignContent, SnackbarOrigin, SnackbarProvider } from 'notistack';
-import { styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { Noto_Sans_SC } from 'next/font/google';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
