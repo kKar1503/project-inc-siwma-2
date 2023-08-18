@@ -1,11 +1,10 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import client from '@inc/db';
-import { NotFoundError, ForbiddenError, ParamRequiredError, WrongPasswordError } from '@inc/errors';
+import { ForbiddenError, NotFoundError, ParamRequiredError, WrongPasswordError } from '@inc/errors';
 import { apiGuardMiddleware } from '@/utils/api/server/middlewares/apiGuardMiddleware';
 import { validateEmail, validateName, validatePassword, validatePhone } from '@/utils/api/validate';
 import bcrypt from 'bcrypt';
 import { userSchema } from '@/utils/api/server/zod';
-import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 import bucket from '@/utils/s3Bucket';
 
 export default apiHandler()
@@ -113,7 +112,7 @@ export default apiHandler()
     if (mobileNumber) {
       validatePhone(mobileNumber);
     }
-    if (password || oldPassword) {
+    if (password != null || oldPassword != null) {
       validatePassword(password as string);
 
       // Check if the user changing the password is not admin

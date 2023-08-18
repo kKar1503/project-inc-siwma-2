@@ -41,6 +41,7 @@ export type ListingTableProps = {
   isLoading: boolean;
   isProductFetching: boolean;
   isParamFetching: boolean;
+  unstyled?: boolean;
 };
 
 /**
@@ -55,7 +56,7 @@ export type ListingTableProps = {
  */
 const ListingTable = (props: ListingTableProps) => {
   // ** Props
-  const { listings, isLoading, isProductFetching, isParamFetching } = props;
+  const { listings, isLoading, isProductFetching, isParamFetching, unstyled } = props;
 
   // ** States
   const [rowOpened, setRowOpened] = useState('');
@@ -82,8 +83,9 @@ const ListingTable = (props: ListingTableProps) => {
 
   // ** Styles
   const tableMaxWidthContainer = useMemo<SxProps>(() => {
-    if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)' };
-    return {};
+    if (unstyled) return {};
+    if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)', mt: 2 };
+    return { mt: 3 };
   }, [isSm]);
 
   // ** Handlers
@@ -96,7 +98,7 @@ const ListingTable = (props: ListingTableProps) => {
   };
 
   return (
-    <Box sx={{ ...tableMaxWidthContainer, mt: 3 }}>
+    <Box sx={{ ...tableMaxWidthContainer }}>
       <Paper sx={{ width: '100%', mb: 2 }} elevation={2}>
         <AboveHeader
           header={mode === 'CATEGORY' ? 'Categorical Listings' : 'Listings'}

@@ -211,5 +211,16 @@
   "Certification": "认证",
   "Posted on": "发布日期",
   "Share": "分享",
-  "share": "分享"
+  "share": "分享",
+
+  "Sign In": "登录",
+  "SIGN IN" : "登录",
+  "Forgot your password?" : "忘记密码？",
+  "Remember me" : "记住我",
+  "Your password" : "您的密码",
+  "Your company e-mail" : "您的公司电子邮件",
+  "Please sign in to your account" : "请登录您的帐户",
+
+  "E-mail" : "电子邮件",
+  "Password" : "密码"
 }
