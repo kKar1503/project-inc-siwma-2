@@ -1,52 +1,64 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ScoreDoughnut from './ScoreDoughnut';
+import LoadingSpinner from './LoadingSpinner';
 
-const CoreVitalsReport = ({ onRescan, reportData, isLoading, fetchReportData }) => {
+const CoreVitalsReport = ({ onRescan, reportData, isLoading }) => {
   const [selectedCategory, setSelectedCategory] = useState('Overview');
   const categories = ['Overview', 'Performance'];
 
   const getCategoryColumns = (category) => {
     if (!reportData || reportData.length === 0 || !reportData[0].categories[category]) {
-      return ['Route'];
+      return [];
     }
 
     const categoryKeys = Object.keys(reportData[0].categories[category]);
-    return category === 'Overview' ? ['Route', 'Score'] : ['Route', ...categoryKeys];
+    return category === 'Overview' ? ['Score'] : ['Route', ...categoryKeys];
   };
 
-  const getCategoryData = (routeData, category) => {
+  const computeAverageScore = () => {
+    if (!reportData || reportData.length === 0) return 0;
+    const totalScore = reportData.reduce((acc, routeData) => {
+      return (
+        acc + (routeData.categories['Performance'] ? routeData.categories['Performance'].score : 0)
+      );
+    }, 0);
+    return totalScore / reportData.length;
+  };
+
+  const getCategoryData = (category) => {
     if (category === 'Overview') {
-      const performanceScore = routeData.categories['Performance']
-        ? routeData.categories['Performance'].score
-        : 0;
+      const averageScore = computeAverageScore();
       const doughnut = (
         <div className="mr-2" style={{ flex: '0 0 auto' }}>
-          <ScoreDoughnut score={performanceScore} category="Performance" />
+          <ScoreDoughnut score={averageScore} category="Performance" />
         </div>
       );
-
-      const overviewData = [routeData.route, <div className="flex">{doughnut}</div>];
-      return overviewData;
+      return [<div className="flex">{doughnut}</div>];
     }
-
-    return getCategoryColumns(category).map((column) => {
-      if (column === 'Route') {
-        return routeData.route;
-      }
-
-      if (column === 'score') {
-        return <ScoreDoughnut score={routeData.categories[category][column]} category={category} />;
-      }
-
-      return routeData.categories[category][column];
+    return reportData.map((routeData) => {
+      return getCategoryColumns(category).map((column) => {
+        if (column === 'Route') {
+          return routeData.route;
+        }
+        if (column === 'score') {
+          return (
+            <ScoreDoughnut score={routeData.categories[category][column]} category={category} />
+          );
+        }
+        return routeData.categories[category][column];
+      });
     });
   };
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 font-sans bg-gray-800 text-white h-full">
+    <div className="w-full flex flex-col flex-grow mx-auto px-4 sm:px-6 font-sans bg-gray-800 text-white">
       <h1 className="pt-4 text-2xl font-semibold">Core Web Vitals Report</h1>
 
-      <div className="mt-4 grid grid-cols-5 gap-4 h-full">
+      <div className="mt-4 grid grid-cols-5 gap-4 h-full pb-4">
         <div className="col-span-1 bg-gray-700 rounded-md p-0">
           <div className="p-4">
             {categories.map((category) => (
@@ -66,34 +78,47 @@ const CoreVitalsReport = ({ onRescan, reportData, isLoading, fetchReportData }) 
         <div className="col-span-4 bg-gray-700 rounded-md p-0">
           <div className="p-4">
             <h2 className="text-lg font-medium">{selectedCategory} Report</h2>
-            <div className="overflow-x-auto scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">
-              <table className="mt-2 w-full">
-                <thead>
-                  <tr>
-                    {getCategoryColumns(selectedCategory).map((column) => (
-                      <th key={column} className="text-left py-2 px-4">
-                        {column}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {reportData.map((routeData) => (
-                    <tr key={routeData.id}>
-                      {getCategoryData(routeData, selectedCategory).map((data, index) => (
-                        <td key={index} className="py-2 px-4">
-                          {data}
-                        </td>
+            <div className="relative overflow-x-auto scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">
+              <div className="custom-scroll overflow-y-scroll h-[calc(100vh-200px)]">
+                <table className="mt-2 w-full">
+                  <thead>
+                    <tr>
+                      {getCategoryColumns(selectedCategory).map((column) => (
+                        <th
+                          key={column}
+                          className="text-left py-2 px-4 sticky top-0 bg-gray-700 z-10"
+                        >
+                          {column}
+                        </th>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {/* If the selected category is 'Overview', show the single average doughnut. Otherwise, show the route data */}
+                    {selectedCategory === 'Overview' ? (
+                      <tr>
+                        {getCategoryData(selectedCategory).map((data, index) => (
+                          <td key={index} className="py-2 px-4">
+                            {data}
+                          </td>
+                        ))}
+                      </tr>
+                    ) : (
+                      reportData.map((routeData, routeIndex) => (
+                        <tr key={routeData.id}>
+                          {getCategoryData(selectedCategory)[routeIndex].map((data, index) => (
+                            <td key={index} className="py-2 px-4">
+                              {data}
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <button
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-              onClick={fetchReportData}
-            >
+            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={onRescan}>
               Rescan
             </button>
           </div>

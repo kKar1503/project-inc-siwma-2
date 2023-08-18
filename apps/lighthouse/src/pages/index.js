@@ -1,9 +1,95 @@
+// import { useState, useEffect } from 'react';
+// import PageCoreVitals from '../components/CoreVitalsReport';
+
+// export default function Home() {
+//   const [reportData, setReportData] = useState([]);
+//   const [initialLoading, setInitialLoading] = useState(true);
+
+//   useEffect(() => {
+//     const urls = [
+//       `${process.env.NEXT_PUBLIC_FRONTEND_URL}/`,
+//       // `${process.env.FRONTEND_URL}/archived/chat`,
+//       // `${process.env.FRONTEND_URL}/login/`,
+//       `${process.env.NEXT_PUBLIC_FRONTEND_URL}/bookmarks`,
+//       `${process.env.NEXT_PUBLIC_FRONTEND_URL}/categories`,
+//       // `${process.env.FRONTEND_URL}/category/[cat]`
+//       // `${process.env.FRONTEND_URL}/chat`,
+//       // `${process.env.FRONTEND_URL}/compare/[id]/CompareDifferences`
+//       // `${process.env.FRONTEND_URL}/compare/[id]/index`
+//       // `${process.env.FRONTEND_URL}/compare-listings/index`,
+//       // `${process.env.FRONTEND_URL}/forgot-password/index`,
+//       // `${process.env.FRONTEND_URL}/forgot-password/success/index`,
+//       // `${process.env.FRONTEND_URL}/index`,
+//       // `${process.env.FRONTEND_URL}/listings/[action]`
+//       // `${process.env.FRONTEND_URL}/profile/change-password`,
+//       // `${process.env.FRONTEND_URL}/profile/[id]/edit-profile`
+//       // `${process.env.FRONTEND_URL}/profile/[id]`
+//       // `${process.env.FRONTEND_URL}/register/index`,
+//       // `${process.env.FRONTEND_URL}/register/success/index`,
+//       // `${process.env.FRONTEND_URL}/reset-password/success/index`,
+//       // `${process.env.FRONTEND_URL}/reset-password/[uuid]`
+//       // `${process.env.FRONTEND_URL}/share/[id]`
+//       // `${process.env.FRONTEND_URL}/share-function/[id]`
+//       // `${process.env.FRONTEND_URL}/test-chat`,
+//       // `${process.env.FRONTEND_URL}/test-modal`,
+//       // `${process.env.FRONTEND_URL}/test-notification`,
+//       // `${process.env.FRONTEND_URL}/test-table`,
+//       // `${process.env.FRONTEND_URL}/_app`
+//       // `${process.env.FRONTEND_URL}/_document`
+//     ];
+
+//     const fetchData = async () => {
+//       try {
+//         const response = await fetch('http://localhost:3001/crawl', {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           body: JSON.stringify({ urls }),
+//         });
+
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+
+//         const data = await response.json();
+//         const processedData = data.map((item, index) => ({
+//           id: index + 1,
+//           route: item.url,
+//           categories: {
+//             Performance: {
+//               score: item.performanceScore || 0,
+//               lcp: item.LCP || 0,
+//               cls: item.CLS || 0,
+//               fid: item.TBT || 0,
+//             },
+//           },
+//         }));
+
+//         setReportData(processedData);
+//         setInitialLoading(false);
+//       } catch (error) {
+//         console.error('Error fetching data:', error);
+//         setInitialLoading(false); // even on error, we should indicate that loading has finished
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   return (
+//     <div className="dark">
+//       <PageCoreVitals reportData={reportData} isLoading={initialLoading} />
+//     </div>
+//   );
+// }
+
 import PageCoreVitals from '../components/CoreVitalsReport';
 
-export default function Home({ reportData }) {
+export default function Home({ reportData, initialLoading }) {
   return (
     <div className="dark">
-      <PageCoreVitals reportData={reportData} isLoading={false} />
+      <PageCoreVitals reportData={reportData} isLoading={initialLoading} />
     </div>
   );
 }
@@ -11,37 +97,36 @@ export default function Home({ reportData }) {
 // This function runs at request time, and its return value populates the `reportData` prop.
 export async function getServerSideProps() {
   const urls = [
-    `${process.env.FRONTEND_URL}/`,
-    `${process.env.FRONTEND_URL}/archived/chat`,
-    `${process.env.FRONTEND_URL}/login/`,
-    `${process.env.FRONTEND_URL}/bookmarks`,
-    `${process.env.FRONTEND_URL}/categories`,
+    `${process.env.NEXT_PUBLIC_FRONTEND_URL}/`,
+    // `${process.env.FRONTEND_URL}/archived/chat`,
+    // `${process.env.FRONTEND_URL}/login/`,
+    `${process.env.NEXT_PUBLIC_FRONTEND_URL}/bookmarks`,
+    `${process.env.NEXT_PUBLIC_FRONTEND_URL}/categories`,
     // `${process.env.FRONTEND_URL}/category/[cat]`
-    `${process.env.FRONTEND_URL}/chat`,
+    // `${process.env.FRONTEND_URL}/chat`,
     // `${process.env.FRONTEND_URL}/compare/[id]/CompareDifferences`
     // `${process.env.FRONTEND_URL}/compare/[id]/index`
-    `${process.env.FRONTEND_URL}/compare-listings/index`,
-    `${process.env.FRONTEND_URL}/forgot-password/index`,
-    `${process.env.FRONTEND_URL}/forgot-password/success/index`,
-    `${process.env.FRONTEND_URL}/index`,
+    // `${process.env.FRONTEND_URL}/compare-listings/index`,
+    // `${process.env.FRONTEND_URL}/forgot-password/index`,
+    // `${process.env.FRONTEND_URL}/forgot-password/success/index`,
+    // `${process.env.FRONTEND_URL}/index`,
     // `${process.env.FRONTEND_URL}/listings/[action]`
-    `${process.env.FRONTEND_URL}/profile/change-password`,
+    // `${process.env.FRONTEND_URL}/profile/change-password`,
     // `${process.env.FRONTEND_URL}/profile/[id]/edit-profile`
     // `${process.env.FRONTEND_URL}/profile/[id]`
-    `${process.env.FRONTEND_URL}/register/index`,
-    `${process.env.FRONTEND_URL}/register/success/index`,
-    `${process.env.FRONTEND_URL}/reset-password/success/index`,
+    // `${process.env.FRONTEND_URL}/register/index`,
+    // `${process.env.FRONTEND_URL}/register/success/index`,
+    // `${process.env.FRONTEND_URL}/reset-password/success/index`,
     // `${process.env.FRONTEND_URL}/reset-password/[uuid]`
     // `${process.env.FRONTEND_URL}/share/[id]`
     // `${process.env.FRONTEND_URL}/share-function/[id]`
-    `${process.env.FRONTEND_URL}/test-chat`,
-    `${process.env.FRONTEND_URL}/test-modal`,
-    `${process.env.FRONTEND_URL}/test-notification`,
-    `${process.env.FRONTEND_URL}/test-table`,
+    // `${process.env.FRONTEND_URL}/test-chat`,
+    // `${process.env.FRONTEND_URL}/test-modal`,
+    // `${process.env.FRONTEND_URL}/test-notification`,
+    // `${process.env.FRONTEND_URL}/test-table`,
     // `${process.env.FRONTEND_URL}/_app`
     // `${process.env.FRONTEND_URL}/_document`
   ];
-
 
   try {
     const response = await fetch('http://localhost:3001/crawl', {
@@ -71,9 +156,9 @@ export async function getServerSideProps() {
       },
     }));
 
-    return { props: { reportData } };
+    return { props: { reportData, initialLoading: false } };
   } catch (error) {
     console.error('Error fetching data:', error);
-    return { props: { reportData: [] } }; // Return an empty array if fetching fails
+    return { props: { reportData: [], initialLoading: false } };
   }
 }

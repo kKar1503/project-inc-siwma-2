@@ -7,7 +7,7 @@ module.exports = async function crawl(urls) {
 
   // Log in before navigating to the protected pages
   // Log in before navigating to the protected pages
-  const loginPage = `${process.env.FRONTEND_URL}/login/`;
+  const loginPage = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/login/`;
   await page.goto(loginPage);
   await page.waitForSelector('#email'); // Wait for the email input field to appear
   await page.type('#email', 'xavier@example.com'); // Replace 'your_email' with your actual email

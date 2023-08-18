@@ -35,3 +35,17 @@ body::-webkit-scrollbar {
 body::-webkit-scrollbar-thumb {
   @apply bg-blue-500 rounded-full;
 }
+
+/* Add to your CSS file or within a <style> tag in your component */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent; 
+}
+
+/* Add a hover effect to make the scrollbar visible when user hovers over the container */
+div:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.5);
+}

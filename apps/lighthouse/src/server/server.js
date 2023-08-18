@@ -24,5 +24,5 @@ app.post('/crawl', async (req, res) => {
 });
 
 app.listen(3001, function () {
-  console.log('CORS-enabled web server listening on port 3001');
+  console.log(`CORS-enabled web server listening on port ${port}`);
 });
