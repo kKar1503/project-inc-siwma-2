@@ -224,6 +224,7 @@ const EditParameter = () => {
       type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
       options,
       dataType: dataType as 'string' | 'number' | 'boolean',
+      unit: 'unit', // Temporary, please change this later
     };
     mutation.mutate(requestBody);
   };

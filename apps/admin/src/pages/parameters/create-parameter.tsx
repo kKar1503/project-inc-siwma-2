@@ -180,6 +180,7 @@ const CreateParameter = () => {
       type: type as 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED',
       dataType: dataType as 'string' | 'number' | 'boolean',
       options,
+      unit: 'unit',
     };
 
     await createParameter(paramBody);
