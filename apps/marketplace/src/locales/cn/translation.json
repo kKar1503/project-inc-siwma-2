@@ -214,17 +214,17 @@
   "share": "分享",
 
   "Sign In": "登录",
-  "SIGN IN" : "登录",
-  "Forgot your password?" : "忘记密码？",
-  "Remember me" : "记住我",
-  "Your password" : "您的密码",
-  "Your company e-mail" : "您的公司电子邮件",
-  "Please sign in to your account" : "请登录您的帐户",
+  "SIGN IN": "登录",
+  "Forgot your password?": "忘记密码？",
+  "Remember me": "记住我",
+  "Your password": "您的密码",
+  "Your company e-mail": "您的公司电子邮件",
+  "Please sign in to your account": "请登录您的帐户",
 
-  "E-mail" : "电子邮件",
-  "Password" : "密码",
+  "E-mail": "电子邮件",
+  "Password": "密码",
 
-    "Please enter your full name": "请输入您的全名",
+  "Please enter your full name": "请输入您的全名",
   "Name cannot contain numbers": "姓名不能包含数字",
   "Invalid name": "无效姓名",
 
@@ -263,5 +263,8 @@
   "Cross Section Image": "横截面图像",
   "Length": "长度",
   "Grade": "金属等级",
-  "Type": "类型"
+  "Type": "类型",
+  "Create a listing": "创建商品",
+  "Your listing is now on the marketplace":"您的商品已在平台上发布",
+  "An error occurred while creating the listing, please try again later":"创建商品时发生错误，请稍后再试"
 }

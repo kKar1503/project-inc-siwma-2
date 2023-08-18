@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import { Box } from '@mui/system';
-import { t } from 'i18next';
 import { FieldValues, Form, FormProvider, useForm } from 'react-hook-form';
 import { useResponsiveness } from '@inc/ui';
 import { Category, Parameter, Product } from '@/utils/api/client/zod';
