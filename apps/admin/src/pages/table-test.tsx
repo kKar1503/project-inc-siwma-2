@@ -93,6 +93,7 @@ const TableTest = () => {
     <Box sx={{ padding: '3rem' }} height="100%">
       <BaseTable
         heading="Desserts"
+        subHeading="A list of desserts"
         rows={rows}
         headers={headCells}
         onPageChange={handleChangePage}

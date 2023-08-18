@@ -1,5 +1,9 @@
 import { alpha } from '@mui/material/styles';
-import { IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -13,6 +17,7 @@ type ToggleEventHandler<T = HTMLButtonElement> = (
 
 type BaseTableToolbarProps = {
   heading: string;
+  subHeading?: string;
   selectedRows: readonly BaseTableData[];
   onToggle?: ToggleEventHandler;
   toggleColumn?: string;
@@ -30,7 +35,7 @@ function selectedRowsAreDisabled(selectedRows: readonly BaseTableData[]) {
 
 const BaseTableToolbar = (props: BaseTableToolbarProps) => {
   // Desctructure props
-  const { heading, selectedRows, onToggle, toggleColumn, onEdit, onDelete } = props;
+  const { heading, subHeading, selectedRows, onToggle, toggleColumn, onEdit, onDelete } = props;
 
   // Get number of selected rows
   const numSelected = selectedRows.length;
@@ -45,6 +50,7 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
             alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
         }),
         flexGrow: 0,
+        minHeight: '88px',
       }}
     >
       {numSelected > 0 ? (
@@ -52,9 +58,22 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-          {heading}
-        </Typography>
+        <Box>
+          <Typography
+            sx={{ flex: 1 }}
+            variant="h5"
+            id="tableTitle"
+            fontWeight="medium"
+            marginBottom="4px"
+          >
+            {heading}
+          </Typography>
+          {subHeading ?? (
+            <Typography variant="body2" id="tableSubTitle">
+              {subHeading}
+            </Typography>
+          )}
+        </Box>
       )}
       {numSelected > 0 && (
         <>

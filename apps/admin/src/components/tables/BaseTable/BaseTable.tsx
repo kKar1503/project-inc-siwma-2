@@ -19,6 +19,7 @@ export interface BaseTableData {
 
 type BaseTableProps = {
   heading: string;
+  subHeading?: string;
   headers: Header[];
   customHeader?: React.ReactNode;
   rows: BaseTableData[];
@@ -38,6 +39,7 @@ type BaseTableProps = {
 /**
  * Build wrapper tables around this component
  * @param heading - The heading of the table
+ * @param subHeading - The subheading of the table
  * @param rows - The data to display in the table
  * @param headers - The headers to display in the table
  * @param customHeader - The custom header to display in the table
@@ -59,6 +61,7 @@ const BaseTable = (props: BaseTableProps) => {
   // Destructure props
   const {
     heading,
+    subHeading,
     rows,
     headers,
     customHeader,
@@ -136,6 +139,7 @@ const BaseTable = (props: BaseTableProps) => {
         {customHeader ?? customHeader}
         <BaseTableToolbar
           heading={heading}
+          subHeading={subHeading}
           selectedRows={selected}
           toggleColumn="enabled"
           onEdit={onEdit ? () => onEdit(selected[0]) : undefined}
@@ -149,6 +153,7 @@ const BaseTable = (props: BaseTableProps) => {
               onSelectAllClick={handleSelectAllClick}
               rowCount={rows.length}
               columns={headers}
+              disabled={rows.length === 0}
             />
             <TableBody>
               {rows.map((row, index) => {
@@ -229,7 +234,7 @@ const BaseTable = (props: BaseTableProps) => {
           </Table>
         </TableContainer>
         <TablePagination
-          sx={{ flexGrow: 0, overflow: 'initial' }}
+          sx={{ flexGrow: 0, overflow: 'initial', paddingBottom: 2 }}
           rowsPerPageOptions={rowsPerPageOptions}
           component="div"
           count={totalCount}
