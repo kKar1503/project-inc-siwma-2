@@ -32,6 +32,7 @@ type BaseTableProps = {
   rowsPerPage: number;
   page: number;
   sx?: React.ComponentProps<typeof Box>['sx'];
+  placeholderMessage?: string;
 };
 
 /**
@@ -50,6 +51,7 @@ type BaseTableProps = {
  * @param rowsPerPage - The number of rows per page
  * @param page - The current page
  * @param sx - Styling
+ * @param placeholderMessage - The message to display when there are no rows
  */
 const BaseTable = (props: BaseTableProps) => {
   const [selected, setSelected] = useState<readonly BaseTableData[]>([]);
@@ -70,6 +72,7 @@ const BaseTable = (props: BaseTableProps) => {
     rowsPerPage,
     page,
     sx,
+    placeholderMessage,
   } = props;
 
   /**
@@ -197,7 +200,7 @@ const BaseTable = (props: BaseTableProps) => {
                   </TableRow>
                 );
               })}
-              {emptyRows > 0 && (
+              {rows.length > 0 && emptyRows > 0 && (
                 <TableRow
                   style={{
                     height: 53 * emptyRows,
@@ -206,6 +209,22 @@ const BaseTable = (props: BaseTableProps) => {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
+              {
+                // Render a placeholder message if there are no rows
+                placeholderMessage
+                  ? rows.length === 0 && (
+                      <TableRow
+                        style={{
+                          height: 53 * rowsPerPage,
+                        }}
+                      >
+                        <TableCell colSpan={6} align="center">
+                          {placeholderMessage}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  : null
+              }
             </TableBody>
           </Table>
         </TableContainer>
