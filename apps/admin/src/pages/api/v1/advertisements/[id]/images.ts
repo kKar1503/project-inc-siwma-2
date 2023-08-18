@@ -1,39 +1,48 @@
 import { apiHandler, formatAPIResponse, parseToNumber } from '@/utils/api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import PrismaClient from '@inc/db';
-import { NotFoundError } from '@inc/errors/src';
-import s3Connection from '@/utils/s3Connection';
-import { select } from '@api/v1/advertisements';
-import { updateImage } from '@/utils/imageUtils';
-import process from 'process';
+import { NotFoundError, ParamError } from '@inc/errors/src';
+import bucket from '@/utils/s3Bucket';
+import { fileToS3Object, getFilesFromRequest } from '@/utils/imageUtils';
 
-const AWS_BUCKET = process.env.AWS_BUCKET as string;
 const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   // Validate payload
-  const id = parseToNumber(req.query.id as string, 'id');
-  // Check if user is admin
-  const isAdmin = true; // this endpoint is admin only
+  const { id } = req.query;
+  if (!id) {
+    throw new ParamError('id');
+  }
 
+  const advertisementId = parseToNumber(id as string, 'id');
   // Get advertisement
   const advertisement = await PrismaClient.advertisements.findUnique({
+    select: {
+      image: true,
+    },
     where: {
-      id,
+      id: advertisementId,
     },
   });
 
   // Throw error if advertisement not found
   if (!advertisement) throw new NotFoundError(`advertisement`);
 
-  const bucket = await s3Connection.getBucket(AWS_BUCKET);
+  const files = await getFilesFromRequest(req);
+  if (files.length === 0) {
+    throw new ParamError('image');
+  }
+
+  const [s3Object] = await Promise.all([
+    bucket.createObject(fileToS3Object(files[0])),
+    advertisement.image !== '' ? bucket.deleteObject(advertisement.image) : null,
+  ]);
 
   // update advertisement
   const updated = await PrismaClient.advertisements.update({
-    select: select(isAdmin),
     data: {
-      image: await updateImage(bucket, advertisement.image, req),
+      image: s3Object.Id,
     },
     where: {
-      id,
+      id: advertisementId,
     },
   });
 
