@@ -117,7 +117,7 @@ const BaseTable = (props: BaseTableProps) => {
   const isSelected = (row: BaseTableData) => selected.find((e) => e.id === row.id) !== undefined;
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? rowsPerPage - rows.length : 0;
+  const emptyRows = rowsPerPage - rows.length;
 
   return (
     <Box width="100%" height="100%" sx={sx}>
