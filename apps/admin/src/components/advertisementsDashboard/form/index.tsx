@@ -47,6 +47,14 @@ interface AdvertisementFormProps {
   companyDict: { [key: string]: string };
 }
 
+// regex for link
+const linkRegex = new RegExp('^(http|https)://' + // protocol (https or http only)
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+  '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
 const parseToPostAdvertisementRequestBody = (values: AdvertisementFormData): PostAdvertisementRequestBody => ({
   companyId: values.companyId.value,
   link: values.link,
@@ -76,9 +84,10 @@ const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
   link: '',
   description: '',
   startDate: DateTime.now(),
-  endDate: DateTime.now(),
+  endDate: DateTime.now().plus({ days: 1 }),
   active: 'active',
 };
+
 
 const validation = (advertisementData: PostAdvertisementRequestBody) => {
   // Initialise an array of errors
@@ -93,16 +102,7 @@ const validation = (advertisementData: PostAdvertisementRequestBody) => {
   // Validate link
   if (!link || link === '') {
     errors.link = new Error('Link is required');
-  }
-  // regex for link
-  const linkRegex = new RegExp('^(https?:\\/\\/)?' + // protocol (optional)
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-    '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-
-  if (!linkRegex.test(link)) {
+  } else if (!linkRegex.test(link)) {
     errors.link = new Error('Link is invalid');
   }
 
@@ -150,6 +150,8 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
     }
   };
 
+  // cannot return Promise or Promise.Reject() or it will be treated as submitted
+  // eslint-disable-next-line consistent-return
   const onHandleSubmit = async (values: AdvertisementFormData) => {
     const advertisementData = parseToPostAdvertisementRequestBody(values);
     const errors = validation(advertisementData);
