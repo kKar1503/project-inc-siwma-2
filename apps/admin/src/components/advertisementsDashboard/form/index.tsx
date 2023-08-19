@@ -30,7 +30,10 @@ interface AdvertisementFormData {
 }
 
 interface AdvertisementFormDataEmpty {
-  companyId: undefined;
+  companyId: {
+    label: 'Select A Company';
+    value: undefined;
+  };
   link: '';
   description: '';
   startDate: DateTime;
@@ -66,7 +69,10 @@ const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
   endDate: DateTime.fromISO(advertisement.endDate as string),
   active: advertisement.active ? 'active' : 'inactive',
 } : {
-  companyId: undefined,
+  companyId: {
+    label: 'Select A Company',
+    value: undefined,
+  },
   link: '',
   description: '',
   startDate: DateTime.now(),
@@ -215,6 +221,10 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
                 label='Company'
                 name='companyId'
                 required
+                customValidation={(obj)=>
+                {
+                  console.log(obj);
+                }}
               />
 
               </FormInputGroup>
