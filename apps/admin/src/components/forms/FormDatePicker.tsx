@@ -1,18 +1,20 @@
-import Skeleton from '@mui/material/Skeleton';
-import TextField from '@mui/material/TextField';
+/* eslint-disable no-nested-ternary */
+import { TextField } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
+import { DateTime } from 'luxon';
 import { FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 type FormInputProps = {
   name: string;
   label: string;
-  placeholder?: string;
   // We do not know what the shape of the object will be
   // eslint-disable-next-line react/forbid-prop-types
   customValidation?: RegisterOptions<FieldValues, string> | undefined;
   required?: boolean;
   success?: boolean;
   isLoading?: boolean;
-  multiline?: boolean;
   sx?: React.ComponentProps<typeof TextField>['sx'];
 };
 
@@ -21,21 +23,21 @@ type FormInputProps = {
  * @type {React.FC<PropTypes.InferProps<typeof propTypes>>}
  * @returns A input that works with react form hook
  */
-const FormInput = ({
+const FormDatePicker = ({
   name,
   label,
-  placeholder,
   customValidation,
   required = false,
   success,
-  multiline,
   isLoading,
   sx,
 }: FormInputProps) => {
   // Use form context
   const {
     register,
-    formState: { errors },
+    setError,
+    setValue,
+    formState: { errors, defaultValues },
   } = useFormContext();
 
   // Hooks inputs to using react form hook
@@ -46,37 +48,40 @@ const FormInput = ({
   ) =>
     register(inputName, {
       required: { value: required, message: `${inputLabel} is required` },
-      maxLength: { value: 255, message: `${inputLabel} can only be 255 characters long` },
       ...options,
     });
+
+  // Determine the border color
+  const borderColor = errors[name] ? 'error.main' : success ? 'success.main' : undefined;
 
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
       <Skeleton height="3.5rem" />
     ) : (
-      <TextField
-        type="text"
-        label={label}
-        InputLabelProps={{
-          required,
-        }}
+      <DatePicker
+        {...hookInput(name, label, customValidation)}
         sx={{
           width: '100%',
           '& .MuiOutlinedInput-root': {
-            '& > fieldset': { borderColor: success ? 'success.main' : undefined },
+            '& > fieldset': { borderColor },
           },
           ...sx,
         }}
-        error={!!errors[name]}
-        color={success ? 'success' : undefined}
-        placeholder={placeholder}
-        {...hookInput(name, label, customValidation)}
-        multiline={multiline}
-        maxRows={multiline ? Infinity : undefined}
+        label={label}
+        format="dd/MM/yyyy"
+        onChange={(value, ctx) => {
+          setValue(name, value, {
+            shouldValidate: true,
+          });
+          if (ctx) {
+            setError(name, { message: ctx.validationError || undefined });
+          }
+        }}
+        defaultValue={defaultValues ? DateTime.fromISO(defaultValues[name]) : undefined}
       />
     )
   );
 };
 
-export default FormInput;
+export default FormDatePicker;
