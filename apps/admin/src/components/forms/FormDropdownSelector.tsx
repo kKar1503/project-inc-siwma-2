@@ -1,8 +1,11 @@
 /* eslint-disable no-nested-ternary */
-import { FormControl, InputLabel, MenuItem, Select, useTheme } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Skeleton from '@mui/material/Skeleton';
+import { useTheme } from '@mui/material/styles';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 export type FormDropdownSelectorOption = {
   label: string;
@@ -64,7 +67,7 @@ const FormDropdownSelector = ({
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
-      <Skeleton className="h-12" />
+      <Skeleton height="3.5rem" />
     ) : (
       <Controller
         name={name}
