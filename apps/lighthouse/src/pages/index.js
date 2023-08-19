@@ -35,6 +35,8 @@ export default function Home({ initialReportData }) {
     setIsLoading(true);
 
     try {
+      console.log('Rescanning URLs:', urls);
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/crawl`, {
         method: 'POST',
         headers: {

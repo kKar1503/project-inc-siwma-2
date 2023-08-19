@@ -1,7 +1,12 @@
 const puppeteer = require('puppeteer');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 module.exports = async function crawl(urls) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: 'new',
+  });
   const { port } = new URL(browser.wsEndpoint());
   const page = await browser.newPage();
 
@@ -23,6 +28,7 @@ module.exports = async function crawl(urls) {
   for (const url of urls) {
     try {
       // Navigate to the target page
+      console.log('Navigating to URL:', url);
       await page.goto(url);
 
       const { lhr } = await lighthouse(url, {
