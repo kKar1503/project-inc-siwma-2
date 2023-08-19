@@ -150,7 +150,9 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
         m: spacing(3),
       })}
     >
-      <Box>
+      <Box sx={{
+        display: 'flex',
+      }}>
         <Upload
           id='advertisement image upload'
           title='Advertisement Image Upload'
