@@ -5,7 +5,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "start:backend": "node server/server.js",
+    "start:backend": "node src/server/server.js",
     "dev:frontend": "next dev",
     "dev": "concurrently \"node src/server/server.js\" \"next dev\""
   },

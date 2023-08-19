@@ -35,7 +35,7 @@ export default function Home({ initialReportData }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/crawl', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/crawl`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
