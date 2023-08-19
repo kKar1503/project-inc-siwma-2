@@ -20,6 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Change .eslintrc.json in Lighthouse
+        run: |
+          rm -rf ./apps/lighthouse/.eslintrc.json
+          mv ./apps/lighthouse/.eslintrc.actions.json ./apps/lighthouse/.eslintrc.json
+
       - name: Setup NodeJS, pnpm and installs packages
         uses: ./.github/actions/setup
 
@@ -49,6 +54,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Change .eslinrc.json in Lighthouse
+        run: |
+          rm -rf ./apps/lighthouse/.eslintrc.json
+          mv ./apps/lighthouse/.eslintrc.actions.json ./apps/lighthouse/.eslintrc.json
 
       - name: Setup NodeJS, pnpm and installs packages
         uses: ./.github/actions/setup
