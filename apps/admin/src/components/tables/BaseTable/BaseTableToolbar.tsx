@@ -50,7 +50,7 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
             alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
         }),
         flexGrow: 0,
-        minHeight: '88px',
+        minHeight: subHeading ? '88px !important' : undefined,
       }}
     >
       {numSelected > 0 ? (
