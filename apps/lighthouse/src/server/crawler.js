@@ -6,14 +6,13 @@ module.exports = async function crawl(urls) {
   const page = await browser.newPage();
 
   // Log in before navigating to the protected pages
-  // Log in before navigating to the protected pages
   const loginPage = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/login/`;
   await page.goto(loginPage);
   await page.waitForSelector('#email'); // Wait for the email input field to appear
-  await page.type('#email', 'xavier@example.com'); // Replace 'your_email' with your actual email
+  await page.type('#email', 'xavier@example.com');
 
   await page.waitForSelector('#password'); // Wait for the password input field to appear
-  await page.type('#password', 'password'); // Replace 'your_password' with your actual password
+  await page.type('#password', 'password');
 
   await page.click('button[type="submit"]');
   await page.waitForNavigation({ waitUntil: 'networkidle0' });
@@ -25,7 +24,6 @@ module.exports = async function crawl(urls) {
     try {
       // Navigate to the target page
       await page.goto(url);
-      // Add any necessary page interactions or waiting as needed
 
       const { lhr } = await lighthouse(url, {
         port,

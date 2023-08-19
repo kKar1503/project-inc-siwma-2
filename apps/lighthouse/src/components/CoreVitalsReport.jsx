@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ScoreDoughnut from './ScoreDoughnut';
 import LoadingSpinner from './LoadingSpinner';
 
-const CoreVitalsReport = ({ onRescan, reportData, isLoading }) => {
+const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
   const [selectedCategory, setSelectedCategory] = useState('Overview');
   const categories = ['Overview', 'Performance'];
 
@@ -22,7 +22,7 @@ const CoreVitalsReport = ({ onRescan, reportData, isLoading }) => {
         acc + (routeData.categories['Performance'] ? routeData.categories['Performance'].score : 0)
       );
     }, 0);
-    return totalScore / reportData.length;
+    return Math.round(totalScore / reportData.length);
   };
 
   const getCategoryData = (category) => {
@@ -104,6 +104,7 @@ const CoreVitalsReport = ({ onRescan, reportData, isLoading }) => {
                         ))}
                       </tr>
                     ) : (
+                      reportData &&
                       reportData.map((routeData, routeIndex) => (
                         <tr key={routeData.id}>
                           {getCategoryData(selectedCategory)[routeIndex].map((data, index) => (
