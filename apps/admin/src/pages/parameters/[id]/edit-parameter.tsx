@@ -70,13 +70,15 @@ const EditParameter = () => {
   const [options, setOptions] = useState<string[]>(
     parameterData.data?.options && Array.isArray(parameterData.data?.options)
       ? parameterData.data?.options
-      : []
+      : ['', '', '']
   );
+
   const [dataType, setDataType] = useState<string>(parameterData.data?.dataType || '');
 
   const [displayNameError, setDisplayNameError] = useState('');
   const [nameError, setNameError] = useState('');
-  const [optionsError, setOptionsError] = useState('');
+  const [optionsError, setOptionsError] = useState<string[]>(Array(options.length).fill(''));
+  const [generalOptionsError, setGeneralOptionsError] = useState<string>('');
 
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
@@ -115,11 +117,13 @@ const EditParameter = () => {
     newOptions[index] = value;
     setOptions(newOptions);
 
+    const newOptionsErrors = [...optionsError];
     if (value.trim() === '') {
-      setOptionsError('Please enter an option');
+      newOptionsErrors[index] = 'Please enter an option';
     } else {
-      setOptionsError('');
+      newOptionsErrors[index] = '';
     }
+    setOptionsError(newOptionsErrors);
   };
 
   const handleAddOption = () => {
@@ -131,39 +135,117 @@ const EditParameter = () => {
   };
 
   const renderCustomOptions = () => {
-    if (type === 'TWO_CHOICES' || type === 'MANY_CHOICES') {
+    if (type === 'TWO_CHOICES') {
       return (
         <>
-          {options.map((options, index) => (
-            <TextField
-              label={`Option ${index + 1}`}
-              placeholder="Long"
-              value={options}
-              onChange={(e) => handleOptionChange(index, e.target.value)}
-              error={!!optionsError}
-              helperText={optionsError}
-              variant="outlined"
-              sx={({ spacing }) => ({
-                width: '100%',
-                mt: spacing(2),
-              })}
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <IconButton onClick={() => handleRemoveOption(index)} color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+          <TextField
+            label="Option 1"
+            placeholder="Long"
+            value={options[0]}
+            onChange={(e) => handleOptionChange(0, e.target.value)}
+            error={!!optionsError[0]}
+            helperText={optionsError[0]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 2"
+            placeholder="Short"
+            value={options[1]}
+            onChange={(e) => handleOptionChange(1, e.target.value)}
+            error={!!optionsError[1]}
+            helperText={optionsError[1]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+        </>
+      );
+    }
+    if (type === 'MANY_CHOICES') {
+      return (
+        <>
+          <TextField
+            label="Option 1"
+            placeholder="Long"
+            value={options[0]}
+            onChange={(e) => handleOptionChange(0, e.target.value)}
+            error={!!optionsError[0]}
+            helperText={optionsError[0]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 2"
+            placeholder="Short"
+            value={options[1]}
+            onChange={(e) => handleOptionChange(1, e.target.value)}
+            error={!!optionsError[1]}
+            helperText={optionsError[1]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 3"
+            placeholder="Short"
+            value={options[2]}
+            onChange={(e) => handleOptionChange(2, e.target.value)}
+            error={!!optionsError[2]}
+            helperText={optionsError[2]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          {options.slice(3).map((option, index) => (
+            <div key={`option-${index + 3}`}>
+              <TextField
+                label={`Option ${index + 4}`}
+                placeholder="Long"
+                value={option}
+                onChange={(e) => handleOptionChange(index + 3, e.target.value)}
+                error={!!optionsError[index + 3]}
+                helperText={optionsError[index + 3]}
+                variant="outlined"
+                sx={({ spacing }) => ({
+                  width: '100%',
+                  mt: spacing(2),
+                })}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment
+                      position="end"
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <IconButton onClick={() => handleRemoveOption(index + 3)} color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
           ))}
           <Button
             onClick={handleAddOption}
@@ -203,7 +285,7 @@ const EditParameter = () => {
         },
         onError: (error) => {
           setError(true);
-        }
+        },
       }
     );
 
@@ -212,10 +294,10 @@ const EditParameter = () => {
   const handleSubmit = () => {
     if (type === 'MANY_CHOICES' && options.length < 3) {
       setOpenMany(true);
-      setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
+      setGeneralOptionsError('Please enter options for parameter type of MANY_CHOICES');
     } else if (type === 'TWO_CHOICES' && options.length < 2) {
       setOpenMany(true);
-      setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
+      setGeneralOptionsError('Please enter options for parameter type of TWO_CHOICES');
     }
     const requestBody: ParameterResponseBody = {
       id,
@@ -430,7 +512,7 @@ const EditParameter = () => {
                   <OptionsErrorModal
                     open={openMany}
                     setOpen={setOpenMany}
-                    errorMessage={optionsError}
+                    errorMessage={generalOptionsError}
                   />
                   <SuccessModal
                     title="Successfully Edited!"
@@ -446,7 +528,6 @@ const EditParameter = () => {
                     open={openError}
                     setOpen={setError}
                     buttonText="Return"
-                    path="/parameters"
                   />
                 </Box>
               </CardActions>
