@@ -33,16 +33,24 @@ const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
           <ScoreDoughnut score={averageScore} category="Performance" />
         </div>
       );
-      return [<div className="flex">{doughnut}</div>];
+      return [
+        <div className="flex" key={0}>
+          {doughnut}
+        </div>,
+      ];
     }
     return reportData.map((routeData) => {
-      return getCategoryColumns(category).map((column) => {
+      return getCategoryColumns(category).map((column, index) => {
         if (column === 'Route') {
           return routeData.route;
         }
         if (column === 'score') {
           return (
-            <ScoreDoughnut score={routeData.categories[category][column]} category={category} />
+            <ScoreDoughnut
+              score={routeData.categories[category][column]}
+              category={category}
+              key={routeData.route + column + index}
+            />
           );
         }
         return routeData.categories[category][column];
