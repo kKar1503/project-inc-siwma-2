@@ -21,6 +21,7 @@ type BaseTableToolbarProps = {
   selectedRows: readonly BaseTableData[];
   onToggle?: ToggleEventHandler;
   toggleColumn?: string;
+  toolbarButtons?: React.ReactNode;
   onEdit?: React.MouseEventHandler<HTMLButtonElement>;
   onDelete?: React.MouseEventHandler<HTMLButtonElement>;
 };
@@ -35,7 +36,7 @@ function selectedRowsAreDisabled(selectedRows: readonly BaseTableData[]) {
 
 const BaseTableToolbar = (props: BaseTableToolbarProps) => {
   // Desctructure props
-  const { heading, subHeading, selectedRows, onToggle, toggleColumn, onEdit, onDelete } = props;
+  const { heading, subHeading, selectedRows, onToggle, toggleColumn, toolbarButtons, onEdit, onDelete } = props;
 
   // Get number of selected rows
   const numSelected = selectedRows.length;
@@ -58,21 +59,24 @@ const BaseTableToolbar = (props: BaseTableToolbarProps) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <Box>
-          <Typography
-            sx={{ flex: 1 }}
-            variant="h5"
-            id="tableTitle"
-            fontWeight="medium"
-            marginBottom="4px"
-          >
-            {heading}
-          </Typography>
-          {subHeading ?? (
-            <Typography variant="body2" id="tableSubTitle">
-              {subHeading}
+        <Box display="flex" justifyContent="space-between" width='100%'>
+          <Box>
+            <Typography
+              sx={{ flex: 1 }}
+              variant="h5"
+              id="tableTitle"
+              fontWeight="medium"
+              marginBottom="4px"
+            >
+              {heading}
             </Typography>
-          )}
+            {subHeading ?? (
+              <Typography variant="body2" id="tableSubTitle">
+                {subHeading}
+              </Typography>
+            )}
+          </Box>
+          {toolbarButtons}
         </Box>
       )}
       {numSelected > 0 && (

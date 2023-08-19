@@ -34,6 +34,7 @@ type BaseTableProps = {
   page: number;
   sx?: React.ComponentProps<typeof Box>['sx'];
   placeholderMessage?: string;
+  toolbarButtons?: React.ReactNode;
 };
 
 /**
@@ -54,6 +55,7 @@ type BaseTableProps = {
  * @param page - The current page
  * @param sx - Styling
  * @param placeholderMessage - The message to display when there are no rows
+ * @param toolbarButtons - The buttons to display in right side of the toolbar
  */
 const BaseTable = (props: BaseTableProps) => {
   const [selected, setSelected] = useState<readonly BaseTableData[]>([]);
@@ -76,6 +78,7 @@ const BaseTable = (props: BaseTableProps) => {
     page,
     sx,
     placeholderMessage,
+    toolbarButtons,
   } = props;
 
   /**
@@ -141,6 +144,7 @@ const BaseTable = (props: BaseTableProps) => {
           heading={heading}
           subHeading={subHeading}
           selectedRows={selected}
+          toolbarButtons={toolbarButtons}
           toggleColumn="enabled"
           onEdit={onEdit ? () => onEdit(selected[0]) : undefined}
           onToggle={onToggle ? (e, toggled) => onToggle(toggled, selected) : undefined}
