@@ -9,15 +9,15 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import PlusIcon from '@mui/icons-material/Add';
-import { MouseEventHandler } from 'react';
+import React, { MouseEventHandler } from 'react';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
+import Link from 'next/link';
 
 interface Props {
   advertisements: { [key: string]: Advertisment };
   selected: readonly string[];
   onDelete: MouseEventHandler<HTMLDivElement>;
   onEdit: MouseEventHandler<HTMLDivElement>;
-  onAdd: MouseEventHandler<HTMLDivElement>;
   refetchData: () => void;
   onSetActive: MouseEventHandler<HTMLDivElement>;
   onSetInactive: MouseEventHandler<HTMLDivElement>;
@@ -27,7 +27,6 @@ const MainHeader = ({
                       advertisements,
                       selected,
                       onDelete,
-                      onAdd,
                       onEdit,
                       onSetActive,
                       onSetInactive,
@@ -98,11 +97,13 @@ const MainHeader = ({
         </>
         )
         : <>
-          <Tooltip title='Create Advertisement' onClick={onAdd}>
+          <Link href='/advertisement-upload'>
+            <Tooltip title='Create Advertisement'>
             <IconButton>
               <PlusIcon />
             </IconButton>
           </Tooltip>
+          </Link>
           <Tooltip title='Refresh Data' onClick={refetchData}>
             <IconButton>
               <RefreshIcon />

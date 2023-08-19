@@ -99,9 +99,6 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   const onEdit = (id: string) => {
     router.push(`/advertisement/edit/${id}`);
   };
-  const onAdd = () => {
-    router.push(`/advertisement-upload`);
-  };
 
   const onSetActive = (ids: readonly string[]) => {
     Promise.all(ids.map((id) => UpdateAdvertisement(id, { active: true }, undefined))).then(updateAdvertisementsTable);
@@ -131,7 +128,6 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
           companies={companies}
           onDelete={onDelete}
           onEdit={onEdit}
-          onAdd={onAdd}
           refetchData={refetchData}
           onSetActive={onSetActive}
           onSetInactive={onSetInactive}
