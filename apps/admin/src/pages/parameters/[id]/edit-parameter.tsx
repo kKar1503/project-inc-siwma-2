@@ -79,6 +79,7 @@ const EditParameter = () => {
   const [nameError, setNameError] = useState('');
   const [optionsError, setOptionsError] = useState<string[]>(Array(options.length).fill(''));
   const [generalOptionsError, setGeneralOptionsError] = useState<string>('');
+  const [generalError, setGeneralError] = useState<string>('');
 
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
@@ -275,19 +276,32 @@ const EditParameter = () => {
   };
 
   const useUpdateParamMutation = (parameterId: string) =>
-    useMutation(
-      (updatedParameterData: ParameterResponseBody) =>
-        updateParameter(updatedParameterData, parameterId),
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries('parameter');
-          setEditItem(true);
-        },
-        onError: (error) => {
-          setError(true);
-        },
-      }
-    );
+  useMutation(
+    (updatedParameterData: ParameterResponseBody) =>
+      updateParameter(updatedParameterData, parameterId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('parameter');
+        setEditItem(true);
+      },
+      onError: (error) => {
+        setError(true);
+        if (typeof parameterData.error === 'string') {
+          setGeneralError(parameterData.error);
+        } else if (typeof parameterData.error === 'object' && parameterData.error !== null) {
+          const errorObject = parameterData.error as Record<string, any>;
+          if ('message' in errorObject && typeof errorObject.message === 'string') {
+            setGeneralError(errorObject.message);
+          } else {
+            setGeneralError('An unknown error occurred.');
+          }
+        } else {
+          setGeneralError('An unknown error occurred.');
+        }
+      },
+    }
+  );
+
 
   const mutation = useUpdateParamMutation(id);
 
@@ -318,6 +332,7 @@ const EditParameter = () => {
           'status' in (parameterData.error as any) &&
           (parameterData.error as any).status === 404
         ) {
+          setGeneralError((parameterData.error as any)|| 'An unknown error occurred.');
           router.replace('/404');
         } else {
           router.replace('/500');
@@ -524,7 +539,7 @@ const EditParameter = () => {
                   />
                   <ErrorModal
                     title="Error"
-                    content="An error has occured."
+                    content={generalError}
                     open={openError}
                     setOpen={setError}
                     buttonText="Return"

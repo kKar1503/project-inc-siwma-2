@@ -25,6 +25,7 @@ import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
 import { useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import createParameter from '@/middlewares/createParameter';
+import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';
@@ -45,6 +46,17 @@ const usePostParameter = (paramBody: ParameterResponseBody) => {
   return data;
 };
 
+const useGetParameter = (parameterId: string) => {
+  const { data, error, isError, isFetched } = useQuery(
+    'parameter',
+    async () => fetchParameterById(parameterId),
+    {
+      enabled: parameterId !== undefined,
+    }
+  );
+  return { data, error, isError, isFetched };
+};
+
 const CreateParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
@@ -63,11 +75,13 @@ const CreateParameter = () => {
   const [displayNameError, setDisplayNameError] = useState('');
   const [optionsError, setOptionsError] = useState<string[]>(Array(options.length).fill(''));
   const [generalOptionsError, setGeneralOptionsError] = useState<string>('');
+  const [generalError, setGeneralError] = useState<string>('');
 
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
   const [createItem, setCreateItem] = useState<boolean>(false);
   const [openError, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -281,6 +295,17 @@ const CreateParameter = () => {
       }
     } catch (error) {
       setError(true);
+      if (typeof error === 'string') {
+        setGeneralError(error);
+      } else if (typeof error === 'object' && error !== null) {
+        if ('message' in error && typeof error.message === 'string') {
+          setGeneralError(error.message);
+        } else {
+          setGeneralError('An unknown error occurred.');
+        }
+      } else {
+        setGeneralError('An unknown error occurred.');
+      }
     }
   };
 
@@ -473,7 +498,7 @@ const CreateParameter = () => {
           />
           <ErrorModal
             title="Error"
-            content="An error has occured"
+            content={generalError}
             open={openError}
             setOpen={setError}
             buttonText="Return"
