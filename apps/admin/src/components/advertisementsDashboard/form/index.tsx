@@ -80,6 +80,58 @@ const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
   active: 'active',
 };
 
+const validation = (advertisementData: PostAdvertisementRequestBody) => {
+  // Initialise an array of errors
+  const errors: { [key: string]: Error } = {};
+  const { companyId, link, description, startDate, endDate, active } = advertisementData;
+
+  // Validate company ID
+  if (!companyId || companyId === '') {
+    errors.companyId = new Error('Company is required');
+  }
+
+  // Validate link
+  if (!link || link === '') {
+    errors.link = new Error('Link is required');
+  }
+  // regex for link
+  const linkRegex = new RegExp('^(https?:\\/\\/)?' + // protocol (optional)
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+    '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+  if (!linkRegex.test(link)) {
+    errors.link = new Error('Link is invalid');
+  }
+
+  // Validate description
+  // no validation needed
+
+  // Validate start date
+  if (!startDate || startDate === '') {
+    errors.startDate = new Error('Start Date is required');
+  }
+
+  // Validate end date
+  if (!endDate || endDate === '') {
+    errors.endDate = new Error('End Date is required');
+  }
+
+  // validate start date is before end date
+  if (startDate > endDate) {
+    errors.startDate = new Error('Start Date must be before End Date');
+    errors.endDate = new Error('End Date must be after Start Date');
+  }
+
+  // Validate active
+  if (active === undefined) {
+    errors.active = new Error('Active is required');
+  }
+
+  return errors;
+};
 const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: AdvertisementFormProps) => {
   const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -89,7 +141,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
     defaultValues: getDefaultValue(advertisement, companyDict),
   });
 
-  const { control, handleSubmit, formState } = formHook;
+  const { control, handleSubmit, setError, formState } = formHook;
   const { isSubmitting, isSubmitSuccessful } = formState;
 
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
@@ -100,8 +152,18 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
 
   const onHandleSubmit = async (values: AdvertisementFormData) => {
     const advertisementData = parseToPostAdvertisementRequestBody(values);
-    return onSubmit(advertisementData, selectedFile || undefined);
-  };
+    const errors = validation(advertisementData);
+    // Check if there were any errors
+    if (Object.keys(errors).length === 0) return onSubmit(advertisementData, selectedFile || undefined);
+
+    Object.keys(values).forEach((inputName) => {
+      if (errors[inputName]) {
+        setError(inputName as Parameters<typeof setError>['0'], {
+          message: errors[inputName].message,
+        });
+      }
+    });
+  }
 
   const onHandleError = async () => {
     // This function just needs to exist, no logic needed
@@ -223,10 +285,6 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
                 label='Company'
                 name='companyId'
                 required
-                customValidation={(obj)=>
-                {
-                  console.log(obj);
-                }}
               />
 
               </FormInputGroup>
@@ -324,5 +382,6 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
     </Box>
   );
 };
+
 
 export default AdvertisementForm;
