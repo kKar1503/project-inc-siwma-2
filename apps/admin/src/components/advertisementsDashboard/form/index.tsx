@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { Modal, useResponsiveness } from '@inc/ui';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
-import Upload, { AcceptedFileTypes, FileUploadProps } from '@/components/FileUpload/FileUploadBase';
+import { FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import Typography from '@mui/material/Typography';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import { useRouter } from 'next/router';
@@ -16,6 +16,7 @@ import FormToggleButton from '@/components/forms/FormToggleButton';
 import FormDatePicker from '@/components/forms/FormDatePicker';
 import FormInputGroup from '@/components/forms/FormInputGroup';
 import { DateTime } from 'luxon';
+import FormImage from '@/components/forms/FormImage';
 
 interface AdvertisementFormData {
   companyId: {
@@ -27,6 +28,7 @@ interface AdvertisementFormData {
   startDate: DateTime;
   endDate: DateTime;
   active: 'active' | 'inactive';
+  image: string | File;
 }
 
 interface AdvertisementFormDataEmpty {
@@ -39,6 +41,7 @@ interface AdvertisementFormDataEmpty {
   startDate: DateTime;
   endDate: DateTime;
   active: 'active';
+  image: undefined;
 }
 
 interface AdvertisementFormProps {
@@ -46,7 +49,6 @@ interface AdvertisementFormProps {
   onSubmit: (body: PostAdvertisementRequestBody, image: File | undefined) => Promise<void>;
   companyDict: { [key: string]: string };
 }
-
 // regex for link
 const linkRegex = new RegExp('^(http|https)://' + // protocol (https or http only)
   '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
@@ -55,13 +57,14 @@ const linkRegex = new RegExp('^(http|https)://' + // protocol (https or http onl
   '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
   '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
 
-const parseToPostAdvertisementRequestBody = (values: AdvertisementFormData): PostAdvertisementRequestBody => ({
+const parseToPostAdvertisementRequestBody = (values: AdvertisementFormData): PostAdvertisementRequestBody & { image: File |string| undefined } => ({
   companyId: values.companyId.value,
   link: values.link,
   description: values.description,
   startDate: values.startDate.toISODate() as string,
   endDate: values.endDate.toISODate() as string,
   active: values.active === 'active',
+  image: values.image,
 });
 
 const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
@@ -76,6 +79,7 @@ const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
   startDate: DateTime.fromISO(advertisement.startDate as string),
   endDate: DateTime.fromISO(advertisement.endDate as string),
   active: advertisement.active ? 'active' : 'inactive',
+  image: advertisement.image || '',
 } : {
   companyId: {
     label: 'Select A Company',
@@ -86,13 +90,14 @@ const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
   startDate: DateTime.now(),
   endDate: DateTime.now().plus({ days: 1 }),
   active: 'active',
+  image: undefined,
 };
 
 
-const validation = (advertisementData: PostAdvertisementRequestBody) => {
+const validation = (advertisementData: PostAdvertisementRequestBody & { image: File | string | undefined }) => {
   // Initialise an array of errors
   const errors: { [key: string]: Error } = {};
-  const { companyId, link, description, startDate, endDate, active } = advertisementData;
+  const { companyId, link, description, startDate, endDate, active, image } = advertisementData;
 
   // Validate company ID
   if (!companyId || companyId === '') {
@@ -130,12 +135,20 @@ const validation = (advertisementData: PostAdvertisementRequestBody) => {
     errors.active = new Error('Active is required');
   }
 
+  // Validate image
+  if (image === undefined) {
+    errors.image = new Error('Image is required');
+  }
+
   return errors;
 };
+
 const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: AdvertisementFormProps) => {
   const router = useRouter();
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isXs, isSm, isMd, isLg] = useResponsiveness(['xs', 'sm', 'md', 'lg']);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const [file, setFile] = useState<File | null>(null);
 
   const formHook = useForm({
     defaultValues: getDefaultValue(advertisement, companyDict),
@@ -146,7 +159,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
 
   const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
     if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
+      setFile(event.target.files[0]);
     }
   };
 
@@ -155,8 +168,14 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
   const onHandleSubmit = async (values: AdvertisementFormData) => {
     const advertisementData = parseToPostAdvertisementRequestBody(values);
     const errors = validation(advertisementData);
+    // if (advertisement === undefined && file === null) {
+    //   errors.image = new Error('Image is required');
+    // }
     // Check if there were any errors
-    if (Object.keys(errors).length === 0) return onSubmit(advertisementData, selectedFile || undefined);
+    if (Object.keys(errors).length === 0) {
+      const image =   typeof values.image === 'string' ? undefined : values.image;
+      return onSubmit(advertisementData, image || undefined);
+    }
 
     Object.keys(values).forEach((inputName) => {
       if (errors[inputName]) {
@@ -165,6 +184,8 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
         });
       }
     });
+
+    setImageError(errors.image ? errors.image.message : null);
   }
 
   const onHandleError = async () => {
@@ -203,8 +224,11 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
     };
   }, [isSm, isMd, isLg]);
 
+  const defaultImage = (advertisement === undefined || advertisement.image === null || advertisement.image === '') ? undefined : advertisement.image;
+  console.log(defaultImage);
 
-  if (isSubmitting) return <SpinnerPage />;
+
+  if (isSubmitting && !imageError) return <SpinnerPage />;
 
   return (
     <Box
@@ -214,21 +238,6 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
         m: spacing(3),
       })}
     >
-      <Box sx={{
-        display: 'flex',
-      }}>
-        <Upload
-          id='advertisement image upload'
-          title='Advertisement Image Upload'
-          description='Select a JPG or PNG file to upload as an advertisement image.'
-          selectedFile={selectedFile}
-          changeHandler={handleFileChange}
-          accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-          maxWidth='100%'
-          maxHeight='500px'
-        />
-      </Box>
-
       <ModuleBase width='100%' sx={sx}>
         <Box
           component='form'
@@ -250,7 +259,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
             {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
             <Modal setOpen={(): void => {
             }}
-                   open={isSubmitSuccessful}
+                   open={isSubmitSuccessful && !imageError}
               buttonColor='#0000FF'
               icon='info'
               title='Confirmation'
@@ -274,6 +283,18 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
             }}
           >
             <FormProvider {...formHook}>
+              <FormInputGroup
+                label='Advertisement Image'
+                name='image'
+                required
+              >
+                <FormImage
+                  name='image'
+                  label='Advertisement Image'
+                  required
+                />
+              </FormInputGroup>
+
               <FormInputGroup
                 label='Company'
                 name='companyId'
