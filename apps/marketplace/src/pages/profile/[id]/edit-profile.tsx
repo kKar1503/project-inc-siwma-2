@@ -149,7 +149,7 @@ const EditProfile = () => {
         setEmailError('Invalid email');
       } else if ((error as Error).message === 'Invalid bio') {
         setBioError('Invalid bio');
-      } 
+      }
     }
   };
 
@@ -180,50 +180,23 @@ const EditProfile = () => {
     setOpenLeave(true);
   };
 
-  const gridCols = useMemo(() => {
-    if (isSm) {
-      return {
-        py: spacing(3),
-        px: '20px',
-        height: '100%;',
-        width: '100%',
-        justifyContent: 'center',
-      };
-    }
-    if (isMd) {
-      return {
-        py: spacing(3),
-        px: '40px',
-        height: '100%;',
-        width: '100%',
-        justifyContent: 'center',
-      };
-    }
-    if (isLg) {
-      return {
-        py: spacing(3),
-        px: '60px',
-        height: '100%;',
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-      };
-    }
-    return {
-      py: spacing(3),
-      px: '20px',
-      height: '100%;',
-      width: '100%',
-    };
-  }, [isSm, isMd, isLg]);
-
   return (
     <>
       <Head>
         <title>{t('Edit Profile')}</title>
       </Head>
 
-      <Grid sx={gridCols}>
+      <Grid
+        sx={{
+          py: spacing(3),
+          // eslint-disable-next-line no-nested-ternary
+          px: isMd ? '40px' : isLg ? '60px' : '20px',
+          height: '100%;',
+          width: '100%',
+          display: isLg ? 'flex' : undefined,
+          justifyContent: isSm || isMd || isLg ? 'center' : undefined,
+        }}
+      >
         {userDetails && <ProfileDetailCard data={userDetails} />}
         <Box
           sx={{
@@ -416,7 +389,7 @@ const EditProfile = () => {
                       name.trim() === '' ||
                       mobileNumber.trim() === '' ||
                       email.trim() === '' ||
-                      bio.trim() === '' 
+                      bio.trim() === ''
                     }
                   >
                     {t('Save Changes')}
