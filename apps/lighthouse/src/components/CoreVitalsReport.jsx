@@ -4,7 +4,36 @@ import LoadingSpinner from './LoadingSpinner';
 
 const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
   const [selectedCategory, setSelectedCategory] = useState('Overview');
-  const categories = ['Overview', 'Performance'];
+  const categories = ['Overview', 'Performance', 'Lighthouse'];
+
+  const LighthouseDescription = () => (
+    <div className="space-y-4 h-[calc(100vh-100px)]">
+      <h3 className="text-2xl font-semibold mb-2">Understanding Lighthouse</h3>
+      <p className="text-lg">
+        Lighthouse is not just another tool; it's your companion in enhancing web page quality. With
+        its automated capabilities, you get insights across multiple dimensions.
+      </p>
+
+      <h4 className="text-xl font-medium mb-2">Key Metrics at a Glance:</h4>
+      <ul className="list-decimal pl-5 space-y-2">
+        <li className="text-lg">
+          <strong>CLS (Cumulative Layout Shift):</strong> Ever noticed the annoying jumps in a
+          webpage? That's layout shift. CLS captures this experience, scoring lower for minimal
+          shifts. Essentially, the less you irritate your user, the better your score!
+        </li>
+        <li className="text-lg">
+          <strong>LCP (Largest Contentful Paint):</strong> Think of LCP as a timer that stops when
+          the main content of your page becomes visible. It's a telling sign of how quickly your
+          users can actually start consuming the content they came for.
+        </li>
+        <li className="text-lg">
+          <strong>FID (First Input Delay):</strong> FID is all about responsiveness. It measures the
+          gap between your user's first interaction and when the browser responds to it. A short
+          delay? Your users will love you for it.
+        </li>
+      </ul>
+    </div>
+  );
 
   const getCategoryColumns = (category) => {
     if (!reportData || reportData.length === 0 || !reportData[0].categories[category]) {
@@ -85,51 +114,59 @@ const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
 
         <div className="col-span-4 bg-gray-700 rounded-md p-0">
           <div className="p-4">
-            <h2 className="text-lg font-medium">{selectedCategory} Report</h2>
-            <div className="relative overflow-x-auto scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">
-              <div className="custom-scroll overflow-y-scroll h-[calc(100vh-200px)]">
-                <table className="mt-2 w-full">
-                  <thead>
-                    <tr>
-                      {getCategoryColumns(selectedCategory).map((column) => (
-                        <th
-                          key={column}
-                          className="text-left py-2 px-4 sticky top-0 bg-gray-700 z-10"
-                        >
-                          {column}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* If the selected category is 'Overview', show the single average doughnut. Otherwise, show the route data */}
-                    {selectedCategory === 'Overview' ? (
+            {selectedCategory !== 'Lighthouse' && (
+              <h2 className="text-lg font-medium">{selectedCategory} Report</h2>
+            )}
+            {selectedCategory === 'Lighthouse' ? (
+              <LighthouseDescription />
+            ) : (
+              <div className="relative overflow-x-auto scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">
+                <div className="custom-scroll overflow-y-scroll h-[calc(100vh-200px)]">
+                  <table className="mt-2 w-full">
+                    <thead>
                       <tr>
-                        {getCategoryData(selectedCategory).map((data, index) => (
-                          <td key={index} className="py-2 px-4">
-                            {data}
-                          </td>
+                        {getCategoryColumns(selectedCategory).map((column) => (
+                          <th
+                            key={column}
+                            className="text-left py-2 px-4 sticky top-0 bg-gray-700 z-10"
+                          >
+                            {column}
+                          </th>
                         ))}
                       </tr>
-                    ) : (
-                      reportData &&
-                      reportData.map((routeData, routeIndex) => (
-                        <tr key={routeData.id}>
-                          {getCategoryData(selectedCategory)[routeIndex].map((data, index) => (
+                    </thead>
+                    <tbody>
+                      {/* If the selected category is 'Overview', show the single average doughnut. Otherwise, show the route data */}
+                      {selectedCategory === 'Overview' ? (
+                        <tr>
+                          {getCategoryData(selectedCategory).map((data, index) => (
                             <td key={index} className="py-2 px-4">
                               {data}
                             </td>
                           ))}
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        reportData &&
+                        reportData.map((routeData, routeIndex) => (
+                          <tr key={routeData.id}>
+                            {getCategoryData(selectedCategory)[routeIndex].map((data, index) => (
+                              <td key={index} className="py-2 px-4">
+                                {data}
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={onRescan}>
-              Rescan
-            </button>
+            )}
+            {selectedCategory !== 'Lighthouse' && (
+              <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={onRescan}>
+                Rescan
+              </button>
+            )}
           </div>
         </div>
       </div>
