@@ -214,5 +214,15 @@
   "Posted on": "Posted on",
 
   "Share": "Share",
-  "share": "share"
+  "share": "share",
+
+  "Sign In": "Sign In",
+  "SIGN IN" : "SIGN IN",
+  "Forgot your password?" : "Forgot your password?",
+  "Remember me" : "Remember me",
+  "Your password" : "Your password",
+  "Your company e-mail" : "Your company e-mail",
+  "Please sign in to your account" : "Please sign in to your account",
+  "E-mail" : "E-mail",
+  "Password" : "Password"
 }
