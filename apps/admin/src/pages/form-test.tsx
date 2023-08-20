@@ -12,6 +12,7 @@ import {
   RadioSelectOption,
   FormDropdownSelector,
   FormToggleButton,
+  FormDatePicker,
 } from '../components/forms';
 
 const dropdownOptions = [
@@ -50,6 +51,7 @@ const obtainDefaultValues = () => ({
   dropdownInput: dropdownOptions[0],
   pillSelectInput: pillSelectOptions[1].value,
   toggleSelectInput: pillSelectOptions[1].value,
+  dateSelectInput: new Date().toISOString(),
 });
 
 const FormTest = () => {
@@ -207,6 +209,17 @@ const FormTest = () => {
           >
             {/** @ts-ignore */}
             <FormToggleButton options={pillSelectOptions} placeholder="Sample Placeholder" />
+          </FormInputGroup>
+          <FormInputGroup
+            sx={{ flex: 1 }}
+            label="Date Select Input"
+            name="dateSelectInput"
+            isLoading={false}
+            success={submitSuccess}
+            required
+          >
+            {/** @ts-ignore */}
+            <FormDatePicker />
           </FormInputGroup>
         </FormProvider>
         <Button type="submit" variant="outlined">
