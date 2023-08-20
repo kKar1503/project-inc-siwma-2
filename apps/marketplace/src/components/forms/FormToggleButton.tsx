@@ -113,7 +113,7 @@ const FormToggleButton = ({
                     padding: 2,
                     '&:not(:last-child)': {
                       '&:not(.Mui-disabled)': {
-                        borderRight: `1px solid ${palette.primary[100]}`,
+                        borderRight: `1px solid ${borderColor}`,
                       },
                     },
                     '&:disabled': {
