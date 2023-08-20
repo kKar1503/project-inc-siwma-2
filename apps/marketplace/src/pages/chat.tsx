@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
-import Pusher from 'pusher-js';
+import Pusher, { Channel } from 'pusher-js';
 
 // ** Components Imports **
 import ChatHeader from '@/components/rtc/ChatHeader';
@@ -47,30 +47,6 @@ type RoomData = ChatListProps & {
 };
 
 const ChatRoom = () => {
-  // useEffect(() => {
-  //     const pusher = new Pusher('APP_KEY', {
-  //       cluster: 'APP_CLUSTER',
-  //       encrypted: true
-  //     });
-  //     const channel = pusher.subscribe('chat');
-  //     channel.bind('message', data => {
-  //       this.setState({ chats: [...this.state.chats, data], test: '' });
-  //     });
-  //     this.handleTextChange = this.handleTextChange.bind(this);
-  //   }
-
-  //   handleTextChange(e) {
-  //     if (e.keyCode === 13) {
-  //       const payload = {
-  //         username: this.state.username,
-  //         message: this.state.text
-  //       };
-  //       axios.post('http://localhost:5000/message', payload);
-  //     } else {
-  //       this.setState({ text: e.target.value });
-  //     }
-  //   }, []);
-
   // ** Hooks **
   const { data } = useSession();
   const router = useRouter();
@@ -83,7 +59,8 @@ const ChatRoom = () => {
   // ** MUI **
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
-  // ** Socket Related **z
+  // ** Pusher Related **
+  let pusher: Pusher | null = null;
   const [roomId, setRoomId] = useState('');
   const [rooms, setRooms] = useState<RoomData[]>([]);
   const [messages, setMessages] = useState<ChatData[]>([]);
@@ -92,24 +69,48 @@ const ChatRoom = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputText, setInputText] = useState('');
 
-  // ** Update Chat List **
-  // const updateChatList = (message: Messages) => {
-  //   setRooms((prev) =>
-  //     prev.map((room) => {
-  //       console.log('iterating rooms', room);
-  //       if (room.id !== message.room) {
-  //         return room;
-  //       }
-  //       const newRoom = { ...room };
+  useEffect(() => {
+    console.log('roomId changed', roomId);
+    if (pusher === null) {
+      const pusherKey = process.env.NEXT_PUBLIC_PUSHER_KEY;
+      const pusherCluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
 
-  //       newRoom.time = new Date(message.createdAt);
-  //       newRoom.latestMessage = ''; // TODO
-  //       newRoom.contentType = message.message.contentType;
+      if (!pusherKey || !pusherCluster) {
+        console.log('pusher key or cluster not found');
+        return;
+      }
+      
+      pusher = new Pusher(pusherKey, {
+        cluster: pusherCluster,
+      });
 
-  //       return newRoom;
-  //     })
-  //   );
-  // };
+      console.log('pusher created', pusher);
+    }
+
+    if (roomId === '') {
+      console.log('roomId is empty');
+      // Unsubscribe from all channels
+      pusher.unbind_all();
+    }
+
+    console.log('still here!');
+
+    const channel = pusher.subscribe(roomId);
+
+    if (channel === null) {
+      console.log('channel not found');
+      return;
+    }
+
+    // channel.bind('message', (data: Messages) => {
+    channel.bind('pusher:subscription_succeeded', () => {
+      console.log('subscription succeeded');
+      // retrieve all messages
+      
+    });
+
+    channel.unbind('message');
+  }, [roomId]);
 
   // ** useEffect **
   useEffect(() => {
@@ -151,6 +152,19 @@ const ChatRoom = () => {
 
       setRooms(formattedRooms);
     });
+
+    // this.handleTextChange = this.handleTextChange.bind(this);
+
+    // handleTextChange(e) {
+    //   if (e.keyCode === 13) {
+    //     const payload = {
+    //       username: this.state.username,
+    //       message: this.state.text
+    //     };
+    //     axios.post('http://localhost:5000/message', payload);
+    //   } else {
+    //     this.setState({ text: e.target.value });
+    //   }
   }, []);
 
   // ** Memos **
@@ -242,8 +256,10 @@ const ChatRoom = () => {
               roomIdRef.current = roomId;
             }}
             onChange={(e) => {
-              const element = e.currentTarget as HTMLInputElement;
-              const { value } = element;
+              // TODO: Figure out what this is for
+              // const element = e.currentTarget as HTMLInputElement;
+              // const { value } = element;
+              // console.log('ONCHANGE', value);
             }}
           />
         </Box>
