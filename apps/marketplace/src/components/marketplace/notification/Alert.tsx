@@ -1,6 +1,6 @@
 import MUIAlert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import { useResponsiveness } from '@inc/ui';
 
 export type AlertProps = {

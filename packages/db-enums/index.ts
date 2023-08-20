@@ -46,6 +46,7 @@ export const ReasonType = {
 export const UnitType = {
   'kg': 'kg',
   'm': 'm',
+  'mm': 'mm',
   'unit': 'unit',
 } as const;
 

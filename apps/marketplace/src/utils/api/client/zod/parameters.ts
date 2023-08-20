@@ -1,4 +1,4 @@
-import { DataType, ParameterType } from '@inc/db-enums';
+import { DataType, ParameterType, UnitType } from '@inc/db-enums';
 import { z } from 'zod';
 
 // -- Define properties -- //
@@ -8,7 +8,9 @@ const displayName = z.string();
 const type = z.nativeEnum(ParameterType);
 const dataType = z.nativeEnum(DataType);
 const active = z.boolean().optional();
+const unit = z.nativeEnum(UnitType);
 const options = z.string().array();
+const unitType = z.nativeEnum(UnitType)
 
 // -- Define schema -- //
 const parameter = z.object({
@@ -18,6 +20,7 @@ const parameter = z.object({
   type,
   dataType,
   active,
+  unit,
   options: options.optional(),
 });
 
@@ -27,11 +30,17 @@ const createParameter = z.object({ parameterId: id });
 // GET /parameters
 const getParameters = z.array(parameter);
 
+// GET /parameters
+const getParameter = parameter;
+
 // GET /parameters/types
 const getParameterTypes = z.array(type);
 
 // GET /parameters/data-types
 const getParameterDataTypes = z.array(dataType);
+
+// GET /parameters/units
+const getParameterUnits = z.array(unitType);
 
 // PUT /parameters/:id
 const updateParameter = parameter;
@@ -48,7 +57,9 @@ export type Parameter = z.infer<typeof parameter>;
 export default {
   create: createParameter,
   getAll: getParameters,
+  getById: getParameter,
   getTypes: getParameterTypes,
+  getUnits: getParameterUnits,
   getDataTypes: getParameterDataTypes,
   update: updateParameter,
   toggle: toggleParameter,

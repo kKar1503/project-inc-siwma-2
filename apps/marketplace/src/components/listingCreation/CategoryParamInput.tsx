@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Parameter } from '@/utils/api/client/zod';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
 import { DataType, ParameterType } from '@inc/db-enums';
 import { FormDropdownSelector, FormInputGroup, FormTextInput, FormToggleButton } from '../forms';
@@ -12,6 +12,12 @@ type CategoryParamInputProps = {
   submitSuccess: boolean;
   required?: boolean;
   sx?: React.ComponentProps<typeof FormInputGroup>['sx'];
+};
+
+// -- Constants -- //
+const MeasurementUnit = {
+  DIMENSION: 'mm',
+  WEIGHT: 'kg',
 };
 
 const CategoryParamInput = ({
@@ -26,7 +32,7 @@ const CategoryParamInput = ({
     switch (parameter.dataType) {
       case DataType.number:
         // @ts-ignore
-        return <FormNumberInput />;
+        return <FormNumberInput suffix={MeasurementUnit[parameter.type]} />;
       case DataType.boolean:
         return (
           // @ts-ignore

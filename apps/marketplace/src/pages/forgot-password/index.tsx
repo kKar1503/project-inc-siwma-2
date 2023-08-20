@@ -16,6 +16,7 @@ import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import forgetPW from '@/services/forget-password';
 import { validateEmail } from '@/utils/api/validate';
+import NoInternetConnection from '@/components/NoInternet';
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState<string>('');
@@ -195,6 +196,7 @@ const ForgetPassword = () => {
           </Box>
         </Container>
       </Box>
+      <NoInternetConnection />
     </Box>
   );
 };
