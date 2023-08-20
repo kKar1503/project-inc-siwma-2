@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Modal, useResponsiveness } from '@inc/ui';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
-import { FileUploadProps } from '@/components/FileUpload/FileUploadBase';
 import Typography from '@mui/material/Typography';
 import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
 import { useRouter } from 'next/router';
@@ -97,7 +96,7 @@ const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
 const validation = (advertisementData: PostAdvertisementRequestBody & { image: File | string | undefined }) => {
   // Initialise an array of errors
   const errors: { [key: string]: Error } = {};
-  const { companyId, link, description, startDate, endDate, active, image } = advertisementData;
+  const { companyId, link, startDate, endDate, active, image } = advertisementData;
 
   // Validate company ID
   if (!companyId || companyId === '') {
@@ -115,17 +114,19 @@ const validation = (advertisementData: PostAdvertisementRequestBody & { image: F
   // no validation needed
 
   // Validate start date
-  if (!startDate || startDate === '') {
+  const missingStartDate = !startDate || startDate === '';
+  if (missingStartDate) {
     errors.startDate = new Error('Start Date is required');
   }
 
   // Validate end date
-  if (!endDate || endDate === '') {
+  const missingEndDate = !endDate || endDate === '';
+  if (missingEndDate) {
     errors.endDate = new Error('End Date is required');
   }
 
   // validate start date is before end date
-  if (startDate > endDate) {
+  if (!missingStartDate && !missingEndDate && startDate > endDate) {
     errors.startDate = new Error('Start Date must be before End Date');
     errors.endDate = new Error('End Date must be after Start Date');
   }
@@ -145,10 +146,7 @@ const validation = (advertisementData: PostAdvertisementRequestBody & { image: F
 
 const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: AdvertisementFormProps) => {
   const router = useRouter();
-  const [isXs, isSm, isMd, isLg] = useResponsiveness(['xs', 'sm', 'md', 'lg']);
-  const [imageError, setImageError] = useState<string | null>(null);
-
-  const [file, setFile] = useState<File | null>(null);
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const formHook = useForm({
     defaultValues: getDefaultValue(advertisement, companyDict),
@@ -157,23 +155,14 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
   const { control, handleSubmit, setError, formState } = formHook;
   const { isSubmitting, isSubmitSuccessful } = formState;
 
-  const handleFileChange: FileUploadProps['changeHandler'] = (event) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setFile(event.target.files[0]);
-    }
-  };
-
   // cannot return Promise or Promise.Reject() or it will be treated as submitted
   // eslint-disable-next-line consistent-return
   const onHandleSubmit = async (values: AdvertisementFormData) => {
     const advertisementData = parseToPostAdvertisementRequestBody(values);
     const errors = validation(advertisementData);
-    // if (advertisement === undefined && file === null) {
-    //   errors.image = new Error('Image is required');
-    // }
     // Check if there were any errors
     if (Object.keys(errors).length === 0) {
-      const image =   typeof values.image === 'string' ? undefined : values.image;
+      const image = typeof values.image === 'string' ? undefined : values.image;
       return onSubmit(advertisementData, image || undefined);
     }
 
@@ -184,8 +173,6 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
         });
       }
     });
-
-    setImageError(errors.image ? errors.image.message : null);
   }
 
   const onHandleError = async () => {
@@ -224,11 +211,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
     };
   }, [isSm, isMd, isLg]);
 
-  const defaultImage = (advertisement === undefined || advertisement.image === null || advertisement.image === '') ? undefined : advertisement.image;
-  console.log(defaultImage);
-
-
-  if (isSubmitting && !imageError) return <SpinnerPage />;
+  if (isSubmitting) return <SpinnerPage />;
 
   return (
     <Box
@@ -259,7 +242,7 @@ const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: Advertiseme
             {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
             <Modal setOpen={(): void => {
             }}
-                   open={isSubmitSuccessful && !imageError}
+                   open={isSubmitSuccessful}
               buttonColor='#0000FF'
               icon='info'
               title='Confirmation'
