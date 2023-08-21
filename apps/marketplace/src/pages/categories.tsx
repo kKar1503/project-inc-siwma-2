@@ -106,7 +106,7 @@ const CategoriesPage = () => {
           }
         </Grid>
       </Grid>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </Box>
   );
 };
