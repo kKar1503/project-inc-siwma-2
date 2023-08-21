@@ -4,12 +4,13 @@
   "scripts": {
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --config ./.eslintrc.actions.json",
     "start:backend": "node src/server/server.js",
     "dev:frontend": "next dev",
     "dev": "concurrently \"node src/server/server.js\" \"next dev\""
   },
   "dependencies": {
+    "@invertase/puppeteer-pool": "0.0.2",
     "chart.js": "4.3.3",
     "dotenv": "16.3.1",
     "express": "^4.18.2",

@@ -1,3 +1,7 @@
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const express = require('express');
 const app = express();
 const port = 3001;
@@ -5,7 +9,7 @@ const port = 3001;
 const crawl = require('./crawler');
 
 app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Origin', `${process.env.NEXT_PUBLIC_FRONTEND_URL}`);
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });

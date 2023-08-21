@@ -154,12 +154,14 @@ const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
         <div className="col-span-4 bg-gray-700 rounded-md p-0">
           <div className="p-4">
             {selectedCategory !== 'What is Lighthouse?' && (
+            {selectedCategory !== 'What is Lighthouse?' && (
               <h2 className="text-lg font-medium">{selectedCategory} Report</h2>
             )}
             {selectedCategory === 'What is Lighthouse?' ? (
+            {selectedCategory === 'What is Lighthouse?' ? (
               <LighthouseDescription />
             ) : (
-              <div className="relative overflow-x-auto scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">
+              <div className="relative overflow-x-auto scrollbar scrollbar-thumb-gray-500 scrollbar-track-gray-700">
                 <div className="custom-scroll overflow-y-scroll h-[calc(100vh-200px)]">
                   <table className="mt-2 w-full">
                     <thead>

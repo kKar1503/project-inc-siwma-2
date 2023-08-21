@@ -1,17 +1,23 @@
-const puppeteer = require('puppeteer');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
+const puppeteer = require('puppeteer');
+
 module.exports = async function crawl(urls) {
-  const browser = await puppeteer.launch({
+  // create puppeteer browser
+  const browser = puppeteer.launch({
     headless: 'new',
   });
+
+  // get browser to get port
   const { port } = new URL(browser.wsEndpoint());
+
+  // create pages
   const page = await browser.newPage();
 
   // Log in before navigating to the protected pages
-  const loginPage = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/login/`;
+  const loginPage = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/login/`;
   await page.goto(loginPage);
   await page.waitForSelector('#email'); // Wait for the email input field to appear
   await page.type('#email', 'xavier@example.com');

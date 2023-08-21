@@ -282,6 +282,9 @@ importers:
 
   apps/lighthouse:
     dependencies:
+      '@invertase/puppeteer-pool':
+        specifier: 0.0.2
+        version: 0.0.2(puppeteer@20.9.0)
       chart.js:
         specifier: 4.3.3
         version: 4.3.3
@@ -2390,6 +2393,15 @@ packages:
   /@humanwhocodes/object-schema@1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
+
+  /@invertase/puppeteer-pool@0.0.2(puppeteer@20.9.0):
+    resolution: {integrity: sha512-j1fT9oUUVX3dcHGOyGeUYdpxxnOOD7i5AR56n3VakzntdDDdpZg1OZ1gup5SFuSRKBpYvyUhu+IusdBFcDNbnw==}
+    peerDependencies:
+      puppeteer: '>= 1.0.0'
+    dependencies:
+      generic-pool: 3.9.0
+      puppeteer: 20.9.0(typescript@5.0.2)
+    dev: false
 
   /@jridgewell/gen-mapping@0.3.3:
     resolution: {integrity: sha512-HLhSWOLRi875zjjMG/r+Nv0oCW8umGb0BgEhyX3dDX3egwZtB8PqLnjz3yedt8R5StBrzcg4aBpnh8UA9D1BoQ==}
@@ -6212,6 +6224,11 @@ packages:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       wide-align: 1.1.5
+    dev: false
+
+  /generic-pool@3.9.0:
+    resolution: {integrity: sha512-hymDOu5B53XvN4QT9dBmZxPX4CWhBPPLguTZ9MMFeFa/Kg0xWVfylOVNlJji/E7yTZWFd/q9GO5TxDLq156D7g==}
+    engines: {node: '>= 4'}
     dev: false
 
   /get-caller-file@2.0.5:
