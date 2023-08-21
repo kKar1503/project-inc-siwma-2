@@ -202,4 +202,5 @@ const ForgetPassword = () => {
 };
 
 ForgetPassword.includeNavbar = false;
+ForgetPassword.allowNonAuthenticated = true;
 export default ForgetPassword;
