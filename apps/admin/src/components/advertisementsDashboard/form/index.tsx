@@ -57,7 +57,7 @@ const linkRegex = new RegExp('^(http|https)://' + // protocol (https or http onl
   '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
 
 const parseToPostAdvertisementRequestBody = (values: AdvertisementFormData): PostAdvertisementRequestBody & { image: File |string| undefined } => ({
-  companyId: values.companyId.value,
+  companyId: values.companyId?.value,
   link: values.link,
   description: values.description,
   startDate: values.startDate.toISODate() as string,
@@ -99,7 +99,7 @@ const validation = (advertisementData: PostAdvertisementRequestBody & { image: F
   const { companyId, link, startDate, endDate, active, image } = advertisementData;
 
   // Validate company ID
-  if (!companyId || companyId === '' || !companyId.value) {
+  if (!companyId || companyId === '') {
     errors.companyId = new Error('Company is required');
   }
 
