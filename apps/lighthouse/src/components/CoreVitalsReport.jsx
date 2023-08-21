@@ -4,7 +4,7 @@ import LoadingSpinner from './LoadingSpinner';
 
 const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
   const [selectedCategory, setSelectedCategory] = useState('Overview');
-  const categories = ['Overview', 'Performance', 'Lighthouse'];
+  const categories = ['Overview', 'Performance', 'What is Lighthouse?'];
 
   const LighthouseDescription = () => (
     <div className="space-y-4 h-[calc(100vh-100px)]">
