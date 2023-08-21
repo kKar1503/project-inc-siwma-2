@@ -99,7 +99,7 @@ const validation = (advertisementData: PostAdvertisementRequestBody & { image: F
   const { companyId, link, startDate, endDate, active, image } = advertisementData;
 
   // Validate company ID
-  if (!companyId || companyId === '') {
+  if (!companyId || companyId === '' || !companyId.value) {
     errors.companyId = new Error('Company is required');
   }
 
