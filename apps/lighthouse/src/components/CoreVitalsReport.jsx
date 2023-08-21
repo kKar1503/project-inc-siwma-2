@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ScoreDoughnut from './ScoreDoughnut';
 import LoadingSpinner from './LoadingSpinner';
+import { saveAs } from 'file-saver';
+import XLSX from 'xlsx';
 
 const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
   const [selectedCategory, setSelectedCategory] = useState('Overview');
   const categories = ['Overview', 'Performance', 'What is Lighthouse?'];
+  const [isXLSXLoaded, setIsXLSXLoaded] = useState(false);
+  const [XLSXModule, setXLSXModule] = useState(null);
+
+  useEffect(() => {
+    // Dynamically import the xlsx module here
+    import('xlsx').then((xlsx) => {
+      setXLSXModule(xlsx);
+      setIsXLSXLoaded(true);
+    });
+  }, []);
 
   const LighthouseDescription = () => (
     <div className="space-y-4 h-[calc(100vh-100px)]">
@@ -34,6 +46,33 @@ const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
       </ul>
     </div>
   );
+
+  const downloadReport = () => {
+    if (!isXLSXLoaded || !XLSXModule) return;
+
+    // Convert the reportData to an array of arrays for sheetjs
+    const ws_data = reportData.map((routeData) => {
+      return [
+        routeData.route,
+        routeData.categories['Performance'].score,
+        routeData.categories['Performance'].lcp,
+        routeData.categories['Performance'].cls,
+        routeData.categories['Performance'].fid,
+      ];
+    });
+
+    // Add headers
+    ws_data.unshift(['Route', 'Score', 'LCP', 'CLS', 'FID']);
+
+    const ws = XLSXModule.utils.aoa_to_sheet(ws_data);
+    const wb = XLSXModule.utils.book_new();
+    XLSXModule.utils.book_append_sheet(wb, ws, 'PerformanceReport');
+    const wbout = XLSXModule.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+    const buf = new Uint8Array(wbout.length);
+    for (let i = 0; i < wbout.length; i++) buf[i] = wbout.charCodeAt(i) & 0xff;
+    saveAs(new Blob([buf], { type: 'application/octet-stream' }), 'PerformanceReport.xlsx');
+  };
 
   const getCategoryColumns = (category) => {
     if (!reportData || reportData.length === 0 || !reportData[0].categories[category]) {
@@ -114,10 +153,10 @@ const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
 
         <div className="col-span-4 bg-gray-700 rounded-md p-0">
           <div className="p-4">
-            {selectedCategory !== 'Lighthouse' && (
+            {selectedCategory !== 'What is Lighthouse?' && (
               <h2 className="text-lg font-medium">{selectedCategory} Report</h2>
             )}
-            {selectedCategory === 'Lighthouse' ? (
+            {selectedCategory === 'What is Lighthouse?' ? (
               <LighthouseDescription />
             ) : (
               <div className="relative overflow-x-auto scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">
@@ -162,10 +201,21 @@ const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
                 </div>
               </div>
             )}
-            {selectedCategory !== 'Lighthouse' && (
-              <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={onRescan}>
-                Rescan
-              </button>
+            {selectedCategory !== 'What is Lighthouse?' && (
+              <div>
+                <button
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                  onClick={onRescan}
+                >
+                  Rescan
+                </button>
+                <button
+                  className="mt-4 px-4 py-2 ml-4 bg-blue-500 text-white rounded"
+                  onClick={downloadReport}
+                >
+                  Download Performance Report
+                </button>
+              </div>
             )}
           </div>
         </div>
