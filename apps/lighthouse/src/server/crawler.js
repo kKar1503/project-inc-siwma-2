@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer');
 
 module.exports = async function crawl(urls) {
   // create puppeteer browser
-  const browser = puppeteer.launch({
+  const browser = await puppeteer.launch({
     headless: 'new',
   });
 
@@ -35,7 +35,7 @@ module.exports = async function crawl(urls) {
     try {
       // Navigate to the target page
       console.log('Navigating to URL:', url);
-      await page.goto(url);
+      await page.goto(url, { waitUntil: 'domcontentloaded' });
 
       const { lhr } = await lighthouse(url, {
         port,
