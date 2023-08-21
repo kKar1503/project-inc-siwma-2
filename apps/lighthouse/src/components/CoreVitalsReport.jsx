@@ -154,10 +154,8 @@ const CoreVitalsReport = ({ onRescan, reportData = [], isLoading }) => {
         <div className="col-span-4 bg-gray-700 rounded-md p-0">
           <div className="p-4">
             {selectedCategory !== 'What is Lighthouse?' && (
-            {selectedCategory !== 'What is Lighthouse?' && (
               <h2 className="text-lg font-medium">{selectedCategory} Report</h2>
             )}
-            {selectedCategory === 'What is Lighthouse?' ? (
             {selectedCategory === 'What is Lighthouse?' ? (
               <LighthouseDescription />
             ) : (
