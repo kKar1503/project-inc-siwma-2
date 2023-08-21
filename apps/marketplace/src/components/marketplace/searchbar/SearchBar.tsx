@@ -166,7 +166,7 @@ const Hits = ({ hits }: { hits: Hit[] }) => (
           padding: '5px',
         }}
       >
-        {`${hit.name} ${hit.chineseName}`}
+        {`${hit.name} ${hit.chineseName ? `(${hit.chineseName})` : ''}`}
       </Box>
     ))}
   </Box>

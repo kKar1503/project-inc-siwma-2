@@ -9,10 +9,11 @@ const searchClient = instantMeiliSearch(
 const Hit = ({ hit }: any) => <Highlight attribute="name" hit={hit} />;
 
 const TestMSearch = () => (
-  <InstantSearch indexName="listings" searchClient={searchClient}>
-    <SearchBox />
-    <Hits hitComponent={Hit} />
-  </InstantSearch>
+  // <InstantSearch indexName="listings" searchClient={searchClient}>
+  //   <SearchBox />
+  //   <Hits hitComponent={Hit} />
+  // </InstantSearch>
+  <div />
 );
 
 export default TestMSearch;
