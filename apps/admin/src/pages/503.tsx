@@ -1,7 +1,5 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Link from 'next/link';
 
 const ErrorPage = () => (
   <Box
@@ -28,11 +26,6 @@ const ErrorPage = () => (
       >
         Service unavailable, please check network connection.
       </Typography>
-      <Link href="/login">
-        <Button sx={({ spacing }) => ({ mt: spacing(2) })} variant="contained">
-          Back to home
-        </Button>
-      </Link>
     </Box>
   </Box>
 );
