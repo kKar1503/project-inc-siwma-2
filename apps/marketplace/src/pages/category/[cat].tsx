@@ -10,7 +10,6 @@ import useUser from '@/services/users/useUser';
 import { useSession } from 'next-auth/react';
 import useBookmarkStore from '@/stores/bookmarks';
 import { useRouter } from 'next/router';
-import NoInternetConnection from '@/components/NoInternet';
 
 const ListingTableTest = () => {
   const router = useRouter();

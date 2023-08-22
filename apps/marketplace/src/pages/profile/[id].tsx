@@ -15,7 +15,6 @@ import ProfileDetailCard from '@/components/marketplace/profile/ProfileDetailCar
 import { useTheme } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
 import useUser from '@/services/users/useUser';
-import NoInternetConnection from '@/components/NoInternet';
 
 const ProfilePage = () => {
   // ** Hooks

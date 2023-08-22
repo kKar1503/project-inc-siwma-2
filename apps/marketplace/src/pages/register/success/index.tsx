@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
 import { useRouter } from 'next/router';
-import NoInternetConnection from '@/components/NoInternet';
 
 const SuccessRegister = () => {
   const router = useRouter();

@@ -122,15 +122,15 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
             allowNonAuthenticated={allowNonAuthenticated}
           >
             <QueryClientProvider client={queryClient}>
-              {/* <NoInternetConnection> */}
-                <SnackbarProvider
-                  style={{ width: '100%', height: '0%' }}
-                  maxSnack={3}
-                  anchorOrigin={alertStyle}
-                  Components={{
-                    default: StyledMaterialDesignContent,
-                  }}
-                >
+              <SnackbarProvider
+                style={{ width: '100%', height: '0%' }}
+                maxSnack={3}
+                anchorOrigin={alertStyle}
+                Components={{
+                  default: StyledMaterialDesignContent,
+                }}
+              >
+                <NoInternetConnection>
                   {getLayout(
                     <Box height="100dvh" display="flex" flexDirection="column">
                       <I18nextProvider i18n={i18n}>
@@ -147,8 +147,8 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
                       </I18nextProvider>
                     </Box>
                   )}
-                </SnackbarProvider>
-              {/* </NoInternetConnection> */}
+                </NoInternetConnection>
+              </SnackbarProvider>
             </QueryClientProvider>
           </AuthenticationGuard>
         </SessionProvider>
