@@ -61,7 +61,7 @@ const Compare = () => {
         </Typography>
         <CompareDifferences listingIds={listingIds} />
       </Box>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </Container>
   );
 };

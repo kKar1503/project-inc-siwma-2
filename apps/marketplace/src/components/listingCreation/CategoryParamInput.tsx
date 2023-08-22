@@ -14,12 +14,6 @@ type CategoryParamInputProps = {
   sx?: React.ComponentProps<typeof FormInputGroup>['sx'];
 };
 
-// -- Constants -- //
-const MeasurementUnit = {
-  DIMENSION: 'mm',
-  WEIGHT: 'kg',
-};
-
 const CategoryParamInput = ({
   parameter,
   isLoading,
@@ -32,7 +26,7 @@ const CategoryParamInput = ({
     switch (parameter.dataType) {
       case DataType.number:
         // @ts-ignore
-        return <FormNumberInput suffix={MeasurementUnit[parameter.type]} />;
+        return <FormNumberInput suffix={parameter.unit} />;
       case DataType.boolean:
         return (
           // @ts-ignore
@@ -95,7 +89,7 @@ const CategoryParamInput = ({
 
     if (parameter.type === ParameterType.OPEN_ENDED) {
       // @ts-ignore
-      return <FormTextInput />;
+      return <FormTextInput suffix={parameter.unit} />;
     }
 
     return (

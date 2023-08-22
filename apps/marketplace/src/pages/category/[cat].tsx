@@ -124,7 +124,7 @@ const ListingTableTest = () => {
         isParamFetching={isParamsFetching || pageLoading}
         listings={listings?.listings || []}
       />
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </>
   );
 };

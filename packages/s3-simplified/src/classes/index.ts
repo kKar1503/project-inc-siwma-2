@@ -1,4 +1,3 @@
-export * from './misc/s3Lib';
 export * from './misc/s3LibInternal';
 export * from './buckets/s3Bucket';
 export * from './buckets/s3BucketInternal';
