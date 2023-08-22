@@ -110,7 +110,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
     return undefined;
   }, [isSm, isMd, isLg]);
 
-  return <>(
+  return (
     <LocalizationProvider dateAdapter={AdapterLuxon}>
       <ThemeComponent fonts={notoSansSC.style.fontFamily}>
         <SessionProvider session={session}>
@@ -122,7 +122,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
             allowNonAuthenticated={allowNonAuthenticated}
           >
             <QueryClientProvider client={queryClient}>
-              <NoInternetConnection>
+              {/* <NoInternetConnection> */}
                 <SnackbarProvider
                   style={{ width: '100%', height: '0%' }}
                   maxSnack={3}
@@ -148,13 +148,13 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
                     </Box>
                   )}
                 </SnackbarProvider>
-              </NoInternetConnection>
+              {/* </NoInternetConnection> */}
             </QueryClientProvider>
           </AuthenticationGuard>
         </SessionProvider>
       </ThemeComponent>
     </LocalizationProvider>
-  )</>;
+  );
 };
 
 export default App;

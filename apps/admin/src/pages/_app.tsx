@@ -94,42 +94,42 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
     },
   });
 
-  return <>(
-    <LocalizationProvider dateAdapter={AdapterLuxon}>
-      <ThemeComponent fonts={notoSansSC.style.fontFamily}>
-        <SessionProvider session={session}>
-          <AuthenticationGuard
-            disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
-            disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
-            loader={<SpinnerPage />}
-            allowAuthenticated={allowAuthenticated}
-            allowNonAuthenticated={allowNonAuthenticated}
-          >
-            <QueryClientProvider client={queryClient}>
-              <NoInternetConnection>
-                <Box display="flex" flexDirection="row" height="100dvh">
-                  {includeSideBar && (
-                    <Box width={isMobileOrTablet ? '0px' : '290px'} overflow="auto">
-                      <ThemeProvider theme={backgroundColor}>
-                        <SideBar />
-                      </ThemeProvider>
+  return (
+      <LocalizationProvider dateAdapter={AdapterLuxon}>
+        <ThemeComponent fonts={notoSansSC.style.fontFamily}>
+          <SessionProvider session={session}>
+            <AuthenticationGuard
+              disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
+              disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
+              loader={<SpinnerPage />}
+              allowAuthenticated={allowAuthenticated}
+              allowNonAuthenticated={allowNonAuthenticated}
+            >
+              <QueryClientProvider client={queryClient}>
+                <NoInternetConnection>
+                  <Box display="flex" flexDirection="row" height="100dvh">
+                    {includeSideBar && (
+                      <Box width={isMobileOrTablet ? '0px' : '290px'} overflow="auto">
+                        <ThemeProvider theme={backgroundColor}>
+                          <SideBar />
+                        </ThemeProvider>
+                      </Box>
+                    )}
+                    <Box
+                      flex="1"
+                      paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}
+                      overflow="auto"
+                    >
+                      {getLayout(<Component {...pageProps} />)}
                     </Box>
-                  )}
-                  <Box
-                    flex="1"
-                    paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}
-                    overflow="auto"
-                  >
-                    {getLayout(<Component {...pageProps} />)}
                   </Box>
-                </Box>
-              </NoInternetConnection>
-            </QueryClientProvider>
-          </AuthenticationGuard>
-        </SessionProvider>
-      </ThemeComponent>
-    </LocalizationProvider>
-  )</>;
+                </NoInternetConnection>
+              </QueryClientProvider>
+            </AuthenticationGuard>
+          </SessionProvider>
+        </ThemeComponent>
+      </LocalizationProvider>
+  );
 };
 
 export default App;
