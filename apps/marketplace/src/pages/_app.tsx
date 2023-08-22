@@ -110,7 +110,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
     return undefined;
   }, [isSm, isMd, isLg]);
 
-  return (
+  return <>(
     <LocalizationProvider dateAdapter={AdapterLuxon}>
       <ThemeComponent fonts={notoSansSC.style.fontFamily}>
         <SessionProvider session={session}>
@@ -154,7 +154,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
         </SessionProvider>
       </ThemeComponent>
     </LocalizationProvider>
-  );
+  )</>;
 };
 
 export default App;
