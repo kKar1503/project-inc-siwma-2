@@ -165,7 +165,6 @@ const CreateCategory = () => {
           </Box>
         </Box>
       </Card>
-      <NoInternetConnection />
     </Box>
   );
 };

@@ -19,6 +19,7 @@ import { Noto_Sans_SC } from 'next/font/google';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import I18Fix from '@/components/marketplace/I18Fix';
+import NoInternetConnection from '@/components/NoInternet';
 
 // -- Type declarations --//
 // Page type
@@ -121,31 +122,33 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
             allowNonAuthenticated={allowNonAuthenticated}
           >
             <QueryClientProvider client={queryClient}>
-              <SnackbarProvider
-                style={{ width: '100%', height: '0%' }}
-                maxSnack={3}
-                anchorOrigin={alertStyle}
-                Components={{
-                  default: StyledMaterialDesignContent,
-                }}
-              >
-                {getLayout(
-                  <Box height="100dvh" display="flex" flexDirection="column">
-                    <I18nextProvider i18n={i18n}>
-                      {includeNavbar ? (
-                        <>
-                          <NavBar renderSearchBar={renderSearchBar} />
-                          <Component {...pageProps} />
-                        </>
-                      ) : (
-                        <I18Fix>
-                          <Component {...pageProps} />
-                        </I18Fix>
-                      )}
-                    </I18nextProvider>
-                  </Box>
-                )}
-              </SnackbarProvider>
+              <NoInternetConnection>
+                <SnackbarProvider
+                  style={{ width: '100%', height: '0%' }}
+                  maxSnack={3}
+                  anchorOrigin={alertStyle}
+                  Components={{
+                    default: StyledMaterialDesignContent,
+                  }}
+                >
+                  {getLayout(
+                    <Box height="100dvh" display="flex" flexDirection="column">
+                      <I18nextProvider i18n={i18n}>
+                        {includeNavbar ? (
+                          <>
+                            <NavBar renderSearchBar={renderSearchBar} />
+                            <Component {...pageProps} />
+                          </>
+                        ) : (
+                          <I18Fix>
+                            <Component {...pageProps} />
+                          </I18Fix>
+                        )}
+                      </I18nextProvider>
+                    </Box>
+                  )}
+                </SnackbarProvider>
+              </NoInternetConnection>
             </QueryClientProvider>
           </AuthenticationGuard>
         </SessionProvider>

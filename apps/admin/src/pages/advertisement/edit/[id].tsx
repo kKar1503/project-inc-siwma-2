@@ -61,7 +61,6 @@ const AdvertisementUpload = () => {
           }} />
         </CardContent>
       </Card>
-      <NoInternetConnection />
     </Box>
   );
 };

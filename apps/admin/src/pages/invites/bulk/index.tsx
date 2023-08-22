@@ -196,7 +196,6 @@ const BulkInvitesPage = () => {
           )}
         </Box>
       </main>
-      <NoInternetConnection />
     </>
   );
 };

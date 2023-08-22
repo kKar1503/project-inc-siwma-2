@@ -216,7 +216,6 @@ const ParameterTable = () => {
         />
       </Box>
       <DeleteParameterModal open={openDeleteModal} setOpen={setOpenDeleteModal} parameters={ids} />
-      <NoInternetConnection />
     </>
   );
 };

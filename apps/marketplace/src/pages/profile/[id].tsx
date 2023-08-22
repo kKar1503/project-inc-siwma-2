@@ -96,7 +96,6 @@ const ProfilePage = () => {
           {/* nth here */}
         </Box>
       </Box>
-      {/* <NoInternetConnection /> */}
     </main>
   );
 };

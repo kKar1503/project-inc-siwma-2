@@ -387,7 +387,6 @@ const CreateParameter = () => {
           />
         </Box>
       </Container>
-      <NoInternetConnection />
     </>
   );
 };

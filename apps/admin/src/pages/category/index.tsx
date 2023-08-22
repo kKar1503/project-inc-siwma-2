@@ -200,7 +200,6 @@ const CategoryTable = () => {
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={rows.length}
       />
-      <NoInternetConnection />
     </Box>
   );
 };

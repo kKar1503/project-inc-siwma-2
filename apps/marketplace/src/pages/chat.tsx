@@ -637,7 +637,6 @@ const ChatRoom = () => {
           </Box>
         </Box>
       )}
-      {/* <NoInternetConnection /> */}
     </Box>
   );
 };

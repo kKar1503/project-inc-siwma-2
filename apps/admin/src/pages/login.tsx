@@ -198,7 +198,6 @@ const LoginForm = () => {
           </Box>
         </Container>
       </Box>
-      <NoInternetConnection />
     </Box>
   );
 };

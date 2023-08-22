@@ -427,7 +427,6 @@ const EditProfile = () => {
           </Grid>
         </Box>
       </Grid>
-      {/* <NoInternetConnection /> */}
     </>
   );
 };

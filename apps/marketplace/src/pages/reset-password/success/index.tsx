@@ -137,7 +137,6 @@ const ResetPassword = () => {
           </Box>
         </Container>
       </Box>
-      {/* <NoInternetConnection /> */}
     </Box>
   );
 };

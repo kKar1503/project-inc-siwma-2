@@ -196,7 +196,6 @@ const ForgetPassword = () => {
           </Box>
         </Container>
       </Box>
-      {/* <NoInternetConnection /> */}
     </Box>
   );
 };

@@ -230,61 +230,59 @@ const Analytics = () => {
     listingQuery.isComplete && productsQuery.isComplete && categoriesQuery.isFetched;
 
   return (
-    <NoInternetConnection>
-      <Box
-        style={{
-          marginTop: '1rem',
-          marginRight: '1rem',
-          marginLeft: '1rem',
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid container item xs={12}>
-            <h1>
-              Company &nbsp;
-              {companyFinishedLoading || <CircularProgress size={30} />}
-            </h1>
-          </Grid>
-
-          <Grid container item xs={6} md={4}>
-            <TopCompanies data={topCompanies} />
-          </Grid>
-          <Grid container item xs={6} md={4}>
-            <TopCompaniesBuySell data={topCompanies} />
-          </Grid>
-          <Grid container item xs={6} md={4}>
-            <LineGraph data={listingMonthsBin} />
-          </Grid>
-
-          <Grid container item xs={12}>
-            <h1>
-              Settlement &nbsp;
-              {settlementFinishedLoading || <CircularProgress size={30} />}
-            </h1>
-          </Grid>
-
-          <Grid container item xs={6} md={4}>
-            <TopGraph data={topCategories} type="Selling" category="Categories" />
-          </Grid>
-          <Grid container item xs={6} md={4}>
-            <TopGraph data={topCategories} type="Buying" category="Categories" />
-          </Grid>
-          <Grid container item xs={6} md={4}>
-            <PieChart data={topCategories.filter((c) => c.active)} title="Active Categories" />
-          </Grid>
-
-          <Grid container item xs={6} md={4}>
-            <TopGraph data={topProducts} type="Selling" category="Products" />
-          </Grid>
-          <Grid container item xs={6} md={4}>
-            <TopGraph data={topProducts} type="Buying" category="Products" />
-          </Grid>
-          <Grid container item xs={6} md={4}>
-            <PieChart data={topProducts} title="Active Products" />
-          </Grid>
+    <Box
+      style={{
+        marginTop: '1rem',
+        marginRight: '1rem',
+        marginLeft: '1rem',
+      }}
+    >
+      <Grid container spacing={2}>
+        <Grid container item xs={12}>
+          <h1>
+            Company &nbsp;
+            {companyFinishedLoading || <CircularProgress size={30} />}
+          </h1>
         </Grid>
-      </Box>
-    </NoInternetConnection>
+
+        <Grid container item xs={6} md={4}>
+          <TopCompanies data={topCompanies} />
+        </Grid>
+        <Grid container item xs={6} md={4}>
+          <TopCompaniesBuySell data={topCompanies} />
+        </Grid>
+        <Grid container item xs={6} md={4}>
+          <LineGraph data={listingMonthsBin} />
+        </Grid>
+
+        <Grid container item xs={12}>
+          <h1>
+            Settlement &nbsp;
+            {settlementFinishedLoading || <CircularProgress size={30} />}
+          </h1>
+        </Grid>
+
+        <Grid container item xs={6} md={4}>
+          <TopGraph data={topCategories} type="Selling" category="Categories" />
+        </Grid>
+        <Grid container item xs={6} md={4}>
+          <TopGraph data={topCategories} type="Buying" category="Categories" />
+        </Grid>
+        <Grid container item xs={6} md={4}>
+          <PieChart data={topCategories.filter((c) => c.active)} title="Active Categories" />
+        </Grid>
+
+        <Grid container item xs={6} md={4}>
+          <TopGraph data={topProducts} type="Selling" category="Products" />
+        </Grid>
+        <Grid container item xs={6} md={4}>
+          <TopGraph data={topProducts} type="Buying" category="Products" />
+        </Grid>
+        <Grid container item xs={6} md={4}>
+          <PieChart data={topProducts} title="Active Products" />
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

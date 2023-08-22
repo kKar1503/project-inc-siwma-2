@@ -210,7 +210,6 @@ const EditCategory = () => {
           </Button>
         </Box>
       </Card>
-      <NoInternetConnection />
     </Box>
   );
 };

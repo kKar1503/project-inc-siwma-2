@@ -75,7 +75,6 @@ const Bookmarks = () => {
           <UserBookmarks users={bookmarkedUsers} updateBookmarkData={refetchUser} />
         )}
       </Grid>
-      {/* <NoInternetConnection /> */}
     </Container>
   );
 };

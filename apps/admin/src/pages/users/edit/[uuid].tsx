@@ -133,7 +133,6 @@ const EditUser = () => {
           setOpen={setOpenSent}
         />
       </Box>
-      <NoInternetConnection />
     </Box>
   );
 };

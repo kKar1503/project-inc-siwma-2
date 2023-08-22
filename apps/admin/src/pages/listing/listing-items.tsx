@@ -152,7 +152,6 @@ const AllListingItems = () => {
         buttonText="Return"
         path="/listing/listing-items"
       />
-      <NoInternetConnection />
     </Box>
   );
 };

@@ -393,7 +393,6 @@ const ListingCreateEdit = () => {
           </Box>
         </Box>
       </Box>
-      {/* <NoInternetConnection /> */}
     </>
   );
 };

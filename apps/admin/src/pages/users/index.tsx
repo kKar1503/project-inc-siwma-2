@@ -312,7 +312,6 @@ const Page = () => {
         setOpen={setInviteUser}
         buttonText="Return"
       />
-      <NoInternetConnection />
     </Box>
   );
 };

@@ -232,7 +232,6 @@ const Marketplace = () => {
         isParamFetching={isParamsFetching || pageLoading}
         listings={listings?.listings || []}
       />
-      {/* <NoInternetConnection /> */}
     </>
   );
 };

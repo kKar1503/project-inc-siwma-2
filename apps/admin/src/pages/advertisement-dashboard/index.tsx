@@ -22,7 +22,6 @@ const AdvertisementDashboard = () => (
         {/*  </Grid> */}
         {/* </Grid> */}
       </Grid>
-      <NoInternetConnection />
     </Box>
   );
 

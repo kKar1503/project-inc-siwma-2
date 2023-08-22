@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useState, useEffect, PropsWithChildren } from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
-const NoInternetConnection = (props: any) => {
+const NoInternetConnection = (props: PropsWithChildren) => {
   // state variable holds the state of the internet connection
   const [isOnline, setOnline] = useState(true);
-  const router = useRouter();
+  const { children } = props;
 
   // On initization set the isOnline state.
   useEffect(() => {
@@ -20,11 +21,38 @@ const NoInternetConnection = (props: any) => {
     setOnline(false);
   });
 
-    // if user is online, return the child component else return a custom component
-    if (!isOnline) {
-        router.replace('/503');
-    }
-  return (props.children);
+  // if user is online, return the child component else return error
+  if (isOnline) {
+    return children;
+  }
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#F5F5F5',
+      }}
+    >
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography
+          sx={({ typography }) => ({
+            fontSize: typography.h1,
+          })}
+        >
+          SERVICE UNAVAILABLE!
+        </Typography>
+        <Typography
+          sx={({ typography }) => ({
+            fontSize: typography.body1,
+          })}
+        >
+          Service unavailable, please check network connection.
+        </Typography>
+      </Box>
+    </Box>
+  );
 };
 
 export default NoInternetConnection;

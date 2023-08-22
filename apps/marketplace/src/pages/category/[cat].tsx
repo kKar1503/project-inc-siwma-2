@@ -117,15 +117,12 @@ const ListingTableTest = () => {
   }, [isProductsFetching, isParamsFetching]);
 
   return (
-    <>
-      <ListingTable
-        isLoading={isListingsLoading}
-        isProductFetching={isProductsFetching || pageLoading}
-        isParamFetching={isParamsFetching || pageLoading}
-        listings={listings?.listings || []}
-      />
-      {/* <NoInternetConnection /> */}
-    </>
+    <ListingTable
+      isLoading={isListingsLoading}
+      isProductFetching={isProductsFetching || pageLoading}
+      isParamFetching={isParamsFetching || pageLoading}
+      listings={listings?.listings || []}
+    />
   );
 };
 

@@ -420,7 +420,6 @@ const EditParameter = () => {
           </Grid>
         </Box>
       </Container>
-      <NoInternetConnection />
     </>
   );
 };

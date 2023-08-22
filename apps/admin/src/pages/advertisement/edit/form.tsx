@@ -214,7 +214,6 @@ const Form = ({ advertisement, onSubmit }: {
           />
         </Box>
       </Box>
-      <NoInternetConnection />
     </Grid>
   );
 };

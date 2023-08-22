@@ -130,7 +130,6 @@ const CompanyManagement = () => {
           )}
         </Grid>
       </Grid>
-      <NoInternetConnection />
     </Container>
   );
 };

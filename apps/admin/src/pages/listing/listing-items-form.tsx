@@ -186,7 +186,6 @@ const ListingItemForm = () => {
         buttonText="Return"
         path="/listing/listing-items"
       />
-      <NoInternetConnection />
     </Box>
   );
 };
