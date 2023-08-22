@@ -1,11 +1,10 @@
-import { useState, useEffect, PropsWithChildren } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-const NoInternetConnection = (props: PropsWithChildren) => {
+const NoInternetConnection = ({ children }: { children: ReactNode }): JSX.Element => {
   // state variable holds the state of the internet connection
   const [isOnline, setOnline] = useState(true);
-  const { children } = props;
 
   // On initization set the isOnline state.
   useEffect(() => {
@@ -23,7 +22,8 @@ const NoInternetConnection = (props: PropsWithChildren) => {
 
   // if user is online, return the child component else return error
   if (isOnline) {
-    return children;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
   }
   return (
     <Box

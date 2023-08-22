@@ -128,7 +128,6 @@ const Analytics = () => {
     Array<{
       buying: number;
       selling: number;
-      // eslint-disable-next-line prefer-spread
     }>
   >(Array.apply(null, Array(12)).map(() => ({ buying: 0, selling: 0 })));
   const [productToCategoryAndName, setProductToCategoryAndName] = useState<
