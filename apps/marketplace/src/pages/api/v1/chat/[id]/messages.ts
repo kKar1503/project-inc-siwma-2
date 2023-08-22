@@ -84,9 +84,9 @@ export default apiHandler()
     const { id } = chatSchema.messages.post.query.parse(req.query);
     const parseResult = chatSchema.messages.post.body.parse(req.body);
     const { message, sender, receiver } = parseResult;
-    
+
     if (!message) {
-      throw new ParamError('message');  
+      throw new ParamError('message');
     }
 
     if (!sender) {
@@ -116,6 +116,16 @@ export default apiHandler()
     });
 
     if (response.status === 200) {
+      await PrismaClient.messages.create({
+        data: {
+          author: req.token?.user?.id, 
+          createdAt: new Date(),
+          contentType: 'text',
+          content: message,
+          room: id,
+        },
+      });
+
       return res.status(200).end();
     }
 
