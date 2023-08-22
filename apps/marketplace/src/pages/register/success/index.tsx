@@ -129,7 +129,7 @@ const SuccessRegister = () => {
           </Box>
         </Container>
       </Box>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </Box>
   );
 };
