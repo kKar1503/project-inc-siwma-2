@@ -263,7 +263,7 @@ const ChangePassword = () => {
           </form>
         </Container>
       </main>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </>
   );
 };
