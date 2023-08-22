@@ -141,7 +141,7 @@ export default apiHandler().get(async (req, res) => {
     listing: {
       id: chat.listingRoomsListingTolisting.id.toString(),
       name: chat.listingRoomsListingTolisting.listingItem.name,
-      price: chat.listingRoomsListingTolisting.price.toNumber(),
+      price: chat.listingRoomsListingTolisting.price.toString(),
       unit: chat.listingRoomsListingTolisting.listingItem.unit,
       type: chat.listingRoomsListingTolisting.type,
       // Whether or not the listing is still available for purchase
@@ -152,7 +152,7 @@ export default apiHandler().get(async (req, res) => {
           (e) => e.messages[0].author === req.token?.user.id
         ).length > 0,
     },
-    latestMessage: chat.messages.length > 0 ? formatMessageResponse(chat.messages[0]) : null,
+    // latestMessage: chat.messages.length > 0 ? formatMessageResponse(chat.messages[0]) : null,
     unreadMessagesCount: await fetchUreadMessages(chat, req.token.user.id),
     createdAt: chat.createdAt.toISOString(),
   };

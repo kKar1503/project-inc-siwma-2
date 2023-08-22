@@ -16,11 +16,11 @@ const chatRequestBody = chatRequestBodyType.extend({
   listingId: z.string().transform(zodParseToInteger),
 });
 
-// const chatMessageRequestQuery = z.object({
-//   id: z.string().uuid(),
-//   lastIdPointer: z.string().transform(zodParseToNumber).optional(),
-//   limit: z.string().transform(zodParseToNumber).optional(),
-// });
+const chatMessageRequestQuery = z.object({
+  id: z.string().uuid(),
+  lastIdPointer: z.string().transform(zodParseToNumber).optional(),
+  limit: z.string().transform(zodParseToNumber).optional(),
+});
 
 const chatRequestQuery = z.object({
   id: z.string().uuid(),
@@ -40,14 +40,14 @@ const chatMessagesRequestBody = z.object({
 });
 
 export type PostChatRequestBody = z.infer<typeof chatRequestBodyType>;
-// export type GetChatMessageQueryParameter = z.infer<typeof chatMessageRequestQuery>;
+export type GetChatMessageQueryParameter = z.infer<typeof chatMessageRequestQuery>;
 export type GetChatRequestQueryParameter = z.infer<typeof chatRequestQuery>;
 
 export default {
   messages: {
-    // get: {
-    //   query: chatMessageRequestQuery,
-    // },
+    get: {
+      query: chatMessageRequestQuery,
+    },
     post: {
       query: chatMessagesRequestQuery,
       body: chatMessagesRequestBody,
