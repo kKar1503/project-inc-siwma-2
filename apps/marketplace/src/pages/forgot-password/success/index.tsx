@@ -3,11 +3,9 @@ import { Typography, Button, Box, Container } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Image from 'next/image';
 import { useTheme } from '@mui/material/styles';
-import { useRouter } from 'next/router';
 import { useResponsiveness } from '@inc/ui';
 
 const SuccessForgotPassword = () => {
-  const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
 
   const { spacing, shape, shadows, palette } = useTheme();
@@ -56,10 +54,6 @@ const SuccessForgotPassword = () => {
       ...shape,
     };
   }, [isSm, isMd, isLg]);
-
-  const handleBackToLogin = () => {
-    router.push('/login');
-  };
 
   return (
     <Box>
@@ -132,7 +126,7 @@ const SuccessForgotPassword = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                onClick={handleBackToLogin}
+                href='/login'
                 sx={({ spacing }) => ({
                   mt: spacing(3),
                 })}
