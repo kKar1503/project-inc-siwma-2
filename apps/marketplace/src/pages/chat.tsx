@@ -14,8 +14,7 @@ import placeholder from 'public/images/listing-placeholder.svg';
 
 // ** MUI Imports **
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import { SxProps, Theme, useTheme } from '@mui/material/styles';
+import { SxProps, Theme } from '@mui/material/styles';
 
 // ** Types Imports **
 import type { ChatListProps } from '@/components/rtc/ChatList';
@@ -26,20 +25,8 @@ import type { ChatData } from '@/components/rtc/ChatBox';
 import { useResponsiveness } from '@inc/ui';
 import fetchChatList from '@/services/chat/fetchChatList';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
 import sendMessage from '@/services/chat/sendMessage';
 import fetchMesssages from '@/services/chat/fetchMessages';
-
-// function formatMessage(message: Messages): ChatData {
-//   const { createdAt, message: messageContent, ...rest } = message;
-//   const formatted: ChatData = {
-//     ...rest,
-//     messageContent,
-//     createdAt: new Date(createdAt),
-//   };
-
-//   return formatted;
-// }
 
 type RoomData = ChatListProps & {
   itemId: number;
