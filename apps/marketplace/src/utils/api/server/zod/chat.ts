@@ -33,10 +33,7 @@ const chatMessagesRequestQuery = z.object({
 });
 
 const chatMessagesRequestBody = z.object({
-  chatId: z.string(),
   message: z.string(),
-  sender: z.string(),
-  receiver: z.string(),
 });
 
 export type PostChatRequestBody = z.infer<typeof chatRequestBodyType>;

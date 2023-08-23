@@ -74,28 +74,18 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(formattedMessages));
   })
   .post(async (req, res) => {
+    console.log('called');
     const { id } = chatSchema.messages.post.query.parse(req.query);
-    const parseResult = chatSchema.messages.post.body.parse(req.body);
-    const { message, sender, receiver } = parseResult;
+    const { message } = chatSchema.messages.post.body.parse(req.body);
 
     if (!message) {
       throw new ParamError('message');
     }
 
-    if (!sender) {
-      throw new ParamError('sender');
-    }
-
-    if (!receiver) {
-      throw new ParamError('receiver');
-    }
-
-    // Verify that chatId exists and that sender and receiver are part of the chat
-    // Sender and receiver are guaranteed to not be the same during chat creation, don't need to check here
+    // Verify that chatId exists and that sender is part of the chat
     const chat = await PrismaClient.rooms.findFirst({
       where: {
         id,
-        AND: [{ buyer: sender || receiver }, { seller: sender || receiver }],
       },
     });
 

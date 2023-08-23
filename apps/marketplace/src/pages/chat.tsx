@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
-import Pusher, { Channel } from 'pusher-js';
+import Pusher from 'pusher-js';
 
 // ** Components Imports **
 import ChatHeader from '@/components/rtc/ChatHeader';
@@ -24,21 +24,21 @@ import type { Messages } from '@inc/types';
 
 // ** Hooks Imports **
 import { useResponsiveness } from '@inc/ui';
-import fetchChatList from '@/services/fetchChatList';
+import fetchChatList from '@/services/chat/fetchChatList';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import NoInternetConnection from '@/components/NoInternet';
+import sendMessage from '@/services/chat/sendMessage';
 
-function formatMessage(message: Messages): ChatData {
-  const { createdAt, message: messageContent, ...rest } = message;
-  const formatted: ChatData = {
-    ...rest,
-    messageContent,
-    createdAt: new Date(createdAt),
-  };
+// function formatMessage(message: Messages): ChatData {
+//   const { createdAt, message: messageContent, ...rest } = message;
+//   const formatted: ChatData = {
+//     ...rest,
+//     messageContent,
+//     createdAt: new Date(createdAt),
+//   };
 
-  return formatted;
-}
+//   return formatted;
+// }
 
 type RoomData = ChatListProps & {
   itemId: number;
@@ -84,8 +84,6 @@ const ChatRoom = () => {
       pusher = new Pusher(pusherKey, {
         cluster: pusherCluster,
       });
-
-      console.log('pusher created', pusher);
     }
 
     if (roomId === '') {
@@ -94,12 +92,9 @@ const ChatRoom = () => {
       pusher.unbind_all();
     }
 
-    console.log('still here!');
-
     const channel = pusher.subscribe(roomId);
 
     if (channel === null) {
-      console.log('channel not found');
       return;
     }
 
@@ -153,19 +148,6 @@ const ChatRoom = () => {
 
       setRooms(formattedRooms);
     });
-
-    // this.handleTextChange = this.handleTextChange.bind(this);
-
-    // handleTextChange(e) {
-    //   if (e.keyCode === 13) {
-    //     const payload = {
-    //       username: this.state.username,
-    //       message: this.state.text
-    //     };
-    //     axios.post('http://localhost:5000/message', payload);
-    //   } else {
-    //     this.setState({ text: e.target.value });
-    //   }
   }, []);
 
   // ** Memos **
@@ -215,26 +197,11 @@ const ChatRoom = () => {
   const onClickSend: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
 
-    if (inputText !== '') {
-      const newMessage = {
-        message: inputText,
-      };
-
-      fetch(`/chat/messages/${roomId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newMessage),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Message sent successfully, no need to handle anything here as
-          // the new message will be received through Pusher and updated in the chat.
-        })
-        .catch((error) => {
-          console.error('Error sending message:', error);
-        });
+    if (inputText.trim().length > 0) {
+      console.log('sending message', inputText);
+      sendMessage(roomId, inputText);
+    } else {
+      console.log('text missing', inputText);
     }
   };
 
