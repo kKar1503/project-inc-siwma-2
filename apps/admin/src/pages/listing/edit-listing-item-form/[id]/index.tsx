@@ -153,6 +153,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={handleNameChange}
+          error={LIName === ''}
+          helperText={LIName === '' ? 'Cannot be empty!' : ' '}
         />
         <TextField
           fullWidth
@@ -175,6 +177,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={handleDescriptionChange}
+          error={LIDescription === ''}
+          helperText={LIDescription === '' ? 'Cannot be empty!' : ' '}
         />
         {cat && (
           <Box sx={{ py: '15px' }}>
@@ -205,6 +209,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={handleUnitChange}
+          error={LIUnit === ''}
+          helperText={LIUnit === '' ? 'Cannot be empty!' : ' '}
         />
         <TextField
           fullWidth
