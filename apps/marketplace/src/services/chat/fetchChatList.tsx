@@ -4,8 +4,6 @@ import chat from '@/utils/api/client/zod/chat';
 const fetchChatList = async () => {
   const response = await apiClient.get('/v1/chat');
 
-  console.log('response.data.data', response.data.data);
-
   const userChatList = chat.getByUser.parse(response.data.data);
 
   // convert price to number

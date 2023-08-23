@@ -92,9 +92,10 @@ export default apiHandler()
       throw new MessageError(); // TODO: Add a more specific error
     }
 
-    const response = await pusher.trigger(id, 'chat-event', {
+    const response = await pusher.trigger(id, 'message_sent', {
       id,
       message,
+      sender: req.token?.user?.id,
     });
 
     if (response.status === 200) {

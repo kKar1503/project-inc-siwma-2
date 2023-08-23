@@ -95,14 +95,21 @@ const ChatRoom = () => {
 
     const channel = pusher.subscribe(roomId);
 
-    if (channel === null) {
-      return;
-    }
+    channel.bind('message_sent', (data: { id: string; message: string; sender: string }) => {
+      console.log('message received', data);
+      const { id, message, sender } = data;
+      const formatted: ChatData = {
+        id,
+        author: sender,
+        read: false,
+        createdAt: new Date(),
+        content: message,
+      };
 
-    // channel.bind('message', (data: Messages) => {
+      setMessages((prev) => [...prev, formatted]);
+    });
+
     channel.bind('pusher:subscription_succeeded', () => {
-      console.log('subscription succeeded');
-      // TODO: retrieve all messages here
       fetchMesssages(roomId).then((messages) => {
         setMessages(messages);
       });
