@@ -10,14 +10,14 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme, alpha } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
-import type { MessageContent } from '@inc/types';
+// import type { MessageContent } from '@inc/types';
 
 export type ChatData = {
-  id: number;
+  id: string;
   author: string;
   read: boolean;
   createdAt: Date;
-  messageContent: MessageContent;
+  content: string;
 };
 
 export type ChatBoxProps = {
@@ -114,15 +114,24 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                       message.author === loginId ? '12px 12px 0 12px' : '12px 12px 12px 0',
                   })}
                 >
-                  {message.messageContent.contentType === 'image' && (
+                  <Typography
+                      sx={({ palette }) => ({
+                        color:
+                          message.author === loginId ? palette.common.white : palette.text.primary,
+                        fontSize: 'body1',
+                        letterSpacing: '0.15px',
+                      })}
+                    >
+                      {message.content}
+                    </Typography>
+                  {/* {message.messageContent.contentType === 'image' && (
                     <CardMedia
                       component="img"
                       height="250"
                       image={message.messageContent.content}
                     />
-                  )}
-
-                  {message.messageContent.contentType === 'text' && (
+                  )} */}
+                  {/* {message.messageContent.contentType === 'text' && (
                     <Typography
                       sx={({ palette }) => ({
                         color:
@@ -133,8 +142,8 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                     >
                       {message.messageContent.content}
                     </Typography>
-                  )}
-                  {message.messageContent.contentType === 'file' &&
+                  )} */}
+                  {/* {message.messageContent.contentType === 'file' &&
                     message.messageContent.content !== undefined && (
                       <Box display="flex">
                         <DescriptionOutlinedIcon
@@ -162,7 +171,7 @@ const ChatBox = ({ loginId, roomData, ChatText }: ChatBoxProps) => {
                           </Button>
                         </Box>
                       </Box>
-                    )}
+                    )} */}
                 </Paper>
               </ListItem>
             ))}

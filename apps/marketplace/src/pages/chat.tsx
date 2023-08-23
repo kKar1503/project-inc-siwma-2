@@ -20,7 +20,7 @@ import { SxProps, Theme, useTheme } from '@mui/material/styles';
 // ** Types Imports **
 import type { ChatListProps } from '@/components/rtc/ChatList';
 import type { ChatData } from '@/components/rtc/ChatBox';
-import type { Messages } from '@inc/types';
+// import type { Messages } from '@inc/types';
 
 // ** Hooks Imports **
 import { useResponsiveness } from '@inc/ui';
@@ -28,6 +28,7 @@ import fetchChatList from '@/services/chat/fetchChatList';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import sendMessage from '@/services/chat/sendMessage';
+import fetchMesssages from '@/services/chat/fetchMessages';
 
 // function formatMessage(message: Messages): ChatData {
 //   const { createdAt, message: messageContent, ...rest } = message;
@@ -101,8 +102,10 @@ const ChatRoom = () => {
     // channel.bind('message', (data: Messages) => {
     channel.bind('pusher:subscription_succeeded', () => {
       console.log('subscription succeeded');
-      // retrieve all messages
-      
+      // TODO: retrieve all messages here
+      fetchMesssages(roomId).then((messages) => {
+        setMessages(messages);
+      });
     });
 
     channel.unbind('message');
@@ -200,8 +203,6 @@ const ChatRoom = () => {
     if (inputText.trim().length > 0) {
       console.log('sending message', inputText);
       sendMessage(roomId, inputText);
-    } else {
-      console.log('text missing', inputText);
     }
   };
 

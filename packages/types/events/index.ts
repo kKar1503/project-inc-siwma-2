@@ -6,70 +6,70 @@ type RoomId = string;
 type MessageId = number;
 type ListingId = number;
 
-export type MessageContent = (
-  | {
-      contentType: 'text' | 'file' | 'image';
-    }
-) & {
-  content: string;
-};
+// export type MessageContent = (
+//   | {
+//       contentType: 'text' | 'file' | 'image';
+//     }
+// ) & {
+//   content: string;
+// };
 
-export type ClientSendMessage = {
-  roomId: RoomId;
-  message: string;
-  time: string;
-};
+// export type ClientSendMessage = {
+//   roomId: RoomId;
+//   message: string;
+//   time: string;
+// };
 
-export type Room = {
-  id: RoomId;
-  username: string;
-  category: 'BUY' | 'SELL';
-  latestMessage?: MessageContent;
-  itemId: ListingId;
-  itemName: string;
-  itemPrice: number;
-  itemPriceIsUnit: boolean;
-  itemImage: string;
-  inProgress: boolean;
-  time?: string;
-  userImage: string;
-  unreadMessages: number;
-};
+// export type Room = {
+//   id: RoomId;
+//   username: string;
+//   category: 'BUY' | 'SELL';
+//   latestMessage?: MessageContent;
+//   itemId: ListingId;
+//   itemName: string;
+//   itemPrice: number;
+//   itemPriceIsUnit: boolean;
+//   itemImage: string;
+//   inProgress: boolean;
+//   time?: string;
+//   userImage: string;
+//   unreadMessages: number;
+// };
 
-export type DataSync<T> =
-  | {
-      status: 'in_progress';
-      progress: number;
-      data: T;
-    }
-  | {
-      status: 'success';
-    }
-  | {
-      status: 'error';
-      err?: string;
-    };
+// export type DataSync<T> =
+//   | {
+//       status: 'in_progress';
+//       progress: number;
+//       data: T;
+//     }
+//   | {
+//       status: 'success';
+//     }
+//   | {
+//       status: 'error';
+//       err?: string;
+//     };
 
-export type ClientCreateRoom = {
-  sellerId: UserId;
-  buyerId: UserId;
-  listingId: ListingId;
-};
+// export type ClientCreateRoom = {
+//   sellerId: UserId;
+//   buyerId: UserId;
+//   listingId: ListingId;
+// };
 
-export type Messages = {
-  id: number;
-  author: string;
-  room: string;
-  read: boolean;
-  createdAt: string;
-  message: MessageContent;
-};
+// export type Messages = {
+//   id: number;
+//   author: string;
+//   room: string;
+//   read: boolean;
+//   createdAt: string;
+//   message: MessageContent;
+// };
 
-export type MessageSync = DataSync<Messages>;
-export type RoomSync = DataSync<Room>;
+// export type MessageSync = DataSync<Messages>;
+// export type RoomSync = DataSync<Room>;
 
-// ** Types Declarations **
-export type LoadingState = 'idle' | 'iam' | 'sync' | 'part';
+// // ** Types Declarations **
+// export type LoadingState = 'idle' | 'iam' | 'sync' | 'part';
 
 // EventParams keys must match all the available events above in the const object.
 // type EventParams = {

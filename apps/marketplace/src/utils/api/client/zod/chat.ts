@@ -26,8 +26,8 @@ const getChatMessage = z.object({
   id: z.string(),
   contentType: z.string(),
   read: z.boolean(),
-  content: z.string().optional(),
-  offer: z.number().nullable().optional(),
+  // content: z.string().optional(),
+  content: z.string(),
   author: z.string().uuid(),
   createdAt: z.string().datetime(),
 });
@@ -42,7 +42,7 @@ const getChatRoom = z.object({
   createdAt: z.string().datetime(),
 });
 
-// const getChatMessages = getChatMessage.array();
+const getChatMessages = getChatMessage.array();
 
 const getUserChats = getChatRoom.array();
 
@@ -54,8 +54,8 @@ export default {
     create: createChatRoom,
     get: getChatRoom,
   },
-  // message: {
-  //   get: getChatMessages,
-  // },
+  message: {
+    get: getChatMessages,
+  },
   getByUser: getUserChats,
 };

@@ -74,7 +74,6 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(formattedMessages));
   })
   .post(async (req, res) => {
-    console.log('called');
     const { id } = chatSchema.messages.post.query.parse(req.query);
     const { message } = chatSchema.messages.post.body.parse(req.body);
 
