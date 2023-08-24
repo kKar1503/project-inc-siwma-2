@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
 import useMultipleUsers from '@/services/users/useMultipleUsers';
+import NoInternetConnection from '@/components/NoInternet';
 
 const BUTTONS = ['LISTINGS', 'USERS'] as const;
 export type BookmarkType = (typeof BUTTONS)[number];
@@ -74,6 +75,7 @@ const Bookmarks = () => {
           <UserBookmarks users={bookmarkedUsers} updateBookmarkData={refetchUser} />
         )}
       </Grid>
+      {/* <NoInternetConnection /> */}
     </Container>
   );
 };

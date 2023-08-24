@@ -9,7 +9,7 @@ export default apiHandler({ allowAdminsOnly: true }).put(async (req, res) => {
   if (!id) {
     throw new ParamError('id');
   }
-  const companyid = parseToNumber(id as string, 'id');
+  const companyId = parseToNumber(id as string, 'id');
   const files = await getFilesFromRequest(req);
   if (files.length === 0) {
     throw new ParamError('company logo');
@@ -22,7 +22,7 @@ export default apiHandler({ allowAdminsOnly: true }).put(async (req, res) => {
       logo: s3Object.Id,
     },
     where: {
-      id: companyid,
+      id: companyId,
     },
   });
 

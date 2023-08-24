@@ -7,6 +7,7 @@ import { useMutation } from 'react-query';
 import createUser from '@/services/users/createUser';
 import { useRouter } from 'next/router';
 import { validatePassword, validatePhone } from '@/utils/api/validate';
+import NoInternetConnection from '@/components/NoInternet';
 
 const Register = () => {
   const [phone, setPhone] = useState('');
@@ -281,6 +282,7 @@ const Register = () => {
           </Box>
         </Container>
       </Box>
+      {/* <NoInternetConnection /> */}
     </Box>
   );
 };

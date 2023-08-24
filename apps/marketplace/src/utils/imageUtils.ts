@@ -1,8 +1,7 @@
 import { NextApiRequest } from 'next';
 import { Fields, File, Files, IncomingForm, Options } from 'formidable';
 import fs from 'fs';
-import { Metadata, S3BucketService, S3ObjectBuilder } from '@inc/s3-simplified';
-import { APIRequestType } from '@/types/api-types';
+import { Metadata, S3ObjectBuilder } from '@inc/s3-simplified';
 
 const DefaultOptions: Partial<Options> = {
   multiples: false,
@@ -40,13 +39,6 @@ export const getFilesFromRequest = async (
   return toArrayIfNot(file);
 };
 
-export const getAllFilesFromRequest = async (req: NextApiRequest): Promise<File[]> => {
-  const { files } = await imageUtils(req);
-  if (files === undefined) return [];
-  return Object.values(files)
-    .map(toArrayIfNot)
-    .reduce((acc, val) => acc.concat(val), []);
-};
 
 export const fileToS3Object = (
   file: File,
@@ -61,52 +53,4 @@ export const fileToS3Object = (
     // "content-disposition": file.newFilename,
   });
   return new S3ObjectBuilder(buffer, metadata);
-};
-
-export const loadImage = async <T extends Record<string, unknown>>(
-  source: T,
-  bucket: S3BucketService,
-  imageKey: string
-): Promise<T> => {
-  if (typeof source[imageKey] !== 'string') return source;
-  try {
-    const image = await bucket.getObject(source[imageKey] as string);
-    return {
-      ...source,
-      [imageKey]: await image.generateLink(),
-    };
-  } catch (e) {
-    return {
-      ...source,
-      [imageKey]: null,
-    };
-  }
-};
-
-export const loadImageBuilder =
-  <T extends Record<string, unknown>>(
-    bucket: S3BucketService,
-    imageKey: string
-  ): ((source: T) => Promise<T>) =>
-  async (source) =>
-    loadImage(source, bucket, imageKey);
-
-export const updateImage = async (
-  bucket: S3BucketService,
-  OldImage: string,
-  req: NextApiRequest & APIRequestType
-): Promise<string> => {
-  const files = await getFilesFromRequest(req);
-  if (files.length > 0) {
-    const s3ObjectBuilder = fileToS3Object(files[0]);
-    // create new image and delete old image as aws doesn't support update
-    // also do these in parallel for faster response
-    const awaitedPromise = await Promise.all([
-      bucket.createObject(s3ObjectBuilder),
-      OldImage ? bucket.deleteObject(OldImage) : null,
-    ]);
-    const [newS3Object] = awaitedPromise;
-    return newS3Object.Id;
-  }
-  return OldImage;
 };
