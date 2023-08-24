@@ -198,14 +198,8 @@ export function formatMessageResponse(message: Messages) {
     read: message.read,
     author: message.author,
     createdAt: message.createdAt.toISOString(),
+    content: message.content,
   };
-
-  // Format the message based on the content type
-  if (message.contentType !== 'offer') {
-    response.content = message.content;
-  } else {
-    response.offer = message.offer;
-  }
 
   return response;
 }
