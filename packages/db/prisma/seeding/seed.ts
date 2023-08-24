@@ -6,7 +6,6 @@ import { Users } from './tables/users';
 import { Listings } from './tables/listing';
 import { ListingItems } from './tables/listing_items';
 import { Rooms } from './tables/rooms';
-import { Offers } from './tables/offers';
 import { Messages } from './tables/messages';
 import { Parameters } from './tables/parameter';
 import { Advertisements } from './tables/advertisements';
@@ -28,7 +27,6 @@ const main = async (): Promise<void> => {
     prismaClient.logs.deleteMany({}),
     prismaClient.parameter.deleteMany({}),
     prismaClient.rooms.deleteMany({}),
-    prismaClient.offers.deleteMany({}),
     prismaClient.messages.deleteMany({}),
     prismaClient.share.deleteMany({}),
     prismaClient.sharesListings.deleteMany({}),
@@ -143,16 +141,6 @@ const main = async (): Promise<void> => {
   });
 
   console.log(`Seeded ${roomsCount} rows into public.rooms`);
-  console.log('Seeding public.offers...');
-
-  const { count: offersCount } = await prismaClient.offers.createMany({
-    data: Offers,
-  });
-
-  await prismaClient.$executeRawUnsafe(`ALTER SEQUENCE public.offers_seq RESTART WITH ${offersCount};`);
-
-  console.log(`Seeded ${offersCount} rows into public.offers`);
-  console.log('Updated public.offers_seq');
   console.log('Seeding public.messages...');
 
   const { count: messagesCount } = await prismaClient.messages.createMany({
