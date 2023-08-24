@@ -78,7 +78,6 @@ const ListingItemForm = () => {
     if (names && names.listingItemsData.length > 0) {
       setNames(names);
     }
-    console.log(LINamesArr);
   }, [names]);
 
   const usePostListingItemMutation = useMutation(
@@ -121,7 +120,6 @@ const ListingItemForm = () => {
   };
 
   const handleConfirm = async () => {
-    console.log(LIName);
     const requestBody: CreateListingItemProps = {
       name: LIName,
       chineseName: LIChineseName ?? undefined,
@@ -130,7 +128,6 @@ const ListingItemForm = () => {
       unit: LIUnit,
       chineseUnit: LICUnit ?? undefined,
     };
-    console.log(requestBody);
     await usePostListingItemMutation.mutateAsync(requestBody);
   };
 
