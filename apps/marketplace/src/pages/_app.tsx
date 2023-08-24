@@ -130,24 +130,24 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
                   default: StyledMaterialDesignContent,
                 }}
               >
-                <NoInternetConnection>
-                  {getLayout(
-                    <Box height="100dvh" display="flex" flexDirection="column">
-                      <I18nextProvider i18n={i18n}>
-                        {includeNavbar ? (
-                          <>
-                            <NavBar renderSearchBar={renderSearchBar} />
+                {getLayout(
+                  <Box height="100dvh" display="flex" flexDirection="column">
+                    <I18nextProvider i18n={i18n}>
+                      {includeNavbar ? (
+                        <>
+                          <NavBar renderSearchBar={renderSearchBar} />
+                          <Component {...pageProps} />
+                        </>
+                      ) : (
+                        <I18Fix>
+                          {/* <NoInternetConnection> */}
                             <Component {...pageProps} />
-                          </>
-                        ) : (
-                          <I18Fix>
-                            <Component {...pageProps} />
-                          </I18Fix>
-                        )}
-                      </I18nextProvider>
-                    </Box>
-                  )}
-                </NoInternetConnection>
+                          {/* </NoInternetConnection> */}
+                        </I18Fix>
+                      )}
+                    </I18nextProvider>
+                  </Box>
+                )}
               </SnackbarProvider>
             </QueryClientProvider>
           </AuthenticationGuard>
