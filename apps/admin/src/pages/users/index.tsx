@@ -84,7 +84,13 @@ const Page = () => {
   ]);
 
   const onErrorFn = (error: any) => {
-    alert(error.statusText);
+    const err = error.data.errors[0];
+    // Check for duplicate error
+    if (err.code === 2006) {
+      alert(err.meta.key);
+    } else {
+      alert(err.detail);
+    }
   };
 
   const { mutate: deleteUsers } = useMutation('deleteUsers', deleteUsersMutationFn, {
