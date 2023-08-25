@@ -282,7 +282,7 @@ const Register = () => {
           </Box>
         </Container>
       </Box>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </Box>
   );
 };

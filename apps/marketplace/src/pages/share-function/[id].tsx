@@ -168,7 +168,7 @@ const ShareFunctionPage = () => {
           />
         </Box>
       </Box>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </main>
   );
 };

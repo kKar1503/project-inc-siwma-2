@@ -144,7 +144,7 @@ const SuccessForgotPassword = () => {
           </Box>
         </Container>
       </Box>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </Box>
   );
 };
