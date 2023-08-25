@@ -82,7 +82,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
         !AcceptedFileTypes.PNG.includes(selectedCompanyFile.type)) ||
       selectedCompanyFile?.type === ''
     ) {
-      setFileError('File type is invalid');
+      setFileError('File type is invalid. Please upload a JPG or PNG file');
       formIsValid = false;
     }
 
