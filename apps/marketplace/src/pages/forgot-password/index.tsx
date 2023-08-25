@@ -187,9 +187,8 @@ const ForgetPassword = () => {
   );
 };
 
+ForgetPassword.noInternet = false;
 ForgetPassword.includeNavbar = false;
-// TODO: the NoInternet component does not work because of the line below
-// * im too lazy to investigate and submission is in 18hrs 
 ForgetPassword.allowNonAuthenticated = true;
 
 export default ForgetPassword;
