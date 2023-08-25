@@ -110,7 +110,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
       formIsValid = false;
     }
 
-    if (!website && !websiteRegex.test(website)) {
+    if (!websiteRegex.test(website)) {
       setWebsiteError('Website is invalid. Use the format: www.example.com');
       formIsValid = false;
     }
