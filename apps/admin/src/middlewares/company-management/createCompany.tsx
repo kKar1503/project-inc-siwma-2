@@ -9,7 +9,7 @@ const createCompany = async (data: PostCompanyRequestBody, image?: File) => {
   if (image) {
     const formData = new FormData();
     formData.append('file', image);
-    await apiClient.post(`/v1/companies/${createdCompany.companyId}/images`, formData);
+    await apiClient.put(`/v1/companies/${createdCompany.companyId}/images`, formData);
   }
 
   return createdCompany;
