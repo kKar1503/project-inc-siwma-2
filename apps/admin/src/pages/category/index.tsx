@@ -32,10 +32,6 @@ const headCells: Header[] = [
     key: 'name',
     label: 'Category Name',
   },
-  // {
-  //   key: 'name',
-  //   label: 'Category Name (Chinese)',
-  // },
   {
     key: 'active',
     label: 'Status',
@@ -76,18 +72,6 @@ const CategoryTable = () => {
     window.location.href = `/category/${row.id}/edit-category`;
   };
 
-  // const handleDelete = async (rowsToDelete: readonly BaseTableData[]): Promise<void> => {
-  //   const idsToDelete = rowsToDelete.map((row) => row.id);
-
-  //   try {
-  //     await Promise.all(idsToDelete.map((id) => deleteCategories(id)));
-
-  //     setRows((prevRows) => prevRows.filter((row) => !idsToDelete.includes(row.id)));
-  //   } catch (error) {
-  //     console.error('Error deleting categories:', error);
-  //   }
-  // };
-
   const handleDelete = (rowsToDelete: readonly BaseTableData[]): BaseTableData[] => {
     const idsToDelete = rowsToDelete.map((row) => row.id);
 
@@ -95,6 +79,8 @@ const CategoryTable = () => {
       Promise.all(idsToDelete.map((id) => deleteCategories(id)));
 
       setRows((prevRows) => prevRows.filter((row) => !idsToDelete.includes(row.id)));
+
+      setIsDeleted(true); // Set this to trigger the effect for delete
 
       return [];
     } catch (error) {
