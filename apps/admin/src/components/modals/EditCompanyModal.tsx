@@ -317,8 +317,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                     selectedFile={selectedCompanyFile}
                     changeHandler={handleLogoChange}
                     accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-                    maxHeight="220px"
-                    maxWidth='220px'
+                    maxHeight="160px"
                   />
                   <Button
                     variant="contained"
