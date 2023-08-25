@@ -3,6 +3,8 @@ import PageCoreVitals from '../components/CoreVitalsReport';
 
 const urls = [
   `${process.env.NEXT_PUBLIC_WEBSITE_URL}/`,
+  `${process.env.NEXT_PUBLIC_WEBSITE_URL}/404`,
+  `${process.env.NEXT_PUBLIC_WEBSITE_URL}/500`,
   `${process.env.NEXT_PUBLIC_WEBSITE_URL}/archived/chat`,
   `${process.env.NEXT_PUBLIC_WEBSITE_URL}/login`,
   `${process.env.NEXT_PUBLIC_WEBSITE_URL}/bookmarks`,
