@@ -80,8 +80,9 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
 
   const checkCompanyDuplicate = async (name: string) => {
     const companies = await getCompaniesByName(name);
+    const originalName = companyData.data?.name;
 
-    if (companies) {
+    if (companies && originalName !== name) {
       return companies.some((company: Company) => company.name === name);
     }
     return false;
