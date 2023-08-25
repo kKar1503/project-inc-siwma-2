@@ -297,8 +297,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                     selectedFile={file}
                     changeHandler={handleExcelChange}
                     accept={[AcceptedFileTypes.XLSX]}
-                    maxWidth="200px"
-                    maxHeight="200px"
+                    maxHeight="300px"
                   />
                 )}
                 <Button
