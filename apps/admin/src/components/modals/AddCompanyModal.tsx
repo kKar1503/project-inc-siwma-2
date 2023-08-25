@@ -257,8 +257,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
                   selectedFile={selectedCompanyFile}
                   changeHandler={handleLogoChange}
                   accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-                  maxHeight="220px"
-                  maxWidth="200px"
+                  maxHeight="160px"
                 />
                 <Button
                   variant="contained"
@@ -266,7 +265,6 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
                   size="large"
                   onClick={handleSubmit}
                   fullWidth
-                  sx={{ mt: 4 }}
                 >
                   Add Company
                 </Button>
