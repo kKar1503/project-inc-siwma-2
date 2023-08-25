@@ -72,11 +72,17 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   const [websiteError, setWebsiteError] = useState<string>('');
   const [fileError, setFileError] = useState<string>('');
 
-  const checkCompanyDuplicate = (companyData: Company) => {
-    if (companies.data && companyData) {
-      return companies.data.some(
-        (company: Company) => company.name === companyData.name && company.id !== companyData.id
-      );
+  const getCompaniesByName = async (name: string) => {
+    const data = await fetchCompaniesByName(name);
+
+    return data;
+  };
+
+  const checkCompanyDuplicate = async (name: string) => {
+    const companies = await getCompaniesByName(name);
+
+    if (companies) {
+      return companies.some((company: Company) => company.name === name);
     }
     return false;
   };
@@ -87,7 +93,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
     setFileError('');
   };
 
-  const formValidation = () => {
+  const formValidation = async () => {
     resetErrors();
 
     let formIsValid = true;
@@ -99,7 +105,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
       formIsValid = false;
     }
 
-    if (companyData?.data && checkCompanyDuplicate(companyData?.data)) {
+    if (await checkCompanyDuplicate(name)) {
       setNameError('Company already exists');
       formIsValid = false;
     }
