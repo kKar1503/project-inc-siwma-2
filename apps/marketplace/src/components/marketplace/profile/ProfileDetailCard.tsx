@@ -164,7 +164,12 @@ const ProfileDetailCard = ({ data, visibleEditButton }: ProfileDetailCardData) =
 
       <CardContent>
         <S3Avatar
-          sx={({ spacing }) => ({ mb: spacing(1), bgcolor: red[500] })}
+          sx={({ spacing }) => ({
+            mb: spacing(1),
+            bgcolor: red[500],
+            textAlign: 'center',
+            alignItems: 'center',
+          })}
           src={`${data?.profilePic}`}
         >
           {data?.name.charAt(0).toUpperCase()}
