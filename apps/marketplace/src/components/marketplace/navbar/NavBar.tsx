@@ -8,11 +8,12 @@ import MessageIcon from '@mui/icons-material/Message';
 import Link from '@mui/material/Link';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
-import { useResponsiveness, SearchBar } from '@inc/ui';
+import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import SearchBar from '../searchbar/SearchBar';
 import CreateListing from './CreateListing';
 
 import Profile from './Profile';
@@ -128,7 +129,7 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
                 </Typography>
               </Link>
             )}
-            {isSm && <SearchBar handleSearch={handleSearch} />}
+            {isSm && <SearchBar />}
 
             <Box sx={{ flexGrow: 1 }} />
             {!isSm && (
@@ -182,7 +183,7 @@ const NavBar = ({ renderSearchBar = true }: NavBarProps) => {
         >
           <Toolbar variant="dense" sx={{ minHeight: 20, height: 48 }}>
             <Box sx={{ width: '100%' }}>
-              <SearchBar handleSearch={handleSearch} />
+              <SearchBar />
             </Box>
           </Toolbar>
         </Box>

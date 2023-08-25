@@ -7227,6 +7227,19 @@ packages:
       react: 18.2.0
     dev: false
 
+  /react-instantsearch-core@6.40.1(react@18.2.0):
+    resolution: {integrity: sha512-KzmOgJjDIrjn1kUziHkG+Dx3lqymKctNnklapiujHZL18svfdyIU+bphW8o4eXiHptTv7WYtEip4zhwxBO6BHA==}
+    peerDependencies:
+      algoliasearch: '>= 3.1 < 5'
+      react: '>= 16.3.0 < 19'
+    dependencies:
+      '@babel/runtime': 7.21.5
+      algoliasearch-helper: 3.13.5(algoliasearch@4.19.1)
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-fast-compare: 3.2.1
+    dev: false
+
   /react-instantsearch-core@6.40.3(react@18.2.0):
     resolution: {integrity: sha512-hAwJVCh0fwFwoyy5TqvXAHRcrQpwUojzqUnIr/RRD9z2Pz/HfGosgizKaEETpY5PGl40jFfjCXHwFgaTVcxUXQ==}
     peerDependencies:
@@ -7238,6 +7251,23 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       react-fast-compare: 3.2.1
+    dev: false
+
+  /react-instantsearch-dom@6.40.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-VYwWmRcycGA4GhmkVawy6GQuD7UF6I6jN2ryYzFPVdIyCyCdPr2gyyoE4N9UeVRU5yXYGrQbZYtU9+UsX3uQCw==}
+    peerDependencies:
+      algoliasearch: '>= 3.1 < 5'
+      react: '>= 16.3.0 < 19'
+      react-dom: '>= 16.3.0 < 19'
+    dependencies:
+      '@babel/runtime': 7.21.5
+      algoliasearch-helper: 3.13.5(algoliasearch@4.19.1)
+      classnames: 2.3.2
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-fast-compare: 3.2.1
+      react-instantsearch-core: 6.40.1(react@18.2.0)
     dev: false
 
   /react-instantsearch-dom@6.40.3(react-dom@18.2.0)(react@18.2.0):
