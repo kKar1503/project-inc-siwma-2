@@ -62,7 +62,7 @@ const CollapsibleRow = (props: CollapsibleRowProps) => {
                   sx={({ spacing }) => ({ mb: spacing(1), bgcolor: red[500] })}
                   src={row.owner.profilePic ?? ''}
                 >
-                  {row.owner.name.charAt(0)}
+                  {row.owner.name.charAt(0).toUpperCase()}
                 </S3Avatar>
                 <Typography sx={{ fontWeight: 'bold', textAlign: 'center' }}>
                   {row.owner.name}
