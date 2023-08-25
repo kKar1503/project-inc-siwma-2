@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Parameter } from '@/utils/api/client/zod';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
 import { DataType, ParameterType } from '@inc/db-enums';
 import { FormDropdownSelector, FormInputGroup, FormTextInput, FormToggleButton } from '../forms';
@@ -26,7 +26,7 @@ const CategoryParamInput = ({
     switch (parameter.dataType) {
       case DataType.number:
         // @ts-ignore
-        return <FormNumberInput min={0} />;
+        return <FormNumberInput suffix={parameter.unit} />;
       case DataType.boolean:
         return (
           // @ts-ignore
@@ -89,7 +89,7 @@ const CategoryParamInput = ({
 
     if (parameter.type === ParameterType.OPEN_ENDED) {
       // @ts-ignore
-      return <FormTextInput />;
+      return <FormTextInput suffix={parameter.unit} />;
     }
 
     return (

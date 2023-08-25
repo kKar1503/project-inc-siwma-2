@@ -4,17 +4,16 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useTheme } from '@mui/material';
 import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
-import CompareDifferences from './CompareDifferences';
+import CompareDifferences from '@/components/tables/CompareDifferencesTable';
+import NoInternetConnection from '@/components/NoInternet';
 
 const Compare = () => {
-  let productIds: string[] = [];
+  let listingIds: string[] = [];
   const urlParts = window.location.pathname.split('/compare/');
 
   if (urlParts.length > 1 && urlParts[1] !== '') {
-    productIds = urlParts[1].split(',');
+    listingIds = urlParts[1].split(',');
   }
-
-  console.log('Product IDs:', productIds);
 
   const theme = useTheme();
   const { spacing } = theme;
@@ -60,8 +59,9 @@ const Compare = () => {
         >
           Compare Differences
         </Typography>
-        <CompareDifferences productIds={productIds} />
+        <CompareDifferences listingIds={listingIds} />
       </Box>
+      {/* <NoInternetConnection /> */}
     </Container>
   );
 };

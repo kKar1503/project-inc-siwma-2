@@ -10,6 +10,7 @@ export default apiHandler({ allowAdminsOnly: true })
     if (!id) {
       throw new ParamError('id');
     }
+
     const categoryId = parseToNumber(id as string, 'id');
     const category = await PrismaClient.category.findFirst({
       select: {
@@ -25,7 +26,7 @@ export default apiHandler({ allowAdminsOnly: true })
 
     const files = await getFilesFromRequest(req);
     if (files.length === 0) {
-      throw new ParamError('cross section image');
+      throw new ParamError('image');
     }
 
     const [s3Object] = await Promise.all([

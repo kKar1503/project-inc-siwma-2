@@ -2,7 +2,9 @@
 import S3BoxImage from '@/components/S3BoxImage';
 import CategoryParamInput from '@/components/listingCreation/CategoryParamInput';
 import ProductDetail from '@/components/listingCreation/ProductDetail';
-import { Typography, Divider, Button } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 import { Box } from '@mui/system';
 import { t } from 'i18next';
 import { FieldValues, Form, FormProvider, useForm } from 'react-hook-form';
@@ -45,8 +47,10 @@ const ListingCreationForm = ({
   errorMessage,
 }: ListingCreationFormProps) => {
   // -- Hooks -- //
-  const [isSm] = useResponsiveness(['sm']);
+  const [isXs, isSm, isMd] = useResponsiveness(['xs', 'sm', 'md']);
   const { control } = formHook;
+  const isMdWidth = isMd ? '25%' : '30%';
+  const isXsWidth = isXs ? '100%' : '47%';
 
   return (
     <Form
@@ -125,8 +129,7 @@ const ListingCreationForm = ({
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: isSm ? 'column' : 'row',
-                justifyContent: 'space-between',
+                flexDirection: 'row',
                 alignItems: 'end',
                 marginBottom: 3,
                 flexWrap: 'wrap',
@@ -145,8 +148,9 @@ const ListingCreationForm = ({
                     selectedCategory?.parameters?.find((f) => e.id === f.parameterId)?.required
                   }
                   sx={{
-                    minWidth: isSm ? '45%' : '15%',
-                    width: isSm ? '100%' : undefined,
+                    flex: 'none',
+                    minWidth: isSm ? isXsWidth : isMdWidth,
+                    width: isSm ? isXsWidth : '15%',
                   }}
                 />
               ))}
@@ -196,7 +200,11 @@ const ListingCreationForm = ({
               required
             >
               {/** @ts-ignore */}
-              <FormNumberInput prefix="S$" min={0} />
+              <FormNumberInput
+                prefix="S$"
+                min={0}
+                suffix={selectedProduct ? `/ ${selectedProduct?.unit}` : undefined}
+              />
             </FormInputGroup>
             <FormInputGroup
               sx={{ flex: 1 }}
@@ -207,7 +215,7 @@ const ListingCreationForm = ({
               required
             >
               {/** @ts-ignore */}
-              <FormNumberInput min={0} />
+              <FormNumberInput min={0} suffix={selectedProduct?.unit} />
             </FormInputGroup>
           </Box>
           <Box
@@ -223,6 +231,9 @@ const ListingCreationForm = ({
               isLoading={isLoading}
               success={submitSuccess}
               hideError
+              sx={{
+                minWidth: '10rem',
+              }}
             >
               {/** @ts-ignore */}
               <FormCheckboxInput options={[{ label: 'Negotiable', value: true }]} />

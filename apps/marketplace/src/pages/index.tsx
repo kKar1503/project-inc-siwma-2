@@ -13,7 +13,7 @@ import fetchCategories from '@/services/fetchCategories';
 import fetchAdvertisements from '@/services/fetchAdvertisements';
 
 import { useResponsiveness } from '@inc/ui';
-import AdvertisementsPlaceholder from '@/components/marketplace/carousel/AdvertisementsPlaceholder';
+import Skeleton from '@mui/material/Skeleton';
 import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ListingTable from '@/components/marketplace/listing/ListingTable';
@@ -26,6 +26,7 @@ import useBookmarkStore from '@/stores/bookmarks';
 import useParamStore from '@/stores/parameters';
 import useProductStore from '@/stores/products';
 import { SxProps } from '@mui/material/styles';
+import NoInternetConnection from '@/components/NoInternet';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -41,18 +42,11 @@ const useGetCategoriesQuery = () => {
   return data;
 };
 
-const useGetAdvertisementsQuery = (permissions: number | undefined) => {
-  const { data } = useQuery(
-    ['advertisements', permissions],
-    async () => fetchAdvertisements(permissions!),
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  return data;
-};
+const useGetAdvertisementsQuery = (permissions: number | undefined) =>
+  useQuery(['advertisements', permissions], async () => fetchAdvertisements(permissions!), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
 const Marketplace = () => {
   const { data: session } = useSession();
@@ -149,7 +143,11 @@ const Marketplace = () => {
   const { t } = useTranslation();
 
   const categories = useGetCategoriesQuery();
-  const advertisementsData = useGetAdvertisementsQuery(session?.user.permissions);
+
+  const { data: advertisementsData, isLoading: advertisementIsLoading } = useGetAdvertisementsQuery(
+    session?.user.permissions
+  );
+  const hasAdvertisements = advertisementsData && advertisementsData.length > 0;
 
   const headerStyles = useMemo(() => {
     if (isSm) {
@@ -194,11 +192,14 @@ const Marketplace = () => {
 
   return (
     <>
-      {advertisementsData?.length ? (
-        <Carousel data={advertisementsData} />
+      {advertisementIsLoading ? (
+        <Box>
+          <Skeleton variant="rectangular" height="300px" />
+        </Box>
       ) : (
-        <AdvertisementsPlaceholder />
+        hasAdvertisements && <Carousel data={advertisementsData} />
       )}
+
       <Box sx={{ ...maxWidthContainer }}>
         <Box display="flex" justifyContent="space-between" paddingTop="2em">
           <Box
@@ -231,6 +232,7 @@ const Marketplace = () => {
         isParamFetching={isParamsFetching || pageLoading}
         listings={listings?.listings || []}
       />
+      {/* <NoInternetConnection /> */}
     </>
   );
 };

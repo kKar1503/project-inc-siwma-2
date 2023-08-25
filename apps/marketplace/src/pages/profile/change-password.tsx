@@ -19,6 +19,7 @@ import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import { useTranslation } from 'react-i18next';
+import NoInternetConnection from '@/components/NoInternet';
 
 const useUpdateUserMutation = (userUuid: string) =>
   useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
@@ -72,6 +73,14 @@ const ChangePassword = () => {
       setCurrentPasswordErrorText('');
     }
   }, [newPassword, confirmNewPassword, mutation.isError]);
+  
+    useEffect(() => {
+    if (mutation.isSuccess) {
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    }
+  }, [mutation.isSuccess]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -254,6 +263,7 @@ const ChangePassword = () => {
           </form>
         </Container>
       </main>
+      {/* <NoInternetConnection /> */}
     </>
   );
 };
