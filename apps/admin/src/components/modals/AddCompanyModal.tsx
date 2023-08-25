@@ -71,7 +71,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
 
     if (website) {
       if (!websiteRegex.test(website)) {
-        setWebsiteError('Website is invalid. Use the format: https://www.example.com');
+        setWebsiteError('Website is invalid. Use the format: www.example.com');
         formIsValid = false;
       }
     }
