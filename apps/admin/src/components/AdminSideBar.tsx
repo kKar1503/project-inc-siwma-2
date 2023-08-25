@@ -36,6 +36,7 @@ import useUser from '@/middlewares/fetchUser';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useResponsiveness } from '@inc/ui';
+import S3Avatar from '@/components/S3Avatar';
 
 const menuItems = [
   {
@@ -303,7 +304,7 @@ const AdminSideBar = () => {
         <List>
   {menuItems.map((item) => (
     <Box key={item.name}>
-      {item.dropdown ? ( 
+      {item.dropdown ? (
         <ListItemButton
           onClick={() => handleClick(item.name)}
           sx={{
@@ -311,7 +312,7 @@ const AdminSideBar = () => {
             display: 'flex',
             alignItems: 'center',
             textDecoration: 'none',
-            color: 'inherit', 
+            color: 'inherit',
           }}
         >
           <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
@@ -340,8 +341,8 @@ const AdminSideBar = () => {
             backgroundColor: isCurrentRoute(item.link) ? blueBackground : 'transparent',
             display: 'flex',
             alignItems: 'center',
-            textDecoration: 'none', 
-            color: 'inherit', 
+            textDecoration: 'none',
+            color: 'inherit',
           }}
         >
           <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
@@ -376,8 +377,8 @@ const AdminSideBar = () => {
                   pl: '2em',
                   display: 'flex',
                   alignItems: 'center',
-                  textDecoration: 'none', 
-                  color: 'inherit',   
+                  textDecoration: 'none',
+                  color: 'inherit',
                 }}
               >
                 <Box style={{ marginRight: '1em', display: 'flex', alignItems: 'center' }}>
@@ -445,14 +446,14 @@ const AdminSideBar = () => {
                 marginRight: '1em',
               }}
             >
-              <Image src={user.imageUrl} alt="Profile Picture" width={40} height={40} />
+              <S3Avatar src={user.imageUrl} alt="Profile Picture" width={40} height={40} />
             </Box>
             <Box>
               <Typography sx={textStyles?.name}>{user.name}</Typography>
               <Typography sx={textStyles?.email}>{user.email}</Typography>
             </Box>
           </Box>
-        </Box>
+        </Box>  
       </Hidden>
     </Box>
   );

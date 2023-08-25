@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Box, Divider, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -391,7 +393,7 @@ const ListingCreateEdit = () => {
           </Box>
         </Box>
       </Box>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </>
   );
 };
