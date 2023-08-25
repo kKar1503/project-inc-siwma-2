@@ -6,7 +6,7 @@ import FileUpload, {
 import { useResponsiveness } from '@inc/ui';
 import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 import { Company } from '@/utils/api/client/zod/companies';
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 import Spinner from '@/components/fallbacks/Spinner';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
