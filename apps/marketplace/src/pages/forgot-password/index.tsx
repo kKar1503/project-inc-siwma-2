@@ -196,10 +196,11 @@ const ForgetPassword = () => {
           </Box>
         </Container>
       </Box>
-      <NoInternetConnection />
+      {/* <NoInternetConnection /> */}
     </Box>
   );
 };
 
 ForgetPassword.includeNavbar = false;
+ForgetPassword.allowNonAuthenticated = true;
 export default ForgetPassword;
