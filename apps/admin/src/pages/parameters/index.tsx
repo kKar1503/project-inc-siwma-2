@@ -8,11 +8,11 @@ import useResponsiveness from '@inc/ui/lib/hook/useResponsiveness';
 import { useTheme } from '@mui/material/styles';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from 'react-query';
-import Head from 'next/head';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { Parameter, ParameterResponseBody } from '@/utils/api/client/zod';
 import fetchParameters from '@/middlewares/fetchParameters';
 import DeleteParameterModal from '@/components/modals/DeleteParameterModal';
+import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 
 type DataType = 'string' | 'number' | 'boolean';
 type TableType = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
@@ -29,7 +29,6 @@ export type ParameterProps = {
 
 export type ParameterTableProps = {
   data: ParameterResponseBody[];
-  updateData?: any;
 };
 
 function createData(
@@ -84,8 +83,8 @@ const headCells: Header[] = [
 ];
 
 const useParameterQuery = () => {
-  const { data } = useQuery('parameter', async () => fetchParameters());
-  return data;
+  const { data, error, isError, isFetched } = useQuery('parameter', async () => fetchParameters());
+  return { data, error, isError, isFetched };
 };
 
 const ParameterTable = () => {
@@ -108,7 +107,7 @@ const ParameterTable = () => {
 
   const sortRows = (): void => {
     const rowsData: BaseTableData[] = [];
-    Object.values(parameter ?? {}).forEach((item: ParameterProps) => {
+    parameter.data?.forEach((item: ParameterProps) => {
       rowsData.push(
         createData(
           item.id,
@@ -142,39 +141,40 @@ const ParameterTable = () => {
   };
 
   const handleEditRow = (row: BaseTableData) => {
-    const { id } = row;
-    const editUrl = `/parameters/${id}/edit-parameter`;
-    router.push(editUrl);
+    window.location.href =`/parameters/${row.id}/edit-parameter`;
   };
 
   const handleCreateParameter = () => {
-    router.push(`/parameters/create-parameter`);
+    window.location.href = `/parameters/create-parameter`;
   };
-
-  const tableStyle = useMemo(() => {
-    if (isSm) {
-      return {
-        px: '20px',
-      };
-    }
-    if (isMd) {
-      return {
-        px: '40px',
-      };
-    }
-    if (isLg) {
-      return {
-        px: '60px',
-      };
-    }
-    return {
-      px: '20px',
-    };
-  }, [isSm, isMd, isLg]);
 
   useEffect(() => {
     sortRows();
   }, [parameter]);
+
+  useEffect(() => {
+    if (!parameter.isFetched) {
+      return;
+    }
+
+    if (parameter.isError) {
+      if ('status' in (parameter.error as any) && (parameter.error as any).status === 404) {
+        router.replace('/404');
+        return;
+      }
+
+      router.replace('/500');
+      return;
+    }
+
+    if (parameter === undefined) {
+      router.replace('/500');
+    }
+  }, [parameter.isFetched]);
+
+  if (!parameter.isFetched) {
+    return <SpinnerPage />;
+  }
 
   return (
     <>

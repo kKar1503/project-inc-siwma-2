@@ -28,6 +28,8 @@ import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import ErrorModal from '@/components/modals/ErrorModal';
+import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -42,10 +44,14 @@ export type ParameterProps = {
 };
 
 const useGetParameter = (parameterId: string) => {
-  const { data } = useQuery('parameter', async () => fetchParameterById(parameterId), {
-    enabled: parameterId !== undefined,
-  });
-  return data;
+  const { data, error, isError, isFetched } = useQuery(
+    'parameter',
+    async () => fetchParameterById(parameterId),
+    {
+      enabled: parameterId !== undefined,
+    }
+  );
+  return { data, error, isError, isFetched };
 };
 
 const EditParameter = () => {
@@ -57,23 +63,28 @@ const EditParameter = () => {
   const id = router.query.id as string;
   const queryClient = useQueryClient();
   const parameterData = useGetParameter(id);
-  console.log(parameterData);
 
-  const [name, setName] = useState<string>(parameterData?.name || '');
-  const [displayName, setDisplayName] = useState<string>(parameterData?.displayName || '');
-  const [type, setType] = useState<string>(parameterData?.type || '');
+  const [name, setName] = useState<string>(parameterData.data?.name || '');
+  const [displayName, setDisplayName] = useState<string>(parameterData.data?.displayName || '');
+  const [type, setType] = useState<string>(parameterData.data?.type || '');
   const [options, setOptions] = useState<string[]>(
-    parameterData?.options && Array.isArray(parameterData?.options) ? parameterData.options : []
+    parameterData.data?.options && Array.isArray(parameterData.data?.options)
+      ? parameterData.data?.options
+      : ['', '', '']
   );
-  const [dataType, setDataType] = useState<string>(parameterData?.dataType || '');
+
+  const [dataType, setDataType] = useState<string>(parameterData.data?.dataType || '');
 
   const [displayNameError, setDisplayNameError] = useState('');
   const [nameError, setNameError] = useState('');
-  const [optionsError, setOptionsError] = useState('');
+  const [optionsError, setOptionsError] = useState<string[]>(Array(options.length).fill(''));
+  const [generalOptionsError, setGeneralOptionsError] = useState<string>('');
+  const [generalError, setGeneralError] = useState<string>('');
 
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<boolean>(false);
+  const [openError, setError] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -107,11 +118,13 @@ const EditParameter = () => {
     newOptions[index] = value;
     setOptions(newOptions);
 
+    const newOptionsErrors = [...optionsError];
     if (value.trim() === '') {
-      setOptionsError('Please enter an option');
+      newOptionsErrors[index] = 'Please enter an option';
     } else {
-      setOptionsError('');
+      newOptionsErrors[index] = '';
     }
+    setOptionsError(newOptionsErrors);
   };
 
   const handleAddOption = () => {
@@ -123,39 +136,117 @@ const EditParameter = () => {
   };
 
   const renderCustomOptions = () => {
-    if (type === 'TWO_CHOICES' || type === 'MANY_CHOICES') {
+    if (type === 'TWO_CHOICES') {
       return (
         <>
-          {options.map((options, index) => (
-            <TextField
-              label={`Option ${index + 1}`}
-              placeholder="Long"
-              value={options}
-              onChange={(e) => handleOptionChange(index, e.target.value)}
-              error={!!optionsError}
-              helperText={optionsError}
-              variant="outlined"
-              sx={({ spacing }) => ({
-                width: '100%',
-                mt: spacing(2),
-              })}
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <IconButton onClick={() => handleRemoveOption(index)} color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+          <TextField
+            label="Option 1"
+            placeholder="Long"
+            value={options[0]}
+            onChange={(e) => handleOptionChange(0, e.target.value)}
+            error={!!optionsError[0]}
+            helperText={optionsError[0]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 2"
+            placeholder="Short"
+            value={options[1]}
+            onChange={(e) => handleOptionChange(1, e.target.value)}
+            error={!!optionsError[1]}
+            helperText={optionsError[1]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+        </>
+      );
+    }
+    if (type === 'MANY_CHOICES') {
+      return (
+        <>
+          <TextField
+            label="Option 1"
+            placeholder="Long"
+            value={options[0]}
+            onChange={(e) => handleOptionChange(0, e.target.value)}
+            error={!!optionsError[0]}
+            helperText={optionsError[0]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 2"
+            placeholder="Short"
+            value={options[1]}
+            onChange={(e) => handleOptionChange(1, e.target.value)}
+            error={!!optionsError[1]}
+            helperText={optionsError[1]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 3"
+            placeholder="Short"
+            value={options[2]}
+            onChange={(e) => handleOptionChange(2, e.target.value)}
+            error={!!optionsError[2]}
+            helperText={optionsError[2]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          {options.slice(3).map((option, index) => (
+            <div key={`option-${index + 3}`}>
+              <TextField
+                label={`Option ${index + 4}`}
+                placeholder="Long"
+                value={option}
+                onChange={(e) => handleOptionChange(index + 3, e.target.value)}
+                error={!!optionsError[index + 3]}
+                helperText={optionsError[index + 3]}
+                variant="outlined"
+                sx={({ spacing }) => ({
+                  width: '100%',
+                  mt: spacing(2),
+                })}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment
+                      position="end"
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <IconButton onClick={() => handleRemoveOption(index + 3)} color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
           ))}
           <Button
             onClick={handleAddOption}
@@ -185,26 +276,42 @@ const EditParameter = () => {
   };
 
   const useUpdateParamMutation = (parameterId: string) =>
-    useMutation(
-      (updatedParameterData: ParameterResponseBody) =>
-        updateParameter(updatedParameterData, parameterId),
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries('parameter');
-          setEditItem(true);
-        },
-      }
-    );
+  useMutation(
+    (updatedParameterData: ParameterResponseBody) =>
+      updateParameter(updatedParameterData, parameterId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('parameter');
+        setEditItem(true);
+      },
+      onError: (error) => {
+        setError(true);
+        if (typeof parameterData.error === 'string') {
+          setGeneralError(parameterData.error);
+        } else if (typeof parameterData.error === 'object' && parameterData.error !== null) {
+          const errorObject = parameterData.error as Record<string, any>;
+          if ('message' in errorObject && typeof errorObject.message === 'string') {
+            setGeneralError(errorObject.message);
+          } else {
+            setGeneralError('An unknown error occurred.');
+          }
+        } else {
+          setGeneralError('An unknown error occurred.');
+        }
+      },
+    }
+  );
+
 
   const mutation = useUpdateParamMutation(id);
 
   const handleSubmit = () => {
     if (type === 'MANY_CHOICES' && options.length < 3) {
       setOpenMany(true);
-      setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
+      setGeneralOptionsError('Please enter options for parameter type of MANY_CHOICES');
     } else if (type === 'TWO_CHOICES' && options.length < 2) {
       setOpenMany(true);
-      setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
+      setGeneralOptionsError('Please enter options for parameter type of TWO_CHOICES');
     }
     const requestBody: ParameterResponseBody = {
       id,
@@ -219,21 +326,38 @@ const EditParameter = () => {
   };
 
   useEffect(() => {
-    if (parameterData) {
-      setName(parameterData?.name || '');
-      setDisplayName(parameterData?.displayName || '');
-      setType(parameterData?.type || '');
-      setOptions(parameterData?.options ?? []);
-      setDataType(parameterData?.dataType || '');
+    if (parameterData.isFetched) {
+      if (parameterData.isError) {
+        if (
+          'status' in (parameterData.error as any) &&
+          (parameterData.error as any).status === 404
+        ) {
+          setGeneralError((parameterData.error as any)|| 'An unknown error occurred.');
+          router.replace('/404');
+        } else {
+          router.replace('/500');
+        }
+      } else if (parameterData.data === undefined) {
+        router.replace('/500');
+      } else {
+        setName(parameterData.data?.name || '');
+        setDisplayName(parameterData.data?.displayName || '');
+        setType(parameterData.data?.type || '');
+        setOptions(parameterData.data?.options ?? []);
+        setDataType(parameterData.data?.dataType || '');
+      }
     }
-  }, [parameterData]);
+  }, [parameterData.isFetched, parameterData.isError, parameterData.data]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
       queryClient.invalidateQueries('parameter');
       router.push(`/parameters`);
     }
-  }, [mutation.isSuccess, queryClient, router, id]);
+    if (mutation.isError) {
+      setError(true);
+    }
+  }, [mutation.isSuccess, mutation.isError, id]);
 
   const tableStyle = useMemo(() => {
     if (isSm) {
@@ -403,7 +527,7 @@ const EditParameter = () => {
                   <OptionsErrorModal
                     open={openMany}
                     setOpen={setOpenMany}
-                    errorMessage={optionsError}
+                    errorMessage={generalOptionsError}
                   />
                   <SuccessModal
                     title="Successfully Edited!"
@@ -412,6 +536,13 @@ const EditParameter = () => {
                     setOpen={setEditItem}
                     buttonText="Return"
                     path="/parameters"
+                  />
+                  <ErrorModal
+                    title="Error"
+                    content={generalError}
+                    open={openError}
+                    setOpen={setError}
+                    buttonText="Return"
                   />
                 </Box>
               </CardActions>

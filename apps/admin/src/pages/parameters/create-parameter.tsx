@@ -25,9 +25,11 @@ import { ParameterResponseBody, Parameter } from '@/utils/api/client/zod';
 import { useQuery, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import createParameter from '@/middlewares/createParameter';
+import fetchParameterById from '@/middlewares/fetchParameterById';
 import OnLeaveModal from '@/components/modals/OnLeaveModal';
 import OptionsErrorModal from '@/components/modals/OptionsErrorModal';
 import SuccessModal from '@/components/modals/SuccessModal';
+import ErrorModal from '@/components/modals/ErrorModal';
 
 export type TypeProps = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';
 export type DataTypeProps = 'string' | 'number' | 'boolean';
@@ -44,6 +46,17 @@ const usePostParameter = (paramBody: ParameterResponseBody) => {
   return data;
 };
 
+const useGetParameter = (parameterId: string) => {
+  const { data, error, isError, isFetched } = useQuery(
+    'parameter',
+    async () => fetchParameterById(parameterId),
+    {
+      enabled: parameterId !== undefined,
+    }
+  );
+  return { data, error, isError, isFetched };
+};
+
 const CreateParameter = () => {
   const theme = useTheme();
   const { spacing } = theme;
@@ -55,16 +68,20 @@ const CreateParameter = () => {
   const [name, setName] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [type, setType] = useState('');
-  const [options, setOptions] = useState<string[]>([]);
+  const [options, setOptions] = useState<string[]>(['', '', '']);
   const [dataType, setDataType] = useState('');
 
   const [nameError, setNameError] = useState('');
   const [displayNameError, setDisplayNameError] = useState('');
-  const [optionsError, setOptionsError] = useState('');
+  const [optionsError, setOptionsError] = useState<string[]>(Array(options.length).fill(''));
+  const [generalOptionsError, setGeneralOptionsError] = useState<string>('');
+  const [generalError, setGeneralError] = useState<string>('');
 
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const [openMany, setOpenMany] = useState<boolean>(false);
   const [createItem, setCreateItem] = useState<boolean>(false);
+  const [openError, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<boolean>(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -98,11 +115,13 @@ const CreateParameter = () => {
     newOptions[index] = value;
     setOptions(newOptions);
 
+    const newOptionsErrors = [...optionsError];
     if (value.trim() === '') {
-      setOptionsError('Please enter an option');
+      newOptionsErrors[index] = 'Please enter an option';
     } else {
-      setOptionsError('');
+      newOptionsErrors[index] = '';
     }
+    setOptionsError(newOptionsErrors);
   };
 
   const handleAddOption = () => {
@@ -119,39 +138,117 @@ const CreateParameter = () => {
   };
 
   const renderCustomOptions = () => {
-    if (type === 'TWO_CHOICES' || type === 'MANY_CHOICES') {
+    if (type === 'TWO_CHOICES') {
       return (
         <>
-          {options.map((options, index) => (
-            <TextField
-              label={`Option ${index + 1}`}
-              placeholder="Long"
-              value={options}
-              onChange={(e) => handleOptionChange(index, e.target.value)}
-              error={!!optionsError}
-              helperText={optionsError}
-              variant="outlined"
-              sx={({ spacing }) => ({
-                width: '100%',
-                mt: spacing(2),
-              })}
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <IconButton onClick={() => handleRemoveOption(index)} color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+          <TextField
+            label="Option 1"
+            placeholder="Long"
+            value={options[0]}
+            onChange={(e) => handleOptionChange(0, e.target.value)}
+            error={!!optionsError[0]}
+            helperText={optionsError[0]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 2"
+            placeholder="Short"
+            value={options[1]}
+            onChange={(e) => handleOptionChange(1, e.target.value)}
+            error={!!optionsError[1]}
+            helperText={optionsError[1]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+        </>
+      );
+    }
+    if (type === 'MANY_CHOICES') {
+      return (
+        <>
+          <TextField
+            label="Option 1"
+            placeholder="Long"
+            value={options[0]}
+            onChange={(e) => handleOptionChange(0, e.target.value)}
+            error={!!optionsError[0]}
+            helperText={optionsError[0]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 2"
+            placeholder="Short"
+            value={options[1]}
+            onChange={(e) => handleOptionChange(1, e.target.value)}
+            error={!!optionsError[1]}
+            helperText={optionsError[1]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Option 3"
+            placeholder="Short"
+            value={options[2]}
+            onChange={(e) => handleOptionChange(2, e.target.value)}
+            error={!!optionsError[2]}
+            helperText={optionsError[2]}
+            variant="outlined"
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+            })}
+            InputLabelProps={{ shrink: true }}
+          />
+          {options.slice(3).map((option, index) => (
+            <div key={`option-${index + 3}`}>
+              <TextField
+                label={`Option ${index + 4}`}
+                placeholder="Long"
+                value={option}
+                onChange={(e) => handleOptionChange(index + 3, e.target.value)}
+                error={!!optionsError[index + 3]}
+                helperText={optionsError[index + 3]}
+                variant="outlined"
+                sx={({ spacing }) => ({
+                  width: '100%',
+                  mt: spacing(2),
+                })}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment
+                      position="end"
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <IconButton onClick={() => handleRemoveOption(index + 3)} color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
           ))}
           <Button
             onClick={handleAddOption}
@@ -185,15 +282,30 @@ const CreateParameter = () => {
   };
 
   const handleSubmit = async () => {
-    if (type === 'MANY_CHOICES' && options.length < 3) {
-      setOpenMany(true);
-      setOptionsError('Please add at least 3 options for parameter type of MANY_CHOICES');
-    } else if (type === 'TWO_CHOICES' && options.length < 2) {
-      setOpenMany(true);
-      setOptionsError('Please add at least 2 options for parameter type of TWO_CHOICES');
-    } else {
-      await postParameter();
-      router.push(`/parameters`);
+    try {
+      if (type === 'MANY_CHOICES' && options.length < 3) {
+        setOpenMany(true);
+        setGeneralOptionsError('Please enter options for parameter type of MANY_CHOICES');
+      } else if (type === 'TWO_CHOICES' && options.length !== 2) {
+        setOpenMany(true);
+        setGeneralOptionsError('Please enter options for parameter type of TWO_CHOICES');
+      } else {
+        await postParameter();
+        router.push(`/parameters`);
+      }
+    } catch (error) {
+      setError(true);
+      if (typeof error === 'string') {
+        setGeneralError(error);
+      } else if (typeof error === 'object' && error !== null) {
+        if ('message' in error && typeof error.message === 'string') {
+          setGeneralError(error.message);
+        } else {
+          setGeneralError('An unknown error occurred.');
+        }
+      } else {
+        setGeneralError('An unknown error occurred.');
+      }
     }
   };
 
@@ -370,7 +482,7 @@ const CreateParameter = () => {
                   <OptionsErrorModal
                     open={openMany}
                     setOpen={setOpenMany}
-                    errorMessage={optionsError}
+                    errorMessage={generalOptionsError}
                   />
                 </Box>
               </CardActions>
@@ -383,6 +495,13 @@ const CreateParameter = () => {
             setOpen={setCreateItem}
             buttonText="Return"
             path="/parameters"
+          />
+          <ErrorModal
+            title="Error"
+            content={generalError}
+            open={openError}
+            setOpen={setError}
+            buttonText="Return"
           />
         </Box>
       </Container>
