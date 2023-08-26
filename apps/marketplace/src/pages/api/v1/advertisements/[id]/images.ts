@@ -47,7 +47,13 @@ const PUT = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   // Return advertisement
-  res.status(201).json(formatAPIResponse(updated));
+  res.status(201).json(
+    formatAPIResponse({
+      ...updated,
+      id: id.toString(),
+      companyId: updated.companyId.toString(),
+    })
+  );
 };
 
 export default apiHandler({ allowAdminsOnly: true }).put(PUT);

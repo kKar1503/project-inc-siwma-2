@@ -1,0 +1,393 @@
+import React, { useMemo } from 'react';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import { Modal, useResponsiveness } from '@inc/ui';
+import { Advertisment } from '@/utils/api/client/zod/advertisements';
+import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
+import Typography from '@mui/material/Typography';
+import ModuleBase from '@/components/advertisementsDashboard/moduleBase';
+import { useRouter } from 'next/router';
+import SpinnerPage from '@/components/fallbacks/SpinnerPage';
+import { Form, FormProvider, useForm } from 'react-hook-form';
+import FormSearchDropdown from '@/components/forms/FormSearchDropdown';
+import FormTextInput from '@/components/forms/FormTextInput';
+import FormToggleButton from '@/components/forms/FormToggleButton';
+import FormDatePicker from '@/components/forms/FormDatePicker';
+import FormInputGroup from '@/components/forms/FormInputGroup';
+import { DateTime } from 'luxon';
+import FormImage from '@/components/forms/FormImage';
+
+interface AdvertisementFormData {
+  companyId: {
+    label: string;
+    value: string;
+  };
+  link: string;
+  description: string;
+  startDate: DateTime;
+  endDate: DateTime;
+  active: 'active' | 'inactive';
+  image: string | File;
+}
+
+interface AdvertisementFormDataEmpty {
+  companyId: {
+    label: 'Select A Company';
+    value: undefined;
+  };
+  link: '';
+  description: '';
+  startDate: DateTime;
+  endDate: DateTime;
+  active: 'active';
+  image: undefined;
+}
+
+interface AdvertisementFormProps {
+  advertisement: Advertisment | undefined;
+  onSubmit: (body: PostAdvertisementRequestBody, image: File | undefined) => Promise<void>;
+  companyDict: { [key: string]: string };
+}
+// regex for link
+const linkRegex = new RegExp('^(http|https)://' + // protocol (https or http only)
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+  '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+const parseToPostAdvertisementRequestBody = (values: AdvertisementFormData): PostAdvertisementRequestBody & { image: File |string| undefined } => ({
+  companyId: values.companyId?.value,
+  link: values.link,
+  description: values.description,
+  startDate: values.startDate.toISODate() as string,
+  endDate: values.endDate.toISODate() as string,
+  active: values.active === 'active',
+  image: values.image,
+});
+
+const getDefaultValue = (advertisement: Advertisment | undefined, companyDict: {
+  [key: string]: string
+}): AdvertisementFormData | AdvertisementFormDataEmpty => advertisement ? {
+  companyId: {
+    label: companyDict[advertisement.companyId],
+    value: advertisement.companyId,
+  },
+  link: advertisement.link,
+  description: advertisement.description,
+  startDate: DateTime.fromISO(advertisement.startDate as string),
+  endDate: DateTime.fromISO(advertisement.endDate as string),
+  active: advertisement.active ? 'active' : 'inactive',
+  image: advertisement.image || '',
+} : {
+  companyId: {
+    label: 'Select A Company',
+    value: undefined,
+  },
+  link: '',
+  description: '',
+  startDate: DateTime.now(),
+  endDate: DateTime.now().plus({ days: 1 }),
+  active: 'active',
+  image: undefined,
+};
+
+
+const validation = (advertisementData: PostAdvertisementRequestBody & { image: File | string | undefined }) => {
+  // Initialise an array of errors
+  const errors: { [key: string]: Error } = {};
+  const { companyId, link, startDate, endDate, active, image } = advertisementData;
+
+  // Validate company ID
+  if (!companyId || companyId === '') {
+    errors.companyId = new Error('Company is required');
+  }
+
+  // Validate link
+  if (!link || link === '') {
+    errors.link = new Error('Link is required');
+  } else if (!linkRegex.test(link)) {
+    errors.link = new Error('Link is invalid');
+  }
+
+  // Validate description
+  // no validation needed
+
+  // Validate start date
+  const missingStartDate = !startDate || startDate === '';
+  if (missingStartDate) {
+    errors.startDate = new Error('Start Date is required');
+  }
+
+  // Validate end date
+  const missingEndDate = !endDate || endDate === '';
+  if (missingEndDate) {
+    errors.endDate = new Error('End Date is required');
+  }
+
+  // validate start date is before end date
+  if (!missingStartDate && !missingEndDate && startDate > endDate) {
+    errors.startDate = new Error('Start Date must be before End Date');
+    errors.endDate = new Error('End Date must be after Start Date');
+  }
+
+  // Validate active
+  if (active === undefined) {
+    errors.active = new Error('Active is required');
+  }
+
+  // Validate image
+  if (image === undefined) {
+    errors.image = new Error('Image is required');
+  }
+
+  return errors;
+};
+
+const AdvertisementForm = ({ advertisement, onSubmit, companyDict }: AdvertisementFormProps) => {
+  const router = useRouter();
+  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+
+  const formHook = useForm({
+    defaultValues: getDefaultValue(advertisement, companyDict),
+  });
+
+  const { control, handleSubmit, setError, formState } = formHook;
+  const { isSubmitting, isSubmitSuccessful } = formState;
+
+  // cannot return Promise or Promise.Reject() or it will be treated as submitted
+  // eslint-disable-next-line consistent-return
+  const onHandleSubmit = async (values: AdvertisementFormData) => {
+    const advertisementData = parseToPostAdvertisementRequestBody(values);
+    const errors = validation(advertisementData);
+    // Check if there were any errors
+    if (Object.keys(errors).length === 0) {
+      const image = typeof values.image === 'string' ? undefined : values.image;
+      return onSubmit(advertisementData, image || undefined);
+    }
+
+    Object.keys(values).forEach((inputName) => {
+      if (errors[inputName]) {
+        setError(inputName as Parameters<typeof setError>['0'], {
+          message: errors[inputName].message,
+        });
+      }
+    });
+  }
+
+  const onHandleError = async () => {
+    // This function just needs to exist, no logic needed
+  };
+
+  const handleRightButtonClick = () => {
+    router.push('/advertisement-dashboard');
+  };
+
+  const sx = useMemo(() => {
+    const style = {
+      height: '100%;',
+      width: '100%',
+      justifyContent: 'center',
+    };
+    if (isSm) return {
+      ...style,
+      py: '0.5rem',
+      px: '1rem',
+    };
+    if (isMd) return {
+      ...style,
+      py: '1rem',
+      px: '1.5rem',
+    };
+    if (isLg) return {
+      ...style,
+      py: '1rem',
+      px: '2rem',
+    };
+    return {
+      ...style,
+      py: '1rem',
+      px: '2rem',
+    };
+  }, [isSm, isMd, isLg]);
+
+  if (isSubmitting) return <SpinnerPage />;
+
+  return (
+    <Box
+      sx={({ spacing, palette }) => ({
+        backgroundColor: palette.background.paper,
+        borderRadius: spacing(2),
+        m: spacing(3),
+      })}
+    >
+      <ModuleBase width='100%' sx={sx}>
+        <Box
+          component='form'
+          sx={() => ({
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+          })}
+        >
+          <Box
+            sx={({ spacing }) => ({
+              width: '100%',
+              mt: spacing(2),
+              display: 'flex',
+              justifyContent: 'flex-end',
+            })}
+          >
+            {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
+            <Modal setOpen={(): void => {
+            }}
+                   open={isSubmitSuccessful}
+              buttonColor='#0000FF'
+              icon='info'
+              title='Confirmation'
+              content='Advertisement has been successfully edited!'
+              rightButtonText='Back to Dashboard'
+              rightButtonState={false}
+              setRightButtonState={handleRightButtonClick}
+            />
+          </Box>
+
+          <Form
+            onSubmit={() => {
+              // this is never called
+            }}
+            control={control}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: isSm ? '0.5rem' : '1rem',
+              width: '100%',
+            }}
+          >
+            <FormProvider {...formHook}>
+              <FormInputGroup
+                label='Advertisement Image'
+                name='image'
+                required
+              >
+                <FormImage
+                  name='image'
+                  label='Advertisement Image'
+                  required
+                />
+              </FormInputGroup>
+
+              <FormInputGroup
+                label='Company'
+                name='companyId'
+                required
+              >
+              <FormSearchDropdown
+                options={Object.keys(companyDict).map((key) => ({
+                  label: companyDict[key],
+                  value: key,
+                }))}
+                label='Company'
+                name='companyId'
+                required
+              />
+
+              </FormInputGroup>
+              <FormInputGroup
+                label='Link'
+                name='link'
+                required
+              >
+                <FormTextInput
+                label='Link'
+                name='link'
+                required
+              />
+              </FormInputGroup>
+              <FormInputGroup
+                label='Advertisement Description'
+                name='description'
+              >
+              <FormTextInput
+                label='Advertisement Description'
+                name='description'
+                multiline
+              />
+              </FormInputGroup>
+              <FormInputGroup
+                label='Active status'
+                name='active'
+              >
+              <FormToggleButton name='active' label='Active' options={[{
+                label: 'Active',
+                value: 'active',
+              }, {
+                label: 'Inactive',
+                value: 'inactive',
+              }]} />
+              </FormInputGroup>
+              <Box
+                sx={({ spacing }) => ({
+                  width: '100%',
+                  mt: spacing(2),
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                })}
+              >
+                <FormInputGroup
+                  name='startDate'
+                  label='Start Date'
+                  required
+                >
+                <FormDatePicker
+                  name='startDate'
+                  label='Start Date'
+                  required
+                />
+                </FormInputGroup>
+
+                <Typography
+                  sx={({ spacing, typography }) => ({
+                    fontSize: typography.body1,
+                    fontWeight: 'bold',
+                    m: spacing(2),
+                  })}
+                >
+                  一
+                </Typography>
+                <FormInputGroup
+                  name='endDate'
+                  label='End Date'
+                  required
+                >
+                <FormDatePicker
+                  name='endDate'
+                  label='End Date'
+                  required
+                />
+                </FormInputGroup>
+              </Box>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  columnGap: 3,
+                  width: '100%',
+                }}
+              >
+                <Button type='submit' onClick={handleSubmit(onHandleSubmit, onHandleError)} variant='contained'
+                        sx={{ p: 2, flex: 1 }}>
+                  {advertisement ? 'Edit Advertisement' : 'Create Advertisement'}
+                </Button>
+              </Box>
+            </FormProvider>
+          </Form>
+        </Box>
+      </ModuleBase>
+    </Box>
+  );
+};
+
+
+export default AdvertisementForm;

@@ -52,7 +52,7 @@ const POST = async (req: NextApiRequest, res: NextApiResponse) => {
         link: payload.link,
       },
     })
-  ).id;
+  ).id.toString();
 
   // Return advertisement id
   res.status(201).json(formatAPIResponse({ advertisementId }));

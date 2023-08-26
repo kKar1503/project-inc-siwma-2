@@ -4,13 +4,13 @@ import { PostAdvertisementRequestBody } from '@/utils/api/server/zod/advertiseme
 import { updateImage } from './updateAdvertisement';
 
 const createAdvertisement = async (data: PostAdvertisementRequestBody, image?: File): Promise<{
-  companyId: string;
+  advertisementId: string;
 }> => {
   const response = await apiClient.post(`v1/advertisements/`, data);
   const advertisement = advertisements.create.parse(response.data.data[0]);
-
   if (!image) return advertisement;
-  return updateImage(image, advertisement.companyId);
+  await updateImage(image, advertisement.advertisementId);
+  return advertisement;
 };
 
 export default createAdvertisement;

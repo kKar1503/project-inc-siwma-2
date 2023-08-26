@@ -12,6 +12,7 @@ import { useState } from 'react';
 import deleteAdvertisement from '@/services/advertisements/deleteAdvertisement';
 import Spinner from '@/components/Spinner';
 import S3ImagePreview from '@/components/modal/S3ImagePreview';
+import { useRouter } from 'next/router';
 
 export interface AdvertisementDashboardProps {
   totalClicks: number;
@@ -21,14 +22,16 @@ const mapCompanies = (companiesQuery: UseQueryResult<Company[]>) => companiesQue
 
 const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) => {
 
+  const router = useRouter();
+
   const [previewImage, setPreviewImage] = useState<string  | null>(null);
 
   const [mutatedAdvertisements, setMutatedAdvertisements] = useState<{
     [key: string]: Advertisment | false;
   }>({});
   const [advertisementsQuery, companiesQuery] = useQueries([
-    { queryKey: 'advertisements', queryFn: () => fetchAdvertisements() },
-    { queryKey: 'companies', queryFn: () => fetchCompanies() },
+    { queryKey: 'advertisements', queryFn: () => fetchAdvertisements(), refetchOnWindowFocus: false, refetchOnReconnect: false },
+    { queryKey: 'companies', queryFn: () => fetchCompanies(), refetchOnWindowFocus: false, refetchOnReconnect: false },
   ]);
 
   if (advertisementsQuery.isLoading || companiesQuery.isLoading) {
@@ -94,7 +97,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
   };
 
   const onEdit = (id: string) => {
-    window.open(`/advertisement/edit/${id}`, '_blank')
+    router.push(`/advertisement/edit/${id}`);
   };
 
   const onSetActive = (ids: readonly string[]) => {
@@ -108,12 +111,12 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={6} md={6} lg={6}>
-        <InfoCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon}
-                  value={active.length.toString()} />
-      </Grid>
-      <Grid item xs={6} md={6} lg={6}>
+      <Grid item xs={0} md={0} lg={6}>
         {/* <InfoCard title='Total Clicks' color='lightGreen' icon={AdsClickIcon} value={totalClicks.toString()} /> */}
+      </Grid>
+      <Grid item xs={12} md={12} lg={6}>
+        <InfoCard title='Active Ad-Spaces' color='blue' icon={CampaignOutlinedIcon}
+                  value={active.length.toString()} scale='40%' />
       </Grid>
       <Grid item xs={12} md={12} lg={12}>
         <S3ImagePreview close={() => {
@@ -125,6 +128,7 @@ const AdvertisementDashboard = ({ totalClicks }: AdvertisementDashboardProps) =>
           companies={companies}
           onDelete={onDelete}
           onEdit={onEdit}
+          refetchData={refetchData}
           onSetActive={onSetActive}
           onSetInactive={onSetInactive}
           onViewImage={(src) => { setPreviewImage(src); }}

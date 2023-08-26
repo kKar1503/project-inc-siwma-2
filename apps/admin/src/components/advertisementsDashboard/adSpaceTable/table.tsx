@@ -22,6 +22,7 @@ export interface Props {
   onSetActive: (elements: readonly string[]) => void;
   onSetInactive: (elements: readonly string[]) => void;
   onViewImage: (src: string | null) => void;
+  refetchData: () => void;
 }
 
 // eslint-disable-next-line react/function-component-definition,func-names
@@ -34,6 +35,7 @@ export default function({
                           onSetActive,
                           onSetInactive,
                           onViewImage,
+                          refetchData,
                         }: Props) {
   const [selected, setSelected] = useState<readonly string[]>([]);
   const companyNames = useMemo(() => {
@@ -50,7 +52,8 @@ export default function({
     handleChangePage,
     handleChangeRowsPerPage,
     rowPageOptions,
-  } = usePagination(4);
+    emptyRows,
+  } = usePagination(4, ids.length);
 
   const visibleRowIds = useMemo(
     () => {
@@ -91,8 +94,6 @@ export default function({
     setSelected(newSelected);
   };
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = Math.max(0, (1 + page) * rowsPerPage - ids.length);
 
 
   const handleDelete = () => {
@@ -124,6 +125,7 @@ export default function({
         onSetInactive={handleSetInactive}
         onDelete={handleDelete}
         onEdit={handleEdit}
+        refetchData={refetchData}
       />
       <TableContainer>
         <Table
