@@ -6,7 +6,7 @@ import FileUpload, {
 import { useResponsiveness } from '@inc/ui';
 import { PostCompanyRequestBody } from '@/utils/api/server/zod';
 import { Company } from '@/utils/api/client/zod/companies';
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 import Spinner from '@/components/fallbacks/Spinner';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -86,8 +86,10 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
           error = `Company already exists in the file`;
         }
 
-        if (!companyData.website && !websiteRegex.test(companyData.website)) {
-          error = 'Website is invalid. Use the format: www.example.com';
+        if (companyData.website) {
+          if (!companyData.website && !websiteRegex.test(companyData.website)) {
+            error = 'Website is invalid. Use the format: www.example.com';
+          }
         }
 
         if (error) {
@@ -297,8 +299,7 @@ const AddCompaniesModal = ({ open, setOpen, updateData }: AddCompanyModalProps) 
                     selectedFile={file}
                     changeHandler={handleExcelChange}
                     accept={[AcceptedFileTypes.XLSX]}
-                    maxWidth="200px"
-                    maxHeight="200px"
+                    maxHeight="300px"
                   />
                 )}
                 <Button
