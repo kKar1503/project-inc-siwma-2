@@ -116,7 +116,7 @@ const EditUser = () => {
 
         <Divider />
         <EditUserForm user={user} companies={companies || []} openModal={openModal} />
-        <WarningModal open={openWarning} setOpen={setOpenWarning} path="/users-management" />
+        <WarningModal open={openWarning} setOpen={setOpenWarning} path="/users" />
         <SuccessModal
           title="Details Updated"
           content="User details has been updated"

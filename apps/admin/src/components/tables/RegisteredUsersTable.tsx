@@ -15,7 +15,7 @@ type RowData = {
   email: string;
   company: string;
   mobileNumber: string;
-  enabled: string;
+  enabled: boolean;
 };
 
 type RegisteredUsersTableProps = {
@@ -57,7 +57,7 @@ const parseUsersData = (users: User[]) => {
       email: u.email,
       company: u.company.name,
       mobileNumber: u.mobileNumber,
-      enabled: u.enabled ? 'active' : 'disabled',
+      enabled: u.enabled,
     });
   });
   return rows;

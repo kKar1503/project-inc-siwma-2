@@ -1,13 +1,26 @@
+// React import
 import React, { useEffect, useState } from 'react';
-import AdminFigure from '@/components/AdminFigure';
+
+// react-icons import
 import { AiOutlineUser } from 'react-icons/ai';
 import { MdStorefront } from 'react-icons/md';
+
+// MUI import
+import { Box, Button, Grid, Typography } from '@mui/material';
+
+// react-query import
+import { useQueries, useMutation } from 'react-query';
+
+// next import
+import { useRouter } from 'next/router';
+
+// custom import
+import AdminFigure from '@/components/AdminFigure';
 import CreateInviteModal from '@/components/modals/CreateInviteModal';
 import RegisteredUsersTable from '@/components/tables/RegisteredUsersTable';
 import PendingInvitesTable from '@/components/tables/PendingInvitesTable';
-import { Box, Button, Grid, Typography, styled } from '@mui/material';
 import { useResponsiveness } from '@inc/ui';
-import { useQueries, useMutation } from 'react-query';
+import Spinner from '@/components/fallbacks/Spinner';
 import fetchCompanies from '@/middlewares/fetchCompanies';
 import fetchUsers from '@/middlewares/fetchUsers';
 import fetchInvites from '@/middlewares/fetchInvites';
@@ -15,8 +28,8 @@ import apiClient from '@/utils/api/client/apiClient';
 import { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { PostInviteRequestBody } from '@/utils/api/server/zod/invites';
 import SuccessModal from '@/components/modals/SuccessModal';
-import { useRouter } from 'next/router';
-import Spinner from '@/components/fallbacks/Spinner';
+import DeleteUsersModal from '@/components/modals/DeleteUsersModal';
+import DeleteInvitesModal from '@/components/modals/DeleteInvitesModal';
 
 const deleteInvitesMutationFn = async (emails: string[]) => {
   const promises = emails.map((email) => apiClient.delete(`/v1/invites/email/${email}`));
@@ -42,11 +55,15 @@ const Page = () => {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const [isSm] = useResponsiveness(['sm']);
+  const [ids, setIds] = useState<string[]>([]);
+  const [emails, setEmails] = useState<string[]>([]);
 
   const [deleteUser, setDeleteUser] = useState<boolean>(false);
   const [deleteInvite, setDeleteInvite] = useState<boolean>(false);
   const [toggleUser, setToggleUser] = useState<boolean>(false);
   const [inviteUser, setInviteUser] = useState<boolean>(false);
+  const [openDeleteUsersModal, setOpenDeleteUsersModal] = useState<boolean>(false);
+  const [openDeleteInvitesModal, setOpenDeleteInvitesModal] = useState<boolean>(false);
 
   const queries = useQueries([
     {
@@ -67,7 +84,13 @@ const Page = () => {
   ]);
 
   const onErrorFn = (error: any) => {
-    alert(error.statusText);
+    const err = error.data.errors[0];
+    // Check for duplicate error
+    if (err.code === 2006) {
+      alert(err.meta.key);
+    } else {
+      alert(err.detail);
+    }
   };
 
   const { mutate: deleteUsers } = useMutation('deleteUsers', deleteUsersMutationFn, {
@@ -145,7 +168,8 @@ const Page = () => {
 
   const handleDeleteUsers = (rows: readonly BaseTableData[]) => {
     const uuids = rows.map((row) => row.id);
-    deleteUsers(uuids as string[]);
+    setIds(uuids);
+    setOpenDeleteUsersModal(true);
     return [];
   };
 
@@ -156,7 +180,8 @@ const Page = () => {
 
   const handleDeleteInvites = (rows: readonly BaseTableData[]) => {
     const emails = rows.map((row) => row.email);
-    deleteInvites(emails as string[]);
+    setEmails(emails as string[]);
+    setOpenDeleteInvitesModal(true);
     return [];
   };
 
@@ -310,6 +335,18 @@ const Page = () => {
         open={inviteUser}
         setOpen={setInviteUser}
         buttonText="Return"
+      />
+      <DeleteUsersModal
+        open={openDeleteUsersModal}
+        setOpen={setOpenDeleteUsersModal}
+        users={ids}
+        deleteUsers={deleteUsers}
+      />
+      <DeleteInvitesModal
+        open={openDeleteInvitesModal}
+        setOpen={setOpenDeleteInvitesModal}
+        invites={emails}
+        deleteInvites={deleteInvites}
       />
     </Box>
   );
