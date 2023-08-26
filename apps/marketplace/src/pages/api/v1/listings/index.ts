@@ -1,3 +1,4 @@
+import { MeiliSearch } from 'meilisearch';
 import {
   apiHandler,
   formatAPIResponse,
@@ -17,6 +18,7 @@ import PrismaClient, {
 import { ParamError, ParamInvalidError, ParamRequiredError } from '@inc/errors';
 import { GetListingsQueryParameter, listingSchema } from '@/utils/api/server/zod';
 import { ListingResponseBody } from '@/utils/api/client/zod';
+import type { TMeilisearchListingParameter, TMeilisearchListing } from '@/types/listing';
 import type { ListingParameter } from '@inc/types';
 
 export type ListingWithParameters = Listing & {
@@ -258,13 +260,18 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse({ totalCount, listings: formattedListings }));
   })
   .post(async (req, res) => {
+    const client = new MeiliSearch({
+      host: process.env.MEILI_URL as string,
+      apiKey: process.env.MEILI_MASTER_KEY as string,
+    });
+
     const data = listingSchema.post.body.parse(req.body);
 
     // Use the user ID from the request object
     const userId = req.token?.user?.id;
 
     // Check if the listing item exists
-    const listingItem = await PrismaClient.listingItem.findUnique({
+    let listingItem = await PrismaClient.listingItem.findUnique({
       where: { id: data.productId },
     });
 
@@ -289,6 +296,7 @@ export default apiHandler()
       }
     });
 
+    // ** completed listing
     const listing = await PrismaClient.listing.create({
       data: {
         listingItemId: data.productId,
@@ -312,6 +320,43 @@ export default apiHandler()
         listingsParametersValue: true,
       },
     });
+
+    listingItem = await PrismaClient.listingItem.findUnique({
+      where: { id: listing.listingItemId },
+    });
+
+    if (!listingItem) {
+      throw new ParamError('listing item');
+    }
+
+    const parameters: Array<TMeilisearchListingParameter> = [];
+
+    (
+      listing.listingsParametersValue?.parameters as Array<{
+        parameterId: number;
+        value: string;
+      }>
+    ).forEach(async (param) =>
+    parameters.push({
+        paramName: (
+          await PrismaClient.parameter.findUnique({
+            where: { id: param.parameterId },
+          })
+        )?.name as string,
+        value: param.value,
+      })
+    );
+
+    await client.index<TMeilisearchListing>('listings').addDocuments([
+      {
+        id: listing.id,
+        name: listingItem.name,
+        chineseName: listingItem.chineseName,
+        description: listingItem.description,
+        price: listing.price.toNumber(),
+        parameters,
+      },
+    ]);
 
     handleBookmarks(UpdateType.CREATE, listing);
 

@@ -35,3 +35,17 @@ export type TListing = {
   }>;
   createdAt: string;
 };
+
+export type TMeilisearchListingParameter = {
+  paramName: string;
+  value: string;
+};
+
+export type TMeilisearchListing = {
+  id: number;
+  name: string;
+  chineseName: string | null;
+  description: string;
+  price: number;
+  parameters: Array<TMeilisearchListingParameter>;
+};

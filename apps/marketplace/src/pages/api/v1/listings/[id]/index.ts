@@ -1,8 +1,10 @@
+import { MeiliSearch } from 'meilisearch';
 import { apiHandler, formatAPIResponse, handleBookmarks, UpdateType } from '@/utils/api';
 import PrismaClient from '@inc/db';
 import { ForbiddenError, NotFoundError, ParamError, ParamInvalidError } from '@inc/errors';
 import { listingSchema } from '@/utils/api/server/zod';
 import type { ListingParameter } from '@inc/types';
+import type { TMeilisearchListing, TMeilisearchListingParameter } from '@/types/listing';
 import { formatSingleListingResponse, parseListingId } from '..';
 
 // -- Functions --//
@@ -95,6 +97,11 @@ export default apiHandler()
     res.status(200).json(formatAPIResponse(response));
   })
   .put(async (req, res) => {
+    const client = new MeiliSearch({
+      host: process.env.MEILI_URL as string,
+      apiKey: process.env.MEILI_MASTER_KEY as string,
+    });
+
     const queryParams = listingSchema.get.query.parse(req.query);
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
@@ -194,6 +201,8 @@ export default apiHandler()
       });
     }
 
+    // ** Listing after update
+    // TODO: do this thingy
     const completeListing = await PrismaClient.listing.findUnique({
       where: { id },
       include: {
@@ -211,6 +220,35 @@ export default apiHandler()
     if (!completeListing) {
       throw new NotFoundError(`Listing with id '${id}'`);
     }
+
+    const parameters: Array<TMeilisearchListingParameter> = [];
+
+    (
+      completeListing.listingsParametersValue?.parameters as Array<{
+        parameterId: number;
+        value: string;
+      }>
+    ).forEach(async (param) =>
+    parameters.push({
+        paramName: (
+          await PrismaClient.parameter.findUnique({
+            where: { id: param.parameterId },
+          })
+        )?.name as string,
+        value: param.value,
+      })
+    );
+
+    await client.index<TMeilisearchListing>('listings').updateDocuments([
+      {
+        id: listing.id,
+        name: completeListing.listingItem.name,
+        chineseName: completeListing.listingItem.chineseName,
+        description: completeListing.listingItem.description,
+        price: listing.price.toNumber(),
+        parameters,
+      },
+    ]);
 
     // MARK: - Notifications
 
@@ -246,6 +284,11 @@ export default apiHandler()
     );
   })
   .delete(async (req, res) => {
+    const client = new MeiliSearch({
+      host: process.env.MEILI_URL as string,
+      apiKey: process.env.MEILI_MASTER_KEY as string,
+    });
+
     const id = parseListingId(req.query.id as string);
     const userId = req.token?.user?.id;
     const userRole = req.token?.user?.permissions;
@@ -266,6 +309,9 @@ export default apiHandler()
         deletedAt: new Date().toISOString(),
       },
     });
+
+    // ** Delete listing from meilisearch index using id
+    await client.index<TMeilisearchListing>('listings').deleteDocument(id.toString());
 
     handleBookmarks(UpdateType.DELETE, listing);
 
