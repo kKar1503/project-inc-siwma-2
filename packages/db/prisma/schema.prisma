@@ -257,8 +257,8 @@ model Messages {
   read        Boolean     @default(false)
   createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   contentType ContentType @map("content_type")
-  offer       Int?
   content     String
+  offer       Int?
   offers      Offers?     @relation(fields: [offer], references: [id], onDelete: Cascade, map: "messages_fk")
   rooms       Rooms       @relation(fields: [room], references: [id], onDelete: Cascade, map: "messages_fk_1")
   users       Users       @relation(fields: [author], references: [id], onDelete: Cascade, map: "messages_fk_2")
@@ -266,7 +266,6 @@ model Messages {
   @@map("messages")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Offers {
   id        Int        @id(map: "offers_pk") @default(sequence(maxValue: 2147483647))
   listingId Int        @map("listing_id")

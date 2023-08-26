@@ -28,6 +28,14 @@ const chatRequestQuery = z.object({
   limit: z.string().transform(zodParseToNumber).optional(),
 });
 
+const chatMessagesRequestQuery = z.object({
+  id: z.string().uuid(),
+});
+
+const chatMessagesRequestBody = z.object({
+  message: z.string(),
+});
+
 export type PostChatRequestBody = z.infer<typeof chatRequestBodyType>;
 export type GetChatMessageQueryParameter = z.infer<typeof chatMessageRequestQuery>;
 export type GetChatRequestQueryParameter = z.infer<typeof chatRequestQuery>;
@@ -36,6 +44,10 @@ export default {
   messages: {
     get: {
       query: chatMessageRequestQuery,
+    },
+    post: {
+      query: chatMessagesRequestQuery,
+      body: chatMessagesRequestBody,
     },
   },
   get: {

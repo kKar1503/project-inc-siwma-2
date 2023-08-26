@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import S3Avatar from '@/components/S3Avatar';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
-import MakeOfferModal from '../modal/MakeOfferModal';
 
 export type ChatSubHeaderProps = {
   itemPic: string;
@@ -15,7 +14,6 @@ export type ChatSubHeaderProps = {
   itemPrice: number;
   itemPriceIsUnit: boolean;
   available: boolean;
-  onCreateOffer: (val: number) => void;
 };
 
 const ChatSubHeader = ({
@@ -24,7 +22,6 @@ const ChatSubHeader = ({
   itemPrice,
   itemPriceIsUnit,
   available,
-  onCreateOffer,
 }: ChatSubHeaderProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { spacing, palette, typography } = useTheme();
@@ -186,11 +183,6 @@ const ChatSubHeader = ({
           itemPriceIsUnit ? '/unit' : ''
         }`}</Typography>
       </Box>
-
-      <Button onClick={handleMakeOffer} sx={chatSubHeaderStyles?.makeOfferBtn}>
-        {t('Make Offer')}
-      </Button>
-      <MakeOfferModal open={openOffer} setOpen={setOpenOffer} onCreateOffer={onCreateOffer} />
     </Box>
   );
 };

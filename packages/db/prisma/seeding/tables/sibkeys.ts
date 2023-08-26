@@ -7,7 +7,7 @@ interface ISibKeys {
 const SibKeys: ISibKeys[] = [
   {
     key: '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',
-    senderEmail: 'karandeepsingh00@icloud.com',
+    senderEmail: 'siwmadevelopment@proton.me',
   },
   {
     key: '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',
