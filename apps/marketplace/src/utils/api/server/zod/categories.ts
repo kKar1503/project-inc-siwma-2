@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zodParseToInteger } from '../../apiHelper';
 
 export const getCategoriesQueryParameter = z.object({
   includeParameters: z.string().optional(),
@@ -9,7 +10,7 @@ export const categoryRequestBody = z.object({
   description: z.string(),
   parameters: z
     .object({
-      parameterId: z.number(),
+      parameterId: z.string().transform(zodParseToInteger),
       required: z.boolean(),
     })
     .array(),
@@ -20,7 +21,7 @@ const editCategoryRequestBody = z.object({
   description: z.string().optional(),
   parameters: z
     .object({
-      parameterId: z.number(),
+      parameterId: z.string().transform(zodParseToInteger),
       required: z.boolean(),
     })
     .array()
