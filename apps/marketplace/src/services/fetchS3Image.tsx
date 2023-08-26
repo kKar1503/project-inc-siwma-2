@@ -1,6 +1,10 @@
 const DISABLE_RENAME_INTEGRATION = true;
 
-const fetchS3Image = async (imgKey: string) => {
+const fetchS3Image = async (imgKey: string): Promise<{
+  url: string | undefined;
+  name: string | undefined;
+}> => {
+  if (!imgKey || imgKey === '') return { url: undefined, name: undefined };
   const imgSrc = `https://s3.karlok.dev/${imgKey}`;
   if (DISABLE_RENAME_INTEGRATION) return { url: imgSrc, name: undefined };
   try {
@@ -12,7 +16,7 @@ const fetchS3Image = async (imgKey: string) => {
 
     return {
       url: URL.createObjectURL(await response.blob()),
-      name: response.headers.get('x-amz-meta-original-name'),
+      name: response.headers.get('x-amz-meta-original-name') || undefined,
     };
   } catch (error) {
     return {

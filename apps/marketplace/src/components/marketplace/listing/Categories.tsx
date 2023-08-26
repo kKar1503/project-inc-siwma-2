@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 import React from 'react';
 import S3CardImage from '@/components/S3CardImage';
 import { useResponsiveness } from '@inc/ui';
-import placeholder from 'public/images/category-placeholder.svg';
 import { useTranslation } from 'react-i18next';
 import Divider from '@mui/material/Divider';
 
@@ -21,8 +20,8 @@ const CategoryCard: React.FC<TCategory> = ({ id, name, image }) => {
           height={isSm ? 140 : 180}
           src={image}
           title={name}
+          placeholder='/images/category-placeholder.svg'
           allowClickThrough
-          placeholder={placeholder.src}
         />
         <Divider sx={{ width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.2)', height: '2px' }} />
         <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>

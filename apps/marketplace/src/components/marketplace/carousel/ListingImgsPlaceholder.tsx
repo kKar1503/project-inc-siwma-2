@@ -1,12 +1,13 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import placeholder from 'public/images/listing-placeholder.svg';
+
 import Image from 'next/image';
 
 const ListingImgsPlaceholder = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: '2em' }}>
     <div style={{ height: '100%', width: '100%' }}>
-      <Image src={placeholder} alt="placeholder" />
+      <Image src='/images/listing-placeholder.svg' alt='placeholder' />
     </div>
     <Typography
       sx={({ typography, palette }) => ({
