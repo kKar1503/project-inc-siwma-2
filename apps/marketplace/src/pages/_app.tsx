@@ -30,6 +30,7 @@ interface PageType extends React.FunctionComponent<any> {
   auth?: boolean;
   includeNavbar?: boolean;
   renderSearchBar?: boolean;
+  noInternet?: boolean;
 }
 
 // App prop type
@@ -94,6 +95,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
     allowNonAuthenticated,
     includeNavbar = true,
     renderSearchBar,
+    noInternet = true,
   } = Component;
   // Stying snackbar responsiveness
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -132,20 +134,35 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
               >
                 {getLayout(
                   <Box height="100dvh" display="flex" flexDirection="column">
-                    <I18nextProvider i18n={i18n}>
-                      {includeNavbar ? (
-                        <>
-                          <NavBar renderSearchBar={renderSearchBar} />
-                          <Component {...pageProps} />
-                        </>
-                      ) : (
-                        <I18Fix>
-                          {/* <NoInternetConnection> */}
+                    {noInternet ? (
+                      <NoInternetConnection>
+                        <I18nextProvider i18n={i18n}>
+                          {includeNavbar ? (
+                            <>
+                              <NavBar renderSearchBar={renderSearchBar} />
+                              <Component {...pageProps} />
+                            </>
+                          ) : (
+                            <I18Fix>
+                              <Component {...pageProps} />
+                            </I18Fix>
+                          )}
+                        </I18nextProvider>
+                      </NoInternetConnection>
+                    ) : (
+                      <I18nextProvider i18n={i18n}>
+                        {includeNavbar ? (
+                          <>
+                            <NavBar renderSearchBar={renderSearchBar} />
                             <Component {...pageProps} />
-                          {/* </NoInternetConnection> */}
-                        </I18Fix>
-                      )}
-                    </I18nextProvider>
+                          </>
+                        ) : (
+                          <I18Fix>
+                            <Component {...pageProps} />
+                          </I18Fix>
+                        )}
+                      </I18nextProvider>
+                    )}
                   </Box>
                 )}
               </SnackbarProvider>
