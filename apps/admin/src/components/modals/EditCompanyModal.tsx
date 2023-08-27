@@ -72,11 +72,18 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
   const [websiteError, setWebsiteError] = useState<string>('');
   const [fileError, setFileError] = useState<string>('');
 
-  const checkCompanyDuplicate = (companyData: Company) => {
-    if (companies.data && companyData) {
-      return companies.data.some(
-        (company: Company) => company.name === companyData.name && company.id !== companyData.id
-      );
+  const getCompaniesByName = async (name: string) => {
+    const data = await fetchCompaniesByName(name);
+
+    return data;
+  };
+
+  const checkCompanyDuplicate = async (name: string) => {
+    const companies = await getCompaniesByName(name);
+    const originalName = companyData.data?.name;
+
+    if (companies && originalName !== name) {
+      return companies.some((company: Company) => company.name === name);
     }
     return false;
   };
@@ -87,7 +94,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
     setFileError('');
   };
 
-  const formValidation = () => {
+  const formValidation = async () => {
     resetErrors();
 
     let formIsValid = true;
@@ -99,12 +106,12 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
       formIsValid = false;
     }
 
-    if (companyData?.data && checkCompanyDuplicate(companyData?.data)) {
+    if (await checkCompanyDuplicate(name)) {
       setNameError('Company already exists');
       formIsValid = false;
     }
 
-    if (!website && !websiteRegex.test(website)) {
+    if (!websiteRegex.test(website)) {
       setWebsiteError('Website is invalid. Use the format: www.example.com');
       formIsValid = false;
     }
@@ -317,8 +324,7 @@ const EditCompanyModal = ({ open, setOpen, company, updateData }: EditCompanyMod
                     selectedFile={selectedCompanyFile}
                     changeHandler={handleLogoChange}
                     accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-                    maxHeight="220px"
-                    maxWidth='220px'
+                    maxHeight="160px"
                   />
                   <Button
                     variant="contained"

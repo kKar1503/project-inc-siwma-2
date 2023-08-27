@@ -69,9 +69,11 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
       formIsValid = false;
     }
 
-    if (!website && !websiteRegex.test(website)) {
-      setWebsiteError('Website is invalid. Use the format: https://www.example.com');
-      formIsValid = false;
+    if (website) {
+      if (!websiteRegex.test(website)) {
+        setWebsiteError('Website is invalid. Use the format: www.example.com');
+        formIsValid = false;
+      }
     }
 
     if (
@@ -80,7 +82,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
         !AcceptedFileTypes.PNG.includes(selectedCompanyFile.type)) ||
       selectedCompanyFile?.type === ''
     ) {
-      setFileError('File type is invalid');
+      setFileError('File type is invalid. Please upload a JPG or PNG file');
       formIsValid = false;
     }
 
@@ -257,8 +259,7 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
                   selectedFile={selectedCompanyFile}
                   changeHandler={handleLogoChange}
                   accept={[AcceptedFileTypes.JPG, AcceptedFileTypes.PNG]}
-                  maxHeight="220px"
-                  maxWidth="200px"
+                  maxHeight="160px"
                 />
                 <Button
                   variant="contained"
@@ -266,7 +267,6 @@ const AddCompanyModal = ({ open, setOpen, updateData }: AddCompanyModalProps) =>
                   size="large"
                   onClick={handleSubmit}
                   fullWidth
-                  sx={{ mt: 4 }}
                 >
                   Add Company
                 </Button>
