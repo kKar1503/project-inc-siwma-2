@@ -17,7 +17,6 @@ import OnCreateModal from '@/components/modal/OnCreateModal';
 import fetchListing from '@/services/fetchListing';
 import { Listing, Product } from '@/utils/api/client/zod';
 import type { SxProps } from '@mui/material/styles';
-import NoInternetConnection from '@/components/NoInternet';
 
 /**
  * Maps default values into react-hook-form default values
@@ -393,7 +392,6 @@ const ListingCreateEdit = () => {
           </Box>
         </Box>
       </Box>
-      {/* <NoInternetConnection /> */}
     </>
   );
 };

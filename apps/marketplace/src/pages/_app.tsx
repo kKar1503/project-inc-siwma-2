@@ -19,6 +19,7 @@ import { Noto_Sans_SC } from 'next/font/google';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import I18Fix from '@/components/marketplace/I18Fix';
+import NoInternetConnection from '@/components/NoInternet';
 
 // -- Type declarations --//
 // Page type
@@ -29,6 +30,7 @@ interface PageType extends React.FunctionComponent<any> {
   auth?: boolean;
   includeNavbar?: boolean;
   renderSearchBar?: boolean;
+  noInternet?: boolean;
 }
 
 // App prop type
@@ -93,6 +95,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
     allowNonAuthenticated,
     includeNavbar = true,
     renderSearchBar,
+    noInternet = true,
   } = Component;
   // Stying snackbar responsiveness
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
@@ -131,18 +134,35 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
               >
                 {getLayout(
                   <Box height="100dvh" display="flex" flexDirection="column">
-                    <I18nextProvider i18n={i18n}>
-                      {includeNavbar ? (
-                        <>
-                          <NavBar renderSearchBar={renderSearchBar} />
-                          <Component {...pageProps} />
-                        </>
-                      ) : (
-                        <I18Fix>
-                          <Component {...pageProps} />
-                        </I18Fix>
-                      )}
-                    </I18nextProvider>
+                    {noInternet ? (
+                      <NoInternetConnection>
+                        <I18nextProvider i18n={i18n}>
+                          {includeNavbar ? (
+                            <>
+                              <NavBar renderSearchBar={renderSearchBar} />
+                              <Component {...pageProps} />
+                            </>
+                          ) : (
+                            <I18Fix>
+                              <Component {...pageProps} />
+                            </I18Fix>
+                          )}
+                        </I18nextProvider>
+                      </NoInternetConnection>
+                    ) : (
+                      <I18nextProvider i18n={i18n}>
+                        {includeNavbar ? (
+                          <>
+                            <NavBar renderSearchBar={renderSearchBar} />
+                            <Component {...pageProps} />
+                          </>
+                        ) : (
+                          <I18Fix>
+                            <Component {...pageProps} />
+                          </I18Fix>
+                        )}
+                      </I18nextProvider>
+                    )}
                   </Box>
                 )}
               </SnackbarProvider>

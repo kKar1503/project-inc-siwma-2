@@ -15,6 +15,7 @@ import { ThemeProvider, createTheme, useMediaQuery, useTheme } from '@mui/materi
 import { Noto_Sans_SC } from 'next/font/google';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
+import NoInternetConnection from '@/components/NoInternet';
 
 // -- Type declarations --//
 // Page type
@@ -94,38 +95,40 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   });
 
   return (
-    <LocalizationProvider dateAdapter={AdapterLuxon}>
-      <ThemeComponent fonts={notoSansSC.style.fontFamily}>
-        <SessionProvider session={session}>
-          <AuthenticationGuard
-            disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
-            disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
-            loader={<SpinnerPage />}
-            allowAuthenticated={allowAuthenticated}
-            allowNonAuthenticated={allowNonAuthenticated}
-          >
-            <QueryClientProvider client={queryClient}>
-              <Box display="flex" flexDirection="row" height="100dvh">
-                {includeSideBar && (
-                  <Box width={isMobileOrTablet ? '0px' : '290px'} overflow="auto">
-                    <ThemeProvider theme={backgroundColor}>
-                      <SideBar />
-                    </ThemeProvider>
+      <LocalizationProvider dateAdapter={AdapterLuxon}>
+        <ThemeComponent fonts={notoSansSC.style.fontFamily}>
+          <SessionProvider session={session}>
+            <AuthenticationGuard
+              disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
+              disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
+              loader={<SpinnerPage />}
+              allowAuthenticated={allowAuthenticated}
+              allowNonAuthenticated={allowNonAuthenticated}
+            >
+              <QueryClientProvider client={queryClient}>
+                <NoInternetConnection>
+                  <Box display="flex" flexDirection="row" height="100dvh">
+                    {includeSideBar && (
+                      <Box width={isMobileOrTablet ? '0px' : '290px'} overflow="auto">
+                        <ThemeProvider theme={backgroundColor}>
+                          <SideBar />
+                        </ThemeProvider>
+                      </Box>
+                    )}
+                    <Box
+                      flex="1"
+                      paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}
+                      overflow="auto"
+                    >
+                      {getLayout(<Component {...pageProps} />)}
+                    </Box>
                   </Box>
-                )}
-                <Box
-                  flex="1"
-                  paddingTop={isMobileOrTablet ? theme.spacing(8) : '0px'}
-                  overflow="auto"
-                >
-                  {getLayout(<Component {...pageProps} />)}
-                </Box>
-              </Box>
-            </QueryClientProvider>
-          </AuthenticationGuard>
-        </SessionProvider>
-      </ThemeComponent>
-    </LocalizationProvider>
+                </NoInternetConnection>
+              </QueryClientProvider>
+            </AuthenticationGuard>
+          </SessionProvider>
+        </ThemeComponent>
+      </LocalizationProvider>
   );
 };
 

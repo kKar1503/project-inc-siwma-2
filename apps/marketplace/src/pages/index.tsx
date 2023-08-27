@@ -26,7 +26,6 @@ import useBookmarkStore from '@/stores/bookmarks';
 import useParamStore from '@/stores/parameters';
 import useProductStore from '@/stores/products';
 import { SxProps } from '@mui/material/styles';
-import NoInternetConnection from '@/components/NoInternet';
 
 // changed all to not refetch on window refocus or reconnect
 // this is to prevent constantly making requests
@@ -232,7 +231,6 @@ const Marketplace = () => {
         isParamFetching={isParamsFetching || pageLoading}
         listings={listings?.listings || []}
       />
-      {/* <NoInternetConnection /> */}
     </>
   );
 };

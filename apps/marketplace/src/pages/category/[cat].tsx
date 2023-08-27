@@ -10,7 +10,6 @@ import useUser from '@/services/users/useUser';
 import { useSession } from 'next-auth/react';
 import useBookmarkStore from '@/stores/bookmarks';
 import { useRouter } from 'next/router';
-import NoInternetConnection from '@/components/NoInternet';
 
 const ListingTableTest = () => {
   const router = useRouter();
@@ -117,15 +116,12 @@ const ListingTableTest = () => {
   }, [isProductsFetching, isParamsFetching]);
 
   return (
-    <>
-      <ListingTable
-        isLoading={isListingsLoading}
-        isProductFetching={isProductsFetching || pageLoading}
-        isParamFetching={isParamsFetching || pageLoading}
-        listings={listings?.listings || []}
-      />
-      {/* <NoInternetConnection /> */}
-    </>
+    <ListingTable
+      isLoading={isListingsLoading}
+      isProductFetching={isProductsFetching || pageLoading}
+      isParamFetching={isParamsFetching || pageLoading}
+      listings={listings?.listings || []}
+    />
   );
 };
 

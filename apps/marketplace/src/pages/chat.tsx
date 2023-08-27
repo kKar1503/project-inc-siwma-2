@@ -39,7 +39,6 @@ import { useResponsiveness } from '@inc/ui';
 import useChat from '@/hooks/useChat';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import NoInternetConnection from '@/components/NoInternet';
 
 function formatMessage(message: Messages): ChatData {
   const { createdAt, message: messageContent, ...rest } = message;
@@ -637,7 +636,6 @@ const ChatRoom = () => {
           </Box>
         </Box>
       )}
-      {/* <NoInternetConnection /> */}
     </Box>
   );
 };

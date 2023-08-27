@@ -23,7 +23,6 @@ import { useResponsiveness } from '@inc/ui';
 
 // ** i18n import
 import { useTranslation } from 'react-i18next';
-import NoInternetConnection from '@/components/NoInternet';
 
 const ShareFunctionPage = () => {
   const router = useRouter();
@@ -168,7 +167,6 @@ const ShareFunctionPage = () => {
           />
         </Box>
       </Box>
-      {/* <NoInternetConnection /> */}
     </main>
   );
 };

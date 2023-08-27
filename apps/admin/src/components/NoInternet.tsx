@@ -2,7 +2,7 @@ import { useState, useEffect, ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-const NoInternetConnection = ({ children }: { children: ReactNode }) => {
+const NoInternetConnection = ({ children }: { children: ReactNode }): JSX.Element => {
   // state variable holds the state of the internet connection
   const [isOnline, setOnline] = useState(true);
 
@@ -54,7 +54,5 @@ const NoInternetConnection = ({ children }: { children: ReactNode }) => {
     </Box>
   );
 };
-
-NoInternetConnection.includeNavbar = false;
 
 export default NoInternetConnection;

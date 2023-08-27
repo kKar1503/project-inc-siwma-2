@@ -14,7 +14,6 @@ import { useResponsiveness } from '@inc/ui';
 import { useRouter } from 'next/router';
 import apiClient from '@/utils/api/client/apiClient';
 import { validatePassword } from '@/utils/api/validate';
-import NoInternetConnection from '@/components/NoInternet';
 
 const ResetForm = () => {
   const router = useRouter();
@@ -223,7 +222,6 @@ const ResetForm = () => {
           </Box>
         </Container>
       </Box>
-      {/* <NoInternetConnection /> */}
     </Box>
   );
 };
