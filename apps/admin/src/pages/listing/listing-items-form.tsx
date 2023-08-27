@@ -7,15 +7,33 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  FormHelperText,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import fetchCategories from '@/services/fetchCategories';
 import createListingItem from '@/services/createListingItem';
 import SuccessModal from '@/components/modals/SuccessModal';
+import fetchListingItems from '@/services/fetchListingItems';
 
 const GetCategoryPageQuery = () => {
   const { data } = useQuery('cat', async () => fetchCategories());
+  return data;
+};
+
+const GetProductsCount = () => {
+  const { data } = useQuery('products', async () => fetchListingItems({ limit: 0 }));
+  return data;
+};
+
+const CheckDupeName = (countData: number | undefined) => {
+  const { data } = useQuery(
+    'products',
+    async () => fetchListingItems({ limit: countData as number }),
+    {
+      enabled: !!countData,
+    }
+  );
   return data;
 };
 
@@ -28,6 +46,19 @@ export type CreateListingItemProps = {
   chineseUnit: string;
 };
 
+export type names = {
+  totalCount: number;
+  listingItemsData: {
+    categoryId: string;
+    id: string;
+    name: string;
+    description: string;
+    chineseName: string | null;
+    unit: string;
+    chineseUnit: string | null;
+  }[];
+};
+
 const ListingItemForm = () => {
   const [createItem, setCreateItem] = useState<boolean>(false);
   const [LIName, setName] = useState('');
@@ -36,10 +67,18 @@ const ListingItemForm = () => {
   const [LICategory, setCategory] = useState('');
   const [LIUnit, setUnit] = useState('');
   const [LICUnit, setChineseUnit] = useState('');
+  const [LINamesArr, setNames] = useState<names>();
 
   const queryClient = useQueryClient();
-
   const cat = GetCategoryPageQuery();
+  const products = GetProductsCount();
+  const names = CheckDupeName(products?.totalCount);
+
+  useEffect(() => {
+    if (names && names.listingItemsData.length > 0) {
+      setNames(names);
+    }
+  }, [names]);
 
   const usePostListingItemMutation = useMutation(
     (listingItemData: CreateListingItemProps) =>
@@ -59,8 +98,28 @@ const ListingItemForm = () => {
     }
   );
 
+  const validator = (inputString: string, input: string) => {
+    if (inputString === '' && input === 'english') {
+      return true;
+    }
+    if (
+      LINamesArr?.listingItemsData.find(
+        (e) => e.name === inputString || e.chineseName === inputString
+      ) !== undefined
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const errorMessage = (dupeName: boolean) => {
+    if (dupeName) {
+      return 'Duplicate name found. Please enter another name';
+    }
+    return 'Name is required';
+  };
+
   const handleConfirm = async () => {
-    console.log(LIName);
     const requestBody: CreateListingItemProps = {
       name: LIName,
       chineseName: LIChineseName ?? undefined,
@@ -69,7 +128,6 @@ const ListingItemForm = () => {
       unit: LIUnit,
       chineseUnit: LICUnit ?? undefined,
     };
-    console.log(requestBody);
     await usePostListingItemMutation.mutateAsync(requestBody);
   };
 
@@ -90,9 +148,10 @@ const ListingItemForm = () => {
         Create listing item
       </Typography>
       <Typography variant="body1">Create a listing item</Typography>
-      
+
       <Box>
         <TextField
+          required
           fullWidth
           name="name"
           id="name"
@@ -101,6 +160,14 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setName(e.target.value)}
+          error={validator(LIName, 'english')}
+          helperText={
+            validator(LIName, 'english')
+              ? errorMessage(
+                  LINamesArr?.listingItemsData.find((e) => e.name === LIName) !== undefined
+                )
+              : ''
+          }
         />
         <TextField
           fullWidth
@@ -111,8 +178,18 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setChineseName(e.target.value)}
+          error={validator(LIChineseName, 'chinese')}
+          helperText={
+            validator(LIChineseName, 'chinese')
+              ? errorMessage(
+                  LINamesArr?.listingItemsData.find((e) => e.chineseName === LIChineseName) !==
+                    undefined
+                )
+              : ''
+          }
         />
         <TextField
+          required
           fullWidth
           name="description"
           id="description"
@@ -121,27 +198,36 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setDescription(e.target.value)}
+          value={LIDescription}
+          error={LIDescription === ''}
+          helperText={LIDescription === '' ? 'Please enter a description!' : ' '}
         />
         {cat && (
           <Box sx={{ py: '15px' }}>
-            <FormControl fullWidth>
+            <FormControl required fullWidth error={LICategory === ''}>
               <InputLabel id="category">Category</InputLabel>
               <Select
+                required
                 value={LICategory}
                 id="category"
                 label="Category"
                 onChange={(e) => {
                   setCategory(e.target.value);
                 }}
+                error={LICategory === ''}
               >
                 {cat.map((categoryItem) => (
-                  <MenuItem value={categoryItem.id} key={categoryItem.id}>{categoryItem.name}</MenuItem>
+                  <MenuItem value={categoryItem.id} key={categoryItem.id}>
+                    {categoryItem.name}
+                  </MenuItem>
                 ))}
               </Select>
+              {LICategory === '' && <FormHelperText>Please select a category!</FormHelperText>}
             </FormControl>
           </Box>
         )}
         <TextField
+          required
           fullWidth
           name="unit"
           id="unit"
@@ -150,6 +236,9 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setUnit(e.target.value)}
+          value={LIUnit}
+          error={LIUnit === ''}
+          helperText={LIUnit === '' ? 'Please enter a unit!' : ' '}
         />
         <TextField
           fullWidth
@@ -160,6 +249,7 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setChineseUnit(e.target.value)}
+          value={LICUnit}
         />
         <Box
           sx={({ spacing }) => ({
@@ -169,13 +259,17 @@ const ListingItemForm = () => {
             justifyContent: 'flex-end',
           })}
         >
-          <Button type="submit" variant="contained" onClick={handleConfirm} sx={({ spacing}) => ({
-            mb: spacing(2),
-          })}>
-          SUBMIT
-        </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={handleConfirm}
+            sx={({ spacing }) => ({
+              mb: spacing(2),
+            })}
+          >
+            SUBMIT
+          </Button>
         </Box>
-        
       </Box>
       <SuccessModal
         title="Successfully Created!"
