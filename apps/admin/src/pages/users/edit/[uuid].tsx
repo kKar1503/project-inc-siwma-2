@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 import SuccessModal from '@/components/modals/SuccessModal';
 import Spinner from '@/components/fallbacks/Spinner';
 import { BaseError } from '@inc/errors';
-import NoInternetConnection from '@/components/NoInternet';
 
 const EditUser = () => {
   const [isXs, isSm] = useResponsiveness(['xs', 'sm']);

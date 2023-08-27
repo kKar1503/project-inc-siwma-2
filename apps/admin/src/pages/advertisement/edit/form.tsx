@@ -8,7 +8,6 @@ import { useTheme } from '@mui/material/styles';
 import Modal from '@inc/ui/lib/components/Modal';
 import { Advertisment } from '@/utils/api/client/zod/advertisements';
 import { PostAdvertisementRequestBody } from '@/utils/api/server/zod';
-import NoInternetConnection from '@/components/NoInternet';
 
 const Form = ({ advertisement, onSubmit }: {
   advertisement: Advertisment;

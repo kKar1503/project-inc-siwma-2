@@ -15,7 +15,6 @@ import { signIn } from 'next-auth/react';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTogglePasswordVisibility } from '@inc/ui';
-import NoInternetConnection from '@/components/NoInternet';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');

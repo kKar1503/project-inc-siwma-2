@@ -8,7 +8,6 @@ import ListingItemsTable from '@/components/tables/ListingItemsTable';
 import { Box } from '@mui/material';
 import SuccessModal from '@/components/modals/SuccessModal';
 import { useRouter } from 'next/router';
-import NoInternetConnection from '@/components/NoInternet';
 
 const deleteListingItemsMutationFn = async (ids: string[]) => {
   const promises = ids.map((id) => apiClient.delete(`/v1/products/${id}`));

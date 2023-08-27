@@ -13,7 +13,6 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import fetchCategories from '@/services/fetchCategories';
 import createListingItem from '@/services/createListingItem';
 import SuccessModal from '@/components/modals/SuccessModal';
-import NoInternetConnection from '@/components/NoInternet';
 
 const GetCategoryPageQuery = () => {
   const { data } = useQuery('cat', async () => fetchCategories());

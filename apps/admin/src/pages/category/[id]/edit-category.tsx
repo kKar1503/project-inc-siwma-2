@@ -13,7 +13,6 @@ import updateCategoryData from '@/middlewares/updateCategories';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useResponsiveness } from '@inc/ui';
 import Spinner from '@/components/fallbacks/Spinner';
-import NoInternetConnection from '@/components/NoInternet';
 
 export type EditCategoryProps = {
   data: CategoryResponseBody[];

@@ -13,7 +13,6 @@ import router, { useRouter } from 'next/router';
 import { Parameter, ParameterResponseBody } from '@/utils/api/client/zod';
 import fetchParameters from '@/middlewares/fetchParameters';
 import DeleteParameterModal from '@/components/modals/DeleteParameterModal';
-import NoInternetConnection from '@/components/NoInternet';
 
 type DataType = 'string' | 'number' | 'boolean';
 type TableType = 'WEIGHT' | 'DIMENSION' | 'TWO_CHOICES' | 'MANY_CHOICES' | 'OPEN_ENDED';

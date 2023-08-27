@@ -11,7 +11,6 @@ import Grid from '@mui/material/Grid';
 import CompanyTable from '@/components/tables/BaseTable/CompanyTable';
 import RegisterCompanyCard from '@/components/cards/RegisterCompanyCard';
 import BulkRegisterCompanyCard from '@/components/cards/BulkRegisterCompanyCard';
-import NoInternetConnection from '@/components/NoInternet';
 
 export type CompanyWithEmails = Company & {
   emails: string[];

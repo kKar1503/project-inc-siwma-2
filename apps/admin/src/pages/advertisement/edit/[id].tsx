@@ -6,7 +6,6 @@ import { useQuery } from 'react-query';
 import fetchAdvertisements from '@/services/advertisements/fetchAdvertisements';
 import Spinner from '@/components/fallbacks/Spinner';
 import updateAdvertisement from '@/services/advertisements/updateAdvertisement';
-import NoInternetConnection from '@/components/NoInternet';
 import Form from './form';
 
 const AdvertisementUpload = () => {
