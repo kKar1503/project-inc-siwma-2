@@ -33,13 +33,13 @@ const headCells: Header[] = [
   },
 ];
 
-const CompanyInvitesTable = ({details, onDelete} : BulkInvitesTableProps) => {
+const CompanyInvitesTable = ({ details, onDelete }: BulkInvitesTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [tableData, setTableData] = useState<BaseTableData[]>([]);
 
   const companyRows = useMemo(() => details.map((x) => createData(x.company, x.name)), [details]);
-  
+
   useEffect(() => {
     setTableData(
       companyRows.filter((d, i) => i >= rowsPerPage * page && i < rowsPerPage * (page + 1))
@@ -66,6 +66,7 @@ const CompanyInvitesTable = ({details, onDelete} : BulkInvitesTableProps) => {
         onEdit={() => console.log('edit')}
         onToggle={() => console.log('toggle')}
         page={page}
+        placeholderMessage="No companies to invite found"
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={companyRows.length}

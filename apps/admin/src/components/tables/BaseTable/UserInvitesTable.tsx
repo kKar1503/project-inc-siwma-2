@@ -81,6 +81,7 @@ const UserInvitesTable = ({ details, onDelete }: BulkInvitesTableProps) => {
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
         totalCount={userRows.length}
+        placeholderMessage="No users to invite found"
         heading="User Invites Preview"
         sx={{ width: '80vh', height: '68vh' }}
       />

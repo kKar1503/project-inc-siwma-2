@@ -117,6 +117,7 @@ const PendingInvitesTable = ({ data, companies, onDelete }: PendingInvitesTableP
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
           borderRadius: '8px',
         }}
+        placeholderMessage="No pending invites found"
         heading=""
         customHeader={
           <Box

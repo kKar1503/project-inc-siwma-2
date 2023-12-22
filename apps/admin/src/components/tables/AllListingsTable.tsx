@@ -85,6 +85,7 @@ const AllListingsTable: React.FC<AllListingsTableProps> = ({ data, ...props }) =
       rows={parsedListingsData(data)}
       headers={headers}
       rowsPerPageOptions={[5, 10, 25]}
+      placeholderMessage="No listings found"
       customHeader={
         <Box sx={{ padding: 2 }}>
           <Typography variant="h5">Listings</Typography>

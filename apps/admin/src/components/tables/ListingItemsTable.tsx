@@ -95,6 +95,7 @@ const AllListingItemsTable: React.FC<ListingItemsTableProps> = ({ data, ...props
       rows={parsedListingItemsData(data)}
       headers={headers}
       rowsPerPageOptions={[5, 10, 25]}
+      placeholderMessage="No listing items found"
       customHeader={
         <Box sx={{ padding: 2, paddingTop: 3 }}>
           <Grid container sx={{ flexGrow: 1 }}>

@@ -19,6 +19,7 @@ export interface BaseTableData {
 
 type BaseTableProps = {
   heading: string;
+  subHeading?: string;
   headers: Header[];
   customHeader?: React.ReactNode;
   rows: BaseTableData[];
@@ -32,11 +33,14 @@ type BaseTableProps = {
   rowsPerPage: number;
   page: number;
   sx?: React.ComponentProps<typeof Box>['sx'];
+  placeholderMessage?: string;
+  toolbarButtons?: React.ReactNode;
 };
 
 /**
  * Build wrapper tables around this component
  * @param heading - The heading of the table
+ * @param subHeading - The subheading of the table
  * @param rows - The data to display in the table
  * @param headers - The headers to display in the table
  * @param customHeader - The custom header to display in the table
@@ -50,6 +54,8 @@ type BaseTableProps = {
  * @param rowsPerPage - The number of rows per page
  * @param page - The current page
  * @param sx - Styling
+ * @param placeholderMessage - The message to display when there are no rows
+ * @param toolbarButtons - The buttons to display in right side of the toolbar
  */
 const BaseTable = (props: BaseTableProps) => {
   const [selected, setSelected] = useState<readonly BaseTableData[]>([]);
@@ -57,6 +63,7 @@ const BaseTable = (props: BaseTableProps) => {
   // Destructure props
   const {
     heading,
+    subHeading,
     rows,
     headers,
     customHeader,
@@ -70,6 +77,8 @@ const BaseTable = (props: BaseTableProps) => {
     rowsPerPage,
     page,
     sx,
+    placeholderMessage,
+    toolbarButtons,
   } = props;
 
   /**
@@ -117,7 +126,7 @@ const BaseTable = (props: BaseTableProps) => {
   const isSelected = (row: BaseTableData) => selected.find((e) => e.id === row.id) !== undefined;
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? rowsPerPage - rows.length : 0;
+  const emptyRows = rowsPerPage - rows.length;
 
   return (
     <Box width="100%" height="100%" sx={sx}>
@@ -133,7 +142,9 @@ const BaseTable = (props: BaseTableProps) => {
         {customHeader ?? customHeader}
         <BaseTableToolbar
           heading={heading}
+          subHeading={subHeading}
           selectedRows={selected}
+          toolbarButtons={toolbarButtons}
           toggleColumn="enabled"
           onEdit={onEdit ? () => onEdit(selected[0]) : undefined}
           onToggle={onToggle ? (e, toggled) => onToggle(toggled, selected) : undefined}
@@ -146,6 +157,7 @@ const BaseTable = (props: BaseTableProps) => {
               onSelectAllClick={handleSelectAllClick}
               rowCount={rows.length}
               columns={headers}
+              disabled={rows.length === 0}
             />
             <TableBody>
               {rows.map((row, index) => {
@@ -197,7 +209,7 @@ const BaseTable = (props: BaseTableProps) => {
                   </TableRow>
                 );
               })}
-              {emptyRows > 0 && (
+              {rows.length > 0 && emptyRows > 0 && (
                 <TableRow
                   style={{
                     height: 53 * emptyRows,
@@ -206,11 +218,27 @@ const BaseTable = (props: BaseTableProps) => {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
+              {
+                // Render a placeholder message if there are no rows
+                placeholderMessage
+                  ? rows.length === 0 && (
+                      <TableRow
+                        style={{
+                          height: 53 * rowsPerPage,
+                        }}
+                      >
+                        <TableCell colSpan={6} align="center">
+                          {placeholderMessage}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  : null
+              }
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
-          sx={{ flexGrow: 0, overflow: 'initial' }}
+          sx={{ flexGrow: 0, overflow: 'initial', paddingBottom: 2 }}
           rowsPerPageOptions={rowsPerPageOptions}
           component="div"
           count={totalCount}

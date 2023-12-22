@@ -146,6 +146,7 @@ const RegisteredUsersTable = ({
           borderRadius: '8px',
         }}
         heading=""
+        placeholderMessage="No registered users found"
         customHeader={
           <Box
             sx={{

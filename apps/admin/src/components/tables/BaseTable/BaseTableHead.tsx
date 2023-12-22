@@ -13,10 +13,11 @@ type BaseTableHeadProps = {
   numSelected: number;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   rowCount: number;
+  disabled?: boolean;
 };
 
 const BaseTableHead = (props: BaseTableHeadProps) => {
-  const { columns, numSelected, onSelectAllClick, rowCount } = props;
+  const { columns, numSelected, onSelectAllClick, rowCount, disabled } = props;
 
   return (
     <TableHead>
@@ -30,6 +31,7 @@ const BaseTableHead = (props: BaseTableHeadProps) => {
             inputProps={{
               'aria-label': 'select all rows',
             }}
+            disabled={disabled}
           />
         </TableCell>
         {columns.map((column) => (

@@ -1,6 +1,6 @@
 import BaseTable, { BaseTableData } from '@/components/tables/BaseTable/BaseTable';
 import { Header } from '@/components/tables/BaseTable/BaseTableHead';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import Head from 'next/head';
 import { useState } from 'react';
 import apiClient from '@/utils/api/client/apiClient';
@@ -93,6 +93,7 @@ const TableTest = () => {
     <Box sx={{ padding: '3rem' }} height="100%">
       <BaseTable
         heading="Desserts"
+        subHeading="A list of desserts"
         rows={rows}
         headers={headCells}
         onPageChange={handleChangePage}
