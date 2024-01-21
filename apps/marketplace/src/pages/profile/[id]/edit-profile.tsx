@@ -5,7 +5,6 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -16,6 +15,7 @@ import Input from '@mui/material/Input';
 import OnLeaveModal from '@/components/modal/OnLeaveModal';
 import { useResponsiveness } from '@inc/ui';
 import updateUser from '@/services/users/updateUser';
+import updateProfilePic from '@/services/users/updateProfilePic';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
 import { useMutation } from 'react-query';
@@ -25,31 +25,35 @@ import { validateName, validateEmail, validatePhone } from '@/utils/api/validate
 import { InvalidNameError, InvalidPhoneNumberError, InvalidEmailError } from '@inc/errors';
 import { useTranslation } from 'react-i18next';
 import useUser from '@/services/users/useUser';
+import { Avatar } from '@mui/material';
 import useUserDataStore from '@/stores/userData';
 import NoInternetConnection from '@/components/NoInternet';
 
-const useUpdateUserMutation = (userUuid: string, profilePicture?: File) =>
-  useMutation((updatedUserData: PutUserRequestBody) =>
-    updateUser(updatedUserData, userUuid, profilePicture)
-  );
+const useUpdateUserMutation = (userUuid: string) =>
+  useMutation((updatedUserData: PutUserRequestBody) => updateUser(updatedUserData, userUuid));
+
+const useUpdateProfilePicMutation = (userUUID: string, SuccessFn: () => void) =>
+  useMutation((profilePic: File) => updateProfilePic(userUUID, profilePic), {
+    onSuccess: SuccessFn,
+  });
 
 const EditProfile = () => {
   const setUser = useUserDataStore((state) => state.setUser);
   const user = useSession();
   const loggedUserUuid = user.data?.user.id as string;
   const id = useRouter().query.id as string;
-  const { data: userDetails } = useUser(id);
+  const { data: userDetails, refetch } = useUser(id);
   const theme = useTheme();
   const { spacing } = theme;
   const router = useRouter();
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [image, setImage] = useState<File | undefined>(undefined);
+  const [imageUrl, setImageUrl] = useState<string>('');
   const [name, setName] = useState<string>(userDetails?.name || '');
   const [nameError, setNameError] = useState('');
   const [mobileNumber, setMobileNumber] = useState<string>(userDetails?.mobileNumber || '');
   const [mobileNumberError, setMobileNumberError] = useState('');
+  const [uploadError, setUploadError] = useState<boolean>(false);
   const [email, setEmail] = useState<string>(userDetails?.email || '');
   const [emailError, setEmailError] = useState('');
   const [bio, setBio] = useState<string>(userDetails?.bio || '');
@@ -57,7 +61,8 @@ const EditProfile = () => {
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const { t } = useTranslation();
 
-  const mutation = useUpdateUserMutation(loggedUserUuid, image);
+  const mutation = useUpdateUserMutation(loggedUserUuid);
+  const profilePicMutation = useUpdateProfilePicMutation(loggedUserUuid, () => refetch());
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -149,7 +154,7 @@ const EditProfile = () => {
         setEmailError('Invalid email');
       } else if ((error as Error).message === 'Invalid bio') {
         setBioError('Invalid bio');
-      } 
+      }
     }
   };
 
@@ -159,15 +164,26 @@ const EditProfile = () => {
       setMobileNumber(userDetails?.mobileNumber);
       setEmail(userDetails?.email);
       setBio(userDetails?.bio || '');
+      setImageUrl(`https://s3.karlok.dev/${userDetails.profilePic}` || '');
     }
   }, [userDetails]);
 
   useEffect(() => {
-    if (profilePicture) {
-      setImageUrl(URL.createObjectURL(profilePicture));
-      setImage(profilePicture);
-    }
+    if (!profilePicture) return;
+    setImageUrl(URL.createObjectURL(profilePicture));
   }, [profilePicture]);
+
+  useEffect(() => {
+    if (profilePicMutation.isError) {
+      setUploadError(true);
+    }
+  }, [profilePicMutation.isError]);
+
+  const uploadProfile = () => {
+    if (!profilePicture) return;
+    setUploadError(false);
+    profilePicMutation.mutate(profilePicture);
+  };
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -286,11 +302,9 @@ const EditProfile = () => {
                     alignItems: 'center',
                   })}
                 >
-                  {imageUrl && profilePicture && (
-                    <Box>
-                      <Avatar src={imageUrl} />
-                    </Box>
-                  )}
+                  <Box>
+                    <Avatar src={imageUrl} />
+                  </Box>
                   <Box sx={({ spacing }) => ({ ml: spacing(2) })}>
                     <Box
                       sx={{
@@ -311,7 +325,13 @@ const EditProfile = () => {
                           sx={{ display: 'none' }}
                         />
                       </Button>
+                      <Button onClick={uploadProfile} variant="contained" sx={{ marginX: 2 }}>
+                        Save
+                      </Button>
                     </Box>
+                    {uploadError && (
+                      <Typography color="red">An error occurred when uploading photo.</Typography>
+                    )}
                   </Box>
                 </Box>
               </CardContent>
@@ -416,7 +436,7 @@ const EditProfile = () => {
                       name.trim() === '' ||
                       mobileNumber.trim() === '' ||
                       email.trim() === '' ||
-                      bio.trim() === '' 
+                      bio.trim() === ''
                     }
                   >
                     {t('Save Changes')}
