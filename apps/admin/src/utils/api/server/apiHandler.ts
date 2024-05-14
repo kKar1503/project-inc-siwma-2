@@ -16,6 +16,8 @@ import {
   QueryError,
   UnknownError,
   UnknownS3Error,
+  DuplicateError,
+  NumberRangeError,
 } from '@inc/errors';
 
 import { NextApiResponse } from 'next';
@@ -24,7 +26,6 @@ import { ZodError } from 'zod';
 import { Prisma } from '@inc/db';
 import { APIHandlerOptions, APIRequestType } from '@/types/api-types';
 import { S3Error } from '@inc/s3-simplified';
-import { NumberRangeError } from '@inc/errors/src';
 import { apiGuardMiddleware } from './middlewares/apiGuardMiddleware';
 import jwtMiddleware from './middlewares/jwtMiddleware';
 import { zodPathToString } from '../apiHelper';
@@ -122,6 +123,15 @@ function handlePrismaError(error: Prisma.PrismaClientKnownRequestError) {
     // Yes it was, return a param error
   }
 
+  // Check if it was a unique key constraint error
+  if (error.code === 'P2002') {
+    // Yes it was, obtain the field name
+    const field = (error.meta?.target as string[])[0];
+
+    // Return a DuplicateError
+    return new DuplicateError(field);
+  }
+
   // Unrecognised prisma error
   return new ParamError();
 }
@@ -186,7 +196,6 @@ function handleError($error: Error): ErrorJSON[] {
   }
 
   // An unknown error was received
-  console.error(error);
   return [new UnknownError().toJSON()];
 }
 

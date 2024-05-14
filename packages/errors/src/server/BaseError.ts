@@ -14,6 +14,7 @@ export type ErrorJSON = {
   status: number;
   code: number;
   detail: string;
+  meta?: Record<string, unknown>;
 };
 
 /**
@@ -25,6 +26,7 @@ export abstract class BaseError extends Error {
   detail?: string; // Detailed error message (for logging)
   status: number; // The HTTP status code
   code: number; // The error code
+  meta?: Record<string, unknown>; // Additional error information
 
   constructor() {
     super();
@@ -38,6 +40,7 @@ export abstract class BaseError extends Error {
       status: this.status,
       code: this.code,
       detail: this.message,
+      meta: this.meta,
     };
   }
 }
