@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useRouter } from 'next/router';
 import fetchCategories from '@/services/fetchCategories';
 import createListingItem from '@/services/createListingItem';
 import SuccessModal from '@/components/modals/SuccessModal';
@@ -37,6 +38,15 @@ const ListingItemForm = () => {
   const [LIUnit, setUnit] = useState('');
   const [LICUnit, setChineseUnit] = useState('');
 
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [nameChineseError, setNameChineseError] = useState<string | null>(null);
+  const [descriptionError, setDescriptionError] = useState<string | null>(null);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [unitError, setUnitError] = useState<string | null>(null);
+  const [unitChineseError, setUnitChineseError] = useState<string | null>(null);
+
+  const router = useRouter();
+
   const queryClient = useQueryClient();
 
   const cat = GetCategoryPageQuery();
@@ -60,6 +70,52 @@ const ListingItemForm = () => {
   );
 
   const handleConfirm = async () => {
+    // Validate input data
+    let hasError = false;
+    if (!LIName) {
+      setNameError('Listing Item Name is required');
+      hasError = true;
+    } else {
+      setNameError(null);
+    }
+
+    if (!LIChineseName) {
+      setNameChineseError('Listing Item Name (Chinese)  is required');
+      hasError = true;
+    } else {
+      setNameChineseError(null);
+    }
+
+    if (!LIDescription) {
+      setDescriptionError('Description is required');
+      hasError = true;
+    } else {
+      setDescriptionError(null);
+    }
+
+    if (!LICategory) {
+      setCategoryError('Category is required');
+      hasError = true;
+    } else {
+      setCategoryError(null);
+    }
+
+    if (!LIUnit) {
+      setUnitError('Unit is required');
+      hasError = true;
+    } else {
+      setUnitError(null);
+    }
+    if (!LICUnit) {
+      setUnitChineseError('Unit (Chinese) is required');
+      hasError = true;
+    } else {
+      setUnitChineseError(null);
+    }
+
+    if (hasError) {
+      return;
+    }
     console.log(LIName);
     const requestBody: CreateListingItemProps = {
       name: LIName,
@@ -71,6 +127,10 @@ const ListingItemForm = () => {
     };
     console.log(requestBody);
     await usePostListingItemMutation.mutateAsync(requestBody);
+  };
+
+  const handleCancel = async () => {
+    router.push('/listing/listing-items');
   };
 
   return (
@@ -90,7 +150,7 @@ const ListingItemForm = () => {
         Create listing item
       </Typography>
       <Typography variant="body1">Create a listing item</Typography>
-      
+
       <Box>
         <TextField
           fullWidth
@@ -101,6 +161,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setName(e.target.value)}
+          error={!!nameError}
+          helperText={nameError}
         />
         <TextField
           fullWidth
@@ -111,6 +173,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setChineseName(e.target.value)}
+          error={!!nameChineseError}
+          helperText={nameChineseError}
         />
         <TextField
           fullWidth
@@ -121,6 +185,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setDescription(e.target.value)}
+          error={!!descriptionError}
+          helperText={descriptionError}
         />
         {cat && (
           <Box sx={{ py: '15px' }}>
@@ -135,9 +201,16 @@ const ListingItemForm = () => {
                 }}
               >
                 {cat.map((categoryItem) => (
-                  <MenuItem value={categoryItem.id} key={categoryItem.id}>{categoryItem.name}</MenuItem>
+                  <MenuItem value={categoryItem.id} key={categoryItem.id}>
+                    {categoryItem.name}
+                  </MenuItem>
                 ))}
               </Select>
+              {categoryError && (
+                <Typography variant="caption" color="error">
+                  {categoryError}
+                </Typography>
+              )}
             </FormControl>
           </Box>
         )}
@@ -150,6 +223,8 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setUnit(e.target.value)}
+          error={!!unitError}
+          helperText={unitError}
         />
         <TextField
           fullWidth
@@ -160,22 +235,39 @@ const ListingItemForm = () => {
           autoFocus
           margin="normal"
           onChange={(e) => setChineseUnit(e.target.value)}
+          error={!!unitChineseError}
+          helperText={unitChineseError}
         />
         <Box
           sx={({ spacing }) => ({
-            width: '98%',
+            width: '100%',
             mt: spacing(2),
             display: 'flex',
             justifyContent: 'flex-end',
           })}
         >
-          <Button type="submit" variant="contained" onClick={handleConfirm} sx={({ spacing}) => ({
-            mb: spacing(2),
-          })}>
-          SUBMIT
-        </Button>
+          <Button
+            variant="contained"
+            onClick={handleCancel}
+            sx={({ spacing, palette }) => ({
+              mb: spacing(2),
+              mr: spacing(3),
+              backgroundColor: palette.error.main,
+            })}
+          >
+            CANCEL
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            onClick={handleConfirm}
+            sx={({ spacing }) => ({
+              mb: spacing(2),
+            })}
+          >
+            SUBMIT
+          </Button>
         </Box>
-        
       </Box>
       <SuccessModal
         title="Successfully Created!"
