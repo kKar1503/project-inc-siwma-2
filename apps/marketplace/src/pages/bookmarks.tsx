@@ -16,6 +16,8 @@ import useUser from '@/services/users/useUser';
 import useMultipleUsers from '@/services/users/useMultipleUsers';
 import NoInternetConnection from '@/components/NoInternet';
 
+import { useLoadingBar } from '@/context/loadingBarContext';
+
 const BUTTONS = ['LISTINGS', 'USERS'] as const;
 export type BookmarkType = (typeof BUTTONS)[number];
 
@@ -32,7 +34,17 @@ const Bookmarks = () => {
   const { data: bookmarkedUsers } = useMultipleUsers(bookmarkedUserUuids);
   const { t } = useTranslation();
 
+  const { loadingBarRef } = useLoadingBar();
+
   // ** Effects
+  useEffect(() => {
+    if (!userDetails?.bookmarks) {
+      loadingBarRef.current?.continuousStart();
+    } else {
+      loadingBarRef.current?.complete();
+    }
+  }, [userDetails?.bookmarks]);
+
   useEffect(() => {
     if (userDetails?.bookmarks) {
       if (userDetails?.bookmarks?.users) {

@@ -3,7 +3,9 @@
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
-import { useRouter } from 'next/router';
+import { useRouter, Router } from 'next/router';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
+import { LoadingBarProvider } from '@/context/loadingBarContext';
 import React, { useEffect, useMemo } from 'react';
 import SpinnerPage from '@/components/fallbacks/SpinnerPage';
 import AuthenticationGuard from '@/components/auth/AuthenticationGuard';
@@ -11,10 +13,10 @@ import { ThemeComponent, useResponsiveness } from '@inc/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import NavBar from '@/components/marketplace/navbar/NavBar';
 import Box from '@mui/material/Box';
+import { useTheme, styled } from '@mui/material/styles';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n/i18n';
 import { MaterialDesignContent, SnackbarOrigin, SnackbarProvider } from 'notistack';
-import { styled } from '@mui/material/styles';
 import { Noto_Sans_SC } from 'next/font/google';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
@@ -22,7 +24,7 @@ import I18Fix from '@/components/marketplace/I18Fix';
 
 // -- Type declarations --//
 // Page type
-interface PageType extends React.FunctionComponent<any> {
+interface PageType extends React.FunctionComponent<unknown> {
   getLayout: (page: JSX.Element) => JSX.Element;
   allowAuthenticated: boolean;
   allowNonAuthenticated: boolean;
@@ -88,6 +90,67 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
   const queryClient = new QueryClient();
+  const ref = React.useRef<LoadingBarRef | null>(null);
+  const [isExternalNavigation, setIsExternalNavigation] = React.useState(false);
+  const [showSpinner, setShowSpinner] = React.useState(false);
+  const router = useRouter();
+  const { palette } = useTheme();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const { referrer } = window.document;
+      const isExternal = !referrer || !referrer.includes(window.location.hostname);
+      setIsExternalNavigation(isExternal);
+      if (isExternal) {
+        setShowSpinner(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+
+    if (showSpinner) {
+      timer = setTimeout(() => {
+        setShowSpinner(false);
+      }, 5000);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [showSpinner]);
+
+  useEffect(() => {
+    const startLoading = () => {
+      setTimeout(() => {
+        if (isExternalNavigation) {
+          setShowSpinner(true);
+          return;
+        }
+        ref.current?.continuousStart();
+      }, 1000);
+    };
+
+    const finishLoading = () => {
+      setIsExternalNavigation(false);
+      setShowSpinner(false);
+      ref.current?.complete();
+    };
+
+    Router.events.on('routeChangeStart', startLoading);
+    Router.events.on('routeChangeComplete', finishLoading);
+    Router.events.on('routeChangeError', finishLoading);
+
+    return () => {
+      Router.events.off('routeChangeStart', startLoading);
+      Router.events.off('routeChangeComplete', finishLoading);
+      Router.events.off('routeChangeError', finishLoading);
+    };
+  }, [isExternalNavigation, router.asPath, router.route]);
+
   const {
     allowAuthenticated = true,
     allowNonAuthenticated,
@@ -112,43 +175,46 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: ExtendedAppPro
   return (
     <LocalizationProvider dateAdapter={AdapterLuxon}>
       <ThemeComponent fonts={notoSansSC.style.fontFamily}>
-        <SessionProvider session={session}>
-          <AuthenticationGuard
-            disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
-            disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
-            loader={<SpinnerPage />}
-            allowAuthenticated={allowAuthenticated}
-            allowNonAuthenticated={allowNonAuthenticated}
-          >
-            <QueryClientProvider client={queryClient}>
-              <SnackbarProvider
-                style={{ width: '100%', height: '0%' }}
-                maxSnack={3}
-                anchorOrigin={alertStyle}
-                Components={{
-                  default: StyledMaterialDesignContent,
-                }}
-              >
-                {getLayout(
-                  <Box height="100dvh" display="flex" flexDirection="column">
-                    <I18nextProvider i18n={i18n}>
-                      {includeNavbar ? (
-                        <>
-                          <NavBar renderSearchBar={renderSearchBar} />
-                          <Component {...pageProps} />
-                        </>
-                      ) : (
-                        <I18Fix>
-                          <Component {...pageProps} />
-                        </I18Fix>
-                      )}
-                    </I18nextProvider>
-                  </Box>
-                )}
-              </SnackbarProvider>
-            </QueryClientProvider>
-          </AuthenticationGuard>
-        </SessionProvider>
+        <LoadingBar color={palette.primary.main} ref={ref} style={{ zIndex: 9999 }} />
+        <LoadingBarProvider loadingBarRef={ref}>
+          <SessionProvider session={session}>
+            <AuthenticationGuard
+              disallowAuthenticatedFallback={<DisallowAuthenticatedFallback />}
+              disallowNonAuthenticatedFallback={<DisallowNonAuthenticatedFallback />}
+              loader={showSpinner ? <SpinnerPage /> : <div />}
+              allowAuthenticated={allowAuthenticated}
+              allowNonAuthenticated={allowNonAuthenticated}
+            >
+              <QueryClientProvider client={queryClient}>
+                <SnackbarProvider
+                  style={{ width: '100%', height: '0%' }}
+                  maxSnack={3}
+                  anchorOrigin={alertStyle}
+                  Components={{
+                    default: StyledMaterialDesignContent,
+                  }}
+                >
+                  {getLayout(
+                    <Box height="100dvh" display="flex" flexDirection="column">
+                      <I18nextProvider i18n={i18n}>
+                        {includeNavbar ? (
+                          <>
+                            <NavBar renderSearchBar={renderSearchBar} />
+                            <Component {...pageProps} />
+                          </>
+                        ) : (
+                          <I18Fix>
+                            <Component {...pageProps} />
+                          </I18Fix>
+                        )}
+                      </I18nextProvider>
+                    </Box>
+                  )}
+                </SnackbarProvider>
+              </QueryClientProvider>
+            </AuthenticationGuard>
+          </SessionProvider>
+        </LoadingBarProvider>
       </ThemeComponent>
     </LocalizationProvider>
   );

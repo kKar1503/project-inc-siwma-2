@@ -10,12 +10,14 @@ import useUser from '@/services/users/useUser';
 import { useSession } from 'next-auth/react';
 import useBookmarkStore from '@/stores/bookmarks';
 import { useRouter } from 'next/router';
+import { useLoadingBar } from '@/context/loadingBarContext';
 import NoInternetConnection from '@/components/NoInternet';
 
 const ListingTableTest = () => {
   const router = useRouter();
   const session = useSession();
   const userId = session.data?.user.id;
+  const { loadingBarRef } = useLoadingBar();
 
   const [paginationStates, paginationActions] = useTablePagination();
   const [products, addProducts] = useProductStore((state) => [state.products, state.addProducts]);
@@ -43,6 +45,14 @@ const ListingTableTest = () => {
   const { data: params, isFetching: isParamsFetching } = useParameters(paramIdsToFetch);
   const { data: productsFetchData, isFetching: isProductsFetching } =
     useProducts(productIdsToFetch);
+
+  useEffect(() => {
+    if (isListingsLoading || isProductsFetching || isParamsFetching) {
+      loadingBarRef.current?.continuousStart();
+    } else {
+      loadingBarRef.current?.complete();
+    }
+  }, [isListingsLoading, isProductsFetching, isParamsFetching]);
 
   useEffect(() => {
     if (user !== undefined) {

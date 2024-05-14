@@ -1,9 +1,5 @@
 lockfileVersion: '6.1'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -417,6 +413,9 @@ importers:
       react-swipeable-views-utils:
         specifier: ^0.14.0
         version: 0.14.0(react@18.2.0)
+      react-top-loading-bar:
+        specifier: 2.3.1
+        version: 2.3.1(react@18.2.0)
       sib-api-v3-sdk:
         specifier: ^8.5.0
         version: 8.5.0
@@ -7460,6 +7459,15 @@ packages:
       warning: 4.0.3
     dev: false
 
+  /react-top-loading-bar@2.3.1(react@18.2.0):
+    resolution: {integrity: sha512-rQk2Nm+TOBrM1C4E3e6KwT65iXyRSgBHjCkr2FNja1S51WaPulRA5nKj/xazuQ3x89wDDdGsrqkqy0RBIfd0xg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /react-transition-group@4.4.5(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
     peerDependencies:
@@ -9160,3 +9168,7 @@ packages:
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false

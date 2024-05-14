@@ -9,11 +9,12 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
-import Link from '@mui/material/Link';
 import { signOut } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
 import { useResponsiveness } from '@inc/ui';
 import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import { useRouter } from 'next/router';
 
 export type UserNameProps = {
   userName: string | undefined;
@@ -26,8 +27,15 @@ const Profile = ({ userName, userId }: UserNameProps) => {
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { t } = useTranslation();
   const { typography, palette, spacing } = useTheme();
+  const router = useRouter();
 
   const isMenuOpen = anchorEl !== null;
+
+  const handleUrl = (url: string) => {
+    if (router.pathname !== url) {
+      router.push(url);
+    }
+  };
 
   const handleProfileMenuOpen = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -113,7 +121,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
 
         <Divider />
 
-        <Link href={`/profile/${userId}`} underline="none">
+        <Box onClick={() => handleUrl(`/profile/${userId}`)}>
           <MenuItem onClick={handleMenuClose}>
             <AccountCircle
               sx={{
@@ -136,9 +144,9 @@ const Profile = ({ userName, userId }: UserNameProps) => {
               {t('Profile')}
             </Typography>
           </MenuItem>
-        </Link>
+        </Box>
 
-        <Link href={`/profile/${userId}/edit-profile`} underline="none">
+        <Box onClick={() => handleUrl(`/profile/${userId}/edit-profile`)}>
           <MenuItem onClick={handleMenuClose}>
             <EditIcon
               sx={{
@@ -161,9 +169,9 @@ const Profile = ({ userName, userId }: UserNameProps) => {
               {t('Edit Profile')}
             </Typography>
           </MenuItem>
-        </Link>
+        </Box>
 
-        <Link href="/profile/change-password" underline="none">
+        <Box onClick={() => handleUrl('/profile/change-password')}>
           <MenuItem onClick={handleMenuClose}>
             <LockIcon
               sx={{
@@ -186,9 +194,9 @@ const Profile = ({ userName, userId }: UserNameProps) => {
               {t('Change Password')}
             </Typography>
           </MenuItem>
-        </Link>
+        </Box>
 
-        <Link href="/bookmarks" underline="none">
+        <Box onClick={() => handleUrl('/bookmarks')}>
           <MenuItem onClick={handleMenuClose}>
             <BookmarksIcon
               sx={{
@@ -211,7 +219,7 @@ const Profile = ({ userName, userId }: UserNameProps) => {
               {t('Bookmarks')}
             </Typography>
           </MenuItem>
-        </Link>
+        </Box>
 
         <MenuItem onClick={handleLogOut}>
           <LogoutIcon

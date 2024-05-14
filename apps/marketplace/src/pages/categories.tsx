@@ -6,7 +6,10 @@ import { CategoryResponseBody } from '@/utils/api/client/zod/categories';
 import fetchCategories from '@/services/fetchCategories';
 import { useRouter } from 'next/router';
 import CategoryCard from '@/components/marketplace/listing/Categories';
-import { useEffect, useMemo } from 'react';
+import Spinner from '@/components/fallbacks/Spinner';
+import { useLoadingBar } from '@/context/loadingBarContext';
+import { LoadingBarRef } from 'react-top-loading-bar';
+import { RefObject, useEffect, useMemo } from 'react';
 import CategoryCardSkeleton from '@/components/marketplace/listing/CategoryCardSkeleton';
 import { SxProps } from '@mui/material/styles';
 import { useResponsiveness } from '@inc/ui';
@@ -17,14 +20,29 @@ export type CategoryPageType = {
   data: CategoryResponseBody[];
 };
 
-const useCategoryPageQuery = () => {
-  const { data, error, isError, isFetched } = useQuery('cat', async () => fetchCategories());
+const useCategoryPageQuery = (loadingBarRef: RefObject<LoadingBarRef>) => {
+  const { data, error, isError, isFetched } = useQuery(
+    'cat',
+    async () => {
+      loadingBarRef.current?.continuousStart();
+      const categories = await fetchCategories();
+      loadingBarRef.current?.complete();
+      return categories;
+    },
+    {
+      onError: () => {
+        loadingBarRef.current?.complete();
+      },
+    }
+  );
+
   return { data, error, isError, isFetched };
 };
 
 const CategoriesPage = () => {
   const router = useRouter();
-  const catData = useCategoryPageQuery();
+  const { loadingBarRef } = useLoadingBar();
+  const catData = useCategoryPageQuery(loadingBarRef);
   const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
   const { t } = useTranslation();
 
