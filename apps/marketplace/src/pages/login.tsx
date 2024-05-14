@@ -151,6 +151,8 @@ const LoginForm = () => {
             <Box
               sx={({ spacing }) => ({
                 mb: spacing(2),
+                display: 'flex',
+                alignItems: 'center',
               })}
             >
               <Typography
@@ -218,7 +220,7 @@ const LoginForm = () => {
                     my: spacing(2),
                   })}
                 >
-                  Invalid email or password!
+                  {t('Invalid email or password!')}
                 </Typography>
               )}
               <Grid

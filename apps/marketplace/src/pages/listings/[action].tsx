@@ -80,7 +80,7 @@ const ListingCreateEdit = () => {
   const isLoading = products.isLoading || categories.isLoading || selectedListing.isLoading;
 
   // Responsive breakpoints
-  const [isSm, isMd, isLg] = useResponsiveness(['sm', 'md', 'lg']);
+  const [isSm] = useResponsiveness(['sm']);
 
   const tableMaxWidthContainer = useMemo<SxProps>(() => {
     if (!isSm) return { minWidth: 900, px: 'calc(50vw - 656px)' };
@@ -198,7 +198,7 @@ const ListingCreateEdit = () => {
 
     // Validate quantity
     if (quantity <= 0) {
-    errors.quantity = new Error('Quantity must be greater than 0');
+      errors.quantity = new Error('Quantity must be greater than 0');
     }
 
     // Validate category parameters
@@ -342,7 +342,9 @@ const ListingCreateEdit = () => {
       <OnCreateModal
         title={isEditing ? t('Successfully updated listing') || undefined : undefined}
         content={
-          isEditing ? t('Your listing has been updated') : 'Your listing is now on the marketplace'
+          isEditing
+            ? t('Your listing has been updated')
+            : t('Your listing is now on the marketplace')
         }
         open={openModal}
         // onRightButtonPress={() => setOpenModal(false)}
@@ -372,7 +374,7 @@ const ListingCreateEdit = () => {
           <Box>
             <Typography variant="h6">{t('Create a listing')}</Typography>
             <Typography variant="body1">
-              {t('Create a buy or a sell listing to be shared on your profile')}
+              {t('Create a new listing to be shared on your profile.')}
             </Typography>
             <Divider sx={{ marginTop: 2, marginBottom: 3 }} />
           </Box>

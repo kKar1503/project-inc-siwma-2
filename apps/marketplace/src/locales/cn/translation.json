@@ -214,13 +214,57 @@
   "share": "分享",
 
   "Sign In": "登录",
-  "SIGN IN" : "登录",
-  "Forgot your password?" : "忘记密码？",
-  "Remember me" : "记住我",
-  "Your password" : "您的密码",
-  "Your company e-mail" : "您的公司电子邮件",
-  "Please sign in to your account" : "请登录您的帐户",
+  "SIGN IN": "登录",
+  "Forgot your password?": "忘记密码？",
+  "Remember me": "记住我",
+  "Your password": "您的密码",
+  "Your company e-mail": "您的公司电子邮件",
+  "Please sign in to your account": "请登录您的帐户",
 
-  "E-mail" : "电子邮件",
-  "Password" : "密码"
+  "E-mail": "电子邮件",
+  "Password": "密码",
+
+  "Please enter your full name": "请输入您的全名",
+  "Name cannot contain numbers": "姓名不能包含数字",
+  "Invalid name": "无效姓名",
+
+  "Please enter a mobile number": "请输入手机号码",
+  "Please enter a valid Singapore phone number": "请输入有效的新加坡电话号码",
+  "Invalid phone number": "无效电话号码",
+
+  "Please enter an email address": "请输入您的电邮",
+  "Please enter a valid email address": "请输入有效的电邮",
+  "Invalid email": "无效电邮",
+
+  "Please enter a bio": "请输入简历",
+  "Invalid bio": "无效简历",
+
+  "Invalid whatsapp number": "无效的 Whatsapp 号码",
+  "Invalid telegram username": "无效的 Telegram 用户名",
+  "Please enter your telegram username": "请输入您的 Telegram 用户名",
+  "Please enter a telegram username": "请输入 Telegram 用户名",
+  "Your Full Name": "您的姓名",
+
+  "New password and confirm new password must be the same": "新密码和确认新密码必须相同",
+  "New password must be at least 8 characters long": "新密码长度必须至少为 8 个字符",
+  "Current password is incorrect": "目前的密码不正确",
+  "Please fill in all fields": "请填写所有信息",
+
+  "Product": "商品",
+  "Product Info": "商品信息",
+  "Product Name": "商品名称",
+  "Product Name (Chinese)": "商品名称 (中文)",
+  "Unit": "单位",
+  "Unit (Chinese)": "单位 (中文)",
+  "Information on the Selected Product": "关于所选产品的信息",
+  "Category Parameters": "分类参数",
+  "Enter the parameters specific to the chosen category": "请输入所选分类的特定参数",
+  "No Product Selected": "未选择商品",
+  "Cross Section Image": "横截面图像",
+  "Length": "长度",
+  "Grade": "金属等级",
+  "Type": "类型",
+  "Create a listing": "创建商品",
+  "Your listing is now on the marketplace":"您的商品已在平台上发布",
+  "An error occurred while creating the listing, please try again later":"创建商品时发生错误，请稍后再试"
 }

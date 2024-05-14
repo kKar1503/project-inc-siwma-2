@@ -170,7 +170,7 @@ const ChangePassword = () => {
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       error={!!currentPasswordError}
-                      helperText={currentPasswordErrorText}
+                      helperText={t(currentPasswordErrorText)}
                     />
                   </FormControl>
 
@@ -185,7 +185,7 @@ const ChangePassword = () => {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       error={!!newPasswordError}
-                      helperText={newPasswordErrorText}
+                      helperText={t(newPasswordErrorText)}
                     />
                   </FormControl>
 
@@ -200,7 +200,7 @@ const ChangePassword = () => {
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
                       error={!!confirmPasswordError}
-                      helperText={confirmPasswordErrorText}
+                      helperText={t(confirmPasswordErrorText)}
                     />
                   </FormControl>
                 </CardContent>

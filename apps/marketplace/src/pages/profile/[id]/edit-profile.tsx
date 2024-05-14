@@ -57,6 +57,8 @@ const EditProfile = () => {
   const [openLeave, setOpenLeave] = useState<boolean>(false);
   const { t } = useTranslation();
 
+  const bioDescription = t('Bio Description');
+  const yourFullName = t('Your Full Name');
   const mutation = useUpdateUserMutation(loggedUserUuid, image);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -303,7 +305,7 @@ const EditProfile = () => {
                     </Box>
                     <Box sx={({ spacing }) => ({ mt: spacing(1) })}>
                       <Button variant="contained" component="label">
-                        Upload Profile Photo
+                        {t('Upload Profile Photo')}
                         <Input
                           type="file"
                           onChange={handleFileSelect}
@@ -333,12 +335,12 @@ const EditProfile = () => {
                 >
                   <TextField
                     label={t('Full Name')}
-                    placeholder="Your Full Name"
+                    placeholder={yourFullName}
                     InputLabelProps={{ shrink: true }}
                     value={name}
                     onChange={handleNameChange}
                     error={!!nameError}
-                    helperText={nameError}
+                    helperText={t(nameError)}
                     sx={({ spacing }) => ({
                       mr: spacing(2),
                       width: '100%',
@@ -351,7 +353,7 @@ const EditProfile = () => {
                     value={mobileNumber}
                     onChange={handleMobileNumberChange}
                     error={!!mobileNumberError}
-                    helperText={mobileNumberError}
+                    helperText={t(mobileNumberError)}
                     inputProps={{
                       maxLength: 8,
                       pattern: '[0-9]*',
@@ -372,13 +374,13 @@ const EditProfile = () => {
                   value={email}
                   onChange={handleEmailChange}
                   error={!!emailError}
-                  helperText={emailError}
+                  helperText={t(emailError)}
                 />
                 <TextField
                   multiline
                   rows={5}
                   label={t('Bio')}
-                  placeholder="Bio Description"
+                  placeholder={bioDescription}
                   InputLabelProps={{ shrink: true }}
                   sx={({ spacing }) => ({
                     mt: spacing(2),
@@ -388,7 +390,7 @@ const EditProfile = () => {
                   value={bio}
                   onChange={handleBioChange}
                   error={!!bioError}
-                  helperText={bioError}
+                  helperText={t(bioError)}
                 />
               </CardContent>
 

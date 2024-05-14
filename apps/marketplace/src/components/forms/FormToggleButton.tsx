@@ -3,6 +3,8 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Skeleton from '@mui/material/Skeleton';
 import { useTheme } from '@mui/material/styles';
 import { Controller, FieldValues, RegisterOptions, useFormContext } from 'react-hook-form';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { useTranslation } from 'react-i18next';
 
 export type FormToggleButtonOption = {
   label: string;
@@ -72,6 +74,8 @@ const FormToggleButton = ({
     ? palette.success[100]
     : palette.primary[300];
 
+  const { t } = useTranslation();
+
   return (
     // Render a skeleton if the component is in a loading state
     isLoading ? (
@@ -122,7 +126,7 @@ const FormToggleButton = ({
                   }}
                   type="button"
                 >
-                  {option.label}
+                  {t(option.label)}
                 </Button>
               ))}
             </ButtonGroup>
