@@ -6,12 +6,17 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import fetchListing from '@/services/fetchListing';
 import fetchCatById from '@/services/fetchCatById';
 import fetchProduct from '@/services/fetchProduct';
+import useParameters from '@/services/listings/useParameters';
 import { Listing } from '@/utils/api/client/zod/listings';
 import { Category } from '@/utils/api/client/zod/categories';
 import { Product } from '@/utils/api/client/zod/products';
+import useParamStore from '@/stores/parameters';
 import S3BoxImage from '@/components/S3BoxImage';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
@@ -51,6 +56,11 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+
+  const [parameters, addParams] = useParamStore((state) => [state.params, state.addParams]);
+  const [paramIdsToFetch, setParamIdsToFetch] = useState<string[]>([]);
+  const { data: params } = useParameters(paramIdsToFetch);
+
   const router = useRouter();
 
   const selectedListing = useQuery(
@@ -58,7 +68,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
     async () => Promise.all(listingIds.map((id) => fetchListing(id))),
     {
       enabled: listingIds !== undefined,
-      retry: false
+      retry: false,
     }
   );
 
@@ -91,6 +101,30 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       setCategory(selectedCat.data);
     }
   }, [selectedListing.data, selectedProduct.data, selectedCat.data]);
+
+  useEffect(() => {
+    if (listings !== undefined) {
+      const existingParams = Object.keys(parameters);
+      const paramIds = new Set<string>();
+
+      listings.forEach((listing) => {
+        listing.parameters?.forEach(({ paramId }) => {
+          const stringParamId = paramId.toString();
+          if (existingParams.indexOf(stringParamId) === -1) paramIds.add(stringParamId);
+        });
+      });
+
+      if (paramIds.size !== 0) {
+        setParamIdsToFetch([...paramIds]);
+      }
+    }
+  }, [listings]);
+
+  useEffect(() => {
+    if (params !== undefined && params.length !== 0) {
+      addParams(params);
+    }
+  }, [params, paramIdsToFetch]);
 
   const queries = [selectedListing, selectedProduct, selectedCat];
   const isError = queries.some((query) => query.isError);
@@ -127,6 +161,7 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       'Cross Section Image',
       'Type',
       'Company',
+      'Parameters',
     ],
     rows: [
       {
@@ -155,6 +190,32 @@ const CompareDifferences = ({ listingIds }: CompareDifferencesProps) => {
       },
       { id: 'row8', data: listings.map((listing) => listing.type) },
       { id: 'row9', data: listings.map((listing) => listing.owner.company.name) },
+      {
+        id: 'row10',
+        data: listings.map((listing) => (
+          <Grid container spacing={2} ml={3}>
+            {listing.parameters &&
+              params &&
+              params.length !== 0 &&
+              listing.parameters.map(({ paramId, value }) => {
+                const data = params.find((param) => param.id === paramId);
+
+                if (data === undefined) return null;
+
+                const { displayName, unit } = data;
+
+                return (
+                  <Grid item xl={3} lg={3} md={3} sm={2} xs={2} direction="row" key={paramId}>
+                    <Box>
+                      <Typography sx={{ fontWeight: 'bold', mb: 1 }}>{displayName}</Typography>
+                      <Typography>{`${value}${unit}`}</Typography>
+                    </Box>
+                  </Grid>
+                );
+              })}
+          </Grid>
+        )),
+      },
     ],
   };
 
