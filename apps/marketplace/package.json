@@ -94,6 +94,6 @@
     "html-loader": "4.2.0",
     "react-is": "18.2.0",
     "typescript": "5.0.2",
-    "webpack": "5.87.0"
+    "webpack": "5.94.0"
   }
 }
